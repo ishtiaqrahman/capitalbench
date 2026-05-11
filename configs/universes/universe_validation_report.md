@@ -1,0 +1,73 @@
+# CapitalBench Universe Validation Report
+
+## Summary
+
+- Source: tiingo
+- Start date: 2026-05-01
+- End date: 2026-05-08
+- Total options: 40
+- Cash options: 1
+- Passed tickers: 39
+- Failed tickers: 0
+
+## Passed Tickers
+
+| id | symbol | tiingo_symbol | status | rows_returned | first_date | last_date | message |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| SHORT_TREASURY | BIL | BIL | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| SP500 | SPY | SPY | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| TOTAL_US_MARKET | VTI | VTI | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| NASDAQ100 | QQQ | QQQ | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| LARGE_GROWTH | IWF | IWF | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| LARGE_VALUE | IWD | IWD | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| MID_CAP | IJH | IJH | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| SMALL_CAP | IWM | IWM | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| SMALL_VALUE | IWN | IWN | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| DIVIDEND | SCHD | SCHD | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| LOW_VOL | SPLV | SPLV | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| MOMENTUM | MTUM | MTUM | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| TECHNOLOGY | XLK | XLK | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| COMMUNICATIONS | XLC | XLC | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| CONSUMER_DISCRETIONARY | XLY | XLY | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| CONSUMER_STAPLES | XLP | XLP | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| HEALTHCARE | XLV | XLV | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| FINANCIALS | XLF | XLF | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| INDUSTRIALS | XLI | XLI | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| ENERGY | XLE | XLE | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| MATERIALS | XLB | XLB | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| UTILITIES | XLU | XLU | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| REAL_ESTATE | XLRE | XLRE | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| INTERMEDIATE_TREASURY | IEF | IEF | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| LONG_TREASURY | TLT | TLT | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| TIPS | TIP | TIP | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| INVESTMENT_GRADE_CREDIT | LQD | LQD | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| HIGH_YIELD_CREDIT | HYG | HYG | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| AGGREGATE_BONDS | AGG | AGG | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| DEVELOPED_EX_US | VEA | VEA | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| EMERGING_MARKETS | VWO | VWO | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| EUROPE | VGK | VGK | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| JAPAN | EWJ | EWJ | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| CHINA | MCHI | MCHI | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| INDIA | INDA | INDA | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| GOLD | IAU | IAU | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| BROAD_COMMODITIES | PDBC | PDBC | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| SEMICONDUCTORS | SMH | SMH | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+| SOFTWARE | IGV | IGV | pass | 6 | 2026-05-01T00:00:00.000Z | 2026-05-08T00:00:00.000Z | OK |
+
+## Failed Tickers
+
+_None._
+
+## Cash Options
+
+| id | symbol | tiingo_symbol | status | rows_returned | first_date | last_date | message |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| CASH |  |  | skipped_cash |  |  |  | Cash option skipped; Tiingo validation is not required. |
+
+## Warnings
+
+_None._
+
+## Rule
+
+No failed ticker should be used in a public round.

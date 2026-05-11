@@ -1,0 +1,520 @@
+options:
+  - id: CASH
+    name: Cash / Do Not Invest
+    symbol: null
+    tiingo_symbol: null
+    asset_class: cash
+    category: cash
+    option_group: cash
+    risk_bucket: cash
+    currency: USD
+    is_cash: true
+    include_in_universe: true
+    exposure_description: "Cash position with no market exposure. Return is treated as 0 unless a round explicitly defines a cash yield proxy."
+
+  - id: SHORT_TREASURY
+    name: Short-Term Treasury Bills
+    symbol: BIL
+    tiingo_symbol: BIL
+    asset_class: cash_like
+    category: treasury_bills
+    option_group: cash_and_short_duration
+    risk_bucket: low
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Short-term US Treasury bill exposure. Typically used as a cash-like proxy with low duration risk."
+
+  - id: SP500
+    name: S&P 500
+    symbol: SPY
+    tiingo_symbol: SPY
+    asset_class: equity
+    category: broad_us_equity
+    option_group: us_broad_market
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Broad US large-cap equity exposure. Represents large publicly traded US companies across multiple sectors."
+
+  - id: TOTAL_US_MARKET
+    name: Total US Stock Market
+    symbol: VTI
+    tiingo_symbol: VTI
+    asset_class: equity
+    category: broad_us_equity
+    option_group: us_broad_market
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Broad exposure to the total US equity market, including large-, mid-, and small-cap companies. Useful as a diversified US equity proxy."
+
+  - id: NASDAQ100
+    name: Nasdaq 100
+    symbol: QQQ
+    tiingo_symbol: QQQ
+    asset_class: equity
+    category: growth_equity
+    option_group: us_growth_and_technology
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Large-cap, growth-oriented US equity exposure with heavy weights in technology and communication services. Sensitive to mega-cap earnings, rates, and growth-stock sentiment."
+
+  - id: LARGE_GROWTH
+    name: US Large-Cap Growth
+    symbol: IWF
+    tiingo_symbol: IWF
+    asset_class: equity
+    category: style_factor
+    option_group: us_style_factor
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US large-cap growth stock exposure. Often tilted toward companies with higher expected growth, higher valuations, and greater sensitivity to interest rates."
+
+  - id: LARGE_VALUE
+    name: US Large-Cap Value
+    symbol: IWD
+    tiingo_symbol: IWD
+    asset_class: equity
+    category: style_factor
+    option_group: us_style_factor
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US large-cap value stock exposure. Often tilted toward companies with lower valuation multiples, dividends, financials, energy, and cyclical sectors."
+
+  - id: MID_CAP
+    name: US Mid-Cap Stocks
+    symbol: IJH
+    tiingo_symbol: IJH
+    asset_class: equity
+    category: size_factor
+    option_group: us_size_factor
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US mid-cap equity exposure. Represents companies between large caps and small caps, with sensitivity to domestic growth, financing conditions, and risk appetite."
+
+  - id: SMALL_CAP
+    name: US Small-Cap Stocks
+    symbol: IWM
+    tiingo_symbol: IWM
+    asset_class: equity
+    category: size_factor
+    option_group: us_size_factor
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US small-cap equity exposure. Often more sensitive to domestic economic growth, credit conditions, rates, and market risk appetite."
+
+  - id: SMALL_VALUE
+    name: US Small-Cap Value
+    symbol: IWN
+    tiingo_symbol: IWN
+    asset_class: equity
+    category: style_and_size_factor
+    option_group: us_style_factor
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US small-cap value equity exposure. Combines smaller company exposure with value-oriented characteristics."
+
+  - id: DIVIDEND
+    name: US Dividend Equities
+    symbol: SCHD
+    tiingo_symbol: SCHD
+    asset_class: equity
+    category: dividend_equity
+    option_group: us_factor_equity
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US dividend-oriented equity exposure. Often tilted toward profitable, mature companies with dividend histories."
+
+  - id: LOW_VOL
+    name: US Low Volatility Equities
+    symbol: SPLV
+    tiingo_symbol: SPLV
+    asset_class: equity
+    category: low_volatility_factor
+    option_group: us_factor_equity
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US equity exposure focused on historically lower-volatility stocks. Often used as a defensive equity factor proxy."
+
+  - id: MOMENTUM
+    name: US Momentum Equities
+    symbol: MTUM
+    tiingo_symbol: MTUM
+    asset_class: equity
+    category: momentum_factor
+    option_group: us_factor_equity
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US equity exposure tilted toward stocks with stronger recent price momentum. Sensitive to trend persistence and factor rotations."
+
+  - id: TECHNOLOGY
+    name: Technology Sector
+    symbol: XLK
+    tiingo_symbol: XLK
+    asset_class: equity
+    category: us_sector
+    option_group: us_sector
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US technology sector exposure within large-cap equities. Includes software, hardware, semiconductors, and technology services companies."
+
+  - id: COMMUNICATIONS
+    name: Communication Services Sector
+    symbol: XLC
+    tiingo_symbol: XLC
+    asset_class: equity
+    category: us_sector
+    option_group: us_sector
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US communication services sector exposure. Includes large internet platforms, media, telecom, and entertainment companies."
+
+  - id: CONSUMER_DISCRETIONARY
+    name: Consumer Discretionary Sector
+    symbol: XLY
+    tiingo_symbol: XLY
+    asset_class: equity
+    category: us_sector
+    option_group: us_sector
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US consumer discretionary sector exposure. Sensitive to consumer spending, employment, credit conditions, and household confidence."
+
+  - id: CONSUMER_STAPLES
+    name: Consumer Staples Sector
+    symbol: XLP
+    tiingo_symbol: XLP
+    asset_class: equity
+    category: us_sector
+    option_group: us_sector
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US consumer staples sector exposure. Includes companies selling essential consumer products and is often considered a defensive equity sector."
+
+  - id: HEALTHCARE
+    name: Healthcare Sector
+    symbol: XLV
+    tiingo_symbol: XLV
+    asset_class: equity
+    category: us_sector
+    option_group: us_sector
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US healthcare sector exposure. Includes pharmaceuticals, biotechnology, medical devices, healthcare services, and insurers."
+
+  - id: FINANCIALS
+    name: Financials Sector
+    symbol: XLF
+    tiingo_symbol: XLF
+    asset_class: equity
+    category: us_sector
+    option_group: us_sector
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US financial sector exposure. Includes banks, insurers, capital markets firms, and financial services companies."
+
+  - id: INDUSTRIALS
+    name: Industrials Sector
+    symbol: XLI
+    tiingo_symbol: XLI
+    asset_class: equity
+    category: us_sector
+    option_group: us_sector
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US industrial sector exposure. Includes aerospace, machinery, transportation, logistics, and industrial services companies."
+
+  - id: ENERGY
+    name: Energy Sector
+    symbol: XLE
+    tiingo_symbol: XLE
+    asset_class: equity
+    category: us_sector
+    option_group: us_sector
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US energy sector exposure. Sensitive to oil and gas prices, production trends, geopolitics, and capital discipline."
+
+  - id: MATERIALS
+    name: Materials Sector
+    symbol: XLB
+    tiingo_symbol: XLB
+    asset_class: equity
+    category: us_sector
+    option_group: us_sector
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US materials sector exposure. Includes chemicals, metals, mining, packaging, and construction materials companies."
+
+  - id: UTILITIES
+    name: Utilities Sector
+    symbol: XLU
+    tiingo_symbol: XLU
+    asset_class: equity
+    category: us_sector
+    option_group: us_sector
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US utilities sector exposure. Often sensitive to interest rates, electricity demand, regulation, and defensive equity flows."
+
+  - id: REAL_ESTATE
+    name: Real Estate Sector
+    symbol: XLRE
+    tiingo_symbol: XLRE
+    asset_class: equity
+    category: us_sector
+    option_group: us_sector
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US listed real estate equity exposure. Sensitive to interest rates, property fundamentals, credit conditions, and real estate valuations."
+
+  - id: INTERMEDIATE_TREASURY
+    name: Intermediate-Term US Treasury Bonds
+    symbol: IEF
+    tiingo_symbol: IEF
+    asset_class: bond
+    category: treasury_duration
+    option_group: bonds_and_rates
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Intermediate-duration US Treasury bond exposure. Sensitive to changes in interest rates, inflation expectations, and growth expectations."
+
+  - id: LONG_TREASURY
+    name: Long-Term US Treasury Bonds
+    symbol: TLT
+    tiingo_symbol: TLT
+    asset_class: bond
+    category: treasury_duration
+    option_group: bonds_and_rates
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Long-duration US Treasury bond exposure. More sensitive to interest-rate changes than shorter-duration bond funds."
+
+  - id: TIPS
+    name: Treasury Inflation-Protected Securities
+    symbol: TIP
+    tiingo_symbol: TIP
+    asset_class: bond
+    category: inflation_linked_bonds
+    option_group: bonds_and_rates
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US Treasury inflation-protected bond exposure. Sensitive to real interest rates and inflation expectations."
+
+  - id: INVESTMENT_GRADE_CREDIT
+    name: Investment Grade Corporate Bonds
+    symbol: LQD
+    tiingo_symbol: LQD
+    asset_class: bond
+    category: corporate_credit
+    option_group: credit
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US investment-grade corporate bond exposure. Sensitive to interest rates, credit spreads, and corporate balance-sheet conditions."
+
+  - id: HIGH_YIELD_CREDIT
+    name: High Yield Corporate Bonds
+    symbol: HYG
+    tiingo_symbol: HYG
+    asset_class: bond
+    category: corporate_credit
+    option_group: credit
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "US high-yield corporate bond exposure. Sensitive to credit spreads, default expectations, liquidity, and risk appetite."
+
+  - id: AGGREGATE_BONDS
+    name: US Aggregate Bond Market
+    symbol: AGG
+    tiingo_symbol: AGG
+    asset_class: bond
+    category: aggregate_bonds
+    option_group: bonds_and_rates
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Broad US investment-grade bond market exposure. Includes Treasuries, agency securities, mortgage-backed securities, and corporate bonds."
+
+  - id: DEVELOPED_EX_US
+    name: Developed Markets ex-US
+    symbol: VEA
+    tiingo_symbol: VEA
+    asset_class: equity
+    category: international_equity
+    option_group: international_equity
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Developed-market equity exposure outside the United States. Includes regions such as Europe, Japan, Canada, and developed Asia-Pacific markets."
+
+  - id: EMERGING_MARKETS
+    name: Emerging Markets
+    symbol: VWO
+    tiingo_symbol: VWO
+    asset_class: equity
+    category: international_equity
+    option_group: international_equity
+    risk_bucket: very_high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Emerging-market equity exposure. Sensitive to global growth, currency moves, capital flows, commodity cycles, and country-specific policy risk."
+
+  - id: EUROPE
+    name: Europe Equities
+    symbol: VGK
+    tiingo_symbol: VGK
+    asset_class: equity
+    category: regional_equity
+    option_group: international_equity
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "European equity exposure. Sensitive to European growth, monetary policy, currency trends, energy costs, and regional earnings."
+
+  - id: JAPAN
+    name: Japan Equities
+    symbol: EWJ
+    tiingo_symbol: EWJ
+    asset_class: equity
+    category: regional_equity
+    option_group: international_equity
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Japanese equity exposure. Sensitive to Japanese corporate earnings, yen movements, monetary policy, and global trade conditions."
+
+  - id: CHINA
+    name: China Equities
+    symbol: MCHI
+    tiingo_symbol: MCHI
+    asset_class: equity
+    category: regional_equity
+    option_group: international_equity
+    risk_bucket: very_high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "China equity exposure through publicly traded Chinese companies. Sensitive to Chinese growth, policy actions, currency moves, and geopolitical risk."
+
+  - id: INDIA
+    name: India Equities
+    symbol: INDA
+    tiingo_symbol: INDA
+    asset_class: equity
+    category: regional_equity
+    option_group: international_equity
+    risk_bucket: very_high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Indian equity exposure. Sensitive to Indian economic growth, currency moves, domestic policy, valuations, and foreign capital flows."
+
+  - id: GOLD
+    name: Gold
+    symbol: IAU
+    tiingo_symbol: IAU
+    asset_class: commodity
+    category: precious_metals
+    option_group: commodities
+    risk_bucket: medium
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Gold exposure through a listed gold trust. Sensitive to real interest rates, US dollar strength, inflation expectations, and safe-haven demand."
+
+  - id: BROAD_COMMODITIES
+    name: Broad Commodities
+    symbol: PDBC
+    tiingo_symbol: PDBC
+    asset_class: commodity
+    category: broad_commodities
+    option_group: commodities
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Broad commodity exposure through a diversified commodity strategy ETF. Sensitive to energy, metals, agriculture, inflation expectations, and global demand."
+
+  - id: SEMICONDUCTORS
+    name: Semiconductors
+    symbol: SMH
+    tiingo_symbol: SMH
+    asset_class: equity
+    category: thematic_equity
+    option_group: ai_and_technology
+    risk_bucket: very_high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Semiconductor equity exposure. Includes companies involved in chip design, manufacturing, equipment, and related supply chains."
+
+  - id: SOFTWARE
+    name: Software
+    symbol: IGV
+    tiingo_symbol: IGV
+    asset_class: equity
+    category: thematic_equity
+    option_group: ai_and_technology
+    risk_bucket: high
+    currency: USD
+    is_cash: false
+    include_in_universe: true
+    exposure_description: "Software equity exposure. Includes companies in application software, infrastructure software, and related technology services."

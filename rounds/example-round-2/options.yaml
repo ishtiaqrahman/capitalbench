@@ -1,0 +1,97 @@
+options:
+  - option_id: SP500
+    label: S&P 500
+    asset_symbol: SPY
+    asset_name: SPDR S&P 500 ETF Trust
+    description: Broad US large-cap equity benchmark.
+    kind: equity_index
+    is_benchmark: true
+    is_cash: false
+  - option_id: NASDAQ100
+    label: Nasdaq 100
+    asset_symbol: QQQ
+    asset_name: Invesco QQQ Trust
+    description: Large-cap growth and technology-heavy US equity exposure.
+    kind: equity_index
+    is_benchmark: false
+    is_cash: false
+  - option_id: SMALL_CAP
+    label: US Small Cap
+    asset_symbol: IWM
+    asset_name: iShares Russell 2000 ETF
+    description: US small-cap equity exposure.
+    kind: equity_index
+    is_benchmark: false
+    is_cash: false
+  - option_id: VALUE
+    label: US Value
+    asset_symbol: IWD
+    asset_name: iShares Russell 1000 Value ETF
+    description: Large-cap US value equity exposure.
+    kind: equity_style
+    is_benchmark: false
+    is_cash: false
+  - option_id: ENERGY
+    label: Energy
+    asset_symbol: XLE
+    asset_name: Energy Select Sector SPDR Fund
+    description: US energy sector equity exposure.
+    kind: equity_sector
+    is_benchmark: false
+    is_cash: false
+  - option_id: FINANCIALS
+    label: Financials
+    asset_symbol: XLF
+    asset_name: Financial Select Sector SPDR Fund
+    description: US financial sector equity exposure.
+    kind: equity_sector
+    is_benchmark: false
+    is_cash: false
+  - option_id: INDUSTRIALS
+    label: Industrials
+    asset_symbol: XLI
+    asset_name: Industrial Select Sector SPDR Fund
+    description: US industrial sector equity exposure.
+    kind: equity_sector
+    is_benchmark: false
+    is_cash: false
+  - option_id: HEALTHCARE
+    label: Healthcare
+    asset_symbol: XLV
+    asset_name: Health Care Select Sector SPDR Fund
+    description: US healthcare sector equity exposure.
+    kind: equity_sector
+    is_benchmark: false
+    is_cash: false
+  - option_id: UTILITIES
+    label: Utilities
+    asset_symbol: XLU
+    asset_name: Utilities Select Sector SPDR Fund
+    description: Defensive US utilities sector equity exposure.
+    kind: equity_sector
+    is_benchmark: false
+    is_cash: false
+  - option_id: LONG_BONDS
+    label: Long Treasury Bonds
+    asset_symbol: TLT
+    asset_name: iShares 20+ Year Treasury Bond ETF
+    description: Long-duration US Treasury bond exposure.
+    kind: fixed_income
+    is_benchmark: false
+    is_cash: false
+  - option_id: SHORT_TREASURY
+    label: Short Treasury Bills
+    asset_symbol: BIL
+    asset_name: SPDR Bloomberg 1-3 Month T-Bill ETF
+    description: Short-duration Treasury bill exposure.
+    kind: fixed_income
+    is_benchmark: false
+    is_cash: false
+  - option_id: CASH
+    label: Cash
+    asset_symbol: CASH
+    asset_name: Uninvested cash
+    description: No market exposure. Return is treated as zero unless prices are supplied.
+    kind: cash
+    is_benchmark: false
+    is_cash: true

@@ -1,0 +1,198 @@
+# Scoring
+
+CapitalBench scores each valid submission against realized local prices.
+
+Preferred price file format:
+
+```text
+option_id,symbol,date,close,adj_close
+SP500,SPY,2026-06-02,500.00,500.00
+NASDAQ100,QQQ,2026-06-02,430.00,430.00
+CASH,,2026-06-02,1.00,1.00
+```
+
+Rows may use `option_id` or `symbol`; `option_id` is preferred. CapitalBench
+uses `adj_close` when available. If only `close` is supplied, scoring is allowed
+but a warning is recorded in `results/price_warnings.json`.
+
+For Tiingo price fetching, CapitalBench uses a selected-only workflow:
+
+```bash
+capitalbench fetch-prices \
+  --round rounds/<id> \
+  --run-id <run_id> \
+  --entry-date YYYY-MM-DD \
+  --exit-date YYYY-MM-DD
+```
+
+That command fetches only the assets picked in parsed submissions, plus the
+S&P 500 benchmark and CASH. It does not fetch every option in the universe.
+
+Full-universe trailing returns for prompt context use a separate command:
+
+```bash
+capitalbench fetch-universe-performance \
+  --round rounds/<id> \
+  --as-of-date YYYY-MM-DD
+```
+
+That command writes `market_data/universe_trailing_returns.csv`,
+`market_data/universe_trailing_returns.md`, and
+`market_data/universe_trailing_returns.json`. It fetches every non-CASH option
+and calculates 7-day, 30-day, 6-month, and 1-year returns from Tiingo adjusted
+close data. It does not create scoring prices and does not affect leaderboards.
+
+For each option:
+
+```text
+option_return = exit_price / entry_price - 1
+```
+
+Cash is treated as a zero return unless cash prices are explicitly supplied.
+
+CapitalBench Universe v1.5 uses CASH plus public US-listed ETF tickers. All
+non-cash universe tickers should pass Tiingo EOD validation before a public
+round is frozen.
+
+For each official model submission:
+
+- `selected_asset_return`: return of the selected option
+- `sp500_return`: return of the S&P 500 benchmark option
+- `alpha_vs_sp500`: selected return minus S&P 500 return
+- `regret_vs_best_option`: best available option return minus selected return, only when full-universe prices are supplied
+- `rank_among_options`: realized rank of the selected option among all options, only when full-universe prices are supplied
+- `beats_sp500`: whether the selected option beat the S&P 500
+- `beats_cash`: whether the selected option beat cash
+- `alpha_per_dollar`: alpha divided by cost, only when `cost_usd > 0`
+
+The main leaderboard is sorted by `alpha_vs_sp500` descending. Ties are resolved
+by lower regret, higher confidence, and then model id.
+
+The benchmark option must be identifiable as S&P 500, usually with
+`is_benchmark: true` and `asset_symbol: SPY`.
+
+## Official One-Shot Leaderboard
+
+The official leaderboard uses exactly one valid submission per model from a run
+with `run_type: official`. It is the headline score. Stability runs do not feed
+into this leaderboard.
+
+Official scoring writes:
+
+```text
+runs/<run_id>/results/returns.csv
+runs/<run_id>/results/leaderboard.csv
+```
+
+## Multi-Run Stability Analysis
+
+Stability analysis uses `run_type: stability` and multiple replicates per model,
+usually five. It answers a different question: does the model keep choosing the
+same asset when asked the same question multiple times?
+
+Stability scoring writes:
+
+```text
+runs/<run_id>/results/returns.csv
+runs/<run_id>/results/stability.csv
+```
+
+`stability.csv` includes:
+
+- pick distribution
+- modal pick
+- consistency rate
+- average repeated return
+- average repeated alpha versus S&P 500
+- best and worst repeated result
+- total and average cost when cost data exists
+
+Tie rule for modal pick: if two or more options are tied for most frequent pick,
+choose the tied option with the highest realized return and record a note.
+
+Example:
+
+```text
+Model picks: QQQ, QQQ, SPY, QQQ, TLT
+Asset returns: QQQ +4%, SPY +2%, TLT -1%
+
+Average repeated return:
+(4 + 4 + 2 + 4 - 1) / 5 = 2.6%
+
+Modal pick:
+QQQ
+
+Consistency:
+3 / 5 = 60%
+```
+
+This is not an official leaderboard and should not be combined with the
+official score.
+
+## Latest Round Leaderboard
+
+The latest round leaderboard uses only the newest resolved round's official
+one-shot run. It is a standalone round result. Cumulative results and stability
+results are separate views.
+
+Publishing writes:
+
+```text
+latest/
+  latest_round_leaderboard.csv
+  latest_round_report.md
+```
+
+## Cumulative Official Leaderboard
+
+Across multiple resolved rounds, each round counts as one game. For each model,
+CapitalBench averages official one-shot alpha versus the S&P 500 across all
+resolved rounds where that model has an official result.
+
+Example:
+
+```text
+Round 1:
+Model A official alpha = +2%
+
+Round 2:
+Model A official alpha = -1%
+
+Cumulative average official alpha:
+(+2 + -1) / 2 = +0.5%
+```
+
+The cumulative official table also includes compounded model return, compounded
+S&P 500 return, cumulative log alpha, hit rates, regret, and cost summaries
+when cost data exists.
+
+Models may have different `resolved_rounds` counts because new models enter
+only in future rounds. CapitalBench does not backfill new models into old
+official rounds. The cumulative official leaderboard is sorted by average alpha
+versus the S&P 500, then cumulative log alpha, then hit rate versus the S&P 500.
+
+## Cumulative Stability Leaderboard
+
+The cumulative stability table averages repeated-run alpha and consistency
+metrics across resolved rounds. It is separate from the official cumulative
+leaderboard.
+
+Example:
+
+```text
+Round 1:
+average repeated alpha = +1.4%
+consistency = 60%
+
+Round 2:
+average repeated alpha = +0.8%
+consistency = 80%
+
+Cumulative stability:
+average repeated alpha = +1.1%
+average consistency = 70%
+```
+
+The cumulative stability leaderboard is sorted by average repeated-run alpha
+versus the S&P 500, then average consistency, then average modal-pick alpha.
+There is no combined official-plus-stability score.

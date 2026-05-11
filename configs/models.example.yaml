@@ -1,0 +1,56 @@
+models:
+  - model_id: "openai-example"
+    provider: "openai"
+    api_model_name: "REPLACE_WITH_MODEL"
+    enabled: true
+    mode: "closed_capability"
+    temperature: 0
+    max_completion_tokens: 3000
+    max_wall_clock_seconds: 120
+    reasoning_effort: low
+    first_eligible_round: null
+    first_eligible_date_utc: null
+    model_release_date: null
+    notes: "Use the lowest provider-supported reasoning setting for the chosen model."
+
+  - model_id: "anthropic-example"
+    provider: "anthropic"
+    api_model_name: "REPLACE_WITH_MODEL"
+    enabled: true
+    mode: "closed_capability"
+    temperature: 0
+    max_completion_tokens: 3000
+    max_wall_clock_seconds: 120
+    reasoning_effort: null
+    first_eligible_round: null
+    first_eligible_date_utc: null
+    model_release_date: null
+    notes: "Use deterministic settings. This provider may not expose comparable reasoning controls."
+
+  - model_id: "google-example"
+    provider: "google"
+    api_model_name: "REPLACE_WITH_MODEL"
+    enabled: true
+    mode: "closed_capability"
+    temperature: 0
+    max_completion_tokens: 3000
+    max_wall_clock_seconds: 120
+    reasoning_effort: low
+    first_eligible_round: null
+    first_eligible_date_utc: null
+    model_release_date: null
+    notes: "Use the lowest positive thinking budget supported by the selected Gemini model."
+
+  - model_id: "xai-example"
+    provider: "xai"
+    api_model_name: "REPLACE_WITH_MODEL"
+    enabled: true
+    mode: "closed_capability"
+    temperature: 0
+    max_completion_tokens: 3000
+    max_wall_clock_seconds: 120
+    reasoning_effort: null
+    first_eligible_round: null
+    first_eligible_date_utc: null
+    model_release_date: null
+    notes: "Use deterministic settings. This provider may not expose comparable reasoning controls."
