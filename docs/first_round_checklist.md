@@ -105,6 +105,7 @@ does not replace the official leaderboard.
 - If using Tiingo for selected-only scoring prices, run `capitalbench fetch-prices --round rounds/<id> --run-id <run_id> --entry-date YYYY-MM-DD --exit-date YYYY-MM-DD`; this fetches only picked assets plus S&P 500 and CASH.
 - Confirm every selected non-cash option and the S&P 500 benchmark have entry and exit prices.
 - To populate `regret_vs_best_option` and `rank_among_options`, run the same fetch command with `--full-universe` so every option in the frozen universe is priced.
+- If the entry date has resolved but the exit date has not, use `--side entry --full-universe` to write only full-universe entry prices. Fetch exit prices after the exit date resolves.
 - Confirm the requested entry and exit dates are the round's intended pricing dates. CapitalBench requires Tiingo rows to exactly match those dates and does not silently use the nearest available trading day.
 - Run `capitalbench score-round --round rounds/<id> --run-id <run_id>`.
 - Run `capitalbench publish-report --round rounds/<id> --run-id <run_id>`.

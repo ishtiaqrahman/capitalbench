@@ -359,6 +359,17 @@ capitalbench fetch-prices \
   --exit-date 2026-07-02
 ```
 
+If the entry date has resolved but the exit date has not, fetch only the entry
+side and leave exit prices untouched:
+
+```bash
+capitalbench fetch-prices \
+  --round rounds/CB-2026-06-01-1M \
+  --run-id official-20260601 \
+  --entry-date 2026-06-02 \
+  --side entry
+```
+
 9. Score and publish:
 
 ```bash
@@ -563,6 +574,10 @@ capitalbench fetch-prices \
   --exit-date 2026-07-02 \
   --full-universe
 ```
+
+If only one side of the pricing window is available, add `--side entry` or
+`--side exit`. For example, `--side entry --full-universe` locks starting
+prices for every frozen option without creating `exit_prices.csv`.
 
 CapitalBench requires Tiingo to return rows exactly matching the requested
 entry and exit dates. It does not silently substitute the nearest trading day.

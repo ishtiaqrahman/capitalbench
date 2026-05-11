@@ -133,6 +133,37 @@ def test_fetch_prices_full_universe_fetches_every_non_cash_option(tmp_path: Path
     assert {row["option_id"] for row in entry_rows} == {"opt_a", "opt_b", "sp500", "cash"}
 
 
+def test_fetch_prices_entry_only_writes_only_entry_file(tmp_path: Path, monkeypatch) -> None:
+    round_path = _create_round_with_submission(tmp_path)
+    monkeypatch.setenv("TIINGO_API_KEY", "test-key")
+    calls: list[tuple[str, str, str]] = []
+
+    def fake_fetch(symbol: str, start_date: str, end_date: str, api_key: str) -> list[dict[str, object]]:
+        calls.append((symbol, start_date, end_date))
+        return [{"date": f"{start_date}T00:00:00Z", "close": 100.0, "adjClose": 100.0}]
+
+    output = fetch_selected_prices(
+        round_path=round_path,
+        run_id=None,
+        entry_date="2026-01-02",
+        exit_date=None,
+        full_universe=True,
+        price_side="entry",
+        fetcher=fake_fetch,
+    )
+
+    assert calls == [
+        ("AAA", "2026-01-02", "2026-01-02"),
+        ("BBB", "2026-01-02", "2026-01-02"),
+        ("SPY", "2026-01-02", "2026-01-02"),
+    ]
+    assert output.price_side == "entry"
+    assert output.entry_prices_path == round_path / "prices" / "entry_prices.csv"
+    assert output.exit_prices_path is None
+    assert output.entry_prices_path.exists()
+    assert not (round_path / "prices" / "exit_prices.csv").exists()
+
+
 def test_full_universe_fetch_populates_regret_and_rank_when_scored(tmp_path: Path, monkeypatch) -> None:
     round_path = _create_round_with_submission(tmp_path)
     monkeypatch.setenv("TIINGO_API_KEY", "test-key")

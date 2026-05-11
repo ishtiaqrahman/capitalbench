@@ -15,9 +15,10 @@ from .validation import iter_submission_files, validate_submission_payload
 
 @dataclass(frozen=True)
 class SelectedPriceFetchOutput:
-    entry_prices_path: Path
-    exit_prices_path: Path
+    entry_prices_path: Path | None
+    exit_prices_path: Path | None
     price_scope: str
+    price_side: str
     option_ids: list[str]
     fetched_symbols: list[str]
     cash_option_ids: list[str]
@@ -57,12 +58,20 @@ def fetch_selected_prices(
     *,
     round_path: Path,
     run_id: str | None,
-    entry_date: str,
-    exit_date: str,
+    entry_date: str | None,
+    exit_date: str | None,
     overwrite_prices: bool = False,
     full_universe: bool = False,
+    price_side: str = "both",
     fetcher: TiingoFetcher | None = None,
 ) -> SelectedPriceFetchOutput:
+    if price_side not in {"entry", "exit", "both"}:
+        raise ValueError("price_side must be one of: entry, exit, both")
+    if price_side in {"entry", "both"} and not entry_date:
+        raise ValueError("entry_date is required when fetching entry prices")
+    if price_side in {"exit", "both"} and not exit_date:
+        raise ValueError("exit_date is required when fetching exit prices")
+
     api_key = os.environ.get(TIINGO_API_KEY_ENV, "").strip()
     if not api_key:
         raise RuntimeError("TIINGO_API_KEY is required for price fetching")
@@ -71,8 +80,13 @@ def fetch_selected_prices(
     prices_dir.mkdir(parents=True, exist_ok=True)
     entry_path = prices_dir / "entry_prices.csv"
     exit_path = prices_dir / "exit_prices.csv"
+    requested_paths = []
+    if price_side in {"entry", "both"}:
+        requested_paths.append(entry_path)
+    if price_side in {"exit", "both"}:
+        requested_paths.append(exit_path)
     if not overwrite_prices:
-        existing = [str(path) for path in [entry_path, exit_path] if path.exists()]
+        existing = [str(path) for path in requested_paths if path.exists()]
         if existing:
             raise FileExistsError(
                 "price files already exist; pass --overwrite-prices to replace selected price files: "
@@ -81,10 +95,16 @@ def fetch_selected_prices(
 
     options = load_options(round_path) if full_universe else selected_price_options(round_path, run_id)
     fetch = fetcher or fetch_tiingo_eod_prices
-    entry_rows = _price_rows_for_date(options, entry_date, api_key, fetch)
-    exit_rows = _price_rows_for_date(options, exit_date, api_key, fetch)
-    _write_price_csv(entry_path, entry_rows)
-    _write_price_csv(exit_path, exit_rows)
+    entry_rows: list[dict[str, Any]] = []
+    exit_rows: list[dict[str, Any]] = []
+    if price_side in {"entry", "both"}:
+        assert entry_date is not None
+        entry_rows = _price_rows_for_date(options, entry_date, api_key, fetch)
+        _write_price_csv(entry_path, entry_rows)
+    if price_side in {"exit", "both"}:
+        assert exit_date is not None
+        exit_rows = _price_rows_for_date(options, exit_date, api_key, fetch)
+        _write_price_csv(exit_path, exit_rows)
     fetched_symbols = sorted(
         {
             str(row["symbol"])
@@ -94,9 +114,10 @@ def fetch_selected_prices(
     )
     cash_ids = [option.option_id for option in options if _is_cash_option(option)]
     return SelectedPriceFetchOutput(
-        entry_prices_path=entry_path,
-        exit_prices_path=exit_path,
+        entry_prices_path=entry_path if price_side in {"entry", "both"} else None,
+        exit_prices_path=exit_path if price_side in {"exit", "both"} else None,
         price_scope="full_universe" if full_universe else "selected",
+        price_side=price_side,
         option_ids=[option.option_id for option in options],
         fetched_symbols=fetched_symbols,
         cash_option_ids=cash_ids,

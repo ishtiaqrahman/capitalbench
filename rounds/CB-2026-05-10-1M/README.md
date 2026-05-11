@@ -2,7 +2,7 @@
 
 Round id: `CB-2026-05-10-1M`
 
-Status: official run complete, unresolved, unscored.
+Status: official run complete, entry prices fetched, exit prices unresolved.
 
 Official run id: `official-round-1-clean`
 
@@ -32,9 +32,11 @@ symbol `SMH` in the option universe.
 
 This round is not scored yet.
 
+Entry prices use Tiingo EOD adjusted close from Friday May 8, 2026, the last
+trading close before the Sunday May 10, 2026 decision deadline.
+
 Missing until the market window resolves:
 
-- `prices/entry_prices.csv`
 - `prices/exit_prices.csv`
 - `runs/official-round-1-clean/results/leaderboard.csv`
 - `runs/official-round-1-clean/results/report.md`

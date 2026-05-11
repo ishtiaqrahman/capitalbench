@@ -27,6 +27,8 @@ capitalbench fetch-prices \
 
 That command fetches only the assets picked in parsed submissions, plus the
 S&P 500 benchmark and CASH. It does not fetch every option in the universe.
+If only one side of the scoring window is available, pass `--side entry` or
+`--side exit` and provide only the matching date.
 
 To populate `regret_vs_best_option` and `rank_among_options`, fetch scoring
 prices for the full frozen option universe:
@@ -43,6 +45,9 @@ capitalbench fetch-prices \
 Full-universe scoring prices are different from the prompt-context trailing
 return artifact. They write `prices/entry_prices.csv` and
 `prices/exit_prices.csv` for every option in `options.yaml`.
+For an unresolved round, use `--side entry --full-universe` to write only
+`prices/entry_prices.csv` for the full frozen universe; fetch exit prices only
+after the exit date resolves.
 
 Price fetching is strict about dates. For each Tiingo request, CapitalBench
 requires a returned row whose date exactly matches the requested `entry-date`

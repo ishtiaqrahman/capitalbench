@@ -349,6 +349,9 @@ fetching: selected options, the S&P 500 benchmark, and CASH. Add
 and `rank_among_options`; this fetches every option in the frozen
 `options.yaml`. Scoring price fetches require Tiingo rows to exactly match the
 requested entry and exit dates, and do not silently use nearest available dates.
+Use `--side entry` or `--side exit` when only one side of the pricing window is
+available. This is useful for locking full-universe entry prices before the
+one-month exit date has resolved.
 
 The first public version supports a one-month single-option decision only. It
 does not support portfolios or live data fetching.

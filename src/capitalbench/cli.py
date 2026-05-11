@@ -100,13 +100,17 @@ def _cmd_fetch_prices(args: argparse.Namespace) -> int:
         exit_date=args.exit_date,
         overwrite_prices=args.overwrite_prices,
         full_universe=args.full_universe,
+        price_side=args.side,
     )
     print(f"price scope: {output.price_scope}")
+    print(f"price side: {output.price_side}")
     print(f"option ids: {', '.join(output.option_ids)}")
     print(f"fetched Tiingo symbols: {', '.join(output.fetched_symbols) if output.fetched_symbols else 'none'}")
     print(f"cash option ids: {', '.join(output.cash_option_ids) if output.cash_option_ids else 'none'}")
-    print(f"wrote entry prices: {output.entry_prices_path}")
-    print(f"wrote exit prices: {output.exit_prices_path}")
+    if output.entry_prices_path is not None:
+        print(f"wrote entry prices: {output.entry_prices_path}")
+    if output.exit_prices_path is not None:
+        print(f"wrote exit prices: {output.exit_prices_path}")
     return 0
 
 
@@ -308,8 +312,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     fetch_prices_parser.add_argument("--round", type=Path, required=True)
     fetch_prices_parser.add_argument("--run-id")
-    fetch_prices_parser.add_argument("--entry-date", required=True)
-    fetch_prices_parser.add_argument("--exit-date", required=True)
+    fetch_prices_parser.add_argument("--entry-date")
+    fetch_prices_parser.add_argument("--exit-date")
+    fetch_prices_parser.add_argument(
+        "--side",
+        choices=["entry", "exit", "both"],
+        default="both",
+        help="which price file to fetch; defaults to both entry and exit",
+    )
     fetch_prices_parser.add_argument("--overwrite-prices", action="store_true")
     fetch_prices_parser.add_argument(
         "--full-universe",
