@@ -28,6 +28,29 @@ capitalbench fetch-prices \
 That command fetches only the assets picked in parsed submissions, plus the
 S&P 500 benchmark and CASH. It does not fetch every option in the universe.
 
+To populate `regret_vs_best_option` and `rank_among_options`, fetch scoring
+prices for the full frozen option universe:
+
+```bash
+capitalbench fetch-prices \
+  --round rounds/<id> \
+  --run-id <run_id> \
+  --entry-date YYYY-MM-DD \
+  --exit-date YYYY-MM-DD \
+  --full-universe
+```
+
+Full-universe scoring prices are different from the prompt-context trailing
+return artifact. They write `prices/entry_prices.csv` and
+`prices/exit_prices.csv` for every option in `options.yaml`.
+
+Price fetching is strict about dates. For each Tiingo request, CapitalBench
+requires a returned row whose date exactly matches the requested `entry-date`
+or `exit-date`. It does not silently use the nearest available trading day. If
+the requested date is a market holiday, weekend, or otherwise absent from
+Tiingo EOD data, the command fails clearly and the operator must choose the
+correct date according to the round manifest.
+
 Full-universe trailing returns for prompt context use a separate command:
 
 ```bash

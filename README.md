@@ -541,8 +541,8 @@ explicitly provided.
 
 For scoring-price fetches, CapitalBench fetches only the unique selected assets
 from parsed submissions, plus the S&P 500 benchmark and CASH. It does not fetch
-the full 40-option universe for scoring unless the operator chooses a separate
-full-universe workflow.
+the full 40-option universe for scoring unless the operator explicitly passes
+`--full-universe`.
 
 ```bash
 capitalbench fetch-prices \
@@ -551,6 +551,21 @@ capitalbench fetch-prices \
   --entry-date 2026-06-02 \
   --exit-date 2026-07-02
 ```
+
+To calculate `regret_vs_best_option` and `rank_among_options`, fetch every
+option in the frozen universe:
+
+```bash
+capitalbench fetch-prices \
+  --round rounds/CB-2026-06-01-1M \
+  --run-id official-20260601 \
+  --entry-date 2026-06-02 \
+  --exit-date 2026-07-02 \
+  --full-universe
+```
+
+CapitalBench requires Tiingo to return rows exactly matching the requested
+entry and exit dates. It does not silently substitute the nearest trading day.
 
 Score an official run:
 
@@ -634,7 +649,7 @@ rounds:
 | `run-round` | Run mock or real provider calls |
 | `list-runs` | List isolated runs for a round |
 | `validate-submissions` | Validate raw submissions |
-| `fetch-prices` | Fetch selected scoring prices |
+| `fetch-prices` | Fetch selected or full-universe scoring prices |
 | `score-round` | Score parsed submissions |
 | `publish-report` | Generate a run report |
 | `publish-round-summary` | Generate a round summary with official and stability sections |

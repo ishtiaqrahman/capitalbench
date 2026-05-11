@@ -102,9 +102,10 @@ does not replace the official leaderboard.
 - Add `prices/exit_prices.csv`.
 - Prefer price columns `option_id,symbol,date,close,adj_close`.
 - Use adjusted close prices when available.
-- If using Tiingo for scoring prices, run `capitalbench fetch-prices --round rounds/<id> --run-id <run_id> --entry-date YYYY-MM-DD --exit-date YYYY-MM-DD`; this fetches only picked assets plus S&P 500 and CASH.
+- If using Tiingo for selected-only scoring prices, run `capitalbench fetch-prices --round rounds/<id> --run-id <run_id> --entry-date YYYY-MM-DD --exit-date YYYY-MM-DD`; this fetches only picked assets plus S&P 500 and CASH.
 - Confirm every selected non-cash option and the S&P 500 benchmark have entry and exit prices.
-- Supply full-universe prices only if you want full-universe regret and rank fields populated.
+- To populate `regret_vs_best_option` and `rank_among_options`, run the same fetch command with `--full-universe` so every option in the frozen universe is priced.
+- Confirm the requested entry and exit dates are the round's intended pricing dates. CapitalBench requires Tiingo rows to exactly match those dates and does not silently use the nearest available trading day.
 - Run `capitalbench score-round --round rounds/<id> --run-id <run_id>`.
 - Run `capitalbench publish-report --round rounds/<id> --run-id <run_id>`.
 - If both official and stability runs exist, run

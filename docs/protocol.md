@@ -343,5 +343,12 @@ CapitalBench is time-resolved. The decision is made before the outcome window is
 known. After the window ends, the operator adds local entry and exit prices and
 runs `capitalbench score-round`.
 
+For Tiingo scoring prices, `capitalbench fetch-prices` defaults to selected-only
+fetching: selected options, the S&P 500 benchmark, and CASH. Add
+`--full-universe` when the round report should include `regret_vs_best_option`
+and `rank_among_options`; this fetches every option in the frozen
+`options.yaml`. Scoring price fetches require Tiingo rows to exactly match the
+requested entry and exit dates, and do not silently use nearest available dates.
+
 The first public version supports a one-month single-option decision only. It
 does not support portfolios or live data fetching.

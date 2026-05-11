@@ -7,6 +7,7 @@ import yaml
 
 from capitalbench.performance import fetch_universe_performance
 from capitalbench.prices import fetch_selected_prices
+from capitalbench.scoring import score_round
 
 
 def _create_round_with_submission(tmp_path: Path) -> Path:
@@ -94,6 +95,119 @@ def test_fetch_selected_prices_only_fetches_selected_plus_sp500(tmp_path: Path, 
         entry_rows = list(csv.DictReader(handle))
     assert {row["option_id"] for row in entry_rows} == {"opt_a", "sp500", "cash"}
     assert "opt_b" not in {row["option_id"] for row in entry_rows}
+
+
+def test_fetch_prices_full_universe_fetches_every_non_cash_option(tmp_path: Path, monkeypatch) -> None:
+    round_path = _create_round_with_submission(tmp_path)
+    monkeypatch.setenv("TIINGO_API_KEY", "test-key")
+    calls: list[tuple[str, str, str]] = []
+
+    def fake_fetch(symbol: str, start_date: str, end_date: str, api_key: str) -> list[dict[str, object]]:
+        calls.append((symbol, start_date, end_date))
+        assert api_key == "test-key"
+        return [{"date": f"{start_date}T00:00:00Z", "close": 100.0, "adjClose": 100.0}]
+
+    output = fetch_selected_prices(
+        round_path=round_path,
+        run_id=None,
+        entry_date="2026-01-02",
+        exit_date="2026-02-02",
+        full_universe=True,
+        fetcher=fake_fetch,
+    )
+
+    assert calls == [
+        ("AAA", "2026-01-02", "2026-01-02"),
+        ("BBB", "2026-01-02", "2026-01-02"),
+        ("SPY", "2026-01-02", "2026-01-02"),
+        ("AAA", "2026-02-02", "2026-02-02"),
+        ("BBB", "2026-02-02", "2026-02-02"),
+        ("SPY", "2026-02-02", "2026-02-02"),
+    ]
+    assert output.price_scope == "full_universe"
+    assert output.option_ids == ["opt_a", "opt_b", "sp500", "cash"]
+    assert output.fetched_symbols == ["AAA", "BBB", "SPY"]
+
+    with output.entry_prices_path.open("r", encoding="utf-8", newline="") as handle:
+        entry_rows = list(csv.DictReader(handle))
+    assert {row["option_id"] for row in entry_rows} == {"opt_a", "opt_b", "sp500", "cash"}
+
+
+def test_full_universe_fetch_populates_regret_and_rank_when_scored(tmp_path: Path, monkeypatch) -> None:
+    round_path = _create_round_with_submission(tmp_path)
+    monkeypatch.setenv("TIINGO_API_KEY", "test-key")
+
+    prices = {
+        ("AAA", "2026-01-02"): 100.0,
+        ("AAA", "2026-02-02"): 110.0,
+        ("BBB", "2026-01-02"): 100.0,
+        ("BBB", "2026-02-02"): 130.0,
+        ("SPY", "2026-01-02"): 100.0,
+        ("SPY", "2026-02-02"): 105.0,
+    }
+
+    def fake_fetch(symbol: str, start_date: str, end_date: str, api_key: str) -> list[dict[str, object]]:
+        price = prices[(symbol, start_date)]
+        return [{"date": f"{start_date}T00:00:00.000Z", "close": price, "adjClose": price}]
+
+    fetch_selected_prices(
+        round_path=round_path,
+        run_id=None,
+        entry_date="2026-01-02",
+        exit_date="2026-02-02",
+        full_universe=True,
+        fetcher=fake_fetch,
+    )
+    scores = score_round(round_path, run_id="legacy-run")
+
+    assert len(scores) == 1
+    assert scores[0].selected_option_id == "opt_a"
+    assert scores[0].selected_asset_return == pytest.approx(0.10)
+    assert scores[0].regret_vs_best_option == pytest.approx(0.20)
+    assert scores[0].rank_among_options == 2
+
+
+def test_fetch_prices_uses_exact_requested_tiingo_date(tmp_path: Path, monkeypatch) -> None:
+    round_path = _create_round_with_submission(tmp_path)
+    monkeypatch.setenv("TIINGO_API_KEY", "test-key")
+
+    def fake_fetch(symbol: str, start_date: str, end_date: str, api_key: str) -> list[dict[str, object]]:
+        return [
+            {"date": "2026-01-01T00:00:00.000Z", "close": 90.0, "adjClose": 90.0},
+            {"date": f"{start_date}T00:00:00.000Z", "close": 100.0, "adjClose": 100.0},
+        ]
+
+    output = fetch_selected_prices(
+        round_path=round_path,
+        run_id=None,
+        entry_date="2026-01-02",
+        exit_date="2026-02-02",
+        fetcher=fake_fetch,
+    )
+
+    with output.entry_prices_path.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    non_cash_rows = [row for row in rows if row["source"] == "tiingo_eod"]
+    assert non_cash_rows
+    assert all(row["date"] == "2026-01-02" for row in non_cash_rows)
+    assert all(row["close"] == "100.0" for row in non_cash_rows)
+
+
+def test_fetch_prices_fails_when_tiingo_date_does_not_match_request(tmp_path: Path, monkeypatch) -> None:
+    round_path = _create_round_with_submission(tmp_path)
+    monkeypatch.setenv("TIINGO_API_KEY", "test-key")
+
+    def fake_fetch(symbol: str, start_date: str, end_date: str, api_key: str) -> list[dict[str, object]]:
+        return [{"date": "2026-01-03T00:00:00.000Z", "close": 100.0, "adjClose": 100.0}]
+
+    with pytest.raises(ValueError, match="exactly matching requested date 2026-01-02"):
+        fetch_selected_prices(
+            round_path=round_path,
+            run_id=None,
+            entry_date="2026-01-02",
+            exit_date="2026-02-02",
+            fetcher=fake_fetch,
+        )
 
 
 def test_fetch_selected_prices_requires_tiingo_key(tmp_path: Path, monkeypatch) -> None:

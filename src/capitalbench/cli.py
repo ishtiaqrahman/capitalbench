@@ -99,8 +99,10 @@ def _cmd_fetch_prices(args: argparse.Namespace) -> int:
         entry_date=args.entry_date,
         exit_date=args.exit_date,
         overwrite_prices=args.overwrite_prices,
+        full_universe=args.full_universe,
     )
-    print(f"selected option ids: {', '.join(output.option_ids)}")
+    print(f"price scope: {output.price_scope}")
+    print(f"option ids: {', '.join(output.option_ids)}")
     print(f"fetched Tiingo symbols: {', '.join(output.fetched_symbols) if output.fetched_symbols else 'none'}")
     print(f"cash option ids: {', '.join(output.cash_option_ids) if output.cash_option_ids else 'none'}")
     print(f"wrote entry prices: {output.entry_prices_path}")
@@ -302,13 +304,18 @@ def build_parser() -> argparse.ArgumentParser:
 
     fetch_prices_parser = subparsers.add_parser(
         "fetch-prices",
-        help="fetch Tiingo prices only for selected submissions plus SP500 and cash",
+        help="fetch Tiingo scoring prices",
     )
     fetch_prices_parser.add_argument("--round", type=Path, required=True)
     fetch_prices_parser.add_argument("--run-id")
     fetch_prices_parser.add_argument("--entry-date", required=True)
     fetch_prices_parser.add_argument("--exit-date", required=True)
     fetch_prices_parser.add_argument("--overwrite-prices", action="store_true")
+    fetch_prices_parser.add_argument(
+        "--full-universe",
+        action="store_true",
+        help="fetch every option in options.yaml instead of only selected options plus SP500 and cash",
+    )
     fetch_prices_parser.set_defaults(func=_cmd_fetch_prices)
 
     fetch_performance_parser = subparsers.add_parser(

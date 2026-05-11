@@ -17,6 +17,7 @@ from .validation import iter_submission_files, validate_submission_payload
 class SelectedPriceFetchOutput:
     entry_prices_path: Path
     exit_prices_path: Path
+    price_scope: str
     option_ids: list[str]
     fetched_symbols: list[str]
     cash_option_ids: list[str]
@@ -59,11 +60,12 @@ def fetch_selected_prices(
     entry_date: str,
     exit_date: str,
     overwrite_prices: bool = False,
+    full_universe: bool = False,
     fetcher: TiingoFetcher | None = None,
 ) -> SelectedPriceFetchOutput:
     api_key = os.environ.get(TIINGO_API_KEY_ENV, "").strip()
     if not api_key:
-        raise RuntimeError("TIINGO_API_KEY is required for selected price fetching")
+        raise RuntimeError("TIINGO_API_KEY is required for price fetching")
 
     prices_dir = round_path / "prices"
     prices_dir.mkdir(parents=True, exist_ok=True)
@@ -77,7 +79,7 @@ def fetch_selected_prices(
                 + ", ".join(existing)
             )
 
-    options = selected_price_options(round_path, run_id)
+    options = load_options(round_path) if full_universe else selected_price_options(round_path, run_id)
     fetch = fetcher or fetch_tiingo_eod_prices
     entry_rows = _price_rows_for_date(options, entry_date, api_key, fetch)
     exit_rows = _price_rows_for_date(options, exit_date, api_key, fetch)
@@ -94,6 +96,7 @@ def fetch_selected_prices(
     return SelectedPriceFetchOutput(
         entry_prices_path=entry_path,
         exit_prices_path=exit_path,
+        price_scope="full_universe" if full_universe else "selected",
         option_ids=[option.option_id for option in options],
         fetched_symbols=fetched_symbols,
         cash_option_ids=cash_ids,
@@ -127,7 +130,25 @@ def _price_rows_for_date(options: list, price_date: str, api_key: str, fetch: Ti
 def _select_tiingo_row(option_id: str, symbol: str, price_date: str, rows: list[dict[str, Any]]) -> dict[str, Any]:
     if not rows:
         raise ValueError(f"Tiingo returned no price rows for {option_id} ({symbol}) on {price_date}")
-    row = rows[0]
+    matching_rows = [
+        row
+        for row in rows
+        if _normalize_tiingo_date(row.get("date")) == price_date
+    ]
+    if not matching_rows:
+        available_dates = sorted(
+            {
+                normalized
+                for row in rows
+                if (normalized := _normalize_tiingo_date(row.get("date"))) is not None
+            }
+        )
+        available = ", ".join(available_dates) if available_dates else "none"
+        raise ValueError(
+            f"Tiingo returned no row exactly matching requested date {price_date} "
+            f"for {option_id} ({symbol}); available dates: {available}"
+        )
+    row = matching_rows[0]
     close = row.get("close")
     adj_close = row.get("adjClose", row.get("adj_close"))
     if close is None:
@@ -137,11 +158,20 @@ def _select_tiingo_row(option_id: str, symbol: str, price_date: str, rows: list[
     return {
         "option_id": option_id,
         "symbol": symbol,
-        "date": str(row.get("date") or price_date)[:10],
+        "date": price_date,
         "close": close,
         "adj_close": adj_close,
         "source": "tiingo_eod",
     }
+
+
+def _normalize_tiingo_date(raw_date: Any) -> str | None:
+    if raw_date is None:
+        return None
+    text = str(raw_date)
+    if len(text) < 10:
+        return None
+    return text[:10]
 
 
 def _write_price_csv(path: Path, rows: list[dict[str, Any]]) -> None:
