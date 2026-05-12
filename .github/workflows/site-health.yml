@@ -8,6 +8,9 @@ on:
 permissions:
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   production-health:
     runs-on: ubuntu-latest
@@ -25,4 +28,3 @@ jobs:
             echo "::error::Expected apex redirect to https://www.capitalbench.org/, got '$location'"
             exit 1
           fi
-
