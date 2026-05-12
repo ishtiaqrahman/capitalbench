@@ -691,7 +691,11 @@ service-role-only `automation_jobs` row. The permanent GitHub Actions resolver
 checks due jobs on a schedule, claims one atomically, fetches exit prices,
 scores the round, publishes reports, updates latest and cumulative leaderboards,
 syncs Supabase, commits generated artifacts, and optionally triggers a
-Cloudflare Pages rebuild.
+Cloudflare Pages rebuild. If `CLOUDFLARE_ACCOUNT_ID` and
+`CLOUDFLARE_API_TOKEN` are configured as GitHub repository secrets, the
+resolver also builds `apps/web`, runs SEO validation, and deploys the updated
+site directly to the `capitalbench-web` Pages project after committing changed
+artifacts.
 
 Manual resolver commands are available for recovery and dry operations:
 

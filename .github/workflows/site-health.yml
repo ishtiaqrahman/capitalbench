@@ -1,0 +1,28 @@
+name: Site Health
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  production-health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify canonical site
+        run: |
+          curl -fsSIL --max-time 20 https://www.capitalbench.org/
+          curl -fsSL --max-time 20 https://www.capitalbench.org/robots.txt >/dev/null
+          curl -fsSL --max-time 20 https://www.capitalbench.org/sitemap.xml >/dev/null
+
+      - name: Verify apex redirect
+        run: |
+          location="$(curl -fsSI --max-time 20 https://capitalbench.org/ | awk 'BEGIN{IGNORECASE=1} /^location:/ {print $2}' | tr -d '\r')"
+          if [ "$location" != "https://www.capitalbench.org/" ]; then
+            echo "::error::Expected apex redirect to https://www.capitalbench.org/, got '$location'"
+            exit 1
+          fi
+

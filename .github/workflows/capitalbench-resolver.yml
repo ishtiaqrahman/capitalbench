@@ -30,6 +30,11 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       CLOUDFLARE_PAGES_DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_PAGES_PROJECT: capitalbench-web
+      PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+      PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -38,6 +43,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
 
       - name: Install CapitalBench
         run: python -m pip install -e ".[web-sync]"
@@ -55,17 +67,33 @@ jobs:
         run: python scripts/public_repo_audit.py
 
       - name: Commit generated benchmark artifacts
+        id: commit-artifacts
         run: |
           git config user.name "capitalbench-bot"
           git config user.email "actions@capitalbench.org"
           git add rounds latest cumulative || true
           if git diff --cached --quiet; then
             echo "No generated artifacts changed."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git commit -m "Resolve due CapitalBench rounds"
           git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Build web for resolved artifacts
+        if: steps.commit-artifacts.outputs.changed == 'true' && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
+        working-directory: apps/web
+        run: |
+          npm ci
+          npm run build
+          npm run seo:check
+
+      - name: Deploy resolved artifacts to Cloudflare Pages
+        if: steps.commit-artifacts.outputs.changed == 'true' && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
+        working-directory: apps/web
+        run: npx wrangler pages deploy dist --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch main
 
       - name: Trigger Cloudflare Pages rebuild
-        if: env.CLOUDFLARE_PAGES_DEPLOY_HOOK != ''
+        if: steps.commit-artifacts.outputs.changed == 'true' && env.CLOUDFLARE_PAGES_DEPLOY_HOOK != ''
         run: curl -fsS -X POST "$CLOUDFLARE_PAGES_DEPLOY_HOOK"

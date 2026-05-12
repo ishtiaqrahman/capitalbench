@@ -36,6 +36,23 @@ Do not add `SUPABASE_SERVICE_ROLE_KEY` to Cloudflare Pages.
 The `_redirects` file redirects `capitalbench.org` traffic to
 `www.capitalbench.org` when both hostnames are routed to Pages.
 
+Production deploys are also supported through GitHub Actions. The
+`Deploy Web` workflow builds `apps/web`, runs SEO validation, and deploys the
+`dist` directory to the existing `capitalbench-web` Pages project when these
+repository secrets are configured:
+
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
+- `PUBLIC_SUPABASE_URL`
+- `PUBLIC_SUPABASE_ANON_KEY`
+
+The token should be scoped to Cloudflare Pages edit access for the CapitalBench
+account. The workflow skips deployment cleanly if the Cloudflare deployment
+secrets are absent.
+
+The `Site Health` workflow checks the canonical hostname, robots file, sitemap,
+and apex redirect every 30 minutes.
+
 ## SEO Validation
 
 Run the production build and static SEO checks before deploying:
