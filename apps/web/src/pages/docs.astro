@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+---
+
+<BaseLayout
+  title="CapitalBench Documentation"
+  description="Public CapitalBench documentation hub for methodology, scoring, fairness, limitations, universe data, and round audit pages."
+>
+  <PageHeader
+    eyebrow="Docs"
+    title="Public Reference"
+    summary="The public site surfaces the core benchmark concepts. The repository remains the source of truth for round artifacts and CLI operations."
+  />
+  <section class="section">
+    <div class="grid-3">
+      <article class="feature">
+        <h3><a href="/methodology">Methodology</a></h3>
+        <p>Round protocol, official track, stability track, and audit model.</p>
+      </article>
+      <article class="feature">
+        <h3><a href="/scoring">Scoring</a></h3>
+        <p>Alpha versus S&P 500, regret, cash comparison, and cumulative aggregation.</p>
+      </article>
+      <article class="feature">
+        <h3><a href="/fairness">Fairness</a></h3>
+        <p>Comparable input controls, run isolation, and no retroactive official backfills.</p>
+      </article>
+      <article class="feature">
+        <h3><a href="/limitations">Limitations</a></h3>
+        <p>Noise, sample size, hosted model changes, and non-advice boundaries.</p>
+      </article>
+      <article class="feature">
+        <h3><a href="/universe">Universe</a></h3>
+        <p>The frozen public option universe for the current round.</p>
+      </article>
+      <article class="feature">
+        <h3><a href="/rounds/CB-2026-05-10-1M">Round 1</a></h3>
+        <p>Official picks, entry prices, status, and audit hashes.</p>
+      </article>
+      <article class="feature">
+        <h3><a href="https://github.com/ishtiaqrahman/capitalbench" target="_blank" rel="noreferrer">Repository</a></h3>
+        <p>CLI source, schema, local artifacts, and implementation history for the public benchmark.</p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

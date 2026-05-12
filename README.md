@@ -432,8 +432,15 @@ export XAI_API_KEY=replace_with_xai_api_key
 export TIINGO_API_KEY=replace_with_tiingo_api_key
 ```
 
-Never commit real API keys. `.env`, `.env.*`, `configs/models.local.yaml`, and
-`configs/*.local.yaml` are ignored by default.
+Never commit real API keys. `.env`, `.env.*`, `configs/models.local.yaml`,
+`configs/*.local.yaml`, generated local output, raw provider responses, and
+provider smoke-test output are ignored by default.
+
+Audit public-repo contents before publishing a branch:
+
+```bash
+python scripts/public_repo_audit.py
+```
 
 Check key presence without printing values:
 
@@ -642,6 +649,68 @@ capitalbench cumulative-status \
   --rounds-dir rounds
 ```
 
+When `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are configured, scoring
+and publishing commands also sync published website rows to Supabase. Without
+those variables, local publishing continues and prints a skip message.
+
+Manual website sync:
+
+```bash
+capitalbench sync-web \
+  --round rounds/CB-2026-05-10-1M \
+  --run-id official-round-1-clean
+
+capitalbench sync-web \
+  --rounds-dir rounds \
+  --include-cumulative
+```
+
+Use the dedicated CapitalBench Supabase project for production sync. Keep the
+project ref, account details, and service credentials in local CLI state,
+GitHub Actions secrets, Supabase secrets, or Cloudflare Pages env vars, not in
+committed documentation.
+
+### Automated Resolution
+
+Provider model runs are still started manually. After a run is valid, accept it
+once; acceptance creates the round-specific resolution job:
+
+```bash
+capitalbench accept-run \
+  --round rounds/CB-2026-05-10-1M \
+  --run-id official-round-1-clean
+```
+
+Acceptance refuses runs unless they are non-mock official runs with
+`official_score_eligible: true`, zero invalid submissions, a valid parsed
+submission for every enabled model, matching round hashes, and required round
+files.
+
+When Supabase service credentials are configured, `accept-run` upserts a
+service-role-only `automation_jobs` row. The permanent GitHub Actions resolver
+checks due jobs on a schedule, claims one atomically, fetches exit prices,
+scores the round, publishes reports, updates latest and cumulative leaderboards,
+syncs Supabase, commits generated artifacts, and optionally triggers a
+Cloudflare Pages rebuild.
+
+Manual resolver commands are available for recovery and dry operations:
+
+```bash
+capitalbench automation-status --rounds-dir rounds
+
+capitalbench automation-run \
+  --rounds-dir rounds \
+  --max-jobs 3
+
+capitalbench automation-resolve \
+  --rounds-dir rounds \
+  --round-id CB-2026-05-10-1M \
+  --run-id official-round-1-clean
+
+capitalbench automation-retry --round rounds/CB-2026-05-10-1M
+capitalbench automation-cancel --round rounds/CB-2026-05-10-1M
+```
+
 If a round has multiple official-score-eligible runs, CapitalBench will not
 guess. Provide an explicit selection file:
 
@@ -670,6 +739,13 @@ rounds:
 | `publish-round-summary` | Generate a round summary with official and stability sections |
 | `publish-latest` | Publish latest resolved official leaderboard |
 | `publish-cumulative` | Publish cumulative official and stability leaderboards |
+| `accept-run` | Accept a valid official run and schedule automated resolution |
+| `automation-run` | Claim and run due automated resolution jobs |
+| `automation-resolve` | Resolve one accepted round immediately |
+| `automation-status` | List local automation jobs |
+| `automation-retry` | Retry a local automation job |
+| `automation-cancel` | Cancel a local automation job |
+| `sync-web` | Sync public benchmark rows and artifacts to Supabase |
 | `cumulative-status` | Show cumulative discovery and selection status |
 | `audit-round` | Audit reproducibility artifacts |
 | `check-providers` | Check API key presence without printing values |
@@ -692,6 +768,8 @@ docs/
 rounds/
   example-round/
   CB-2026-05-10-1M/
+apps/web/
+supabase/
 src/capitalbench/
 tests/
 ```

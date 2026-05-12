@@ -1,0 +1,39 @@
+---
+import Badge from "./Badge.astro";
+
+interface Props {
+  roundId: string;
+  status: "pending" | "resolved" | "archived";
+  decisionDeadline: string;
+  entryDate?: string;
+  exitDate: string;
+  officialRunId: string;
+}
+
+const { roundId, status, decisionDeadline, entryDate = "2026-05-08", exitDate, officialRunId } = Astro.props;
+const tone = status === "resolved" ? "green" : status === "pending" ? "amber" : "neutral";
+---
+
+<section class="status-strip" aria-label="Current benchmark status">
+  <div class="status-item">
+    <span>Round</span>
+    <strong>{roundId}</strong>
+    <Badge tone={tone}>{status}</Badge>
+  </div>
+  <div class="status-item">
+    <span>Decision Deadline</span>
+    <strong>{decisionDeadline}</strong>
+  </div>
+  <div class="status-item">
+    <span>Entry Date</span>
+    <strong>{entryDate}</strong>
+  </div>
+  <div class="status-item">
+    <span>Exit Date</span>
+    <strong>{exitDate}</strong>
+  </div>
+  <div class="status-item">
+    <span>Official Run</span>
+    <strong>{officialRunId}</strong>
+  </div>
+</section>

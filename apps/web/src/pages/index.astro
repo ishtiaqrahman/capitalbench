@@ -1,0 +1,162 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import StatusCards from "../components/StatusCards.astro";
+import LeaderboardTable from "../components/LeaderboardTable";
+import OfficialPicksTable from "../components/OfficialPicksTable";
+import { ExternalLink, GitBranch } from "lucide-react";
+import { auditHashes, latestLeaderboard, officialSubmissions, rounds, universeOptions } from "../data/fallback";
+import { siteConfig } from "../lib/seo";
+
+const currentRound = rounds[0];
+const consensusPick = "SEMICONDUCTORS";
+const publishedArtifactCount = auditHashes.length + officialSubmissions.length + universeOptions.length;
+---
+
+<BaseLayout
+  title="CapitalBench - LLM Market Benchmark and Leaderboards"
+  description="CapitalBench is a public benchmark for one-shot LLM market decisions, official model picks, audit hashes, and leaderboards."
+>
+  <section class="dashboard-header">
+    <div class="dashboard-title">
+      <p class="eyebrow">Public benchmark console</p>
+      <h1>CapitalBench</h1>
+      <p>
+        One-shot LLM market decisions, frozen before the deadline and scored after the fixed horizon. The public site
+        tracks official model picks, market benchmark leaderboards, methodology, and audit hashes for reproducible AI
+        market evaluation.
+      </p>
+      <div class="header-actions" aria-label="Project resources">
+        <a class="action-link action-primary" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
+          <GitBranch size={17} aria-hidden="true" />
+          GitHub repository
+          <ExternalLink size={14} aria-hidden="true" />
+        </a>
+        <a class="action-link" href="/methodology">Read methodology</a>
+      </div>
+    </div>
+    <aside class="header-note">
+      CapitalBench is evaluation research, not financial advice. Round 1 is pending until exit prices for
+      {` ${currentRound.exit_date} `} are available.
+    </aside>
+  </section>
+
+  <StatusCards
+    roundId={currentRound.round_id}
+    status={currentRound.status}
+    decisionDeadline={currentRound.decision_deadline_utc}
+    entryDate={currentRound.entry_date}
+    exitDate={currentRound.exit_date}
+    officialRunId={currentRound.official_run_id}
+  />
+
+  <section class="phase-band" aria-labelledby="round-progress-title">
+    <div class="phase-intro">
+      <span class="panel-kicker">Round 1 progress</span>
+      <h2 id="round-progress-title">Published Until Resolution</h2>
+      <p>
+        The site distinguishes collected decisions from scored performance. Picks and entry prices are public; realized
+        returns remain absent until the exit date resolves.
+      </p>
+    </div>
+    <ol class="phase-list">
+      <li class="phase-complete">
+        <span>1</span>
+        <strong>Inputs frozen</strong>
+        <p>Briefing, prompt, universe, and market context hashed before model calls.</p>
+      </li>
+      <li class="phase-complete">
+        <span>2</span>
+        <strong>Submissions collected</strong>
+        <p>{officialSubmissions.length} valid official one-shot picks are published.</p>
+      </li>
+      <li class="phase-complete">
+        <span>3</span>
+        <strong>Entry prices published</strong>
+        <p>Entry side is visible for selected options, S&amp;P 500, and cash.</p>
+      </li>
+      <li class="phase-current">
+        <span>4</span>
+        <strong>Exit prices pending</strong>
+        <p>Performance unlocks after {currentRound.exit_date} prices are collected and scored.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="evidence-grid" aria-label="Benchmark safeguards">
+    <article>
+      <span class="metric-label">Protocol</span>
+      <h3>One official call per model</h3>
+      <p>Official picks are not averaged with repeated stability runs or private smoke tests.</p>
+    </article>
+    <article>
+      <span class="metric-label">Audit Read Model</span>
+      <h3>{publishedArtifactCount} public rows</h3>
+      <p>Round metadata, options, official submissions, and hashes are mirrored into Supabase for the site.</p>
+    </article>
+    <article>
+      <span class="metric-label">Boundary</span>
+      <h3>No performance before resolution</h3>
+      <p>Pending pages show decisions and artifacts without implying realized alpha.</p>
+    </article>
+  </section>
+
+  <nav class="view-switcher" aria-label="Primary result views">
+    <a href="/leaderboards/latest">
+      <strong>Latest Round</strong>
+      <span>Newest resolved official one-shot leaderboard.</span>
+    </a>
+    <a href="/leaderboards/cumulative-official">
+      <strong>Cumulative Official</strong>
+      <span>Average official alpha across participated resolved rounds.</span>
+    </a>
+    <a href="/leaderboards/cumulative-stability">
+      <strong>Cumulative Stability</strong>
+      <span>Repeated-call alpha and consistency, separate from official results.</span>
+    </a>
+  </nav>
+
+  <section class="dashboard-grid">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Current round</span>
+          <h2>Official Picks</h2>
+          <p>All four official Round 1 models selected the same option. Performance remains unpublished while the round is pending.</p>
+        </div>
+        <span class="status-badge status-pending">Pending score</span>
+      </div>
+      <OfficialPicksTable client:visible fallbackRows={officialSubmissions} roundId={currentRound.round_id} runId={currentRound.official_run_id} />
+    </div>
+
+    <aside class="rail" aria-label="Round audit summary">
+      <div class="rail-panel">
+        <span class="metric-label">Consensus Pick</span>
+        <h3>{consensusPick}</h3>
+        <p>Four of four official submissions selected Semiconductors.</p>
+      </div>
+      <div class="rail-panel">
+        <span class="metric-label">Methodology</span>
+        <h3>{currentRound.methodology_version}</h3>
+        <p>One call per model. No tools, browsing, or post-cutoff retrieval.</p>
+      </div>
+      <div class="rail-panel">
+        <span class="metric-label">Audit Surface</span>
+        <h3>{auditHashes.length} hashed inputs</h3>
+        <p>{universeOptions.length} frozen options. Public hashes and validation metadata are synced to Supabase.</p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="section">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Latest leaderboard</span>
+          <h2>Resolution Pending</h2>
+          <p>The official leaderboard appears here after exit prices are available and the run is scored.</p>
+        </div>
+      </div>
+      <LeaderboardTable client:visible fallbackRows={latestLeaderboard} kind="latest" />
+    </div>
+  </section>
+</BaseLayout>

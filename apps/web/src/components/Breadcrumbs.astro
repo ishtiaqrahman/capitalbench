@@ -1,0 +1,27 @@
+---
+import { getBreadcrumbs } from "../lib/seo";
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+const items = getBreadcrumbs(currentPath);
+---
+
+{
+  items.length > 0 && (
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        {items.map((item, index) => {
+          const isLast = index === items.length - 1;
+          return (
+            <li>
+              {isLast ? <span aria-current="page">{item.name}</span> : <a href={item.href}>{item.name}</a>}
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
+  )
+}

@@ -535,6 +535,31 @@ def test_mock_runs_are_excluded_from_public_cumulative_leaderboards(tmp_path: Pa
     assert _read_csv(output.stability_leaderboard_path) == []
 
 
+def test_publish_latest_excludes_mock_official_runs(tmp_path: Path) -> None:
+    rounds_dir = tmp_path / "rounds"
+    _create_round(
+        rounds_dir,
+        "round-1",
+        mock=True,
+        official_score_eligible=True,
+        model_alpha=0.02,
+        model_return=0.05,
+        sp500_return=0.03,
+        beats_sp500=True,
+        beats_cash=True,
+        stability_alpha=0.014,
+        stability_return=0.044,
+        consistency=0.6,
+        modal_alpha=0.01,
+        modal_return=0.04,
+        best_replicate=0.08,
+        worst_replicate=-0.01,
+    )
+
+    with pytest.raises(ValueError, match="no resolved official rounds found"):
+        publish_latest(rounds_dir, tmp_path / "latest")
+
+
 def test_publish_latest_selects_newest_resolved_round(tmp_path: Path) -> None:
     rounds_dir = tmp_path / "rounds"
     _create_round(

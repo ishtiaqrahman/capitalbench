@@ -6,6 +6,14 @@ import sys
 from pathlib import Path
 
 from .audit import audit_round
+from .automation import (
+    accept_run,
+    automation_run,
+    automation_status,
+    cancel_local_job,
+    resolve_accepted_round,
+    retry_local_job,
+)
 from .cumulative import cumulative_status, publish_cumulative, publish_latest
 from .hashing import write_round_hashes
 from .performance import fetch_universe_performance
@@ -19,6 +27,15 @@ from .runner import run_round
 from .scoring import score_round
 from .universe import validate_universe
 from .validation import validate_submissions
+from .web_sync import (
+    SUPABASE_SKIP_MESSAGE,
+    configured_sink_from_env,
+    optional_sync_cumulative,
+    optional_sync_latest,
+    optional_sync_round,
+    sync_round,
+    sync_rounds_dir,
+)
 
 
 def _load_local_env_file(path: Path = Path(".env")) -> None:
@@ -34,6 +51,11 @@ def _load_local_env_file(path: Path = Path(".env")) -> None:
         value = value.strip().strip('"').strip("'")
         if key and key not in os.environ:
             os.environ[key] = value
+
+
+def _load_local_env_files() -> None:
+    _load_local_env_file(Path(".env"))
+    _load_local_env_file(Path(".env.local"))
 
 
 def _cmd_init_round(args: argparse.Namespace) -> int:
@@ -132,12 +154,14 @@ def _cmd_fetch_universe_performance(args: argparse.Namespace) -> int:
 def _cmd_score_round(args: argparse.Namespace) -> int:
     scores = score_round(args.round, run_id=args.run_id)
     print(f"wrote scoring results for {len(scores)} submissions")
+    optional_sync_round(args.round, run_id=args.run_id, event_type="score_round")
     return 0
 
 
 def _cmd_publish_report(args: argparse.Namespace) -> int:
     report_path = publish_report(args.round, run_id=args.run_id)
     print(f"wrote report: {report_path}")
+    optional_sync_round(args.round, run_id=args.run_id, event_type="publish_report")
     return 0
 
 
@@ -159,6 +183,7 @@ def _cmd_publish_cumulative(args: argparse.Namespace) -> int:
     print(f"wrote stability cumulative leaderboard: {output.stability_leaderboard_path}")
     print(f"wrote round index: {output.round_index_path}")
     print(f"wrote cumulative report: {output.cumulative_report_path}")
+    optional_sync_cumulative(args.rounds_dir, selection_path=args.selection, event_type="publish_cumulative")
     return 0
 
 
@@ -168,6 +193,7 @@ def _cmd_publish_latest(args: argparse.Namespace) -> int:
         print(f"warning: {warning}", file=sys.stderr)
     print(f"wrote latest round leaderboard: {output.latest_leaderboard_path}")
     print(f"wrote latest round report: {output.latest_report_path}")
+    optional_sync_latest(args.rounds_dir, selection_path=args.selection, event_type="publish_latest")
     return 0
 
 
@@ -266,6 +292,129 @@ def _cmd_smoke_provider(args: argparse.Namespace) -> int:
     if summary.error:
         print(f"error: {summary.error}", file=sys.stderr)
     return 0 if summary.validation_status == "valid" else 1
+
+
+def _cmd_accept_run(args: argparse.Namespace) -> int:
+    summary = accept_run(
+        args.round,
+        run_id=args.run_id,
+        schedule_resolution=not args.no_schedule_resolution,
+        due_at_utc=args.due_at_utc,
+        sync_pending=not args.no_sync,
+    )
+    _print_automation_summary(summary)
+    return 0
+
+
+def _cmd_automation_resolve(args: argparse.Namespace) -> int:
+    summary = resolve_accepted_round(
+        args.rounds_dir,
+        round_id=args.round_id,
+        run_id=args.run_id,
+        latest_output=args.latest_output,
+        cumulative_output=args.cumulative_output,
+        selection_path=args.selection,
+        fetch_exit_prices=not args.skip_fetch_prices,
+        overwrite_prices=args.overwrite_prices,
+        full_universe_prices=not args.selected_prices_only,
+        sync=not args.no_sync,
+    )
+    _print_automation_summary(summary)
+    return 0
+
+
+def _cmd_automation_run(args: argparse.Namespace) -> int:
+    summaries = automation_run(
+        args.rounds_dir,
+        due_before_utc=args.due_before_utc,
+        max_jobs=args.max_jobs,
+        latest_output=args.latest_output,
+        cumulative_output=args.cumulative_output,
+        selection_path=args.selection,
+        worker_id=args.worker_id,
+    )
+    if not summaries:
+        print("no due automation jobs")
+    for summary in summaries:
+        _print_automation_summary(summary)
+    return 1 if any(summary.status == "failed" for summary in summaries) else 0
+
+
+def _cmd_automation_status(args: argparse.Namespace) -> int:
+    rows = automation_status(args.rounds_dir)
+    if not rows:
+        print("no local automation jobs found")
+        return 0
+    print("round_id\trun_id\tstatus\tdue_at_utc\tnext_attempt_at_utc\tlast_error")
+    for row in rows:
+        print(
+            "\t".join(
+                [
+                    str(row.get("round_id") or ""),
+                    str(row.get("run_id") or ""),
+                    str(row.get("status") or ""),
+                    str(row.get("due_at_utc") or ""),
+                    str(row.get("next_attempt_at_utc") or ""),
+                    str(row.get("last_error") or ""),
+                ]
+            )
+        )
+    return 0
+
+
+def _cmd_automation_retry(args: argparse.Namespace) -> int:
+    summary = retry_local_job(args.round, next_attempt_at_utc=args.next_attempt_at_utc)
+    _print_automation_summary(summary)
+    return 0
+
+
+def _cmd_automation_cancel(args: argparse.Namespace) -> int:
+    summary = cancel_local_job(args.round)
+    _print_automation_summary(summary)
+    return 0
+
+
+def _cmd_sync_web(args: argparse.Namespace) -> int:
+    sink = configured_sink_from_env()
+    if sink is None:
+        print(SUPABASE_SKIP_MESSAGE)
+        return 0
+    if args.round is not None:
+        summary = sync_round(args.round, run_id=args.run_id, event_type="sync_web", sink=sink)
+        _print_sync_summary(summary)
+        return 0
+    if args.run_id:
+        raise ValueError("--run-id can only be used with --round")
+    summaries = sync_rounds_dir(
+        args.rounds_dir,
+        include_cumulative=args.include_cumulative,
+        selection_path=args.selection,
+        event_type="sync_web",
+        sink=sink,
+    )
+    for summary in summaries:
+        _print_sync_summary(summary)
+    return 0
+
+
+def _print_sync_summary(summary) -> None:
+    label = summary.round_id or "global"
+    if summary.run_id:
+        label = f"{label}/{summary.run_id}"
+    row_counts = ", ".join(f"{table}={count}" for table, count in summary.row_counts.items()) or "no rows"
+    print(f"synced {label}: {summary.status} ({row_counts})")
+    if summary.message:
+        print(summary.message)
+
+
+def _print_automation_summary(summary) -> None:
+    label = f"{summary.round_id}/{summary.run_id}"
+    due = f" due_at_utc={summary.due_at_utc}" if summary.due_at_utc else ""
+    job = f" job_id={summary.job_id}" if summary.job_id else ""
+    message = f" {summary.message}" if summary.message else ""
+    print(f"automation {label}: {summary.status}{job}{due}{message}")
+    for key, value in summary.outputs.items():
+        print(f"{key}: {value}")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -418,12 +567,88 @@ def build_parser() -> argparse.ArgumentParser:
     smoke_parser.add_argument("--allow-real-api-calls", action="store_true")
     smoke_parser.set_defaults(func=_cmd_smoke_provider)
 
+    accept_parser = subparsers.add_parser(
+        "accept-run",
+        help="accept a valid official run and schedule automated resolution",
+    )
+    accept_parser.add_argument("--round", type=Path, required=True)
+    accept_parser.add_argument("--run-id", required=True)
+    accept_parser.add_argument(
+        "--due-at-utc",
+        help="override resolution due time, e.g. 2026-06-10T23:30:00+00:00",
+    )
+    accept_parser.add_argument(
+        "--no-schedule-resolution",
+        action="store_true",
+        help="accept the run without creating an automation job",
+    )
+    accept_parser.add_argument("--no-sync", action="store_true", help="skip pending Supabase sync during acceptance")
+    accept_parser.set_defaults(func=_cmd_accept_run)
+
+    automation_resolve_parser = subparsers.add_parser(
+        "automation-resolve",
+        help="resolve one accepted due round immediately",
+    )
+    automation_resolve_parser.add_argument("--rounds-dir", type=Path, required=True)
+    automation_resolve_parser.add_argument("--round-id", required=True)
+    automation_resolve_parser.add_argument("--run-id", required=True)
+    automation_resolve_parser.add_argument("--latest-output", type=Path, default=Path("latest"))
+    automation_resolve_parser.add_argument("--cumulative-output", type=Path, default=Path("cumulative"))
+    automation_resolve_parser.add_argument("--selection", type=Path)
+    automation_resolve_parser.add_argument("--skip-fetch-prices", action="store_true")
+    automation_resolve_parser.add_argument("--overwrite-prices", action="store_true")
+    automation_resolve_parser.add_argument("--selected-prices-only", action="store_true")
+    automation_resolve_parser.add_argument("--no-sync", action="store_true")
+    automation_resolve_parser.set_defaults(func=_cmd_automation_resolve)
+
+    automation_run_parser = subparsers.add_parser(
+        "automation-run",
+        help="claim and run due automated resolution jobs",
+    )
+    automation_run_parser.add_argument("--rounds-dir", type=Path, required=True)
+    automation_run_parser.add_argument("--due-before-utc")
+    automation_run_parser.add_argument("--max-jobs", type=int, default=3)
+    automation_run_parser.add_argument("--latest-output", type=Path, default=Path("latest"))
+    automation_run_parser.add_argument("--cumulative-output", type=Path, default=Path("cumulative"))
+    automation_run_parser.add_argument("--selection", type=Path)
+    automation_run_parser.add_argument("--worker-id")
+    automation_run_parser.set_defaults(func=_cmd_automation_run)
+
+    automation_status_parser = subparsers.add_parser("automation-status", help="list local automation jobs")
+    automation_status_parser.add_argument("--rounds-dir", type=Path, required=True)
+    automation_status_parser.set_defaults(func=_cmd_automation_status)
+
+    automation_retry_parser = subparsers.add_parser("automation-retry", help="retry a local automation job")
+    automation_retry_parser.add_argument("--round", type=Path, required=True)
+    automation_retry_parser.add_argument("--next-attempt-at-utc")
+    automation_retry_parser.set_defaults(func=_cmd_automation_retry)
+
+    automation_cancel_parser = subparsers.add_parser("automation-cancel", help="cancel a local automation job")
+    automation_cancel_parser.add_argument("--round", type=Path, required=True)
+    automation_cancel_parser.set_defaults(func=_cmd_automation_cancel)
+
+    sync_parser = subparsers.add_parser(
+        "sync-web",
+        help="sync published benchmark artifacts to Supabase for the public website",
+    )
+    sync_source = sync_parser.add_mutually_exclusive_group(required=True)
+    sync_source.add_argument("--round", type=Path)
+    sync_source.add_argument("--rounds-dir", type=Path)
+    sync_parser.add_argument("--run-id")
+    sync_parser.add_argument(
+        "--include-cumulative",
+        action="store_true",
+        help="also sync latest and cumulative leaderboard read tables when using --rounds-dir",
+    )
+    sync_parser.add_argument("--selection", type=Path)
+    sync_parser.set_defaults(func=_cmd_sync_web)
+
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     if argv is None:
-        _load_local_env_file()
+        _load_local_env_files()
     parser = build_parser()
     args = parser.parse_args(argv)
     try:

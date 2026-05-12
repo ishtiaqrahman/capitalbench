@@ -8,5 +8,8 @@ Available audit evidence for this run:
 - `run_log.jsonl` contains provider/model metadata, usage, validation status,
   and the SHA256 hash of the original provider text seen at runtime.
 
-Future runs preserve exact provider text in `raw_responses/<submission>.txt`
-and record the sidecar path in `run_log.jsonl`.
+Future local runs preserve exact provider text in
+`raw_responses/<submission>.txt` and record the sidecar path in
+`run_log.jsonl`. Those text sidecars are private operator artifacts and are
+excluded from the public repository; public audit material should use the
+recorded SHA256 hashes and normalized submissions.

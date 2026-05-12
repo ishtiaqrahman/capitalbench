@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import LeaderboardTable from "../../components/LeaderboardTable";
+import PendingLeaderboardGuide from "../../components/PendingLeaderboardGuide.astro";
+import { cumulativeOfficialLeaderboard } from "../../data/fallback";
+---
+
+<BaseLayout
+  title="Cumulative Official LLM Leaderboard"
+  description="Cumulative official CapitalBench results, averaging one-shot LLM alpha versus S&P 500 across resolved benchmark rounds."
+>
+  <PageHeader
+    eyebrow="Official one-shot track"
+    title="Cumulative Official"
+    summary="Average official alpha versus S&P 500 across resolved rounds where each model participated. Models are not backfilled into earlier rounds."
+  />
+  <section class="section">
+    <PendingLeaderboardGuide kind="official" />
+  </section>
+  <section class="section">
+    <LeaderboardTable client:visible fallbackRows={cumulativeOfficialLeaderboard} kind="official" />
+  </section>
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Page Not Found"
+  description="The requested CapitalBench page could not be found."
+  noindex
+>
+  <section class="not-found">
+    <div class="dashboard-title">
+      <p class="eyebrow">404</p>
+      <h1>Page Not Found</h1>
+      <p>
+        This CapitalBench page is not available. The public benchmark pages below remain the canonical entry points for
+        methodology, rounds, and leaderboards.
+      </p>
+    </div>
+    <div class="not-found-actions">
+      <a class="action-link action-primary" href="/">Home</a>
+      <a class="action-link" href="/methodology">Methodology</a>
+      <a class="action-link" href="/rounds">Rounds</a>
+    </div>
+  </section>
+</BaseLayout>

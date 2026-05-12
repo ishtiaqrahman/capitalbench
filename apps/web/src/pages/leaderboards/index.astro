@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+---
+
+<BaseLayout
+  title="CapitalBench Leaderboards"
+  description="CapitalBench leaderboard hub for latest official results, cumulative one-shot scores, and repeated-run stability metrics."
+>
+  <PageHeader
+    eyebrow="Leaderboards"
+    title="Benchmark Result Views"
+    summary="CapitalBench separates latest official results, cumulative one-shot outcomes, and repeated-run stability metrics so each leaderboard answers a distinct evaluation question."
+  />
+
+  <section class="section">
+    <div class="grid-3">
+      <article class="feature">
+        <h3><a href="/leaderboards/latest">Latest Round Leaderboard</a></h3>
+        <p>Newest resolved official one-shot leaderboard. Pending rounds show picks before performance.</p>
+      </article>
+      <article class="feature">
+        <h3><a href="/leaderboards/cumulative-official">Cumulative Official</a></h3>
+        <p>Average official alpha versus S&amp;P 500 across resolved rounds where each model participated.</p>
+      </article>
+      <article class="feature">
+        <h3><a href="/leaderboards/cumulative-stability">Cumulative Stability</a></h3>
+        <p>Repeated-run alpha and consistency metrics, reported separately from official results.</p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

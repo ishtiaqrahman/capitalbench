@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import RoundsTable from "../../components/RoundsTable";
+import { rounds } from "../../data/fallback";
+import { datasetSchema } from "../../lib/seo";
+
+const roundsDataset = datasetSchema({
+  name: "CapitalBench public round index",
+  description:
+    "A public index of CapitalBench LLM market benchmark rounds, deadlines, horizons, official run IDs, scoring status, and audit pages.",
+  path: "/rounds",
+  datePublished: "2026-05-12",
+  keywords: ["LLM benchmark rounds", "market benchmark", "AI evaluation", "CapitalBench"],
+  variableMeasured: ["round status", "decision deadline", "entry date", "exit date", "official run id"]
+});
+---
+
+<BaseLayout
+  title="CapitalBench Rounds"
+  description="Index of CapitalBench benchmark rounds with deadlines, horizons, official run IDs, scoring status, and audit links."
+  structuredData={roundsDataset}
+>
+  <PageHeader
+    eyebrow="Round index"
+    title="Rounds"
+    summary="Each round freezes a briefing, option universe, prompt, model submissions, and audit hashes before scoring."
+  />
+  <section class="section">
+    <RoundsTable client:visible fallbackRows={rounds} />
+  </section>
+</BaseLayout>

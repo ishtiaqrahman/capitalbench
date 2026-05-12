@@ -1,0 +1,231 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import StatusCards from "../../components/StatusCards.astro";
+import OfficialPicksTable from "../../components/OfficialPicksTable";
+import HashTable from "../../components/HashTable";
+import TableIsland from "../../components/TableIsland";
+import { auditHashes, entryPrices, officialSubmissions, rounds, universeOptions } from "../../data/fallback";
+import { datasetSchema } from "../../lib/seo";
+
+export function getStaticPaths() {
+  return rounds.map((round) => ({ params: { round_id: round.round_id }, props: { round } }));
+}
+
+const { round } = Astro.props;
+const consensusPick = "SEMICONDUCTORS";
+const consensusOption = universeOptions.find((option) => option.option_id === consensusPick);
+const consensusPrice = entryPrices.find((price) => price.option_id === consensusPick);
+const roundDataset = datasetSchema({
+  name: `${round.round_id} CapitalBench round audit dataset`,
+  description: `${round.title}: frozen inputs, official one-shot LLM submissions, entry prices, status, and published audit hashes.`,
+  path: `/rounds/${round.round_id}`,
+  datePublished: "2026-05-12",
+  temporalCoverage: `${round.entry_date}/${round.exit_date}`,
+  keywords: ["LLM market benchmark", "AI market decision", "round audit", round.round_id, "CapitalBench"],
+  variableMeasured: [
+    "official model pick",
+    "confidence",
+    "entry price",
+    "exit status",
+    "SHA-256 input hash",
+    "alpha versus S&P 500"
+  ]
+});
+const priceColumns = [
+  { key: "option_id", label: "Option" },
+  { key: "symbol", label: "Symbol" },
+  { key: "date", label: "Date" },
+  { key: "price", label: "Entry Price", align: "right" as const },
+  { key: "source", label: "Source" }
+];
+---
+
+<BaseLayout
+  title={`${round.round_id} Round Audit Packet`}
+  description={`${round.title}: official LLM picks, entry prices, pending status, and published audit hashes for the ${round.horizon} benchmark round.`}
+  structuredData={roundDataset}
+>
+  <section class="dashboard-header">
+    <div class="dashboard-title">
+      <p class="eyebrow">Round audit packet</p>
+      <h1>{round.round_id}</h1>
+      <p>{round.description}</p>
+    </div>
+    <aside class="header-note">
+      Official submissions are collected. Exit prices and scored performance are intentionally absent until the round
+      resolves.
+    </aside>
+  </section>
+
+  <StatusCards
+    roundId={round.round_id}
+    status={round.status}
+    decisionDeadline={round.decision_deadline_utc}
+    entryDate={round.entry_date}
+    exitDate={round.exit_date}
+    officialRunId={round.official_run_id}
+  />
+
+  <section class="phase-band compact" aria-label="Round lifecycle">
+    <ol class="phase-list">
+      <li class="phase-complete">
+        <span>1</span>
+        <strong>Round frozen</strong>
+        <p>{auditHashes.length} public input hashes are available.</p>
+      </li>
+      <li class="phase-complete">
+        <span>2</span>
+        <strong>Picks collected</strong>
+        <p>{officialSubmissions.length} valid official submissions.</p>
+      </li>
+      <li class="phase-complete">
+        <span>3</span>
+        <strong>Entry priced</strong>
+        <p>{entryPrices.length} entry rows published.</p>
+      </li>
+      <li class="phase-current">
+        <span>4</span>
+        <strong>Exit pending</strong>
+        <p>Scores publish after {round.exit_date} prices are available.</p>
+      </li>
+    </ol>
+  </section>
+
+  <nav class="round-tabs" aria-label="Round sections">
+    <a href="#overview">Overview</a>
+    <a href="#picks">Picks</a>
+    <a href="#prices">Prices</a>
+    <a href="#audit">Audit</a>
+  </nav>
+
+  <section class="dashboard-grid" id="overview">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Round state</span>
+          <h2>Pending Official Score</h2>
+          <p>
+            Round 1 has valid official submissions and entry prices. The leaderboard remains unavailable until
+            exit prices are collected and the scorer publishes results.
+          </p>
+        </div>
+        <span class="status-badge status-pending">Pending</span>
+      </div>
+      <div class="panel-body">
+        <div class="grid-3">
+          <article class="feature">
+            <span class="metric-label">Submissions</span>
+            <h3>{officialSubmissions.length} valid official picks</h3>
+            <p>No invalid parsed submissions are published for the official run.</p>
+          </article>
+          <article class="feature">
+            <span class="metric-label">Universe</span>
+            <h3>40 frozen options</h3>
+            <p>Cash, broad equity, factors, sectors, bonds, international equity, commodities, and AI themes.</p>
+          </article>
+          <article class="feature">
+            <span class="metric-label">Scoring</span>
+            <h3>Exit pending</h3>
+            <p>Selected asset return, S&P 500 return, alpha, and regret publish after scoring.</p>
+          </article>
+        </div>
+        <div class="audit-checklist" aria-label="Round audit checklist">
+          <div class="check-item complete">
+            <span aria-hidden="true"></span>
+            <strong>Frozen input hashes</strong>
+            <p>{auditHashes.length} artifacts published.</p>
+          </div>
+          <div class="check-item complete">
+            <span aria-hidden="true"></span>
+            <strong>Official run selected</strong>
+            <p>{round.official_run_id}</p>
+          </div>
+          <div class="check-item complete">
+            <span aria-hidden="true"></span>
+            <strong>Entry prices present</strong>
+            <p>Selected picks, S&amp;P 500, and cash are priced.</p>
+          </div>
+          <div class="check-item pending">
+            <span aria-hidden="true"></span>
+            <strong>Exit prices pending</strong>
+            <p>Leaderboard rows remain withheld.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="rail">
+      <div class="rail-panel highlight-panel">
+        <span class="metric-label">Consensus Pick</span>
+        <h3>{consensusPick}</h3>
+        <p>{officialSubmissions.length} of {officialSubmissions.length} official models selected this option.</p>
+        <dl class="mini-facts">
+          <div>
+            <dt>Symbol</dt>
+            <dd>{consensusOption?.symbol}</dd>
+          </div>
+          <div>
+            <dt>Asset Class</dt>
+            <dd>{consensusOption?.asset_class}</dd>
+          </div>
+          <div>
+            <dt>Risk</dt>
+            <dd>{consensusOption?.risk_bucket}</dd>
+          </div>
+          <div>
+            <dt>Entry</dt>
+            <dd>{consensusPrice ? `$${consensusPrice.price.toFixed(2)}` : "Pending"}</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="rail-panel">
+        <span class="metric-label">Methodology</span>
+        <h3>{round.methodology_version}</h3>
+        <p>One-shot official run. Stability analysis remains separate.</p>
+      </div>
+      <div class="rail-panel">
+        <span class="metric-label">Boundary</span>
+        <p>Benchmark output is research data and should not be interpreted as a trading recommendation.</p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="section" id="picks">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Official one-shot run</span>
+          <h2>Model Decisions</h2>
+          <p>Expand a row to inspect the model rationale and risk list without crowding the main table.</p>
+        </div>
+      </div>
+      <OfficialPicksTable client:visible fallbackRows={officialSubmissions} roundId={round.round_id} runId={round.official_run_id} />
+    </div>
+  </section>
+
+  <section class="section" id="prices">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Pricing</span>
+          <h2>Entry Prices</h2>
+          <p>Exit prices are intentionally absent until the round resolves.</p>
+        </div>
+      </div>
+      <TableIsland client:visible rows={entryPrices} columns={priceColumns} emptyText="No entry prices are published yet." tableLabel="Entry prices" csvFilename="capitalbench-entry-prices.csv" />
+    </div>
+  </section>
+
+  <section class="section" id="audit">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Audit</span>
+          <h2>Published Hashes</h2>
+          <p>Round inputs are hashed before model calls and mirrored into the public read model.</p>
+        </div>
+      </div>
+      <HashTable client:visible rows={auditHashes} />
+    </div>
+  </section>
+</BaseLayout>

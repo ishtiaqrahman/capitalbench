@@ -1,0 +1,66 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+---
+
+<BaseLayout
+  title="CapitalBench Limitations"
+  description="Limitations of one-month LLM market benchmarks, including noisy outcomes, small samples, provider changes, and the non-advice boundary."
+>
+  <PageHeader
+    eyebrow="Limitations"
+    title="What The Benchmark Cannot Prove"
+    summary="One-month market outcomes are noisy. CapitalBench makes model decisions auditable, but it does not convert them into investment recommendations."
+  />
+  <section class="section doc-layout">
+    <article class="doc-body">
+      <h2>Market Noise</h2>
+      <p>
+        A single month can be dominated by random market movement, macro shocks, liquidity shifts, earnings surprises,
+        sector-specific reversals, or events not represented in the model-facing briefing. A strong or weak round does
+        not prove durable investing skill by itself.
+      </p>
+
+      <h2>Small Samples</h2>
+      <p>
+        Cumulative results become more informative as more resolved rounds are added. Early leaderboards should be read
+        as benchmark observations, not as statistically settled rankings. Participation counts matter because models may
+        enter the benchmark at different times.
+      </p>
+
+      <h2>Model And Provider Changes</h2>
+      <p>
+        Hosted model behavior can change over time even when a public model name appears stable. CapitalBench records
+        round timing, run metadata, provider, model ID, and official run ID, but it cannot guarantee that a hosted model
+        will behave identically in a later rerun.
+      </p>
+
+      <h2>Universe Limits</h2>
+      <p>
+        The option universe is deliberately constrained. It uses broad public exposures such as cash, ETFs, sectors,
+        factors, bonds, commodities, and technology themes. It does not represent all tradable assets, single-name stock
+        selection, options trading, leverage, transaction costs, taxes, or investor-specific constraints.
+      </p>
+
+      <h2>Prompt Sensitivity</h2>
+      <p>
+        LLM outputs can be sensitive to prompt wording, schema requirements, system instructions, model routing, and
+        provider-side changes. CapitalBench reduces those degrees of freedom by freezing inputs and publishing audit
+        hashes, but no one benchmark captures all useful model behavior.
+      </p>
+
+      <h2>Not Financial Advice</h2>
+      <p>
+        Benchmark results should not be used as trading signals or portfolio allocation advice. The public pages are
+        research artifacts for comparing model decisions under a strict protocol.
+      </p>
+    </article>
+    <aside class="side-panel">
+      <strong>Interpret carefully</strong>
+      <p>
+        The leaderboard measures benchmark outcomes under a strict protocol, not investor suitability, risk tolerance,
+        liquidity needs, tax position, or portfolio construction quality.
+      </p>
+    </aside>
+  </section>
+</BaseLayout>

@@ -545,44 +545,30 @@ def _select_latest_run_for_round(
             round_path,
             official_run_id,
             expected_run_type="official",
-            official=False,
-            allow_mock=True,
+            official=True,
         )
     else:
         eligible_official_run_ids: list[str] = []
-        fallback_official_run_ids: list[str] = []
         for run_id in list_run_ids(round_path):
             paths = get_run_paths(round_path, run_id)
             manifest_data = read_run_manifest(paths)
-            if str(manifest_data.get("run_type") or "") == "official" and (paths.results_dir / "leaderboard.csv").exists():
-                if bool(manifest_data.get("official_score_eligible")):
-                    eligible_official_run_ids.append(run_id)
-                else:
-                    fallback_official_run_ids.append(run_id)
+            if (
+                str(manifest_data.get("run_type") or "") == "official"
+                and manifest_data.get("mock") is not True
+                and bool(manifest_data.get("official_score_eligible"))
+                and (paths.results_dir / "leaderboard.csv").exists()
+            ):
+                eligible_official_run_ids.append(run_id)
         if len(eligible_official_run_ids) > 1:
             raise ValueError(
                 f"Round {round_id} has multiple official-score-eligible runs. "
                 "Add cumulative_selection.yaml or pass explicit selections."
             )
-        if len(eligible_official_run_ids) == 1:
-            official_run_id = eligible_official_run_ids[0]
-        elif len(fallback_official_run_ids) == 1:
-            official_run_id = fallback_official_run_ids[0]
-        elif len(fallback_official_run_ids) > 1:
-            raise ValueError(
-                f"Round {round_id} has multiple non-eligible official runs. "
-                "Add cumulative_selection.yaml or pass explicit selections."
-            )
-        else:
-            official_run_id = None
+        official_run_id = eligible_official_run_ids[0] if len(eligible_official_run_ids) == 1 else None
 
     official_rows = load_official_results(round_path, official_run_id) if official_run_id else []
     if not official_rows:
         warnings.append(f"Round {round_id} has no scored official run.")
-    elif official_run_id:
-        run_manifest = read_run_manifest(get_run_paths(round_path, official_run_id))
-        if run_manifest.get("mock") is True:
-            warnings.append(f"Round {round_id} latest official run is mock and is not a public benchmark result.")
     return CumulativeRoundSelection(
         round_id=round_id,
         round_path=round_path,

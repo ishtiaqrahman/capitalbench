@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import UniverseTable from "../components/UniverseTable";
+import { rounds, universeOptions } from "../data/fallback";
+import { datasetSchema } from "../lib/seo";
+
+const universeDataset = datasetSchema({
+  name: "CapitalBench option universe",
+  description:
+    "The frozen public option universe used by CapitalBench benchmark rounds, including cash, ETFs, sectors, factors, bonds, commodities, and AI themes.",
+  path: "/universe",
+  datePublished: "2026-05-12",
+  keywords: ["LLM benchmark", "market options", "ETF universe", "AI market benchmark", "CapitalBench"],
+  variableMeasured: ["option id", "ticker symbol", "asset class", "option group", "risk bucket"]
+});
+---
+
+<BaseLayout
+  title="CapitalBench Option Universe"
+  description="Frozen CapitalBench option universe for public benchmark rounds, including cash, ETFs, sectors, factors, bonds, commodities, and AI themes."
+  structuredData={universeDataset}
+>
+  <PageHeader
+    eyebrow="Universe v1.5"
+    title="Frozen Option Universe"
+    summary="The public round universe contains cash, Treasury bills, broad equity, factors, sectors, bonds, credit, international equity, commodities, and AI or technology themes."
+  />
+
+  <section class="section">
+    <UniverseTable client:visible fallbackRows={universeOptions} roundId={rounds[0].round_id} />
+  </section>
+</BaseLayout>

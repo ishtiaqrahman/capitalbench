@@ -1,0 +1,139 @@
+---
+import "../styles/global.css";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import {
+  assetUrl,
+  breadcrumbSchema,
+  canonicalUrl,
+  getRouteMeta,
+  jsonLdGraph,
+  organizationSchema,
+  pageTitle,
+  siteConfig,
+  webPageSchema,
+  websiteSchema,
+  type JsonLdRecord
+} from "../lib/seo";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  noindex?: boolean;
+  structuredData?: JsonLdRecord | JsonLdRecord[];
+}
+
+const currentPath = Astro.url.pathname;
+const routeMeta = getRouteMeta(currentPath);
+const {
+  title = routeMeta?.title ?? siteConfig.name,
+  description = routeMeta?.description ?? siteConfig.description,
+  image = siteConfig.ogImage,
+  imageAlt = siteConfig.ogImageAlt,
+  noindex = routeMeta?.noindex ?? false,
+  structuredData = []
+} = Astro.props;
+const resolvedTitle = pageTitle(title);
+const resolvedCanonicalUrl = canonicalUrl(currentPath);
+const resolvedImageUrl = image.startsWith("http") ? image : assetUrl(image);
+const robotsContent = noindex ? "noindex,follow" : "index,follow,max-image-preview:large";
+const pageSchemas = Array.isArray(structuredData) ? structuredData : [structuredData];
+const jsonLd = jsonLdGraph([
+  organizationSchema(),
+  websiteSchema(),
+  webPageSchema(currentPath, resolvedTitle, description),
+  breadcrumbSchema(currentPath),
+  ...pageSchemas
+]);
+
+const navItems = [
+  { href: "/leaderboards/latest", label: "Latest", active: currentPath.startsWith("/leaderboards/latest") },
+  {
+    href: "/leaderboards/cumulative-official",
+    label: "Official",
+    active: currentPath.startsWith("/leaderboards/cumulative-official")
+  },
+  {
+    href: "/leaderboards/cumulative-stability",
+    label: "Stability",
+    active: currentPath.startsWith("/leaderboards/cumulative-stability")
+  },
+  { href: "/rounds", label: "Rounds", active: currentPath.startsWith("/rounds") },
+  { href: "/methodology", label: "Methodology", active: currentPath.startsWith("/methodology") },
+  { href: "/universe", label: "Universe", active: currentPath.startsWith("/universe") },
+  {
+    href: "/docs",
+    label: "Docs",
+    active:
+      currentPath.startsWith("/docs") ||
+      currentPath.startsWith("/scoring") ||
+      currentPath.startsWith("/fairness") ||
+      currentPath.startsWith("/limitations")
+  }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{resolvedTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={robotsContent} />
+    <meta name="author" content="CapitalBench" />
+    <meta name="theme-color" content={siteConfig.themeColor} />
+    <link rel="canonical" href={resolvedCanonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:title" content={resolvedTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={resolvedCanonicalUrl} />
+    <meta property="og:image" content={resolvedImageUrl} />
+    <meta property="og:image:width" content={String(siteConfig.ogImageWidth)} />
+    <meta property="og:image:height" content={String(siteConfig.ogImageHeight)} />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={resolvedTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedImageUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script is:inline type="application/ld+json" set:html={jsonLd} />
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="site-shell">
+      <header class="site-header">
+        <nav class="nav-inner" aria-label="Primary">
+          <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>CapitalBench</span>
+          </a>
+          <div class="nav-links">
+            {
+              navItems.map((item) => (
+                <a href={item.href} aria-current={item.active ? "page" : undefined}>
+                  {item.label}
+                </a>
+              ))
+            }
+          </div>
+        </nav>
+      </header>
+      <main id="content" tabindex="-1">
+        <Breadcrumbs currentPath={currentPath} />
+        <slot />
+      </main>
+      <footer class="site-footer">
+        <div class="footer-inner">
+          <span>CapitalBench is a benchmark and research project, not financial advice.</span>
+          <span>Public artifacts are designed for auditability.</span>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

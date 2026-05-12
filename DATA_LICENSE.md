@@ -7,8 +7,13 @@ International license:
 https://creativecommons.org/licenses/by/4.0/
 
 This applies to public benchmark artifacts such as round manifests, prompts,
-option files, hashed research artifacts, model submissions, run logs, and public
-reports.
+option files, hashed research artifacts, normalized model submissions,
+sanitized run logs, public hashes, and public reports.
+
+It does not apply to local `.env` files, private model configs, API keys,
+Supabase service credentials, deployment hooks, provider smoke-test output, raw
+provider responses, generated screenshots, Lighthouse output, or any future
+gated Pro artifacts.
 
 The software code is licensed separately under the Apache License 2.0.
 

@@ -22,6 +22,7 @@ setup(
     ],
     extras_require={
         "test": ["pytest>=8"],
+        "web-sync": ["supabase>=2,<3"],
     },
     entry_points={
         "console_scripts": [

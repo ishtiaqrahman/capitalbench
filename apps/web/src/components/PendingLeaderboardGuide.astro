@@ -1,0 +1,64 @@
+---
+interface Props {
+  kind: "latest" | "official" | "stability";
+  exitDate?: string;
+}
+
+const { kind, exitDate = "2026-06-10" } = Astro.props;
+
+const copy = {
+  latest: {
+    kicker: "Pending result",
+    title: "Why There Is No Score Yet",
+    body:
+      `Round 1 has official picks and entry prices, but the latest leaderboard stays empty until exit prices for ${exitDate} are collected and scored.`,
+    columns: ["Model", "Provider", "Pick", "Return", "S&P 500", "Alpha", "Rank"],
+    sort: "Alpha versus S&P 500 descending, then lower regret, higher confidence, and model id.",
+    cta: "Review official picks"
+  },
+  official: {
+    kicker: "Cumulative official",
+    title: "What Appears After Resolved Rounds",
+    body:
+      "This table averages one-shot official alpha across resolved rounds where each model participated. New models enter future rounds only; old outcomes are not backfilled.",
+    columns: ["Model", "Provider", "Resolved rounds", "Average alpha", "Hit rate", "Cumulative log alpha"],
+    sort: "Average official alpha descending, then cumulative log alpha and hit rate.",
+    cta: "View current round"
+  },
+  stability: {
+    kicker: "Repeated-call track",
+    title: "What Stability Will Show",
+    body:
+      "Stability rows summarize repeated calls with the same frozen inputs. They measure consistency and repeated-run alpha, separately from official one-shot performance.",
+    columns: ["Model", "Provider", "Resolved rounds", "Avg repeated alpha", "Consistency", "Modal-pick alpha"],
+    sort: "Average repeated alpha descending, then consistency and modal-pick alpha.",
+    cta: "Read methodology"
+  }
+}[kind];
+
+const href =
+  kind === "latest"
+    ? "#official-picks"
+    : kind === "stability"
+      ? "/methodology#execution"
+      : "/rounds/CB-2026-05-10-1M";
+---
+
+<section class="leaderboard-guide" aria-label="Pending leaderboard explanation">
+  <div class="guide-primary">
+    <span class="panel-kicker">{copy.kicker}</span>
+    <h2>{copy.title}</h2>
+    <p>{copy.body}</p>
+    <a class="action-link" href={href}>{copy.cta}</a>
+  </div>
+  <div class="guide-secondary">
+    <span class="metric-label">Published Columns</span>
+    <div class="column-chips">
+      {copy.columns.map((column) => <span>{column}</span>)}
+    </div>
+  </div>
+  <div class="guide-secondary">
+    <span class="metric-label">Sort Rule</span>
+    <p>{copy.sort}</p>
+  </div>
+</section>

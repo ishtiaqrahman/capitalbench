@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+---
+
+<BaseLayout
+  title="CapitalBench Fairness Controls"
+  description="Fairness controls for CapitalBench benchmark rounds: identical prompt surfaces, frozen inputs, run isolation, and no retroactive backfills."
+>
+  <PageHeader
+    eyebrow="Fairness"
+    title="Comparable Inputs"
+    summary="The benchmark is designed so model differences come from the model call, not from changing inputs, hidden tool access, or later market data."
+  />
+  <section class="section doc-layout">
+    <article class="doc-body">
+      <h2>Same Prompt Surface</h2>
+      <p>
+        Models receive the same frozen prompt, briefing, option universe, and allowed response schema for an official
+        run. The benchmark is not trying to equalize the internal knowledge of each model; it is controlling the
+        external information surface supplied at decision time.
+      </p>
+      <p>
+        Round inputs are hashed before official model calls. The public site mirrors the published hashes so readers can
+        verify that the prompt, briefing, universe, and market-data context were fixed before submissions were collected.
+      </p>
+
+      <h2>No Public Backfills</h2>
+      <p>
+        New models become eligible for future rounds only. Older official leaderboards remain unchanged, which prevents
+        later model releases from being scored against historical market states they did not face in public at the time.
+      </p>
+
+      <h2>Run Isolation</h2>
+      <p>
+        Official, stability, mock, retrospective, and provider smoke runs live under separate run IDs. Official public
+        leaderboards only use the selected official run for a round. Repeated stability runs are shown separately because
+        they answer a different evaluation question.
+      </p>
+
+      <h2>Tool And Retrieval Boundary</h2>
+      <p>
+        Official model calls do not use browsing, live retrieval, trading tools, or hidden post-cutoff data. If a
+        provider run fails, the failed raw attempt can remain in the audit trail, but it does not become an official
+        public result.
+      </p>
+
+      <h2>Invalid Submission Handling</h2>
+      <p>
+        A public official result requires a schema-valid single selected option. Multiple selections, missing option
+        identifiers, unparsable responses, and failed attempts are excluded from official scoring. This keeps the
+        leaderboard tied to comparable one-shot decisions.
+      </p>
+    </article>
+    <aside class="side-panel">
+      <strong>Operator controls</strong>
+      <p>
+        Manual price fetching, report publishing, and web sync leave auditable files in the repository. Supabase stores
+        normalized public copies for the website, not a replacement for the local audit record.
+      </p>
+    </aside>
+  </section>
+</BaseLayout>

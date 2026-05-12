@@ -1,0 +1,389 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+---
+
+<BaseLayout
+  title="CapitalBench Methodology"
+  description="CapitalBench methodology for frozen prompts, one-shot LLM submissions, official scoring, stability runs, fairness controls, and audit artifacts."
+>
+  <PageHeader
+    eyebrow="Methodology"
+    title="A Frozen One-Shot Market Benchmark"
+    summary="CapitalBench asks each model one market question under the same frozen inputs, preserves the full audit trail, and scores the selected option only after the fixed horizon resolves."
+  />
+
+  <section class="methodology-lede" aria-label="Methodology summary">
+    <div>
+      <span class="metric-label">Primary measurement</span>
+      <strong>One official asset choice</strong>
+      <p>Each model chooses exactly one option from the frozen universe. The official leaderboard uses one valid call per model.</p>
+    </div>
+    <div>
+      <span class="metric-label">Information rule</span>
+      <strong>Same prompt, same context</strong>
+      <p>No browsing, tools, live retrieval, or intentional use of facts after the research cutoff.</p>
+    </div>
+    <div>
+      <span class="metric-label">Scoring rule</span>
+      <strong>Alpha versus S&amp;P 500</strong>
+      <p>Realized selected-option return is compared with the S&amp;P 500 benchmark over the manifest horizon.</p>
+    </div>
+  </section>
+
+  <nav class="protocol-jump" aria-label="Methodology sections">
+    <a href="#lifecycle">Lifecycle</a>
+    <a href="#artifacts">Artifacts</a>
+    <a href="#execution">Execution</a>
+    <a href="#pricing">Scoring</a>
+    <a href="#fairness">Fairness</a>
+    <a href="#audit">Audit</a>
+  </nav>
+
+  <section class="rule-matrix" aria-label="Protocol rule summary">
+    <article>
+      <span class="panel-kicker">Allowed</span>
+      <h3>Internal learned knowledge</h3>
+      <p>Models may use general priors already inside the model. Every model receives the same external context.</p>
+    </article>
+    <article>
+      <span class="panel-kicker">Forbidden</span>
+      <h3>Browsing and live retrieval</h3>
+      <p>Tools, search, live prices, and intentional use of post-cutoff facts are disabled or disallowed.</p>
+    </article>
+    <article>
+      <span class="panel-kicker">Scored</span>
+      <h3>One official selected option</h3>
+      <p>The official leaderboard uses one valid one-shot pick per model from the selected official run.</p>
+    </article>
+    <article>
+      <span class="panel-kicker">Not scored</span>
+      <h3>Private and invalid attempts</h3>
+      <p>Mock, provider-smoke, retrospective, failed, incomplete, and invalid submissions are excluded.</p>
+    </article>
+  </section>
+
+  <section class="section doc-layout methodology-layout">
+    <article class="doc-body methodology-body">
+      <section id="scope">
+        <h2>What CapitalBench Measures</h2>
+        <p>
+          CapitalBench evaluates one narrow question: given the same frozen market context, which single market option
+          does a model choose for the next month? It is a benchmark for reproducible model comparison, not a trading
+          system, portfolio optimizer, or investment recommendation engine.
+        </p>
+        <p>
+          Models may use internal learned knowledge and general market priors. They do not have to behave like blank
+          slates. The controlled part is the externally supplied information: every model receives the same prompt,
+          briefing, option universe, and optional mechanical market-data table.
+        </p>
+        <div class="method-callout">
+          <strong>No combined mega-score.</strong>
+          Official one-shot results, cumulative official results, and repeated-run stability results are separate views.
+          CapitalBench does not blend them into a weighted headline score.
+        </div>
+      </section>
+
+      <section id="lifecycle">
+        <h2>Round Lifecycle</h2>
+        <ol class="protocol-steps">
+          <li><strong>Create the round directory.</strong> Each round lives under <code>rounds/&lt;round_id&gt;/</code> with a manifest, prompt, briefing, option universe, price files, hashes, and isolated run folders.</li>
+          <li><strong>Prepare the model-facing material.</strong> Operators write or import the factual briefing, exact prompt, and frozen option list.</li>
+          <li><strong>Validate the universe.</strong> Non-cash ETF tickers must pass Tiingo EOD validation before a public round is frozen.</li>
+          <li><strong>Add optional trailing-return context.</strong> A mechanical full-universe return table may be generated from adjusted closes and sorted by option order.</li>
+          <li><strong>Freeze the inputs.</strong> <code>capitalbench hash-round</code> writes SHA-256 hashes for the round inputs before submissions are collected.</li>
+          <li><strong>Collect model calls before the deadline.</strong> Official runs use one call per model. Stability runs use repeated calls and a different <code>run_id</code>.</li>
+          <li><strong>Validate submissions.</strong> Raw provider responses are preserved. Only schema-valid submissions move into parsed submissions and scoring.</li>
+          <li><strong>Fetch prices and score after resolution.</strong> Entry prices can be collected while a round is pending; exit prices are collected only after the manifest horizon resolves.</li>
+          <li><strong>Publish normalized artifacts.</strong> Public results, hashes, reports, and leaderboard rows are synced to the website read model when Supabase sync is configured.</li>
+        </ol>
+      </section>
+
+      <section id="artifacts">
+        <h2>Round Artifacts</h2>
+        <p>
+          The local round directory is the audit source of truth. Supabase stores normalized published copies for the
+          website, but the canonical record remains the hashed round artifact set.
+        </p>
+        <div class="table-scroll doc-table-shell">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>Artifact</th>
+                <th>Audience</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Artifact"><code>manifest.yaml</code></td>
+                <td data-label="Audience">Public</td>
+                <td data-label="Purpose">Round metadata, decision deadline, entry rule, exit rule, horizon, and methodology version.</td>
+              </tr>
+              <tr>
+                <td data-label="Artifact"><code>prompt.md</code></td>
+                <td data-label="Audience">Model-facing</td>
+                <td data-label="Purpose">The exact task instruction sent to every model.</td>
+              </tr>
+              <tr>
+                <td data-label="Artifact"><code>briefing.md</code></td>
+                <td data-label="Audience">Model-facing</td>
+                <td data-label="Purpose">Neutral factual context available at decision time.</td>
+              </tr>
+              <tr>
+                <td data-label="Artifact"><code>options.yaml</code></td>
+                <td data-label="Audience">Model-facing</td>
+                <td data-label="Purpose">The only valid choices. Each public submission must select exactly one option id.</td>
+              </tr>
+              <tr>
+                <td data-label="Artifact"><code>market_data/universe_trailing_returns.*</code></td>
+                <td data-label="Audience">Model-facing when present</td>
+                <td data-label="Purpose">Mechanical 7-day, 30-day, 6-month, and 1-year trailing returns from adjusted close data.</td>
+              </tr>
+              <tr>
+                <td data-label="Artifact"><code>hashes.json</code></td>
+                <td data-label="Audience">Public audit</td>
+                <td data-label="Purpose">SHA-256 hashes proving the frozen input files used for the round.</td>
+              </tr>
+              <tr>
+                <td data-label="Artifact"><code>research/*</code></td>
+                <td data-label="Audience">Audit, except final briefing</td>
+                <td data-label="Purpose">Research manifest, hashes, source fact report, audit report, and final model-facing briefing.</td>
+              </tr>
+              <tr>
+                <td data-label="Artifact"><code>runs/&lt;run_id&gt;/*</code></td>
+                <td data-label="Audience">Audit and scoring</td>
+                <td data-label="Purpose">Raw responses, normalized raw payloads, parsed submissions, run logs, validation summaries, and results.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="research">
+        <h2>Research And Briefing Rules</h2>
+        <p>
+          Deep research output is stored as audit material first. The only research artifact copied into the model
+          prompt is <code>research/final_briefing.md</code>, which becomes round-level <code>briefing.md</code>.
+          Market fact reports, source ledgers, and briefing audit reports remain audit-only.
+        </p>
+        <p>
+          The model-facing briefing should include facts, dates, values, forecasts labeled as forecasts, scheduled
+          catalysts, and source-reported uncertainties. It should not include opinion, interpretation, scenario
+          analysis, "why it matters" commentary, affected-market mapping, recommendations, or option rankings.
+        </p>
+        <pre class="command-block"><code>capitalbench import-research \
+  --round rounds/&lt;id&gt; \
+  --market-fact-report market_fact_report.md \
+  --audit-report briefing_audit_report.md \
+  --final-briefing final_briefing.md \
+  --research-cutoff-utc "YYYY-MM-DDTHH:MM:SSZ"</code></pre>
+      </section>
+
+      <section id="universe">
+        <h2>Universe Policy</h2>
+        <p>
+          Public rounds use CapitalBench Universe v1.5: a fixed ETF universe plus CASH. The model sees readable option
+          ids, names, public symbols, asset classes, categories, groups, risk buckets, and exposure descriptions.
+          Internal fields and provider-specific data-fetching fields are kept out of the prompt.
+        </p>
+        <p>
+          All non-cash options are US-listed ETF tickers and must validate against Tiingo EOD data before the round is
+          frozen. CASH has no ticker and is skipped during Tiingo validation.
+        </p>
+        <pre class="command-block"><code>capitalbench validate-universe \
+  --round rounds/&lt;id&gt; \
+  --start-date YYYY-MM-DD \
+  --end-date YYYY-MM-DD</code></pre>
+      </section>
+
+      <section id="submissions">
+        <h2>Submission Schema</h2>
+        <p>
+          Each model must return one JSON or YAML object. A submission with multiple selected assets is invalid. Invalid
+          raw responses remain preserved, but they are not scored and cannot enter a public official leaderboard.
+        </p>
+        <div class="schema-grid">
+          <span><code>round_id</code></span>
+          <span><code>model_id</code></span>
+          <span><code>provider</code></span>
+          <span><code>mode: closed_capability</code></span>
+          <span><code>run_type</code></span>
+          <span><code>replicate_index</code></span>
+          <span><code>replicate_count</code></span>
+          <span><code>is_official_score</code></span>
+          <span><code>selected_option_id</code></span>
+          <span><code>confidence</code></span>
+          <span><code>rationale_summary</code></span>
+          <span><code>key_risks</code></span>
+        </div>
+        <p>
+          Official runs require <code>replicate_index: 1</code>, <code>replicate_count: 1</code>, and
+          <code>is_official_score: true</code>. Stability runs use repeated replicate indexes for each model and require
+          <code>is_official_score: false</code>.
+        </p>
+      </section>
+
+      <section id="execution">
+        <h2>Model Execution Policy</h2>
+        <div class="split-cards">
+          <div class="method-card">
+            <span class="panel-kicker">Official</span>
+            <h3>One call per model</h3>
+            <p>The official result is the selected asset from one valid provider call in the selected official run.</p>
+          </div>
+          <div class="method-card">
+            <span class="panel-kicker">Stability</span>
+            <h3>Repeated calls</h3>
+            <p>Stability runs ask the same model the same question multiple times to measure decision consistency.</p>
+          </div>
+        </div>
+        <ul>
+          <li>Every model receives the same prompt, briefing, option universe, and frozen market-data artifact.</li>
+          <li>Temperature is set to <code>0</code> where supported.</li>
+          <li>Tools, browsing, web search, code execution, and external retrieval are disabled at the API level where supported.</li>
+          <li>Live market data and intentional use of post-cutoff facts, prices, news, or events are not allowed.</li>
+          <li>Reasoning or thinking is set to the lowest provider-supported setting that still allows valid structured output.</li>
+          <li>Hidden reasoning tokens are recorded when exposed but are not treated as directly comparable across providers.</li>
+          <li>Provider token usage, latency, and cost are logged when available.</li>
+        </ul>
+        <pre class="command-block"><code>capitalbench run-round \
+  --round rounds/&lt;id&gt; \
+  --models configs/models.local.yaml \
+  --run-id official-YYYYMMDD \
+  --run-type official \
+  --allow-real-api-calls</code></pre>
+      </section>
+
+      <section id="retries">
+        <h2>Retry Policy</h2>
+        <p>
+          An official retry is allowed only when no valid decision can be parsed because of infrastructure or format
+          failure: malformed JSON, truncated response, provider transport or API failure, or schema output failure.
+        </p>
+        <p>
+          A retry is not allowed because of the selected asset, confidence value, or rationale quality. Failed raw
+          responses must remain in the run artifacts and must stay ineligible for public official scoring.
+        </p>
+      </section>
+
+      <section id="pricing">
+        <h2>Pricing And Scoring</h2>
+        <p>
+          CapitalBench scores valid submissions against local price files. Adjusted close is preferred. If only close is
+          supplied, scoring may continue but records a warning in the result artifacts. Tiingo fetching is strict about
+          dates and requires rows matching the manifest entry and exit dates.
+        </p>
+        <div class="formula-grid">
+          <div>
+            <span>Selected return</span>
+            <code>exit_price / entry_price - 1</code>
+          </div>
+          <div>
+            <span>Alpha versus S&amp;P 500</span>
+            <code>selected_return - sp500_return</code>
+          </div>
+          <div>
+            <span>Regret versus best option</span>
+            <code>best_option_return - selected_return</code>
+          </div>
+          <div>
+            <span>Alpha per dollar</span>
+            <code>alpha_vs_sp500 / cost_usd</code>
+          </div>
+        </div>
+        <p>
+          Cash is treated as a zero return unless cash prices are explicitly supplied. The main official leaderboard is
+          sorted by alpha versus S&amp;P 500 descending. Ties are resolved by lower regret, higher confidence, and then
+          model id.
+        </p>
+        <pre class="command-block"><code>capitalbench fetch-prices \
+  --round rounds/&lt;id&gt; \
+  --run-id &lt;run_id&gt; \
+  --entry-date YYYY-MM-DD \
+  --exit-date YYYY-MM-DD \
+  --full-universe</code></pre>
+      </section>
+
+      <section id="leaderboards">
+        <h2>Leaderboard Definitions</h2>
+        <div class="leaderboard-defs">
+          <div>
+            <h3>Latest Round Leaderboard</h3>
+            <p>Newest resolved official one-shot run only. If the latest round is pending, picks may be shown but performance is withheld.</p>
+          </div>
+          <div>
+            <h3>Cumulative Official Leaderboard</h3>
+            <p>Average official alpha versus S&amp;P 500 across resolved rounds where each model has an official result. New models are not backfilled into old rounds.</p>
+          </div>
+          <div>
+            <h3>Cumulative Stability Leaderboard</h3>
+            <p>Average repeated-run alpha and average consistency across resolved stability runs. This view stays separate from official scoring.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="fairness">
+        <h2>Fairness Controls</h2>
+        <ul class="dense-list">
+          <li>Freeze <code>manifest.yaml</code>, <code>briefing.md</code>, <code>options.yaml</code>, <code>prompt.md</code>, and any prompt-facing <code>market_data/</code> artifact before collection.</li>
+          <li>Publish <code>hashes.json</code> so readers can verify that inputs did not change after model calls.</li>
+          <li>Do not give one model extra context or a different option universe.</li>
+          <li>Do not revise a completed round after seeing model choices just to create more varied picks.</li>
+          <li>Preserve invalid raw submissions instead of deleting them.</li>
+          <li>Use the same entry and exit price source for every option.</li>
+          <li>Identify exactly one official one-shot run for public reporting.</li>
+          <li>Exclude mock, provider-smoke, failed, incomplete, and retrospective runs from public official leaderboards.</li>
+          <li>Add newly released models only to future rounds. Do not rerun old rounds after outcomes may be knowable.</li>
+        </ul>
+      </section>
+
+      <section id="audit">
+        <h2>Auditability And Website Sync</h2>
+        <p>
+          The CLI stores exact provider text in local <code>raw_responses/</code> sidecars, normalized payloads in
+          <code>submissions/raw/</code>, validated submissions in <code>submissions/parsed/</code>, and SHA-256 paths in
+          <code>run_log.jsonl</code>. Raw provider text and private smoke-test output are excluded from the public repo;
+          reports, validation summaries, result CSVs, and public hashes are generated from the sanitized artifacts.
+        </p>
+        <p>
+          When the Supabase URL and server-side service-role credentials are configured, publish and scoring commands
+          can sync normalized public rows to Supabase for website rendering. The public frontend uses only the Supabase
+          anon key. Service-role keys, provider keys, and market-data keys are never exposed in built assets.
+        </p>
+        <pre class="command-block"><code>capitalbench sync-web --round rounds/&lt;round_id&gt; --run-id &lt;run_id&gt;
+capitalbench sync-web --rounds-dir rounds --include-cumulative</code></pre>
+      </section>
+
+      <section id="limitations">
+        <h2>Limitations</h2>
+        <p>
+          CapitalBench measures one prompt, one option set, and one time window at a time. It does not model taxes,
+          transaction costs, slippage, liquidity, dividends, position sizing, or portfolio construction. A one-month
+          result can be dominated by noise, and a round where many models choose the same asset can be fair but
+          low-discrimination as a ranking event.
+        </p>
+        <p>
+          The framework is useful for reproducible comparison, but it should not be read as proof that a model has
+          durable investing skill. The benchmark output is research, not financial advice.
+        </p>
+      </section>
+    </article>
+
+    <aside class="side-panel methodology-aside" aria-label="Methodology navigation">
+      <strong>Protocol Sections</strong>
+      <a href="#scope">Scope</a>
+      <a href="#lifecycle">Lifecycle</a>
+      <a href="#artifacts">Artifacts</a>
+      <a href="#research">Research rules</a>
+      <a href="#universe">Universe</a>
+      <a href="#submissions">Submissions</a>
+      <a href="#execution">Execution</a>
+      <a href="#pricing">Scoring</a>
+      <a href="#leaderboards">Leaderboards</a>
+      <a href="#fairness">Fairness</a>
+      <a href="#audit">Audit</a>
+      <a href="#limitations">Limitations</a>
+    </aside>
+  </section>
+</BaseLayout>

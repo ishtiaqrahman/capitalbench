@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import StatusCards from "../../components/StatusCards.astro";
+import OfficialPicksTable from "../../components/OfficialPicksTable";
+import LeaderboardTable from "../../components/LeaderboardTable";
+import PendingLeaderboardGuide from "../../components/PendingLeaderboardGuide.astro";
+import { latestLeaderboard, officialSubmissions, rounds } from "../../data/fallback";
+import { datasetSchema } from "../../lib/seo";
+
+const currentRound = rounds[0];
+const officialPicksDataset = datasetSchema({
+  name: `${currentRound.round_id} official LLM picks`,
+  description:
+    "Pending official CapitalBench one-shot LLM market decisions for the latest round, including selected option, provider, model, confidence, rationale, and risks.",
+  path: "/leaderboards/latest",
+  datePublished: "2026-05-12",
+  temporalCoverage: `${currentRound.entry_date}/${currentRound.exit_date}`,
+  keywords: ["LLM market leaderboard", "AI market picks", "one-shot benchmark", "CapitalBench"],
+  variableMeasured: ["model id", "provider", "selected option", "confidence", "pending score status"]
+});
+---
+
+<BaseLayout
+  title="Latest LLM Market Leaderboard"
+  description="Latest CapitalBench official leaderboard for one-shot LLM market decisions, with pending picks shown before scored performance is published."
+  structuredData={officialPicksDataset}
+>
+  <PageHeader
+    eyebrow="Latest official result"
+    title="Latest Round Leaderboard"
+    summary="Round 1 is pending. The official picks are visible now; realized performance appears only after exit prices are available."
+  />
+
+  <StatusCards
+    roundId={currentRound.round_id}
+    status={currentRound.status}
+    decisionDeadline={currentRound.decision_deadline_utc}
+    entryDate={currentRound.entry_date}
+    exitDate={currentRound.exit_date}
+    officialRunId={currentRound.official_run_id}
+  />
+
+  <section class="section" id="official-picks">
+    <PendingLeaderboardGuide kind="latest" exitDate={currentRound.exit_date} />
+  </section>
+
+  <section class="section">
+    <LeaderboardTable client:visible fallbackRows={latestLeaderboard} kind="latest" />
+  </section>
+
+  <section class="section">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Pending official run</span>
+          <h2>Official Picks</h2>
+          <p>These are public decisions, not scored performance.</p>
+        </div>
+      </div>
+      <OfficialPicksTable client:visible fallbackRows={officialSubmissions} roundId={currentRound.round_id} runId={currentRound.official_run_id} />
+    </div>
+  </section>
+</BaseLayout>
