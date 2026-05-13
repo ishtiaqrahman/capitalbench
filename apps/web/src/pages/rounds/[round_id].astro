@@ -1,10 +1,21 @@
 ---
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { parse as parseYaml } from "yaml";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import StatusCards from "../../components/StatusCards.astro";
 import OfficialPicksTable from "../../components/OfficialPicksTable";
 import HashTable from "../../components/HashTable";
 import TableIsland from "../../components/TableIsland";
-import { auditHashes, entryPrices, officialSubmissions, rounds, universeOptions } from "../../data/fallback";
+import {
+  auditHashes,
+  entryPrices,
+  modelLabel,
+  officialSubmissions,
+  providerLabel,
+  rounds,
+  universeOptions
+} from "../../data/fallback";
 import { datasetSchema } from "../../lib/seo";
 
 export function getStaticPaths() {
@@ -12,12 +23,170 @@ export function getStaticPaths() {
 }
 
 const { round } = Astro.props;
-const consensusPick = "SEMICONDUCTORS";
+const repoRoot = resolve(process.cwd(), "../..");
+const roundRoot = resolve(repoRoot, "rounds", round.round_id);
+const officialRunId = round.official_run_id;
+const roundSubmissions = officialSubmissions.filter(
+  (submission) => submission.round_id === round.round_id && submission.run_id === officialRunId
+);
+const roundEntryPrices = entryPrices.filter((price) => price.option_id);
+const roundAuditHashes = auditHashes;
+
+type ParsedOption = {
+  id?: string;
+  name?: string;
+  symbol?: string | null;
+  asset_class?: string;
+  category?: string;
+  option_group?: string;
+  risk_bucket?: string;
+  exposure_description?: string;
+  include_in_universe?: boolean;
+};
+
+type ModelOutput = {
+  round_id: string;
+  model_id: string;
+  provider: string;
+  mode: string;
+  selected_option_id: string;
+  confidence: number;
+  rationale_summary: string;
+  key_risks: string[];
+  run_type?: string;
+  [key: string]: unknown;
+};
+
+function readRoundText(...segments: string[]): string {
+  const path = join(roundRoot, ...segments);
+  if (!existsSync(path)) return "";
+  return readFileSync(path, "utf-8").trim();
+}
+
+function parseRoundYaml<T>(...segments: string[]): T | null {
+  const text = readRoundText(...segments);
+  if (!text) return null;
+  try {
+    return parseYaml(text) as T;
+  } catch {
+    return null;
+  }
+}
+
+function stripMarkdownHeading(text: string, heading: string): string {
+  return text.startsWith(heading) ? text.slice(heading.length).trim() : text;
+}
+
+function renderRoundMetadata(manifest: Record<string, unknown>, researchManifest: Record<string, unknown> | null): string {
+  const researchCutoff = researchManifest?.research_cutoff_utc ? String(researchManifest.research_cutoff_utc) : "TBD";
+  const rows = [
+    `Round ID: ${manifest.round_id ?? round.round_id}`,
+    `Decision date: ${manifest.decision_date ?? round.decision_date}`,
+    `Research cutoff UTC: ${researchCutoff}`,
+    `Decision deadline UTC: ${manifest.decision_deadline ?? round.decision_deadline_utc}`,
+    `Horizon: ${manifest.horizon ?? round.horizon}`,
+    `Entry date: ${manifest.entry_date ?? round.entry_date}`,
+    `Exit date: ${manifest.exit_date ?? round.exit_date}`,
+    `Entry rule: ${manifest.entry_rule ?? "TBD"}`,
+    `Exit rule: ${manifest.exit_rule ?? "TBD"}`,
+    "Scoring benchmark: S&P 500 / SPY",
+    "Return calculation: adjusted close prices are used when available."
+  ];
+  return rows.map((line) => `- ${line}`).join("\n");
+}
+
+function renderOptionsForPrompt(options: ParsedOption[]): string {
+  return options
+    .filter((option) => option.include_in_universe !== false)
+    .map((option) =>
+      [
+        "Allowed option:",
+        `ID: ${option.id ?? "UNKNOWN"}`,
+        `Name: ${option.name ?? "Unknown"}`,
+        `Symbol: ${option.symbol || "N/A"}`,
+        `Asset class: ${option.asset_class ?? "unknown"}`,
+        `Category: ${option.category ?? "unknown"}`,
+        `Group: ${option.option_group ?? "unknown"}`,
+        `Risk bucket: ${option.risk_bucket ?? "unknown"}`,
+        `Description: ${option.exposure_description ?? ""}`
+      ].join("\n")
+    )
+    .join("\n\n");
+}
+
+function modelSuffix(output: ModelOutput, allowedOptionIds: string): string {
+  return [
+    "For this specific call, return only JSON using exactly these identifiers:",
+    `- round_id: ${output.round_id}`,
+    `- model_id: ${output.model_id}`,
+    `- provider: ${output.provider}`,
+    `- mode: ${output.mode}`,
+    `- allowed selected_option_id values: ${allowedOptionIds}`
+  ].join("\n");
+}
+
+function loadModelOutputs(): ModelOutput[] {
+  const parsedDir = join(roundRoot, "runs", officialRunId, "submissions", "parsed");
+  if (!existsSync(parsedDir)) {
+    return roundSubmissions.map((submission) => ({
+      ...submission,
+      mode: "closed_capability"
+    }));
+  }
+  return readdirSync(parsedDir)
+    .filter((filename: string) => filename.endsWith(".json"))
+    .sort()
+    .map((filename: string) => JSON.parse(readFileSync(join(parsedDir, filename), "utf-8")) as ModelOutput);
+}
+
+const promptInstructions = readRoundText("prompt.md");
+const briefingText = readRoundText("briefing.md");
+const optionsYamlText = readRoundText("options.yaml");
+const manifestYamlText = readRoundText("manifest.yaml");
+const hashesJsonText = readRoundText("hashes.json");
+const trailingReturnsText = stripMarkdownHeading(
+  readRoundText("market_data", "universe_trailing_returns.md"),
+  "# Full-Universe Trailing Returns"
+);
+const manifestData = parseRoundYaml<Record<string, unknown>>("manifest.yaml") ?? {};
+const researchManifest = parseRoundYaml<Record<string, unknown>>("research", "research_manifest.yaml");
+const optionsData = parseRoundYaml<{ options?: ParsedOption[] }>("options.yaml");
+const parsedOptions = optionsData?.options ?? [];
+const renderedOptionsForPrompt = renderOptionsForPrompt(parsedOptions);
+const allowedOptionIds = parsedOptions
+  .filter((option) => option.include_in_universe !== false)
+  .map((option) => option.id)
+  .filter(Boolean)
+  .join(", ");
+const renderedRoundMetadata = renderRoundMetadata(manifestData, researchManifest);
+const sharedPromptPacket = [
+  `${promptInstructions}\n\n## Round Metadata\n\n${renderedRoundMetadata}\n\n## Briefing\n\n${briefingText}`,
+  trailingReturnsText ? `## Full-Universe Trailing Returns\n\n${trailingReturnsText}` : "",
+  `## Options\n\n${renderedOptionsForPrompt}\n`
+]
+  .filter(Boolean)
+  .join("\n\n");
+const modelOutputs = loadModelOutputs();
+const inputArtifacts = [
+  { label: "Base Instructions", path: "prompt.md", text: promptInstructions },
+  { label: "Round Manifest", path: "manifest.yaml", text: manifestYamlText },
+  { label: "Briefing", path: "briefing.md", text: briefingText },
+  { label: "Full-Universe Trailing Returns", path: "market_data/universe_trailing_returns.md", text: trailingReturnsText },
+  { label: "Rendered Options In Prompt", path: "options.yaml rendered for model prompt", text: renderedOptionsForPrompt },
+  { label: "Source Options YAML", path: "options.yaml", text: optionsYamlText },
+  { label: "Round Hashes", path: "hashes.json", text: hashesJsonText }
+].filter((artifact) => artifact.text);
+const pickCounts = roundSubmissions.reduce<Record<string, number>>((counts, submission) => {
+  counts[submission.selected_option_id] = (counts[submission.selected_option_id] ?? 0) + 1;
+  return counts;
+}, {});
+const consensusPick = Object.entries(pickCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "Pending";
+const consensusCount = pickCounts[consensusPick] ?? 0;
 const consensusOption = universeOptions.find((option) => option.option_id === consensusPick);
-const consensusPrice = entryPrices.find((price) => price.option_id === consensusPick);
+const consensusPrice = roundEntryPrices.find((price) => price.option_id === consensusPick);
 const roundDataset = datasetSchema({
   name: `${round.round_id} CapitalBench round audit dataset`,
-  description: `${round.title}: frozen inputs, official one-shot LLM submissions, entry prices, status, and published audit hashes.`,
+  description: `${round.title}: frozen model-facing inputs, prompt artifacts, official one-shot LLM submissions, entry prices, status, and published audit hashes.`,
   path: `/rounds/${round.round_id}`,
   datePublished: "2026-05-12",
   temporalCoverage: `${round.entry_date}/${round.exit_date}`,
@@ -25,6 +194,8 @@ const roundDataset = datasetSchema({
   variableMeasured: [
     "official model pick",
     "confidence",
+    "model-facing prompt",
+    "input artifact",
     "entry price",
     "exit status",
     "SHA-256 input hash",
@@ -42,7 +213,7 @@ const priceColumns = [
 
 <BaseLayout
   title={`${round.round_id} Round Audit Packet`}
-  description={`${round.title}: official LLM picks, entry prices, pending status, and published audit hashes for the ${round.horizon} benchmark round.`}
+  description={`${round.title}: official LLM picks, model-facing inputs, prompt packet, entry prices, pending status, and published audit hashes for the ${round.horizon} benchmark round.`}
   structuredData={roundDataset}
 >
   <section class="dashboard-header">
@@ -71,17 +242,17 @@ const priceColumns = [
       <li class="phase-complete">
         <span>1</span>
         <strong>Round frozen</strong>
-        <p>{auditHashes.length} public input hashes are available.</p>
+        <p>{roundAuditHashes.length} public input hashes are available.</p>
       </li>
       <li class="phase-complete">
         <span>2</span>
         <strong>Picks collected</strong>
-        <p>{officialSubmissions.length} valid official submissions.</p>
+        <p>{roundSubmissions.length} valid official submissions.</p>
       </li>
       <li class="phase-complete">
         <span>3</span>
         <strong>Entry priced</strong>
-        <p>{entryPrices.length} entry rows published.</p>
+        <p>{roundEntryPrices.length} entry rows published.</p>
       </li>
       <li class="phase-current">
         <span>4</span>
@@ -93,6 +264,8 @@ const priceColumns = [
 
   <nav class="round-tabs" aria-label="Round sections">
     <a href="#overview">Overview</a>
+    <a href="#inputs">Inputs</a>
+    <a href="#outputs">Outputs</a>
     <a href="#picks">Picks</a>
     <a href="#prices">Prices</a>
     <a href="#audit">Audit</a>
@@ -115,7 +288,7 @@ const priceColumns = [
         <div class="grid-3">
           <article class="feature">
             <span class="metric-label">Submissions</span>
-            <h3>{officialSubmissions.length} valid official picks</h3>
+            <h3>{roundSubmissions.length} valid official picks</h3>
             <p>No invalid parsed submissions are published for the official run.</p>
           </article>
           <article class="feature">
@@ -133,7 +306,7 @@ const priceColumns = [
           <div class="check-item complete">
             <span aria-hidden="true"></span>
             <strong>Frozen input hashes</strong>
-            <p>{auditHashes.length} artifacts published.</p>
+            <p>{roundAuditHashes.length} artifacts published.</p>
           </div>
           <div class="check-item complete">
             <span aria-hidden="true"></span>
@@ -142,8 +315,8 @@ const priceColumns = [
           </div>
           <div class="check-item complete">
             <span aria-hidden="true"></span>
-            <strong>Entry prices present</strong>
-            <p>Selected picks, S&amp;P 500, and cash are priced.</p>
+            <strong>Model-facing prompt available</strong>
+            <p>{sharedPromptPacket.length.toLocaleString()} shared prompt characters.</p>
           </div>
           <div class="check-item pending">
             <span aria-hidden="true"></span>
@@ -158,7 +331,7 @@ const priceColumns = [
       <div class="rail-panel highlight-panel">
         <span class="metric-label">Consensus Pick</span>
         <h3>{consensusPick}</h3>
-        <p>{officialSubmissions.length} of {officialSubmissions.length} official models selected this option.</p>
+        <p>{consensusCount} of {roundSubmissions.length} official models selected this option.</p>
         <dl class="mini-facts">
           <div>
             <dt>Symbol</dt>
@@ -190,6 +363,113 @@ const priceColumns = [
     </aside>
   </section>
 
+  <section class="section" id="inputs">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Frozen model-facing context</span>
+          <h2>Prompt And Input Packet</h2>
+          <p>
+            The shared packet below is the prompt body common to every official model call. Each provider call appends a
+            small model-specific identifier block shown after the artifacts.
+          </p>
+        </div>
+      </div>
+      <div class="audit-packet">
+        <details class="artifact-card" open>
+          <summary>
+            <span>Shared Model-Facing Prompt Packet</span>
+            <small>{sharedPromptPacket.length.toLocaleString()} characters</small>
+          </summary>
+          <pre class="artifact-pre"><code>{sharedPromptPacket}</code></pre>
+        </details>
+
+        <div class="artifact-grid">
+          {inputArtifacts.map((artifact) => (
+            <details class="artifact-card">
+              <summary>
+                <span>{artifact.label}</span>
+                <small>{artifact.path}</small>
+              </summary>
+              <pre class="artifact-pre"><code>{artifact.text}</code></pre>
+            </details>
+          ))}
+        </div>
+
+        <details class="artifact-card">
+          <summary>
+            <span>Per-Model Prompt Suffixes</span>
+            <small>{modelOutputs.length} model calls</small>
+          </summary>
+          <div class="suffix-list">
+            {modelOutputs.map((output) => (
+              <article class="suffix-card">
+                <strong>{modelLabel(output.model_id)}</strong>
+                <pre class="artifact-pre compact-pre"><code>{modelSuffix(output, allowedOptionIds)}</code></pre>
+              </article>
+            ))}
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="outputs">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Parsed provider responses</span>
+          <h2>Model Outputs</h2>
+          <p>
+            These are the validated JSON submissions used by CapitalBench. Raw provider response text remains excluded
+            from the public site.
+          </p>
+        </div>
+      </div>
+      <div class="model-output-grid">
+        {modelOutputs.map((output) => (
+          <article class="model-output-card">
+            <div class="model-output-head">
+              <div>
+                <span class={`provider-badge provider-${output.provider}`}>{providerLabel(output.provider)}</span>
+                <h3>{modelLabel(output.model_id)}</h3>
+                <p class="mono">{output.model_id}</p>
+              </div>
+              <div class="pick-pill">
+                <span>Pick</span>
+                <strong>{output.selected_option_id}</strong>
+              </div>
+            </div>
+            <dl class="output-facts">
+              <div>
+                <dt>Confidence</dt>
+                <dd>{Number(output.confidence).toFixed(2)}</dd>
+              </div>
+              <div>
+                <dt>Run Type</dt>
+                <dd>{String(output.run_type ?? "official")}</dd>
+              </div>
+            </dl>
+            <div class="output-copy">
+              <span class="metric-label">Rationale</span>
+              <p>{output.rationale_summary}</p>
+            </div>
+            <div class="output-copy">
+              <span class="metric-label">Key Risks</span>
+              <ul>
+                {(output.key_risks ?? []).map((risk) => <li>{risk}</li>)}
+              </ul>
+            </div>
+            <details class="json-details">
+              <summary>Validated JSON</summary>
+              <pre class="artifact-pre compact-pre"><code>{JSON.stringify(output, null, 2)}</code></pre>
+            </details>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <section class="section" id="picks">
     <div class="panel">
       <div class="panel-header">
@@ -199,7 +479,7 @@ const priceColumns = [
           <p>Expand a row to inspect the model rationale and risk list without crowding the main table.</p>
         </div>
       </div>
-      <OfficialPicksTable client:visible fallbackRows={officialSubmissions} roundId={round.round_id} runId={round.official_run_id} />
+      <OfficialPicksTable client:visible fallbackRows={roundSubmissions} roundId={round.round_id} runId={round.official_run_id} />
     </div>
   </section>
 
@@ -212,7 +492,7 @@ const priceColumns = [
           <p>Exit prices are intentionally absent until the round resolves.</p>
         </div>
       </div>
-      <TableIsland client:visible rows={entryPrices} columns={priceColumns} emptyText="No entry prices are published yet." tableLabel="Entry prices" csvFilename="capitalbench-entry-prices.csv" />
+      <TableIsland client:visible rows={roundEntryPrices} columns={priceColumns} emptyText="No entry prices are published yet." tableLabel="Entry prices" csvFilename="capitalbench-entry-prices.csv" />
     </div>
   </section>
 
@@ -225,7 +505,7 @@ const priceColumns = [
           <p>Round inputs are hashed before model calls and mirrored into the public read model.</p>
         </div>
       </div>
-      <HashTable client:visible rows={auditHashes} />
+      <HashTable client:visible rows={roundAuditHashes} />
     </div>
   </section>
 </BaseLayout>

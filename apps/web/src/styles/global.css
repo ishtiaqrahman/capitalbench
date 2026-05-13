@@ -372,6 +372,7 @@ h3 {
 
 .dashboard-grid {
   min-width: 0;
+  scroll-margin-top: 150px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
   gap: 18px;
@@ -697,6 +698,7 @@ h3 {
 }
 
 .section {
+  scroll-margin-top: 150px;
   padding: 30px 0;
 }
 
@@ -1344,6 +1346,211 @@ tbody tr:hover {
   color: var(--ink);
 }
 
+.audit-packet {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  background: var(--surface-muted);
+}
+
+.artifact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.artifact-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.artifact-card summary,
+.json-details summary {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  color: var(--ink-strong);
+  cursor: pointer;
+  font-weight: 760;
+}
+
+.artifact-card summary small {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 640;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.artifact-pre {
+  max-width: 100%;
+  max-height: 520px;
+  overflow: auto;
+  margin: 0;
+  border-top: 1px solid var(--line);
+  padding: 14px;
+  background: #111b1a;
+  color: #e9f3ef;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.artifact-pre code {
+  white-space: inherit;
+  overflow-wrap: inherit;
+}
+
+.compact-pre {
+  max-height: 280px;
+}
+
+.suffix-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.suffix-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.suffix-card strong {
+  display: block;
+  padding: 10px 12px;
+  color: var(--ink-strong);
+  font-size: 0.9rem;
+}
+
+.model-output-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 14px;
+  background: var(--surface-muted);
+}
+
+.model-output-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.model-output-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.model-output-head h3 {
+  margin-top: 9px;
+  font-size: 1.1rem;
+}
+
+.model-output-head p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  overflow-wrap: anywhere;
+}
+
+.pick-pill {
+  min-width: 116px;
+  border: 1px solid #b9ddd5;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #eef8f5;
+  text-align: right;
+}
+
+.pick-pill span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 780;
+  text-transform: uppercase;
+}
+
+.pick-pill strong {
+  display: block;
+  margin-top: 4px;
+  color: #0e5f4c;
+  overflow-wrap: anywhere;
+}
+
+.output-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 14px;
+}
+
+.output-facts div {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--surface-muted);
+}
+
+.output-facts dt {
+  color: var(--muted-2);
+  font-size: 0.68rem;
+  font-weight: 780;
+  text-transform: uppercase;
+}
+
+.output-facts dd {
+  margin: 4px 0 0;
+  color: var(--ink-strong);
+  font-weight: 760;
+}
+
+.output-copy {
+  margin-top: 12px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.output-copy p {
+  margin: 6px 0 0;
+}
+
+.output-copy ul {
+  margin: 7px 0 0;
+  padding-left: 18px;
+}
+
+.json-details {
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.json-details summary {
+  min-height: 40px;
+  padding: 9px 12px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
 .hash-row {
   display: flex;
   align-items: center;
@@ -1513,7 +1720,11 @@ tbody tr:hover {
   .phase-list,
   .evidence-grid,
   .rule-matrix,
-  .audit-checklist {
+  .audit-checklist,
+  .artifact-grid,
+  .suffix-list,
+  .model-output-grid,
+  .output-facts {
     grid-template-columns: 1fr;
   }
 
@@ -1664,10 +1875,31 @@ tbody tr:hover {
 
   .panel-header,
   .table-toolbar,
-  .pick-details {
+  .pick-details,
+  .model-output-head {
     grid-template-columns: 1fr;
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .artifact-card summary,
+  .json-details summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .artifact-card summary small,
+  .pick-pill {
+    text-align: left;
+  }
+
+  .pick-pill {
+    width: 100%;
+  }
+
+  .artifact-pre {
+    max-height: 420px;
+    font-size: 0.74rem;
   }
 
   .page-header {
