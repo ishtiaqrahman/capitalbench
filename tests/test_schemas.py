@@ -1,7 +1,12 @@
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
 from capitalbench.schemas import ModelSubmission, PortfolioConstraints, Usage
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def _valid_submission() -> dict[str, object]:
@@ -78,6 +83,13 @@ def test_portfolio_constraints_reject_impossible_minimum_allocation() -> None:
 def test_portfolio_constraints_require_full_allocation() -> None:
     with pytest.raises(ValidationError, match="max_total_allocation_pct must be 100"):
         PortfolioConstraints(max_total_allocation_pct=80)
+
+
+def test_public_portfolio_schema_matches_repo_schema() -> None:
+    schema_path = PROJECT_ROOT / "schemas" / "portfolio_submission_v1.json"
+    public_schema_path = PROJECT_ROOT / "apps" / "web" / "public" / "schemas" / "portfolio_submission_v1.json"
+
+    assert public_schema_path.read_text(encoding="utf-8") == schema_path.read_text(encoding="utf-8")
 
 
 def test_schema_validation_rejects_invalid_provider() -> None:
