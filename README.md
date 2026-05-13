@@ -9,12 +9,13 @@ CapitalBench is an offline, auditable benchmark for one-shot LLM market
 decisions.
 
 In each round, every model receives the same frozen briefing, prompt, option
-universe, and mechanical market-data table. The model must choose exactly one
-investable option. After the one-month horizon resolves, CapitalBench scores
-the decision against local entry and exit prices.
+universe, and mechanical market-data table. The round manifest declares whether
+the model must choose one investable option or allocate a constrained portfolio.
+After the one-month horizon resolves, CapitalBench scores the decision against
+local entry and exit prices.
 
 CapitalBench is designed for evaluation research, not investment advice. It is
-not a trading system, recommendation engine, or portfolio optimizer.
+not a trading system, recommendation engine, or investment adviser.
 
 ```text
 Status: research benchmark framework
@@ -29,11 +30,11 @@ Public artifact license: CC BY 4.0
 
 | Area | CapitalBench behavior |
 |---|---|
-| Core task | Pick exactly one option from a frozen investable universe |
+| Core task | Make one frozen market decision: a single pick or a constrained portfolio, depending on the round protocol |
 | Evaluation horizon | One month |
 | Model input | Frozen briefing, prompt, options, and optional mechanical market-data table |
 | Model output | Strict JSON submission |
-| Official result | One call per model, one selected asset, one official score |
+| Official result | One call per model, one official score |
 | Stability result | Multiple calls per model, usually five, reported separately |
 | Benchmark scoring | Alpha versus S&P 500, cash comparison, regret where full prices exist |
 | API calls | Never made unless `--allow-real-api-calls` is passed |
@@ -46,9 +47,8 @@ LLMs increasingly produce market commentary, forecasts, and investment-related
 reasoning. Many evaluations of that behavior are subjective, prompt-only, or
 not time-resolved. CapitalBench makes the question concrete:
 
-> Given the same information at the same decision time, which single market
-> exposure does a model select, and how does that choice perform one month
-> later?
+> Given the same information at the same decision time, what market decision
+> does a model make, and how does that decision perform one month later?
 
 The framework emphasizes reproducibility:
 
@@ -139,7 +139,7 @@ CapitalBench does not create:
 - provisional, tracking, or qualified labels
 - a weighted mega-score
 - retroactive official backfills
-- portfolio allocations
+- unversioned portfolio rules
 
 New models become eligible only for future rounds. They are not penalized for
 missing older rounds, and older round leaderboards remain unchanged.
@@ -168,6 +168,19 @@ Consistency: 3 / 5 = 60%
 ```
 
 The stability result does not affect the official leaderboard.
+
+## Submission Formats
+
+Each round declares its response protocol in `manifest.yaml`.
+
+| Format | Model decision | Score return |
+|---|---|---|
+| `single_pick` | One `selected_option_id` from the frozen universe | Realized return of the selected option |
+| `portfolio` | 1 to 5 holdings by default, 5% increments, total allocation exactly 100% | Weighted realized portfolio return |
+
+Portfolio rounds are versioned methodology changes. They do not alter completed
+single-pick rounds, and reports label the submission format so readers can
+interpret results correctly.
 
 ## CapitalBench Universe v1.5
 
@@ -798,10 +811,9 @@ CapitalBench does not:
 - recommend assets
 - fetch live market prices automatically
 - call live model APIs by default
-- support portfolios, leverage, shorting, or multiple selections
+- support leverage, shorting, or unversioned multiple-selection rules
 - backfill new models into old official rounds
 - combine official and stability results into one score
-- include a website in this repository
 
 ## Contributing
 
@@ -809,7 +821,7 @@ See `CONTRIBUTING.md`.
 
 Before proposing methodology changes, keep these principles intact:
 
-- one official pick per model per round
+- one official decision per model per round
 - official and stability results stay separate
 - completed rounds remain unchanged
 - new models enter future rounds only

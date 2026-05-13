@@ -1,7 +1,13 @@
 # CapitalBench Protocol
 
-CapitalBench evaluates one thing: given the same frozen market context, which
-single market option does a model choose for the next month?
+CapitalBench evaluates one thing: given the same frozen market context, what
+official market decision does a model make for the next month?
+
+Earlier rounds use a `single_pick` protocol: each model selects exactly one
+option. Future portfolio rounds can use a `portfolio` protocol: each model
+allocates 100% across a small number of allowed options under constraints
+declared in the round manifest. The submission format is part of the frozen
+round configuration and is never changed after model calls begin.
 
 Models may use their internal learned knowledge and general market priors. They
 must not browse, call tools, retrieve live data, or intentionally rely on facts,
@@ -22,6 +28,7 @@ The public inputs are:
 - `briefing.md`: information available to every model at decision time
 - `options.yaml`: the only choices models may select
 - `prompt.md`: the exact task instruction
+- `submission_schema.json`, if present: the exact machine-readable response schema
 - `market_data/universe_trailing_returns.md`, if present: a mechanical full-universe trailing-return table
 
 Before collecting submissions, run `capitalbench hash-round`. This freezes the
@@ -157,6 +164,29 @@ capitalbench validate-universe \
 `validate-universe` requires `TIINGO_API_KEY` in the environment and does not
 print the key.
 
+## Submission Formats
+
+Every round declares `submission_format` in `manifest.yaml`.
+
+`single_pick` rounds require one `selected_option_id`. The selected option must
+exist in `options.yaml`.
+
+`portfolio` rounds require a `portfolio` array. The default public portfolio
+protocol is:
+
+- 1 to 5 holdings
+- whole-round allocation total of exactly 100%
+- 5% allocation increments
+- no shorting, leverage, or negative weights
+- each holding must use an `option_id` from the frozen `options.yaml`
+- CASH and benchmark allocations are allowed only if permitted by the round
+  manifest and present in the option universe
+
+The exact constraints are stored under `portfolio_constraints` in the round
+manifest and are injected into the provider response schema and prompt. This
+keeps the public protocol auditable and lets future methodology versions adjust
+limits without rewriting old rounds.
+
 ## Submission Rule
 
 Each model must submit one JSON or YAML object. It must include:
@@ -169,14 +199,21 @@ Each model must submit one JSON or YAML object. It must include:
 - `replicate_index`
 - `replicate_count`
 - `is_official_score`
-- `selected_option_id`
 - `confidence`
 - `rationale_summary`
 - `key_risks`
 
-The selected option must exist in `options.yaml`. A submission that includes
-multiple selections is invalid. Invalid raw submissions are preserved but are
-not scored.
+For `single_pick` rounds, the object must include `selected_option_id`.
+
+For `portfolio` rounds, the object must include:
+
+- `portfolio`: one object per holding, with `option_id`, `allocation_pct`, and
+  per-holding `rationale`
+- `portfolio_rationale`: short explanation of the overall allocation
+
+Legacy multi-select fields such as `selected_option_ids`, `selected_options`,
+or `selections` are invalid. Invalid raw submissions are preserved but are not
+scored.
 
 Official runs require `replicate_index: 1`, `replicate_count: 1`, and
 `is_official_score: true`. Stability runs require `replicate_index` from `1` to
@@ -186,8 +223,9 @@ are unique, and require `is_official_score: false`.
 ## Official One-Shot Result
 
 The official leaderboard uses one valid submission per model from one selected
-official run. The model gets one attempt. The selected asset from that attempt
-is the official score.
+official run. The model gets one attempt. In a `single_pick` round, the
+selected asset from that attempt is the official score. In a `portfolio` round,
+the weighted realized return of the submitted allocation is the official score.
 
 ```bash
 capitalbench run-round \
@@ -343,8 +381,9 @@ CapitalBench is time-resolved. The decision is made before the outcome window is
 known. After the window ends, the operator adds local entry and exit prices and
 runs `capitalbench score-round`.
 
-For Tiingo scoring prices, `capitalbench fetch-prices` defaults to selected-only
-fetching: selected options, the S&P 500 benchmark, and CASH. Add
+For Tiingo scoring prices, `capitalbench fetch-prices` defaults to decision-only
+fetching: selected options or portfolio holdings, plus the S&P 500 benchmark
+and CASH. Add
 `--full-universe` when the round report should include `regret_vs_best_option`
 and `rank_among_options`; this fetches every option in the frozen
 `options.yaml`. Scoring price fetches require Tiingo rows to exactly match the
@@ -353,5 +392,6 @@ Use `--side entry` or `--side exit` when only one side of the pricing window is
 available. This is useful for locking full-universe entry prices before the
 one-month exit date has resolved.
 
-The first public version supports a one-month single-option decision only. It
-does not support portfolios or live data fetching.
+Round 1 supports a one-month single-option decision only. Future methodology
+versions can use the portfolio protocol. Live market-data fetching remains an
+explicit operator command, not automatic model-time retrieval.

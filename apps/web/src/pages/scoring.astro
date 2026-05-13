@@ -5,7 +5,7 @@ import PageHeader from "../components/PageHeader.astro";
 
 <BaseLayout
   title="CapitalBench Scoring"
-  description="Definitions for CapitalBench official scores, selected-option returns, alpha versus S&P 500, regret, cash comparison, and stability metrics."
+  description="Definitions for CapitalBench official scores, selected-option and portfolio returns, alpha versus S&P 500, regret, cash comparison, and stability metrics."
 >
   <PageHeader
     eyebrow="Scoring"
@@ -16,15 +16,16 @@ import PageHeader from "../components/PageHeader.astro";
     <article class="doc-body">
       <h2>Official Round</h2>
       <p>
-        The official score is the selected option return minus the S&amp;P 500 return over the round horizon. Each
-        model has one official selected option for a round, and only that one-shot submission is eligible for the
-        official leaderboard.
+        The official score is the model's decision return minus the S&amp;P 500 return over the round horizon. Each
+        model has one official submission for a round, and only that one-shot submission is eligible for the official
+        leaderboard.
       </p>
       <ul>
-        <li>Selected asset return: exit price divided by entry price, minus one.</li>
-        <li>Alpha versus S&P 500: selected asset return minus S&P 500 return.</li>
-        <li>Regret: best priced option return minus selected asset return, when full-universe prices exist.</li>
-        <li>Cash comparison: whether the selected option beats a cash return.</li>
+        <li>Single-pick return: selected option exit price divided by entry price, minus one.</li>
+        <li>Portfolio return: weighted sum of holding returns, using the submitted allocation percentages.</li>
+        <li>Alpha versus S&P 500: decision return minus S&P 500 return.</li>
+        <li>Regret: best priced option return minus decision return, when full-universe prices exist.</li>
+        <li>Cash comparison: whether the decision return beats a cash return.</li>
       </ul>
 
       <h2>Price Inputs</h2>
@@ -39,12 +40,16 @@ import PageHeader from "../components/PageHeader.astro";
           <code>(exit_price / entry_price) - 1</code>
         </div>
         <div>
+          <span>Portfolio return</span>
+          <code>sum(weight * option_return)</code>
+        </div>
+        <div>
           <span>Official alpha</span>
-          <code>selected_return - sp500_return</code>
+          <code>decision_return - sp500_return</code>
         </div>
         <div>
           <span>Regret</span>
-          <code>best_option_return - selected_return</code>
+          <code>best_option_return - decision_return</code>
         </div>
       </div>
 
@@ -73,7 +78,7 @@ import PageHeader from "../components/PageHeader.astro";
 
       <h2>Pending Rounds</h2>
       <p>
-        Pending rounds can show model picks, confidence values, rationale summaries, entry prices, and audit hashes.
+        Pending rounds can show model decisions, confidence values, rationale summaries, entry prices, and audit hashes.
         They should not show rank, alpha, selected-option return, or regret until exit prices are present. This prevents
         the site from implying performance before a benchmark round is actually resolved.
       </p>

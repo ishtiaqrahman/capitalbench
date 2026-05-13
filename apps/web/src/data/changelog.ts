@@ -27,6 +27,24 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-13-portfolio-protocol-groundwork",
+    date: "2026-05-13",
+    title: "Portfolio round protocol groundwork added",
+    category: "Methodology",
+    status: "published",
+    summary:
+      "CapitalBench now supports a versioned portfolio submission protocol for future rounds while preserving single-pick compatibility for completed rounds.",
+    details: [
+      "Future portfolio rounds can require 1 to 5 holdings, 5% allocation increments, and exactly 100% total allocation through frozen round manifest constraints.",
+      "CLI validation, mock submissions, scoring, reports, Supabase sync, and website tables now understand portfolio allocations and holding-level audit rows.",
+      "Completed single-pick rounds remain labeled and scored under their original methodology; portfolio rounds are reported separately by submission format."
+    ],
+    links: [
+      { label: "Methodology", href: "/methodology" },
+      { label: "Scoring", href: "/scoring" }
+    ]
+  },
+  {
     id: "2026-05-13-changelog-established",
     date: "2026-05-13",
     title: "Public changelog format established",

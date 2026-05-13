@@ -59,7 +59,12 @@ def _load_local_env_files() -> None:
 
 
 def _cmd_init_round(args: argparse.Namespace) -> int:
-    round_path = init_round(args.round_id, args.rounds_dir, universe_path=args.universe)
+    round_path = init_round(
+        args.round_id,
+        args.rounds_dir,
+        universe_path=args.universe,
+        submission_format=args.submission_format,
+    )
     print(f"initialized round: {round_path}")
     return 0
 
@@ -425,6 +430,7 @@ def build_parser() -> argparse.ArgumentParser:
     init_parser.add_argument("--round-id", required=True)
     init_parser.add_argument("--rounds-dir", type=Path, default=Path("rounds"))
     init_parser.add_argument("--universe", type=Path)
+    init_parser.add_argument("--submission-format", choices=["single_pick", "portfolio"], default="single_pick")
     init_parser.set_defaults(func=_cmd_init_round)
 
     hash_parser = subparsers.add_parser("hash-round", help="hash round input files")

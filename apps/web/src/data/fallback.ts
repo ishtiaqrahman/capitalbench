@@ -1,4 +1,5 @@
 export type RoundStatus = "pending" | "resolved" | "archived";
+export type SubmissionFormat = "single_pick" | "portfolio";
 
 export interface RoundRecord {
   round_id: string;
@@ -12,6 +13,7 @@ export interface RoundRecord {
   exit_date: string;
   status: RoundStatus;
   methodology_version: string;
+  submission_format?: SubmissionFormat;
   official_run_id: string;
   stability_run_id?: string;
   notes: string;
@@ -22,7 +24,20 @@ export interface SubmissionRecord {
   run_id: string;
   model_id: string;
   provider: string;
+  submission_format?: SubmissionFormat;
   selected_option_id: string;
+  holding_count?: number;
+  max_allocation_bps?: number;
+  cash_allocation_bps?: number;
+  benchmark_allocation_bps?: number;
+  concentration_hhi?: number;
+  portfolio?: Array<{
+    option_id: string;
+    allocation_pct?: number;
+    allocation_bps?: number;
+    rationale?: string;
+  }>;
+  portfolio_rationale?: string;
   confidence: number;
   rationale_summary: string;
   key_risks: string[];
@@ -56,6 +71,13 @@ export interface LeaderboardRecord {
   model_id: string;
   provider: string;
   selected_option_id?: string;
+  submission_format?: SubmissionFormat;
+  holding_count?: number;
+  portfolio_return?: number;
+  max_allocation_bps?: number;
+  cash_allocation_bps?: number;
+  benchmark_allocation_bps?: number;
+  concentration_hhi?: number;
   confidence?: number;
   selected_asset_return?: number;
   sp500_return?: number;

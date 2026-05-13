@@ -8,6 +8,15 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from .io import load_manifest, load_options, read_json
+from .portfolio import (
+    allocation_views,
+    constraints_from_manifest,
+    portfolio_metrics,
+    primary_option_id,
+    score_portfolio_return,
+    selected_option_ids,
+    submission_format_from_manifest,
+)
 from .run_store import RunPaths, get_selected_run_paths, read_run_manifest
 from .schemas import MarketOption, ModelSubmission, PriceRecord, ScoreRecord
 from .validation import iter_submission_files, validate_submission_payload
@@ -140,6 +149,8 @@ def _load_parsed_submissions(
     round_id: str,
     run_type: str,
     replicate_count: int,
+    submission_format,
+    portfolio_constraints,
 ) -> list[ModelSubmission]:
     submissions: list[ModelSubmission] = []
     for parsed_file in iter_submission_files(run_paths.parsed_dir):
@@ -153,6 +164,8 @@ def _load_parsed_submissions(
                     run_type=run_type,
                     replicate_count=replicate_count,
                     require_run_metadata=run_type in {"official", "stability", "retrospective"},
+                    submission_format=submission_format,
+                    portfolio_constraints=portfolio_constraints,
                 )
             )
         except Exception:
@@ -281,8 +294,53 @@ def _write_leaderboard_csv(path: Path, scores: list[ScoreRecord]) -> None:
             writer.writerow(row)
 
 
+def _write_allocations_csv(
+    path: Path,
+    submissions: list[ModelSubmission],
+    option_returns: dict[str, float],
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = [
+        "round_id",
+        "model_id",
+        "provider",
+        "replicate_index",
+        "option_id",
+        "allocation_bps",
+        "allocation_pct",
+        "allocation_rank",
+        "option_return",
+        "return_contribution",
+        "rationale",
+    ]
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for submission in sorted(submissions, key=lambda item: (item.model_id, item.replicate_index or 1)):
+            for allocation in allocation_views(submission):
+                option_return = option_returns.get(allocation.option_id)
+                writer.writerow(
+                    {
+                        "round_id": submission.round_id,
+                        "model_id": submission.model_id,
+                        "provider": submission.provider,
+                        "replicate_index": submission.replicate_index or 1,
+                        "option_id": allocation.option_id,
+                        "allocation_bps": allocation.allocation_bps,
+                        "allocation_pct": allocation.allocation_bps / 100,
+                        "allocation_rank": allocation.allocation_rank,
+                        "option_return": "" if option_return is None else option_return,
+                        "return_contribution": ""
+                        if option_return is None
+                        else (allocation.allocation_bps / 10000) * option_return,
+                        "rationale": allocation.rationale,
+                    }
+                )
+
+
 def _score_submission(
     submission: ModelSubmission,
+    options_by_id: dict[str, MarketOption],
     option_returns: dict[str, float],
     ranks: dict[str, int],
     sp500_return: float,
@@ -290,27 +348,35 @@ def _score_submission(
     best_return: float | None,
     full_universe_priced: bool,
 ) -> ScoreRecord:
-    if submission.selected_option_id not in option_returns:
-        raise ValueError(f"missing price data for selected option_id: {submission.selected_option_id}")
-    selected_return = option_returns[submission.selected_option_id]
+    selected_id = primary_option_id(submission)
+    selected_return = score_portfolio_return(submission, option_returns)
     alpha_vs_sp500 = selected_return - sp500_return
     alpha_per_dollar = None
     if submission.cost_usd is not None and submission.cost_usd > 0:
         alpha_per_dollar = alpha_vs_sp500 / submission.cost_usd
+    metrics = portfolio_metrics(submission, options_by_id)
     return ScoreRecord(
         round_id=submission.round_id,
         model_id=submission.model_id,
         provider=submission.provider,
         mode=submission.mode,
-        selected_option_id=submission.selected_option_id,
+        submission_format="portfolio" if submission.portfolio is not None else "single_pick",
+        selected_option_id=selected_id,
         confidence=submission.confidence,
         rationale_summary=submission.rationale_summary,
+        portfolio_rationale=submission.portfolio_rationale,
         key_risks=submission.key_risks,
         selected_asset_return=selected_return,
+        portfolio_return=selected_return if submission.portfolio is not None else None,
         sp500_return=sp500_return,
         alpha_vs_sp500=alpha_vs_sp500,
         regret_vs_best_option=(best_return - selected_return) if best_return is not None else None,
-        rank_among_options=ranks.get(submission.selected_option_id) if full_universe_priced else None,
+        rank_among_options=ranks.get(selected_id) if submission.portfolio is None and full_universe_priced else None,
+        holding_count=metrics.holding_count,
+        max_allocation_bps=metrics.max_allocation_bps,
+        cash_allocation_bps=metrics.cash_allocation_bps,
+        benchmark_allocation_bps=metrics.benchmark_allocation_bps,
+        concentration_hhi=metrics.concentration_hhi,
         beats_sp500=selected_return > sp500_return,
         beats_cash=selected_return > cash_return,
         cost_usd=submission.cost_usd,
@@ -334,8 +400,11 @@ def _write_stability_returns_csv(
         "replicate_index",
         "replicate_count",
         "selected_option_id",
+        "submission_format",
+        "holding_count",
         "confidence",
         "selected_asset_return",
+        "portfolio_return",
         "sp500_return",
         "alpha_vs_sp500",
         "regret_vs_best_option",
@@ -362,8 +431,11 @@ def _write_stability_returns_csv(
                     "replicate_index": submission.replicate_index,
                     "replicate_count": submission.replicate_count,
                     "selected_option_id": score.selected_option_id,
+                    "submission_format": score.submission_format,
+                    "holding_count": score.holding_count,
                     "confidence": score.confidence,
                     "selected_asset_return": score.selected_asset_return,
+                    "portfolio_return": "" if score.portfolio_return is None else score.portfolio_return,
                     "sp500_return": score.sp500_return,
                     "alpha_vs_sp500": score.alpha_vs_sp500,
                     "regret_vs_best_option": score.regret_vs_best_option,
@@ -500,22 +572,33 @@ def _write_stability_csv(
 def score_round(round_path: Path, run_id: str | None = None) -> list[ScoreRecord]:
     manifest = load_manifest(round_path)
     options = load_options(round_path)
+    options_by_id = {option.option_id: option for option in options}
+    submission_format = submission_format_from_manifest(manifest)
+    portfolio_constraints = constraints_from_manifest(manifest)
     run_paths = get_selected_run_paths(round_path, run_id)
     run_manifest = read_run_manifest(run_paths)
     run_type = str(run_manifest.get("run_type") or "mock")
     replicate_count = int(run_manifest.get("replicates") or 1)
-    submissions = _load_parsed_submissions(run_paths, options, manifest.round_id, run_type, replicate_count)
+    submissions = _load_parsed_submissions(
+        run_paths,
+        options,
+        manifest.round_id,
+        run_type,
+        replicate_count,
+        submission_format,
+        portfolio_constraints,
+    )
     entry_prices = read_price_records(round_path / "prices" / "entry_prices.csv")
     exit_prices = read_price_records(round_path / "prices" / "exit_prices.csv")
     sp500_option = _find_sp500_option(options)
-    selected_option_ids = {submission.selected_option_id for submission in submissions}
-    required_option_ids = {sp500_option.option_id} | selected_option_ids
+    selected_ids = set().union(*(selected_option_ids(submission) for submission in submissions)) if submissions else set()
+    required_option_ids = {sp500_option.option_id} | selected_ids
     required_option_ids.update(option.option_id for option in options if _is_cash_option(option))
     option_returns = calculate_option_returns(
         options,
         entry_prices,
         exit_prices,
-        selected_option_ids,
+        selected_ids,
         required_option_ids=required_option_ids,
     )
     ranks = rank_options(option_returns)
@@ -534,6 +617,7 @@ def score_round(round_path: Path, run_id: str | None = None) -> list[ScoreRecord
         scores.append(
             _score_submission(
                 submission,
+                options_by_id,
                 option_returns,
                 ranks,
                 sp500_return,
@@ -558,6 +642,7 @@ def score_round(round_path: Path, run_id: str | None = None) -> list[ScoreRecord
         scores_by_submission = [
             _score_submission(
                 submission,
+                options_by_id,
                 option_returns,
                 ranks,
                 sp500_return,
@@ -590,6 +675,7 @@ def score_round(round_path: Path, run_id: str | None = None) -> list[ScoreRecord
             ranks,
             full_universe_priced=full_universe_priced,
         )
+        _write_allocations_csv(results_dir / "allocations.csv", submissions, option_returns)
         _write_leaderboard_csv(results_dir / "leaderboard.csv", scores)
         stability_path = results_dir / "stability.csv"
         if stability_path.exists():

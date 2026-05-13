@@ -5,19 +5,19 @@ import PageHeader from "../components/PageHeader.astro";
 
 <BaseLayout
   title="CapitalBench Methodology"
-  description="CapitalBench methodology for frozen prompts, one-shot LLM submissions, official scoring, stability runs, fairness controls, and audit artifacts."
+  description="CapitalBench methodology for frozen prompts, one-shot LLM submissions, single-pick and portfolio protocols, official scoring, stability runs, fairness controls, and audit artifacts."
 >
   <PageHeader
     eyebrow="Methodology"
     title="A Frozen One-Shot Market Benchmark"
-    summary="CapitalBench asks each model one market question under the same frozen inputs, preserves the full audit trail, and scores the selected option only after the fixed horizon resolves."
+    summary="CapitalBench asks each model one market question under the same frozen inputs, preserves the full audit trail, and scores the official decision only after the fixed horizon resolves."
   />
 
   <section class="methodology-lede" aria-label="Methodology summary">
     <div>
       <span class="metric-label">Primary measurement</span>
-      <strong>One official asset choice</strong>
-      <p>Each model chooses exactly one option from the frozen universe. The official leaderboard uses one valid call per model.</p>
+      <strong>One official decision</strong>
+      <p>Each model submits one schema-valid decision: a single pick or constrained portfolio, depending on the frozen round protocol.</p>
     </div>
     <div>
       <span class="metric-label">Information rule</span>
@@ -27,7 +27,7 @@ import PageHeader from "../components/PageHeader.astro";
     <div>
       <span class="metric-label">Scoring rule</span>
       <strong>Alpha versus S&amp;P 500</strong>
-      <p>Realized selected-option return is compared with the S&amp;P 500 benchmark over the manifest horizon.</p>
+      <p>The realized decision return is compared with the S&amp;P 500 benchmark over the manifest horizon.</p>
     </div>
   </section>
 
@@ -53,8 +53,8 @@ import PageHeader from "../components/PageHeader.astro";
     </article>
     <article>
       <span class="panel-kicker">Scored</span>
-      <h3>One official selected option</h3>
-      <p>The official leaderboard uses one valid one-shot pick per model from the selected official run.</p>
+      <h3>One official submission</h3>
+      <p>The official leaderboard uses one valid one-shot submission per model from the selected official run.</p>
     </article>
     <article>
       <span class="panel-kicker">Not scored</span>
@@ -68,9 +68,10 @@ import PageHeader from "../components/PageHeader.astro";
       <section id="scope">
         <h2>What CapitalBench Measures</h2>
         <p>
-          CapitalBench evaluates one narrow question: given the same frozen market context, which single market option
-          does a model choose for the next month? It is a benchmark for reproducible model comparison, not a trading
-          system, portfolio optimizer, or investment recommendation engine.
+          CapitalBench evaluates one narrow question: given the same frozen market context, what market decision does a
+          model make for the next month? Earlier rounds use a single-pick protocol. Future rounds can use a constrained
+          portfolio protocol. It is a benchmark for reproducible model comparison, not a trading system or investment
+          recommendation engine.
         </p>
         <p>
           Models may use internal learned knowledge and general market priors. They do not have to behave like blank
@@ -118,7 +119,7 @@ import PageHeader from "../components/PageHeader.astro";
               <tr>
                 <td data-label="Artifact"><code>manifest.yaml</code></td>
                 <td data-label="Audience">Public</td>
-                <td data-label="Purpose">Round metadata, decision deadline, entry rule, exit rule, horizon, and methodology version.</td>
+                <td data-label="Purpose">Round metadata, decision deadline, entry rule, exit rule, horizon, methodology version, submission format, and portfolio constraints.</td>
               </tr>
               <tr>
                 <td data-label="Artifact"><code>prompt.md</code></td>
@@ -133,7 +134,12 @@ import PageHeader from "../components/PageHeader.astro";
               <tr>
                 <td data-label="Artifact"><code>options.yaml</code></td>
                 <td data-label="Audience">Model-facing</td>
-                <td data-label="Purpose">The only valid choices. Each public submission must select exactly one option id.</td>
+                <td data-label="Purpose">The only valid choices. Each public submission must use option ids from this frozen universe.</td>
+              </tr>
+              <tr>
+                <td data-label="Artifact"><code>submission_schema.json</code></td>
+                <td data-label="Audience">Model-facing when present</td>
+                <td data-label="Purpose">The machine-readable response contract for the round's declared submission format.</td>
               </tr>
               <tr>
                 <td data-label="Artifact"><code>market_data/universe_trailing_returns.*</code></td>
@@ -200,8 +206,8 @@ import PageHeader from "../components/PageHeader.astro";
       <section id="submissions">
         <h2>Submission Schema</h2>
         <p>
-          Each model must return one JSON or YAML object. A submission with multiple selected assets is invalid. Invalid
-          raw responses remain preserved, but they are not scored and cannot enter a public official leaderboard.
+          Each model must return one JSON or YAML object matching the round's declared submission format. Invalid raw
+          responses remain preserved, but they are not scored and cannot enter a public official leaderboard.
         </p>
         <div class="schema-grid">
           <span><code>round_id</code></span>
@@ -212,10 +218,23 @@ import PageHeader from "../components/PageHeader.astro";
           <span><code>replicate_index</code></span>
           <span><code>replicate_count</code></span>
           <span><code>is_official_score</code></span>
-          <span><code>selected_option_id</code></span>
           <span><code>confidence</code></span>
           <span><code>rationale_summary</code></span>
           <span><code>key_risks</code></span>
+        </div>
+        <div class="leaderboard-defs schema-mode-defs">
+          <div>
+            <h3>Single Pick</h3>
+            <p>Requires one <code>selected_option_id</code> from <code>options.yaml</code>. Legacy multi-select fields are invalid.</p>
+          </div>
+          <div>
+            <h3>Portfolio</h3>
+            <p>Requires a <code>portfolio</code> array plus <code>portfolio_rationale</code>. The default protocol allows 1 to 5 holdings, 5% increments, and exactly 100% total allocation.</p>
+          </div>
+          <div>
+            <h3>Round Constraints</h3>
+            <p><code>manifest.yaml</code> freezes the exact submission format, holding limits, allocation increment, and cash or benchmark allowance before model calls begin.</p>
+          </div>
         </div>
         <p>
           Official runs require <code>replicate_index: 1</code>, <code>replicate_count: 1</code>, and
@@ -230,7 +249,7 @@ import PageHeader from "../components/PageHeader.astro";
           <div class="method-card">
             <span class="panel-kicker">Official</span>
             <h3>One call per model</h3>
-            <p>The official result is the selected asset from one valid provider call in the selected official run.</p>
+            <p>The official result is one valid provider call in the selected official run, scored under the round's declared submission format.</p>
           </div>
           <div class="method-card">
             <span class="panel-kicker">Stability</span>
@@ -280,8 +299,12 @@ import PageHeader from "../components/PageHeader.astro";
             <code>exit_price / entry_price - 1</code>
           </div>
           <div>
+            <span>Portfolio return</span>
+            <code>sum(weight * option_return)</code>
+          </div>
+          <div>
             <span>Alpha versus S&amp;P 500</span>
-            <code>selected_return - sp500_return</code>
+            <code>decision_return - sp500_return</code>
           </div>
           <div>
             <span>Regret versus best option</span>
@@ -293,9 +316,9 @@ import PageHeader from "../components/PageHeader.astro";
           </div>
         </div>
         <p>
-          Cash is treated as a zero return unless cash prices are explicitly supplied. The main official leaderboard is
-          sorted by alpha versus S&amp;P 500 descending. Ties are resolved by lower regret, higher confidence, and then
-          model id.
+          Cash is treated as a zero return unless cash prices are explicitly supplied. Portfolio rounds use the weighted
+          realized return of the submitted allocation. The main official leaderboard is sorted by alpha versus S&amp;P
+          500 descending. Ties are resolved by lower regret, higher confidence, and then model id.
         </p>
         <pre class="command-block"><code>capitalbench fetch-prices \
   --round rounds/&lt;id&gt; \
@@ -310,7 +333,7 @@ import PageHeader from "../components/PageHeader.astro";
         <div class="leaderboard-defs">
           <div>
             <h3>Latest Round Leaderboard</h3>
-            <p>Newest resolved official one-shot run only. If the latest round is pending, picks may be shown but performance is withheld.</p>
+            <p>Newest resolved official one-shot run only. If the latest round is pending, decisions may be shown but performance is withheld.</p>
           </div>
           <div>
             <h3>Cumulative Official Leaderboard</h3>
@@ -359,7 +382,7 @@ capitalbench sync-web --rounds-dir rounds --include-cumulative</code></pre>
         <h2>Limitations</h2>
         <p>
           CapitalBench measures one prompt, one option set, and one time window at a time. It does not model taxes,
-          transaction costs, slippage, liquidity, dividends, position sizing, or portfolio construction. A one-month
+          transaction costs, slippage, liquidity, dividends, or real-world execution constraints. A one-month
           result can be dominated by noise, and a round where many models choose the same asset can be fair but
           low-discrimination as a ranking event.
         </p>

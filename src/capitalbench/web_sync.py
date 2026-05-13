@@ -17,7 +17,9 @@ from .cumulative import (
 )
 from .hashing import round_hashes_match, sha256_file
 from .io import load_manifest, load_options, read_json, read_yaml
+from .portfolio import allocation_views, portfolio_metrics, primary_option_id
 from .run_store import get_run_paths, list_run_ids, read_run_manifest, resolve_run_id
+from .schemas import ModelSubmission
 from .validation import iter_submission_files
 
 SUPABASE_SKIP_MESSAGE = "Supabase sync skipped: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured."
@@ -159,6 +161,7 @@ def sync_round(
     run_payloads: list[dict[str, Any]] = []
     model_rows: dict[str, dict[str, Any]] = {}
     submission_rows: list[dict[str, Any]] = []
+    allocation_rows: list[dict[str, Any]] = []
     official_rows: list[dict[str, Any]] = []
     stability_rows: list[dict[str, Any]] = []
     option_return_rows: list[dict[str, Any]] = []
@@ -175,6 +178,7 @@ def sync_round(
         for model_row in _model_rows(run_paths):
             model_rows[model_row["model_id"]] = model_row
         submission_rows.extend(_submission_rows(run_paths, published=True))
+        allocation_rows.extend(_submission_allocation_rows(run_paths, published=True))
         if (run_paths.results_dir / "leaderboard.csv").exists():
             official_rows.extend(_official_result_rows(manifest.round_id, selected_run_id, run_paths))
             option_return_rows.extend(_option_return_rows(manifest.round_id, selected_run_id, run_paths))
@@ -208,6 +212,11 @@ def sync_round(
     sink.upsert("models", list(model_rows.values()), on_conflict="model_id")
     sink.upsert("runs", run_payloads, on_conflict="round_id,run_id")
     sink.upsert("submissions", submission_rows, on_conflict="round_id,run_id,model_id,replicate_index")
+    sink.upsert(
+        "submission_allocations",
+        allocation_rows,
+        on_conflict="round_id,run_id,model_id,replicate_index,option_id",
+    )
     sink.upsert("official_results", official_rows, on_conflict="round_id,run_id,model_id")
     sink.upsert("stability_results", stability_rows, on_conflict="round_id,run_id,model_id")
     sink.upsert("option_returns", option_return_rows, on_conflict="round_id,run_id,option_id")
@@ -227,6 +236,7 @@ def sync_round(
             "models": len(model_rows),
             "runs": len(run_payloads),
             "submissions": len(submission_rows),
+            "submission_allocations": len(allocation_rows),
             "official_results": len(official_rows),
             "stability_results": len(stability_rows),
             "option_returns": len(option_return_rows),
@@ -534,13 +544,16 @@ def _model_configs_by_id(run_paths: Any) -> dict[str, dict[str, Any]]:
 
 def _submission_rows(run_paths: Any, *, published: bool) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
+    options_by_id = {option.option_id: option for option in load_options(run_paths.round_path)}
     for submission_path in iter_submission_files(run_paths.parsed_dir):
         payload = read_json(submission_path)
+        submission = ModelSubmission.model_validate(payload)
         replicate_index = int(payload.get("replicate_index") or 1)
         usage = payload.get("usage")
         cost_usd = payload.get("cost_usd")
         if cost_usd is None and isinstance(usage, dict):
             cost_usd = usage.get("cost_usd")
+        metrics = portfolio_metrics(submission, options_by_id)
         rows.append(
             {
                 "round_id": payload["round_id"],
@@ -552,7 +565,15 @@ def _submission_rows(run_paths: Any, *, published: bool) -> list[dict[str, Any]]
                 "replicate_index": replicate_index,
                 "replicate_count": int(payload.get("replicate_count") or 1),
                 "is_official_score": bool(payload.get("is_official_score")),
-                "selected_option_id": payload["selected_option_id"],
+                "submission_format": "portfolio" if payload.get("portfolio") else "single_pick",
+                "selected_option_id": primary_option_id(submission),
+                "holding_count": metrics.holding_count,
+                "max_allocation_bps": metrics.max_allocation_bps,
+                "cash_allocation_bps": metrics.cash_allocation_bps,
+                "benchmark_allocation_bps": metrics.benchmark_allocation_bps,
+                "concentration_hhi": _decimal(metrics.concentration_hhi),
+                "portfolio": _jsonable(payload.get("portfolio") or []),
+                "portfolio_rationale": payload.get("portfolio_rationale") or None,
                 "confidence": _decimal(payload.get("confidence")),
                 "rationale_summary": payload["rationale_summary"],
                 "key_risks": payload.get("key_risks") or [],
@@ -566,6 +587,29 @@ def _submission_rows(run_paths: Any, *, published: bool) -> list[dict[str, Any]]
     return rows
 
 
+def _submission_allocation_rows(run_paths: Any, *, published: bool) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for submission_path in iter_submission_files(run_paths.parsed_dir):
+        payload = read_json(submission_path)
+        submission = ModelSubmission.model_validate(payload)
+        replicate_index = int(payload.get("replicate_index") or 1)
+        for allocation in allocation_views(submission):
+            rows.append(
+                {
+                    "round_id": payload["round_id"],
+                    "run_id": run_paths.run_id,
+                    "model_id": payload["model_id"],
+                    "replicate_index": replicate_index,
+                    "option_id": allocation.option_id,
+                    "allocation_bps": allocation.allocation_bps,
+                    "allocation_rank": allocation.allocation_rank,
+                    "rationale_summary": allocation.rationale,
+                    "published": published,
+                }
+            )
+    return rows
+
+
 def _official_result_rows(round_id: str, run_id: str, run_paths: Any) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for row in _read_csv(run_paths.results_dir / "leaderboard.csv"):
@@ -576,13 +620,20 @@ def _official_result_rows(round_id: str, run_id: str, run_paths: Any) -> list[di
                 "model_id": row["model_id"],
                 "provider": row["provider"],
                 "mode": row["mode"],
+                "submission_format": row.get("submission_format") or "single_pick",
                 "selected_option_id": row["selected_option_id"],
                 "confidence": _decimal(row.get("confidence")),
                 "selected_asset_return": _decimal(row.get("selected_asset_return")),
+                "portfolio_return": _decimal(row.get("portfolio_return")),
                 "sp500_return": _decimal(row.get("sp500_return")),
                 "alpha_vs_sp500": _decimal(row.get("alpha_vs_sp500")),
                 "regret_vs_best_option": _decimal(row.get("regret_vs_best_option")),
                 "rank_among_options": _int_or_none(row.get("rank_among_options")),
+                "holding_count": _int_or_none(row.get("holding_count")) or 1,
+                "max_allocation_bps": _int_or_none(row.get("max_allocation_bps")) or 10000,
+                "cash_allocation_bps": _int_or_none(row.get("cash_allocation_bps")) or 0,
+                "benchmark_allocation_bps": _int_or_none(row.get("benchmark_allocation_bps")) or 0,
+                "concentration_hhi": _decimal(row.get("concentration_hhi")),
                 "beats_sp500": _bool(row.get("beats_sp500")),
                 "beats_cash": _bool(row.get("beats_cash")),
                 "cost_usd": _decimal(row.get("cost_usd")),
@@ -748,13 +799,20 @@ def _latest_row(round_id: str, run_id: str, row: dict[str, str]) -> dict[str, An
         "run_id": run_id,
         "model_id": row["model_id"],
         "provider": row["provider"],
+        "submission_format": row.get("submission_format") or "single_pick",
         "selected_option_id": row["selected_option_id"],
         "confidence": _decimal(row.get("confidence")),
         "selected_asset_return": _decimal(row.get("selected_asset_return")),
+        "portfolio_return": _decimal(row.get("portfolio_return")),
         "sp500_return": _decimal(row.get("sp500_return")),
         "alpha_vs_sp500": _decimal(row.get("alpha_vs_sp500")),
         "regret_vs_best_option": _decimal(row.get("regret_vs_best_option")),
         "rank_among_options": _int_or_none(row.get("rank_among_options")),
+        "holding_count": _int_or_none(row.get("holding_count")) or 1,
+        "max_allocation_bps": _int_or_none(row.get("max_allocation_bps")) or 10000,
+        "cash_allocation_bps": _int_or_none(row.get("cash_allocation_bps")) or 0,
+        "benchmark_allocation_bps": _int_or_none(row.get("benchmark_allocation_bps")) or 0,
+        "concentration_hhi": _decimal(row.get("concentration_hhi")),
         "beats_sp500": _bool(row.get("beats_sp500")),
         "beats_cash": _bool(row.get("beats_cash")),
         "published": True,

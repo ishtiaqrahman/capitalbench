@@ -9,7 +9,16 @@ from pydantic import ValidationError
 
 from .io import load_manifest, load_options, read_json, read_yaml, write_json
 from .run_store import get_selected_run_paths, read_run_manifest
-from .schemas import MarketOption, ModelSubmission
+from .portfolio import (
+    allocation_increment_bps,
+    allocation_views,
+    constraints_from_manifest,
+    min_allocation_bps,
+    selected_option_ids,
+    submission_format_from_manifest,
+    total_allocation_bps,
+)
+from .schemas import MarketOption, ModelSubmission, PortfolioConstraints, SubmissionFormat
 
 SUBMISSION_EXTENSIONS = {".json", ".yaml", ".yml"}
 
@@ -48,15 +57,17 @@ def validate_submission_payload(
     run_type: str | None = None,
     replicate_count: int | None = None,
     require_run_metadata: bool = False,
+    submission_format: SubmissionFormat = "single_pick",
+    portfolio_constraints: PortfolioConstraints | None = None,
 ) -> ModelSubmission:
     if not isinstance(payload, dict):
         raise ValueError("submission must be a JSON/YAML object")
 
-    multi_select_fields = {"selected_option_ids", "selected_options", "selections"}
-    present_multi_select_fields = sorted(multi_select_fields.intersection(payload))
-    if present_multi_select_fields:
-        fields = ", ".join(present_multi_select_fields)
-        raise ValueError(f"exactly one selected_option_id is required; remove {fields}")
+    legacy_multi_select_fields = {"selected_option_ids", "selected_options", "selections"}
+    present_legacy_fields = sorted(legacy_multi_select_fields.intersection(payload))
+    if present_legacy_fields:
+        fields = ", ".join(present_legacy_fields)
+        raise ValueError(f"unsupported legacy multi-select fields: {fields}; use portfolio")
     if isinstance(payload.get("selected_option_id"), list):
         raise ValueError("exactly one selected_option_id is required")
 
@@ -65,12 +76,8 @@ def validate_submission_payload(
     except ValidationError as error:
         raise ValueError("; ".join(_format_validation_error(error))) from error
 
-    valid_option_ids = {option.option_id for option in options}
-    if submission.selected_option_id not in valid_option_ids:
-        raise ValueError(
-            "selected_option_id must exist in options.yaml: "
-            f"{submission.selected_option_id}"
-        )
+    _validate_submission_format(submission, submission_format)
+    _validate_selected_options(submission, options, portfolio_constraints or PortfolioConstraints())
     if round_id is not None and submission.round_id != round_id:
         raise ValueError(
             "submission round_id does not match manifest.yaml: "
@@ -83,6 +90,67 @@ def validate_submission_payload(
         require_run_metadata=require_run_metadata,
     )
     return submission
+
+
+def _validate_submission_format(submission: ModelSubmission, submission_format: SubmissionFormat) -> None:
+    if submission_format == "single_pick" and submission.portfolio is not None:
+        raise ValueError("single_pick rounds require selected_option_id and do not allow portfolio")
+    if submission_format == "portfolio" and submission.portfolio is None:
+        raise ValueError("portfolio rounds require portfolio allocations")
+
+
+def _validate_selected_options(
+    submission: ModelSubmission,
+    options: list[MarketOption],
+    constraints: PortfolioConstraints,
+) -> None:
+    options_by_id = {option.option_id: option for option in options}
+    for option_id in selected_option_ids(submission):
+        if option_id not in options_by_id:
+            raise ValueError(f"selected option_id must exist in options.yaml: {option_id}")
+
+    if submission.portfolio is None:
+        return
+
+    allocations = allocation_views(submission)
+    holding_count = len(allocations)
+    if holding_count < constraints.min_holdings or holding_count > constraints.max_holdings:
+        raise ValueError(
+            f"portfolio must contain between {constraints.min_holdings} and "
+            f"{constraints.max_holdings} holdings"
+        )
+
+    seen: set[str] = set()
+    total_bps = 0
+    increment = allocation_increment_bps(constraints)
+    minimum = min_allocation_bps(constraints)
+    for allocation in allocations:
+        if allocation.option_id in seen:
+            raise ValueError(f"duplicate portfolio option_id: {allocation.option_id}")
+        seen.add(allocation.option_id)
+        total_bps += allocation.allocation_bps
+        if allocation.allocation_bps < minimum:
+            raise ValueError(
+                f"allocation for {allocation.option_id} must be at least "
+                f"{constraints.min_allocation_pct}%"
+            )
+        if allocation.allocation_bps % increment != 0:
+            raise ValueError(
+                f"allocation for {allocation.option_id} must be a multiple of "
+                f"{constraints.allocation_increment_pct}%"
+            )
+        option = options_by_id[allocation.option_id]
+        if option.is_cash and not constraints.allow_cash:
+            raise ValueError("cash allocation is not allowed for this round")
+        if (option.is_benchmark or option.option_id.upper() == "SP500") and not constraints.allow_benchmark_asset:
+            raise ValueError("benchmark asset allocation is not allowed for this round")
+
+    expected_total = total_allocation_bps(constraints)
+    if total_bps != expected_total:
+        raise ValueError(
+            f"portfolio allocations must sum to {constraints.max_total_allocation_pct}% "
+            f"({total_bps / 100:.0f}% supplied)"
+        )
 
 
 def _validate_run_metadata(
@@ -158,6 +226,8 @@ def validate_submissions(
     run_id: str | None = None,
 ) -> SubmissionValidationSummary:
     manifest = load_manifest(round_path)
+    submission_format = submission_format_from_manifest(manifest)
+    portfolio_constraints = constraints_from_manifest(manifest)
     if options is None:
         options = load_options(round_path)
     run_paths = get_selected_run_paths(round_path, run_id)
@@ -188,6 +258,8 @@ def validate_submissions(
                 run_type=run_type,
                 replicate_count=replicate_count,
                 require_run_metadata=require_run_metadata,
+                submission_format=submission_format,
+                portfolio_constraints=portfolio_constraints,
             )
         except Exception as exc:
             errors[raw_file.name] = [str(exc)]

@@ -61,3 +61,19 @@ All public benchmark tables have RLS enabled.
 - `automation_jobs`: service-role-only scheduler state
 - `capitalbench-public-artifacts`: public storage bucket
 - `capitalbench-gated-artifacts`: private reserved bucket for future Pro work
+
+## Portfolio Read Model
+
+Portfolio-capable rounds add public normalized allocation data without exposing
+private provider credentials or raw provider sidecars.
+
+- `rounds.submission_format` declares whether a round is `single_pick` or
+  `portfolio`.
+- `rounds.portfolio_constraints` stores the frozen allocation rules used in the
+  prompt and response schema.
+- `submissions.portfolio` stores the normalized submitted allocation JSON.
+- `submission_allocations` stores one published row per model, replicate, and
+  holding for table rendering and audit.
+- `official_results` and `latest_leaderboard` include portfolio return,
+  holding count, largest allocation, cash allocation, benchmark allocation, and
+  concentration HHI.

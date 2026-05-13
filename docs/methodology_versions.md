@@ -43,3 +43,23 @@ Changes from `round1-v1.0`:
   retrieval, and intentional use of post-cutoff facts, prices, news, or events.
 - `raw_responses/` sidecars preserve exact provider text for every model call.
 - Run logs include raw response sidecar paths and SHA256 hashes.
+
+## portfolio-v1.0 Planned Protocol
+
+Use for future portfolio-allocation rounds when the round manifest sets
+`submission_format: portfolio`.
+
+Changes from `v1.1`:
+
+- Models submit one official allocation decision instead of one selected asset.
+- The default portfolio constraint set allows 1 to 5 holdings.
+- Allocations must be whole percentages in 5% increments and must total 100%.
+- No shorting, leverage, negative weights, or unfrozen option ids are allowed.
+- CASH and benchmark allocations are controlled by the round manifest and must
+  be present in `options.yaml`.
+- Scoring uses the weighted realized portfolio return versus the S&P 500 return.
+- Public artifacts include holding-level allocation rows, portfolio rationale,
+  holding count, largest allocation, cash allocation, benchmark allocation, and
+  concentration HHI.
+- Single-pick and portfolio rounds remain labeled by methodology and submission
+  format in reports and website tables.

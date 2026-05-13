@@ -25,8 +25,10 @@ capitalbench fetch-prices \
   --exit-date YYYY-MM-DD
 ```
 
-That command fetches only the assets picked in parsed submissions, plus the
-S&P 500 benchmark and CASH. It does not fetch every option in the universe.
+That command fetches only the assets needed by parsed submissions, plus the
+S&P 500 benchmark and CASH. For `single_pick` rounds, that means selected
+options. For `portfolio` rounds, it means every holding in every parsed
+portfolio. It does not fetch every option in the universe.
 If only one side of the scoring window is available, pass `--side entry` or
 `--side exit` and provide only the matching date.
 
@@ -82,15 +84,39 @@ CapitalBench Universe v1.5 uses CASH plus public US-listed ETF tickers. All
 non-cash universe tickers should pass Tiingo EOD validation before a public
 round is frozen.
 
+For a `single_pick` submission:
+
+```text
+selected_asset_return = option_return(selected_option_id)
+```
+
+For a `portfolio` submission:
+
+```text
+portfolio_return = sum(allocation_weight * option_return(option_id))
+selected_asset_return = portfolio_return
+```
+
+`selected_asset_return` remains the common score-return column so cumulative
+reports can compare rounds with different submission formats. Portfolio rounds
+also write `portfolio_return` and allocation diagnostics for audit clarity.
+
 For each official model submission:
 
-- `selected_asset_return`: return of the selected option
+- `submission_format`: `single_pick` or `portfolio`
+- `selected_asset_return`: return of the selected option, or weighted portfolio return
+- `portfolio_return`: weighted portfolio return when the round uses portfolio submissions
 - `sp500_return`: return of the S&P 500 benchmark option
 - `alpha_vs_sp500`: selected return minus S&P 500 return
 - `regret_vs_best_option`: best available option return minus selected return, only when full-universe prices are supplied
-- `rank_among_options`: realized rank of the selected option among all options, only when full-universe prices are supplied
-- `beats_sp500`: whether the selected option beat the S&P 500
-- `beats_cash`: whether the selected option beat cash
+- `rank_among_options`: realized rank of the selected option among all options for single-pick rounds, only when full-universe prices are supplied
+- `holding_count`: number of holdings in the scored submission
+- `max_allocation_bps`: largest allocation in basis points
+- `cash_allocation_bps`: cash allocation in basis points
+- `benchmark_allocation_bps`: benchmark allocation in basis points
+- `concentration_hhi`: allocation concentration on a 0 to 1 scale, where 1.0 means one 100% holding
+- `beats_sp500`: whether the decision return beat the S&P 500
+- `beats_cash`: whether the decision return beat cash
 - `alpha_per_dollar`: alpha divided by cost, only when `cost_usd > 0`
 
 The main leaderboard is sorted by `alpha_vs_sp500` descending. Ties are resolved
@@ -110,6 +136,7 @@ Official scoring writes:
 ```text
 runs/<run_id>/results/returns.csv
 runs/<run_id>/results/leaderboard.csv
+runs/<run_id>/results/allocations.csv, for portfolio-aware allocation audit rows
 ```
 
 ## Multi-Run Stability Analysis

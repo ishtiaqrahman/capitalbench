@@ -7,6 +7,7 @@ from .io import read_json, write_json
 
 HASHED_ROUND_FILES = ["briefing.md", "options.yaml", "prompt.md", "manifest.yaml"]
 OPTIONAL_HASHED_ROUND_FILES = [
+    "submission_schema.json",
     "market_data/universe_trailing_returns.csv",
     "market_data/universe_trailing_returns.md",
     "market_data/universe_trailing_returns.json",

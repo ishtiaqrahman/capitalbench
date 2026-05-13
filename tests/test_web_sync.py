@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from shutil import copytree
 from typing import Any
@@ -5,6 +6,8 @@ from typing import Any
 import yaml
 
 from capitalbench.cli import main
+from capitalbench.hashing import write_round_hashes
+from capitalbench.scoring import score_round
 from capitalbench.web_sync import SUPABASE_SKIP_MESSAGE, sync_latest_leaderboard, sync_round
 
 
@@ -74,6 +77,113 @@ def test_sync_round_refuses_mock_official_public_result(tmp_path: Path) -> None:
         assert "not syncable public benchmark data" in str(exc)
     else:
         raise AssertionError("mock official run was synced")
+
+
+def test_sync_round_publishes_portfolio_allocations(tmp_path: Path) -> None:
+    round_path = tmp_path / "portfolio-round"
+    (round_path / "runs" / "official" / "submissions" / "parsed").mkdir(parents=True)
+    (round_path / "prices").mkdir(parents=True)
+    (round_path / "briefing.md").write_text("Briefing.", encoding="utf-8")
+    (round_path / "prompt.md").write_text("Prompt.", encoding="utf-8")
+    (round_path / "manifest.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "round_id": "portfolio-round",
+                "title": "Portfolio Round",
+                "description": "Portfolio test.",
+                "decision_deadline": "2026-01-01T20:00:00Z",
+                "horizon": "one month",
+                "entry_date": "2026-01-02",
+                "exit_date": "2026-02-02",
+                "methodology_version": "portfolio-v1.0",
+                "submission_format": "portfolio",
+                "portfolio_constraints": {
+                    "min_holdings": 1,
+                    "max_holdings": 5,
+                    "allocation_increment_pct": 5,
+                    "min_allocation_pct": 5,
+                    "max_total_allocation_pct": 100,
+                },
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    (round_path / "options.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "options": [
+                    {"option_id": "opt_a", "label": "Option A", "asset_symbol": "AAA"},
+                    {"option_id": "sp500", "label": "S&P 500", "asset_symbol": "SPY", "is_benchmark": True},
+                    {"option_id": "cash", "label": "Cash", "asset_symbol": "USD", "is_cash": True},
+                ]
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    for name in ["entry_prices.csv", "exit_prices.csv"]:
+        price = 100 if name.startswith("entry") else 110
+        (round_path / "prices" / name).write_text(
+            "option_id,price\nopt_a,{price}\nsp500,105\ncash,1\n".format(price=price),
+            encoding="utf-8",
+        )
+    (round_path / "runs" / "official" / "run_manifest.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "run_id": "official",
+                "round_id": "portfolio-round",
+                "run_type": "official",
+                "mode": "closed_capability",
+                "replicates": 1,
+                "mock": False,
+                "official_score_eligible": True,
+                "model_count": 1,
+                "valid_submissions": 1,
+                "invalid_submissions": 0,
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    (round_path / "runs" / "official" / "validation_summary.json").write_text(
+        json.dumps({"invalid_count": 0}),
+        encoding="utf-8",
+    )
+    (round_path / "runs" / "official" / "run_log.jsonl").write_text("", encoding="utf-8")
+    (round_path / "runs" / "official" / "submissions" / "parsed" / "model-a.json").write_text(
+        json.dumps(
+            {
+                "round_id": "portfolio-round",
+                "model_id": "model-a",
+                "provider": "openai",
+                "mode": "closed_capability",
+                "run_type": "official",
+                "replicate_index": 1,
+                "replicate_count": 1,
+                "is_official_score": True,
+                "portfolio": [
+                    {"option_id": "opt_a", "allocation_pct": 60, "rationale": "Upside."},
+                    {"option_id": "sp500", "allocation_pct": 40, "rationale": "Benchmark."},
+                ],
+                "confidence": 0.5,
+                "portfolio_rationale": "Portfolio rationale.",
+                "rationale_summary": "Summary.",
+                "key_risks": ["Risk"],
+            }
+        ),
+        encoding="utf-8",
+    )
+    score_round(round_path, run_id="official")
+    write_round_hashes(round_path)
+    sink = FakeSink()
+
+    sync_round(round_path, run_id="official", sink=sink)
+
+    assert sink.upserts["submissions"][0]["submission_format"] == "portfolio"
+    assert sink.upserts["submissions"][0]["holding_count"] == 2
+    assert len(sink.upserts["submission_allocations"]) == 2
+    assert {row["allocation_bps"] for row in sink.upserts["submission_allocations"]} == {6000, 4000}
 
 
 def test_sync_latest_clears_stale_rows_when_no_public_resolved_round(tmp_path: Path) -> None:

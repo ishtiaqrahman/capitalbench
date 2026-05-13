@@ -1,6 +1,7 @@
 from capitalbench.providers.base import parse_json_object
 from capitalbench.providers.anthropic_provider import AnthropicProvider
 from capitalbench.providers.google_provider import GoogleProvider, _to_google_response_schema
+from capitalbench.providers.mock_provider import MockProvider
 from capitalbench.providers.openai_provider import OpenAIProvider
 from capitalbench.providers.xai_provider import XAIProvider
 from capitalbench.schemas import ModelConfig, RuntimeSettings
@@ -45,6 +46,61 @@ def _model_config() -> ModelConfig:
             "option_ids": ["SP500", "CASH"],
         },
     )
+
+
+def _portfolio_model_config() -> ModelConfig:
+    config = _model_config()
+    return config.model_copy(
+        update={
+            "metadata": {
+                **config.metadata,
+                "submission_format": "portfolio",
+                "portfolio_constraints": {
+                    "min_holdings": 1,
+                    "max_holdings": 5,
+                    "allocation_increment_pct": 5,
+                    "min_allocation_pct": 5,
+                    "max_total_allocation_pct": 100,
+                },
+            }
+        }
+    )
+
+
+def test_provider_submission_schema_supports_portfolio_format() -> None:
+    schema = provider_submission_schema(_portfolio_model_config())
+
+    assert "portfolio" in schema["required"]
+    portfolio_schema = schema["properties"]["portfolio"]
+    assert portfolio_schema["minItems"] == 1
+    assert portfolio_schema["maxItems"] == 5
+    assert portfolio_schema["items"]["properties"]["allocation_pct"]["multipleOf"] == 5
+
+
+def test_mock_provider_respects_portfolio_allocation_constraints() -> None:
+    config = _portfolio_model_config().model_copy(
+        update={
+            "metadata": {
+                "round_id": "example-round",
+                "option_ids": ["SP500", "CASH", "TECHNOLOGY", "HEALTHCARE"],
+                "submission_format": "portfolio",
+                "portfolio_constraints": {
+                    "min_holdings": 2,
+                    "max_holdings": 3,
+                    "allocation_increment_pct": 10,
+                    "min_allocation_pct": 10,
+                    "max_total_allocation_pct": 100,
+                },
+            }
+        }
+    )
+
+    result = MockProvider().run_model(config, "prompt", provider_submission_schema(config), RuntimeSettings())
+    portfolio = result.parsed_json["portfolio"]
+    allocations = [item["allocation_pct"] for item in portfolio]
+    assert 2 <= len(portfolio) <= 3
+    assert sum(allocations) == 100
+    assert all(allocation >= 10 and allocation % 10 == 0 for allocation in allocations)
 
 
 def _xai_model_config() -> ModelConfig:

@@ -5,6 +5,7 @@ from pathlib import Path
 
 from .hashing import compute_round_hashes
 from .io import load_manifest, load_options
+from .portfolio import constraints_from_manifest, submission_format_from_manifest
 from .research import final_briefing_matches_round_briefing, research_artifact_rows
 from .run_store import RunPaths, get_run_paths, get_selected_run_paths, read_run_manifest
 from .validation import _load_submission, iter_submission_files, validate_submission_payload
@@ -36,6 +37,8 @@ def _sort_cost_adjusted(rows: list[dict[str, str]]) -> list[dict[str, str]]:
 def _invalid_submission_summary(round_path: Path, run_paths: RunPaths) -> tuple[int, list[str]]:
     manifest = load_manifest(round_path)
     options = load_options(round_path)
+    submission_format = submission_format_from_manifest(manifest)
+    portfolio_constraints = constraints_from_manifest(manifest)
     run_manifest = read_run_manifest(run_paths)
     run_type = str(run_manifest.get("run_type") or "mock")
     replicate_count = int(run_manifest.get("replicates") or 1)
@@ -49,6 +52,8 @@ def _invalid_submission_summary(round_path: Path, run_paths: RunPaths) -> tuple[
                 run_type=run_type,
                 replicate_count=replicate_count,
                 require_run_metadata=run_type in {"official", "stability", "retrospective"},
+                submission_format=submission_format,
+                portfolio_constraints=portfolio_constraints,
             )
         except Exception:
             invalid_files.append(raw_file.name)
@@ -112,13 +117,16 @@ def _publish_official_report(
     results_dir = run_paths.results_dir
     returns = _read_csv(results_dir / "returns.csv")
     leaderboard = _read_csv(results_dir / "leaderboard.csv")
+    allocations = _read_csv(results_dir / "allocations.csv") if (results_dir / "allocations.csv").exists() else []
     cost_adjusted = _sort_cost_adjusted(leaderboard)
     invalid_count, invalid_files = _invalid_submission_summary(round_path, run_paths)
 
     selected_columns = [
         "model_id",
         "provider",
+        "submission_format",
         "selected_option_id",
+        "holding_count",
         "confidence",
         "rationale_summary",
         "key_risks",
@@ -126,8 +134,10 @@ def _publish_official_report(
     leaderboard_columns = [
         "model_id",
         "selected_option_id",
+        "holding_count",
         "confidence",
         "selected_asset_return",
+        "portfolio_return",
         "alpha_vs_sp500",
         "regret_vs_best_option",
         "rank_among_options",
@@ -136,6 +146,7 @@ def _publish_official_report(
     ]
     cost_columns = ["model_id", "selected_option_id", "alpha_vs_sp500", "cost_usd", "alpha_per_dollar"]
     return_columns = ["option_id", "label", "entry_price", "exit_price", "return", "rank"]
+    allocation_columns = ["model_id", "option_id", "allocation_pct", "option_return", "return_contribution", "rationale"]
 
     report = "\n\n".join(
         [
@@ -158,6 +169,8 @@ def _publish_official_report(
             f"- Options: {len(options)}",
             "## Model Decisions\n\n" + _markdown_table(leaderboard, selected_columns),
             "## Realized Returns\n\n" + _markdown_table(returns, return_columns),
+            "## Portfolio Allocations\n\n"
+            + (_markdown_table(allocations, allocation_columns) if allocations else "_No allocation rows found._"),
             "## Leaderboard\n\nOfficial One-Shot Leaderboard\n\n"
             + _markdown_table(leaderboard, leaderboard_columns),
             "## Cost-Adjusted Leaderboard\n\n"
@@ -169,9 +182,9 @@ def _publish_official_report(
             "## Research Artifacts\n\n" + _research_artifacts_section(round_path),
             "## Limitations\n\n"
             "- Prices are loaded from local CSV files and are not fetched live.\n"
-            "- Official scoring uses one selected option per model.\n"
+            "- Official scoring uses the round's declared submission format.\n"
             "- Stability analysis, when present, is separate and does not change this leaderboard.\n"
-            "- Scores evaluate a single selected option and do not model portfolio allocation.\n"
+            "- Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.\n"
             "- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.",
         ]
     )
@@ -261,7 +274,7 @@ def _publish_stability_report(
             "- Stability analysis is secondary and does not replace the official one-shot leaderboard.\n"
             "- Repeated calls use the same prompt, briefing, and options, but provider systems may still vary internally.\n"
             "- Prices are loaded from local CSV files and are not fetched live.\n"
-            "- Scores evaluate a single selected option and do not model portfolio allocation.",
+            "- Scores follow the round's declared submission format; portfolio rounds use weighted allocations.",
         ]
     )
 
@@ -284,7 +297,9 @@ def publish_round_summary(
 
     leaderboard_columns = [
         "model_id",
+        "submission_format",
         "selected_option_id",
+        "holding_count",
         "selected_asset_return",
         "alpha_vs_sp500",
         "regret_vs_best_option",
@@ -311,6 +326,7 @@ def publish_round_summary(
             f"- Horizon: {manifest.horizon}\n"
             f"- Entry rule: {manifest.entry_rule}\n"
             f"- Exit rule: {manifest.exit_rule}\n"
+            f"- Submission format: {getattr(manifest, 'submission_format', 'single_pick')}\n"
             f"- Official run ID: {official_run_id}\n"
             f"- Stability run ID: {stability_run_id}",
             "## Result Types\n\n"
@@ -327,7 +343,7 @@ def publish_round_summary(
             "- The official score uses exactly one scored decision per model.\n"
             "- Stability analysis is secondary and does not change the official leaderboard.\n"
             "- Prices are loaded from local CSV files and are not fetched live.\n"
-            "- Scores evaluate one selected option, not a portfolio.",
+            "- Scores follow the round's declared submission format; portfolio rounds use weighted allocations.",
         ]
     )
     summary_path = round_path / "round_summary.md"

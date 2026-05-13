@@ -49,13 +49,30 @@ type ModelOutput = {
   model_id: string;
   provider: string;
   mode: string;
-  selected_option_id: string;
+  selected_option_id?: string;
+  portfolio?: Array<{
+    option_id: string;
+    allocation_pct?: number;
+    allocation_bps?: number;
+    rationale?: string;
+  }>;
+  portfolio_rationale?: string;
   confidence: number;
   rationale_summary: string;
   key_risks: string[];
   run_type?: string;
   [key: string]: unknown;
 };
+
+function outputPickLabel(output: ModelOutput): string {
+  if (!output.portfolio || output.portfolio.length === 0) return output.selected_option_id ?? "";
+  return output.portfolio
+    .map((item) => {
+      const allocationPct = item.allocation_pct ?? Number(item.allocation_bps ?? 0) / 100;
+      return `${item.option_id} ${allocationPct}%`;
+    })
+    .join(" / ");
+}
 
 function readRoundText(...segments: string[]): string {
   const path = join(roundRoot, ...segments);
@@ -115,6 +132,16 @@ function renderOptionsForPrompt(options: ParsedOption[]): string {
 }
 
 function modelSuffix(output: ModelOutput, allowedOptionIds: string): string {
+  if (output.portfolio && output.portfolio.length > 0) {
+    return [
+      "For this specific call, return only JSON using exactly these identifiers:",
+      `- round_id: ${output.round_id}`,
+      `- model_id: ${output.model_id}`,
+      `- provider: ${output.provider}`,
+      `- mode: ${output.mode}`,
+      `- allowed portfolio option_id values: ${allowedOptionIds}`
+    ].join("\n");
+  }
   return [
     "For this specific call, return only JSON using exactly these identifiers:",
     `- round_id: ${output.round_id}`,
@@ -436,8 +463,8 @@ const priceColumns = [
                 <p class="mono">{output.model_id}</p>
               </div>
               <div class="pick-pill">
-                <span>Pick</span>
-                <strong>{output.selected_option_id}</strong>
+                <span>{output.portfolio && output.portfolio.length > 0 ? "Portfolio" : "Pick"}</span>
+                <strong>{outputPickLabel(output)}</strong>
               </div>
             </div>
             <dl class="output-facts">
@@ -452,8 +479,24 @@ const priceColumns = [
             </dl>
             <div class="output-copy">
               <span class="metric-label">Rationale</span>
+              {output.portfolio_rationale && <p>{output.portfolio_rationale}</p>}
               <p>{output.rationale_summary}</p>
             </div>
+            {output.portfolio && output.portfolio.length > 0 && (
+              <div class="output-copy">
+                <span class="metric-label">Allocations</span>
+                <ul>
+                  {output.portfolio.map((allocation) => {
+                    const allocationPct = allocation.allocation_pct ?? Number(allocation.allocation_bps ?? 0) / 100;
+                    return (
+                      <li>
+                        <strong>{allocation.option_id}</strong>: {allocationPct}%{allocation.rationale ? ` - ${allocation.rationale}` : ""}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
             <div class="output-copy">
               <span class="metric-label">Key Risks</span>
               <ul>

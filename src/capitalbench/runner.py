@@ -12,6 +12,7 @@ from .config import PricingTable, calculate_cost_usd, load_model_configs, load_p
 from .io import load_manifest, load_options, write_json
 from .prompting import build_prompt
 from .providers import AnthropicProvider, GoogleProvider, MockProvider, OpenAIProvider, ProviderResult, XAIProvider
+from .portfolio import constraints_from_manifest, submission_format_from_manifest
 from .run_store import (
     create_run_paths,
     generate_run_id,
@@ -64,6 +65,8 @@ def run_round(
 
     manifest = load_manifest(round_path)
     options = load_options(round_path)
+    submission_format = submission_format_from_manifest(manifest)
+    portfolio_constraints = constraints_from_manifest(manifest)
     prompt = build_prompt(round_path)
     model_configs = load_model_configs(models_path)
     pricing = load_pricing_config(pricing_path)
@@ -104,6 +107,8 @@ def run_round(
                     replicate_index=replicate_index,
                     replicate_count=selected_replicates,
                     is_official_score=selected_run_type == "official",
+                    submission_format=submission_format,
+                    portfolio_constraints=portfolio_constraints.model_dump(mode="json"),
                 )
                 started_at = _utc_now()
                 result = _run_one_model(
@@ -144,7 +149,9 @@ def run_round(
                         manifest.round_id,
                         run_type=selected_run_type,
                         replicate_count=selected_replicates,
-                    require_run_metadata=selected_run_type in {"official", "stability", "retrospective"},
+                        require_run_metadata=selected_run_type in {"official", "stability", "retrospective"},
+                        submission_format=submission_format,
+                        portfolio_constraints=portfolio_constraints,
                     )
                 except Exception as exc:
                     invalid_count += 1
@@ -312,6 +319,8 @@ def _with_round_metadata(
     replicate_index: int,
     replicate_count: int,
     is_official_score: bool,
+    submission_format: str,
+    portfolio_constraints: dict[str, Any],
 ) -> ModelConfig:
     metadata = {
         **model_config.metadata,
@@ -321,6 +330,8 @@ def _with_round_metadata(
         "replicate_index": replicate_index,
         "replicate_count": replicate_count,
         "is_official_score": is_official_score,
+        "submission_format": submission_format,
+        "portfolio_constraints": portfolio_constraints,
     }
     return model_config.model_copy(update={"metadata": metadata})
 

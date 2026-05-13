@@ -33,6 +33,8 @@ create table if not exists public.rounds (
   exit_date date,
   status text not null default 'pending' check (status in ('pending', 'resolved', 'archived')),
   methodology_version text not null default '',
+  submission_format text not null default 'single_pick' check (submission_format in ('single_pick', 'portfolio')),
+  portfolio_constraints jsonb not null default '{}'::jsonb,
   published boolean not null default false,
   notes text not null default '',
   created_at_utc timestamptz,
@@ -113,7 +115,15 @@ create table if not exists public.submissions (
   replicate_index integer not null default 1,
   replicate_count integer not null default 1,
   is_official_score boolean not null default false,
+  submission_format text not null default 'single_pick' check (submission_format in ('single_pick', 'portfolio')),
   selected_option_id text not null,
+  holding_count integer not null default 1 check (holding_count >= 1),
+  max_allocation_bps integer not null default 10000 check (max_allocation_bps between 1 and 10000),
+  cash_allocation_bps integer not null default 0 check (cash_allocation_bps between 0 and 10000),
+  benchmark_allocation_bps integer not null default 0 check (benchmark_allocation_bps between 0 and 10000),
+  concentration_hhi numeric,
+  portfolio jsonb not null default '[]'::jsonb,
+  portfolio_rationale text,
   confidence numeric not null,
   rationale_summary text not null,
   key_risks jsonb not null default '[]'::jsonb,
@@ -129,19 +139,44 @@ create table if not exists public.submissions (
   foreign key (round_id, selected_option_id) references public.options(round_id, option_id)
 );
 
+create table if not exists public.submission_allocations (
+  round_id text not null,
+  run_id text not null,
+  model_id text not null,
+  replicate_index integer not null default 1,
+  option_id text not null,
+  allocation_bps integer not null check (allocation_bps > 0 and allocation_bps <= 10000),
+  allocation_rank integer not null check (allocation_rank >= 1),
+  rationale_summary text not null default '',
+  published boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  primary key (round_id, run_id, model_id, replicate_index, option_id),
+  foreign key (round_id, run_id, model_id, replicate_index)
+    references public.submissions(round_id, run_id, model_id, replicate_index) on delete cascade,
+  foreign key (round_id, option_id) references public.options(round_id, option_id)
+);
+
 create table if not exists public.official_results (
   round_id text not null,
   run_id text not null,
   model_id text not null references public.models(model_id),
   provider text not null references public.model_providers(provider),
   mode text not null,
+  submission_format text not null default 'single_pick' check (submission_format in ('single_pick', 'portfolio')),
   selected_option_id text not null,
   confidence numeric not null,
   selected_asset_return numeric not null,
+  portfolio_return numeric,
   sp500_return numeric not null,
   alpha_vs_sp500 numeric not null,
   regret_vs_best_option numeric,
   rank_among_options integer,
+  holding_count integer not null default 1,
+  max_allocation_bps integer not null default 10000,
+  cash_allocation_bps integer not null default 0,
+  benchmark_allocation_bps integer not null default 0,
+  concentration_hhi numeric,
   beats_sp500 boolean not null,
   beats_cash boolean not null,
   cost_usd numeric,
@@ -215,13 +250,20 @@ create table if not exists public.latest_leaderboard (
   run_id text not null,
   model_id text not null,
   provider text not null,
+  submission_format text not null default 'single_pick',
   selected_option_id text not null,
   confidence numeric not null,
   selected_asset_return numeric not null,
+  portfolio_return numeric,
   sp500_return numeric not null,
   alpha_vs_sp500 numeric not null,
   regret_vs_best_option numeric,
   rank_among_options integer,
+  holding_count integer not null default 1,
+  max_allocation_bps integer not null default 10000,
+  cash_allocation_bps integer not null default 0,
+  benchmark_allocation_bps integer not null default 0,
+  concentration_hhi numeric,
   beats_sp500 boolean not null,
   beats_cash boolean not null,
   published boolean not null default true,
@@ -328,6 +370,7 @@ begin
     'runs',
     'options',
     'submissions',
+    'submission_allocations',
     'official_results',
     'stability_results',
     'option_returns',
@@ -365,6 +408,7 @@ alter table public.models enable row level security;
 alter table public.runs enable row level security;
 alter table public.options enable row level security;
 alter table public.submissions enable row level security;
+alter table public.submission_allocations enable row level security;
 alter table public.official_results enable row level security;
 alter table public.stability_results enable row level security;
 alter table public.option_returns enable row level security;
@@ -386,6 +430,7 @@ begin
     'runs',
     'options',
     'submissions',
+    'submission_allocations',
     'official_results',
     'stability_results',
     'option_returns',

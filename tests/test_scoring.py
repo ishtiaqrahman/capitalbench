@@ -143,6 +143,61 @@ def test_scoring_math_and_regret_calculation(tmp_path: Path) -> None:
     assert (run_paths.results_dir / "leaderboard.csv").exists()
 
 
+def test_portfolio_scoring_uses_weighted_returns_and_writes_allocations(tmp_path: Path) -> None:
+    round_path = _create_round(
+        tmp_path,
+        {
+            "model-p.json": {
+                "round_id": "test",
+                "model_id": "model-p",
+                "provider": "openai",
+                "mode": "closed_capability",
+                "portfolio": [
+                    {"option_id": "opt_a", "allocation_pct": 60, "rationale": "Upside exposure."},
+                    {"option_id": "sp500", "allocation_pct": 25, "rationale": "Benchmark ballast."},
+                    {"option_id": "cash", "allocation_pct": 15, "rationale": "Defensive ballast."},
+                ],
+                "confidence": 0.55,
+                "portfolio_rationale": "A concentrated but partially defensive portfolio.",
+                "rationale_summary": "Weighted portfolio submission.",
+                "key_risks": ["Risk one"],
+            }
+        },
+    )
+    manifest_path = round_path / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["submission_format"] = "portfolio"
+    manifest["portfolio_constraints"] = {
+        "min_holdings": 1,
+        "max_holdings": 5,
+        "allocation_increment_pct": 5,
+        "min_allocation_pct": 5,
+        "max_total_allocation_pct": 100,
+        "allow_cash": True,
+        "allow_benchmark_asset": True,
+    }
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+
+    [score] = score_round(round_path)
+
+    expected_return = (0.60 * 0.10) + (0.25 * 0.05) + (0.15 * 0.0)
+    assert score.submission_format == "portfolio"
+    assert score.selected_option_id == "opt_a"
+    assert score.holding_count == 3
+    assert score.max_allocation_bps == 6000
+    assert score.cash_allocation_bps == 1500
+    assert score.benchmark_allocation_bps == 2500
+    assert math.isclose(score.selected_asset_return, expected_return)
+    assert math.isclose(score.portfolio_return or 0, expected_return)
+    assert math.isclose(score.alpha_vs_sp500, expected_return - 0.05)
+
+    allocations_path = get_selected_run_paths(round_path).results_dir / "allocations.csv"
+    with allocations_path.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    assert [row["option_id"] for row in rows] == ["opt_a", "sp500", "cash"]
+    assert [row["allocation_bps"] for row in rows] == ["6000", "2500", "1500"]
+
+
 def test_scoring_allows_selected_only_price_files(tmp_path: Path) -> None:
     round_path = _create_round(
         tmp_path,

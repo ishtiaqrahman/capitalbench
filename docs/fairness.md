@@ -32,10 +32,11 @@ Use these rules for a fair round:
 - Do not backfill new models into old official rounds.
 - Label any manual old-round run as retrospective and exclude it from public official and cumulative leaderboards.
 
-For official scoring, each model gets one attempt and one selected asset. For
-stability analysis, each model can be called multiple times with the same
-prompt, briefing, and option list. Stability reports consistency and repeated
-return statistics, but it is not the official benchmark score.
+For official scoring, each model gets one attempt and one schema-valid decision
+under the round's declared submission format. For stability analysis, each
+model can be called multiple times with the same prompt, briefing, and option
+list. Stability reports consistency and repeated return statistics, but it is
+not the official benchmark score.
 
 If submissions are entered manually, the operator should record the model id,
 provider, mode, run type, replicate index, confidence, rationale summary, key

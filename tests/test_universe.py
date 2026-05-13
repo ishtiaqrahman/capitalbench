@@ -302,3 +302,26 @@ def test_init_round_prompt_allows_internal_knowledge_but_blocks_live_retrieval(t
     assert "internal learned knowledge and general market priors" in prompt
     assert "Do not browse, use tools, request updated market data" in prompt
     assert "Use only the information in this prompt" not in prompt
+
+
+def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
+    exit_code = main(
+        [
+            "init-round",
+            "--round-id",
+            "CB-TEST-PORTFOLIO",
+            "--rounds-dir",
+            str(tmp_path / "rounds"),
+            "--submission-format",
+            "portfolio",
+        ]
+    )
+
+    round_path = tmp_path / "rounds" / "CB-TEST-PORTFOLIO"
+    manifest = yaml.safe_load((round_path / "manifest.yaml").read_text(encoding="utf-8"))
+    prompt = (round_path / "prompt.md").read_text(encoding="utf-8")
+    assert exit_code == 0
+    assert manifest["submission_format"] == "portfolio"
+    assert manifest["methodology_version"] == "portfolio-v1.0"
+    assert "portfolio" in prompt
+    assert "allocation_pct values must sum to exactly 100" in prompt

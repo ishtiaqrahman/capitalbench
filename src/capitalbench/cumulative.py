@@ -648,16 +648,28 @@ def _write_latest_report(
     returns = _read_csv(run_paths.results_dir / "returns.csv")
     leaderboard_columns = [
         "model_id",
+        "submission_format",
         "selected_option_id",
+        "holding_count",
         "confidence",
         "selected_asset_return",
+        "portfolio_return",
         "alpha_vs_sp500",
         "regret_vs_best_option",
         "rank_among_options",
         "beats_sp500",
         "beats_cash",
     ]
-    decision_columns = ["model_id", "provider", "selected_option_id", "confidence", "rationale_summary", "key_risks"]
+    decision_columns = [
+        "model_id",
+        "provider",
+        "submission_format",
+        "selected_option_id",
+        "holding_count",
+        "confidence",
+        "rationale_summary",
+        "key_risks",
+    ]
     return_columns = ["option_id", "label", "entry_price", "exit_price", "return", "rank"]
     report = "\n\n".join(
         [
@@ -673,6 +685,7 @@ def _write_latest_report(
             "## Official Leaderboard\n\n" + _markdown_table(selected.official_rows, leaderboard_columns),
             "## Notes\n\n"
             "- This is one standalone round.\n"
+            "- Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.\n"
             "- Cumulative results are separate.\n"
             "- Stability results are separate and do not affect this leaderboard.",
         ]

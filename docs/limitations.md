@@ -8,7 +8,7 @@ CapitalBench is intentionally narrow in this version.
 - It depends on operator-supplied price files.
 - Universe validation depends on Tiingo EOD availability for each non-cash ticker.
 - Tiingo validation confirms data availability, not investment suitability.
-- It supports one selected option, not portfolios.
+- Round 1 supports one selected option; future versioned rounds can use constrained portfolios.
 - It does not model taxes, transaction costs, slippage, liquidity, or dividends.
 - It does not verify that a manually entered submission truly came from a named model.
 - It measures one prompt and one option set at a time.

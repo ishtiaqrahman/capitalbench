@@ -4,6 +4,7 @@ from pathlib import Path
 
 from .io import load_manifest, load_options, read_yaml
 from .performance import MARKET_DATA_DIRNAME, UNIVERSE_TRAILING_RETURNS_MD
+from .portfolio import constraints_from_manifest, submission_format_from_manifest
 from .schemas import MarketOption
 
 
@@ -27,6 +28,7 @@ def build_prompt(round_path: Path) -> str:
 
 def render_round_metadata(round_path: Path, manifest) -> str:
     research_cutoff = _research_cutoff_utc(round_path)
+    submission_format = submission_format_from_manifest(manifest)
     lines = [
         f"Round ID: {manifest.round_id}",
         f"Decision date: {manifest.decision_date or 'TBD'}",
@@ -37,9 +39,20 @@ def render_round_metadata(round_path: Path, manifest) -> str:
         f"Exit date: {manifest.exit_date or 'TBD'}",
         f"Entry rule: {manifest.entry_rule or 'TBD'}",
         f"Exit rule: {manifest.exit_rule or 'TBD'}",
+        f"Submission format: {submission_format}",
         "Scoring benchmark: S&P 500 / SPY",
         "Return calculation: adjusted close prices are used when available.",
     ]
+    if submission_format == "portfolio":
+        constraints = constraints_from_manifest(manifest)
+        lines.extend(
+            [
+                f"Portfolio holdings allowed: {constraints.min_holdings}-{constraints.max_holdings}",
+                f"Portfolio allocation increment: {constraints.allocation_increment_pct}%",
+                f"Portfolio minimum allocation: {constraints.min_allocation_pct}%",
+                f"Portfolio total allocation: {constraints.max_total_allocation_pct}%",
+            ]
+        )
     return "\n".join(f"- {line}" for line in lines)
 
 

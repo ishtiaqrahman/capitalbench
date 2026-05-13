@@ -7,6 +7,11 @@ from pathlib import Path
 from typing import Any
 
 from .io import load_manifest, load_options, read_json
+from .portfolio import (
+    constraints_from_manifest,
+    selected_option_ids as submission_selected_option_ids,
+    submission_format_from_manifest,
+)
 from .run_store import get_selected_run_paths, read_run_manifest
 from .scoring import _find_sp500_option, _is_cash_option
 from .universe import TIINGO_API_KEY_ENV, TiingoFetcher, fetch_tiingo_eod_prices
@@ -27,13 +32,14 @@ class SelectedPriceFetchOutput:
 def selected_price_options(round_path: Path, run_id: str | None = None) -> list:
     manifest = load_manifest(round_path)
     options = load_options(round_path)
-    options_by_id = {option.option_id: option for option in options}
+    submission_format = submission_format_from_manifest(manifest)
+    portfolio_constraints = constraints_from_manifest(manifest)
     run_paths = get_selected_run_paths(round_path, run_id)
     run_manifest = read_run_manifest(run_paths)
     run_type = str(run_manifest.get("run_type") or "mock")
     replicate_count = int(run_manifest.get("replicates") or 1)
 
-    selected_option_ids: set[str] = set()
+    selected_ids: set[str] = set()
     for parsed_file in iter_submission_files(run_paths.parsed_dir):
         submission = validate_submission_payload(
             read_json(parsed_file),
@@ -42,13 +48,15 @@ def selected_price_options(round_path: Path, run_id: str | None = None) -> list:
             run_type=run_type,
             replicate_count=replicate_count,
             require_run_metadata=run_type in {"official", "stability", "retrospective"},
+            submission_format=submission_format,
+            portfolio_constraints=portfolio_constraints,
         )
-        selected_option_ids.add(submission.selected_option_id)
+        selected_ids.update(submission_selected_option_ids(submission))
 
-    if not selected_option_ids:
+    if not selected_ids:
         raise ValueError("no valid parsed submissions found for selected price fetching")
 
-    required_ids = set(selected_option_ids)
+    required_ids = set(selected_ids)
     required_ids.add(_find_sp500_option(options).option_id)
     required_ids.update(option.option_id for option in options if _is_cash_option(option))
     return [option for option in options if option.option_id in required_ids]

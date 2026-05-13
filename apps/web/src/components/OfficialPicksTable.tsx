@@ -19,6 +19,16 @@ function providerClass(provider: string): string {
   return `provider-badge provider-${provider}`;
 }
 
+function allocationLabel(row: SubmissionRecord): string {
+  if (!row.portfolio || row.portfolio.length === 0) return row.selected_option_id;
+  return row.portfolio
+    .map((item) => {
+      const allocationPct = item.allocation_pct ?? (item.allocation_bps ?? 0) / 100;
+      return `${item.option_id} ${allocationPct}%`;
+    })
+    .join(" / ");
+}
+
 export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Props) {
   const [rows, setRows] = useState<SubmissionRecord[]>(fallbackRows);
   const [query, setQuery] = useState("");
@@ -51,6 +61,8 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
         modelLabel(row.model_id),
         providerLabel(row.provider),
         row.selected_option_id,
+        allocationLabel(row),
+        row.portfolio_rationale ?? "",
         row.rationale_summary,
         ...(row.key_risks ?? [])
       ]
@@ -61,13 +73,14 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
   }, [query, rows]);
 
   function exportCsv() {
-    const header = ["Model", "Provider", "Pick", "Confidence", "Status", "Rationale", "Key risks"].join(",");
+    const header = ["Model", "Provider", "Pick", "Allocations", "Confidence", "Status", "Rationale", "Key risks"].join(",");
     const body = filteredRows
       .map((row) =>
         [
           modelLabel(row.model_id),
           providerLabel(row.provider),
           row.selected_option_id,
+          allocationLabel(row),
           row.confidence.toFixed(2),
           "Pending",
           row.rationale_summary,
@@ -109,7 +122,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
             <tr>
               <th>Model</th>
               <th>Provider</th>
-              <th>Pick</th>
+              <th>{rows.some((row) => row.submission_format === "portfolio") ? "Portfolio" : "Pick"}</th>
               <th className="numeric">Confidence</th>
               <th>Status</th>
               <th aria-label="Details"></th>
@@ -131,7 +144,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
                     </td>
                     <td data-label="Pick">
                       <div className="pick-cell">
-                        <strong>{row.selected_option_id}</strong>
+                        <strong>{allocationLabel(row)}</strong>
                       </div>
                     </td>
                     <td className="numeric" data-label="Confidence">
@@ -159,8 +172,24 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
                         <div className="pick-details">
                           <div>
                             <span className="metric-label">Rationale</span>
+                            {row.portfolio_rationale && <p>{row.portfolio_rationale}</p>}
                             <p>{row.rationale_summary}</p>
                           </div>
+                          {row.portfolio && row.portfolio.length > 0 && (
+                            <div>
+                              <span className="metric-label">Allocations</span>
+                              <ul>
+                                {row.portfolio.map((allocation) => {
+                                  const pct = allocation.allocation_pct ?? (allocation.allocation_bps ?? 0) / 100;
+                                  return (
+                                    <li key={allocation.option_id}>
+                                      <strong>{allocation.option_id}</strong>: {pct}%{allocation.rationale ? ` - ${allocation.rationale}` : ""}
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            </div>
+                          )}
                           <div>
                             <span className="metric-label">Key Risks</span>
                             <ul>

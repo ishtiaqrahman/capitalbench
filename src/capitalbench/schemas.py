@@ -26,6 +26,9 @@ class RoundManifest(StrictModel):
     entry_date: str | None = None
     exit_date: str | None = None
     created_at: str | None = None
+    methodology_version: str | None = None
+    submission_format: "SubmissionFormat" = "single_pick"
+    portfolio_constraints: "PortfolioConstraints" = Field(default_factory=lambda: PortfolioConstraints())
     notes: str = ""
 
     @field_validator("round_id")
@@ -45,6 +48,33 @@ def _none_if_blank(value: object) -> str | None:
 
 
 RiskBucket = Literal["cash", "low", "medium", "high", "very_high"]
+SubmissionFormat = Literal["single_pick", "portfolio"]
+
+
+class PortfolioConstraints(StrictModel):
+    min_holdings: int = Field(default=1, ge=1)
+    max_holdings: int = Field(default=5, ge=1)
+    allocation_increment_pct: int = Field(default=5, ge=1, le=100)
+    min_allocation_pct: int = Field(default=5, ge=1, le=100)
+    max_total_allocation_pct: int = Field(default=100, ge=1, le=100)
+    allow_cash: bool = True
+    allow_benchmark_asset: bool = True
+
+    @model_validator(mode="after")
+    def validate_constraints(self) -> "PortfolioConstraints":
+        if self.max_holdings < self.min_holdings:
+            raise ValueError("max_holdings must be greater than or equal to min_holdings")
+        if self.max_total_allocation_pct != 100:
+            raise ValueError("max_total_allocation_pct must be 100")
+        if self.min_allocation_pct > self.max_total_allocation_pct:
+            raise ValueError("min_allocation_pct cannot exceed max_total_allocation_pct")
+        if self.min_holdings * self.min_allocation_pct > self.max_total_allocation_pct:
+            raise ValueError("min_holdings times min_allocation_pct cannot exceed max_total_allocation_pct")
+        if self.max_total_allocation_pct % self.allocation_increment_pct != 0:
+            raise ValueError("max_total_allocation_pct must be a multiple of allocation_increment_pct")
+        if self.min_allocation_pct % self.allocation_increment_pct != 0:
+            raise ValueError("min_allocation_pct must be a multiple of allocation_increment_pct")
+        return self
 
 
 class MarketOption(StrictModel):
@@ -264,21 +294,31 @@ class ModelSubmission(StrictModel):
     replicate_index: int | None = Field(default=None, ge=1)
     replicate_count: int | None = Field(default=None, ge=1)
     is_official_score: bool = False
-    selected_option_id: str
+    selected_option_id: str | None = None
+    portfolio: list["PortfolioAllocation"] | None = None
     confidence: float = Field(ge=0, le=1)
     rationale_summary: str
+    portfolio_rationale: str | None = None
     key_risks: list[str]
     usage: Usage | None = None
     cost_usd: float | None = Field(default=None, ge=0)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
-    @field_validator("round_id", "model_id", "selected_option_id", "rationale_summary")
+    @field_validator("round_id", "model_id", "rationale_summary")
     @classmethod
     def require_non_empty_text(cls, value: str) -> str:
         value = value.strip()
         if not value:
             raise ValueError("field cannot be blank")
         return value
+
+    @field_validator("selected_option_id", "portfolio_rationale")
+    @classmethod
+    def normalize_optional_text(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+        normalized = value.strip()
+        return normalized or None
 
     @field_validator("key_risks")
     @classmethod
@@ -287,6 +327,30 @@ class ModelSubmission(StrictModel):
         if any(not item for item in normalized):
             raise ValueError("key_risks cannot contain blank items")
         return normalized
+
+    @model_validator(mode="after")
+    def validate_decision_shape(self) -> "ModelSubmission":
+        has_single_pick = self.selected_option_id is not None
+        has_portfolio = self.portfolio is not None
+        if has_single_pick == has_portfolio:
+            raise ValueError("submission must contain exactly one of selected_option_id or portfolio")
+        if has_portfolio and not self.portfolio_rationale:
+            raise ValueError("portfolio submissions require portfolio_rationale")
+        return self
+
+
+class PortfolioAllocation(StrictModel):
+    option_id: str
+    allocation_pct: int = Field(ge=1, le=100)
+    rationale: str
+
+    @field_validator("option_id", "rationale")
+    @classmethod
+    def require_non_empty_text(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("field cannot be blank")
+        return value
 
 
 class PriceRecord(StrictModel):
@@ -350,15 +414,23 @@ class ScoreRecord(StrictModel):
     model_id: str
     provider: ProviderName
     mode: RunMode
+    submission_format: SubmissionFormat = "single_pick"
     selected_option_id: str
     confidence: float
     rationale_summary: str
+    portfolio_rationale: str | None = None
     key_risks: list[str]
     selected_asset_return: float
+    portfolio_return: float | None = None
     sp500_return: float
     alpha_vs_sp500: float
     regret_vs_best_option: float | None = None
     rank_among_options: int | None = None
+    holding_count: int = 1
+    max_allocation_bps: int = 10000
+    cash_allocation_bps: int = 0
+    benchmark_allocation_bps: int = 0
+    concentration_hhi: float = 1.0
     beats_sp500: bool
     beats_cash: bool
     cost_usd: float | None = None

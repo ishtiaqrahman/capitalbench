@@ -32,6 +32,7 @@ export default function LeaderboardTable({ fallbackRows, kind }: Props) {
     { key: "model_id", label: "Model", value: (row) => modelLabel(row.model_id) },
     { key: "provider", label: "Provider", value: (row) => providerLabel(row.provider) },
     { key: "selected_option_id", label: "Pick" },
+    { key: "holding_count", label: "Holdings", align: "right" },
     { key: "selected_asset_return", label: "Return", align: "right", value: (row) => pct(row.selected_asset_return) },
     { key: "sp500_return", label: "S&P 500", align: "right", value: (row) => pct(row.sp500_return) },
     { key: "alpha_vs_sp500", label: "Alpha", align: "right", value: (row) => pct(row.alpha_vs_sp500) },
