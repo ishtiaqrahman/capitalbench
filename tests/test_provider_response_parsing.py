@@ -330,6 +330,7 @@ def test_google_schema_conversion_strips_unsupported_keywords() -> None:
         "additionalProperties": False,
         "properties": {
             "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "allocation_pct": {"type": "integer", "minimum": 5, "maximum": 100, "multipleOf": 5},
             "key_risks": {
                 "type": "array",
                 "items": {"type": "string", "additionalProperties": False},
@@ -342,6 +343,7 @@ def test_google_schema_conversion_strips_unsupported_keywords() -> None:
     assert "additionalProperties" not in converted
     assert "minimum" not in converted["properties"]["confidence"]
     assert "maximum" not in converted["properties"]["confidence"]
+    assert "multipleOf" not in converted["properties"]["allocation_pct"]
     assert "additionalProperties" not in converted["properties"]["key_risks"]["items"]
 
 

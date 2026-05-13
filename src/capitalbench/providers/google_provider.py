@@ -89,7 +89,7 @@ def _google_thinking_config(reasoning_effort: str | None) -> dict[str, int] | No
 
 
 def _to_google_response_schema(schema: dict[str, Any]) -> dict[str, Any]:
-    unsupported = {"additionalProperties", "minimum", "maximum"}
+    unsupported = {"additionalProperties", "minimum", "maximum", "multipleOf"}
     converted: dict[str, Any] = {}
     for key, value in schema.items():
         if key in unsupported:
