@@ -22,7 +22,7 @@ export const siteConfig = {
   name: "CapitalBench",
   defaultTitle: "CapitalBench - LLM Market Benchmark and Leaderboards",
   description:
-    "CapitalBench is a public benchmark for one-shot LLM market decisions, official model picks, audit hashes, and leaderboards.",
+    "CapitalBench tests AI models on the same market prompt and frozen data, then publishes their picks, scores, and audit trail.",
   url: "https://www.capitalbench.org",
   githubUrl: "https://github.com/ishtiaqrahman/capitalbench",
   ogImage: "/og-image.png",
