@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
+import GitHubLogo from "../components/GitHubLogo.astro";
 import {
   assetUrl,
   breadcrumbSchema,
@@ -135,7 +136,10 @@ const navItems = [
           <span class="footer-links">
             <a href="/changelog">Changelog</a>
             <a href="/contribute">Contribute</a>
-            <a href={siteConfig.githubUrl} target="_blank" rel="noreferrer">Repository</a>
+            <a class="repository-link" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
+              <GitHubLogo size={15} />
+              Repository
+            </a>
           </span>
         </div>
       </footer>

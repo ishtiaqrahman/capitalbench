@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import GitHubLogo from "../components/GitHubLogo.astro";
 import PageHeader from "../components/PageHeader.astro";
 ---
 
@@ -43,7 +44,12 @@ import PageHeader from "../components/PageHeader.astro";
         <p>Major public changes to the benchmark, site, methodology, data, and operations.</p>
       </article>
       <article class="feature">
-        <h3><a href="https://github.com/ishtiaqrahman/capitalbench" target="_blank" rel="noreferrer">Repository</a></h3>
+        <h3>
+          <a class="repository-link" href="https://github.com/ishtiaqrahman/capitalbench" target="_blank" rel="noreferrer">
+            <GitHubLogo size={17} />
+            Repository
+          </a>
+        </h3>
         <p>CLI source, schema, local artifacts, and implementation history for the public benchmark.</p>
       </article>
     </div>

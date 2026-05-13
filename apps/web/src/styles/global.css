@@ -220,6 +220,9 @@ main,
 }
 
 .footer-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--ink);
   font-weight: 700;
   text-decoration: none;
@@ -234,6 +237,20 @@ main,
   padding: 22px 0 0;
   color: var(--muted);
   font-size: 0.82rem;
+}
+
+.repository-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.repository-link svg {
+  flex: 0 0 auto;
+}
+
+.github-logo {
+  display: block;
 }
 
 .breadcrumbs ol {
