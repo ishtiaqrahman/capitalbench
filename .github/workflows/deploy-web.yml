@@ -65,4 +65,4 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         if: steps.cloudflare.outputs.configured == 'true'
-        run: npx wrangler pages deploy dist --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch main
+        run: npx wrangler pages deploy dist --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch main --commit-dirty=true

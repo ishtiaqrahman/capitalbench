@@ -95,7 +95,7 @@ jobs:
       - name: Deploy resolved artifacts to Cloudflare Pages
         if: steps.commit-artifacts.outputs.changed == 'true' && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
         working-directory: apps/web
-        run: npx wrangler pages deploy dist --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch main
+        run: npx wrangler pages deploy dist --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch main --commit-dirty=true
 
       - name: Trigger Cloudflare Pages rebuild
         if: steps.commit-artifacts.outputs.changed == 'true' && env.CLOUDFLARE_PAGES_DEPLOY_HOOK != ''
