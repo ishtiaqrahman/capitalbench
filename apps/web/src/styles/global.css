@@ -840,6 +840,38 @@ h3 {
   color: var(--ink);
 }
 
+.round-link {
+  display: inline-flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+  color: var(--ink-strong);
+  text-decoration: none;
+}
+
+.round-link strong {
+  overflow-wrap: anywhere;
+}
+
+.round-link span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 680;
+}
+
+.round-link:hover strong {
+  text-decoration: underline;
+  text-decoration-color: rgb(15 118 110 / 45%);
+  text-underline-offset: 0.18em;
+}
+
+.table-action-link {
+  width: max-content;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .table-scroll {
   max-width: 100%;
   overflow-x: auto;
