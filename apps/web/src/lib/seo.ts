@@ -161,6 +161,25 @@ export const routeMeta: RouteMeta[] = [
     lastmod: "2026-05-13"
   },
   {
+    path: "/contribute",
+    title: "Contribute to CapitalBench",
+    description:
+      "Contribute to CapitalBench public benchmark infrastructure through monthly or one-time Stripe-hosted contributions.",
+    priority: 0.62,
+    changefreq: "monthly",
+    lastmod: "2026-05-13"
+  },
+  {
+    path: "/contribute/thanks",
+    title: "Thank You for Contributing to CapitalBench",
+    description: "Thank you for contributing to CapitalBench public benchmark infrastructure.",
+    priority: 0.1,
+    changefreq: "monthly",
+    lastmod: "2026-05-13",
+    sitemap: false,
+    noindex: true
+  },
+  {
     path: "/pro",
     title: "CapitalBench Pro",
     description:
@@ -186,6 +205,8 @@ const labelOverrides: Record<string, string> = {
   limitations: "Limitations",
   docs: "Docs",
   changelog: "Changelog",
+  contribute: "Contribute",
+  thanks: "Thanks",
   pro: "Pro"
 };
 

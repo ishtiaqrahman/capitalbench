@@ -70,7 +70,8 @@ const navItems = [
       currentPath.startsWith("/scoring") ||
       currentPath.startsWith("/fairness") ||
       currentPath.startsWith("/limitations")
-  }
+  },
+  { href: "/contribute", label: "Contribute", active: currentPath.startsWith("/contribute"), cta: true }
 ];
 ---
 
@@ -116,7 +117,7 @@ const navItems = [
           <div class="nav-links">
             {
               navItems.map((item) => (
-                <a href={item.href} aria-current={item.active ? "page" : undefined}>
+                <a class={item.cta ? "nav-cta" : undefined} href={item.href} aria-current={item.active ? "page" : undefined}>
                   {item.label}
                 </a>
               ))
@@ -133,6 +134,7 @@ const navItems = [
           <span>CapitalBench is a benchmark and research project, not financial advice.</span>
           <span class="footer-links">
             <a href="/changelog">Changelog</a>
+            <a href="/contribute">Contribute</a>
             <a href={siteConfig.githubUrl} target="_blank" rel="noreferrer">Repository</a>
           </span>
         </div>

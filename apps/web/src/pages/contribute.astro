@@ -1,0 +1,177 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { ArrowRight, CalendarClock, CheckCircle2, CreditCard, FileText, LockKeyhole, ReceiptText } from "lucide-react";
+import { fundingUses, monthlyContributionTiers, oneTimeContributionTiers } from "../data/contributions";
+
+const independenceRules = [
+  "No influence over methodology, model inclusion, scoring, publication timing, or results.",
+  "No early access to official benchmark outcomes.",
+  "No paid placement in leaderboards, reports, or round pages.",
+  "The public benchmark remains public."
+];
+
+const faqs = [
+  {
+    question: "Is this customer support?",
+    answer:
+      "No. This page is for voluntary financial contributions to CapitalBench. For operational questions, use the contact details in Stripe receipts or the public repository."
+  },
+  {
+    question: "Are contributions tax deductible?",
+    answer:
+      "Contributions are not tax-deductible charitable donations unless explicitly stated. CapitalBench is presented here as public benchmark infrastructure, not as a registered charity."
+  },
+  {
+    question: "Can I cancel a monthly contribution?",
+    answer:
+      "Yes. Monthly contributions are processed by Stripe. Stripe receipts and billing emails provide the payment record; contact CapitalBench if you need subscription help."
+  },
+  {
+    question: "Does contributing affect the benchmark?",
+    answer:
+      "No. Contributions do not affect model selection, methodology, scoring, publication timing, or results."
+  }
+];
+---
+
+<BaseLayout
+  title="Contribute to CapitalBench"
+  description="Contribute to CapitalBench public benchmark infrastructure through monthly or one-time Stripe-hosted contributions."
+>
+  <section class="contribute-hero" aria-labelledby="contribute-title">
+    <div class="contribute-hero-copy">
+      <p class="eyebrow">Public benchmark funding</p>
+      <h1 id="contribute-title">Fund CapitalBench</h1>
+      <p>
+        CapitalBench publishes auditable LLM market benchmark infrastructure. Contributions help cover model API calls,
+        market data, hosting, audit tooling, and public reporting without changing the benchmark's independence.
+      </p>
+      <div class="contribute-actions" aria-label="Contribution shortcuts">
+        <a class="action-link action-primary" href="#monthly">
+          <CalendarClock size={17} aria-hidden="true" />
+          Monthly contribution
+        </a>
+        <a class="action-link" href="#one-time">
+          One-time contribution
+          <ArrowRight size={15} aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+
+    <aside class="contribute-principles" aria-label="Contribution principles">
+      <div class="principle-head">
+        <LockKeyhole size={20} aria-hidden="true" />
+        <div>
+          <span>Independence Boundary</span>
+          <strong>Funding does not buy influence</strong>
+        </div>
+      </div>
+      <ul>
+        {independenceRules.map((rule) => (
+          <li><CheckCircle2 size={16} aria-hidden="true" /> {rule}</li>
+        ))}
+      </ul>
+    </aside>
+  </section>
+
+  <section class="contribute-band" aria-labelledby="funding-uses-title">
+    <div>
+      <span class="panel-kicker">What funding covers</span>
+      <h2 id="funding-uses-title">Research Operations, Not Perks</h2>
+      <p>
+        Contributions are treated as operational funding for public work. They do not create private leaderboard access,
+        hidden methodology changes, or preferential treatment.
+      </p>
+    </div>
+    <ul class="funding-use-list">
+      {fundingUses.map((item) => (
+        <li><CheckCircle2 size={16} aria-hidden="true" /> {item}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section id="monthly" class="section contribute-section" aria-labelledby="monthly-title">
+    <div class="contribute-section-head">
+      <span class="panel-kicker">Recurring funding</span>
+      <h2 id="monthly-title">Monthly Contributions</h2>
+      <p>Steady funding helps CapitalBench run future public rounds and keep the audit surface maintained.</p>
+    </div>
+    <div class="contribution-grid">
+      {monthlyContributionTiers.map((tier) => (
+        <article class:list={["contribution-card", tier.featured && "featured"]}>
+          <span class="metric-label">{tier.name}</span>
+          <h3>{tier.amount}<small>/mo</small></h3>
+          <p>{tier.description}</p>
+          <a class="action-link" href={tier.href} target="_blank" rel="noreferrer">
+            {tier.cta}
+            <ArrowRight size={15} aria-hidden="true" />
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section id="one-time" class="section contribute-section" aria-labelledby="one-time-title">
+    <div class="contribute-section-head">
+      <span class="panel-kicker">One-time funding</span>
+      <h2 id="one-time-title">One-Time Contributions</h2>
+      <p>Use a fixed amount or choose a custom one-time amount through Stripe-hosted checkout.</p>
+    </div>
+    <div class="contribution-grid one-time-grid">
+      {oneTimeContributionTiers.map((tier) => (
+        <article class="contribution-card compact">
+          <span class="metric-label">{tier.name}</span>
+          <h3>{tier.amount}</h3>
+          <p>{tier.description}</p>
+          <a class="action-link" href={tier.href} target="_blank" rel="noreferrer">
+            {tier.cta}
+            <ArrowRight size={15} aria-hidden="true" />
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="contribute-terms" aria-labelledby="terms-title">
+    <div>
+      <ReceiptText size={20} aria-hidden="true" />
+      <h2 id="terms-title">Billing Clarity</h2>
+      <p>
+        Payments are processed by Stripe-hosted checkout. Monthly contributions renew automatically until cancelled.
+        Contributions are not tax-deductible charitable donations unless explicitly stated.
+      </p>
+    </div>
+    <div>
+      <CreditCard size={20} aria-hidden="true" />
+      <h2>Payment Security</h2>
+      <p>
+        CapitalBench does not collect or store card details on this website. Stripe handles checkout, receipts, and
+        payment processing.
+      </p>
+    </div>
+    <div>
+      <FileText size={20} aria-hidden="true" />
+      <h2>Public Benchmark Boundary</h2>
+      <p>
+        Contribution status is not used in scoring, model inclusion, methodology decisions, publication timing, or
+        benchmark reporting.
+      </p>
+    </div>
+  </section>
+
+  <section class="section contribute-faq" aria-labelledby="contribute-faq-title">
+    <div class="contribute-section-head">
+      <span class="panel-kicker">Questions</span>
+      <h2 id="contribute-faq-title">Contribution FAQ</h2>
+    </div>
+    <div class="faq-grid">
+      {faqs.map((item) => (
+        <article>
+          <h3>{item.question}</h3>
+          <p>{item.answer}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+

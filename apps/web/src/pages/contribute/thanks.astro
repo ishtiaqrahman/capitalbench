@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+---
+
+<BaseLayout
+  title="Thank You for Contributing to CapitalBench"
+  description="Thank you for contributing to CapitalBench public benchmark infrastructure."
+>
+  <section class="thanks-panel" aria-labelledby="thanks-title">
+    <div class="thanks-mark" aria-hidden="true">
+      <CheckCircle2 size={28} />
+    </div>
+    <p class="eyebrow">Contribution received</p>
+    <h1 id="thanks-title">Thank You</h1>
+    <p>
+      Your contribution helps fund CapitalBench's public benchmark infrastructure: model API calls, market data, hosting,
+      audit tooling, and reproducible reporting.
+    </p>
+    <p class="muted">
+      Stripe sends the payment receipt and billing details. Contribution status does not influence methodology, scoring,
+      model inclusion, publication timing, or results.
+    </p>
+    <div class="not-found-actions">
+      <a class="action-link action-primary" href="/rounds">
+        View rounds
+        <ArrowRight size={15} aria-hidden="true" />
+      </a>
+      <a class="action-link" href="/">Return home</a>
+    </div>
+  </section>
+</BaseLayout>
+
