@@ -152,6 +152,15 @@ export const routeMeta: RouteMeta[] = [
     lastmod: defaultLastmod
   },
   {
+    path: "/changelog",
+    title: "CapitalBench Changelog",
+    description:
+      "Public CapitalBench changelog for major website, benchmark, data, methodology, security, and operations updates.",
+    priority: 0.66,
+    changefreq: "monthly",
+    lastmod: "2026-05-13"
+  },
+  {
     path: "/pro",
     title: "CapitalBench Pro",
     description:
@@ -176,6 +185,7 @@ const labelOverrides: Record<string, string> = {
   fairness: "Fairness",
   limitations: "Limitations",
   docs: "Docs",
+  changelog: "Changelog",
   pro: "Pro"
 };
 

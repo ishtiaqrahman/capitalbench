@@ -198,6 +198,23 @@ main,
   gap: 18px;
 }
 
+.footer-links {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.footer-links a {
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+  text-decoration-color: rgb(15 118 110 / 45%);
+}
+
 .breadcrumbs {
   padding: 22px 0 0;
   color: var(--muted);
@@ -603,6 +620,21 @@ h3 {
   color: #3a2600 !important;
 }
 
+.status-published {
+  color: var(--resolved);
+  background: var(--resolved-bg);
+}
+
+.status-updated {
+  color: var(--pending);
+  background: var(--pending-bg);
+}
+
+.status-deprecated {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
 .badge,
 .provider-badge,
 .status-badge {
@@ -870,6 +902,184 @@ h3 {
   color: var(--ink);
   font-weight: 700;
   text-decoration: none;
+}
+
+.changelog-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.changelog-overview article,
+.changelog-sidebar,
+.changelog-feed {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.changelog-overview article,
+.changelog-sidebar {
+  padding: 18px;
+}
+
+.changelog-overview h2 {
+  font-size: 1.15rem;
+}
+
+.changelog-overview p,
+.changelog-sidebar p,
+.changelog-summary,
+.changelog-details {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.changelog-layout {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.34fr) minmax(0, 0.66fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.changelog-sidebar h2 {
+  margin-top: 6px;
+  font-size: 1.25rem;
+}
+
+.changelog-category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 16px;
+}
+
+.changelog-category-list span {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 9px;
+  background: var(--surface-muted);
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 720;
+}
+
+.changelog-feed {
+  overflow: hidden;
+}
+
+.changelog-feed-header {
+  background: var(--surface-muted);
+}
+
+.changelog-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.changelog-entry {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 18px;
+  padding: 22px 20px;
+  border-top: 1px solid var(--line);
+}
+
+.changelog-entry:first-child {
+  border-top: 0;
+}
+
+.changelog-entry-date {
+  padding-top: 2px;
+}
+
+.changelog-entry-date span {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 10px;
+  background: #ffffff;
+  color: var(--ink-strong);
+  font-size: 0.78rem;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+}
+
+.changelog-entry-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.changelog-entry-header h3 {
+  margin-top: 10px;
+  font-size: 1.24rem;
+}
+
+.changelog-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.anchor-link {
+  flex: 0 0 auto;
+  color: var(--muted-2);
+  font-weight: 780;
+  text-decoration: none;
+}
+
+.anchor-link:hover {
+  color: var(--accent);
+}
+
+.changelog-summary {
+  margin: 10px 0 0;
+}
+
+.changelog-details {
+  margin: 14px 0 0;
+  padding-left: 18px;
+}
+
+.changelog-details li {
+  margin-bottom: 7px;
+}
+
+.changelog-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.changelog-links a {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 0 10px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 720;
+  text-decoration: none;
+}
+
+.changelog-links a:hover {
+  border-color: var(--line-strong);
 }
 
 .table-scroll {
@@ -1749,6 +1959,8 @@ tbody tr:hover {
   .status-strip,
   .view-switcher,
   .grid-3,
+  .changelog-overview,
+  .changelog-layout,
   .phase-list,
   .evidence-grid,
   .rule-matrix,
@@ -1769,6 +1981,16 @@ tbody tr:hover {
 
   .phase-list li:last-child {
     border-bottom: 0;
+  }
+
+  .changelog-entry {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 18px 16px;
+  }
+
+  .changelog-entry-header {
+    gap: 12px;
   }
 
   .schema-grid {

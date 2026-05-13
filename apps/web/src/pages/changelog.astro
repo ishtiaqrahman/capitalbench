@@ -1,0 +1,125 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import { changelogCategories, changelogEntries } from "../data/changelog";
+import { canonicalUrl, type JsonLdRecord } from "../lib/seo";
+
+const latestEntry = changelogEntries[0];
+const changelogSchema: JsonLdRecord = {
+  "@type": "ItemList",
+  "@id": `${canonicalUrl("/changelog")}#changelog`,
+  name: "CapitalBench Changelog",
+  description:
+    "Public log of major CapitalBench website, benchmark, data, methodology, security, and operations changes.",
+  itemListOrder: "https://schema.org/ItemListOrderDescending",
+  numberOfItems: changelogEntries.length,
+  itemListElement: changelogEntries.map((entry, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    url: `${canonicalUrl("/changelog")}#${entry.id}`,
+    item: {
+      "@type": "Article",
+      headline: entry.title,
+      datePublished: entry.date,
+      dateModified: entry.date,
+      description: entry.summary,
+      url: `${canonicalUrl("/changelog")}#${entry.id}`
+    }
+  }))
+};
+---
+
+<BaseLayout
+  title="CapitalBench Changelog"
+  description="Public CapitalBench changelog for major website, benchmark, data, methodology, security, and operations updates."
+  structuredData={changelogSchema}
+>
+  <PageHeader
+    eyebrow="Changelog"
+    title="Major Changes"
+    summary="A public, reverse-chronological record of meaningful CapitalBench changes. Entries are added only when a change is selected for public reporting."
+  />
+
+  <section class="section">
+    <div class="changelog-overview" aria-label="Changelog format">
+      <article>
+        <span class="metric-label">Cadence</span>
+        <h2>Event-Based</h2>
+        <p>Updates are posted for material benchmark, data, methodology, website, security, or operational changes.</p>
+      </article>
+      <article>
+        <span class="metric-label">Latest Entry</span>
+        <h2>{latestEntry ? latestEntry.date : "No entries yet"}</h2>
+        <p>{latestEntry ? latestEntry.title : "Major updates will appear here after approval."}</p>
+      </article>
+      <article>
+        <span class="metric-label">Entry Format</span>
+        <h2>Impact First</h2>
+        <p>Each entry states what changed, why it matters, what was touched, and where to inspect the result.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section changelog-layout" aria-labelledby="changelog-title">
+    <aside class="changelog-sidebar" aria-label="Changelog categories">
+      <span class="panel-kicker">Categories</span>
+      <h2>What Gets Logged</h2>
+      <p>
+        The changelog is for changes a reader would reasonably care about when interpreting CapitalBench results or
+        trusting the public site.
+      </p>
+      <div class="changelog-category-list">
+        {changelogCategories.map((category) => <span>{category}</span>)}
+      </div>
+    </aside>
+
+    <div class="changelog-feed">
+      <div class="panel-header changelog-feed-header">
+        <div>
+          <span class="panel-kicker">Release Notes</span>
+          <h2 id="changelog-title">Published Updates</h2>
+          <p>Newest entries appear first. Links and anchors are stable unless an entry is corrected.</p>
+        </div>
+      </div>
+
+      <ol class="changelog-list">
+        {
+          changelogEntries.map((entry) => (
+            <li class="changelog-entry" id={entry.id}>
+              <div class="changelog-entry-date" aria-label={`Published ${entry.date}`}>
+                <span>{entry.date}</span>
+              </div>
+              <article>
+                <header class="changelog-entry-header">
+                  <div>
+                    <div class="changelog-badges">
+                      <span class="badge badge-neutral">{entry.category}</span>
+                      <span class={`status-badge status-${entry.status}`}>{entry.status}</span>
+                    </div>
+                    <h3>{entry.title}</h3>
+                  </div>
+                  <a class="anchor-link" href={`#${entry.id}`} aria-label={`Permalink to ${entry.title}`}>
+                    #
+                  </a>
+                </header>
+                <p class="changelog-summary">{entry.summary}</p>
+                <ul class="changelog-details">
+                  {entry.details.map((detail) => <li>{detail}</li>)}
+                </ul>
+                {
+                  entry.links && entry.links.length > 0 && (
+                    <nav class="changelog-links" aria-label={`${entry.title} links`}>
+                      {entry.links.map((link) => (
+                        <a href={link.href}>{link.label}</a>
+                      ))}
+                    </nav>
+                  )
+                }
+              </article>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
