@@ -755,6 +755,8 @@ rounds:
 | `check-providers` | Check API key presence without printing values |
 | `smoke-provider` | Run a private provider adapter smoke test |
 
+For production operations, see `docs/operations_runbook.md`.
+
 ## Repository Layout
 
 ```text
@@ -768,6 +770,7 @@ docs/
   fairness.md
   limitations.md
   first_round_checklist.md
+  operations_runbook.md
   methodology_versions.md
 rounds/
   example-round/
