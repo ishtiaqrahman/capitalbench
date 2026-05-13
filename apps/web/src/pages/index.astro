@@ -3,41 +3,139 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import StatusCards from "../components/StatusCards.astro";
 import LeaderboardTable from "../components/LeaderboardTable";
 import OfficialPicksTable from "../components/OfficialPicksTable";
-import { ExternalLink, GitBranch } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  Database,
+  ExternalLink,
+  FileCheck2,
+  GitBranch,
+  Layers3,
+  ShieldCheck,
+  TimerReset
+} from "lucide-react";
 import { auditHashes, latestLeaderboard, officialSubmissions, rounds, universeOptions } from "../data/fallback";
 import { siteConfig } from "../lib/seo";
 
 const currentRound = rounds[0];
 const consensusPick = "SEMICONDUCTORS";
+const consensusCount = officialSubmissions.filter((row) => row.selected_option_id === consensusPick).length;
+const providerCount = new Set(officialSubmissions.map((row) => row.provider)).size;
 const publishedArtifactCount = auditHashes.length + officialSubmissions.length + universeOptions.length;
+const heroMetrics = [
+  { label: "Official submissions", value: `${officialSubmissions.length}/${providerCount} providers` },
+  { label: "Frozen universe", value: `${universeOptions.length} options` },
+  { label: "Input hashes", value: String(auditHashes.length) },
+  { label: "Score state", value: "Pending" }
+];
+const resultViews = [
+  {
+    href: "/leaderboards/latest",
+    icon: BarChart3,
+    label: "Latest Round",
+    description: "Newest resolved official one-shot leaderboard.",
+    state: "Pending"
+  },
+  {
+    href: "/leaderboards/cumulative-official",
+    icon: Layers3,
+    label: "Cumulative Official",
+    description: "Average official alpha across participated resolved rounds.",
+    state: "Separate"
+  },
+  {
+    href: "/leaderboards/cumulative-stability",
+    icon: TimerReset,
+    label: "Cumulative Stability",
+    description: "Repeated-call alpha and consistency, never blended with official results.",
+    state: "Separate"
+  }
+];
+const safeguards = [
+  {
+    icon: ShieldCheck,
+    label: "Protocol",
+    title: "One official call per model",
+    description: "Official picks are not averaged with repeated stability runs, mock output, or private smoke tests."
+  },
+  {
+    icon: Database,
+    label: "Audit Read Model",
+    title: `${publishedArtifactCount} public rows`,
+    description: "Round metadata, options, official submissions, and hashes are mirrored into Supabase for the public site."
+  },
+  {
+    icon: FileCheck2,
+    label: "Boundary",
+    title: "No performance before resolution",
+    description: "Pending pages show decisions and artifacts without implying realized alpha."
+  }
+];
 ---
 
 <BaseLayout
   title="CapitalBench - LLM Market Benchmark and Leaderboards"
   description="CapitalBench is a public benchmark for one-shot LLM market decisions, official model picks, audit hashes, and leaderboards."
 >
-  <section class="dashboard-header">
-    <div class="dashboard-title">
-      <p class="eyebrow">Public benchmark console</p>
-      <h1>CapitalBench</h1>
-      <p>
-        One-shot LLM market decisions, frozen before the deadline and scored after the fixed horizon. The public site
-        tracks official model picks, market benchmark leaderboards, methodology, and audit hashes for reproducible AI
-        market evaluation.
+  <section class="home-hero" aria-labelledby="home-title">
+    <div class="home-hero-copy">
+      <p class="eyebrow">Auditable LLM market benchmark</p>
+      <h1 id="home-title">CapitalBench</h1>
+      <p class="home-hero-lede">
+        One-shot model market decisions, frozen before the deadline and scored after a fixed horizon. Every public result
+        links back to the prompt, option universe, validation state, and input hashes.
       </p>
-      <div class="header-actions" aria-label="Project resources">
-        <a class="action-link action-primary" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
-          <GitBranch size={17} aria-hidden="true" />
-          GitHub repository
-          <ExternalLink size={14} aria-hidden="true" />
-        </a>
-        <a class="action-link" href="/methodology">Read methodology</a>
+    </div>
+
+    <div class="home-hero-actions" aria-label="Project resources">
+      <a class="action-link action-primary" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
+        <GitBranch size={17} aria-hidden="true" />
+        GitHub repository
+        <ExternalLink size={14} aria-hidden="true" />
+      </a>
+      <a class="action-link" href="/rounds">
+        Inspect Round 1
+        <ArrowRight size={15} aria-hidden="true" />
+      </a>
+      <a class="action-link" href="/methodology">Read methodology</a>
+    </div>
+
+    <div class="home-hero-console" aria-label="Current benchmark state">
+      <div class="console-header">
+        <div class="console-title">
+          <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="eager" />
+          <div>
+            <span>Current Public Round</span>
+            <strong>{currentRound.round_id}</strong>
+          </div>
+        </div>
+        <span class="status-badge status-pending">Score pending</span>
+      </div>
+
+      <div class="console-metrics">
+        {heroMetrics.map((metric) => (
+          <div>
+            <span>{metric.label}</span>
+            <strong>{metric.value}</strong>
+          </div>
+        ))}
+      </div>
+
+      <div class="console-ledger" aria-label="Round 1 evidence ledger">
+        <div>
+          <span>Decision state</span>
+          <strong>{consensusCount} of {officialSubmissions.length} models selected {consensusPick}</strong>
+        </div>
+        <div>
+          <span>Resolution gate</span>
+          <strong>Exit prices due after {currentRound.exit_date}</strong>
+        </div>
+        <div>
+          <span>Reader promise</span>
+          <strong>Research benchmark, not financial advice</strong>
+        </div>
       </div>
     </div>
-    <aside class="header-note">
-      CapitalBench is evaluation research, not financial advice. Round 1 is pending until exit prices for
-      {` ${currentRound.exit_date} `} are available.
-    </aside>
   </section>
 
   <StatusCards
@@ -51,8 +149,8 @@ const publishedArtifactCount = auditHashes.length + officialSubmissions.length +
 
   <section class="phase-band" aria-labelledby="round-progress-title">
     <div class="phase-intro">
-      <span class="panel-kicker">Round 1 progress</span>
-      <h2 id="round-progress-title">Published Until Resolution</h2>
+      <span class="panel-kicker">Round 1 lifecycle</span>
+      <h2 id="round-progress-title">A Clear Line Between Decisions And Performance</h2>
       <p>
         The site distinguishes collected decisions from scored performance. Picks and entry prices are public; realized
         returns remain absent until the exit date resolves.
@@ -82,37 +180,45 @@ const publishedArtifactCount = auditHashes.length + officialSubmissions.length +
     </ol>
   </section>
 
-  <section class="evidence-grid" aria-label="Benchmark safeguards">
-    <article>
-      <span class="metric-label">Protocol</span>
-      <h3>One official call per model</h3>
-      <p>Official picks are not averaged with repeated stability runs or private smoke tests.</p>
-    </article>
-    <article>
-      <span class="metric-label">Audit Read Model</span>
-      <h3>{publishedArtifactCount} public rows</h3>
-      <p>Round metadata, options, official submissions, and hashes are mirrored into Supabase for the site.</p>
-    </article>
-    <article>
-      <span class="metric-label">Boundary</span>
-      <h3>No performance before resolution</h3>
-      <p>Pending pages show decisions and artifacts without implying realized alpha.</p>
-    </article>
+  <section class="home-section-heading" aria-labelledby="safeguards-title">
+    <span class="panel-kicker">Benchmark safeguards</span>
+    <h2 id="safeguards-title">Built For Inspection Before Interpretation</h2>
+    <p>
+      The landing page should make the benchmark's trust model obvious before readers see a score: fixed inputs,
+      isolated runs, public hashes, and no provisional alpha.
+    </p>
   </section>
 
-  <nav class="view-switcher" aria-label="Primary result views">
-    <a href="/leaderboards/latest">
-      <strong>Latest Round</strong>
-      <span>Newest resolved official one-shot leaderboard.</span>
-    </a>
-    <a href="/leaderboards/cumulative-official">
-      <strong>Cumulative Official</strong>
-      <span>Average official alpha across participated resolved rounds.</span>
-    </a>
-    <a href="/leaderboards/cumulative-stability">
-      <strong>Cumulative Stability</strong>
-      <span>Repeated-call alpha and consistency, separate from official results.</span>
-    </a>
+  <section class="evidence-grid enhanced" aria-label="Benchmark safeguards">
+    {safeguards.map((item) => {
+      const Icon = item.icon;
+      return (
+        <article>
+          <div class="evidence-icon" aria-hidden="true">
+            <Icon size={19} />
+          </div>
+          <span class="metric-label">{item.label}</span>
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+        </article>
+      );
+    })}
+  </section>
+
+  <nav class="view-switcher enhanced" aria-label="Primary result views">
+    {resultViews.map((view) => {
+      const Icon = view.icon;
+      return (
+        <a href={view.href}>
+          <span class="view-icon" aria-hidden="true"><Icon size={18} /></span>
+          <span class="view-copy">
+            <strong>{view.label}</strong>
+            <span>{view.description}</span>
+          </span>
+          <span class="view-state">{view.state}</span>
+        </a>
+      );
+    })}
   </nav>
 
   <section class="dashboard-grid">
@@ -121,7 +227,10 @@ const publishedArtifactCount = auditHashes.length + officialSubmissions.length +
         <div>
           <span class="panel-kicker">Current round</span>
           <h2>Official Picks</h2>
-          <p>All four official Round 1 models selected the same option. Performance remains unpublished while the round is pending.</p>
+          <p>
+            All four official Round 1 models selected the same option. The table shows decisions, confidence, rationales,
+            and risks without presenting performance while the round is pending.
+          </p>
         </div>
         <span class="status-badge status-pending">Pending score</span>
       </div>
@@ -129,10 +238,10 @@ const publishedArtifactCount = auditHashes.length + officialSubmissions.length +
     </div>
 
     <aside class="rail" aria-label="Round audit summary">
-      <div class="rail-panel">
+      <div class="rail-panel highlight-panel">
         <span class="metric-label">Consensus Pick</span>
         <h3>{consensusPick}</h3>
-        <p>Four of four official submissions selected Semiconductors.</p>
+        <p>{consensusCount} of {officialSubmissions.length} official submissions selected Semiconductors.</p>
       </div>
       <div class="rail-panel">
         <span class="metric-label">Methodology</span>
@@ -144,16 +253,27 @@ const publishedArtifactCount = auditHashes.length + officialSubmissions.length +
         <h3>{auditHashes.length} hashed inputs</h3>
         <p>{universeOptions.length} frozen options. Public hashes and validation metadata are synced to Supabase.</p>
       </div>
+      <div class="rail-panel rail-checklist">
+        <span class="metric-label">Reader Path</span>
+        <ul>
+          <li><a href={`/rounds/${currentRound.round_id}/`}>Review the round packet</a></li>
+          <li><a href="/universe">Inspect the frozen universe</a></li>
+          <li><a href="/fairness">Read fairness controls</a></li>
+        </ul>
+      </div>
     </aside>
   </section>
 
-  <section class="section">
+  <section class="section resolution-section">
     <div class="panel">
       <div class="panel-header">
         <div>
           <span class="panel-kicker">Latest leaderboard</span>
           <h2>Resolution Pending</h2>
-          <p>The official leaderboard appears here after exit prices are available and the run is scored.</p>
+          <p>
+            The official leaderboard appears here after exit prices are available, the selected run is scored, and the
+            result artifacts are regenerated.
+          </p>
         </div>
       </div>
       <LeaderboardTable client:visible fallbackRows={latestLeaderboard} kind="latest" />
