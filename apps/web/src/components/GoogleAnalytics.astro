@@ -1,0 +1,101 @@
+---
+const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID?.trim() ?? "";
+const enabled = Boolean(measurementId);
+const googleTagUrl = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+---
+
+{
+  enabled && (
+    <>
+      <script is:inline async src={googleTagUrl}></script>
+      <script is:inline define:vars={{ measurementId }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          window.dataLayer.push(arguments);
+        }
+        window.gtag = gtag;
+
+        const pagePath = window.location.pathname || "/";
+        const pageLocation = `${window.location.origin}${pagePath}`;
+
+        gtag("js", new Date());
+        gtag("set", "allow_google_signals", false);
+        gtag("set", "allow_ad_personalization_signals", false);
+        gtag("config", measurementId, {
+          page_path: pagePath,
+          page_location: pageLocation,
+          page_title: document.title
+        });
+      </script>
+      <script is:inline>
+        (() => {
+          const PARAM_PREFIX = "data-analytics-param-";
+          const EVENT_NAME_RE = /^[a-z][a-z0-9_]{0,39}$/;
+
+          const cleanPath = () => window.location.pathname || "/";
+          const cleanLocation = () => `${window.location.origin}${cleanPath()}`;
+
+          const track = (name, params = {}) => {
+            if (!EVENT_NAME_RE.test(name) || typeof window.gtag !== "function") return;
+            window.gtag("event", name, {
+              ...params,
+              page_path: cleanPath(),
+              page_location: cleanLocation(),
+              transport_type: "beacon"
+            });
+          };
+
+          window.capitalbenchAnalytics = { track };
+
+          document.addEventListener(
+            "click",
+            (event) => {
+              const target = event.target;
+              const anchor =
+                target && typeof target.closest === "function"
+                  ? target.closest("a[data-analytics-event]")
+                  : null;
+              if (!anchor) return;
+
+              const eventName = anchor.getAttribute("data-analytics-event") || "";
+              const params = {};
+
+              for (const attr of anchor.attributes) {
+                if (!attr.name.startsWith(PARAM_PREFIX)) continue;
+                const key = attr.name.slice(PARAM_PREFIX.length).replace(/[^a-zA-Z0-9_]/g, "_");
+                if (key) params[key] = attr.value;
+              }
+
+              const href = anchor.getAttribute("href");
+              if (href) {
+                try {
+                  const url = new URL(href, window.location.href);
+                  params.link_domain = url.hostname;
+                  params.outbound = url.hostname !== window.location.hostname ? "true" : "false";
+                } catch {
+                  params.link_domain = "unparseable";
+                }
+              }
+
+              track(eventName, params);
+            },
+            { capture: true }
+          );
+
+          const trackRoundDetailView = () => {
+            const path = cleanPath().replace(/\/+$/g, "");
+            const match = path.match(/^\/rounds\/([^/]+)$/);
+            if (!match) return;
+            track("round_detail_view", { round_id: decodeURIComponent(match[1]) });
+          };
+
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", trackRoundDetailView, { once: true });
+          } else {
+            trackRoundDetailView();
+          }
+        })();
+      </script>
+    </>
+  )
+}

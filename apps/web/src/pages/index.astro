@@ -88,7 +88,14 @@ const safeguards = [
     </div>
 
     <div class="home-hero-actions" aria-label="Project resources">
-      <a class="action-link action-primary" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
+      <a
+        class="action-link action-primary"
+        href={siteConfig.githubUrl}
+        target="_blank"
+        rel="noreferrer"
+        data-analytics-event="github_repository_click"
+        data-analytics-param-location="home_hero"
+      >
         <GitHubLogo size={17} />
         GitHub repository
         <ExternalLink size={14} aria-hidden="true" />
@@ -97,7 +104,14 @@ const safeguards = [
         Inspect Round 1
         <ArrowRight size={15} aria-hidden="true" />
       </a>
-      <a class="action-link" href="/methodology">Read methodology</a>
+      <a
+        class="action-link"
+        href="/methodology"
+        data-analytics-event="methodology_click"
+        data-analytics-param-location="home_hero"
+      >
+        Read methodology
+      </a>
     </div>
 
     <div class="home-hero-console" aria-label="Current benchmark state">

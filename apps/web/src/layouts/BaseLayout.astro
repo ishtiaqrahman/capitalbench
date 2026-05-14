@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import GitHubLogo from "../components/GitHubLogo.astro";
+import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 import {
   assetUrl,
   breadcrumbSchema,
@@ -105,6 +106,7 @@ const navItems = [
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script is:inline type="application/ld+json" set:html={jsonLd} />
+    <GoogleAnalytics />
   </head>
   <body>
     <a class="skip-link" href="#content">Skip to content</a>
@@ -118,7 +120,21 @@ const navItems = [
           <div class="nav-links">
             {
               navItems.map((item) => (
-                <a class={item.cta ? "nav-cta" : undefined} href={item.href} aria-current={item.active ? "page" : undefined}>
+                <a
+                  class={item.cta ? "nav-cta" : undefined}
+                  href={item.href}
+                  aria-current={item.active ? "page" : undefined}
+                  data-analytics-event={
+                    item.href === "/contribute"
+                      ? "contribute_click"
+                      : item.href === "/methodology"
+                        ? "methodology_click"
+                        : undefined
+                  }
+                  data-analytics-param-location={
+                    item.href === "/contribute" || item.href === "/methodology" ? "primary_nav" : undefined
+                  }
+                >
                   {item.label}
                 </a>
               ))
@@ -135,8 +151,16 @@ const navItems = [
           <span>CapitalBench is a benchmark and research project, not financial advice.</span>
           <span class="footer-links">
             <a href="/changelog">Changelog</a>
-            <a href="/contribute">Contribute</a>
-            <a class="repository-link" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
+            <a href="/privacy">Privacy</a>
+            <a href="/contribute" data-analytics-event="contribute_click" data-analytics-param-location="footer">Contribute</a>
+            <a
+              class="repository-link"
+              href={siteConfig.githubUrl}
+              target="_blank"
+              rel="noreferrer"
+              data-analytics-event="github_repository_click"
+              data-analytics-param-location="footer"
+            >
               <GitHubLogo size={15} />
               Repository
             </a>

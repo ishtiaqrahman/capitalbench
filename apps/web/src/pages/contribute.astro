@@ -46,6 +46,12 @@ const assuranceItems = [
       "CapitalBench does not collect or store card details on this website."
   }
 ];
+
+const analyticsKey = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
 ---
 
 <BaseLayout
@@ -106,7 +112,16 @@ const assuranceItems = [
             <h3>{tier.amount}<small>/mo</small></h3>
             <p>{tier.description}</p>
           </div>
-          <a class="contribution-button" href={tier.href} target="_blank" rel="noreferrer">
+          <a
+            class="contribution-button"
+            href={tier.href}
+            target="_blank"
+            rel="noreferrer"
+            data-analytics-event="stripe_contribution_click"
+            data-analytics-param-cadence={tier.cadence}
+            data-analytics-param-tier={analyticsKey(tier.name)}
+            data-analytics-param-amount={tier.amount}
+          >
             <span>{tier.cta}</span>
             <ArrowRight size={15} aria-hidden="true" />
           </a>
@@ -124,7 +139,16 @@ const assuranceItems = [
       </div>
       <div class="one-time-options" aria-label="One-time contribution options">
         {oneTimeContributionTiers.map((tier) => (
-          <a class="amount-option" href={tier.href} target="_blank" rel="noreferrer">
+          <a
+            class="amount-option"
+            href={tier.href}
+            target="_blank"
+            rel="noreferrer"
+            data-analytics-event="stripe_contribution_click"
+            data-analytics-param-cadence={tier.cadence}
+            data-analytics-param-tier={analyticsKey(`${tier.name}-${tier.amount}`)}
+            data-analytics-param-amount={tier.amount}
+          >
             <span>{tier.amount}</span>
             <small>{tier.cta}</small>
             <ArrowRight size={15} aria-hidden="true" />

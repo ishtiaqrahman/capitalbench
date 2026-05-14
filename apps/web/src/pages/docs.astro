@@ -45,7 +45,14 @@ import PageHeader from "../components/PageHeader.astro";
       </article>
       <article class="feature">
         <h3>
-          <a class="repository-link" href="https://github.com/ishtiaqrahman/capitalbench" target="_blank" rel="noreferrer">
+          <a
+            class="repository-link"
+            href="https://github.com/ishtiaqrahman/capitalbench"
+            target="_blank"
+            rel="noreferrer"
+            data-analytics-event="github_repository_click"
+            data-analytics-param-location="docs_card"
+          >
             <GitHubLogo size={17} />
             Repository
           </a>

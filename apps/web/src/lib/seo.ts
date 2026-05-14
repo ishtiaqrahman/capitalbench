@@ -180,6 +180,14 @@ export const routeMeta: RouteMeta[] = [
     noindex: true
   },
   {
+    path: "/privacy",
+    title: "CapitalBench Privacy",
+    description: "CapitalBench privacy note for website analytics, contribution links, and public benchmark data.",
+    priority: 0.42,
+    changefreq: "monthly",
+    lastmod: "2026-05-14"
+  },
+  {
     path: "/pro",
     title: "CapitalBench Pro",
     description:
@@ -207,6 +215,7 @@ const labelOverrides: Record<string, string> = {
   changelog: "Changelog",
   contribute: "Contribute",
   thanks: "Thanks",
+  privacy: "Privacy",
   pro: "Pro"
 };
 

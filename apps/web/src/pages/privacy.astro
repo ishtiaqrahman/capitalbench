@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+---
+
+<BaseLayout
+  title="CapitalBench Privacy"
+  description="CapitalBench privacy note for website analytics, contribution links, and public benchmark data."
+>
+  <PageHeader
+    eyebrow="Privacy"
+    title="Analytics And Data Use"
+    summary="CapitalBench uses analytics to understand aggregate site usage and improve the public benchmark website."
+  />
+
+  <section class="section doc-layout">
+    <article class="doc-main">
+      <h2>Website Analytics</h2>
+      <p>
+        CapitalBench uses Google Analytics to measure aggregate traffic, page views, referral sources, and selected
+        product interactions such as repository clicks, round-detail views, methodology clicks, and Stripe contribution
+        link clicks.
+      </p>
+
+      <h2>What We Do Not Send</h2>
+      <p>
+        CapitalBench does not intentionally send provider API keys, raw provider responses, raw model prompts, full
+        model outputs, payment details, email addresses, or private operational secrets to Google Analytics.
+      </p>
+
+      <h2>Contribution Payments</h2>
+      <p>
+        Contribution checkout is handled by Stripe. CapitalBench tracks outbound contribution link clicks for aggregate
+        funnel measurement, but Stripe handles card details, receipts, billing records, and payment processing.
+      </p>
+
+      <h2>Public Benchmark Data</h2>
+      <p>
+        Round inputs, official model decisions, audit hashes, score status, and public benchmark reports are published
+        as part of the benchmark's audit surface. The privacy boundary here concerns website analytics and payment
+        handling, not public benchmark artifacts.
+      </p>
+    </article>
+
+    <aside class="methodology-aside" aria-label="Privacy summary">
+      <div class="rail-panel">
+        <span class="metric-label">Analytics</span>
+        <h3>Always On</h3>
+        <p>Google Analytics loads when the production measurement ID is configured.</p>
+      </div>
+      <div class="rail-panel">
+        <span class="metric-label">Payments</span>
+        <h3>Stripe Hosted</h3>
+        <p>Payment details are handled by Stripe-hosted checkout, not by this website.</p>
+      </div>
+      <div class="rail-panel">
+        <span class="metric-label">Event Scope</span>
+        <h3>Safe Parameters</h3>
+        <p>Events use limited fields such as page path, round ID, contribution tier, cadence, and link domain.</p>
+      </div>
+    </aside>
+  </section>
+</BaseLayout>
