@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import GitHubLogo from "../components/GitHubLogo.astro";
-import StatusCards from "../components/StatusCards.astro";
 import LeaderboardTable from "../components/LeaderboardTable";
 import OfficialPicksTable from "../components/OfficialPicksTable";
 import {
@@ -22,53 +21,101 @@ const consensusPick = "SEMICONDUCTORS";
 const consensusCount = officialSubmissions.filter((row) => row.selected_option_id === consensusPick).length;
 const providerCount = new Set(officialSubmissions.map((row) => row.provider)).size;
 const publishedArtifactCount = auditHashes.length + officialSubmissions.length + universeOptions.length;
+const currentRoundUrl = `/rounds/${currentRound.round_id}/`;
+const confidenceValues = officialSubmissions
+  .map((row) => row.confidence)
+  .filter((value): value is number => Number.isFinite(value));
+const confidenceRange =
+  confidenceValues.length > 0
+    ? `${Math.min(...confidenceValues).toFixed(2)}-${Math.max(...confidenceValues).toFixed(2)}`
+    : "not reported";
 const heroMetrics = [
-  { label: "Official submissions", value: `${officialSubmissions.length}/${providerCount} providers` },
-  { label: "Frozen universe", value: `${universeOptions.length} options` },
-  { label: "Input hashes", value: String(auditHashes.length) },
-  { label: "Score state", value: "Pending" }
+  { label: "Official models", value: `${officialSubmissions.length}/${providerCount}` },
+  { label: "Frozen universe", value: `${universeOptions.length} assets` },
+  { label: "Public hashes", value: String(auditHashes.length) },
+  { label: "Score window", value: `Ends ${currentRound.exit_date}` }
 ];
 const resultViews = [
   {
     href: "/leaderboards/latest",
     icon: BarChart3,
     label: "Latest Round",
-    description: "Newest resolved official one-shot leaderboard.",
+    description: "The newest resolved official round. Pending rounds show locked decisions only.",
     state: "Pending"
   },
   {
     href: "/leaderboards/cumulative-official",
     icon: Layers3,
     label: "Cumulative Official",
-    description: "Average official alpha across participated resolved rounds.",
-    state: "Separate"
+    description: "Average official alpha across resolved rounds where each model participated.",
+    state: "Official"
   },
   {
     href: "/leaderboards/cumulative-stability",
     icon: TimerReset,
     label: "Cumulative Stability",
-    description: "Repeated-call alpha and consistency, never blended with official results.",
-    state: "Separate"
+    description: "Repeated-call alpha and consistency, kept separate from official results.",
+    state: "Stability"
+  }
+];
+const protocolHighlights = [
+  {
+    label: "Same packet",
+    title: "Identical prompt and market context",
+    description: "Every official model receives the same frozen briefing, option universe, dates, and response schema."
+  },
+  {
+    label: "No hindsight",
+    title: "Picks locked before outcomes",
+    description: "Submissions are collected and published while the round is still unresolved."
+  },
+  {
+    label: "Declared scoring",
+    title: "Return and alpha after the exit date",
+    description: "Scores are calculated only after exit prices are available for the full option universe."
+  },
+  {
+    label: "Public audit",
+    title: "Inputs, decisions, hashes, and reports",
+    description: "Readers can inspect the round packet, model outputs, artifacts, and repository history."
+  }
+];
+const audiences = [
+  {
+    title: "AI labs",
+    description: "Compare model behavior on the same uncertainty-heavy decision task without private prompts or hidden judging."
+  },
+  {
+    title: "Researchers",
+    description: "Study reasoning, calibration, consensus, and brittleness using timestamped public artifacts."
+  },
+  {
+    title: "Investors and analysts",
+    description: "See how models translate market context into concrete allocations without treating outputs as advice."
+  },
+  {
+    title: "Builders",
+    description: "Use the protocol as a reference for auditable evaluation, repeat runs, and production monitoring."
   }
 ];
 const safeguards = [
   {
     icon: ShieldCheck,
-    label: "Protocol",
+    label: "Run isolation",
     title: "One official call per model",
-    description: "Official picks are not averaged with repeated stability runs, mock output, or private smoke tests."
+    description: "Official results are never mixed with repeated stability runs, mock output, or provider smoke tests."
   },
   {
     icon: Database,
-    label: "Audit Read Model",
-    title: `${publishedArtifactCount} public rows`,
-    description: "Round metadata, options, official submissions, and hashes are mirrored into Supabase for the public site."
+    label: "Inspection",
+    title: `${publishedArtifactCount} published records`,
+    description: "Round metadata, options, submissions, and hashes are published as a readable public audit surface."
   },
   {
     icon: FileCheck2,
-    label: "Boundary",
+    label: "Score boundary",
     title: "No performance before resolution",
-    description: "Pending pages show decisions and artifacts without implying realized alpha."
+    description: "Pending rounds show decisions and artifacts, but realized alpha appears only after prices are collected."
   }
 ];
 ---
@@ -79,29 +126,18 @@ const safeguards = [
 >
   <section class="home-hero" aria-labelledby="home-title">
     <div class="home-hero-copy">
-      <p class="eyebrow">Public AI market benchmark</p>
+      <p class="eyebrow">Auditable AI market benchmark</p>
       <h1 id="home-title">CapitalBench</h1>
       <p class="home-hero-lede">
-        CapitalBench tests AI models on real market decisions. Each round gives every model the same prompt and frozen
-        data, records the picks before outcomes are known, then publishes the scores and full audit trail.
+        CapitalBench measures whether AI models can make disciplined market allocations from the same frozen
+        information before outcomes are known. Every round publishes the prompt, model decisions, scores, and audit
+        trail.
       </p>
     </div>
 
     <div class="home-hero-actions" aria-label="Project resources">
-      <a
-        class="action-link action-primary"
-        href={siteConfig.githubUrl}
-        target="_blank"
-        rel="noreferrer"
-        data-analytics-event="github_repository_click"
-        data-analytics-param-location="home_hero"
-      >
-        <GitHubLogo size={17} />
-        GitHub repository
-        <ExternalLink size={14} aria-hidden="true" />
-      </a>
-      <a class="action-link" href="/rounds">
-        Inspect Round 1
+      <a class="action-link action-primary" href={currentRoundUrl}>
+        View current round
         <ArrowRight size={15} aria-hidden="true" />
       </a>
       <a
@@ -111,6 +147,18 @@ const safeguards = [
         data-analytics-param-location="home_hero"
       >
         Read methodology
+      </a>
+      <a
+        class="action-link"
+        href={siteConfig.githubUrl}
+        target="_blank"
+        rel="noreferrer"
+        data-analytics-event="github_repository_click"
+        data-analytics-param-location="home_hero"
+      >
+        <GitHubLogo size={17} />
+        GitHub repository
+        <ExternalLink size={14} aria-hidden="true" />
       </a>
     </div>
 
@@ -137,37 +185,38 @@ const safeguards = [
 
       <div class="console-ledger" aria-label="Round 1 evidence ledger">
         <div>
-          <span>Decision state</span>
+          <span>Locked decision state</span>
           <strong>{consensusCount} of {officialSubmissions.length} models selected {consensusPick}</strong>
         </div>
         <div>
-          <span>Resolution gate</span>
-          <strong>Exit prices due after {currentRound.exit_date}</strong>
+          <span>Observation window</span>
+          <strong>Scores publish after {currentRound.exit_date} exit prices are collected</strong>
         </div>
         <div>
-          <span>Reader promise</span>
-          <strong>Research benchmark, not financial advice</strong>
+          <span>Scoring basis</span>
+          <strong>Realized return and alpha versus S&amp;P 500 and cash baselines</strong>
         </div>
       </div>
     </div>
   </section>
 
-  <StatusCards
-    roundId={currentRound.round_id}
-    status={currentRound.status}
-    decisionDeadline={currentRound.decision_deadline_utc}
-    entryDate={currentRound.entry_date}
-    exitDate={currentRound.exit_date}
-    officialRunId={currentRound.official_run_id}
-  />
+  <section class="trust-strip" aria-label="Benchmark protocol snapshot">
+    {protocolHighlights.map((item) => (
+      <article>
+        <span>{item.label}</span>
+        <strong>{item.title}</strong>
+        <p>{item.description}</p>
+      </article>
+    ))}
+  </section>
 
   <section class="phase-band" aria-labelledby="round-progress-title">
     <div class="phase-intro">
       <span class="panel-kicker">Round 1 lifecycle</span>
       <h2 id="round-progress-title">A Clear Line Between Decisions And Performance</h2>
       <p>
-        The site distinguishes collected decisions from scored performance. Picks and entry prices are public; realized
-        returns remain absent until the exit date resolves.
+        Round 1 is in its observation window. Picks and entry prices are public now; realized returns stay absent until
+        the pre-declared exit date resolves.
       </p>
     </div>
     <ol class="phase-list">
@@ -194,12 +243,30 @@ const safeguards = [
     </ol>
   </section>
 
+  <section class="home-section-heading" aria-labelledby="audience-title">
+    <span class="panel-kicker">Who it is for</span>
+    <h2 id="audience-title">A Benchmark For Decisions Under Uncertainty</h2>
+    <p>
+      CapitalBench is designed for readers who need more than a demo answer: they need comparable behavior, a timestamp,
+      and enough public evidence to audit what each model saw and selected.
+    </p>
+  </section>
+
+  <section class="rule-matrix home-audience" aria-label="Who uses CapitalBench">
+    {audiences.map((item) => (
+      <article>
+        <h3>{item.title}</h3>
+        <p>{item.description}</p>
+      </article>
+    ))}
+  </section>
+
   <section class="home-section-heading" aria-labelledby="safeguards-title">
     <span class="panel-kicker">Benchmark safeguards</span>
-    <h2 id="safeguards-title">Built For Inspection Before Interpretation</h2>
+    <h2 id="safeguards-title">Built To Be Hard To Game</h2>
     <p>
-      The landing page should make the benchmark's trust model obvious before readers see a score: fixed inputs,
-      isolated runs, public hashes, and no provisional alpha.
+      The trust model is deliberately simple: fixed inputs, isolated official runs, public hashes, and no provisional
+      performance claims.
     </p>
   </section>
 
@@ -242,8 +309,9 @@ const safeguards = [
           <span class="panel-kicker">Current round</span>
           <h2>Official Picks</h2>
           <p>
-            All four official Round 1 models selected the same option. The table shows decisions, confidence, rationales,
-            and risks without presenting performance while the round is pending.
+            Round 1 produced full consensus: all {officialSubmissions.length} official models selected Semiconductors,
+            with confidence ranging from {confidenceRange}. The table shows decisions, rationales, and risks without
+            presenting performance while the round is pending.
           </p>
         </div>
         <span class="status-badge status-pending">Pending score</span>
@@ -253,24 +321,24 @@ const safeguards = [
 
     <aside class="rail" aria-label="Round audit summary">
       <div class="rail-panel highlight-panel">
-        <span class="metric-label">Consensus Pick</span>
+        <span class="metric-label">Round 1 consensus</span>
         <h3>{consensusPick}</h3>
         <p>{consensusCount} of {officialSubmissions.length} official submissions selected Semiconductors.</p>
       </div>
       <div class="rail-panel">
-        <span class="metric-label">Methodology</span>
+        <span class="metric-label">Official protocol</span>
         <h3>{currentRound.methodology_version}</h3>
         <p>One call per model. No tools, browsing, or post-cutoff retrieval.</p>
       </div>
       <div class="rail-panel">
-        <span class="metric-label">Audit Surface</span>
+        <span class="metric-label">Audit trail</span>
         <h3>{auditHashes.length} hashed inputs</h3>
-        <p>{universeOptions.length} frozen options. Public hashes and validation metadata are synced to Supabase.</p>
+        <p>{universeOptions.length} frozen options with public hashes and validation metadata.</p>
       </div>
       <div class="rail-panel rail-checklist">
-        <span class="metric-label">Reader Path</span>
+        <span class="metric-label">Reader path</span>
         <ul>
-          <li><a href={`/rounds/${currentRound.round_id}/`}>Review the round packet</a></li>
+          <li><a href={currentRoundUrl}>Review the round packet</a></li>
           <li><a href="/universe">Inspect the frozen universe</a></li>
           <li><a href="/fairness">Read fairness controls</a></li>
         </ul>
@@ -285,8 +353,8 @@ const safeguards = [
           <span class="panel-kicker">Latest leaderboard</span>
           <h2>Resolution Pending</h2>
           <p>
-            The official leaderboard appears here after exit prices are available, the selected run is scored, and the
-            result artifacts are regenerated.
+            The official leaderboard appears here after exit prices are available and the selected run is scored. Until
+            then, the benchmark publishes decisions without implying realized performance.
           </p>
         </div>
       </div>

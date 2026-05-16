@@ -54,16 +54,18 @@ const navItems = [
   {
     href: "/leaderboards/cumulative-official",
     label: "Official",
-    active: currentPath.startsWith("/leaderboards/cumulative-official")
+    active: currentPath.startsWith("/leaderboards/cumulative-official"),
+    mobileSecondary: true
   },
   {
     href: "/leaderboards/cumulative-stability",
     label: "Stability",
-    active: currentPath.startsWith("/leaderboards/cumulative-stability")
+    active: currentPath.startsWith("/leaderboards/cumulative-stability"),
+    mobileSecondary: true
   },
   { href: "/rounds", label: "Rounds", active: currentPath.startsWith("/rounds") },
-  { href: "/methodology", label: "Methodology", active: currentPath.startsWith("/methodology") },
-  { href: "/universe", label: "Universe", active: currentPath.startsWith("/universe") },
+  { href: "/methodology", label: "Methodology", shortLabel: "Method", active: currentPath.startsWith("/methodology") },
+  { href: "/universe", label: "Universe", active: currentPath.startsWith("/universe"), mobileSecondary: true },
   {
     href: "/docs",
     label: "Docs",
@@ -71,7 +73,8 @@ const navItems = [
       currentPath.startsWith("/docs") ||
       currentPath.startsWith("/scoring") ||
       currentPath.startsWith("/fairness") ||
-      currentPath.startsWith("/limitations")
+      currentPath.startsWith("/limitations"),
+    mobileSecondary: true
   },
   { href: "/contribute", label: "Contribute", active: currentPath.startsWith("/contribute"), cta: true }
 ];
@@ -121,7 +124,11 @@ const navItems = [
             {
               navItems.map((item) => (
                 <a
-                  class={item.cta ? "nav-cta" : undefined}
+                  class:list={[
+                    item.cta && "nav-cta",
+                    item.mobileSecondary && "nav-secondary",
+                    item.shortLabel && "has-short-label"
+                  ]}
                   href={item.href}
                   aria-current={item.active ? "page" : undefined}
                   data-analytics-event={
@@ -135,7 +142,8 @@ const navItems = [
                     item.href === "/contribute" || item.href === "/methodology" ? "primary_nav" : undefined
                   }
                 >
-                  {item.label}
+                  <span class="nav-label-full">{item.label}</span>
+                  {item.shortLabel && <span class="nav-label-short">{item.shortLabel}</span>}
                 </a>
               ))
             }

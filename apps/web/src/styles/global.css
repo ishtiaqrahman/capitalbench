@@ -199,6 +199,10 @@ main,
   color: #ffffff;
 }
 
+.nav-label-short {
+  display: none;
+}
+
 .site-footer {
   margin-top: 72px;
   border-top: 1px solid var(--line);
@@ -491,6 +495,51 @@ h3 {
   font-size: 0.93rem;
   line-height: 1.38;
   overflow-wrap: anywhere;
+}
+
+.trust-strip {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 14px 0 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.trust-strip article {
+  min-width: 0;
+  min-height: 142px;
+  padding: 17px 16px;
+  border-right: 1px solid var(--line);
+}
+
+.trust-strip article:last-child {
+  border-right: 0;
+}
+
+.trust-strip span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted-2);
+  font-size: 0.7rem;
+  font-weight: 780;
+  text-transform: uppercase;
+}
+
+.trust-strip strong {
+  display: block;
+  color: var(--ink-strong);
+  line-height: 1.25;
+}
+
+.trust-strip p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.48;
 }
 
 .dashboard-header {
@@ -1069,6 +1118,10 @@ h3 {
 
 .evidence-grid.enhanced p {
   margin: 0;
+}
+
+.home-audience article {
+  min-height: 154px;
 }
 
 .rail-checklist ul {
@@ -2574,10 +2627,23 @@ tbody tr:hover {
   }
 
   .phase-list,
+  .trust-strip,
   .evidence-grid,
   .rule-matrix,
   .audit-checklist {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .trust-strip article:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .trust-strip article {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .trust-strip article:nth-last-child(-n + 2) {
+    border-bottom: 0;
   }
 
   .view-switcher.enhanced {
@@ -2631,7 +2697,10 @@ tbody tr:hover {
   }
 
   .nav-inner {
-    padding: 10px 0;
+    min-height: 56px;
+    padding: 8px 0;
+    align-items: flex-start;
+    flex-direction: column;
     gap: 8px;
   }
 
@@ -2650,9 +2719,23 @@ tbody tr:hover {
   }
 
   .nav-links {
+    width: 100%;
     flex-wrap: wrap;
     gap: 0;
+    justify-content: flex-start;
     font-size: 0.84rem;
+  }
+
+  .nav-links .nav-secondary {
+    display: none;
+  }
+
+  .has-short-label .nav-label-full {
+    display: none;
+  }
+
+  .nav-label-short {
+    display: inline;
   }
 
   .nav-links a {
@@ -2777,6 +2860,7 @@ tbody tr:hover {
   .changelog-overview,
   .changelog-layout,
   .phase-list,
+  .trust-strip,
   .evidence-grid,
   .rule-matrix,
   .audit-checklist,
@@ -2788,6 +2872,17 @@ tbody tr:hover {
   .model-output-grid,
   .output-facts {
     grid-template-columns: 1fr;
+  }
+
+  .trust-strip article,
+  .trust-strip article:nth-child(2n),
+  .trust-strip article:nth-last-child(-n + 2) {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .trust-strip article:last-child {
+    border-bottom: 0;
   }
 
   .phase-list li,
@@ -3025,6 +3120,7 @@ tbody tr:hover {
     padding: 0 8px;
     font-size: 0.8rem;
   }
+
 
   .console-header {
     padding: 10px;
