@@ -182,6 +182,7 @@ def test_sync_round_publishes_portfolio_allocations(tmp_path: Path) -> None:
 
     sync_round(round_path, run_id="official", sink=sink)
 
+    assert sink.upserts["rounds"][0]["methodology_version"] == "portfolio-v1.0"
     assert sink.upserts["rounds"][0]["universe_version"] == "test-v2.0"
     assert sink.upserts["rounds"][0]["submission_format"] == "portfolio"
     assert sink.upserts["options"][0]["sort_order"] == 1

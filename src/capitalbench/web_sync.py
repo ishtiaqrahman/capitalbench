@@ -394,7 +394,10 @@ def _require_files(directory: Path, filenames: list[str], label: str) -> None:
 def _round_row(round_path: Path, selected_run_ids: list[str]) -> dict[str, Any]:
     manifest = load_manifest(round_path)
     run_manifests = [read_run_manifest(get_run_paths(round_path, run_id)) for run_id in selected_run_ids]
-    methodology_version = next((str(item.get("methodology_version")) for item in run_manifests if item.get("methodology_version")), "")
+    methodology_version = next(
+        (str(item.get("methodology_version")) for item in run_manifests if item.get("methodology_version")),
+        str(manifest.methodology_version or ""),
+    )
     has_scored_results = any(
         (get_run_paths(round_path, run_id).results_dir / "leaderboard.csv").exists()
         or (get_run_paths(round_path, run_id).results_dir / "stability.csv").exists()
