@@ -203,6 +203,8 @@ const safeguards = [
         </div>
         <ScoreCountdown
           client:load
+          variant="hero"
+          label="Scoring target"
           scoreEtaUtc={currentRound.score_eta_utc}
           source={currentRound.score_eta_source}
           status={currentRound.status}
@@ -318,7 +320,9 @@ const safeguards = [
         {previousRound && (
           <ScoreCountdown
             client:visible
-            compact
+            variant="chip"
+            precision="days"
+            label="Target"
             scoreEtaUtc={previousRound.score_eta_utc}
             source={previousRound.score_eta_source}
             status={previousRound.status}
@@ -333,7 +337,9 @@ const safeguards = [
         <p>Portfolio returns and alpha publish after {currentRound.exit_date}.</p>
         <ScoreCountdown
           client:visible
-          compact
+          variant="chip"
+          precision="days"
+          label="Target"
           scoreEtaUtc={currentRound.score_eta_utc}
           source={currentRound.score_eta_source}
           status={currentRound.status}

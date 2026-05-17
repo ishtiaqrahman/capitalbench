@@ -2,6 +2,9 @@ import { Clock3 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { RoundStatus, ScoreEtaSource } from "../data/fallback";
 
+type ScoreCountdownVariant = "hero" | "panel" | "inline" | "chip";
+type ScoreCountdownPrecision = "days" | "hours";
+
 interface Props {
   scoreEtaUtc?: string;
   status: RoundStatus;
@@ -11,31 +14,35 @@ interface Props {
   compact?: boolean;
   showIcon?: boolean;
   initialNowIso?: string;
+  variant?: ScoreCountdownVariant;
+  precision?: ScoreCountdownPrecision;
 }
 
 const MINUTE_MS = 60_000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 
-function pad(value: number): string {
-  return String(value).padStart(2, "0");
+function plural(value: number, unit: string): string {
+  return `${value} ${unit}${value === 1 ? "" : "s"}`;
 }
 
-function targetLabel(scoreEtaUtc?: string, source?: ScoreEtaSource, exitDate?: string): string {
-  if (!scoreEtaUtc) return exitDate ? `Exit date: ${exitDate}` : "Score ETA unavailable";
-  const target = new Date(scoreEtaUtc);
-  if (!Number.isFinite(target.getTime())) return exitDate ? `Exit date: ${exitDate}` : "Score ETA unavailable";
-  const formatted = new Intl.DateTimeFormat("en", {
+function formatTarget(scoreEtaUtc?: string, mode: "date" | "datetime" = "datetime", exitDate?: string): string {
+  const target = scoreEtaUtc ? new Date(scoreEtaUtc) : null;
+  if (!target || !Number.isFinite(target.getTime())) return exitDate ?? "Target pending";
+  return new Intl.DateTimeFormat("en", {
     month: "short",
     day: "numeric",
     year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
+    ...(mode === "datetime"
+      ? {
+          hour: "2-digit",
+          minute: "2-digit",
+          hourCycle: "h23" as const,
+          timeZoneName: "short" as const
+        }
+      : {}),
     timeZone: "UTC",
-    timeZoneName: "short"
   }).format(target);
-  return source === "automation" ? `Target: ${formatted}` : `Estimated target: ${formatted}`;
 }
 
 function partsUntil(scoreEtaUtc: string | undefined, now: number) {
@@ -50,11 +57,22 @@ function partsUntil(scoreEtaUtc: string | undefined, now: number) {
   return { reached: false, days, hours, minutes, seconds };
 }
 
-function compactText(parts: NonNullable<ReturnType<typeof partsUntil>>): string {
-  if (parts.reached) return "Window reached";
-  if (parts.days > 0) return `${parts.days}d ${parts.hours}h`;
-  if (parts.hours > 0) return `${parts.hours}h ${pad(parts.minutes)}m`;
-  return `${parts.minutes}m ${pad(parts.seconds)}s`;
+function remainingText(
+  parts: NonNullable<ReturnType<typeof partsUntil>> | null,
+  precision: ScoreCountdownPrecision,
+  approximate = false
+): string {
+  if (!parts) return "Timing pending";
+  if (parts.reached) return "Scoring window reached";
+  if (approximate && precision === "days" && parts.days > 0) return `~${parts.days}d remaining`;
+  const prefix = approximate ? "~" : "";
+  if (precision === "days" && parts.days > 0) return `${prefix}${plural(parts.days, "day")} remaining`;
+  if (parts.days > 0) {
+    const hours = parts.hours > 0 ? `, ${plural(parts.hours, "hour")}` : "";
+    return `${plural(parts.days, "day")}${hours} remaining`;
+  }
+  if (parts.hours > 0) return `${plural(parts.hours, "hour")} remaining`;
+  return "Less than one hour remaining";
 }
 
 function ariaText(parts: NonNullable<ReturnType<typeof partsUntil>> | null, status: RoundStatus): string {
@@ -68,16 +86,25 @@ function ariaText(parts: NonNullable<ReturnType<typeof partsUntil>> | null, stat
   return `Score ETA: ${segments.join(", ") || "less than one minute"}.`;
 }
 
+function statusTarget(status: RoundStatus, parts: NonNullable<ReturnType<typeof partsUntil>> | null, target: string): string {
+  if (status === "resolved") return "Scores published";
+  if (parts?.reached) return "Scoring window reached";
+  return target;
+}
+
 export default function ScoreCountdown({
   scoreEtaUtc,
   status,
-  label = "Score ETA",
+  label = "Scoring target",
   source,
   exitDate,
   compact = false,
   showIcon = false,
-  initialNowIso
+  initialNowIso,
+  variant,
+  precision = "hours"
 }: Props) {
+  const resolvedVariant = variant ?? (compact ? "chip" : "hero");
   const initialNow = useMemo(() => {
     const parsed = initialNowIso ? Date.parse(initialNowIso) : Number.NaN;
     return Number.isFinite(parsed) ? parsed : Date.now();
@@ -85,54 +112,35 @@ export default function ScoreCountdown({
   const [now, setNow] = useState(initialNow);
 
   useEffect(() => {
-    const interval = window.setInterval(() => setNow(Date.now()), 1000);
+    const interval = window.setInterval(() => setNow(Date.now()), MINUTE_MS);
     return () => window.clearInterval(interval);
   }, []);
 
   const parts = partsUntil(scoreEtaUtc, now);
-  const target = targetLabel(scoreEtaUtc, source, exitDate);
+  const targetMode = resolvedVariant === "chip" || resolvedVariant === "inline" ? "date" : "datetime";
+  const target = formatTarget(scoreEtaUtc, targetMode, exitDate);
   const isResolved = status === "resolved";
   const isReached = !isResolved && parts?.reached;
   const statusClass = isResolved ? "resolved" : isReached ? "reached" : "pending";
+  const targetText = statusTarget(status, parts, target);
+  const remaining = isReached ? "Waiting for score publication" : remainingText(parts, precision, resolvedVariant === "chip");
+  const shouldShowIcon = showIcon || resolvedVariant === "panel";
+  const sourceLabel = source === "automation" ? "Automation target" : source === "derived" ? "Estimated from exit date" : "Scoring target";
+  const title = `${sourceLabel}: ${target}`;
 
   return (
-    <div className={`score-countdown ${compact ? "compact" : ""} ${statusClass}`} aria-label={ariaText(parts, status)} title={target}>
+    <div
+      className={`score-countdown score-countdown-${resolvedVariant} ${statusClass}`}
+      aria-label={ariaText(parts, status)}
+      title={title}
+    >
       <div className="score-countdown-head">
-        {showIcon && <Clock3 size={15} aria-hidden="true" />}
+        {!shouldShowIcon && <span className="score-countdown-dot" aria-hidden="true" />}
+        {shouldShowIcon && <Clock3 size={15} aria-hidden="true" />}
         <span className="score-countdown-kicker">{label}</span>
       </div>
-      {isResolved ? (
-        <strong className="score-countdown-status">Scores published</strong>
-      ) : isReached ? (
-        <strong className="score-countdown-status">Scoring window reached</strong>
-      ) : parts ? (
-        compact ? (
-          <strong className="score-countdown-compact-value" aria-hidden="true">{compactText(parts)}</strong>
-        ) : (
-          <div className="score-countdown-value" aria-hidden="true">
-            <span>
-              <b>{parts.days}</b>
-              <small>d</small>
-            </span>
-            <span>
-              <b>{pad(parts.hours)}</b>
-              <small>h</small>
-            </span>
-            <span>
-              <b>{pad(parts.minutes)}</b>
-              <small>m</small>
-            </span>
-            <span className="score-countdown-seconds">
-              <b>{pad(parts.seconds)}</b>
-              <small>s</small>
-            </span>
-          </div>
-        )
-      ) : (
-        <strong className="score-countdown-status">Exit date pending</strong>
-      )}
-      <p>{isReached ? "Waiting for score publication" : target}</p>
+      <strong className="score-countdown-target">{targetText}</strong>
+      <p className="score-countdown-meta">{isResolved ? "Leaderboard is live" : remaining}</p>
     </div>
   );
 }
-
