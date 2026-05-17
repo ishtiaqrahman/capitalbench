@@ -57,6 +57,9 @@ def test_sync_round_publishes_pending_round_without_leaderboard(tmp_path: Path) 
     assert sink.upserts["rounds"][0]["universe_version"] == "capitalbench_universe_v1_5"
     assert sink.upserts["runs"][0]["run_id"] == "official-round-1-clean"
     assert len(sink.upserts["submissions"]) == 4
+    assert len(sink.upserts["submission_allocations"]) == 4
+    assert {row["option_id"] for row in sink.upserts["submission_allocations"]} == {"SEMICONDUCTORS"}
+    assert {row["allocation_bps"] for row in sink.upserts["submission_allocations"]} == {10000}
     assert len(sink.upserts["official_results"]) == 0
     assert any(row["option_id"] == "SEMICONDUCTORS" and row["entry_price"] for row in sink.upserts["options"])
     assert any(row["path"] == "hashes.json" for row in sink.upserts["audit_artifacts"])

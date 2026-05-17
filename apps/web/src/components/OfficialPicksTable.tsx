@@ -1,6 +1,7 @@
 import { ChevronDown, Download, Search } from "lucide-react";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { modelLabel, providerLabel, type SubmissionRecord } from "../data/fallback";
+import { allocationLabel, allocationThemeClass, decisionAllocations, formatAllocationPct, protocolLabel } from "../lib/allocations";
 import { getSupabaseClient, hasSupabaseConfig } from "../lib/supabase";
 
 interface Props {
@@ -17,16 +18,6 @@ function csvEscape(value: string | number): string {
 
 function providerClass(provider: string): string {
   return `provider-badge provider-${provider}`;
-}
-
-function allocationLabel(row: SubmissionRecord): string {
-  if (!row.portfolio || row.portfolio.length === 0) return row.selected_option_id;
-  return row.portfolio
-    .map((item) => {
-      const allocationPct = item.allocation_pct ?? (item.allocation_bps ?? 0) / 100;
-      return `${item.option_id} ${allocationPct}%`;
-    })
-    .join(" / ");
 }
 
 export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Props) {
@@ -73,7 +64,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
   }, [query, rows]);
 
   function exportCsv() {
-    const header = ["Model", "Provider", "Pick", "Allocations", "Confidence", "Status", "Rationale", "Key risks"].join(",");
+    const header = ["Model", "Provider", "Primary option", "Allocations", "Confidence", "Protocol", "Rationale", "Key risks"].join(",");
     const body = filteredRows
       .map((row) =>
         [
@@ -82,7 +73,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
           row.selected_option_id,
           allocationLabel(row),
           row.confidence.toFixed(2),
-          "Pending",
+          protocolLabel(row),
           row.rationale_summary,
           (row.key_risks ?? []).join("; ")
         ]
@@ -94,21 +85,21 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "capitalbench-official-picks.csv";
+    anchor.download = "capitalbench-official-allocations.csv";
     anchor.click();
     URL.revokeObjectURL(url);
   }
 
   return (
-    <div className="picks-shell" aria-label="Official one-shot picks">
+    <div className="picks-shell" aria-label="Official one-shot allocations">
       <div className="table-toolbar">
         <label className="search-box">
           <Search size={16} aria-hidden="true" />
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search picks"
-            aria-label="Search official picks"
+            placeholder="Search allocations"
+            aria-label="Search official allocations"
           />
         </label>
         <button className="small-button" type="button" onClick={exportCsv}>
@@ -122,15 +113,16 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
             <tr>
               <th>Model</th>
               <th>Provider</th>
-              <th>{rows.some((row) => row.submission_format === "portfolio") ? "Portfolio" : "Pick"}</th>
+              <th>Allocation</th>
               <th className="numeric">Confidence</th>
-              <th>Status</th>
+              <th>Protocol</th>
               <th aria-label="Details"></th>
             </tr>
           </thead>
           <tbody>
             {filteredRows.map((row) => {
               const isExpanded = expanded === row.model_id;
+              const allocations = decisionAllocations(row);
               return (
                 <Fragment key={row.model_id}>
                   <tr className="picks-row" onClick={() => setExpanded(isExpanded ? null : row.model_id)}>
@@ -142,8 +134,18 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
                     <td data-label="Provider">
                       <span className={providerClass(row.provider)}>{providerLabel(row.provider)}</span>
                     </td>
-                    <td data-label="Pick">
-                      <div className="pick-cell">
+                    <td data-label="Allocation">
+                      <div className="decision-cell">
+                        <div className="allocation-stack mini" aria-hidden="true">
+                          {allocations.map((allocation) => (
+                            <span
+                              key={allocation.option_id}
+                              className={allocationThemeClass(allocation.option_id)}
+                              style={{ width: `${Math.max(3, allocation.allocation_pct)}%` }}
+                              title={`${allocation.option_id} ${formatAllocationPct(allocation.allocation_pct)}`}
+                            />
+                          ))}
+                        </div>
                         <strong>{allocationLabel(row)}</strong>
                       </div>
                     </td>
@@ -155,8 +157,8 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
                         </span>
                       </div>
                     </td>
-                    <td data-label="Status">
-                      <span className="status-badge status-pending">Pending</span>
+                    <td data-label="Protocol">
+                      <span className="badge badge-neutral">{protocolLabel(row)}</span>
                     </td>
                     <td className="numeric" data-label="Details">
                       <ChevronDown
@@ -175,15 +177,15 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
                             {row.portfolio_rationale && <p>{row.portfolio_rationale}</p>}
                             <p>{row.rationale_summary}</p>
                           </div>
-                          {row.portfolio && row.portfolio.length > 0 && (
+                          {allocations.length > 0 && (
                             <div>
                               <span className="metric-label">Allocations</span>
                               <ul>
-                                {row.portfolio.map((allocation) => {
-                                  const pct = allocation.allocation_pct ?? (allocation.allocation_bps ?? 0) / 100;
+                                {allocations.map((allocation) => {
                                   return (
                                     <li key={allocation.option_id}>
-                                      <strong>{allocation.option_id}</strong>: {pct}%{allocation.rationale ? ` - ${allocation.rationale}` : ""}
+                                      <strong>{allocation.option_id}</strong>: {formatAllocationPct(allocation.allocation_pct)}
+                                      {allocation.rationale ? ` - ${allocation.rationale}` : ""}
                                     </li>
                                   );
                                 })}
@@ -208,7 +210,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
           </tbody>
         </table>
       </div>
-      {filteredRows.length === 0 && <p className="empty-state">No official picks match the current filter.</p>}
+      {filteredRows.length === 0 && <p className="empty-state">No official allocations match the current filter.</p>}
     </div>
   );
 }

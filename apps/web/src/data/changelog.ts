@@ -27,6 +27,25 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-17-multi-round-allocation-homepage",
+    date: "2026-05-17",
+    title: "Homepage redesigned for multi-round allocation reporting",
+    category: "Site",
+    status: "published",
+    summary:
+      "The public landing page now reports two official rounds and displays every model decision as an allocation.",
+    details: [
+      "Round 2 portfolio submissions are surfaced on the homepage and latest leaderboard page with allocation bars, model-level weights, and aggregate exposure summaries.",
+      "Round 1 remains historically labeled as a single-pick round, but is displayed as a one-holding 100% Semiconductors allocation for cross-round readability.",
+      "Pending-score language was updated across the homepage and latest leaderboard so the site clearly separates locked decisions from future realized performance."
+    ],
+    links: [
+      { label: "Homepage", href: "/" },
+      { label: "Latest round", href: "/leaderboards/latest" },
+      { label: "Rounds", href: "/rounds" }
+    ]
+  },
+  {
     id: "2026-05-17-universe-v2-approved",
     date: "2026-05-17",
     title: "Universe v2.0 approved for future rounds",

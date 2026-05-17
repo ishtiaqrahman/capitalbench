@@ -19,6 +19,7 @@ import {
   type UniverseOption,
   universeOptions
 } from "../../data/fallback";
+import { allocationThemeClass, formatAllocationPct } from "../../lib/allocations";
 import { repoRootPath, staticRoundRecords } from "../../lib/localRoundRecords";
 import { datasetSchema } from "../../lib/seo";
 
@@ -69,13 +70,32 @@ type ModelOutput = {
   [key: string]: unknown;
 };
 
+function outputAllocations(output: ModelOutput): Array<{ option_id: string; allocation_pct: number; allocation_bps: number; rationale?: string }> {
+  if (output.portfolio && output.portfolio.length > 0) {
+    return output.portfolio.map((item) => {
+      const allocationBps = item.allocation_bps ?? Number(item.allocation_pct ?? 0) * 100;
+      return {
+        option_id: item.option_id,
+        allocation_pct: allocationBps / 100,
+        allocation_bps: allocationBps,
+        rationale: item.rationale
+      };
+    });
+  }
+  if (!output.selected_option_id) return [];
+  return [
+    {
+      option_id: output.selected_option_id,
+      allocation_pct: 100,
+      allocation_bps: 10000,
+      rationale: output.rationale_summary
+    }
+  ];
+}
+
 function outputPickLabel(output: ModelOutput): string {
-  if (!output.portfolio || output.portfolio.length === 0) return output.selected_option_id ?? "";
-  return output.portfolio
-    .map((item) => {
-      const allocationPct = item.allocation_pct ?? Number(item.allocation_bps ?? 0) / 100;
-      return `${item.option_id} ${allocationPct}%`;
-    })
+  return outputAllocations(output)
+    .map((item) => `${item.option_id} ${formatAllocationPct(item.allocation_pct)}`)
     .join(" / ");
 }
 
@@ -264,8 +284,12 @@ function loadModelOutputs(): ModelOutput[] {
 }
 
 function submissionFromOutput(output: ModelOutput): SubmissionRecord {
+  const allocations = outputAllocations(output);
   const hasPortfolio = Boolean(output.portfolio?.length);
-  const selectedOptionId = output.selected_option_id ?? output.portfolio?.[0]?.option_id ?? "";
+  const selectedOptionId =
+    output.selected_option_id ??
+    [...allocations].sort((a, b) => b.allocation_bps - a.allocation_bps)[0]?.option_id ??
+    "";
   return {
     round_id: output.round_id,
     run_id: officialRunId,
@@ -273,7 +297,7 @@ function submissionFromOutput(output: ModelOutput): SubmissionRecord {
     provider: output.provider,
     submission_format: hasPortfolio ? "portfolio" : "single_pick",
     selected_option_id: selectedOptionId,
-    holding_count: output.portfolio?.length,
+    holding_count: allocations.length,
     portfolio: output.portfolio,
     portfolio_rationale: output.portfolio_rationale,
     confidence: Number(output.confidence),
@@ -335,6 +359,10 @@ const consensusPrice = roundEntryPrices.find((price) => price.option_id === cons
 const universeOptionCount = roundUniverseOptions.filter((option) => option.option_id).length;
 const decisionNoun = round.submission_format === "portfolio" ? "allocations" : "picks";
 const decisionNounSingular = round.submission_format === "portfolio" ? "portfolio" : "pick";
+const allocationDisplayNote =
+  round.submission_format === "single_pick"
+    ? "This round used the original single-pick protocol. For cross-round readability, each valid pick is displayed as a one-holding 100% allocation while the validated JSON remains unchanged."
+    : "This round used the portfolio protocol. Allocation weights below are the submitted model decisions.";
 const statusLabel = round.status === "resolved" ? "Resolved" : round.status === "archived" ? "Archived" : "Pending";
 const roundStateTitle = round.status === "resolved" ? "Resolved Official Score" : "Pending Official Score";
 const roundDataset = datasetSchema({
@@ -366,7 +394,7 @@ const priceColumns = [
 
 <BaseLayout
   title={`${round.round_id} Round Audit Packet`}
-  description={`${round.title}: official LLM picks, model-facing inputs, prompt packet, entry prices, pending status, and published audit hashes for the ${round.horizon} benchmark round.`}
+  description={`${round.title}: official LLM decisions, model-facing inputs, prompt packet, entry prices, pending status, and published audit hashes for the ${round.horizon} benchmark round.`}
   structuredData={roundDataset}
 >
   <section class="dashboard-header">
@@ -424,7 +452,7 @@ const priceColumns = [
     <a href="#overview">Overview</a>
     <a href="#inputs">Inputs</a>
     <a href="#outputs">Outputs</a>
-    <a href="#picks">Picks</a>
+    <a href="#picks">Decisions</a>
     <a href="#prices">Prices</a>
     <a href="#audit">Audit</a>
   </nav>
@@ -488,7 +516,7 @@ const priceColumns = [
 
     <aside class="rail">
       <div class="rail-panel highlight-panel">
-        <span class="metric-label">Consensus Pick</span>
+        <span class="metric-label">Primary decision</span>
         <h3>{consensusPick}</h3>
         <p>{consensusCount} of {roundSubmissions.length} official models selected this primary {decisionNounSingular}.</p>
         <dl class="mini-facts">
@@ -514,6 +542,10 @@ const priceColumns = [
         <span class="metric-label">Methodology</span>
         <h3>{round.methodology_version}</h3>
         <p>{round.submission_format === "portfolio" ? "Portfolio allocation protocol." : "Single-pick official protocol."} Stability analysis remains separate.</p>
+      </div>
+      <div class="rail-panel">
+        <span class="metric-label">Display rule</span>
+        <p>{allocationDisplayNote}</p>
       </div>
       <div class="rail-panel">
         <span class="metric-label">Universe</span>
@@ -591,61 +623,71 @@ const priceColumns = [
         </div>
       </div>
       <div class="model-output-grid">
-        {modelOutputs.map((output) => (
-          <article class="model-output-card">
-            <div class="model-output-head">
-              <div>
-                <span class={`provider-badge provider-${output.provider}`}>{providerLabel(output.provider)}</span>
-                <h3>{modelLabel(output.model_id)}</h3>
-                <p class="mono">{output.model_id}</p>
+        {modelOutputs.map((output) => {
+          const allocations = outputAllocations(output);
+          return (
+            <article class="model-output-card">
+              <div class="model-output-head">
+                <div>
+                  <span class={`provider-badge provider-${output.provider}`}>{providerLabel(output.provider)}</span>
+                  <h3>{modelLabel(output.model_id)}</h3>
+                  <p class="mono">{output.model_id}</p>
+                </div>
+                <div class="pick-pill">
+                  <span>{output.portfolio && output.portfolio.length > 0 ? "Portfolio" : "Allocation Display"}</span>
+                  <strong>{outputPickLabel(output)}</strong>
+                </div>
               </div>
-              <div class="pick-pill">
-                <span>{output.portfolio && output.portfolio.length > 0 ? "Portfolio" : "Pick"}</span>
-                <strong>{outputPickLabel(output)}</strong>
+              <div class="allocation-stack output-stack" aria-hidden="true">
+                {allocations.map((allocation) => (
+                  <span
+                    class={allocationThemeClass(allocation.option_id)}
+                    style={`width: ${Math.max(3, allocation.allocation_pct)}%`}
+                    title={`${allocation.option_id} ${formatAllocationPct(allocation.allocation_pct)}`}
+                  />
+                ))}
               </div>
-            </div>
-            <dl class="output-facts">
-              <div>
-                <dt>Confidence</dt>
-                <dd>{Number(output.confidence).toFixed(2)}</dd>
-              </div>
-              <div>
-                <dt>Run Type</dt>
-                <dd>{String(output.run_type ?? "official")}</dd>
-              </div>
-            </dl>
-            <div class="output-copy">
-              <span class="metric-label">Rationale</span>
-              {output.portfolio_rationale && <p>{output.portfolio_rationale}</p>}
-              <p>{output.rationale_summary}</p>
-            </div>
-            {output.portfolio && output.portfolio.length > 0 && (
+              <dl class="output-facts">
+                <div>
+                  <dt>Confidence</dt>
+                  <dd>{Number(output.confidence).toFixed(2)}</dd>
+                </div>
+                <div>
+                  <dt>Run Type</dt>
+                  <dd>{String(output.run_type ?? "official")}</dd>
+                </div>
+              </dl>
               <div class="output-copy">
-                <span class="metric-label">Allocations</span>
-                <ul>
-                  {output.portfolio.map((allocation) => {
-                    const allocationPct = allocation.allocation_pct ?? Number(allocation.allocation_bps ?? 0) / 100;
-                    return (
+                <span class="metric-label">Rationale</span>
+                {output.portfolio_rationale && <p>{output.portfolio_rationale}</p>}
+                <p>{output.rationale_summary}</p>
+              </div>
+              {allocations.length > 0 && (
+                <div class="output-copy">
+                  <span class="metric-label">Allocations</span>
+                  <ul>
+                    {allocations.map((allocation) => (
                       <li>
-                        <strong>{allocation.option_id}</strong>: {allocationPct}%{allocation.rationale ? ` - ${allocation.rationale}` : ""}
+                        <strong>{allocation.option_id}</strong>: {formatAllocationPct(allocation.allocation_pct)}
+                        {allocation.rationale ? ` - ${allocation.rationale}` : ""}
                       </li>
-                    );
-                  })}
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <div class="output-copy">
+                <span class="metric-label">Key Risks</span>
+                <ul>
+                  {(output.key_risks ?? []).map((risk) => <li>{risk}</li>)}
                 </ul>
               </div>
-            )}
-            <div class="output-copy">
-              <span class="metric-label">Key Risks</span>
-              <ul>
-                {(output.key_risks ?? []).map((risk) => <li>{risk}</li>)}
-              </ul>
-            </div>
-            <details class="json-details">
-              <summary>Validated JSON</summary>
-              <pre class="artifact-pre compact-pre"><code>{JSON.stringify(output, null, 2)}</code></pre>
-            </details>
-          </article>
-        ))}
+              <details class="json-details">
+                <summary>Validated JSON</summary>
+                <pre class="artifact-pre compact-pre"><code>{JSON.stringify(output, null, 2)}</code></pre>
+              </details>
+            </article>
+          );
+        })}
       </div>
     </div>
   </section>
@@ -656,7 +698,7 @@ const priceColumns = [
         <div>
           <span class="panel-kicker">Official one-shot run</span>
           <h2>Model Decisions</h2>
-          <p>Expand a row to inspect the model rationale and risk list without crowding the main table.</p>
+          <p>{allocationDisplayNote} Expand a row to inspect rationale and risk lists without crowding the main table.</p>
         </div>
       </div>
       <OfficialPicksTable client:visible fallbackRows={roundSubmissions} roundId={round.round_id} runId={round.official_run_id} />

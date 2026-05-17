@@ -5,31 +5,34 @@ import StatusCards from "../../components/StatusCards.astro";
 import OfficialPicksTable from "../../components/OfficialPicksTable";
 import LeaderboardTable from "../../components/LeaderboardTable";
 import PendingLeaderboardGuide from "../../components/PendingLeaderboardGuide.astro";
-import { latestLeaderboard, officialSubmissions, rounds } from "../../data/fallback";
+import { latestLeaderboard, rounds as fallbackRounds } from "../../data/fallback";
+import { staticOfficialSubmissions, staticRoundRecords } from "../../lib/localRoundRecords";
 import { datasetSchema } from "../../lib/seo";
 
-const currentRound = rounds[0];
+const roundRows = staticRoundRecords();
+const currentRound = roundRows[0] ?? fallbackRounds[0];
+const officialSubmissions = staticOfficialSubmissions(currentRound.round_id, currentRound.official_run_id);
 const officialPicksDataset = datasetSchema({
-  name: `${currentRound.round_id} official LLM picks`,
+  name: `${currentRound.round_id} official LLM allocations`,
   description:
-    "Pending official CapitalBench one-shot LLM market decisions for the latest round, including selected option, provider, model, confidence, rationale, and risks.",
+    "Pending official CapitalBench one-shot LLM market decisions for the latest round, including allocations, provider, model, confidence, rationale, and risks.",
   path: "/leaderboards/latest",
-  datePublished: "2026-05-12",
+  datePublished: "2026-05-17",
   temporalCoverage: `${currentRound.entry_date}/${currentRound.exit_date}`,
-  keywords: ["LLM market leaderboard", "AI market picks", "one-shot benchmark", "CapitalBench"],
-  variableMeasured: ["model id", "provider", "selected option", "confidence", "pending score status"]
+  keywords: ["LLM market leaderboard", "AI market allocations", "one-shot benchmark", "CapitalBench"],
+  variableMeasured: ["model id", "provider", "portfolio allocation", "confidence", "pending score status"]
 });
 ---
 
 <BaseLayout
   title="Latest LLM Market Leaderboard"
-  description="Latest CapitalBench official leaderboard for one-shot LLM market decisions, with pending picks shown before scored performance is published."
+  description="Latest CapitalBench official leaderboard for one-shot LLM market decisions, with pending allocations shown before scored performance is published."
   structuredData={officialPicksDataset}
 >
   <PageHeader
     eyebrow="Latest official result"
     title="Latest Round Leaderboard"
-    summary="Round 1 is pending. The official picks are visible now; realized performance appears only after exit prices are available."
+    summary={`${currentRound.round_id} is pending. Official allocations are visible now; realized performance appears only after exit prices are available.`}
   />
 
   <StatusCards
@@ -42,7 +45,7 @@ const officialPicksDataset = datasetSchema({
   />
 
   <section class="section" id="official-picks">
-    <PendingLeaderboardGuide kind="latest" exitDate={currentRound.exit_date} />
+    <PendingLeaderboardGuide kind="latest" roundId={currentRound.round_id} exitDate={currentRound.exit_date} />
   </section>
 
   <section class="section">
@@ -54,7 +57,7 @@ const officialPicksDataset = datasetSchema({
       <div class="panel-header">
         <div>
           <span class="panel-kicker">Pending official run</span>
-          <h2>Official Picks</h2>
+          <h2>Official Allocations</h2>
           <p>These are public decisions, not scored performance.</p>
         </div>
       </div>

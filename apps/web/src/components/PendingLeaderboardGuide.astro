@@ -1,20 +1,21 @@
 ---
 interface Props {
   kind: "latest" | "official" | "stability";
+  roundId?: string;
   exitDate?: string;
 }
 
-const { kind, exitDate = "2026-06-10" } = Astro.props;
+const { kind, roundId = "The latest round", exitDate = "the declared exit date" } = Astro.props;
 
 const copy = {
   latest: {
     kicker: "Pending result",
     title: "Why There Is No Score Yet",
     body:
-      `Round 1 has official picks and entry prices, but the latest leaderboard stays empty until exit prices for ${exitDate} are collected and scored.`,
-    columns: ["Model", "Provider", "Pick", "Return", "S&P 500", "Alpha", "Rank"],
+      `${roundId} has official allocations and entry prices, but the latest leaderboard stays empty until exit prices for ${exitDate} are collected and scored.`,
+    columns: ["Model", "Provider", "Decision", "Holdings", "Portfolio return", "S&P 500", "Alpha"],
     sort: "Alpha versus S&P 500 descending, then lower regret, higher confidence, and model id.",
-    cta: "Review official picks"
+    cta: "Review official allocations"
   },
   official: {
     kicker: "Cumulative official",
@@ -30,7 +31,7 @@ const copy = {
     title: "What Stability Will Show",
     body:
       "Stability rows summarize repeated calls with the same frozen inputs. They measure consistency and repeated-run alpha, separately from official one-shot performance.",
-    columns: ["Model", "Provider", "Resolved rounds", "Avg repeated alpha", "Consistency", "Modal-pick alpha"],
+    columns: ["Model", "Provider", "Resolved rounds", "Avg repeated alpha", "Consistency", "Modal decision alpha"],
     sort: "Average repeated alpha descending, then consistency and modal-pick alpha.",
     cta: "Read methodology"
   }

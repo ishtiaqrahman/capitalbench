@@ -22,12 +22,12 @@ export const siteConfig = {
   name: "CapitalBench",
   defaultTitle: "CapitalBench - LLM Market Benchmark and Leaderboards",
   description:
-    "CapitalBench tests AI models on the same market prompt and frozen data, then publishes their picks, scores, and audit trail.",
+    "CapitalBench tests AI models on the same frozen market packet, then publishes their allocations, scores, and audit trail.",
   url: "https://www.capitalbench.org",
   githubUrl: "https://github.com/ishtiaqrahman/capitalbench",
   ogImage: "/og-image.png",
   ogImageAlt:
-    "CapitalBench public LLM market benchmark showing frozen inputs, official picks, and pending leaderboard status.",
+    "CapitalBench public LLM market benchmark showing frozen inputs, official allocations, and pending leaderboard status.",
   ogImageWidth: 1200,
   ogImageHeight: 630,
   themeColor: "#f7f8f6"
@@ -58,7 +58,7 @@ export const routeMeta: RouteMeta[] = [
     path: "/leaderboards/latest",
     title: "Latest LLM Market Leaderboard",
     description:
-      "Latest CapitalBench official leaderboard for one-shot LLM market decisions, with pending picks shown before scored performance is published.",
+      "Latest CapitalBench official leaderboard for one-shot LLM market decisions, with pending allocations shown before scored performance is published.",
     priority: 0.9,
     changefreq: "weekly",
     lastmod: defaultLastmod
@@ -93,7 +93,7 @@ export const routeMeta: RouteMeta[] = [
   ...publicRounds.map((round) => ({
     path: `/rounds/${round.round_id}`,
     title: `${round.round_id} Round Audit Packet`,
-    description: `${round.title}: official LLM picks, entry prices, pending status, and published audit hashes for the ${round.horizon} benchmark round.`,
+    description: `${round.title}: official LLM decisions, entry prices, pending status, and published audit hashes for the ${round.horizon} benchmark round.`,
     priority: 0.8,
     changefreq: "weekly" as const,
     lastmod: defaultLastmod

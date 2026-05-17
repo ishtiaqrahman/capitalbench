@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
-import { rounds, type RoundRecord } from "../data/fallback";
+import { rounds, type RoundRecord, type SubmissionRecord, type UniverseOption } from "../data/fallback";
 
 type RoundManifestYaml = {
   round_id: string;
@@ -27,10 +27,56 @@ type RunManifestYaml = {
   invalid_submissions?: number;
 };
 
+type ParsedSubmissionJson = {
+  round_id?: string;
+  model_id?: string;
+  provider?: string;
+  mode?: string;
+  run_type?: string;
+  replicate_index?: number;
+  replicate_count?: number;
+  selected_option_id?: string;
+  portfolio?: Array<{
+    option_id?: string;
+    allocation_pct?: number;
+    allocation_bps?: number;
+    rationale?: string;
+  }>;
+  portfolio_rationale?: string;
+  confidence?: number;
+  rationale_summary?: string;
+  key_risks?: string[];
+};
+
+type OptionYaml = {
+  id?: string;
+  option_id?: string;
+  name?: string;
+  label?: string;
+  symbol?: string;
+  asset_symbol?: string;
+  asset_class?: string;
+  category?: string;
+  option_group?: string;
+  risk_bucket?: string;
+  is_cash?: boolean;
+  is_benchmark?: boolean;
+  include_in_universe?: boolean;
+};
+
 function readYamlFile<T>(path: string): T | null {
   if (!existsSync(path)) return null;
   try {
     return parseYaml(readFileSync(path, "utf-8")) as T;
+  } catch {
+    return null;
+  }
+}
+
+function readJsonFile<T>(path: string): T | null {
+  if (!existsSync(path)) return null;
+  try {
+    return JSON.parse(readFileSync(path, "utf-8")) as T;
   } catch {
     return null;
   }
@@ -110,6 +156,117 @@ export function staticRoundRecords(): RoundRecord[] {
     }
   }
   return Array.from(byId.values()).sort((a, b) => b.decision_deadline_utc.localeCompare(a.decision_deadline_utc));
+}
+
+function roundPathForId(roundId: string): string | null {
+  const roundsRoot = join(repoRootPath(), "rounds");
+  const directPath = join(roundsRoot, roundId);
+  if (existsSync(directPath)) return directPath;
+  return null;
+}
+
+function primaryOptionId(payload: ParsedSubmissionJson): string {
+  if (payload.selected_option_id) return payload.selected_option_id;
+  const allocations = payload.portfolio ?? [];
+  const [primary] = [...allocations].sort((a, b) => {
+    const bpsA = a.allocation_bps ?? Number(a.allocation_pct ?? 0) * 100;
+    const bpsB = b.allocation_bps ?? Number(b.allocation_pct ?? 0) * 100;
+    return bpsB - bpsA;
+  });
+  return primary?.option_id ?? "";
+}
+
+function normalizeSubmission(
+  payload: ParsedSubmissionJson,
+  fallback: { fallbackRoundId: string; fallbackRunId: string }
+): SubmissionRecord | null {
+  if (!payload.model_id || !payload.provider) return null;
+  const portfolio = (payload.portfolio ?? [])
+    .filter((item) => item.option_id)
+    .map((item) => ({
+      option_id: String(item.option_id),
+      allocation_pct:
+        typeof item.allocation_pct === "number"
+          ? item.allocation_pct
+          : typeof item.allocation_bps === "number"
+            ? item.allocation_bps / 100
+            : undefined,
+      allocation_bps:
+        typeof item.allocation_bps === "number"
+          ? item.allocation_bps
+          : typeof item.allocation_pct === "number"
+            ? item.allocation_pct * 100
+            : undefined,
+      rationale: item.rationale ? String(item.rationale) : undefined
+    }));
+  return {
+    round_id: payload.round_id ?? fallback.fallbackRoundId,
+    run_id: fallback.fallbackRunId,
+    model_id: payload.model_id,
+    provider: payload.provider,
+    submission_format: portfolio.length > 0 ? "portfolio" : "single_pick",
+    selected_option_id: primaryOptionId(payload),
+    holding_count: portfolio.length > 0 ? portfolio.length : 1,
+    max_allocation_bps:
+      portfolio.length > 0
+        ? Math.max(...portfolio.map((item) => item.allocation_bps ?? Number(item.allocation_pct ?? 0) * 100))
+        : 10000,
+    cash_allocation_bps: portfolio
+      .filter((item) => item.option_id.toUpperCase() === "CASH")
+      .reduce((total, item) => total + (item.allocation_bps ?? Number(item.allocation_pct ?? 0) * 100), 0),
+    benchmark_allocation_bps: portfolio
+      .filter((item) => item.option_id.toUpperCase() === "SP500")
+      .reduce((total, item) => total + (item.allocation_bps ?? Number(item.allocation_pct ?? 0) * 100), 0),
+    portfolio,
+    portfolio_rationale: payload.portfolio_rationale,
+    confidence: Number(payload.confidence ?? 0),
+    rationale_summary: payload.rationale_summary ?? "",
+    key_risks: Array.isArray(payload.key_risks) ? payload.key_risks : []
+  };
+}
+
+export function staticOfficialSubmissions(roundId: string, runId?: string): SubmissionRecord[] {
+  const roundPath = roundPathForId(roundId);
+  if (!roundPath) return [];
+  const selectedRunId = runId || publicOfficialRuns(roundPath)[0]?.runId;
+  if (!selectedRunId) return [];
+  const parsedPath = join(roundPath, "runs", selectedRunId, "submissions", "parsed");
+  if (!existsSync(parsedPath)) return [];
+  return readdirSync(parsedPath)
+    .filter((filename) => filename.endsWith(".json"))
+    .map((filename) =>
+      normalizeSubmission(readJsonFile<ParsedSubmissionJson>(join(parsedPath, filename)) ?? {}, {
+        fallbackRoundId: roundId,
+        fallbackRunId: selectedRunId
+      })
+    )
+    .filter((item): item is SubmissionRecord => item !== null)
+    .sort((a, b) => a.provider.localeCompare(b.provider));
+}
+
+export function staticAllOfficialSubmissions(roundRows = staticRoundRecords()): SubmissionRecord[] {
+  return roundRows.flatMap((round) => staticOfficialSubmissions(round.round_id, round.official_run_id));
+}
+
+export function staticUniverseOptions(roundId: string): UniverseOption[] {
+  const roundPath = roundPathForId(roundId);
+  if (!roundPath) return [];
+  const yaml = readYamlFile<{ options?: OptionYaml[] }>(join(roundPath, "options.yaml"));
+  const options = Array.isArray(yaml?.options) ? yaml.options : [];
+  return options
+    .filter((option) => option.include_in_universe !== false)
+    .map((option, index) => ({
+      option_id: String(option.id ?? option.option_id ?? ""),
+      name: String(option.name ?? option.label ?? option.id ?? option.option_id ?? ""),
+      symbol: String(option.symbol ?? option.asset_symbol ?? ""),
+      asset_class: String(option.asset_class ?? "unknown"),
+      option_group: String(option.option_group ?? option.category ?? "unknown"),
+      risk_bucket: String(option.risk_bucket ?? "medium"),
+      is_cash: Boolean(option.is_cash),
+      is_benchmark: Boolean(option.is_benchmark),
+      sort_order: index + 1
+    }))
+    .filter((option) => option.option_id);
 }
 
 export function repoRootPath(): string {

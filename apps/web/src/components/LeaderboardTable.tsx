@@ -31,7 +31,7 @@ export default function LeaderboardTable({ fallbackRows, kind }: Props) {
   const latestColumns: Column<LeaderboardRecord>[] = [
     { key: "model_id", label: "Model", value: (row) => modelLabel(row.model_id) },
     { key: "provider", label: "Provider", value: (row) => providerLabel(row.provider) },
-    { key: "selected_option_id", label: "Pick" },
+    { key: "selected_option_id", label: "Decision" },
     { key: "holding_count", label: "Holdings", align: "right" },
     { key: "selected_asset_return", label: "Return", align: "right", value: (row) => pct(row.selected_asset_return) },
     { key: "sp500_return", label: "S&P 500", align: "right", value: (row) => pct(row.sp500_return) },
@@ -62,7 +62,7 @@ export default function LeaderboardTable({ fallbackRows, kind }: Props) {
   const columns = kind === "latest" ? latestColumns : kind === "official" ? officialColumns : stabilityColumns;
   const emptyText =
     kind === "latest"
-      ? "No resolved official round is published yet. Round 1 remains pending until exit prices are available."
+      ? "No resolved official round is published yet. Official decisions remain pending until exit prices are available."
       : "No resolved rounds are published for this leaderboard yet.";
 
   if (rows.length === 0) {
