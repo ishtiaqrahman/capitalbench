@@ -1,18 +1,32 @@
 ---
+import ScoreCountdown from "./ScoreCountdown";
+
 interface Props {
   kind: "latest" | "official" | "stability";
   roundId?: string;
   exitDate?: string;
+  scoreEtaUtc?: string;
+  scoreEtaSource?: "automation" | "derived";
+  status?: "pending" | "resolved" | "archived";
+  initialNowIso?: string;
 }
 
-const { kind, roundId = "The latest round", exitDate = "the declared exit date" } = Astro.props;
+const {
+  kind,
+  roundId = "The latest round",
+  exitDate = "the declared exit date",
+  scoreEtaUtc,
+  scoreEtaSource,
+  status = "pending",
+  initialNowIso
+} = Astro.props;
 
 const copy = {
   latest: {
     kicker: "Pending result",
     title: "Why There Is No Score Yet",
     body:
-      `${roundId} has official allocations and entry prices, but the latest leaderboard stays empty until exit prices for ${exitDate} are collected and scored.`,
+      `${roundId} has official allocations and entry prices, but the latest leaderboard stays empty until exit prices are collected and scored.`,
     columns: ["Model", "Provider", "Decision", "Holdings", "Portfolio return", "S&P 500", "Alpha"],
     sort: "Alpha versus S&P 500 descending, then lower regret, higher confidence, and model id.",
     cta: "Review official allocations"
@@ -50,6 +64,18 @@ const href =
     <span class="panel-kicker">{copy.kicker}</span>
     <h2>{copy.title}</h2>
     <p>{copy.body}</p>
+    {kind === "latest" && (
+      <ScoreCountdown
+        client:visible
+        showIcon
+        compact
+        scoreEtaUtc={scoreEtaUtc}
+        source={scoreEtaSource}
+        status={status}
+        exitDate={exitDate}
+        initialNowIso={initialNowIso}
+      />
+    )}
     <a class="action-link" href={href}>{copy.cta}</a>
   </div>
   <div class="guide-secondary">

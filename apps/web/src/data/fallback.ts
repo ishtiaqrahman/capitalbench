@@ -1,5 +1,6 @@
 export type RoundStatus = "pending" | "resolved" | "archived";
 export type SubmissionFormat = "single_pick" | "portfolio";
+export type ScoreEtaSource = "automation" | "derived";
 
 export interface RoundRecord {
   round_id: string;
@@ -17,6 +18,8 @@ export interface RoundRecord {
   submission_format?: SubmissionFormat;
   official_run_id: string;
   stability_run_id?: string;
+  score_eta_utc?: string;
+  score_eta_source?: ScoreEtaSource;
   notes: string;
 }
 
@@ -106,6 +109,8 @@ export const rounds: RoundRecord[] = [
     methodology_version: "round1-v1.0",
     universe_version: "capitalbench_universe_v1_5",
     official_run_id: "official-round-1-clean",
+    score_eta_utc: "2026-06-10T23:30:00Z",
+    score_eta_source: "derived",
     notes:
       "Official model submissions are collected. Performance remains unpublished until exit prices are available."
   }

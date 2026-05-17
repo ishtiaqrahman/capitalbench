@@ -13,6 +13,7 @@ const roundRows = staticRoundRecords();
 const currentRound = roundRows[0] ?? fallbackRounds[0];
 const officialSubmissions = staticOfficialSubmissions(currentRound.round_id, currentRound.official_run_id);
 const currentUniverseOptions = staticUniverseOptions(currentRound.round_id);
+const initialNowIso = new Date().toISOString();
 const officialPicksDataset = datasetSchema({
   name: `${currentRound.round_id} official LLM allocations`,
   description:
@@ -46,7 +47,15 @@ const officialPicksDataset = datasetSchema({
   />
 
   <section class="section" id="official-picks">
-    <PendingLeaderboardGuide kind="latest" roundId={currentRound.round_id} exitDate={currentRound.exit_date} />
+    <PendingLeaderboardGuide
+      kind="latest"
+      roundId={currentRound.round_id}
+      exitDate={currentRound.exit_date}
+      scoreEtaUtc={currentRound.score_eta_utc}
+      scoreEtaSource={currentRound.score_eta_source}
+      status={currentRound.status}
+      initialNowIso={initialNowIso}
+    />
   </section>
 
   <section class="section">

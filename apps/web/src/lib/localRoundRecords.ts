@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
-import { rounds, type RoundRecord, type SubmissionRecord, type UniverseOption } from "../data/fallback";
+import { rounds, type RoundRecord, type ScoreEtaSource, type SubmissionRecord, type UniverseOption } from "../data/fallback";
 
 type RoundManifestYaml = {
   round_id: string;
@@ -25,6 +25,12 @@ type RunManifestYaml = {
   operator_selected_official?: boolean;
   methodology_version?: string;
   invalid_submissions?: number;
+};
+
+type ResolutionJobYaml = {
+  due_at_utc?: string;
+  next_attempt_at_utc?: string;
+  status?: string;
 };
 
 type ParsedSubmissionJson = {
@@ -113,6 +119,24 @@ function horizonDays(entryDate?: string, exitDate?: string): number {
   return Math.round((end - start) / 86_400_000);
 }
 
+function validIsoDateTime(value?: string): string | undefined {
+  if (!value) return undefined;
+  return Number.isFinite(Date.parse(value)) ? value : undefined;
+}
+
+function scoreEta(roundPath: string, manifest: RoundManifestYaml): { score_eta_utc?: string; score_eta_source?: ScoreEtaSource } {
+  const job = readYamlFile<ResolutionJobYaml>(join(roundPath, "automation", "resolution_job.yaml"));
+  const automationEta = validIsoDateTime(job?.due_at_utc ?? job?.next_attempt_at_utc);
+  if (automationEta) {
+    return { score_eta_utc: automationEta, score_eta_source: "automation" };
+  }
+  const derivedEta = validIsoDateTime(manifest.exit_date ? `${manifest.exit_date}T23:30:00Z` : undefined);
+  if (derivedEta) {
+    return { score_eta_utc: derivedEta, score_eta_source: "derived" };
+  }
+  return {};
+}
+
 function discoverRoundRecord(roundPath: string): RoundRecord | null {
   const manifest = readYamlFile<RoundManifestYaml>(join(roundPath, "manifest.yaml"));
   if (!manifest?.round_id) return null;
@@ -121,6 +145,7 @@ function discoverRoundRecord(roundPath: string): RoundRecord | null {
   const hasScoredResults =
     selectedRun !== undefined &&
     existsSync(join(roundPath, "runs", selectedRun.runId, "results", "leaderboard.csv"));
+  const scoreEtaFields = scoreEta(roundPath, manifest);
   return {
     round_id: manifest.round_id,
     title: manifest.title ?? fallback?.title ?? manifest.round_id,
@@ -141,6 +166,8 @@ function discoverRoundRecord(roundPath: string): RoundRecord | null {
     submission_format: manifest.submission_format ?? fallback?.submission_format ?? "single_pick",
     official_run_id: selectedRun?.runId ?? fallback?.official_run_id ?? "",
     stability_run_id: fallback?.stability_run_id,
+    score_eta_utc: hasScoredResults ? undefined : scoreEtaFields.score_eta_utc ?? fallback?.score_eta_utc,
+    score_eta_source: hasScoredResults ? undefined : scoreEtaFields.score_eta_source ?? fallback?.score_eta_source,
     notes: manifest.notes ?? fallback?.notes ?? ""
   };
 }

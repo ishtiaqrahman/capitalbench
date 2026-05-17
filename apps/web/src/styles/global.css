@@ -497,6 +497,131 @@ h3 {
   overflow-wrap: anywhere;
 }
 
+.score-countdown {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.score-countdown-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.score-countdown-kicker {
+  color: var(--muted-2);
+  font-size: 0.72rem;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.score-countdown-value {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  max-width: 340px;
+}
+
+.score-countdown-value span,
+.score-countdown-compact-value,
+.score-countdown-status {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #ffffff;
+  color: var(--ink-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-countdown-value span {
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  gap: 1px;
+  padding: 6px 4px;
+}
+
+.score-countdown-value b,
+.score-countdown-compact-value,
+.score-countdown-status {
+  font-weight: 820;
+}
+
+.score-countdown-value small {
+  color: var(--muted-2);
+  font-size: 0.64rem;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.score-countdown-seconds {
+  opacity: 0.72;
+}
+
+.score-countdown-compact-value,
+.score-countdown-status {
+  width: max-content;
+  max-width: 100%;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  overflow-wrap: anywhere;
+}
+
+.score-countdown p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.score-countdown.reached .score-countdown-status {
+  border-color: #eed4a3;
+  background: var(--pending-bg);
+  color: var(--pending);
+}
+
+.score-countdown.resolved .score-countdown-status {
+  border-color: #b8ddd2;
+  background: var(--resolved-bg);
+  color: var(--resolved);
+}
+
+.home-hero-console .score-countdown {
+  padding: 12px 0;
+  border-bottom: 1px solid #263b37;
+}
+
+.home-hero-console .score-countdown-head {
+  margin-bottom: 3px;
+}
+
+.home-hero-console .score-countdown-kicker,
+.home-hero-console .score-countdown p {
+  color: #98aaa4;
+}
+
+.home-hero-console .score-countdown-value span,
+.home-hero-console .score-countdown-compact-value,
+.home-hero-console .score-countdown-status {
+  border-color: #2f4944;
+  background: #152421;
+  color: #ffffff;
+}
+
+.home-hero-console .score-countdown-value small {
+  color: #98aaa4;
+}
+
+.phase-list .score-countdown {
+  margin-top: 10px;
+}
+
+.leaderboard-guide .score-countdown {
+  margin: 12px 0 14px;
+}
+
 .trust-strip {
   min-width: 0;
   display: grid;

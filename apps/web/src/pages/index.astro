@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import GitHubLogo from "../components/GitHubLogo.astro";
 import LeaderboardTable from "../components/LeaderboardTable";
 import OfficialPicksTable from "../components/OfficialPicksTable";
+import ScoreCountdown from "../components/ScoreCountdown";
 import {
   ArrowRight,
   BarChart3,
@@ -43,6 +44,7 @@ const currentOptionsById = Object.fromEntries(currentUniverseOptions.map((option
 const resolvedRoundCount = roundRows.filter((round) => round.status === "resolved").length;
 const pendingRoundCount = roundRows.filter((round) => round.status === "pending").length;
 const currentRoundUrl = `/rounds/${currentRound.round_id}/`;
+const initialNowIso = new Date().toISOString();
 const confidenceValues = currentRoundSubmissions
   .map((row) => row.confidence)
   .filter((value): value is number => Number.isFinite(value));
@@ -199,10 +201,14 @@ const safeguards = [
           <span>Latest protocol</span>
           <strong>{currentRound.methodology_version} with {currentRoundSubmissions.length} official portfolios</strong>
         </div>
-        <div>
-          <span>Observation window</span>
-          <strong>Scores publish after {currentRound.exit_date} exit prices are collected</strong>
-        </div>
+        <ScoreCountdown
+          client:load
+          scoreEtaUtc={currentRound.score_eta_utc}
+          source={currentRound.score_eta_source}
+          status={currentRound.status}
+          exitDate={currentRound.exit_date}
+          initialNowIso={initialNowIso}
+        />
         <div>
           <span>Round 1 compatibility</span>
           <strong>{semiconductorAllocationCount} of {previousRoundSubmissions.length} models display as SEMICONDUCTORS 100%</strong>
@@ -309,11 +315,31 @@ const safeguards = [
         <span>3</span>
         <strong>Round 1 exit pending</strong>
         <p>Performance unlocks after {previousRound?.exit_date ?? "the declared exit date"} prices are collected.</p>
+        {previousRound && (
+          <ScoreCountdown
+            client:visible
+            compact
+            scoreEtaUtc={previousRound.score_eta_utc}
+            source={previousRound.score_eta_source}
+            status={previousRound.status}
+            exitDate={previousRound.exit_date}
+            initialNowIso={initialNowIso}
+          />
+        )}
       </li>
       <li class="phase-current">
         <span>4</span>
         <strong>Round 2 exit pending</strong>
         <p>Portfolio returns and alpha publish after {currentRound.exit_date}.</p>
+        <ScoreCountdown
+          client:visible
+          compact
+          scoreEtaUtc={currentRound.score_eta_utc}
+          source={currentRound.score_eta_source}
+          status={currentRound.status}
+          exitDate={currentRound.exit_date}
+          initialNowIso={initialNowIso}
+        />
       </li>
     </ol>
   </section>
