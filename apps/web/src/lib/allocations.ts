@@ -1,4 +1,4 @@
-import type { SubmissionRecord } from "../data/fallback";
+import type { SubmissionRecord, UniverseOption } from "../data/fallback";
 
 export type DisplayAllocation = {
   option_id: string;
@@ -6,6 +6,8 @@ export type DisplayAllocation = {
   allocation_bps: number;
   rationale?: string;
 };
+
+export type OptionLabelMap = Record<string, Pick<UniverseOption, "name" | "symbol" | "is_cash"> | undefined>;
 
 export function formatAllocationPct(value: number): string {
   if (Number.isInteger(value)) return `${value}%`;
@@ -41,6 +43,21 @@ export function allocationLabel(row: SubmissionRecord): string {
   return allocations.map((item) => `${item.option_id} ${formatAllocationPct(item.allocation_pct)}`).join(" / ");
 }
 
+export function optionDisplayName(optionId: string, optionsById: OptionLabelMap = {}): string {
+  const option = optionsById[optionId];
+  if (!option) return optionId;
+  if (option.is_cash) return option.name || optionId;
+  return option.symbol ? `${option.name || optionId} (${option.symbol})` : option.name || optionId;
+}
+
+export function allocationDisplayLabel(row: SubmissionRecord, optionsById: OptionLabelMap = {}): string {
+  const allocations = decisionAllocations(row);
+  if (allocations.length === 0) return optionDisplayName(row.selected_option_id, optionsById);
+  return allocations
+    .map((item) => `${optionDisplayName(item.option_id, optionsById)} ${formatAllocationPct(item.allocation_pct)}`)
+    .join(" / ");
+}
+
 export function protocolLabel(row: Pick<SubmissionRecord, "submission_format">): string {
   return row.submission_format === "portfolio" ? "Portfolio round" : "Single-pick round";
 }
@@ -58,4 +75,3 @@ export function allocationThemeClass(optionId: string): string {
   if (["CONSUMER_STAPLES", "UTILITIES", "HEALTHCARE"].includes(normalized)) return "allocation-stable";
   return "allocation-other";
 }
-

@@ -1,13 +1,22 @@
 import { ChevronDown, Download, Search } from "lucide-react";
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { modelLabel, providerLabel, type SubmissionRecord } from "../data/fallback";
-import { allocationLabel, allocationThemeClass, decisionAllocations, formatAllocationPct, protocolLabel } from "../lib/allocations";
+import { modelLabel, providerLabel, type SubmissionRecord, type UniverseOption } from "../data/fallback";
+import {
+  allocationDisplayLabel,
+  allocationThemeClass,
+  decisionAllocations,
+  formatAllocationPct,
+  optionDisplayName,
+  protocolLabel,
+  type OptionLabelMap
+} from "../lib/allocations";
 import { getSupabaseClient, hasSupabaseConfig } from "../lib/supabase";
 
 interface Props {
   fallbackRows: SubmissionRecord[];
   roundId: string;
   runId: string;
+  options?: UniverseOption[];
 }
 
 function csvEscape(value: string | number): string {
@@ -20,10 +29,14 @@ function providerClass(provider: string): string {
   return `provider-badge provider-${provider}`;
 }
 
-export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Props) {
+export default function OfficialPicksTable({ fallbackRows, roundId, runId, options = [] }: Props) {
   const [rows, setRows] = useState<SubmissionRecord[]>(fallbackRows);
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState<string | null>(fallbackRows[0]?.model_id ?? null);
+  const optionsById = useMemo<OptionLabelMap>(
+    () => Object.fromEntries(options.map((option) => [option.option_id, option])),
+    [options]
+  );
 
   useEffect(() => {
     const supabase = getSupabaseClient();
@@ -52,7 +65,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
         modelLabel(row.model_id),
         providerLabel(row.provider),
         row.selected_option_id,
-        allocationLabel(row),
+        allocationDisplayLabel(row, optionsById),
         row.portfolio_rationale ?? "",
         row.rationale_summary,
         ...(row.key_risks ?? [])
@@ -61,7 +74,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
         .toLowerCase()
         .includes(normalized)
     );
-  }, [query, rows]);
+  }, [optionsById, query, rows]);
 
   function exportCsv() {
     const header = ["Model", "Provider", "Primary option", "Allocations", "Confidence", "Protocol", "Rationale", "Key risks"].join(",");
@@ -70,8 +83,8 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
         [
           modelLabel(row.model_id),
           providerLabel(row.provider),
-          row.selected_option_id,
-          allocationLabel(row),
+          optionDisplayName(row.selected_option_id, optionsById),
+          allocationDisplayLabel(row, optionsById),
           row.confidence.toFixed(2),
           protocolLabel(row),
           row.rationale_summary,
@@ -146,7 +159,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
                             />
                           ))}
                         </div>
-                        <strong>{allocationLabel(row)}</strong>
+                        <strong>{allocationDisplayLabel(row, optionsById)}</strong>
                       </div>
                     </td>
                     <td className="numeric" data-label="Confidence">
@@ -184,7 +197,8 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId }: Pro
                                 {allocations.map((allocation) => {
                                   return (
                                     <li key={allocation.option_id}>
-                                      <strong>{allocation.option_id}</strong>: {formatAllocationPct(allocation.allocation_pct)}
+                                      <strong>{optionDisplayName(allocation.option_id, optionsById)}</strong>:{" "}
+                                      {formatAllocationPct(allocation.allocation_pct)}
                                       {allocation.rationale ? ` - ${allocation.rationale}` : ""}
                                     </li>
                                   );

@@ -15,7 +15,13 @@ import {
   TimerReset
 } from "lucide-react";
 import { latestLeaderboard, modelLabel, providerLabel, rounds as fallbackRounds } from "../data/fallback";
-import { allocationThemeClass, decisionAllocations, formatAllocationPct, protocolLabel } from "../lib/allocations";
+import {
+  allocationThemeClass,
+  decisionAllocations,
+  formatAllocationPct,
+  optionDisplayName,
+  protocolLabel
+} from "../lib/allocations";
 import {
   staticAllOfficialSubmissions,
   staticOfficialSubmissions,
@@ -33,6 +39,7 @@ const previousRoundSubmissions = previousRound
   : [];
 const allOfficialSubmissions = staticAllOfficialSubmissions(roundRows);
 const currentUniverseOptions = staticUniverseOptions(currentRound.round_id);
+const currentOptionsById = Object.fromEntries(currentUniverseOptions.map((option) => [option.option_id, option]));
 const resolvedRoundCount = roundRows.filter((round) => round.status === "resolved").length;
 const pendingRoundCount = roundRows.filter((round) => round.status === "pending").length;
 const currentRoundUrl = `/rounds/${currentRound.round_id}/`;
@@ -242,7 +249,7 @@ const safeguards = [
                 <span
                   class={allocationThemeClass(allocation.option_id)}
                   style={`width: ${Math.max(3, allocation.allocation_pct)}%`}
-                  title={`${allocation.option_id} ${formatAllocationPct(allocation.allocation_pct)}`}
+                  title={`${optionDisplayName(allocation.option_id, currentOptionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
                 />
               ))}
             </div>
@@ -250,7 +257,7 @@ const safeguards = [
               {allocations.map((allocation) => (
                 <li>
                   <span class={`allocation-dot ${allocationThemeClass(allocation.option_id)}`}></span>
-                  <strong>{allocation.option_id}</strong>
+                  <strong>{optionDisplayName(allocation.option_id, currentOptionsById)}</strong>
                   <span>{formatAllocationPct(allocation.allocation_pct)}</span>
                 </li>
               ))}
@@ -270,7 +277,7 @@ const safeguards = [
       <div class="exposure-list">
         {currentRoundExposure.map((item) => (
           <div>
-            <span>{item.optionId}</span>
+            <span>{optionDisplayName(item.optionId, currentOptionsById)}</span>
             <strong>{formatAllocationPct(item.averagePct)}</strong>
           </div>
         ))}
@@ -345,6 +352,7 @@ const safeguards = [
         fallbackRows={currentRoundSubmissions}
         roundId={currentRound.round_id}
         runId={currentRound.official_run_id}
+        options={currentUniverseOptions}
       />
     </div>
 

@@ -19,7 +19,7 @@ import {
   type UniverseOption,
   universeOptions
 } from "../../data/fallback";
-import { allocationThemeClass, formatAllocationPct } from "../../lib/allocations";
+import { allocationThemeClass, formatAllocationPct, optionDisplayName } from "../../lib/allocations";
 import { repoRootPath, staticRoundRecords } from "../../lib/localRoundRecords";
 import { datasetSchema } from "../../lib/seo";
 
@@ -320,6 +320,7 @@ const researchManifest = parseRoundYaml<Record<string, unknown>>("research", "re
 const optionsData = parseRoundYaml<{ options?: ParsedOption[] }>("options.yaml");
 const parsedOptions = optionsData?.options ?? [];
 const roundUniverseOptions = parsedOptions.length ? parsedOptions.map(optionFromParsed) : universeOptions;
+const roundOptionsById = Object.fromEntries(roundUniverseOptions.map((option) => [option.option_id, option]));
 const roundEntryPrices = loadRoundEntryPrices();
 const roundAuditHashes = loadRoundAuditHashes();
 const renderedOptionsForPrompt = renderOptionsForPrompt(parsedOptions);
@@ -643,7 +644,7 @@ const priceColumns = [
                   <span
                     class={allocationThemeClass(allocation.option_id)}
                     style={`width: ${Math.max(3, allocation.allocation_pct)}%`}
-                    title={`${allocation.option_id} ${formatAllocationPct(allocation.allocation_pct)}`}
+                  title={`${optionDisplayName(allocation.option_id, roundOptionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
                   />
                 ))}
               </div>
@@ -668,7 +669,8 @@ const priceColumns = [
                   <ul>
                     {allocations.map((allocation) => (
                       <li>
-                        <strong>{allocation.option_id}</strong>: {formatAllocationPct(allocation.allocation_pct)}
+                        <strong>{optionDisplayName(allocation.option_id, roundOptionsById)}</strong>:{" "}
+                        {formatAllocationPct(allocation.allocation_pct)}
                         {allocation.rationale ? ` - ${allocation.rationale}` : ""}
                       </li>
                     ))}
@@ -701,7 +703,13 @@ const priceColumns = [
           <p>{allocationDisplayNote} Expand a row to inspect rationale and risk lists without crowding the main table.</p>
         </div>
       </div>
-      <OfficialPicksTable client:visible fallbackRows={roundSubmissions} roundId={round.round_id} runId={round.official_run_id} />
+      <OfficialPicksTable
+        client:visible
+        fallbackRows={roundSubmissions}
+        roundId={round.round_id}
+        runId={round.official_run_id}
+        options={roundUniverseOptions}
+      />
     </div>
   </section>
 

@@ -6,12 +6,13 @@ import OfficialPicksTable from "../../components/OfficialPicksTable";
 import LeaderboardTable from "../../components/LeaderboardTable";
 import PendingLeaderboardGuide from "../../components/PendingLeaderboardGuide.astro";
 import { latestLeaderboard, rounds as fallbackRounds } from "../../data/fallback";
-import { staticOfficialSubmissions, staticRoundRecords } from "../../lib/localRoundRecords";
+import { staticOfficialSubmissions, staticRoundRecords, staticUniverseOptions } from "../../lib/localRoundRecords";
 import { datasetSchema } from "../../lib/seo";
 
 const roundRows = staticRoundRecords();
 const currentRound = roundRows[0] ?? fallbackRounds[0];
 const officialSubmissions = staticOfficialSubmissions(currentRound.round_id, currentRound.official_run_id);
+const currentUniverseOptions = staticUniverseOptions(currentRound.round_id);
 const officialPicksDataset = datasetSchema({
   name: `${currentRound.round_id} official LLM allocations`,
   description:
@@ -61,7 +62,13 @@ const officialPicksDataset = datasetSchema({
           <p>These are public decisions, not scored performance.</p>
         </div>
       </div>
-      <OfficialPicksTable client:visible fallbackRows={officialSubmissions} roundId={currentRound.round_id} runId={currentRound.official_run_id} />
+      <OfficialPicksTable
+        client:visible
+        fallbackRows={officialSubmissions}
+        roundId={currentRound.round_id}
+        runId={currentRound.official_run_id}
+        options={currentUniverseOptions}
+      />
     </div>
   </section>
 </BaseLayout>
