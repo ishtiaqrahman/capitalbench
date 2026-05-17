@@ -1,8 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import GitHubLogo from "../components/GitHubLogo.astro";
-import LeaderboardTable from "../components/LeaderboardTable";
-import OfficialPicksTable from "../components/OfficialPicksTable";
 import ScoreCountdown from "../components/ScoreCountdown";
 import {
   ArrowRight,
@@ -11,17 +9,15 @@ import {
   ExternalLink,
   FileCheck2,
   Layers3,
-  Scale,
   ShieldCheck,
   TimerReset
 } from "lucide-react";
-import { latestLeaderboard, modelLabel, providerLabel, rounds as fallbackRounds } from "../data/fallback";
+import { modelLabel, providerLabel, rounds as fallbackRounds } from "../data/fallback";
 import {
   allocationThemeClass,
   decisionAllocations,
   formatAllocationPct,
-  optionDisplayName,
-  protocolLabel
+  optionDisplayName
 } from "../lib/allocations";
 import {
   staticAllOfficialSubmissions,
@@ -41,20 +37,9 @@ const previousRoundSubmissions = previousRound
 const allOfficialSubmissions = staticAllOfficialSubmissions(roundRows);
 const currentUniverseOptions = staticUniverseOptions(currentRound.round_id);
 const currentOptionsById = Object.fromEntries(currentUniverseOptions.map((option) => [option.option_id, option]));
-const resolvedRoundCount = roundRows.filter((round) => round.status === "resolved").length;
 const pendingRoundCount = roundRows.filter((round) => round.status === "pending").length;
 const currentRoundUrl = `/rounds/${currentRound.round_id}/`;
 const initialNowIso = new Date().toISOString();
-const confidenceValues = currentRoundSubmissions
-  .map((row) => row.confidence)
-  .filter((value): value is number => Number.isFinite(value));
-const confidenceRange =
-  confidenceValues.length > 0
-    ? `${Math.min(...confidenceValues).toFixed(2)}-${Math.max(...confidenceValues).toFixed(2)}`
-    : "not reported";
-const semiconductorAllocationCount = previousRoundSubmissions.filter((row) =>
-  decisionAllocations(row).some((allocation) => allocation.option_id === "SEMICONDUCTORS" && allocation.allocation_pct === 100)
-).length;
 const allocationTotals = new Map<string, number>();
 for (const submission of currentRoundSubmissions) {
   for (const allocation of decisionAllocations(submission)) {
@@ -68,55 +53,56 @@ const currentRoundExposure = Array.from(allocationTotals.entries())
   }))
   .sort((a, b) => b.averagePct - a.averagePct)
   .slice(0, 7);
+const topExposure = currentRoundExposure[0];
 const heroMetrics = [
   { label: "Official rounds", value: String(roundRows.length) },
   { label: "Locked decisions", value: String(allOfficialSubmissions.length) },
   { label: "Latest universe", value: `${currentUniverseOptions.length} assets` },
-  { label: "Resolved scores", value: String(resolvedRoundCount) }
+  { label: "Round horizon", value: currentRound.horizon }
 ];
-const resultViews = [
+const exploreLinks = [
   {
     href: "/leaderboards/latest",
     icon: BarChart3,
-    label: "Latest Round",
-    description: "Newest official round. Pending rounds show locked allocations before scored performance.",
-    state: currentRound.status === "resolved" ? "Scored" : "Pending"
+    label: "Latest allocations",
+    description: "Model portfolios for the newest official round, kept separate from realized performance.",
+    state: currentRound.status === "resolved" ? "Scored" : "Pending score"
   },
   {
-    href: "/leaderboards/cumulative-official",
+    href: "/rounds",
     icon: Layers3,
-    label: "Cumulative Official",
-    description: "Average official alpha once at least one score window has resolved.",
-    state: resolvedRoundCount > 0 ? "Live" : "Awaiting scores"
+    label: "All rounds",
+    description: "Round packets, prompts, model outputs, entry prices, hashes, and status history.",
+    state: `${roundRows.length} rounds`
   },
   {
-    href: "/leaderboards/cumulative-stability",
+    href: "/methodology",
     icon: TimerReset,
-    label: "Cumulative Stability",
-    description: "Repeated-call alpha and consistency, kept separate from official one-shot results.",
-    state: "Separate"
+    label: "Methodology",
+    description: "Scoring rules, safeguards, data boundaries, and how official runs are separated.",
+    state: "Audit"
   }
 ];
 const protocolHighlights = [
   {
-    label: "Same packet",
-    title: "Identical prompt and market context",
-    description: "Every official model receives the same frozen briefing, option universe, dates, and response schema."
+    label: "Same inputs",
+    title: "Frozen prompt and market packet",
+    description: "Every official model receives the same briefing, option universe, dates, and response schema."
   },
   {
-    label: "Locked first",
+    label: "No hindsight",
     title: "Decisions publish before outcomes",
-    description: "Allocations are public while the score window is still unresolved, so hindsight cannot shape the record."
+    description: "Allocations are public while score windows remain unresolved."
   },
   {
-    label: "Portfolio aware",
-    title: "Single picks and portfolios compare cleanly",
-    description: "Round 1 is displayed as a 100% one-holding allocation; Round 2 uses submitted multi-asset portfolios."
+    label: "Comparable",
+    title: "Picks and portfolios normalized",
+    description: "Round 1 displays as a 100% one-holding allocation; Round 2 uses submitted portfolios."
   },
   {
     label: "Public audit",
-    title: "Prompts, outputs, hashes, and repo history",
-    description: "Readers can inspect model-facing inputs, validated outputs, artifacts, and implementation changes."
+    title: "Prompts, outputs, hashes public",
+    description: "Readers can inspect inputs, validated outputs, artifacts, and implementation history."
   }
 ];
 const safeguards = [
@@ -150,9 +136,10 @@ const safeguards = [
       <p class="eyebrow">Auditable AI market benchmark</p>
       <h1 id="home-title">CapitalBench</h1>
       <p class="home-hero-lede">
-        CapitalBench gives leading AI models the same frozen market packet, asks them to make a one-month market
-        allocation before outcomes are known, then publishes the decisions, realized returns, and audit trail.
+        CapitalBench tests whether leading AI models can make market allocations before outcomes are known. Every round
+        uses the same frozen packet, publishes model decisions first, then scores them after exit prices settle.
       </p>
+      <p class="hero-disclaimer">Benchmark and research project. Not financial advice.</p>
     </div>
 
     <div class="home-hero-actions" aria-label="Project resources">
@@ -204,16 +191,18 @@ const safeguards = [
         <ScoreCountdown
           client:load
           variant="hero"
-          label="Scoring target"
+          label="Settlement target"
           scoreEtaUtc={currentRound.score_eta_utc}
           source={currentRound.score_eta_source}
           status={currentRound.status}
           exitDate={currentRound.exit_date}
           initialNowIso={initialNowIso}
+          showRemaining={false}
+          metaText="After market close once exit prices are available"
         />
         <div>
-          <span>Round 1 compatibility</span>
-          <strong>{semiconductorAllocationCount} of {previousRoundSubmissions.length} models display as SEMICONDUCTORS 100%</strong>
+          <span>Audit trail</span>
+          <strong>{allOfficialSubmissions.length} decisions, public prompts, outputs, hashes, and repo history</strong>
         </div>
       </div>
     </div>
@@ -231,11 +220,17 @@ const safeguards = [
 
   <section class="home-section-heading" aria-labelledby="latest-allocation-title">
     <span class="panel-kicker">Latest round</span>
-    <h2 id="latest-allocation-title">Round 2 Moves From Picks To Portfolios</h2>
+    <h2 id="latest-allocation-title">Latest Round: Models Built Portfolios</h2>
     <p>
-      The current official round lets models allocate across multiple assets. The site now reports every model decision
-      as an allocation, which keeps Round 1 comparable without rewriting its original single-pick protocol.
+      Round 2 allowed 1-5 holdings in 5% increments across {currentUniverseOptions.length} assets. Scores remain pending
+      until the {currentRound.exit_date} exit prices are collected.
     </p>
+    <div class="round-meta-row" aria-label="Latest round summary">
+      <span>{currentRound.round_id}</span>
+      <span>{currentRoundSubmissions.length} official portfolios</span>
+      <span>{currentUniverseOptions.length} assets</span>
+      <span>Pending score</span>
+    </div>
   </section>
 
   <section class="allocation-showcase" aria-label="Latest round model allocations">
@@ -250,7 +245,7 @@ const safeguards = [
                 <h3>{modelLabel(submission.model_id)}</h3>
                 <p class="mono">{submission.model_id}</p>
               </div>
-              <span class="badge badge-blue">{protocolLabel(submission)}</span>
+              <span class="badge badge-amber">Pending score</span>
             </div>
             <div class="allocation-stack" aria-hidden="true">
               {allocations.map((allocation) => (
@@ -279,27 +274,33 @@ const safeguards = [
       <span class="panel-kicker">Aggregate exposure</span>
       <h3>Where Round 2 Concentrated</h3>
       <p>
-        Across {currentRoundSubmissions.length} official models, energy and real-asset exposure replaced the Round 1
-        all-semiconductor consensus, while semiconductors remained present in every portfolio.
+        Round 2 shifted from the Round 1 semiconductor consensus toward energy, oil, commodities, and gold.
       </p>
-      <div class="exposure-list">
+      <div class="exposure-bars">
         {currentRoundExposure.map((item) => (
-          <div>
+          <div class="exposure-bar-row">
             <span>{optionDisplayName(item.optionId, currentOptionsById)}</span>
+            <div class="exposure-bar-track" aria-hidden="true">
+              <span
+                class={allocationThemeClass(item.optionId)}
+                style={`width: ${topExposure ? Math.max(4, (item.averagePct / topExposure.averagePct) * 100) : 0}%`}
+              />
+            </div>
             <strong>{formatAllocationPct(item.averagePct)}</strong>
           </div>
         ))}
       </div>
+      <a class="action-link" href="/leaderboards/latest">View full allocation table</a>
     </aside>
   </section>
 
   <section class="phase-band" aria-labelledby="round-progress-title">
     <div class="phase-intro">
       <span class="panel-kicker">Two-round record</span>
-      <h2 id="round-progress-title">Decisions Are Public; Scores Wait For Exit Prices</h2>
+      <h2 id="round-progress-title">Published First, Scored After Settlement</h2>
       <p>
-        Both official rounds are locked and auditable. Performance stays absent until each pre-declared exit date
-        resolves.
+        Official decisions are locked before outcomes. Performance appears only after each pre-declared exit close is
+        priced and scored.
       </p>
     </div>
     <ol class="phase-list">
@@ -315,43 +316,19 @@ const safeguards = [
       </li>
       <li class="phase-current">
         <span>3</span>
-        <strong>Round 1 exit pending</strong>
-        <p>Performance unlocks after {previousRound?.exit_date ?? "the declared exit date"} prices are collected.</p>
-        {previousRound && (
-          <ScoreCountdown
-            client:visible
-            variant="chip"
-            precision="days"
-            label="Target"
-            scoreEtaUtc={previousRound.score_eta_utc}
-            source={previousRound.score_eta_source}
-            status={previousRound.status}
-            exitDate={previousRound.exit_date}
-            initialNowIso={initialNowIso}
-          />
-        )}
+        <strong>Round 1 settlement</strong>
+        <p>Target: {previousRound?.exit_date ?? "declared exit date"} after market close.</p>
       </li>
       <li class="phase-current">
         <span>4</span>
-        <strong>Round 2 exit pending</strong>
-        <p>Portfolio returns and alpha publish after {currentRound.exit_date}.</p>
-        <ScoreCountdown
-          client:visible
-          variant="chip"
-          precision="days"
-          label="Target"
-          scoreEtaUtc={currentRound.score_eta_utc}
-          source={currentRound.score_eta_source}
-          status={currentRound.status}
-          exitDate={currentRound.exit_date}
-          initialNowIso={initialNowIso}
-        />
+        <strong>Round 2 settlement</strong>
+        <p>Target: {currentRound.exit_date} after market close.</p>
       </li>
     </ol>
   </section>
 
-  <nav class="view-switcher enhanced" aria-label="Primary result views">
-    {resultViews.map((view) => {
+  <nav class="view-switcher enhanced" aria-label="Explore CapitalBench">
+    {exploreLinks.map((view) => {
       const Icon = view.icon;
       return (
         <a href={view.href}>
@@ -366,53 +343,23 @@ const safeguards = [
     })}
   </nav>
 
-  <section class="dashboard-grid">
-    <div class="panel">
-      <div class="panel-header">
-        <div>
-          <span class="panel-kicker">Latest official round</span>
-          <h2>Official Allocations</h2>
-          <p>
-            Round 2 contains {currentRoundSubmissions.length} valid one-shot portfolios, with confidence ranging from
-            {" "}{confidenceRange}. These are locked decisions, not realized performance.
-          </p>
-        </div>
-        <span class="status-badge status-pending">Pending score</span>
-      </div>
-      <OfficialPicksTable
-        client:visible
-        fallbackRows={currentRoundSubmissions}
-        roundId={currentRound.round_id}
-        runId={currentRound.official_run_id}
-        options={currentUniverseOptions}
-      />
+  <section class="audit-preview" aria-labelledby="audit-preview-title">
+    <div>
+      <span class="panel-kicker">Audit snapshot</span>
+      <h2 id="audit-preview-title">Inspect The Full Round Record</h2>
+      <p>
+        The homepage previews the current state. The round page carries the detailed evidence: model-facing input,
+        prompts, parsed outputs, entry prices, source reports, and hashes.
+      </p>
     </div>
-
-    <aside class="rail" aria-label="Round audit summary">
-      <div class="rail-panel highlight-panel">
-        <span class="metric-label">Latest protocol</span>
-        <h3>{currentRound.submission_format === "portfolio" ? "Portfolio allocations" : "Single-pick decisions"}</h3>
-        <p>{currentRound.methodology_version}. One official call per model; no post-cutoff retrieval.</p>
-      </div>
-      <div class="rail-panel">
-        <span class="metric-label">Round 1 display</span>
-        <h3>SEMICONDUCTORS 100%</h3>
-        <p>Round 1 remains a single-pick round, shown as one-holding allocations for cross-round readability.</p>
-      </div>
-      <div class="rail-panel">
-        <span class="metric-label">Audit trail</span>
-        <h3>{allOfficialSubmissions.length} public decisions</h3>
-        <p>{roundRows.length} rounds with frozen prompts, option files, entry prices, and validation artifacts.</p>
-      </div>
-      <div class="rail-panel rail-checklist">
-        <span class="metric-label">Reader path</span>
-        <ul>
-          <li><a href={currentRoundUrl}>Review the latest round packet</a></li>
-          <li><a href="/rounds">Compare all rounds</a></li>
-          <li><a href="/methodology">Read methodology</a></li>
-        </ul>
-      </div>
-    </aside>
+    <div class="audit-preview-actions">
+      <a class="action-link action-primary" href={currentRoundUrl}>Open latest round packet</a>
+      <a class="action-link" href="/leaderboards/latest">Review all official allocations</a>
+      <a class="action-link" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
+        <GitHubLogo size={15} />
+        Repository
+      </a>
+    </div>
   </section>
 
   <section class="home-section-heading" aria-labelledby="safeguards-title">
@@ -440,20 +387,15 @@ const safeguards = [
     })}
   </section>
 
-  <section class="section resolution-section">
-    <div class="panel">
-      <div class="panel-header">
-        <div>
-          <span class="panel-kicker">Latest leaderboard</span>
-          <h2>No Resolved Scores Yet</h2>
-          <p>
-            The first official leaderboard appears after exit prices are available and the selected run is scored. Until
-            then, CapitalBench publishes allocations without implying realized performance.
-          </p>
-        </div>
-        <Scale size={22} aria-hidden="true" />
-      </div>
-      <LeaderboardTable client:visible fallbackRows={latestLeaderboard} kind="latest" />
+  <section class="resolution-callout" aria-labelledby="resolution-title">
+    <div>
+      <span class="panel-kicker">Latest leaderboard</span>
+      <h2 id="resolution-title">Scores Publish After Settlement</h2>
+      <p>
+        No official performance table is live yet. Until exit prices are available, CapitalBench shows decisions and
+        audit artifacts without implying realized returns.
+      </p>
     </div>
+    <a class="action-link" href="/scoring">Read scoring rules</a>
   </section>
 </BaseLayout>

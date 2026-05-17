@@ -16,6 +16,8 @@ interface Props {
   initialNowIso?: string;
   variant?: ScoreCountdownVariant;
   precision?: ScoreCountdownPrecision;
+  showRemaining?: boolean;
+  metaText?: string;
 }
 
 const MINUTE_MS = 60_000;
@@ -102,7 +104,9 @@ export default function ScoreCountdown({
   showIcon = false,
   initialNowIso,
   variant,
-  precision = "hours"
+  precision = "hours",
+  showRemaining = true,
+  metaText
 }: Props) {
   const resolvedVariant = variant ?? (compact ? "chip" : "hero");
   const initialNow = useMemo(() => {
@@ -126,6 +130,7 @@ export default function ScoreCountdown({
   const remaining = isReached ? "Waiting for score publication" : remainingText(parts, precision, resolvedVariant === "chip");
   const shouldShowIcon = showIcon || resolvedVariant === "panel";
   const sourceLabel = source === "automation" ? "Automation target" : source === "derived" ? "Estimated from exit date" : "Scoring target";
+  const displayedMeta = isResolved ? "Leaderboard is live" : metaText ?? (showRemaining ? remaining : sourceLabel);
   const title = `${sourceLabel}: ${target}`;
 
   return (
@@ -140,7 +145,7 @@ export default function ScoreCountdown({
         <span className="score-countdown-kicker">{label}</span>
       </div>
       <strong className="score-countdown-target">{targetText}</strong>
-      <p className="score-countdown-meta">{isResolved ? "Leaderboard is live" : remaining}</p>
+      <p className="score-countdown-meta">{displayedMeta}</p>
     </div>
   );
 }
