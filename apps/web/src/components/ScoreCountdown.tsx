@@ -77,13 +77,13 @@ function remainingText(
 
 function ariaText(parts: NonNullable<ReturnType<typeof partsUntil>> | null, status: RoundStatus): string {
   if (status === "resolved") return "Scores published.";
-  if (!parts) return "Score ETA unavailable.";
+  if (!parts) return "Scoring target unavailable.";
   if (parts.reached) return "Scoring window reached. Waiting for score publication.";
   const segments = [];
   if (parts.days) segments.push(`${parts.days} ${parts.days === 1 ? "day" : "days"}`);
   if (parts.hours) segments.push(`${parts.hours} ${parts.hours === 1 ? "hour" : "hours"}`);
   if (!parts.days && parts.minutes) segments.push(`${parts.minutes} ${parts.minutes === 1 ? "minute" : "minutes"}`);
-  return `Score ETA: ${segments.join(", ") || "less than one minute"}.`;
+  return `Scoring target: ${segments.join(", ") || "less than one hour"}.`;
 }
 
 function statusTarget(status: RoundStatus, parts: NonNullable<ReturnType<typeof partsUntil>> | null, target: string): string {
