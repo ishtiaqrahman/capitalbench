@@ -15,6 +15,7 @@ def init_round(
     round_id: str,
     rounds_dir: Path = Path("rounds"),
     universe_path: Path | None = None,
+    universe_version: str | None = None,
     submission_format: SubmissionFormat = "single_pick",
 ) -> Path:
     round_id = round_id.strip()
@@ -26,6 +27,7 @@ def init_round(
     round_path = rounds_dir / round_id
     for dirname in ROUND_DIRS:
         (round_path / dirname).mkdir(parents=True, exist_ok=True)
+    resolved_universe_version = (universe_version or (universe_path.stem if universe_path is not None else "")).strip()
 
     manifest_path = round_path / "manifest.yaml"
     if not manifest_path.exists():
@@ -39,6 +41,7 @@ def init_round(
                 "decision_deadline": None,
                 "horizon": "one month",
                 "methodology_version": "portfolio-v1.0" if submission_format == "portfolio" else "single_pick-v1.0",
+                "universe_version": resolved_universe_version or None,
                 "submission_format": submission_format,
                 "portfolio_constraints": {
                     "min_holdings": 1,

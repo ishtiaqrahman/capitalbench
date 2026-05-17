@@ -2,9 +2,10 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import RoundsTable from "../../components/RoundsTable";
-import { rounds } from "../../data/fallback";
+import { staticRoundRecords } from "../../lib/localRoundRecords";
 import { datasetSchema } from "../../lib/seo";
 
+const roundRows = staticRoundRecords();
 const roundsDataset = datasetSchema({
   name: "CapitalBench public round index",
   description:
@@ -27,6 +28,6 @@ const roundsDataset = datasetSchema({
     summary="Each round freezes a briefing, option universe, prompt, model submissions, and audit hashes before scoring."
   />
   <section class="section">
-    <RoundsTable client:visible fallbackRows={rounds} />
+    <RoundsTable client:visible fallbackRows={roundRows} />
   </section>
 </BaseLayout>

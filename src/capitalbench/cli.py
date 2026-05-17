@@ -63,6 +63,7 @@ def _cmd_init_round(args: argparse.Namespace) -> int:
         args.round_id,
         args.rounds_dir,
         universe_path=args.universe,
+        universe_version=args.universe_version,
         submission_format=args.submission_format,
     )
     print(f"initialized round: {round_path}")
@@ -430,6 +431,10 @@ def build_parser() -> argparse.ArgumentParser:
     init_parser.add_argument("--round-id", required=True)
     init_parser.add_argument("--rounds-dir", type=Path, default=Path("rounds"))
     init_parser.add_argument("--universe", type=Path)
+    init_parser.add_argument(
+        "--universe-version",
+        help="version label written to manifest.yaml; defaults to the --universe filename stem",
+    )
     init_parser.add_argument("--submission-format", choices=["single_pick", "portfolio"], default="single_pick")
     init_parser.set_defaults(func=_cmd_init_round)
 

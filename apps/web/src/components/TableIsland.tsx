@@ -16,6 +16,8 @@ interface Props<T> {
   emptyText: string;
   tableLabel: string;
   csvFilename?: string;
+  initialSortKey?: string;
+  initialSortDirection?: "asc" | "desc";
 }
 
 function rawValue<T>(row: T, column: Column<T>): string | number {
@@ -37,11 +39,13 @@ export default function TableIsland<T extends object>({
   columns,
   emptyText,
   tableLabel,
-  csvFilename = "capitalbench-table.csv"
+  csvFilename = "capitalbench-table.csv",
+  initialSortKey,
+  initialSortDirection = "asc"
 }: Props<T>) {
   const [query, setQuery] = useState("");
-  const [sortKey, setSortKey] = useState<string>(String(columns[0]?.key ?? ""));
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [sortKey, setSortKey] = useState<string>(initialSortKey ?? String(columns[0]?.key ?? ""));
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">(initialSortDirection);
 
   const sortedRows = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -50,7 +54,7 @@ export default function TableIsland<T extends object>({
           columns.some((column) => String(rawValue(row, column)).toLowerCase().includes(normalizedQuery))
         )
       : rows;
-    const column = columns.find((item) => String(item.key) === sortKey) ?? columns[0];
+    const column = columns.find((item) => String(item.key) === sortKey) ?? ({ key: sortKey, label: sortKey } as Column<T>);
     return [...filtered].sort((a, b) => {
       const aValue = rawValue(a, column);
       const bValue = rawValue(b, column);

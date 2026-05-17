@@ -8,10 +8,10 @@ Use this checklist before running a public CapitalBench round.
 - Create the round with `capitalbench init-round --round-id <id>`.
 - Fill in `manifest.yaml`, including decision deadline, horizon, entry rule, and exit rule.
 - Write the briefing using only information available before the deadline.
-- Define the complete option list in `options.yaml`, preferably by initializing with `--universe configs/universes/capitalbench_universe_v1_5.yaml`.
+- Define the complete option list in `options.yaml`, preferably by initializing with the intended versioned universe file. Round 1 uses `configs/universes/capitalbench_universe_v1_5.yaml`; future expanded rounds can use `configs/universes/capitalbench_universe_v2_0.yaml`.
 - Confirm one option is the S&P 500 benchmark.
 - Confirm cash is present if you want a cash comparison.
-- Run `capitalbench validate-universe --round rounds/<id> --start-date <date> --end-date <date>` with `TIINGO_API_KEY` set.
+- Run `capitalbench validate-universe --round rounds/<id> --start-date <date> --end-date <date>` with `TIINGO_API_KEY` set. When the prompt includes 7-day, 30-day, six-month, and one-year trailing returns, validate a window long enough to prove all required lookbacks are available.
 - Remove or replace any non-cash ticker that fails Tiingo validation before freezing the round.
 - Import research artifacts with `capitalbench import-research`.
 - Confirm `research/final_briefing.md` is copied to `briefing.md`.

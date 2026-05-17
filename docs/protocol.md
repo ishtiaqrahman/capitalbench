@@ -141,18 +141,25 @@ CapitalBench publishes three result views:
 There is no qualified leaderboard and no weighted mega-score. Official and
 stability results stay separate.
 
-## CapitalBench Universe v1.5
+## CapitalBench Universe
 
-Public rounds should use the fixed ETF universe in
-`configs/universes/capitalbench_universe_v1_5.yaml`. The model sees a readable
-neutral list of option ids, names, symbols, asset classes, categories, groups,
-risk buckets, and exposure descriptions. Tiingo symbols and internal fields
-such as `include_in_universe` are not shown to the model.
+Public rounds should declare a universe version in `manifest.yaml` and freeze
+that exact option file before model calls. Round 1 uses the fixed 40-option
+universe in `configs/universes/capitalbench_universe_v1_5.yaml`. Future rounds
+can use the expanded 65-option universe in
+`configs/universes/capitalbench_universe_v2_0.yaml`.
 
-All non-cash options are US-listed ETF tickers and must pass Tiingo EOD
-validation before a public round is frozen. CASH has no ticker and is skipped
-by Tiingo validation. If a ticker fails validation, remove or replace it before
-running `hash-round`.
+The model sees a readable neutral list of option ids, names, symbols, asset
+classes, categories, groups, risk buckets, and exposure descriptions. Tiingo
+symbols and internal fields such as `include_in_universe` are not shown to the
+model.
+
+All non-cash options must pass Tiingo EOD validation before a public round is
+frozen. CASH has no ticker and is skipped by Tiingo validation. If a ticker
+fails validation, remove or replace it before running `hash-round`. If the
+round prompt will include trailing returns, validate the full lookback window
+needed by those fields, including the one-year window when one-year returns are
+present.
 
 ```bash
 capitalbench validate-universe \

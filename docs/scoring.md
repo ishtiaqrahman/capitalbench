@@ -80,9 +80,9 @@ option_return = exit_price / entry_price - 1
 
 Cash is treated as a zero return unless cash prices are explicitly supplied.
 
-CapitalBench Universe v1.5 uses CASH plus public US-listed ETF tickers. All
-non-cash universe tickers should pass Tiingo EOD validation before a public
-round is frozen.
+Each round freezes a versioned universe with CASH plus public tickers that are
+priced through the Tiingo EOD workflow. All non-cash universe tickers should
+pass Tiingo validation before a public round is frozen.
 
 For a `single_pick` submission:
 

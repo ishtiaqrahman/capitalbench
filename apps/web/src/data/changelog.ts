@@ -27,6 +27,24 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-17-universe-v2-approved",
+    date: "2026-05-17",
+    title: "Universe v2.0 approved for future rounds",
+    category: "Data",
+    status: "published",
+    summary:
+      "CapitalBench now has an expanded 65-option universe for future rounds while preserving the original 40-option universe for completed rounds.",
+    details: [
+      "Universe v2.0 keeps every v1.5 option and adds 25 Tiingo-validated exposures across equal-weight US equity, biotechnology, regional banks, aerospace and defense, country equity, bonds, commodities, currencies, and crypto ETF proxies.",
+      "Round manifests can now carry a universe_version value so the website and Supabase read model can show which option file was frozen for each round.",
+      "The public universe page now shows version history and renders the latest approved option table without changing any completed round inputs."
+    ],
+    links: [
+      { label: "Universe", href: "/universe" },
+      { label: "Rounds", href: "/rounds" }
+    ]
+  },
+  {
     id: "2026-05-13-portfolio-protocol-groundwork",
     date: "2026-05-13",
     title: "Portfolio round protocol groundwork added",

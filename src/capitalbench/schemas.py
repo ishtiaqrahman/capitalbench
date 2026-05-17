@@ -27,6 +27,7 @@ class RoundManifest(StrictModel):
     exit_date: str | None = None
     created_at: str | None = None
     methodology_version: str | None = None
+    universe_version: str | None = None
     submission_format: "SubmissionFormat" = "single_pick"
     portfolio_constraints: "PortfolioConstraints" = Field(default_factory=lambda: PortfolioConstraints())
     notes: str = ""

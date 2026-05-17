@@ -414,6 +414,9 @@ def _round_row(round_path: Path, selected_run_ids: list[str]) -> dict[str, Any]:
         "exit_date": manifest.exit_date,
         "status": "resolved" if has_scored_results else "pending",
         "methodology_version": methodology_version,
+        "universe_version": _round_universe_version(round_path, manifest.universe_version),
+        "submission_format": manifest.submission_format,
+        "portfolio_constraints": _jsonable(manifest.portfolio_constraints.model_dump(mode="json")),
         "published": True,
         "notes": manifest.notes,
         "created_at_utc": manifest.created_at,
@@ -470,12 +473,13 @@ def _option_rows(round_path: Path, *, published: bool) -> list[dict[str, Any]]:
     manifest = load_manifest(round_path)
     entry_prices = _read_csv_by_key(round_path / "prices" / "entry_prices.csv", "option_id")
     rows: list[dict[str, Any]] = []
-    for option in load_options(round_path):
+    for sort_order, option in enumerate(load_options(round_path), start=1):
         price_row = _price_row_for_option(entry_prices, option)
         rows.append(
             {
                 "round_id": manifest.round_id,
                 "option_id": option.option_id,
+                "sort_order": sort_order,
                 "name": option.name,
                 "symbol": option.symbol,
                 "tiingo_symbol": option.tiingo_symbol,
@@ -495,6 +499,22 @@ def _option_rows(round_path: Path, *, published: bool) -> list[dict[str, Any]]:
             }
         )
     return rows
+
+
+def _round_universe_version(round_path: Path, manifest_version: str | None) -> str | None:
+    if manifest_version:
+        return manifest_version
+    options_path = round_path / "options.yaml"
+    if not options_path.exists():
+        return None
+    options_text = options_path.read_text(encoding="utf-8").strip()
+    configs_dir = Path(__file__).resolve().parents[2] / "configs" / "universes"
+    if not configs_dir.exists():
+        return None
+    for config_path in sorted(configs_dir.glob("capitalbench_universe_*.yaml"), reverse=True):
+        if config_path.read_text(encoding="utf-8").strip() == options_text:
+            return config_path.stem
+    return None
 
 
 def _model_rows(run_paths: Any) -> list[dict[str, Any]]:

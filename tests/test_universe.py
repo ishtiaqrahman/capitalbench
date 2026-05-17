@@ -13,6 +13,34 @@ from capitalbench.universe import validate_universe
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 UNIVERSE_PATH = PROJECT_ROOT / "configs" / "universes" / "capitalbench_universe_v1_5.yaml"
+UNIVERSE_V2_PATH = PROJECT_ROOT / "configs" / "universes" / "capitalbench_universe_v2_0.yaml"
+UNIVERSE_V2_ADDED_SYMBOLS = [
+    "RSP",
+    "XBI",
+    "KRE",
+    "ITA",
+    "EWC",
+    "EWU",
+    "EWA",
+    "EWY",
+    "EWT",
+    "EWZ",
+    "EWW",
+    "EZA",
+    "MBB",
+    "MUB",
+    "EMB",
+    "BNDX",
+    "SLV",
+    "CPER",
+    "DBA",
+    "USO",
+    "UUP",
+    "FXE",
+    "FXY",
+    "IBIT",
+    "ETHA",
+]
 
 
 def _write_small_universe(path: Path) -> Path:
@@ -57,12 +85,26 @@ def _write_small_universe(path: Path) -> Path:
     return path
 
 
-def test_options_schema_accepts_full_universe() -> None:
+def test_v1_5_options_schema_accepts_full_universe() -> None:
     options = load_options_file(UNIVERSE_PATH)
 
     assert len(options) == 40
     assert options[0].id == "CASH"
     assert options[-1].id == "SOFTWARE"
+
+
+def test_v2_0_options_schema_accepts_expanded_universe() -> None:
+    v1_options = load_options_file(UNIVERSE_PATH)
+    v2_options = load_options_file(UNIVERSE_V2_PATH)
+
+    assert len(v2_options) == 65
+    assert [option.id for option in v2_options[:40]] == [option.id for option in v1_options]
+    assert [option.symbol for option in v2_options[-25:]] == UNIVERSE_V2_ADDED_SYMBOLS
+    assert len({option.id for option in v2_options}) == 65
+    assert len({option.symbol for option in v2_options if not option.is_cash}) == 64
+    assert sum(option.is_cash for option in v2_options) == 1
+    assert sum(option.is_benchmark for option in v2_options) == 1
+    assert all(option.tiingo_symbol for option in v2_options if not option.is_cash)
 
 
 def test_cash_can_have_null_symbol_and_tiingo_symbol() -> None:
@@ -229,6 +271,7 @@ def test_validate_universe_skips_cash_and_passes_mocked_tiingo_response(tmp_path
     assert statuses == {"CASH": "skipped_cash", "SP500": "pass"}
     assert output.json_path.exists()
     assert output.markdown_path.exists()
+    assert output.json_path.name == "options_validation_report.json"
 
 
 def test_validate_universe_fails_mocked_tiingo_response_with_no_rows(tmp_path: Path, monkeypatch) -> None:
@@ -282,8 +325,32 @@ def test_init_round_universe_copies_options_yaml(tmp_path: Path) -> None:
     )
 
     copied = tmp_path / "rounds" / "CB-TEST-UNIVERSE" / "options.yaml"
+    manifest = yaml.safe_load((tmp_path / "rounds" / "CB-TEST-UNIVERSE" / "manifest.yaml").read_text(encoding="utf-8"))
     assert exit_code == 0
     assert copied.read_text(encoding="utf-8") == UNIVERSE_PATH.read_text(encoding="utf-8")
+    assert manifest["universe_version"] == "capitalbench_universe_v1_5"
+
+
+def test_init_round_allows_explicit_universe_version(tmp_path: Path) -> None:
+    exit_code = main(
+        [
+            "init-round",
+            "--round-id",
+            "CB-TEST-UNIVERSE-VERSION",
+            "--rounds-dir",
+            str(tmp_path / "rounds"),
+            "--universe",
+            str(UNIVERSE_V2_PATH),
+            "--universe-version",
+            "v2.0",
+        ]
+    )
+
+    manifest = yaml.safe_load(
+        (tmp_path / "rounds" / "CB-TEST-UNIVERSE-VERSION" / "manifest.yaml").read_text(encoding="utf-8")
+    )
+    assert exit_code == 0
+    assert manifest["universe_version"] == "v2.0"
 
 
 def test_init_round_prompt_allows_internal_knowledge_but_blocks_live_retrieval(tmp_path: Path) -> None:

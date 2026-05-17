@@ -54,6 +54,7 @@ def test_sync_round_publishes_pending_round_without_leaderboard(tmp_path: Path) 
 
     assert summary.status == "success"
     assert sink.upserts["rounds"][0]["status"] == "pending"
+    assert sink.upserts["rounds"][0]["universe_version"] == "capitalbench_universe_v1_5"
     assert sink.upserts["runs"][0]["run_id"] == "official-round-1-clean"
     assert len(sink.upserts["submissions"]) == 4
     assert len(sink.upserts["official_results"]) == 0
@@ -96,6 +97,7 @@ def test_sync_round_publishes_portfolio_allocations(tmp_path: Path) -> None:
                 "entry_date": "2026-01-02",
                 "exit_date": "2026-02-02",
                 "methodology_version": "portfolio-v1.0",
+                "universe_version": "test-v2.0",
                 "submission_format": "portfolio",
                 "portfolio_constraints": {
                     "min_holdings": 1,
@@ -180,6 +182,9 @@ def test_sync_round_publishes_portfolio_allocations(tmp_path: Path) -> None:
 
     sync_round(round_path, run_id="official", sink=sink)
 
+    assert sink.upserts["rounds"][0]["universe_version"] == "test-v2.0"
+    assert sink.upserts["rounds"][0]["submission_format"] == "portfolio"
+    assert sink.upserts["options"][0]["sort_order"] == 1
     assert sink.upserts["submissions"][0]["submission_format"] == "portfolio"
     assert sink.upserts["submissions"][0]["holding_count"] == 2
     assert len(sink.upserts["submission_allocations"]) == 2

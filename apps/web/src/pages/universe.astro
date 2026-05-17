@@ -1,16 +1,64 @@
 ---
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { parse as parseYaml } from "yaml";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
 import UniverseTable from "../components/UniverseTable";
-import { rounds, universeOptions } from "../data/fallback";
+import { rounds, type UniverseOption } from "../data/fallback";
+import { repoRootPath } from "../lib/localRoundRecords";
 import { datasetSchema } from "../lib/seo";
 
+type UniverseYamlOption = {
+  id: string;
+  name: string;
+  symbol: string | null;
+  asset_class: string;
+  option_group: string;
+  risk_bucket: string;
+  is_cash?: boolean;
+  is_benchmark?: boolean;
+};
+
+function loadUniverseConfig(filename: string): UniverseOption[] {
+  const path = resolve(repoRootPath(), "configs", "universes", filename);
+  const data = parseYaml(readFileSync(path, "utf-8")) as { options?: UniverseYamlOption[] };
+  return (data.options ?? []).map((option, index) => ({
+    option_id: option.id,
+    name: option.name,
+    symbol: option.symbol ?? "",
+    asset_class: option.asset_class,
+    option_group: option.option_group,
+    risk_bucket: option.risk_bucket,
+    is_cash: Boolean(option.is_cash),
+    is_benchmark: Boolean(option.is_benchmark),
+    sort_order: index + 1
+  }));
+}
+
+const universeVersions = [
+  {
+    label: "v2.0",
+    file: "capitalbench_universe_v2_0.yaml",
+    status: "Approved for future rounds",
+    summary: "65 options: the original 40 plus 25 country, sector, bond, commodity, currency, and crypto-proxy exposures."
+  },
+  {
+    label: "v1.5",
+    file: "capitalbench_universe_v1_5.yaml",
+    status: "Frozen for Round 1",
+    summary: "40 options covering cash, broad US equity, factors, sectors, bonds, international equity, commodities, and AI themes."
+  }
+].map((version) => ({ ...version, rows: loadUniverseConfig(version.file) }));
+
+const latestUniverse = universeVersions[0];
 const universeDataset = datasetSchema({
   name: "CapitalBench option universe",
   description:
-    "The frozen public option universe used by CapitalBench benchmark rounds, including cash, ETFs, sectors, factors, bonds, commodities, and AI themes.",
+    "The versioned public option universe used by CapitalBench benchmark rounds, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies.",
   path: "/universe",
   datePublished: "2026-05-12",
+  dateModified: "2026-05-17",
   keywords: ["LLM benchmark", "market options", "ETF universe", "AI market benchmark", "CapitalBench"],
   variableMeasured: ["option id", "ticker symbol", "asset class", "option group", "risk bucket"]
 });
@@ -18,16 +66,73 @@ const universeDataset = datasetSchema({
 
 <BaseLayout
   title="CapitalBench Option Universe"
-  description="Frozen CapitalBench option universe for public benchmark rounds, including cash, ETFs, sectors, factors, bonds, commodities, and AI themes."
+  description="Versioned CapitalBench option universes for public benchmark rounds, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies."
   structuredData={universeDataset}
 >
   <PageHeader
-    eyebrow="Universe v1.5"
-    title="Frozen Option Universe"
-    summary="The public round universe contains cash, Treasury bills, broad equity, factors, sectors, bonds, credit, international equity, commodities, and AI or technology themes."
+    eyebrow="Versioned Universe"
+    title="Frozen Option Universes"
+    summary="Every round freezes its own option universe before model calls. Completed rounds keep their original file; future rounds can use the expanded v2.0 universe after the pre-round data checks pass."
   />
 
+  <section class="section compact">
+    <div class="grid-3">
+      <article class="feature">
+        <span class="metric-label">Latest Universe</span>
+        <h3>{latestUniverse.label}</h3>
+        <p>{latestUniverse.rows.length} total options for future rounds.</p>
+      </article>
+      <article class="feature">
+        <span class="metric-label">Round Freeze Rule</span>
+        <h3>No retroactive edits</h3>
+        <p>Universe changes apply only to new rounds. Prior model decisions are always evaluated against the universe they actually saw.</p>
+      </article>
+      <article class="feature">
+        <span class="metric-label">Data Gate</span>
+        <h3>Tiingo EOD</h3>
+        <p>Non-cash tickers must be available in the existing Tiingo price workflow before a public round can use them.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section compact">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Universe versions</span>
+          <h2>Version History</h2>
+          <p>
+            The site publishes the active universe catalog and keeps prior versions visible so round inputs remain
+            reproducible.
+          </p>
+        </div>
+      </div>
+      <div class="grid-3">
+        {universeVersions.map((version) => (
+          <article class="feature">
+            <span class="metric-label">{version.status}</span>
+            <h3>{version.label}</h3>
+            <p>{version.summary}</p>
+            <p class="mono">{version.file}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <section class="section">
-    <UniverseTable client:visible fallbackRows={universeOptions} roundId={rounds[0].round_id} />
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Latest approved universe</span>
+          <h2>{latestUniverse.label} Option Table</h2>
+          <p>
+            This table is rendered from the repository configuration file. Round-specific pages remain tied to the
+            exact options frozen in each round directory.
+          </p>
+        </div>
+      </div>
+      <UniverseTable client:visible fallbackRows={latestUniverse.rows} roundId={rounds[0].round_id} disableRemote />
+    </div>
   </section>
 </BaseLayout>

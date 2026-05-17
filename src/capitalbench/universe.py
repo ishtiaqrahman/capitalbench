@@ -52,8 +52,10 @@ def validate_universe(
     if not api_key:
         raise RuntimeError("TIINGO_API_KEY is required for universe validation")
 
-    options = load_options(round_path) if round_path is not None else load_options_file(options_path or Path())
-    output_dir = round_path if round_path is not None else (options_path or Path()).parent
+    resolved_options_path = options_path or Path()
+    options = load_options(round_path) if round_path is not None else load_options_file(resolved_options_path)
+    output_dir = round_path if round_path is not None else resolved_options_path.parent
+    output_stem = "universe_validation_report" if round_path is not None else f"{resolved_options_path.stem}_validation_report"
     output_dir.mkdir(parents=True, exist_ok=True)
     fetch = fetcher or fetch_tiingo_eod_prices
 
@@ -87,8 +89,8 @@ def validate_universe(
         "warnings": warnings,
         "results": results,
     }
-    json_path = output_dir / "universe_validation_report.json"
-    markdown_path = output_dir / "universe_validation_report.md"
+    json_path = output_dir / f"{output_stem}.json"
+    markdown_path = output_dir / f"{output_stem}.md"
     write_json(json_path, report)
     markdown_path.write_text(_render_markdown_report(report), encoding="utf-8")
     return UniverseValidationOutput(json_path=json_path, markdown_path=markdown_path, report=report)

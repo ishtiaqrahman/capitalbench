@@ -1,4 +1,4 @@
-import { rounds } from "../data/fallback";
+import { staticRoundRecords } from "./localRoundRecords";
 
 export type RouteMeta = {
   path: string;
@@ -33,7 +33,8 @@ export const siteConfig = {
   themeColor: "#f7f8f6"
 };
 
-const defaultLastmod = "2026-05-12";
+const defaultLastmod = "2026-05-17";
+const publicRounds = staticRoundRecords();
 
 export const routeMeta: RouteMeta[] = [
   {
@@ -89,7 +90,7 @@ export const routeMeta: RouteMeta[] = [
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
-  ...rounds.map((round) => ({
+  ...publicRounds.map((round) => ({
     path: `/rounds/${round.round_id}`,
     title: `${round.round_id} Round Audit Packet`,
     description: `${round.title}: official LLM picks, entry prices, pending status, and published audit hashes for the ${round.horizon} benchmark round.`,
@@ -110,7 +111,7 @@ export const routeMeta: RouteMeta[] = [
     path: "/universe",
     title: "CapitalBench Option Universe",
     description:
-      "Frozen CapitalBench option universe for public benchmark rounds, including cash, ETFs, sectors, factors, bonds, commodities, and AI themes.",
+      "Versioned CapitalBench option universes for public benchmark rounds, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies.",
     priority: 0.76,
     changefreq: "monthly",
     lastmod: defaultLastmod
@@ -330,6 +331,7 @@ export function datasetSchema(input: {
   path: string;
   keywords: string[];
   datePublished?: string;
+  dateModified?: string;
   temporalCoverage?: string;
   variableMeasured?: string[];
 }): JsonLdRecord {
@@ -343,6 +345,7 @@ export function datasetSchema(input: {
     publisher: { "@id": `${siteConfig.url}/#organization` },
     isAccessibleForFree: true,
     datePublished: input.datePublished,
+    dateModified: input.dateModified,
     temporalCoverage: input.temporalCoverage,
     keywords: input.keywords,
     variableMeasured: input.variableMeasured

@@ -189,13 +189,19 @@ import PageHeader from "../components/PageHeader.astro";
       <section id="universe">
         <h2>Universe Policy</h2>
         <p>
-          Public rounds use CapitalBench Universe v1.5: a fixed ETF universe plus CASH. The model sees readable option
-          ids, names, public symbols, asset classes, categories, groups, risk buckets, and exposure descriptions.
-          Internal fields and provider-specific data-fetching fields are kept out of the prompt.
+          Public rounds declare a universe version in the round manifest and freeze that exact option file before model
+          calls. Round 1 uses CapitalBench Universe v1.5. Future rounds can use Universe v2.0, which expands the public
+          universe to 65 options while keeping completed rounds tied to the 40 options they actually saw.
         </p>
         <p>
-          All non-cash options are US-listed ETF tickers and must validate against Tiingo EOD data before the round is
-          frozen. CASH has no ticker and is skipped during Tiingo validation.
+          The model sees readable option ids, names, public symbols, asset classes, categories, groups, risk buckets,
+          and exposure descriptions. Internal fields and provider-specific data-fetching fields are kept out of the prompt.
+        </p>
+        <p>
+          All non-cash options are public tickers that must validate against Tiingo EOD data before the round is frozen.
+          CASH has no ticker and is skipped during Tiingo validation. Because prompt context may include 7-day, 30-day,
+          six-month, and one-year trailing returns, the pre-round data check should cover the full lookback window needed
+          for the round.
         </p>
         <pre class="command-block"><code>capitalbench validate-universe \
   --round rounds/&lt;id&gt; \

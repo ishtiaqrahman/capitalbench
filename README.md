@@ -182,20 +182,38 @@ Portfolio rounds are versioned methodology changes. They do not alter completed
 single-pick rounds, and reports label the submission format so readers can
 interpret results correctly.
 
-## CapitalBench Universe v1.5
+## CapitalBench Universes
 
-CapitalBench Universe v1.5 is a fixed 40-option ETF universe covering cash,
-short-duration Treasuries, US equities, US style and size factors, US sectors,
-bonds, credit, international equities, commodities, and AI or technology themes.
+Every public round freezes a versioned option universe before model calls. The
+round manifest records `universe_version`, and completed rounds are always
+scored against the exact options they saw.
+
+CapitalBench Universe v1.5 is the fixed 40-option ETF universe used by Round 1.
+It covers cash, short-duration Treasuries, US equities, US style and size
+factors, US sectors, bonds, credit, international equities, commodities, and AI
+or technology themes.
+
+CapitalBench Universe v2.0 is approved for future rounds. It keeps all 40 v1.5
+options and adds 25 exposures across equal-weight US equity, biotechnology,
+regional banks, aerospace and defense, country equity, bonds, commodities,
+currencies, and crypto ETF proxies.
 
 All non-cash options are public US-listed ETFs intended to be validated through
 Tiingo EOD data before a public round. Descriptions shown to models are neutral
 exposure descriptions, not performance predictions or recommendations.
 
-Canonical universe file:
+Canonical universe files:
 
 ```text
 configs/universes/capitalbench_universe_v1_5.yaml
+configs/universes/capitalbench_universe_v2_0.yaml
+```
+
+Universe v2.0 additions:
+
+```text
+RSP, XBI, KRE, ITA, EWC, EWU, EWA, EWY, EWT, EWZ, EWW, EZA,
+MBB, MUB, EMB, BNDX, SLV, CPER, DBA, USO, UUP, FXE, FXY, IBIT, ETHA
 ```
 
 | ID | Symbol | Name | Group |
@@ -245,12 +263,14 @@ Validate the universe before a public round:
 
 ```bash
 capitalbench validate-universe \
-  --options configs/universes/capitalbench_universe_v1_5.yaml \
+  --options configs/universes/capitalbench_universe_v2_0.yaml \
   --start-date 2026-01-01 \
   --end-date 2026-01-31
 ```
 
-`validate-universe` requires `TIINGO_API_KEY`. It never prints the key.
+`validate-universe` requires `TIINGO_API_KEY`. It never prints the key. For a
+round that will include 7-day, 30-day, six-month, and one-year trailing returns,
+validate a long enough lookback window before freezing the round.
 
 ## Quickstart
 
@@ -308,7 +328,8 @@ This is the high-level operator workflow.
 ```bash
 capitalbench init-round \
   --round-id CB-2026-06-01-1M \
-  --universe configs/universes/capitalbench_universe_v1_5.yaml
+  --universe configs/universes/capitalbench_universe_v2_0.yaml \
+  --universe-version v2.0
 ```
 
 2. Import research artifacts:
@@ -572,7 +593,7 @@ explicitly provided.
 
 For scoring-price fetches, CapitalBench fetches only the unique selected assets
 from parsed submissions, plus the S&P 500 benchmark and CASH. It does not fetch
-the full 40-option universe for scoring unless the operator explicitly passes
+the full frozen universe for scoring unless the operator explicitly passes
 `--full-universe`.
 
 ```bash

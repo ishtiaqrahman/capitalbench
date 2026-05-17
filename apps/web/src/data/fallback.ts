@@ -13,6 +13,7 @@ export interface RoundRecord {
   exit_date: string;
   status: RoundStatus;
   methodology_version: string;
+  universe_version?: string;
   submission_format?: SubmissionFormat;
   official_run_id: string;
   stability_run_id?: string;
@@ -52,6 +53,7 @@ export interface UniverseOption {
   risk_bucket: string;
   is_cash?: boolean;
   is_benchmark?: boolean;
+  sort_order?: number;
 }
 
 export interface EntryPrice {
@@ -102,6 +104,7 @@ export const rounds: RoundRecord[] = [
     exit_date: "2026-06-10",
     status: "pending",
     methodology_version: "round1-v1.0",
+    universe_version: "capitalbench_universe_v1_5",
     official_run_id: "official-round-1-clean",
     notes:
       "Official model submissions are collected. Performance remains unpublished until exit prices are available."
