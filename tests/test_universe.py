@@ -177,6 +177,7 @@ def test_prompt_rendering_includes_descriptions_and_hides_internal_fields(tmp_pa
 
     assert "## Round Metadata" in prompt
     assert "Round ID: test-round" in prompt
+    assert "Scoring window: 2026-01-02 to 2026-02-02; optimize for this one month window only." in prompt
     assert "Scoring benchmark: S&P 500 / SPY" in prompt
     assert "Symbol: N/A" in prompt
     assert "Description: Broad US large-cap equity exposure." in prompt
@@ -368,6 +369,8 @@ def test_init_round_prompt_allows_internal_knowledge_but_blocks_live_retrieval(t
     assert exit_code == 0
     assert "internal learned knowledge and general market priors" in prompt
     assert "Do not browse, use tools, request updated market data" in prompt
+    assert "Do not optimize for long-term attractiveness beyond this scoring window." in prompt
+    assert "strongest expected one-month realized return" in prompt
     assert "Use only the information in this prompt" not in prompt
 
 
@@ -391,4 +394,6 @@ def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
     assert manifest["submission_format"] == "portfolio"
     assert manifest["methodology_version"] == "portfolio-v1.0"
     assert "portfolio" in prompt
+    assert "maximize expected one-month realized portfolio return" in prompt
+    assert "Do not optimize for long-term attractiveness beyond this scoring window." in prompt
     assert "allocation_pct values must sum to exactly 100" in prompt

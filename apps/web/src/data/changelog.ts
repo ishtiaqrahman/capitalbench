@@ -27,6 +27,24 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-18-one-month-objective-clarified",
+    date: "2026-05-18",
+    title: "One-month prompt objective clarified",
+    category: "Methodology",
+    status: "published",
+    summary:
+      "Future CapitalBench prompts now make the one-month scoring window explicit before models choose allocations.",
+    details: [
+      "Newly initialized portfolio prompts instruct models to optimize from entry price to exit date, approximately one month later, and not for long-term attractiveness beyond the scoring window.",
+      "Single-pick prompt defaults received the same clarification so older and newer submission formats remain conceptually aligned.",
+      "Generated model inputs now include a scoring-window metadata line derived from each round manifest's entry date, exit date, and horizon."
+    ],
+    links: [
+      { label: "Methodology", href: "/methodology" },
+      { label: "Scoring", href: "/scoring" }
+    ]
+  },
+  {
     id: "2026-05-17-multi-round-allocation-homepage",
     date: "2026-05-17",
     title: "Homepage redesigned for multi-round allocation reporting",

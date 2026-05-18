@@ -37,6 +37,10 @@ def render_round_metadata(round_path: Path, manifest) -> str:
         f"Horizon: {manifest.horizon}",
         f"Entry date: {manifest.entry_date or 'TBD'}",
         f"Exit date: {manifest.exit_date or 'TBD'}",
+        (
+            f"Scoring window: {manifest.entry_date or 'entry date'} to {manifest.exit_date or 'exit date'}; "
+            f"optimize for this {manifest.horizon} window only."
+        ),
         f"Entry rule: {manifest.entry_rule or 'TBD'}",
         f"Exit rule: {manifest.exit_rule or 'TBD'}",
         f"Submission format: {submission_format}",
