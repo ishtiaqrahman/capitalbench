@@ -22,7 +22,7 @@ export const siteConfig = {
   name: "CapitalBench",
   defaultTitle: "CapitalBench - LLM Market Benchmark and Leaderboards",
   description:
-    "CapitalBench measures and compares how leading AI models allocate capital across public market assets before outcomes are known.",
+    "CapitalBench measures capital allocation ability across leading AI models using real public-market outcomes.",
   url: "https://www.capitalbench.org",
   githubUrl: "https://github.com/ishtiaqrahman/capitalbench",
   ogImage: "/og-image.png",
