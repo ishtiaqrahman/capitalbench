@@ -79,8 +79,10 @@ import PageHeader from "../components/PageHeader.astro";
       <h2>Pending Rounds</h2>
       <p>
         Pending rounds can show model decisions, confidence values, rationale summaries, entry prices, and audit hashes.
-        They should not show rank, alpha, selected-option return, or regret until exit prices are present. This prevents
-        the site from implying performance before a benchmark round is actually resolved.
+        After at least one weekly price snapshot exists, a round page may also show interim return tracking versus
+        S&amp;P 500. That chart is explicitly provisional and separate from the official leaderboard. Rank, regret, and
+        final official alpha remain withheld until exit prices are present and the scorer publishes the resolved
+        artifacts.
       </p>
     </article>
     <aside class="side-panel">

@@ -9,6 +9,7 @@ from capitalbench.cli import main
 from capitalbench.hashing import write_round_hashes
 from capitalbench.scoring import score_round
 from capitalbench.web_sync import SUPABASE_SKIP_MESSAGE, sync_latest_leaderboard, sync_round
+from capitalbench.weekly import update_weekly_performance
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -180,6 +181,12 @@ def test_sync_round_publishes_portfolio_allocations(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     score_round(round_path, run_id="official")
+    update_weekly_performance(
+        round_path,
+        "official",
+        snapshot_price_files=[round_path / "prices" / "exit_prices.csv"],
+        snapshot_dates=["2026-01-09"],
+    )
     write_round_hashes(round_path)
     sink = FakeSink()
 
@@ -193,6 +200,9 @@ def test_sync_round_publishes_portfolio_allocations(tmp_path: Path) -> None:
     assert sink.upserts["submissions"][0]["holding_count"] == 2
     assert len(sink.upserts["submission_allocations"]) == 2
     assert {row["allocation_bps"] for row in sink.upserts["submission_allocations"]} == {6000, 4000}
+    assert len(sink.upserts["round_weekly_prices"]) == 6
+    assert len(sink.upserts["round_weekly_performance"]) == 2
+    assert sink.upserts["round_weekly_performance"][1]["submission_format"] == "portfolio"
 
 
 def test_sync_latest_clears_stale_rows_when_no_public_resolved_round(tmp_path: Path) -> None:

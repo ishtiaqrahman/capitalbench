@@ -326,6 +326,11 @@ import PageHeader from "../components/PageHeader.astro";
           realized return of the submitted allocation. The main official leaderboard is sorted by alpha versus S&amp;P
           500 descending. Ties are resolved by lower regret, higher confidence, and then model id.
         </p>
+        <p>
+          Weekly interim tracking can be generated from post-entry price snapshots before the final exit date. These
+          rows are shown on round pages as provisional progress versus S&amp;P 500 only; they do not resolve a round,
+          populate the official leaderboard, or create rank/regret metrics.
+        </p>
         <pre class="command-block"><code>capitalbench fetch-prices \
   --round rounds/&lt;id&gt; \
   --run-id &lt;run_id&gt; \

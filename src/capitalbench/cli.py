@@ -36,6 +36,7 @@ from .web_sync import (
     sync_round,
     sync_rounds_dir,
 )
+from .weekly import update_weekly_performance
 
 
 def _load_local_env_file(path: Path = Path(".env")) -> None:
@@ -161,6 +162,22 @@ def _cmd_score_round(args: argparse.Namespace) -> int:
     scores = score_round(args.round, run_id=args.run_id)
     print(f"wrote scoring results for {len(scores)} submissions")
     optional_sync_round(args.round, run_id=args.run_id, event_type="score_round")
+    return 0
+
+
+def _cmd_update_weekly_performance(args: argparse.Namespace) -> int:
+    output = update_weekly_performance(
+        args.round,
+        args.run_id,
+        snapshot_price_files=args.snapshot_price_file,
+        snapshot_dates=args.snapshot_date,
+    )
+    print(f"weekly snapshots: {output.snapshot_count}")
+    print(f"models: {output.model_count}")
+    print(f"wrote weekly prices: {output.weekly_prices_path}")
+    print(f"wrote weekly performance: {output.weekly_performance_path}")
+    if not args.no_sync:
+        optional_sync_round(args.round, run_id=args.run_id, event_type="update_weekly_performance")
     return 0
 
 
@@ -501,6 +518,28 @@ def build_parser() -> argparse.ArgumentParser:
     score_parser.add_argument("--round", type=Path, required=True)
     score_parser.add_argument("--run-id")
     score_parser.set_defaults(func=_cmd_score_round)
+
+    weekly_parser = subparsers.add_parser(
+        "update-weekly-performance",
+        help="calculate interim weekly model performance from existing price snapshots",
+    )
+    weekly_parser.add_argument("--round", type=Path, required=True)
+    weekly_parser.add_argument("--run-id", required=True)
+    weekly_parser.add_argument(
+        "--snapshot-price-file",
+        type=Path,
+        action="append",
+        default=[],
+        help="price CSV for a weekly snapshot after the entry date; repeat with --snapshot-date",
+    )
+    weekly_parser.add_argument(
+        "--snapshot-date",
+        action="append",
+        default=[],
+        help="target date for the corresponding --snapshot-price-file in YYYY-MM-DD format",
+    )
+    weekly_parser.add_argument("--no-sync", action="store_true", help="write local artifacts without Supabase sync")
+    weekly_parser.set_defaults(func=_cmd_update_weekly_performance)
 
     report_parser = subparsers.add_parser("publish-report", help="write a Markdown report")
     report_parser.add_argument("--round", type=Path, required=True)

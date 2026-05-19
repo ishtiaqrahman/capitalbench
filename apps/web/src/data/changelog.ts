@@ -27,6 +27,25 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-19-weekly-round-performance",
+    date: "2026-05-19",
+    title: "Interim weekly round performance added",
+    category: "Benchmark",
+    status: "published",
+    summary:
+      "Round pages can now show interim model allocation returns versus S&P 500 when weekly price snapshots are available.",
+    details: [
+      "The CLI can calculate weekly performance from existing price snapshots without resolving the official one-month leaderboard early.",
+      "Supabase now stores published weekly price and model-performance rows so round pages can render the chart from the public read model.",
+      "Round 1 is backfilled with the May 8 entry snapshot and the May 15 price snapshot already used for Round 2 inputs."
+    ],
+    links: [
+      { label: "Round 1", href: "/rounds/CB-2026-05-10-1M" },
+      { label: "Rounds", href: "/rounds" },
+      { label: "Scoring", href: "/scoring" }
+    ]
+  },
+  {
     id: "2026-05-18-one-month-objective-clarified",
     date: "2026-05-18",
     title: "One-month prompt objective clarified",

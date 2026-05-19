@@ -94,6 +94,25 @@ export interface LeaderboardRecord {
   average_consistency_rate?: number;
 }
 
+export interface WeeklyPerformanceRecord {
+  round_id: string;
+  run_id: string;
+  model_id: string;
+  provider: string;
+  target_date: string;
+  price_date: string;
+  days_elapsed: number;
+  run_type?: string;
+  submission_format?: SubmissionFormat;
+  selected_option_id: string;
+  holding_count?: number;
+  model_return: number;
+  sp500_return: number;
+  alpha_vs_sp500: number;
+  price_status?: string;
+  published?: boolean;
+}
+
 export const rounds: RoundRecord[] = [
   {
     round_id: "CB-2026-05-10-1M",

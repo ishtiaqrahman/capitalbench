@@ -165,6 +165,8 @@ def sync_round(
     official_rows: list[dict[str, Any]] = []
     stability_rows: list[dict[str, Any]] = []
     option_return_rows: list[dict[str, Any]] = []
+    weekly_price_rows: list[dict[str, Any]] = []
+    weekly_performance_rows: list[dict[str, Any]] = []
     audit_rows: list[dict[str, Any]] = []
     uploaded_paths: list[Path] = []
 
@@ -184,6 +186,7 @@ def sync_round(
             option_return_rows.extend(_option_return_rows(manifest.round_id, selected_run_id, run_paths))
         if (run_paths.results_dir / "stability.csv").exists():
             stability_rows.extend(_stability_result_rows(manifest.round_id, selected_run_id, run_paths))
+        weekly_performance_rows.extend(_weekly_performance_rows(manifest.round_id, selected_run_id, run_paths))
         run_audit_rows, run_uploads = _run_audit_artifact_rows(manifest.round_id, run_paths)
         audit_rows.extend(run_audit_rows)
         uploaded_paths.extend(run_uploads)
@@ -203,6 +206,7 @@ def sync_round(
 
     round_row = _round_row(round_path, selected_run_ids)
     option_rows = _option_rows(round_path, published=True)
+    weekly_price_rows.extend(_weekly_price_rows(manifest.round_id, round_path))
     research_rows, research_uploads = _research_artifact_rows(manifest.round_id, round_path)
     audit_rows.extend(_round_audit_artifact_rows(manifest.round_id, round_path))
     uploaded_paths.extend(research_uploads)
@@ -220,6 +224,12 @@ def sync_round(
     sink.upsert("official_results", official_rows, on_conflict="round_id,run_id,model_id")
     sink.upsert("stability_results", stability_rows, on_conflict="round_id,run_id,model_id")
     sink.upsert("option_returns", option_return_rows, on_conflict="round_id,run_id,option_id")
+    sink.upsert("round_weekly_prices", weekly_price_rows, on_conflict="round_id,target_date,option_id")
+    sink.upsert(
+        "round_weekly_performance",
+        weekly_performance_rows,
+        on_conflict="round_id,run_id,model_id,target_date",
+    )
     sink.upsert("research_artifacts", research_rows, on_conflict="round_id,path")
     sink.upsert("audit_artifacts", audit_rows, on_conflict="round_id,run_id,path")
 
@@ -240,6 +250,8 @@ def sync_round(
             "official_results": len(official_rows),
             "stability_results": len(stability_rows),
             "option_returns": len(option_return_rows),
+            "round_weekly_prices": len(weekly_price_rows),
+            "round_weekly_performance": len(weekly_performance_rows),
             "research_artifacts": len(research_rows),
             "audit_artifacts": len(audit_rows),
         },
@@ -724,6 +736,50 @@ def _option_return_rows(round_id: str, run_id: str, run_paths: Any) -> list[dict
                 "is_benchmark": _bool(row.get("is_benchmark")),
                 "is_cash": _bool(row.get("is_cash")),
                 "published": True,
+            }
+        )
+    return rows
+
+
+def _weekly_price_rows(round_id: str, round_path: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for row in _read_csv(round_path / "prices" / "weekly_prices.csv"):
+        rows.append(
+            {
+                "round_id": round_id,
+                "target_date": row["target_date"],
+                "price_date": row.get("price_date") or row["target_date"],
+                "option_id": row["option_id"],
+                "symbol": row.get("symbol") or None,
+                "price": _decimal(row.get("price")),
+                "price_source": row.get("price_source") or None,
+                "published": _bool(row.get("published") or True),
+            }
+        )
+    return rows
+
+
+def _weekly_performance_rows(round_id: str, run_id: str, run_paths: Any) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for row in _read_csv(run_paths.results_dir / "weekly_performance.csv"):
+        rows.append(
+            {
+                "round_id": round_id,
+                "run_id": run_id,
+                "model_id": row["model_id"],
+                "provider": row["provider"],
+                "target_date": row["target_date"],
+                "price_date": row.get("price_date") or row["target_date"],
+                "days_elapsed": _int_or_none(row.get("days_elapsed")) or 0,
+                "run_type": row.get("run_type") or "official",
+                "submission_format": row.get("submission_format") or "single_pick",
+                "selected_option_id": row["selected_option_id"],
+                "holding_count": _int_or_none(row.get("holding_count")) or 1,
+                "model_return": _decimal(row.get("model_return")),
+                "sp500_return": _decimal(row.get("sp500_return")),
+                "alpha_vs_sp500": _decimal(row.get("alpha_vs_sp500")),
+                "price_status": row.get("price_status") or "complete",
+                "published": _bool(row.get("published") or True),
             }
         )
     return rows

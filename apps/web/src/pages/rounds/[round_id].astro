@@ -5,6 +5,7 @@ import { parse as parseYaml } from "yaml";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import StatusCards from "../../components/StatusCards.astro";
 import OfficialPicksTable from "../../components/OfficialPicksTable";
+import RoundPerformanceChart from "../../components/RoundPerformanceChart";
 import HashTable from "../../components/HashTable";
 import TableIsland from "../../components/TableIsland";
 import {
@@ -17,6 +18,7 @@ import {
   providerLabel,
   type SubmissionRecord,
   type UniverseOption,
+  type WeeklyPerformanceRecord,
   universeOptions
 } from "../../data/fallback";
 import { allocationThemeClass, formatAllocationPct, optionDisplayName } from "../../lib/allocations";
@@ -193,6 +195,37 @@ function loadRoundAuditHashes(): HashRecord[] {
   return auditHashes;
 }
 
+function loadRoundWeeklyPerformance(): WeeklyPerformanceRecord[] {
+  const text = readRoundText("runs", officialRunId, "results", "weekly_performance.csv");
+  if (!text) return [];
+  return parseCsv(text)
+    .map((row): WeeklyPerformanceRecord => ({
+      round_id: row.round_id,
+      run_id: row.run_id,
+      model_id: row.model_id,
+      provider: row.provider,
+      target_date: row.target_date,
+      price_date: row.price_date,
+      days_elapsed: Number(row.days_elapsed),
+      run_type: row.run_type,
+      submission_format: row.submission_format === "portfolio" ? "portfolio" : "single_pick",
+      selected_option_id: row.selected_option_id,
+      holding_count: Number(row.holding_count || 1),
+      model_return: Number(row.model_return),
+      sp500_return: Number(row.sp500_return),
+      alpha_vs_sp500: Number(row.alpha_vs_sp500),
+      price_status: row.price_status,
+      published: row.published !== "false"
+    }))
+    .filter(
+      (row) =>
+        Boolean(row.round_id && row.run_id && row.model_id && row.target_date) &&
+        Number.isFinite(row.model_return) &&
+        Number.isFinite(row.sp500_return) &&
+        Number.isFinite(row.alpha_vs_sp500)
+    );
+}
+
 function optionFromParsed(option: ParsedOption, index: number): UniverseOption {
   return {
     option_id: option.id ?? "UNKNOWN",
@@ -323,6 +356,7 @@ const roundUniverseOptions = parsedOptions.length ? parsedOptions.map(optionFrom
 const roundOptionsById = Object.fromEntries(roundUniverseOptions.map((option) => [option.option_id, option]));
 const roundEntryPrices = loadRoundEntryPrices();
 const roundAuditHashes = loadRoundAuditHashes();
+const weeklyPerformanceRows = loadRoundWeeklyPerformance();
 const renderedOptionsForPrompt = renderOptionsForPrompt(parsedOptions);
 const allowedOptionIds = parsedOptions
   .filter((option) => option.include_in_universe !== false)
@@ -451,6 +485,7 @@ const priceColumns = [
 
   <nav class="round-tabs" aria-label="Round sections">
     <a href="#overview">Overview</a>
+    <a href="#performance">Performance</a>
     <a href="#inputs">Inputs</a>
     <a href="#outputs">Outputs</a>
     <a href="#picks">Decisions</a>
@@ -558,6 +593,27 @@ const priceColumns = [
         <p>Benchmark output is research data and should not be interpreted as a trading recommendation.</p>
       </div>
     </aside>
+  </section>
+
+  <section class="section" id="performance">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Interim tracking</span>
+          <h2>Weekly Performance Vs S&amp;P 500</h2>
+          <p>
+            Once at least one week of prices exists, this chart tracks each official model allocation against S&amp;P 500
+            from the round entry date. It is interim research context, not the final official score.
+          </p>
+        </div>
+      </div>
+      <RoundPerformanceChart
+        client:visible
+        fallbackRows={weeklyPerformanceRows}
+        roundId={round.round_id}
+        runId={round.official_run_id}
+      />
+    </div>
   </section>
 
   <section class="section" id="inputs">
