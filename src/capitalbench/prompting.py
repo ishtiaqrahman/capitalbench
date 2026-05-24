@@ -13,7 +13,7 @@ def build_prompt(round_path: Path) -> str:
     manifest = load_manifest(round_path)
     briefing = (round_path / "briefing.md").read_text(encoding="utf-8").strip()
     metadata = render_round_metadata(round_path, manifest)
-    universe_performance = _universe_performance_section(round_path)
+    universe_performance = None if _briefing_contains_universe_performance(briefing) else _universe_performance_section(round_path)
     options = render_options_for_prompt(load_options(round_path))
     parts = [
         f"{prompt}\n\n"
@@ -82,6 +82,10 @@ def _universe_performance_section(round_path: Path) -> str | None:
     if text.startswith("# Full-Universe Trailing Returns"):
         text = text.removeprefix("# Full-Universe Trailing Returns").strip()
     return text or None
+
+
+def _briefing_contains_universe_performance(briefing: str) -> bool:
+    return "# Full-Universe Trailing Returns" in briefing
 
 
 def render_options_for_prompt(options: list[MarketOption]) -> str:

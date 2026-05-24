@@ -6,6 +6,7 @@ from pathlib import Path
 from .hashing import HASHED_ROUND_FILES, compute_round_hashes
 from .io import load_manifest, load_options, read_json
 from .prices import selected_price_options
+from .portfolio import constraints_from_manifest, submission_format_from_manifest
 from .research import (
     BRIEFING_AUDIT_REPORT,
     FINAL_BRIEFING,
@@ -49,6 +50,8 @@ def _count_invalid_raw_submissions(round_path: Path, run_paths: RunPaths) -> tup
     try:
         manifest = load_manifest(round_path)
         options = load_options(round_path)
+        submission_format = submission_format_from_manifest(manifest)
+        portfolio_constraints = constraints_from_manifest(manifest)
     except Exception as exc:
         return 0, 0, {"round": [str(exc)]}
 
@@ -68,6 +71,8 @@ def _count_invalid_raw_submissions(round_path: Path, run_paths: RunPaths) -> tup
                 run_type=run_type,
                 replicate_count=replicate_count,
                 require_run_metadata=run_type in {"official", "stability", "retrospective"},
+                submission_format=submission_format,
+                portfolio_constraints=portfolio_constraints,
             )
         except Exception as exc:
             errors[raw_file.name] = [str(exc)]
@@ -80,6 +85,8 @@ def _count_valid_parsed_submissions(round_path: Path, run_paths: RunPaths) -> in
     try:
         manifest = load_manifest(round_path)
         options = load_options(round_path)
+        submission_format = submission_format_from_manifest(manifest)
+        portfolio_constraints = constraints_from_manifest(manifest)
     except Exception:
         return 0
 
@@ -96,6 +103,8 @@ def _count_valid_parsed_submissions(round_path: Path, run_paths: RunPaths) -> in
                 run_type=run_type,
                 replicate_count=replicate_count,
                 require_run_metadata=run_type in {"official", "stability", "retrospective"},
+                submission_format=submission_format,
+                portfolio_constraints=portfolio_constraints,
             )
         except Exception:
             continue
