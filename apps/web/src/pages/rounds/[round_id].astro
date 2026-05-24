@@ -340,6 +340,7 @@ function submissionFromOutput(output: ModelOutput): SubmissionRecord {
 }
 
 const promptInstructions = readRoundText("prompt.md");
+const modelInputText = readRoundText("model_input.md");
 const briefingText = readRoundText("briefing.md");
 const optionsYamlText = readRoundText("options.yaml");
 const manifestYamlText = readRoundText("manifest.yaml");
@@ -364,13 +365,15 @@ const allowedOptionIds = parsedOptions
   .filter(Boolean)
   .join(", ");
 const renderedRoundMetadata = renderRoundMetadata(manifestData, researchManifest);
-const sharedPromptPacket = [
+const briefingContainsTrailingReturns = briefingText.includes("# Full-Universe Trailing Returns");
+const reconstructedSharedPromptPacket = [
   `${promptInstructions}\n\n## Round Metadata\n\n${renderedRoundMetadata}\n\n## Briefing\n\n${briefingText}`,
-  trailingReturnsText ? `## Full-Universe Trailing Returns\n\n${trailingReturnsText}` : "",
+  trailingReturnsText && !briefingContainsTrailingReturns ? `## Full-Universe Trailing Returns\n\n${trailingReturnsText}` : "",
   `## Options\n\n${renderedOptionsForPrompt}\n`
 ]
   .filter(Boolean)
   .join("\n\n");
+const sharedPromptPacket = modelInputText || reconstructedSharedPromptPacket;
 const modelOutputs = loadModelOutputs();
 const roundSubmissions = modelOutputs.map(submissionFromOutput);
 const inputArtifacts = [
