@@ -97,7 +97,7 @@ const protocolHighlights = [
   {
     label: "Comparable",
     title: "Picks and portfolios normalized",
-    description: "Round 1 displays as a 100% one-holding allocation; Round 2 uses submitted portfolios."
+    description: "Single-pick rounds display as one-holding allocations; portfolio rounds preserve submitted weights."
   },
   {
     label: "Public audit",
@@ -116,7 +116,7 @@ const safeguards = [
     icon: Database,
     label: "Inspection",
     title: `${currentUniverseOptions.length} current options`,
-    description: "The latest round expands the market universe while preserving the original Round 1 packet."
+    description: "The current round packet preserves the frozen model-facing universe, prompts, outputs, and audit hashes."
   },
   {
     icon: FileCheck2,
@@ -223,8 +223,8 @@ const safeguards = [
     <span class="panel-kicker">Latest round</span>
     <h2 id="latest-allocation-title">Latest Round: Models Built Portfolios</h2>
     <p>
-      Round 2 allowed 1-5 holdings in 5% increments across {currentUniverseOptions.length} assets. Scores remain pending
-      until the {currentRound.exit_date} exit prices are collected.
+      The latest portfolio round allowed 1-5 holdings in 5% increments across {currentUniverseOptions.length} assets.
+      Scores remain pending until the {currentRound.exit_date} exit prices are collected.
     </p>
     <div class="round-meta-row" aria-label="Latest round summary">
       <span>{currentRound.round_id}</span>
@@ -273,9 +273,9 @@ const safeguards = [
 
     <aside class="allocation-summary" aria-label="Latest round allocation summary">
       <span class="panel-kicker">Aggregate exposure</span>
-      <h3>Where Round 2 Concentrated</h3>
+      <h3>Where The Latest Round Concentrated</h3>
       <p>
-        Round 2 shifted from the Round 1 semiconductor consensus toward energy, oil, commodities, and gold.
+        Average allocations below aggregate the latest official portfolios before realized performance is scored.
       </p>
       <div class="exposure-bars">
         {currentRoundExposure.map((item) => (
@@ -297,7 +297,7 @@ const safeguards = [
 
   <section class="phase-band" aria-labelledby="round-progress-title">
     <div class="phase-intro">
-      <span class="panel-kicker">Two-round record</span>
+      <span class="panel-kicker">{roundRows.length}-round record</span>
       <h2 id="round-progress-title">Published First, Scored After Settlement</h2>
       <p>
         Official decisions are locked before outcomes. Performance appears only after each pre-declared exit close is
@@ -307,22 +307,22 @@ const safeguards = [
     <ol class="phase-list">
       <li class="phase-complete">
         <span>1</span>
-        <strong>Round 1 locked</strong>
-        <p>{previousRoundSubmissions.length} models selected Semiconductors; displayed as 100% allocations.</p>
+        <strong>Previous round locked</strong>
+        <p>{previousRound?.round_id ?? "Previous round"} has {previousRoundSubmissions.length} public official decisions.</p>
       </li>
       <li class="phase-complete">
         <span>2</span>
-        <strong>Round 2 locked</strong>
+        <strong>Latest round locked</strong>
         <p>{currentRoundSubmissions.length} valid official portfolios are public.</p>
       </li>
       <li class="phase-current">
         <span>3</span>
-        <strong>Round 1 settlement</strong>
+        <strong>Previous settlement target</strong>
         <p>Target: {previousRound?.exit_date ?? "declared exit date"} after market close.</p>
       </li>
       <li class="phase-current">
         <span>4</span>
-        <strong>Round 2 settlement</strong>
+        <strong>Latest settlement target</strong>
         <p>Target: {currentRound.exit_date} after market close.</p>
       </li>
     </ol>
