@@ -199,29 +199,29 @@ def _cmd_publish_round_summary(args: argparse.Namespace) -> int:
 
 
 def _cmd_publish_cumulative(args: argparse.Namespace) -> int:
-    output = publish_cumulative(args.rounds_dir, args.output, selection_path=args.selection)
+    output = publish_cumulative(args.rounds_dir, args.output, selection_path=args.selection, track=args.track)
     for warning in output.status.warnings:
         print(f"warning: {warning}", file=sys.stderr)
     print(f"wrote official cumulative leaderboard: {output.official_leaderboard_path}")
     print(f"wrote stability cumulative leaderboard: {output.stability_leaderboard_path}")
     print(f"wrote round index: {output.round_index_path}")
     print(f"wrote cumulative report: {output.cumulative_report_path}")
-    optional_sync_cumulative(args.rounds_dir, selection_path=args.selection, event_type="publish_cumulative")
+    optional_sync_cumulative(args.rounds_dir, selection_path=args.selection, event_type="publish_cumulative", track=args.track)
     return 0
 
 
 def _cmd_publish_latest(args: argparse.Namespace) -> int:
-    output = publish_latest(args.rounds_dir, args.output, selection_path=args.selection)
+    output = publish_latest(args.rounds_dir, args.output, selection_path=args.selection, track=args.track)
     for warning in output.status.warnings:
         print(f"warning: {warning}", file=sys.stderr)
     print(f"wrote latest round leaderboard: {output.latest_leaderboard_path}")
     print(f"wrote latest round report: {output.latest_report_path}")
-    optional_sync_latest(args.rounds_dir, selection_path=args.selection, event_type="publish_latest")
+    optional_sync_latest(args.rounds_dir, selection_path=args.selection, event_type="publish_latest", track=args.track)
     return 0
 
 
 def _cmd_cumulative_status(args: argparse.Namespace) -> int:
-    status = cumulative_status(args.rounds_dir, selection_path=args.selection)
+    status = cumulative_status(args.rounds_dir, selection_path=args.selection, track=args.track)
     print(f"discovered rounds: {len(status.selections) + len(status.skipped_rounds)}")
     for selected in status.selections:
         print(
@@ -562,6 +562,7 @@ def build_parser() -> argparse.ArgumentParser:
     cumulative_parser.add_argument("--rounds-dir", type=Path, required=True)
     cumulative_parser.add_argument("--output", type=Path, required=True)
     cumulative_parser.add_argument("--selection", type=Path)
+    cumulative_parser.add_argument("--track", choices=["weekly", "monthly"])
     cumulative_parser.set_defaults(func=_cmd_publish_cumulative)
 
     latest_parser = subparsers.add_parser(
@@ -571,6 +572,7 @@ def build_parser() -> argparse.ArgumentParser:
     latest_parser.add_argument("--rounds-dir", type=Path, required=True)
     latest_parser.add_argument("--output", type=Path, required=True)
     latest_parser.add_argument("--selection", type=Path)
+    latest_parser.add_argument("--track", choices=["weekly", "monthly"])
     latest_parser.set_defaults(func=_cmd_publish_latest)
 
     cumulative_status_parser = subparsers.add_parser(
@@ -579,6 +581,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     cumulative_status_parser.add_argument("--rounds-dir", type=Path, required=True)
     cumulative_status_parser.add_argument("--selection", type=Path)
+    cumulative_status_parser.add_argument("--track", choices=["weekly", "monthly"])
     cumulative_status_parser.set_defaults(func=_cmd_cumulative_status)
 
     audit_parser = subparsers.add_parser("audit-round", help="audit round reproducibility and artifacts")

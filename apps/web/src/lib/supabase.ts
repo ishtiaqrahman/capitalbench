@@ -19,13 +19,17 @@ export function getSupabaseClient(): SupabaseClient | null {
 export async function fetchPublicRows<T>(
   table: string,
   fallback: T[],
-  order?: { column: string; ascending?: boolean }
+  order?: { column: string; ascending?: boolean },
+  filters: Record<string, string | number | boolean> = {}
 ): Promise<T[]> {
   const supabase = getSupabaseClient();
   if (supabase === null) {
     return fallback;
   }
   let query = supabase.from(table).select("*").eq("published", true);
+  for (const [column, value] of Object.entries(filters)) {
+    query = query.eq(column, value);
+  }
   if (order) {
     query = query.order(order.column, { ascending: order.ascending ?? true });
   }

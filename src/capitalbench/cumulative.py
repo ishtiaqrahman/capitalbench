@@ -6,7 +6,7 @@ import statistics
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from .io import load_manifest, read_yaml
 from .run_store import get_run_paths, list_run_ids, read_run_manifest
@@ -66,6 +66,9 @@ ROUND_INDEX_COLUMNS = [
     "included_in_stability_cumulative",
     "warnings",
 ]
+
+Track = Literal["weekly", "monthly"]
+TRACKS: tuple[Track, ...] = ("weekly", "monthly")
 
 
 @dataclass(frozen=True)
@@ -216,7 +219,13 @@ def select_runs_for_round(
     )
 
 
-def cumulative_status(rounds_dir: Path, selection_path: Path | None = None) -> CumulativeStatus:
+def cumulative_status(
+    rounds_dir: Path,
+    selection_path: Path | None = None,
+    *,
+    track: Track | None = None,
+) -> CumulativeStatus:
+    _validate_track(track)
     selection = load_selection(selection_path)
     round_paths = discover_rounds(rounds_dir)
     round_paths_by_id = {load_manifest(path).round_id: path for path in round_paths}
@@ -229,6 +238,8 @@ def cumulative_status(rounds_dir: Path, selection_path: Path | None = None) -> C
             if round_id not in round_paths_by_id:
                 raise ValueError(f"selected round_id not found under {rounds_dir}: {round_id}")
             selected = select_runs_for_round(round_paths_by_id[round_id], selection)
+            if selected is not None and not _selection_matches_track(selected, track):
+                continue
             if selected is not None:
                 selections.append(selected)
                 warnings.extend(selected.warnings)
@@ -237,6 +248,8 @@ def cumulative_status(rounds_dir: Path, selection_path: Path | None = None) -> C
     for round_path in round_paths:
         selected = select_runs_for_round(round_path, selection)
         if selected is None:
+            continue
+        if not _selection_matches_track(selected, track):
             continue
         if selected.official_rows or selected.stability_rows:
             selections.append(selected)
@@ -356,8 +369,10 @@ def publish_cumulative(
     rounds_dir: Path,
     output: Path,
     selection_path: Path | None = None,
+    *,
+    track: Track | None = None,
 ) -> CumulativeOutput:
-    status = cumulative_status(rounds_dir, selection_path)
+    status = cumulative_status(rounds_dir, selection_path, track=track)
     official_input_rows: list[dict[str, str]] = []
     stability_input_rows: list[dict[str, str]] = []
     for selected in status.selections:
@@ -393,8 +408,10 @@ def publish_latest(
     rounds_dir: Path,
     output: Path,
     selection_path: Path | None = None,
+    *,
+    track: Track | None = None,
 ) -> LatestOutput:
-    status = latest_status(rounds_dir, selection_path)
+    status = latest_status(rounds_dir, selection_path, track=track)
     if not status.selections:
         raise ValueError("no resolved official rounds found for latest leaderboard")
     selected = max(
@@ -417,7 +434,13 @@ def publish_latest(
     )
 
 
-def latest_status(rounds_dir: Path, selection_path: Path | None = None) -> CumulativeStatus:
+def latest_status(
+    rounds_dir: Path,
+    selection_path: Path | None = None,
+    *,
+    track: Track | None = None,
+) -> CumulativeStatus:
+    _validate_track(track)
     selection = load_selection(selection_path)
     round_paths = discover_rounds(rounds_dir)
     round_paths_by_id = {load_manifest(path).round_id: path for path in round_paths}
@@ -436,6 +459,8 @@ def latest_status(rounds_dir: Path, selection_path: Path | None = None) -> Cumul
 
     for round_path in paths_to_scan:
         selected = _select_latest_run_for_round(round_path, selection)
+        if not _selection_matches_track(selected, track):
+            continue
         if selected.official_rows:
             selections.append(selected)
         else:
@@ -767,6 +792,27 @@ def _horizon_days(entry_date: str | None, exit_date: str | None) -> int | None:
         return (date.fromisoformat(exit_date) - date.fromisoformat(entry_date)).days
     except ValueError:
         return None
+
+
+def track_for_horizon_days(horizon_days: int | None) -> Track | None:
+    if horizon_days is None:
+        return None
+    if horizon_days <= 10:
+        return "weekly"
+    if horizon_days >= 28:
+        return "monthly"
+    return None
+
+
+def _selection_matches_track(selection: CumulativeRoundSelection, track: Track | None) -> bool:
+    if track is None:
+        return True
+    return track_for_horizon_days(selection.horizon_days) == track
+
+
+def _validate_track(track: Track | None) -> None:
+    if track is not None and track not in TRACKS:
+        raise ValueError("track must be one of: weekly, monthly")
 
 
 def _float(value: str | object) -> float:

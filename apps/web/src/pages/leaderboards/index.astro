@@ -10,22 +10,26 @@ import PageHeader from "../../components/PageHeader.astro";
   <PageHeader
     eyebrow="Leaderboards"
     title="Benchmark Result Views"
-    summary="CapitalBench separates latest official results, cumulative one-shot outcomes, and repeated-run stability metrics so each leaderboard answers a distinct evaluation question."
+    summary="CapitalBench separates weekly and monthly tracks. Latest, cumulative official, and stability results are reported within each horizon."
   />
 
   <section class="section">
     <div class="grid-3">
       <article class="feature">
-        <h3><a href="/leaderboards/latest">Latest Round Leaderboard</a></h3>
-        <p>Newest resolved official one-shot leaderboard. Pending rounds show allocations before performance.</p>
+        <h3><a href="/leaderboards/latest-weekly">Latest Weekly</a></h3>
+        <p>Newest one-week official leaderboard. Pending rounds show allocations before performance.</p>
       </article>
       <article class="feature">
-        <h3><a href="/leaderboards/cumulative-official">Cumulative Official</a></h3>
-        <p>Average official alpha versus S&amp;P 500 across resolved rounds where each model participated.</p>
+        <h3><a href="/leaderboards/latest-monthly">Latest Monthly</a></h3>
+        <p>Newest one-month official leaderboard, separate from weekly results.</p>
       </article>
       <article class="feature">
-        <h3><a href="/leaderboards/cumulative-stability">Cumulative Stability</a></h3>
-        <p>Repeated-run alpha and consistency metrics, reported separately from official results.</p>
+        <h3><a href="/leaderboards/cumulative-weekly">Weekly Cumulative</a></h3>
+        <p>Official and stability cumulative tables for weekly rounds only.</p>
+      </article>
+      <article class="feature">
+        <h3><a href="/leaderboards/cumulative-monthly">Monthly Cumulative</a></h3>
+        <p>Official and stability cumulative tables for monthly rounds only.</p>
       </article>
     </div>
   </section>

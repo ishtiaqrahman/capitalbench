@@ -6,7 +6,7 @@ from datetime import datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import Any, Protocol
 
-from .cumulative import publish_cumulative, publish_latest
+from .cumulative import publish_cumulative, publish_latest, track_for_horizon_days
 from .hashing import round_hashes_match
 from .io import load_manifest, read_json, read_yaml, write_yaml
 from .prices import fetch_selected_prices
@@ -262,13 +262,19 @@ def resolve_accepted_round(
 
     scores = score_round(round_path, run_id=run_id)
     report_path = publish_report(round_path, run_id=run_id)
-    latest = publish_latest(rounds_dir, latest_output, selection_path=selection_path)
-    cumulative = publish_cumulative(rounds_dir, cumulative_output, selection_path=selection_path)
+    track = track_for_horizon_days(_horizon_days(manifest.entry_date, manifest.exit_date))
+    latest = publish_latest(rounds_dir, latest_output, selection_path=selection_path, track=track)
+    cumulative = publish_cumulative(rounds_dir, cumulative_output, selection_path=selection_path, track=track)
 
     if sync:
         optional_sync_round(round_path, run_id=run_id, event_type="automation_resolve")
-        optional_sync_latest(rounds_dir, selection_path=selection_path, event_type="automation_publish_latest")
-        optional_sync_cumulative(rounds_dir, selection_path=selection_path, event_type="automation_publish_cumulative")
+        optional_sync_latest(rounds_dir, selection_path=selection_path, event_type="automation_publish_latest", track=track)
+        optional_sync_cumulative(
+            rounds_dir,
+            selection_path=selection_path,
+            event_type="automation_publish_cumulative",
+            track=track,
+        )
 
     completed_at_utc = _utc_now()
     update_run_manifest(run_paths, {"resolved_at_utc": completed_at_utc})
@@ -525,6 +531,15 @@ def _default_due_at_utc(exit_date: str | None) -> str:
     day = datetime.fromisoformat(exit_date).date()
     due = datetime.combine(day, DEFAULT_RESOLUTION_TIME_UTC)
     return due.isoformat()
+
+
+def _horizon_days(entry_date: str | None, exit_date: str | None) -> int | None:
+    if not entry_date or not exit_date:
+        return None
+    try:
+        return (datetime.fromisoformat(exit_date).date() - datetime.fromisoformat(entry_date).date()).days
+    except ValueError:
+        return None
 
 
 def _parse_utc(value: str) -> datetime:

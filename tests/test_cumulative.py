@@ -46,6 +46,9 @@ def _create_round(
     official_run_type: str = "official",
     stability_run_type: str = "stability",
     official_score_eligible: bool = True,
+    entry_date: str = "2026-01-02",
+    exit_date: str = "2026-02-02",
+    horizon: str = "one month",
 ) -> Path:
     round_path = rounds_dir / round_id
     round_path.mkdir(parents=True)
@@ -55,9 +58,9 @@ def _create_round(
                 "round_id": round_id,
                 "title": round_id,
                 "decision_deadline": "2026-01-01T20:00:00Z",
-                "entry_date": "2026-01-02",
-                "exit_date": "2026-02-02",
-                "horizon": "one month",
+                "entry_date": entry_date,
+                "exit_date": exit_date,
+                "horizon": horizon,
             },
             sort_keys=False,
         ),
@@ -603,6 +606,55 @@ def test_publish_latest_selects_newest_resolved_round(tmp_path: Path) -> None:
     assert output.selected_round.round_id == "round-2"
     assert output.latest_leaderboard_path.exists()
     assert output.latest_report_path.exists()
+
+
+def test_publish_latest_and_cumulative_can_filter_by_track(tmp_path: Path) -> None:
+    rounds_dir = tmp_path / "rounds"
+    _create_round(
+        rounds_dir,
+        "CB-2026-01-01-1W",
+        model_alpha=0.07,
+        model_return=0.08,
+        sp500_return=0.01,
+        beats_sp500=True,
+        beats_cash=True,
+        stability_alpha=0.02,
+        stability_return=0.03,
+        consistency=0.6,
+        modal_alpha=0.02,
+        modal_return=0.03,
+        best_replicate=0.08,
+        worst_replicate=-0.01,
+        entry_date="2026-01-02",
+        exit_date="2026-01-09",
+        horizon="one week",
+    )
+    _create_round(
+        rounds_dir,
+        "CB-2026-01-01-1M",
+        model_alpha=-0.02,
+        model_return=0.00,
+        sp500_return=0.02,
+        beats_sp500=False,
+        beats_cash=False,
+        stability_alpha=-0.01,
+        stability_return=0.01,
+        consistency=0.8,
+        modal_alpha=-0.01,
+        modal_return=0.01,
+        best_replicate=0.04,
+        worst_replicate=-0.03,
+    )
+
+    weekly_latest = publish_latest(rounds_dir, tmp_path / "latest-weekly", track="weekly")
+    monthly_latest = publish_latest(rounds_dir, tmp_path / "latest-monthly", track="monthly")
+    weekly_cumulative = publish_cumulative(rounds_dir, tmp_path / "cumulative-weekly", track="weekly")
+    monthly_cumulative = publish_cumulative(rounds_dir, tmp_path / "cumulative-monthly", track="monthly")
+
+    assert weekly_latest.selected_round.round_id == "CB-2026-01-01-1W"
+    assert monthly_latest.selected_round.round_id == "CB-2026-01-01-1M"
+    assert _read_csv(weekly_cumulative.official_leaderboard_path)[0]["rounds_included"] == "CB-2026-01-01-1W"
+    assert _read_csv(monthly_cumulative.official_leaderboard_path)[0]["rounds_included"] == "CB-2026-01-01-1M"
 
 
 def test_publish_latest_fails_with_multiple_official_runs_without_selection(tmp_path: Path) -> None:

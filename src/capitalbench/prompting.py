@@ -41,6 +41,11 @@ def render_round_metadata(round_path: Path, manifest) -> str:
             f"Scoring window: {manifest.entry_date or 'entry date'} to {manifest.exit_date or 'exit date'}; "
             f"optimize for this {manifest.horizon} window only."
         ),
+        (
+            "Close-to-close scoring: the entry price is the adjusted close on the entry date, "
+            "and the exit price is the adjusted close on the exit date after regular trading ends."
+        ),
+        "Timeline focus: prioritize facts, catalysts, and risks that can plausibly affect prices before the exit close.",
         f"Entry rule: {manifest.entry_rule or 'TBD'}",
         f"Exit rule: {manifest.exit_rule or 'TBD'}",
         f"Submission format: {submission_format}",

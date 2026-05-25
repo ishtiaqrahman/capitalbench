@@ -27,6 +27,28 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-24-weekly-track-separated",
+    date: "2026-05-24",
+    title: "Weekly benchmark track added separately from monthly rounds",
+    category: "Benchmark",
+    status: "published",
+    summary:
+      "CapitalBench now supports one-week rounds as a separate track with separate website lanes and leaderboard slots.",
+    details: [
+      "The first weekly packet, CB-2026-05-24-1W, uses its own manifest, prompt, model input, hashes, run folder, entry prices, and resolution job while reusing May 24 source research only as input material.",
+      "Latest and cumulative public read models now use separate weekly and monthly slots so one-week and one-month scores cannot overwrite or mix with each other.",
+      "The homepage, leaderboard hub, round index, and round pages now label weekly and monthly tracks separately.",
+      "The landing page now presents weekly and monthly as equal track lanes with separate status cards, allocation previews, leaderboard links, timelines, and audit packet links.",
+      "Weekly prompts now make the close-to-close timeline explicit, including the May 22 entry close, Memorial Day market holiday, Tuesday-to-Friday regular-session window, and May 29 exit close.",
+      "Default monthly prompt generation and generated model-input metadata now reinforce close-to-close scoring and timeline-focused reasoning without using negative one-month wording in weekly rounds."
+    ],
+    links: [
+      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
+      { label: "Latest monthly", href: "/leaderboards/latest-monthly" },
+      { label: "Rounds", href: "/rounds" }
+    ]
+  },
+  {
     id: "2026-05-19-weekly-round-performance",
     date: "2026-05-19",
     title: "Interim weekly round performance added",
@@ -54,9 +76,9 @@ export const changelogEntries: ChangelogEntry[] = [
     summary:
       "Future CapitalBench prompts now make the one-month scoring window explicit before models choose allocations.",
     details: [
-      "Newly initialized portfolio prompts instruct models to optimize from entry price to exit date, approximately one month later, and not for long-term attractiveness beyond the scoring window.",
+      "Newly initialized portfolio prompts instruct models to optimize for the close-to-close one-month scoring window from entry adjusted close to exit adjusted close.",
       "Single-pick prompt defaults received the same clarification so older and newer submission formats remain conceptually aligned.",
-      "Generated model inputs now include a scoring-window metadata line derived from each round manifest's entry date, exit date, and horizon."
+      "Generated model inputs now include scoring-window, close-to-close scoring, and timeline-focus metadata derived from each round manifest's entry date, exit date, and horizon."
     ],
     links: [
       { label: "Methodology", href: "/methodology" },

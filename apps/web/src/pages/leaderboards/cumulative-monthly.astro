@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import LeaderboardTable from "../../components/LeaderboardTable";
+import PendingLeaderboardGuide from "../../components/PendingLeaderboardGuide.astro";
+import { cumulativeOfficialLeaderboard, cumulativeStabilityLeaderboard } from "../../data/fallback";
+import { cumulativeSlotForTrack } from "../../lib/tracks";
+
+const slot = cumulativeSlotForTrack("monthly");
+---
+
+<BaseLayout
+  title="Monthly Cumulative CapitalBench Leaderboard"
+  description="Cumulative CapitalBench results for one-month benchmark rounds only."
+>
+  <PageHeader
+    eyebrow="Monthly track"
+    title="Monthly Cumulative Leaderboards"
+    summary="Monthly cumulative results include only one-month rounds. Weekly rounds are excluded from these tables."
+  />
+  <section class="section">
+    <PendingLeaderboardGuide kind="official" />
+  </section>
+  <section class="section">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Monthly official</span>
+          <h2>Cumulative Official</h2>
+        </div>
+      </div>
+      <LeaderboardTable client:visible fallbackRows={cumulativeOfficialLeaderboard} kind="official" slot={slot} />
+    </div>
+  </section>
+  <section class="section">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Monthly stability</span>
+          <h2>Cumulative Stability</h2>
+        </div>
+      </div>
+      <LeaderboardTable client:visible fallbackRows={cumulativeStabilityLeaderboard} kind="stability" slot={slot} />
+    </div>
+  </section>
+</BaseLayout>

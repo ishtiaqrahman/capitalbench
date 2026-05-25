@@ -1,24 +1,27 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/PageHeader.astro";
-import LeaderboardTable from "../../components/LeaderboardTable";
-import PendingLeaderboardGuide from "../../components/PendingLeaderboardGuide.astro";
-import { cumulativeStabilityLeaderboard } from "../../data/fallback";
 ---
 
 <BaseLayout
-  title="Cumulative Stability Leaderboard"
-  description="Repeated-run CapitalBench stability results for LLM market decisions, reported separately from official one-shot scores."
+  title="Cumulative Stability CapitalBench Leaderboards"
+  description="Cumulative stability CapitalBench leaderboards split by weekly and monthly benchmark tracks."
 >
   <PageHeader
-    eyebrow="Repeated-call track"
-    title="Cumulative Stability"
-    summary="Repeated-run alpha and consistency metrics across resolved rounds. Stability results are reported separately from official one-shot results."
+    eyebrow="Repeated-call results"
+    title="Cumulative Stability By Track"
+    summary="Stability results are reported within each benchmark horizon and remain separate from official one-shot scoring."
   />
   <section class="section">
-    <PendingLeaderboardGuide kind="stability" />
-  </section>
-  <section class="section">
-    <LeaderboardTable client:visible fallbackRows={cumulativeStabilityLeaderboard} kind="stability" />
+    <div class="grid-3">
+      <article class="feature">
+        <h3><a href="/leaderboards/cumulative-weekly">Weekly Cumulative</a></h3>
+        <p>Stability and official cumulative tables for one-week rounds only.</p>
+      </article>
+      <article class="feature">
+        <h3><a href="/leaderboards/cumulative-monthly">Monthly Cumulative</a></h3>
+        <p>Stability and official cumulative tables for one-month rounds only.</p>
+      </article>
+    </div>
   </section>
 </BaseLayout>

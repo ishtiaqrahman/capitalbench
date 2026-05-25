@@ -409,7 +409,9 @@ def test_init_round_prompt_allows_internal_knowledge_but_blocks_live_retrieval(t
     assert exit_code == 0
     assert "internal learned knowledge and general market priors" in prompt
     assert "Do not browse, use tools, request updated market data" in prompt
-    assert "Do not optimize for long-term attractiveness beyond this scoring window." in prompt
+    assert "close-to-close one-month scoring window" in prompt
+    assert "calculated after regular trading ends on the exit date" in prompt
+    assert "Use longer-horizon facts only when they are likely to affect prices before the exit close." in prompt
     assert "strongest expected one-month realized return" in prompt
     assert "Use only the information in this prompt" not in prompt
 
@@ -435,5 +437,7 @@ def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
     assert manifest["methodology_version"] == "portfolio-v1.0"
     assert "portfolio" in prompt
     assert "maximize expected one-month realized portfolio return" in prompt
-    assert "Do not optimize for long-term attractiveness beyond this scoring window." in prompt
+    assert "close-to-close one-month scoring window" in prompt
+    assert "calculated after regular trading ends on the exit date" in prompt
+    assert "Use longer-horizon facts only when they are likely to affect prices before the exit close." in prompt
     assert "allocation_pct values must sum to exactly 100" in prompt

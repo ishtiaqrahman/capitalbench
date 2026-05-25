@@ -8,6 +8,7 @@ import TableIsland, { type Column } from "./TableIsland";
 interface Props {
   fallbackRows: LeaderboardRecord[];
   kind: "latest" | "official" | "stability";
+  slot?: string;
 }
 
 const tableByKind = {
@@ -16,7 +17,7 @@ const tableByKind = {
   stability: "cumulative_stability_leaderboard"
 };
 
-export default function LeaderboardTable({ fallbackRows, kind }: Props) {
+export default function LeaderboardTable({ fallbackRows, kind, slot }: Props) {
   const [rows, setRows] = useState<LeaderboardRecord[]>(fallbackRows);
 
   useEffect(() => {
@@ -25,8 +26,8 @@ export default function LeaderboardTable({ fallbackRows, kind }: Props) {
     fetchPublicRows<LeaderboardRecord>(tableByKind[kind], fallbackRows, {
       column: orderColumn,
       ascending: false
-    }).then(setRows);
-  }, [fallbackRows, kind]);
+    }, slot ? { slot } : {}).then(setRows);
+  }, [fallbackRows, kind, slot]);
 
   const latestColumns: Column<LeaderboardRecord>[] = [
     { key: "model_id", label: "Model", value: (row) => modelLabel(row.model_id) },

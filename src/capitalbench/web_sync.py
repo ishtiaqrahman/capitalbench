@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from .cumulative import (
+    TRACKS,
+    Track,
     build_cumulative_official,
     build_cumulative_stability,
     cumulative_status,
@@ -119,12 +121,19 @@ def optional_sync_latest(
     selection_path: Path | None = None,
     event_type: str = "publish_latest",
     sink: WebSyncSink | None = None,
+    track: Track | None = None,
 ) -> SyncSummary:
     configured_sink = sink or configured_sink_from_env()
     if configured_sink is None:
         print(SUPABASE_SKIP_MESSAGE)
         return SyncSummary(event_type=event_type, status="skipped", message=SUPABASE_SKIP_MESSAGE)
-    return sync_latest_leaderboard(rounds_dir, selection_path=selection_path, event_type=event_type, sink=configured_sink)
+    return sync_latest_leaderboard(
+        rounds_dir,
+        selection_path=selection_path,
+        event_type=event_type,
+        sink=configured_sink,
+        track=track,
+    )
 
 
 def optional_sync_cumulative(
@@ -133,6 +142,7 @@ def optional_sync_cumulative(
     selection_path: Path | None = None,
     event_type: str = "publish_cumulative",
     sink: WebSyncSink | None = None,
+    track: Track | None = None,
 ) -> SyncSummary:
     configured_sink = sink or configured_sink_from_env()
     if configured_sink is None:
@@ -143,6 +153,7 @@ def optional_sync_cumulative(
         selection_path=selection_path,
         event_type=event_type,
         sink=configured_sink,
+        track=track,
     )
 
 
@@ -271,8 +282,9 @@ def sync_rounds_dir(
     for round_path in sorted(path for path in rounds_dir.iterdir() if path.is_dir() and (path / "manifest.yaml").exists()):
         summaries.append(sync_round(round_path, event_type=event_type, sink=sink))
     if include_cumulative:
-        summaries.append(sync_latest_leaderboard(rounds_dir, selection_path=selection_path, sink=sink))
-        summaries.append(sync_cumulative_leaderboards(rounds_dir, selection_path=selection_path, sink=sink))
+        for track in TRACKS:
+            summaries.append(sync_latest_leaderboard(rounds_dir, selection_path=selection_path, sink=sink, track=track))
+            summaries.append(sync_cumulative_leaderboards(rounds_dir, selection_path=selection_path, sink=sink, track=track))
     return summaries
 
 
@@ -282,10 +294,12 @@ def sync_latest_leaderboard(
     selection_path: Path | None = None,
     event_type: str = "sync_latest_leaderboard",
     sink: WebSyncSink,
+    track: Track | None = None,
 ) -> SyncSummary:
-    status = latest_status(rounds_dir, selection_path)
+    status = latest_status(rounds_dir, selection_path, track=track)
+    slot = _latest_slot(track)
     if not status.selections:
-        sink.delete_eq("latest_leaderboard", {"slot": "latest"})
+        sink.delete_eq("latest_leaderboard", {"slot": slot})
         return _record_event(
             sink,
             SyncSummary(
@@ -296,8 +310,8 @@ def sync_latest_leaderboard(
             ),
         )
     selected = max(status.selections, key=lambda item: (item.decision_deadline_utc, item.round_id))
-    rows = [_latest_row(selected.round_id, selected.official_run_id or "", row) for row in selected.official_rows]
-    sink.delete_eq("latest_leaderboard", {"slot": "latest"})
+    rows = [_latest_row(selected.round_id, selected.official_run_id or "", row, slot=slot) for row in selected.official_rows]
+    sink.delete_eq("latest_leaderboard", {"slot": slot})
     sink.upsert("latest_leaderboard", rows, on_conflict="slot,model_id")
     return _record_event(
         sink,
@@ -316,8 +330,10 @@ def sync_cumulative_leaderboards(
     selection_path: Path | None = None,
     event_type: str = "sync_cumulative_leaderboards",
     sink: WebSyncSink,
+    track: Track | None = None,
 ) -> SyncSummary:
-    status = cumulative_status(rounds_dir, selection_path)
+    status = cumulative_status(rounds_dir, selection_path, track=track)
+    slot = _cumulative_slot(track)
     official_input_rows: list[dict[str, str]] = []
     stability_input_rows: list[dict[str, str]] = []
     for selected in status.selections:
@@ -326,12 +342,12 @@ def sync_cumulative_leaderboards(
         for row in selected.stability_rows:
             stability_input_rows.append({**row, "round_id": selected.round_id})
 
-    official_rows = [_published_row(row) for row in build_cumulative_official(official_input_rows)]
-    stability_rows = [_published_row(row) for row in build_cumulative_stability(stability_input_rows)]
-    sink.delete_eq("cumulative_official_leaderboard", {"published": True})
-    sink.delete_eq("cumulative_stability_leaderboard", {"published": True})
-    sink.upsert("cumulative_official_leaderboard", official_rows, on_conflict="model_id")
-    sink.upsert("cumulative_stability_leaderboard", stability_rows, on_conflict="model_id")
+    official_rows = [_published_row({**row, "slot": slot}) for row in build_cumulative_official(official_input_rows)]
+    stability_rows = [_published_row({**row, "slot": slot}) for row in build_cumulative_stability(stability_input_rows)]
+    sink.delete_eq("cumulative_official_leaderboard", {"slot": slot})
+    sink.delete_eq("cumulative_stability_leaderboard", {"slot": slot})
+    sink.upsert("cumulative_official_leaderboard", official_rows, on_conflict="slot,model_id")
+    sink.upsert("cumulative_stability_leaderboard", stability_rows, on_conflict="slot,model_id")
     return _record_event(
         sink,
         SyncSummary(
@@ -871,9 +887,9 @@ def _artifact_row(
     return row
 
 
-def _latest_row(round_id: str, run_id: str, row: dict[str, str]) -> dict[str, Any]:
+def _latest_row(round_id: str, run_id: str, row: dict[str, str], *, slot: str = "latest") -> dict[str, Any]:
     return {
-        "slot": "latest",
+        "slot": slot,
         "round_id": round_id,
         "run_id": run_id,
         "model_id": row["model_id"],
@@ -896,6 +912,14 @@ def _latest_row(round_id: str, run_id: str, row: dict[str, str]) -> dict[str, An
         "beats_cash": _bool(row.get("beats_cash")),
         "published": True,
     }
+
+
+def _latest_slot(track: Track | None) -> str:
+    return f"latest_{track}" if track else "latest"
+
+
+def _cumulative_slot(track: Track | None) -> str:
+    return f"cumulative_{track}" if track else "cumulative_all"
 
 
 def _record_event(sink: WebSyncSink, summary: SyncSummary) -> SyncSummary:

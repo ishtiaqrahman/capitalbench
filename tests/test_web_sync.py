@@ -1,3 +1,4 @@
+import csv
 import json
 from pathlib import Path
 from shutil import copytree
@@ -8,7 +9,7 @@ import yaml
 from capitalbench.cli import main
 from capitalbench.hashing import write_round_hashes
 from capitalbench.scoring import score_round
-from capitalbench.web_sync import SUPABASE_SKIP_MESSAGE, sync_latest_leaderboard, sync_round
+from capitalbench.web_sync import SUPABASE_SKIP_MESSAGE, sync_cumulative_leaderboards, sync_latest_leaderboard, sync_round
 from capitalbench.weekly import update_weekly_performance
 
 
@@ -34,6 +35,74 @@ class FakeSink:
 
     def upload_public_artifact(self, local_path: Path, storage_path: str) -> None:
         self.uploads.append((local_path, storage_path))
+
+
+def _write_resolved_round(rounds_dir: Path, round_id: str, *, entry_date: str, exit_date: str, horizon: str) -> None:
+    round_path = rounds_dir / round_id
+    results_dir = round_path / "runs" / "official" / "results"
+    results_dir.mkdir(parents=True)
+    (round_path / "manifest.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "round_id": round_id,
+                "title": round_id,
+                "decision_deadline": "2026-01-01T20:00:00Z",
+                "entry_date": entry_date,
+                "exit_date": exit_date,
+                "horizon": horizon,
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    (round_path / "runs" / "official" / "run_manifest.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "run_id": "official",
+                "round_id": round_id,
+                "run_type": "official",
+                "mode": "closed_capability",
+                "replicates": 1,
+                "mock": False,
+                "official_score_eligible": True,
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    with (results_dir / "leaderboard.csv").open("w", encoding="utf-8", newline="") as handle:
+        fieldnames = [
+            "model_id",
+            "provider",
+            "mode",
+            "selected_option_id",
+            "confidence",
+            "selected_asset_return",
+            "sp500_return",
+            "alpha_vs_sp500",
+            "regret_vs_best_option",
+            "rank_among_options",
+            "beats_sp500",
+            "beats_cash",
+        ]
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerow(
+            {
+                "model_id": "model-a",
+                "provider": "openai",
+                "mode": "closed_capability",
+                "selected_option_id": "SP500",
+                "confidence": 0.5,
+                "selected_asset_return": 0.03,
+                "sp500_return": 0.02,
+                "alpha_vs_sp500": 0.01,
+                "regret_vs_best_option": "",
+                "rank_among_options": 1,
+                "beats_sp500": True,
+                "beats_cash": True,
+            }
+        )
 
 
 def test_sync_web_skips_when_supabase_env_is_missing(monkeypatch, capsys) -> None:
@@ -216,3 +285,32 @@ def test_sync_latest_clears_stale_rows_when_no_public_resolved_round(tmp_path: P
     assert summary.row_counts == {"latest_leaderboard": 0}
     assert ("latest_leaderboard", {"slot": "latest"}) in sink.deletes
     assert "latest_leaderboard" not in sink.upserts
+
+
+def test_sync_latest_and_cumulative_use_track_slots(tmp_path: Path) -> None:
+    rounds_dir = tmp_path / "rounds"
+    _write_resolved_round(
+        rounds_dir,
+        "CB-2026-01-01-1W",
+        entry_date="2026-01-02",
+        exit_date="2026-01-09",
+        horizon="one week",
+    )
+    _write_resolved_round(
+        rounds_dir,
+        "CB-2026-01-01-1M",
+        entry_date="2026-01-02",
+        exit_date="2026-02-02",
+        horizon="one month",
+    )
+    sink = FakeSink()
+
+    sync_latest_leaderboard(rounds_dir, sink=sink, track="weekly")
+    sync_cumulative_leaderboards(rounds_dir, sink=sink, track="weekly")
+
+    assert ("latest_leaderboard", {"slot": "latest_weekly"}) in sink.deletes
+    assert sink.upserts["latest_leaderboard"][0]["slot"] == "latest_weekly"
+    assert sink.upserts["latest_leaderboard"][0]["round_id"] == "CB-2026-01-01-1W"
+    assert ("cumulative_official_leaderboard", {"slot": "cumulative_weekly"}) in sink.deletes
+    assert sink.upserts["cumulative_official_leaderboard"][0]["slot"] == "cumulative_weekly"
+    assert sink.upserts["cumulative_official_leaderboard"][0]["rounds_included"] == "CB-2026-01-01-1W"

@@ -56,28 +56,62 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: "/leaderboards/latest",
-    title: "Latest LLM Market Leaderboard",
+    title: "Latest CapitalBench Leaderboards",
     description:
-      "Latest CapitalBench official leaderboard for one-shot LLM market decisions, with pending allocations shown before scored performance is published.",
+      "Latest CapitalBench leaderboards split by weekly and monthly benchmark tracks.",
+    priority: 0.9,
+    changefreq: "weekly",
+    lastmod: defaultLastmod
+  },
+  {
+    path: "/leaderboards/latest-weekly",
+    title: "Latest Weekly CapitalBench Leaderboard",
+    description:
+      "Latest one-week CapitalBench official leaderboard with weekly allocations and results kept separate from monthly rounds.",
+    priority: 0.9,
+    changefreq: "weekly",
+    lastmod: defaultLastmod
+  },
+  {
+    path: "/leaderboards/latest-monthly",
+    title: "Latest Monthly CapitalBench Leaderboard",
+    description:
+      "Latest one-month CapitalBench official leaderboard with monthly allocations and results kept separate from weekly rounds.",
     priority: 0.9,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
   {
     path: "/leaderboards/cumulative-official",
-    title: "Cumulative Official LLM Leaderboard",
+    title: "Cumulative Official CapitalBench Leaderboards",
     description:
-      "Cumulative official CapitalBench results, averaging one-shot LLM alpha versus S&P 500 across resolved benchmark rounds.",
+      "Cumulative official CapitalBench leaderboards split by weekly and monthly benchmark tracks.",
     priority: 0.86,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
   {
     path: "/leaderboards/cumulative-stability",
-    title: "Cumulative Stability Leaderboard",
+    title: "Cumulative Stability CapitalBench Leaderboards",
     description:
-      "Repeated-run CapitalBench stability results for LLM market decisions, reported separately from official one-shot scores.",
+      "Cumulative stability CapitalBench leaderboards split by weekly and monthly benchmark tracks.",
     priority: 0.82,
+    changefreq: "weekly",
+    lastmod: defaultLastmod
+  },
+  {
+    path: "/leaderboards/cumulative-weekly",
+    title: "Weekly Cumulative CapitalBench Leaderboard",
+    description: "Cumulative CapitalBench results for one-week benchmark rounds only.",
+    priority: 0.86,
+    changefreq: "weekly",
+    lastmod: defaultLastmod
+  },
+  {
+    path: "/leaderboards/cumulative-monthly",
+    title: "Monthly Cumulative CapitalBench Leaderboard",
+    description: "Cumulative CapitalBench results for one-month benchmark rounds only.",
+    priority: 0.86,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
@@ -204,8 +238,12 @@ export const routeMeta: RouteMeta[] = [
 const labelOverrides: Record<string, string> = {
   leaderboards: "Leaderboards",
   latest: "Latest",
+  "latest-weekly": "Latest Weekly",
+  "latest-monthly": "Latest Monthly",
   "cumulative-official": "Cumulative Official",
   "cumulative-stability": "Cumulative Stability",
+  "cumulative-weekly": "Cumulative Weekly",
+  "cumulative-monthly": "Cumulative Monthly",
   rounds: "Rounds",
   methodology: "Methodology",
   universe: "Universe",

@@ -24,6 +24,7 @@ import {
 import { allocationThemeClass, formatAllocationPct, optionDisplayName } from "../../lib/allocations";
 import { repoRootPath, staticRoundRecords } from "../../lib/localRoundRecords";
 import { datasetSchema } from "../../lib/seo";
+import { roundTrack, trackLabel } from "../../lib/tracks";
 
 const repoRoot = repoRootPath();
 
@@ -402,6 +403,8 @@ const allocationDisplayNote =
     ? "This round used the original single-pick protocol. For cross-round readability, each valid pick is displayed as a one-holding 100% allocation while the validated JSON remains unchanged."
     : "This round used the portfolio protocol. Allocation weights below are the submitted model decisions.";
 const statusLabel = round.status === "resolved" ? "Resolved" : round.status === "archived" ? "Archived" : "Pending";
+const track = roundTrack(round);
+const benchmarkTrackLabel = trackLabel(track);
 const roundStateTitle = round.status === "resolved" ? "Resolved Official Score" : "Pending Official Score";
 const roundDataset = datasetSchema({
   name: `${round.round_id} CapitalBench round audit dataset`,
@@ -439,6 +442,10 @@ const priceColumns = [
     <div class="dashboard-title">
       <p class="eyebrow">Round audit packet</p>
       <h1>{round.round_id}</h1>
+      <div class="round-meta-row compact" aria-label="Round track">
+        <span>{benchmarkTrackLabel} track</span>
+        <span>{round.horizon}</span>
+      </div>
       <p>{round.description}</p>
     </div>
     <aside class="header-note">
