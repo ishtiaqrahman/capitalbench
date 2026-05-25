@@ -83,14 +83,16 @@ const href =
     </div>
     <a class="action-link" href={href}>{copy.cta}</a>
   </div>
-  <div class="guide-secondary">
-    <span class="metric-label">Published Columns</span>
-    <div class="column-chips">
-      {copy.columns.map((column) => <span>{column}</span>)}
+  <div class="guide-side">
+    <div class="guide-secondary">
+      <span class="metric-label">Published Columns</span>
+      <div class="column-chips">
+        {copy.columns.map((column) => <span>{column}</span>)}
+      </div>
     </div>
-  </div>
-  <div class="guide-secondary">
-    <span class="metric-label">Sort Rule</span>
-    <p>{copy.sort}</p>
+    <div class="guide-secondary">
+      <span class="metric-label">Sort Rule</span>
+      <p>{copy.sort}</p>
+    </div>
   </div>
 </section>

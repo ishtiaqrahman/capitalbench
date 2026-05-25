@@ -17,7 +17,7 @@ type ChartPoint = WeeklyPerformanceRecord & {
   days_elapsed: number;
 };
 
-const palette = ["#0f766e", "#7c3aed", "#c2410c", "#2563eb", "#be123c", "#4d7c0f", "#9333ea"];
+const palette = ["#006b5f", "#234f89", "#8a5b00", "#7c3aed", "#9a3324", "#2f8065", "#64748b"];
 const width = 780;
 const height = 330;
 const pad = { top: 24, right: 28, bottom: 42, left: 56 };
