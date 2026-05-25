@@ -21,7 +21,7 @@ import {
   type WeeklyPerformanceRecord,
   universeOptions
 } from "../../data/fallback";
-import { allocationThemeClass, formatAllocationPct, optionDisplayName } from "../../lib/allocations";
+import { allocationThemeClass, formatAllocationPct, optionDisplayName, optionShortDisplayName } from "../../lib/allocations";
 import { repoRootPath, staticRoundRecords } from "../../lib/localRoundRecords";
 import { datasetSchema } from "../../lib/seo";
 import { roundTrack, trackLabel } from "../../lib/tracks";
@@ -100,6 +100,10 @@ function outputPickLabel(output: ModelOutput): string {
   return outputAllocations(output)
     .map((item) => `${item.option_id} ${formatAllocationPct(item.allocation_pct)}`)
     .join(" / ");
+}
+
+function outputPrimaryAllocation(output: ModelOutput) {
+  return [...outputAllocations(output)].sort((a, b) => b.allocation_bps - a.allocation_bps)[0];
 }
 
 function readRoundText(...segments: string[]): string {
@@ -692,6 +696,7 @@ const priceColumns = [
       <div class="model-output-grid">
         {modelOutputs.map((output) => {
           const allocations = outputAllocations(output);
+          const primaryAllocation = outputPrimaryAllocation(output);
           return (
             <article class="model-output-card">
               <div class="model-output-head">
@@ -700,9 +705,27 @@ const priceColumns = [
                   <h3>{modelLabel(output.model_id)}</h3>
                   <p class="mono">{output.model_id}</p>
                 </div>
-                <div class="pick-pill">
-                  <span>{output.portfolio && output.portfolio.length > 0 ? "Portfolio" : "Allocation Display"}</span>
-                  <strong>{outputPickLabel(output)}</strong>
+                <div class="output-allocation-summary">
+                  <span>{allocations.length > 1 ? `${allocations.length} holdings` : "Allocation"}</span>
+                  <strong>
+                    {primaryAllocation
+                      ? optionDisplayName(primaryAllocation.option_id, roundOptionsById)
+                      : outputPickLabel(output) || "No allocation"}
+                  </strong>
+                  {allocations.length > 0 && (
+                    <div class="allocation-chip-row compact" aria-label="Portfolio holdings">
+                      {allocations.map((allocation) => (
+                        <span
+                          class="allocation-chip"
+                          title={`${optionDisplayName(allocation.option_id, roundOptionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
+                        >
+                          <span class={`allocation-dot ${allocationThemeClass(allocation.option_id)}`} aria-hidden="true"></span>
+                          <strong>{optionShortDisplayName(allocation.option_id, roundOptionsById)}</strong>
+                          <span>{formatAllocationPct(allocation.allocation_pct)}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               <div class="allocation-stack output-stack" aria-hidden="true">
@@ -710,7 +733,7 @@ const priceColumns = [
                   <span
                     class={allocationThemeClass(allocation.option_id)}
                     style={`width: ${Math.max(3, allocation.allocation_pct)}%`}
-                  title={`${optionDisplayName(allocation.option_id, roundOptionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
+                    title={`${optionDisplayName(allocation.option_id, roundOptionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
                   />
                 ))}
               </div>

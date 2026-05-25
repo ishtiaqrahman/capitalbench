@@ -1720,6 +1720,69 @@ h3 {
   height: 9px;
 }
 
+.portfolio-cell {
+  min-width: 0;
+  display: grid;
+  gap: 9px;
+}
+
+.allocation-chip-row {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.allocation-chip {
+  max-width: 100%;
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d8e0de;
+  border-radius: 999px;
+  padding: 3px 8px 3px 6px;
+  background: #ffffff;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.2;
+  box-shadow: 0 1px 0 rgb(22 32 38 / 3%);
+}
+
+.allocation-chip strong {
+  min-width: 0;
+  color: var(--ink-strong);
+  font-size: 0.76rem;
+  font-weight: 780;
+  overflow-wrap: anywhere;
+}
+
+.allocation-chip span:last-child {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-weight: 740;
+  white-space: nowrap;
+}
+
+.allocation-chip .allocation-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+}
+
+.allocation-chip-row.compact {
+  gap: 5px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+.allocation-chip-row.compact .allocation-chip {
+  min-height: 24px;
+  padding-block: 2px;
+  font-size: 0.72rem;
+}
+
 .output-stack {
   margin-bottom: 14px;
 }
@@ -3493,27 +3556,30 @@ tbody tr:hover {
   overflow-wrap: anywhere;
 }
 
-.pick-pill {
-  min-width: 116px;
-  border: 1px solid #b9ddd5;
+.output-allocation-summary {
+  width: min(100%, 340px);
+  min-width: 230px;
+  border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 10px 12px;
-  background: #eef8f5;
+  padding: 10px 11px;
+  background: #fbfcfc;
   text-align: right;
+  box-shadow: inset 3px 0 0 #d4a33f;
 }
 
-.pick-pill span {
+.output-allocation-summary > span {
   display: block;
-  color: var(--muted);
+  color: var(--muted-2);
   font-size: 0.68rem;
   font-weight: 780;
   text-transform: uppercase;
 }
 
-.pick-pill strong {
+.output-allocation-summary > strong {
   display: block;
-  margin-top: 4px;
-  color: #0e5f4c;
+  margin-top: 5px;
+  color: var(--ink-strong);
+  line-height: 1.32;
   overflow-wrap: anywhere;
 }
 
@@ -4299,12 +4365,17 @@ tbody tr:hover {
   }
 
   .artifact-card summary small,
-  .pick-pill {
+  .output-allocation-summary {
     text-align: left;
   }
 
-  .pick-pill {
+  .output-allocation-summary {
     width: 100%;
+    min-width: 0;
+  }
+
+  .allocation-chip-row.compact {
+    justify-content: flex-start;
   }
 
   .artifact-pre {

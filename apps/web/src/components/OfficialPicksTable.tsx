@@ -7,7 +7,9 @@ import {
   decisionAllocations,
   formatAllocationPct,
   optionDisplayName,
+  optionShortDisplayName,
   protocolLabel,
+  type DisplayAllocation,
   type OptionLabelMap
 } from "../lib/allocations";
 import { getSupabaseClient, hasSupabaseConfig } from "../lib/supabase";
@@ -27,6 +29,46 @@ function csvEscape(value: string | number): string {
 
 function providerClass(provider: string): string {
   return `provider-badge provider-${provider}`;
+}
+
+function AllocationPortfolioView({
+  allocations,
+  optionsById
+}: {
+  allocations: DisplayAllocation[];
+  optionsById: OptionLabelMap;
+}) {
+  if (allocations.length === 0) {
+    return <span className="muted">No allocation</span>;
+  }
+
+  return (
+    <div className="portfolio-cell">
+      <div className="allocation-stack mini" aria-hidden="true">
+        {allocations.map((allocation) => (
+          <span
+            key={allocation.option_id}
+            className={allocationThemeClass(allocation.option_id)}
+            style={{ width: `${Math.max(3, allocation.allocation_pct)}%` }}
+            title={`${optionDisplayName(allocation.option_id, optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
+          />
+        ))}
+      </div>
+      <div className="allocation-chip-row" aria-label="Portfolio holdings">
+        {allocations.map((allocation) => (
+          <span
+            key={allocation.option_id}
+            className="allocation-chip"
+            title={`${optionDisplayName(allocation.option_id, optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
+          >
+            <span className={`allocation-dot ${allocationThemeClass(allocation.option_id)}`} aria-hidden="true" />
+            <strong>{optionShortDisplayName(allocation.option_id, optionsById)}</strong>
+            <span>{formatAllocationPct(allocation.allocation_pct)}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default function OfficialPicksTable({ fallbackRows, roundId, runId, options = [] }: Props) {
@@ -148,19 +190,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId, optio
                       <span className={providerClass(row.provider)}>{providerLabel(row.provider)}</span>
                     </td>
                     <td data-label="Allocation">
-                      <div className="decision-cell">
-                        <div className="allocation-stack mini" aria-hidden="true">
-                          {allocations.map((allocation) => (
-                            <span
-                              key={allocation.option_id}
-                              className={allocationThemeClass(allocation.option_id)}
-                              style={{ width: `${Math.max(3, allocation.allocation_pct)}%` }}
-                              title={`${allocation.option_id} ${formatAllocationPct(allocation.allocation_pct)}`}
-                            />
-                          ))}
-                        </div>
-                        <strong>{allocationDisplayLabel(row, optionsById)}</strong>
-                      </div>
+                      <AllocationPortfolioView allocations={allocations} optionsById={optionsById} />
                     </td>
                     <td className="numeric" data-label="Confidence">
                       <div className="pick-cell" style={{ justifyContent: "flex-end" }}>

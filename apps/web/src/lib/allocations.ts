@@ -50,6 +50,13 @@ export function optionDisplayName(optionId: string, optionsById: OptionLabelMap 
   return option.symbol ? `${option.name || optionId} (${option.symbol})` : option.name || optionId;
 }
 
+export function optionShortDisplayName(optionId: string, optionsById: OptionLabelMap = {}): string {
+  const option = optionsById[optionId];
+  if (!option) return optionId;
+  if (option.is_cash) return option.name || optionId;
+  return option.symbol || option.name || optionId;
+}
+
 export function allocationDisplayLabel(row: SubmissionRecord, optionsById: OptionLabelMap = {}): string {
   const allocations = decisionAllocations(row);
   if (allocations.length === 0) return optionDisplayName(row.selected_option_id, optionsById);
