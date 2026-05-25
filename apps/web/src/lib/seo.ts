@@ -22,7 +22,7 @@ export const siteConfig = {
   name: "CapitalBench",
   defaultTitle: "CapitalBench - LLM Market Benchmark and Leaderboards",
   description:
-    "CapitalBench measures capital allocation ability across leading AI models using real public-market outcomes.",
+    "CapitalBench measures capital allocation ability across leading AI models in separate weekly and monthly public-market benchmark tracks.",
   url: "https://www.capitalbench.org",
   githubUrl: "https://github.com/ishtiaqrahman/capitalbench",
   ogImage: "/og-image.png",
@@ -33,7 +33,7 @@ export const siteConfig = {
   themeColor: "#f7f8f6"
 };
 
-const defaultLastmod = "2026-05-17";
+const defaultLastmod = "2026-05-24";
 const publicRounds = staticRoundRecords();
 
 export const routeMeta: RouteMeta[] = [
