@@ -24,7 +24,8 @@ import {
   allocationThemeClass,
   decisionAllocations,
   formatAllocationPct,
-  optionDisplayName
+  optionDisplayName,
+  optionShortDisplayName
 } from "../lib/allocations";
 import { dateOnly } from "../lib/format";
 import {
@@ -209,8 +210,8 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
     .slice(0, 2);
   if (allocations.length === 0) return "No allocation";
   return allocations
-    .map((allocation) => `${optionDisplayName(allocation.option_id, optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`)
-    .join(" / ");
+    .map((allocation) => `${optionShortDisplayName(allocation.option_id, optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`)
+    .join(", ");
 }
 ---
 

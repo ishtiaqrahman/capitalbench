@@ -120,7 +120,7 @@ const navItems = [
             <span class="brand-mark" aria-hidden="true"></span>
             <span>CapitalBench</span>
           </a>
-          <div class="nav-links">
+          <div class="nav-links desktop-nav">
             {
               navItems.map((item) => (
                 <a
@@ -147,6 +147,29 @@ const navItems = [
                 </a>
               ))
             }
+          </div>
+          <div class="mobile-nav-controls">
+            <a class="mobile-quick-link" href="/leaderboards/latest">Latest</a>
+            <a class="mobile-contribute" href="/contribute">Contribute</a>
+            <details class="mobile-menu">
+              <summary aria-label="Open site menu">
+                <span aria-hidden="true"></span>
+                Menu
+              </summary>
+              <div class="mobile-menu-panel">
+                {
+                  navItems.map((item) => (
+                    <a href={item.href} aria-current={item.active ? "page" : undefined}>
+                      {item.label}
+                    </a>
+                  ))
+                }
+                <a href="/leaderboards/latest-weekly">Latest Weekly</a>
+                <a href="/leaderboards/latest-monthly">Latest Monthly</a>
+                <a href="/leaderboards/cumulative-weekly">Cumulative Weekly</a>
+                <a href="/leaderboards/cumulative-monthly">Cumulative Monthly</a>
+              </div>
+            </details>
           </div>
         </nav>
       </header>

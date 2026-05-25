@@ -74,7 +74,7 @@ function AllocationPortfolioView({
 export default function OfficialPicksTable({ fallbackRows, roundId, runId, options = [] }: Props) {
   const [rows, setRows] = useState<SubmissionRecord[]>(fallbackRows);
   const [query, setQuery] = useState("");
-  const [expanded, setExpanded] = useState<string | null>(fallbackRows[0]?.model_id ?? null);
+  const [expanded, setExpanded] = useState<string | null>(null);
   const optionsById = useMemo<OptionLabelMap>(
     () => Object.fromEntries(options.map((option) => [option.option_id, option])),
     [options]
@@ -91,10 +91,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId, optio
       .eq("run_id", runId)
       .order("provider", { ascending: true })
       .then(({ data, error }) => {
-        if (!error && data) {
-          setRows(data as SubmissionRecord[]);
-          setExpanded((data as SubmissionRecord[])[0]?.model_id ?? null);
-        }
+        if (!error && data) setRows(data as SubmissionRecord[]);
       });
   }, [roundId, runId]);
 

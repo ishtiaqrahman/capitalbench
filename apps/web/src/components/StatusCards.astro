@@ -1,5 +1,6 @@
 ---
 import Badge from "./Badge.astro";
+import { dateOnly } from "../lib/format";
 
 interface Props {
   roundId: string;
@@ -22,7 +23,7 @@ const tone = status === "resolved" ? "green" : status === "pending" ? "amber" : 
   </div>
   <div class="status-item">
     <span>Decision Deadline</span>
-    <strong>{decisionDeadline}</strong>
+    <strong>{dateOnly(decisionDeadline)}</strong>
   </div>
   <div class="status-item">
     <span>Entry Date</span>

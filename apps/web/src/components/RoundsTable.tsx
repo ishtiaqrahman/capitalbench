@@ -44,17 +44,19 @@ export default function RoundsTable({ fallbackRows }: Props) {
     {
       key: "track",
       label: "Track",
-      value: (row) => trackLabel(roundTrack(row))
+      value: (row) => trackLabel(roundTrack(row)),
+      mobile: "primary"
     },
-    { key: "status", label: "Status" },
-    { key: "decision_deadline_utc", label: "Decision", value: (row) => dateOnly(row.decision_deadline_utc) },
-    { key: "horizon", label: "Horizon" },
-    { key: "exit_date", label: "Exit", value: (row) => dateOnly(row.exit_date) },
-    { key: "methodology_version", label: "Methodology" },
-    { key: "official_run_id", label: "Official Run" },
+    { key: "status", label: "Status", mobile: "secondary" },
+    { key: "decision_deadline_utc", label: "Decision", value: (row) => dateOnly(row.decision_deadline_utc), mobile: "secondary" },
+    { key: "horizon", label: "Horizon", mobile: "primary" },
+    { key: "exit_date", label: "Exit", value: (row) => dateOnly(row.exit_date), mobile: "primary" },
+    { key: "methodology_version", label: "Methodology", mobile: "hidden" },
+    { key: "official_run_id", label: "Official Run", mobile: "hidden" },
     {
       key: "audit_path",
       label: "Audit",
+      mobile: "hidden",
       value: (row) => row.audit_path,
       render: (row) => (
         <a className="small-button table-action-link" href={row.audit_path}>

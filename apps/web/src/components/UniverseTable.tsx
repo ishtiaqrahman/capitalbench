@@ -29,12 +29,12 @@ export default function UniverseTable({ fallbackRows, roundId, disableRemote = f
   }, [disableRemote, roundId]);
 
   const columns: Column<UniverseOption>[] = [
-    { key: "option_id", label: "Option ID" },
-    { key: "name", label: "Name" },
-    { key: "symbol", label: "Symbol" },
-    { key: "asset_class", label: "Asset Class" },
-    { key: "option_group", label: "Group" },
-    { key: "risk_bucket", label: "Risk" }
+    { key: "option_id", label: "Option ID", mobile: "primary" },
+    { key: "name", label: "Name", mobile: "primary" },
+    { key: "symbol", label: "Symbol", mobile: "primary" },
+    { key: "asset_class", label: "Asset Class", mobile: "hidden" },
+    { key: "option_group", label: "Group", mobile: "hidden" },
+    { key: "risk_bucket", label: "Risk", mobile: "secondary" }
   ];
 
   return (

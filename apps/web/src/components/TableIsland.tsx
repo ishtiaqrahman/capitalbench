@@ -6,6 +6,7 @@ export interface Column<T> {
   key: keyof T | string;
   label: string;
   align?: "left" | "right";
+  mobile?: "primary" | "secondary" | "hidden";
   value?: (row: T) => string | number | null | undefined;
   render?: (row: T) => ReactNode;
 }
@@ -122,10 +123,15 @@ export default function TableIsland<T extends object>({
           <tbody>
             {sortedRows.map((row, index) => (
               <tr key={String((row as Record<string, unknown>).id ?? (row as Record<string, unknown>).model_id ?? index)}>
-                {columns.map((column) => (
+                {columns.map((column, columnIndex) => (
                   <td
                     key={String(column.key)}
-                    className={column.align === "right" ? "numeric" : ""}
+                    className={[
+                      column.align === "right" ? "numeric" : "",
+                      `mobile-${column.mobile ?? (columnIndex < 3 ? "primary" : "secondary")}`
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
                     data-label={column.label}
                   >
                     {column.render ? column.render(row) : rawValue(row, column)}
