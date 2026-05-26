@@ -30,7 +30,7 @@ export const siteConfig = {
     "CapitalBench public LLM market benchmark showing frozen inputs, official allocations, and pending leaderboard status.",
   ogImageWidth: 1200,
   ogImageHeight: 630,
-  themeColor: "#f7f8f6"
+  themeColor: "#f4f6f5"
 };
 
 const defaultLastmod = "2026-05-24";

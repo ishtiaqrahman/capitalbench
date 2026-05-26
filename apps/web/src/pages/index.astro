@@ -206,8 +206,7 @@ function scoreLine(round?: RoundRecord): string {
 
 function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["optionsById"]): string {
   const allocations = decisionAllocations(submission)
-    .sort((a, b) => b.allocation_bps - a.allocation_bps)
-    .slice(0, 2);
+    .sort((a, b) => b.allocation_bps - a.allocation_bps);
   if (allocations.length === 0) return "No allocation";
   return allocations
     .map((allocation) => `${optionShortDisplayName(allocation.option_id, optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`)
@@ -343,7 +342,7 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
 
   <section class="decision-track-grid" aria-label="Latest weekly and monthly allocations">
     {trackStates.map((track) => (
-      <article class="decision-track">
+      <article class={`decision-track decision-track-${track.key}`}>
         <div class="decision-track-header">
           <div>
             <span class="panel-kicker">{track.label} decisions</span>

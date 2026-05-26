@@ -698,7 +698,7 @@ const priceColumns = [
           const allocations = outputAllocations(output);
           const primaryAllocation = outputPrimaryAllocation(output);
           return (
-            <article class="model-output-card">
+            <article class={`model-output-card model-output-${output.provider}`}>
               <div class="model-output-head">
                 <div>
                   <span class={`provider-badge provider-${output.provider}`}>{providerLabel(output.provider)}</span>
