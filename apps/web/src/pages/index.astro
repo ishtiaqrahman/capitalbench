@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ActiveExposureMap from "../components/ActiveExposureMap";
 import GitHubLogo from "../components/GitHubLogo.astro";
-import ScoreCountdown from "../components/ScoreCountdown";
 import {
   ArrowRight,
   BarChart3,
@@ -34,7 +34,7 @@ import {
   staticUniverseOptions
 } from "../lib/localRoundRecords";
 import { siteConfig } from "../lib/seo";
-import { latestRoundForTrack, roundsForTrack, type BenchmarkTrack } from "../lib/tracks";
+import { latestRoundForTrack, roundTrack, roundsForTrack, type BenchmarkTrack } from "../lib/tracks";
 
 type TrackHomeState = {
   key: BenchmarkTrack;
@@ -59,7 +59,6 @@ const latestWeeklyRound = latestRoundForTrack(roundRows, "weekly");
 const latestMonthlyRound = latestRoundForTrack(roundRows, "monthly");
 const allOfficialSubmissions = staticAllOfficialSubmissions(roundRows);
 const pendingRoundCount = roundRows.filter((round) => round.status === "pending").length;
-const initialNowIso = new Date().toISOString();
 
 function aggregateExposure(submissions: SubmissionRecord[]) {
   const totals = new Map<string, number>();
@@ -107,13 +106,26 @@ const trackStates = [
   buildTrackState("weekly", "Weekly", "One-week test", latestWeeklyRound, weeklyRounds.length),
   buildTrackState("monthly", "Monthly", "One-month test", latestMonthlyRound, monthlyRounds.length)
 ];
+const activeExposureRounds = roundRows
+  .filter((round) => round.status === "pending" && round.official_run_id)
+  .map((round) => {
+    const track = roundTrack(round);
+    return {
+      round,
+      track,
+      submissions: staticOfficialSubmissions(round.round_id, round.official_run_id),
+      options: staticUniverseOptions(round.round_id)
+    };
+  })
+  .filter((item) => (item.track === "weekly" || item.track === "monthly") && item.submissions.length > 0);
 const latestUniverseOptionCount = Math.max(0, ...trackStates.map((track) => track.options.length));
 const currentRound = latestMonthlyRound ?? latestWeeklyRound ?? roundRows[0] ?? fallbackRounds[0];
-const heroMetrics = [
-  { label: "One-week tests", value: String(weeklyRounds.length) },
-  { label: "One-month tests", value: String(monthlyRounds.length) },
-  { label: "Model portfolios", value: String(allOfficialSubmissions.length) },
-  { label: "Asset list", value: `${latestUniverseOptionCount || staticUniverseOptions(currentRound.round_id).length} assets` }
+const currentUniverseOptionCount = latestUniverseOptionCount || staticUniverseOptions(currentRound.round_id).length;
+const modelRoster = Array.from(new Map(allOfficialSubmissions.map((submission) => [submission.model_id, submission])).values())
+  .sort((a, b) => providerLabel(a.provider).localeCompare(providerLabel(b.provider)));
+const scoringWindows = [
+  { label: "Weekly", value: "One market week" },
+  { label: "Monthly", value: "One market month" }
 ];
 const exploreLinks = [
   {
@@ -203,6 +215,31 @@ function scoreLine(round?: RoundRecord): string {
   return `Scores publish after the ${dateOnly(round.exit_date)} ending close.`;
 }
 
+function shortMonthDay(value?: string): string {
+  if (!value) return "";
+  const [year, month, day] = value.slice(0, 10).split("-").map(Number);
+  if (!year || !month || !day) return dateOnly(value);
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(
+    new Date(Date.UTC(year, month - 1, day))
+  );
+}
+
+function scoreShortLine(round?: RoundRecord): string {
+  if (!round) return "No score date";
+  if (round.status === "resolved") return "Scored";
+  return `Scores after ${shortMonthDay(round.exit_date)} close`;
+}
+
+function providerLogoSrc(provider: string): string | undefined {
+  const logos: Record<string, string> = {
+    anthropic: "/labs/anthropic.svg",
+    google: "/labs/google.svg",
+    openai: "/labs/openai.svg",
+    xai: "/labs/xai.svg"
+  };
+  return logos[provider];
+}
+
 function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["optionsById"]): string {
   const allocations = decisionAllocations(submission)
     .sort((a, b) => b.allocation_bps - a.allocation_bps);
@@ -226,104 +263,137 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
         portfolios using real market prices.
       </p>
       <p class="hero-disclaimer">Research benchmark. Not financial advice.</p>
+
+      <div class="home-hero-actions" aria-label="Project resources">
+        <a class="action-link action-primary" href="/leaderboards/latest">
+          See results
+          <ArrowRight size={15} aria-hidden="true" />
+        </a>
+        <a class="action-link" href="#current-picks">Current picks</a>
+        <a class="action-link" href="#how-it-works">How it works</a>
+        <a class="action-link" href="#proof-and-data">Proof and data</a>
+      </div>
+
+      <div class="hero-proof-strip" aria-label="Benchmark proof points">
+        <span>
+          <strong>Same input</strong>
+          Frozen brief
+        </span>
+        <span>
+          <strong>Saved picks</strong>
+          Public files
+        </span>
+        <span>
+          <strong>Real prices</strong>
+          Market scoring
+        </span>
+      </div>
     </div>
 
-    <div class="home-hero-actions" aria-label="Project resources">
-      <a class="action-link action-primary" href="/leaderboards/latest">
-        See results
-        <ArrowRight size={15} aria-hidden="true" />
-      </a>
-      <a class="action-link" href="#current-picks">Current picks</a>
-      <a class="action-link" href="#how-it-works">How it works</a>
-      <a class="action-link" href="#proof-and-data">Proof and data</a>
-    </div>
-
-    <div class="home-hero-console" aria-label="Current benchmark state">
+    <div class="home-hero-console" aria-label="Benchmark snapshot">
       <div class="console-header">
         <div class="console-title">
           <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="eager" />
           <div>
-            <span>Current tests</span>
-            <strong>Weekly and monthly</strong>
+            <span>Benchmark snapshot</span>
+            <strong>Same rules for every model</strong>
           </div>
         </div>
         <span class="status-badge status-pending">Live</span>
       </div>
 
-      <div class="console-track-list">
-        {trackStates.map((track) => (
-          <div class="console-track-row">
-            <div>
-              <span>{track.label} test</span>
-              <strong>{track.round?.round_id ?? "Not started"}</strong>
-              <p>{track.round ? `${windowLabel(track.round)}; ${track.submissions.length} model portfolios` : "No test locked yet."}</p>
-            </div>
-            {track.round && (
-              <ScoreCountdown
-                client:visible
-                status={track.round.status}
-                scoreEtaUtc={track.round.score_eta_utc}
-                source={track.round.score_eta_source}
-                exitDate={track.round.exit_date}
-                label="Scores after"
-                variant="inline"
-                precision={track.key === "weekly" ? "hours" : "days"}
-                initialNowIso={initialNowIso}
-              />
-            )}
+      <div class="snapshot-body">
+        <section class="snapshot-section snapshot-models" aria-labelledby="snapshot-models-title">
+          <div class="snapshot-section-head">
+            <span id="snapshot-models-title">Models compared</span>
+            <strong>{modelRoster.length} official models</strong>
           </div>
-        ))}
-      </div>
+          <div class="snapshot-model-list" aria-label="Official model roster">
+            {modelRoster.map((submission) => (
+              <span
+                class={`snapshot-model-chip snapshot-model-${submission.provider}`}
+                aria-label={`${providerLabel(submission.provider)}: ${modelLabel(submission.model_id)}`}
+              >
+                {providerLogoSrc(submission.provider) ? (
+                  <img
+                    class="snapshot-lab-logo"
+                    src={providerLogoSrc(submission.provider)}
+                    alt={providerLabel(submission.provider)}
+                    width="92"
+                    height="24"
+                    loading="eager"
+                  />
+                ) : (
+                  <span>{providerLabel(submission.provider)}</span>
+                )}
+                <strong>{modelLabel(submission.model_id)}</strong>
+              </span>
+            ))}
+          </div>
+        </section>
 
-      <div class="console-metrics">
-        {heroMetrics.map((metric) => (
-          <div>
-            <span>{metric.label}</span>
-            <strong>{metric.value}</strong>
+        <div class="snapshot-split">
+          <section class="snapshot-section" aria-labelledby="snapshot-windows-title">
+            <div class="snapshot-section-head">
+              <span id="snapshot-windows-title">Scoring windows</span>
+              <strong>Close-to-close</strong>
+            </div>
+            <div class="snapshot-window-list">
+              {scoringWindows.map((window) => (
+                <span>
+                  <strong>{window.label}</strong>
+                  <span>{window.value}</span>
+                </span>
+              ))}
+            </div>
+          </section>
+
+          <section class="snapshot-section" aria-labelledby="snapshot-assets-title">
+            <div class="snapshot-section-head">
+              <span id="snapshot-assets-title">Asset choices</span>
+              <strong>{currentUniverseOptionCount} public-market assets</strong>
+            </div>
+            <p>ETFs, sectors, themes, commodities, bonds, cash, and benchmarks.</p>
+            <a href="/universe">View asset list</a>
+          </section>
+        </div>
+
+        <section class="snapshot-section snapshot-rounds" aria-labelledby="snapshot-rounds-title">
+          <div class="snapshot-section-head">
+            <span id="snapshot-rounds-title">Latest test windows</span>
+            <strong>{pendingRoundCount} pending score{pendingRoundCount === 1 ? "" : "s"}</strong>
           </div>
-        ))}
+          <div class="snapshot-round-list">
+            {trackStates.map((track) => (
+              <a href={track.roundHref ?? "/rounds"}>
+                <span>{track.label}</span>
+                <strong>{track.round?.round_id ?? "Not started"}</strong>
+                <em>{scoreShortLine(track.round)}</em>
+              </a>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   </section>
 
-  <section class="track-summary" aria-label="CapitalBench track summary">
-    {trackStates.map((track) => (
-      <article class={`track-card track-card-${track.key}`}>
-        <div class="track-card-head">
-          <div>
-            <span class="panel-kicker">{track.label} test</span>
-            <h2>{track.round?.round_id ?? "No round yet"}</h2>
-          </div>
-          <span class={`status-badge ${statusClass(track.round)}`}>{statusLabel(track.round)}</span>
-        </div>
-        {track.round ? (
-          <>
-            <p>{track.horizonLabel}. {scoreLine(track.round)}</p>
-            <div class="track-card-grid">
-              <span>Dates <strong>{windowLabel(track.round)}</strong></span>
-              <span>Portfolios <strong>{track.submissions.length}</strong></span>
-              <span>Asset list <strong>{track.options.length} assets</strong></span>
-              <span>Run id <strong>{track.round.official_run_id}</strong></span>
-            </div>
-          </>
-        ) : (
-          <p>No {track.label.toLowerCase()} test is published yet.</p>
-        )}
-        <div class="track-card-actions">
-          <a class="small-button" href={track.latestHref}>Results</a>
-          <a class="small-button" href={track.cumulativeHref}>Overall</a>
-          {track.roundHref && <a class="small-button" href={track.roundHref}>Proof files</a>}
-        </div>
-      </article>
-    ))}
+  <section class="home-section-heading" aria-labelledby="active-exposure-title">
+    <span class="panel-kicker">Active exposure</span>
+    <h2 id="active-exposure-title">Where Active Model Portfolios Are Invested</h2>
+    <p>
+      This counts only tests still waiting for final prices. Completed tests are excluded, so the view shows where open
+      model capital is currently allocated.
+    </p>
   </section>
 
+  <ActiveExposureMap client:visible rounds={activeExposureRounds} />
+
   <section class="home-section-heading" id="current-picks" aria-labelledby="latest-decisions-title">
-    <span class="panel-kicker">Model portfolios</span>
-    <h2 id="latest-decisions-title">What The Models Picked</h2>
+    <span class="panel-kicker">Latest model portfolios</span>
+    <h2 id="latest-decisions-title">What The Models Picked In The Latest Tests</h2>
     <p>
-      These are the portfolios each model locked in for the active weekly and monthly tests. Scores appear after ending
-      prices are available.
+      These are the portfolios each model locked in for the most recent weekly and monthly tests only. Older tests remain
+      available on the round pages.
     </p>
   </section>
 
@@ -438,6 +508,47 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
         <strong>Monthly only</strong>
       </a>
     </div>
+  </section>
+
+  <section class="home-section-heading track-summary-heading" aria-labelledby="current-tests-title">
+    <span class="panel-kicker">Current test windows</span>
+    <h2 id="current-tests-title">Latest Weekly And Monthly Tests</h2>
+    <p>
+      These cards summarize the newest open or recently scored tests for each track, with direct links to results and
+      proof files.
+    </p>
+  </section>
+
+  <section class="track-summary" aria-label="Latest weekly and monthly tests">
+    {trackStates.map((track) => (
+      <article class={`track-card track-card-${track.key}`}>
+        <div class="track-card-head">
+          <div>
+            <span class="panel-kicker">{track.label} test</span>
+            <h3>{track.round?.round_id ?? "No round yet"}</h3>
+          </div>
+          <span class={`status-badge ${statusClass(track.round)}`}>{statusLabel(track.round)}</span>
+        </div>
+        {track.round ? (
+          <>
+            <p>{track.horizonLabel}. {scoreLine(track.round)}</p>
+            <div class="track-card-grid">
+              <span>Dates <strong>{windowLabel(track.round)}</strong></span>
+              <span>Portfolios <strong>{track.submissions.length}</strong></span>
+              <span>Asset list <strong>{track.options.length} assets</strong></span>
+              <span>Run id <strong>{track.round.official_run_id}</strong></span>
+            </div>
+          </>
+        ) : (
+          <p>No {track.label.toLowerCase()} test is published yet.</p>
+        )}
+        <div class="track-card-actions">
+          <a class="small-button" href={track.latestHref}>Results</a>
+          <a class="small-button" href={track.cumulativeHref}>Overall</a>
+          {track.roundHref && <a class="small-button" href={track.roundHref}>Proof files</a>}
+        </div>
+      </article>
+    ))}
   </section>
 
   <section class="timeline-lanes" aria-labelledby="track-timeline-title">

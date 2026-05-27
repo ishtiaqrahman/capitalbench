@@ -27,6 +27,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-27-active-exposure-homepage",
+    date: "2026-05-27",
+    title: "Homepage adds active allocation map and clearer benchmark snapshot",
+    category: "Site",
+    status: "published",
+    summary:
+      "The landing page now shows where active model portfolios are invested and explains the benchmark setup more directly.",
+    details: [
+      "A new active allocation map counts only pending weekly and monthly tests, excluding completed rounds from current exposure totals.",
+      "The hero snapshot now lists the official model labs, scoring windows, asset choices, and latest pending weekly/monthly tests.",
+      "Model lab logos were added to the hero snapshot, including icon-plus-wordmark marks for OpenAI and Anthropic.",
+      "Homepage layout spacing was tightened so hero actions, proof points, active allocations, latest picks, and track status sections read in a clearer order."
+    ],
+    links: [
+      { label: "Homepage", href: "/" },
+      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
+      { label: "Latest monthly", href: "/leaderboards/latest-monthly" }
+    ]
+  },
+  {
     id: "2026-05-26-plain-language-scoreboard",
     date: "2026-05-26",
     title: "Landing page reframed as a plain-language AI market picks scoreboard",
