@@ -262,6 +262,46 @@ def test_prompt_rendering_does_not_duplicate_embedded_universe_performance(tmp_p
     assert "| SP500 | 2.00% |" not in prompt
 
 
+def test_prompt_rendering_does_not_duplicate_numbered_universe_performance_section(tmp_path: Path) -> None:
+    round_path = tmp_path / "round"
+    round_path.mkdir()
+    (round_path / "prompt.md").write_text("Choose one option.", encoding="utf-8")
+    (round_path / "briefing.md").write_text(
+        "Briefing.\n\n## 2. Full-Universe Trailing Returns\n\n| option_id | return_7d |\n| --- | --- |\n| SP500 | 1.00% |\n",
+        encoding="utf-8",
+    )
+    (round_path / "manifest.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "round_id": "test-round",
+                "title": "Test Round",
+                "decision_date": "2026-01-01",
+                "decision_deadline": "2026-01-01T20:00:00Z",
+                "horizon": "one month",
+                "entry_rule": "Use entry prices.",
+                "exit_rule": "Use exit prices.",
+                "entry_date": "2026-01-02",
+                "exit_date": "2026-02-02",
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    _write_small_universe(round_path / "options.yaml")
+    market_data_dir = round_path / "market_data"
+    market_data_dir.mkdir()
+    (market_data_dir / "universe_trailing_returns.md").write_text(
+        "# Full-Universe Trailing Returns\n\n| option_id | return_7d |\n| --- | --- |\n| SP500 | 2.00% |\n",
+        encoding="utf-8",
+    )
+
+    prompt = build_prompt(round_path)
+
+    assert prompt.count("Full-Universe Trailing Returns") == 1
+    assert "| SP500 | 1.00% |" in prompt
+    assert "| SP500 | 2.00% |" not in prompt
+
+
 def test_validate_universe_fails_clearly_when_tiingo_key_missing(tmp_path: Path, monkeypatch) -> None:
     options_path = _write_small_universe(tmp_path / "options.yaml")
     monkeypatch.delenv("TIINGO_API_KEY", raising=False)

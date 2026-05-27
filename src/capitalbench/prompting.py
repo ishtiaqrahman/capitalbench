@@ -90,7 +90,7 @@ def _universe_performance_section(round_path: Path) -> str | None:
 
 
 def _briefing_contains_universe_performance(briefing: str) -> bool:
-    return "# Full-Universe Trailing Returns" in briefing
+    return "Full-Universe Trailing Returns" in briefing
 
 
 def render_options_for_prompt(options: list[MarketOption]) -> str:
