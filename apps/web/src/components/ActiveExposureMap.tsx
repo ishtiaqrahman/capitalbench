@@ -4,6 +4,7 @@ import { modelLabel, providerLabel, type RoundRecord, type SubmissionRecord, typ
 import { decisionAllocations, optionDisplayName, optionShortDisplayName, type OptionLabelMap } from "../lib/allocations";
 
 type ActiveTrack = "all" | "weekly" | "monthly";
+type ActiveView = "asset" | "model";
 type RoundTrack = "weekly" | "monthly" | "other";
 
 type ActiveExposureRound = {
@@ -42,6 +43,27 @@ type AssetExposure = {
   trackBps: Record<"weekly" | "monthly", number>;
 };
 
+type ModelAssetExposure = {
+  optionId: string;
+  exposurePct: number;
+  totalBps: number;
+  group: ExposureGroup;
+};
+
+type ModelExposure = {
+  modelId: string;
+  provider: string;
+  portfolioCount: number;
+  portfolioKeys: Set<string>;
+  roundIds: Set<string>;
+  trackCounts: Record<"weekly" | "monthly", number>;
+  assets: ModelAssetExposure[];
+  groups: Array<{ group: ExposureGroup; exposurePct: number }>;
+  topAsset?: ModelAssetExposure;
+  topGroup?: { group: ExposureGroup; exposurePct: number };
+  concentrationScore: number;
+};
+
 interface Props {
   rounds: ActiveExposureRound[];
 }
@@ -60,8 +82,13 @@ const TRACK_OPTIONS: Array<{ key: ActiveTrack; label: string }> = [
   { key: "weekly", label: "Weekly" },
   { key: "monthly", label: "Monthly" }
 ];
+const VIEW_OPTIONS: Array<{ key: ActiveView; label: string }> = [
+  { key: "asset", label: "By Asset" },
+  { key: "model", label: "By Model" }
+];
 const HOLDER_PREVIEW_LIMIT = 5;
 const TOP_ASSET_LIMIT = 10;
+const MODEL_HOLDING_LIMIT = 4;
 
 function formatPct(value: number): string {
   if (!Number.isFinite(value)) return "0%";
@@ -195,6 +222,138 @@ function buildExposure(rounds: ActiveExposureRound[], selectedTrack: ActiveTrack
   };
 }
 
+function buildModelExposure(rounds: ActiveExposureRound[], selectedTrack: ActiveTrack) {
+  const visibleRounds = rounds.filter((round) => visibleTrack(round.track) && (selectedTrack === "all" || round.track === selectedTrack));
+  const optionsById = optionMaps(visibleRounds);
+  const modelRows = new Map<
+    string,
+    {
+      modelId: string;
+      provider: string;
+      portfolioKeys: Set<string>;
+      roundIds: Set<string>;
+      trackCounts: Record<"weekly" | "monthly", number>;
+      assetBps: Map<string, number>;
+    }
+  >();
+
+  for (const round of visibleRounds) {
+    if (!visibleTrack(round.track)) continue;
+    for (const submission of round.submissions) {
+      const modelKey = `${submission.provider}:${submission.model_id}`;
+      const existing =
+        modelRows.get(modelKey) ??
+        ({
+          modelId: submission.model_id,
+          provider: submission.provider,
+          portfolioKeys: new Set<string>(),
+          roundIds: new Set<string>(),
+          trackCounts: { weekly: 0, monthly: 0 },
+          assetBps: new Map<string, number>()
+        } satisfies {
+          modelId: string;
+          provider: string;
+          portfolioKeys: Set<string>;
+          roundIds: Set<string>;
+          trackCounts: Record<"weekly" | "monthly", number>;
+          assetBps: Map<string, number>;
+        });
+
+      const portfolioKey = `${round.round.round_id}:${submission.run_id}:${submission.model_id}`;
+      existing.portfolioKeys.add(portfolioKey);
+      existing.roundIds.add(round.round.round_id);
+      existing.trackCounts[round.track] += 1;
+
+      const perAsset = new Map<string, number>();
+      for (const allocation of decisionAllocations(submission)) {
+        if (!allocation.option_id || allocation.allocation_bps <= 0) continue;
+        perAsset.set(allocation.option_id, (perAsset.get(allocation.option_id) ?? 0) + allocation.allocation_bps);
+      }
+      for (const [optionId, allocationBps] of perAsset.entries()) {
+        existing.assetBps.set(optionId, (existing.assetBps.get(optionId) ?? 0) + allocationBps);
+      }
+
+      modelRows.set(modelKey, existing);
+    }
+  }
+
+  const models: ModelExposure[] = Array.from(modelRows.values())
+    .map((model) => {
+      const portfolioCount = model.portfolioKeys.size;
+      const denominatorBps = portfolioCount * 10_000;
+      const assets = Array.from(model.assetBps.entries())
+        .map(([optionId, totalBps]) => {
+          const option = optionsById[optionId] as UniverseOption | undefined;
+          return {
+            optionId,
+            totalBps,
+            exposurePct: denominatorBps > 0 ? (totalBps / denominatorBps) * 100 : 0,
+            group: groupForOption(optionId, option)
+          };
+        })
+        .sort((a, b) => b.exposurePct - a.exposurePct);
+      const groups = GROUP_ORDER.map((group) => ({
+        group,
+        exposurePct: assets.filter((asset) => asset.group === group).reduce((total, asset) => total + asset.exposurePct, 0)
+      }))
+        .filter((group) => group.exposurePct > 0)
+        .sort((a, b) => b.exposurePct - a.exposurePct);
+      return {
+        modelId: model.modelId,
+        provider: model.provider,
+        portfolioCount,
+        portfolioKeys: model.portfolioKeys,
+        roundIds: model.roundIds,
+        trackCounts: model.trackCounts,
+        assets,
+        groups,
+        topAsset: assets[0],
+        topGroup: groups[0],
+        concentrationScore: assets.reduce((total, asset) => total + (asset.exposurePct / 100) ** 2, 0)
+      };
+    })
+    .sort(
+      (a, b) =>
+        providerLabel(a.provider).localeCompare(providerLabel(b.provider)) ||
+        modelLabel(a.modelId).localeCompare(modelLabel(b.modelId))
+    );
+
+  const sharedTopAssets = new Map<string, { count: number; totalPct: number }>();
+  for (const model of models) {
+    if (!model.topAsset) continue;
+    const current = sharedTopAssets.get(model.topAsset.optionId) ?? { count: 0, totalPct: 0 };
+    current.count += 1;
+    current.totalPct += model.topAsset.exposurePct;
+    sharedTopAssets.set(model.topAsset.optionId, current);
+  }
+  const sharedTopHolding = Array.from(sharedTopAssets.entries())
+    .map(([optionId, value]) => ({
+      optionId,
+      count: value.count,
+      averagePct: value.count > 0 ? value.totalPct / value.count : 0
+    }))
+    .sort((a, b) => b.count - a.count || b.averagePct - a.averagePct)[0];
+  const mostConcentrated = [...models].sort((a, b) => b.concentrationScore - a.concentrationScore)[0];
+  const mostDiversified = [...models].filter((model) => model.assets.length > 0).sort((a, b) => a.concentrationScore - b.concentrationScore)[0];
+
+  return {
+    visibleRounds,
+    optionsById,
+    models,
+    sharedTopHolding,
+    mostConcentrated,
+    mostDiversified
+  };
+}
+
+function topModelSegments(model: ModelExposure) {
+  const topAssets = model.assets.slice(0, MODEL_HOLDING_LIMIT);
+  const otherPct = model.assets.slice(MODEL_HOLDING_LIMIT).reduce((total, asset) => total + asset.exposurePct, 0);
+  return otherPct > 0
+    ? [...topAssets, { optionId: "OTHER", exposurePct: otherPct, totalBps: 0, group: "Other" as ExposureGroup }]
+    : topAssets;
+}
+
 function trackLabel(track: ActiveTrack): string {
   if (track === "weekly") return "Weekly";
   if (track === "monthly") return "Monthly";
@@ -203,19 +362,24 @@ function trackLabel(track: ActiveTrack): string {
 
 export default function ActiveExposureMap({ rounds }: Props) {
   const [track, setTrack] = useState<ActiveTrack>("all");
+  const [view, setView] = useState<ActiveView>("asset");
   const [selectedGroup, setSelectedGroup] = useState<ExposureGroup | "all">("all");
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [showAllHolders, setShowAllHolders] = useState(false);
+  const [expandedModelKey, setExpandedModelKey] = useState<string | null>(null);
   const summary = useMemo(() => buildExposure(rounds, track), [rounds, track]);
+  const modelSummary = useMemo(() => buildModelExposure(rounds, track), [rounds, track]);
   const selectedAsset = summary.assets.find((asset) => asset.optionId === selectedOptionId) ?? summary.assets[0];
   const leadingGroup = [...summary.groups].sort((a, b) => b.exposurePct - a.exposurePct)[0];
   const largestExposure = summary.assets[0];
+  const sharedTopHolding = modelSummary.sharedTopHolding;
   const focusedAssets = selectedGroup === "all" ? summary.assets : summary.assets.filter((asset) => asset.group === selectedGroup);
   const rankedAssets = focusedAssets.slice(0, TOP_ASSET_LIMIT);
   const remainingAssets = focusedAssets.slice(TOP_ASSET_LIMIT);
   const remainingExposure = remainingAssets.reduce((total, asset) => total + asset.exposurePct, 0);
   const holderRows = selectedAsset ? [...selectedAsset.contributions].sort((a, b) => b.allocationBps - a.allocationBps) : [];
   const visibleHolderRows = showAllHolders ? holderRows : holderRows.slice(0, HOLDER_PREVIEW_LIMIT);
+  const modelPortfolioScope = track === "all" ? "open weekly and monthly" : `open ${track}`;
 
   useEffect(() => {
     if (summary.assets.length === 0) {
@@ -229,7 +393,11 @@ export default function ActiveExposureMap({ rounds }: Props) {
 
   useEffect(() => {
     setShowAllHolders(false);
-  }, [selectedOptionId, track]);
+  }, [selectedOptionId, track, view]);
+
+  useEffect(() => {
+    setExpandedModelKey(null);
+  }, [track, view]);
 
   if (rounds.length === 0) {
     return (
@@ -245,32 +413,57 @@ export default function ActiveExposureMap({ rounds }: Props) {
       <div className="active-exposure-hero">
         <div className="active-exposure-hero-copy">
           <div className="active-exposure-toolbar">
-            <div className="active-exposure-tabs" aria-label="Filter active exposure by track">
-              {TRACK_OPTIONS.map((option) => (
-                <button
-                  key={option.key}
-                  className={track === option.key ? "is-active" : ""}
-                  type="button"
-                  onClick={() => {
-                    setTrack(option.key);
-                    setSelectedGroup("all");
-                  }}
-                  aria-pressed={track === option.key}
-                >
-                  {option.label}
-                </button>
-              ))}
+            <div className="active-exposure-control-cluster">
+              <div className="active-exposure-control">
+                <span>Scope</span>
+                <div className="active-exposure-tabs" aria-label="Filter active exposure by track">
+                  {TRACK_OPTIONS.map((option) => (
+                    <button
+                      key={option.key}
+                      className={track === option.key ? "is-active" : ""}
+                      type="button"
+                      onClick={() => {
+                        setTrack(option.key);
+                        setSelectedGroup("all");
+                      }}
+                      aria-pressed={track === option.key}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="active-exposure-control">
+                <span>View</span>
+                <div className="active-exposure-tabs active-exposure-view-tabs" aria-label="Choose active exposure view">
+                  {VIEW_OPTIONS.map((option) => (
+                    <button
+                      key={option.key}
+                      className={view === option.key ? "is-active" : ""}
+                      type="button"
+                      onClick={() => setView(option.key)}
+                      aria-pressed={view === option.key}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
             <span>{trackLabel(track)} portfolios only</span>
           </div>
           <span className="panel-kicker">Active capital map</span>
           <h3>
-            {largestExposure && leadingGroup
+            {view === "model"
+              ? "Where each model's open portfolios are invested."
+              : largestExposure && leadingGroup
               ? `${optionDisplayName(largestExposure.optionId, summary.optionsById)} is the largest active allocation.`
               : "No active model capital is allocated yet."}
           </h3>
           <p>
-            {largestExposure && leadingGroup
+            {view === "model"
+              ? `Each row averages that model's ${modelPortfolioScope} portfolios into one live allocation. Completed tests are excluded.`
+              : largestExposure && leadingGroup
               ? `${formatPct(largestExposure.exposurePct)} is allocated to ${optionDisplayName(
                   largestExposure.optionId,
                   summary.optionsById
@@ -280,31 +473,69 @@ export default function ActiveExposureMap({ rounds }: Props) {
         </div>
 
         <div className="active-exposure-stat-grid" aria-label="Active exposure summary">
-          <div>
-            <span>Largest asset</span>
-            <strong>{largestExposure ? optionShortDisplayName(largestExposure.optionId, summary.optionsById) : "None"}</strong>
-            <small>{largestExposure ? formatPct(largestExposure.exposurePct) : "0%"}</small>
-          </div>
-          <div>
-            <span>Lead category</span>
-            <strong>{leadingGroup?.group ?? "None"}</strong>
-            <small>{leadingGroup ? formatPct(leadingGroup.exposurePct) : "0%"}</small>
-          </div>
-          <div>
-            <span>Active tests</span>
-            <strong>{summary.visibleRounds.length}</strong>
-            <small>{trackLabel(track)}</small>
-          </div>
-          <div>
-            <span>Portfolios</span>
-            <strong>{summary.portfolioCount}</strong>
-            <small>{summary.assets.length} assets held</small>
-          </div>
+          {view === "asset" ? (
+            <>
+              <div>
+                <span>Largest asset</span>
+                <strong>{largestExposure ? optionShortDisplayName(largestExposure.optionId, summary.optionsById) : "None"}</strong>
+                <small>{largestExposure ? formatPct(largestExposure.exposurePct) : "0%"}</small>
+              </div>
+              <div>
+                <span>Lead category</span>
+                <strong>{leadingGroup?.group ?? "None"}</strong>
+                <small>{leadingGroup ? formatPct(leadingGroup.exposurePct) : "0%"}</small>
+              </div>
+              <div>
+                <span>Active tests</span>
+                <strong>{summary.visibleRounds.length}</strong>
+                <small>{trackLabel(track)}</small>
+              </div>
+              <div>
+                <span>Portfolios</span>
+                <strong>{summary.portfolioCount}</strong>
+                <small>{summary.assets.length} assets held</small>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <span>Models</span>
+                <strong>{modelSummary.models.length}</strong>
+                <small>{trackLabel(track)}</small>
+              </div>
+              <div>
+                <span>Shared top holding</span>
+                <strong>{sharedTopHolding ? optionShortDisplayName(sharedTopHolding.optionId, modelSummary.optionsById) : "None"}</strong>
+                <small>
+                  {sharedTopHolding ? `${sharedTopHolding.count} of ${modelSummary.models.length} models` : "No common top asset"}
+                </small>
+              </div>
+              <div>
+                <span>Most concentrated</span>
+                <strong>{modelSummary.mostConcentrated ? modelLabel(modelSummary.mostConcentrated.modelId) : "None"}</strong>
+                <small>
+                  {modelSummary.mostConcentrated?.topAsset
+                    ? `${optionShortDisplayName(
+                        modelSummary.mostConcentrated.topAsset.optionId,
+                        modelSummary.optionsById
+                      )} ${formatPct(modelSummary.mostConcentrated.topAsset.exposurePct)}`
+                    : "No active holdings"}
+                </small>
+              </div>
+              <div>
+                <span>Most diversified</span>
+                <strong>{modelSummary.mostDiversified ? modelLabel(modelSummary.mostDiversified.modelId) : "None"}</strong>
+                <small>{modelSummary.mostDiversified ? `${modelSummary.mostDiversified.assets.length} assets held` : "No active holdings"}</small>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       {summary.portfolioCount > 0 ? (
         <div className="active-exposure-content">
+          {view === "asset" ? (
+            <>
           <section className="active-exposure-ribbon-panel" aria-labelledby="active-category-title">
             <div className="active-exposure-panel-head">
               <div>
@@ -449,6 +680,153 @@ export default function ActiveExposureMap({ rounds }: Props) {
               )}
             </aside>
           </div>
+            </>
+          ) : (
+            <section className="active-model-panel" aria-labelledby="active-model-title">
+              <div className="active-exposure-panel-head active-model-panel-head">
+                <div>
+                  <span className="metric-label">Live model allocation profiles</span>
+                  <strong id="active-model-title">How each model is positioned across active tests</strong>
+                  <p>Each model's {modelPortfolioScope} portfolios are averaged into one profile. Completed tests are not counted.</p>
+                </div>
+                <span>{modelSummary.models.length} models</span>
+              </div>
+
+              <div className="active-model-insights" aria-label="Model allocation highlights">
+                <div>
+                  <span>Most common top asset</span>
+                  <strong>{sharedTopHolding ? optionShortDisplayName(sharedTopHolding.optionId, modelSummary.optionsById) : "None"}</strong>
+                  <small>
+                    {sharedTopHolding ? `${sharedTopHolding.count} models lead with it` : "No active top holding"}
+                  </small>
+                </div>
+                <div>
+                  <span>Highest concentration</span>
+                  <strong>{modelSummary.mostConcentrated ? modelLabel(modelSummary.mostConcentrated.modelId) : "None"}</strong>
+                  <small>
+                    {modelSummary.mostConcentrated?.topAsset
+                      ? `${formatPct(modelSummary.mostConcentrated.topAsset.exposurePct)} in ${optionShortDisplayName(
+                          modelSummary.mostConcentrated.topAsset.optionId,
+                          modelSummary.optionsById
+                        )}`
+                      : "No active holdings"}
+                  </small>
+                </div>
+                <div>
+                  <span>Broadest allocation</span>
+                  <strong>{modelSummary.mostDiversified ? modelLabel(modelSummary.mostDiversified.modelId) : "None"}</strong>
+                  <small>{modelSummary.mostDiversified ? `${modelSummary.mostDiversified.assets.length} assets held` : "No active holdings"}</small>
+                </div>
+              </div>
+
+              <div className="active-model-grid">
+                {modelSummary.models.map((model) => {
+                  const modelKey = `${model.provider}:${model.modelId}`;
+                  const segments = topModelSegments(model);
+                  const expanded = expandedModelKey === modelKey;
+                  return (
+                    <article className={`active-model-card ${expanded ? "is-expanded" : ""}`} key={modelKey}>
+                      <div className="active-model-card-head">
+                        <div>
+                          <span>{providerLabel(model.provider)}</span>
+                          <strong>{modelLabel(model.modelId)}</strong>
+                        </div>
+                        <span>{model.portfolioCount} active</span>
+                      </div>
+
+                      <div className="active-model-meta">
+                        <div>
+                          <span>Top category</span>
+                          <strong>{model.topGroup ? `${model.topGroup.group} ${formatPct(model.topGroup.exposurePct)}` : "None"}</strong>
+                        </div>
+                        <div>
+                          <span>Largest holding</span>
+                          <strong>
+                            {model.topAsset
+                              ? `${optionShortDisplayName(model.topAsset.optionId, modelSummary.optionsById)} ${formatPct(model.topAsset.exposurePct)}`
+                              : "None"}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div className="active-model-stack" aria-label={`${modelLabel(model.modelId)} live aggregate allocation`}>
+                        {segments.map((segment) => (
+                          <span
+                            key={segment.optionId}
+                            className={`exposure-${groupClass(segment.group)}`}
+                            style={{ width: `${Math.max(segment.exposurePct, 2)}%` }}
+                            title={`${
+                              segment.optionId === "OTHER"
+                                ? "Other holdings"
+                                : optionDisplayName(segment.optionId, modelSummary.optionsById)
+                            }: ${formatPct(segment.exposurePct)}`}
+                          />
+                        ))}
+                      </div>
+
+                      <div className="active-model-top-list" aria-label={`${modelLabel(model.modelId)} largest active holdings`}>
+                        {segments.slice(0, 4).map((segment) => (
+                          <div key={segment.optionId}>
+                            <span className={`active-exposure-dot exposure-${groupClass(segment.group)}`} aria-hidden="true" />
+                            <span>{segment.optionId === "OTHER" ? "Other holdings" : optionDisplayName(segment.optionId, modelSummary.optionsById)}</span>
+                            <strong>{formatPct(segment.exposurePct)}</strong>
+                          </div>
+                        ))}
+                      </div>
+
+                      <button
+                        className="active-model-toggle"
+                        type="button"
+                        onClick={() => setExpandedModelKey(expanded ? null : modelKey)}
+                        aria-expanded={expanded}
+                      >
+                        {expanded ? "Hide allocation details" : "Show allocation details"}
+                        <ChevronDown size={14} aria-hidden="true" />
+                      </button>
+
+                      {expanded && (
+                        <div className="active-model-details">
+                          <div className="active-model-track-split">
+                            <div>
+                              <span>Weekly portfolios</span>
+                              <strong>{model.trackCounts.weekly}</strong>
+                            </div>
+                            <div>
+                              <span>Monthly portfolios</span>
+                              <strong>{model.trackCounts.monthly}</strong>
+                            </div>
+                          </div>
+
+                          <div className="active-model-rounds">
+                            <span>Included rounds</span>
+                            <div>
+                              {Array.from(model.roundIds).map((roundId) => (
+                                <a href={`/rounds/${roundId}/`} key={roundId}>
+                                  {roundId}
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="active-model-allocation-list">
+                            {model.assets.map((asset) => (
+                              <div key={asset.optionId}>
+                                <span>
+                                  {optionDisplayName(asset.optionId, modelSummary.optionsById)}
+                                  <small>{asset.group}</small>
+                                </span>
+                                <strong>{formatPct(asset.exposurePct)}</strong>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          )}
         </div>
       ) : (
         <div className="active-exposure-empty">
