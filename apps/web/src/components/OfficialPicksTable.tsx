@@ -116,7 +116,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId, optio
   }, [optionsById, query, rows]);
 
   function exportCsv() {
-    const header = ["Model", "Provider", "Primary option", "Allocations", "Confidence", "Protocol", "Rationale", "Key risks"].join(",");
+    const header = ["Model", "Provider", "Primary pick", "Portfolio", "Confidence", "Protocol", "Rationale", "Key risks"].join(",");
     const body = filteredRows
       .map((row) =>
         [
@@ -137,21 +137,21 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId, optio
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "capitalbench-official-allocations.csv";
+    anchor.download = "capitalbench-model-portfolios.csv";
     anchor.click();
     URL.revokeObjectURL(url);
   }
 
   return (
-    <div className="picks-shell" aria-label="Official one-shot allocations">
+    <div className="picks-shell" aria-label="Model portfolios">
       <div className="table-toolbar">
         <label className="search-box">
           <Search size={16} aria-hidden="true" />
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search allocations"
-            aria-label="Search official allocations"
+            placeholder="Search portfolios"
+            aria-label="Search model portfolios"
           />
         </label>
         <button className="small-button" type="button" onClick={exportCsv}>
@@ -165,7 +165,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId, optio
             <tr>
               <th>Model</th>
               <th>Provider</th>
-              <th>Allocation</th>
+              <th>Portfolio</th>
               <th className="numeric">Confidence</th>
               <th>Protocol</th>
               <th aria-label="Details"></th>
@@ -186,7 +186,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId, optio
                     <td data-label="Provider">
                       <span className={providerClass(row.provider)}>{providerLabel(row.provider)}</span>
                     </td>
-                    <td data-label="Allocation">
+                    <td data-label="Portfolio">
                       <AllocationPortfolioView allocations={allocations} optionsById={optionsById} />
                     </td>
                     <td className="numeric" data-label="Confidence">
@@ -219,7 +219,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId, optio
                           </div>
                           {allocations.length > 0 && (
                             <div>
-                              <span className="metric-label">Allocations</span>
+                              <span className="metric-label">Portfolio</span>
                               <ul>
                                 {allocations.map((allocation) => {
                                   return (
@@ -251,7 +251,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId, optio
           </tbody>
         </table>
       </div>
-      {filteredRows.length === 0 && <p className="empty-state">No official allocations match the current filter.</p>}
+      {filteredRows.length === 0 && <p className="empty-state">No model portfolios match the current filter.</p>}
     </div>
   );
 }

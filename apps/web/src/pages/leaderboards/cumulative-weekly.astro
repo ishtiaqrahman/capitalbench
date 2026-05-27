@@ -10,13 +10,13 @@ const slot = cumulativeSlotForTrack("weekly");
 ---
 
 <BaseLayout
-  title="Weekly Cumulative CapitalBench Leaderboard"
-  description="Cumulative CapitalBench results for one-week benchmark rounds only."
+  title="Overall Weekly CapitalBench Results"
+  description="Overall CapitalBench results for completed one-week market tests only."
 >
   <PageHeader
-    eyebrow="Weekly track"
-    title="Weekly Cumulative Leaderboards"
-    summary="Weekly cumulative results include only one-week rounds. Monthly rounds are excluded from these tables."
+    eyebrow="One-week tests"
+    title="Overall Weekly Results"
+    summary="Only completed one-week tests are included here. Monthly tests are scored separately."
   />
   <section class="section">
     <PendingLeaderboardGuide kind="official" />
@@ -25,8 +25,8 @@ const slot = cumulativeSlotForTrack("weekly");
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">Weekly official</span>
-          <h2>Cumulative Official</h2>
+          <span class="panel-kicker">Weekly public picks</span>
+          <h2>Overall Results</h2>
         </div>
       </div>
       <LeaderboardTable client:visible fallbackRows={cumulativeOfficialLeaderboard} kind="official" slot={slot} />
@@ -36,8 +36,8 @@ const slot = cumulativeSlotForTrack("weekly");
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">Weekly stability</span>
-          <h2>Cumulative Stability</h2>
+          <span class="panel-kicker">Weekly consistency</span>
+          <h2>Consistency Tests</h2>
         </div>
       </div>
       <LeaderboardTable client:visible fallbackRows={cumulativeStabilityLeaderboard} kind="stability" slot={slot} />

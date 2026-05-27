@@ -5,91 +5,88 @@ import PageHeader from "../components/PageHeader.astro";
 
 <BaseLayout
   title="CapitalBench Scoring"
-  description="Definitions for CapitalBench official scores, selected-option and portfolio returns, alpha versus S&P 500, regret, cash comparison, and stability metrics."
+  description="How CapitalBench compares AI model portfolio returns with the S&P 500 in weekly and monthly tests."
 >
   <PageHeader
     eyebrow="Scoring"
-    title="Official Metrics"
-    summary="CapitalBench reports simple realized-return metrics for a one-month decision. The benchmark output is research data, not investment advice."
+    title="How Scores Work"
+    summary="Each model's portfolio return is compared with the S&P 500 over the same one-week or one-month test."
   />
   <section class="section doc-layout">
     <article class="doc-body">
-      <h2>Official Round</h2>
+      <h2>Public Score</h2>
       <p>
-        The official score is the model's decision return minus the S&amp;P 500 return over the round horizon. Each
-        model has one official submission for a round, and only that one-shot submission is eligible for the official
-        leaderboard.
+        The public score is the model portfolio return minus the S&amp;P 500 return over the same test period. Each
+        model gets one saved portfolio for a test, and that portfolio is what appears on the public scoreboard.
       </p>
       <ul>
-        <li>Single-pick return: selected option exit price divided by entry price, minus one.</li>
+        <li>Single-pick return: selected option ending price divided by starting price, minus one.</li>
         <li>Portfolio return: weighted sum of holding returns, using the submitted allocation percentages.</li>
-        <li>Alpha versus S&P 500: decision return minus S&P 500 return.</li>
-        <li>Regret: best priced option return minus decision return, when full-universe prices exist.</li>
-        <li>Cash comparison: whether the decision return beats a cash return.</li>
+        <li>Return versus S&P 500: portfolio return minus S&P 500 return.</li>
+        <li>Regret: best available asset return minus the model's return, when full asset-list prices exist.</li>
+        <li>Cash comparison: whether the model's return beats a cash return.</li>
       </ul>
 
       <h2>Price Inputs</h2>
       <p>
-        Entry and exit prices come from the round manifest rules. Entry prices may be published while a round is
-        pending. Exit prices and realized returns are withheld until the exit date has resolved and the scoring command
-        has produced the official result artifacts.
+        Starting and ending prices come from the test rules. Starting prices may be published while a test is pending.
+        Ending prices and final returns are withheld until the test period is over and the scoring job has produced the
+        result files.
       </p>
       <div class="formula-grid">
         <div>
-          <span>Selected return</span>
-          <code>(exit_price / entry_price) - 1</code>
+          <span>Single-pick return</span>
+          <code>(ending_price / starting_price) - 1</code>
         </div>
         <div>
           <span>Portfolio return</span>
           <code>sum(weight * option_return)</code>
         </div>
         <div>
-          <span>Official alpha</span>
-          <code>decision_return - sp500_return</code>
+          <span>Return vs S&amp;P 500</span>
+          <code>portfolio_return - sp500_return</code>
         </div>
         <div>
           <span>Regret</span>
-          <code>best_option_return - decision_return</code>
+          <code>best_asset_return - portfolio_return</code>
         </div>
       </div>
 
-      <h2>Cumulative Official</h2>
+      <h2>Overall Results</h2>
       <p>
-        Cumulative official results average a model's one-shot alpha across resolved rounds where that model
-        participated. Models are not backfilled into earlier rounds; they begin accumulating official history only from
-        the rounds where they were actually run.
+        Overall results average a model's return versus the S&amp;P 500 across completed tests where that model
+        participated. Models are not backfilled into earlier tests; they begin accumulating public history only from
+        the tests where they were actually run.
       </p>
       <p>
-        The cumulative view is intentionally simple. It reports participation count, average alpha, and related
-        resolved-round aggregates. It does not introduce hidden weighting, qualified tiers, or a single combined score
-        that merges official and stability behavior.
-      </p>
-
-      <h2>Stability</h2>
-      <p>
-        Stability results summarize repeated calls with the same frozen round input. They measure repeated alpha,
-        modal pick behavior, and consistency rate.
-      </p>
-      <p>
-        Stability runs are useful for detecting whether a model repeatedly chooses the same exposure under identical
-        inputs. They are not mixed into the official leaderboard because the official track measures the one-shot public
-        decision.
+        The overall view is intentionally simple. It reports participation count, average return versus S&amp;P 500, and
+        related completed-test aggregates. It does not introduce hidden weighting, qualified tiers, or a single combined
+        score that merges public picks and consistency checks.
       </p>
 
-      <h2>Pending Rounds</h2>
+      <h2>Consistency Tests</h2>
       <p>
-        Pending rounds can show model decisions, confidence values, rationale summaries, entry prices, and audit hashes.
-        After at least one weekly price snapshot exists, a round page may also show interim return tracking versus
-        S&amp;P 500. That chart is explicitly provisional and separate from the official leaderboard. Rank, regret, and
-        final official alpha remain withheld until exit prices are present and the scorer publishes the resolved
-        artifacts.
+        Consistency tests summarize repeated calls with the same saved test input. They measure whether a model tends to
+        make the same pick under identical conditions.
+      </p>
+      <p>
+        These repeated-call checks are not mixed into the main scoreboard because the public contest uses one saved
+        portfolio per model.
+      </p>
+
+      <h2>Pending Tests</h2>
+      <p>
+        Pending tests can show model portfolios, confidence values, rationale summaries, starting prices, and proof hashes.
+        After at least one weekly price snapshot exists, a test page may also show interim return tracking versus
+        S&amp;P 500. That chart is explicitly provisional and separate from the final scoreboard. Rank, regret, and final
+        return versus S&amp;P 500 remain withheld until ending prices are present and the scorer publishes the result files.
       </p>
     </article>
     <aside class="side-panel">
       <strong>No qualified tier</strong>
       <p>
         The public site intentionally avoids provisional tiers, maturity labels, and weighted mega-scores. A row is
-        either pending, official, cumulative official, or stability.
+        either pending, public result, overall result, or consistency check.
       </p>
     </aside>
   </section>

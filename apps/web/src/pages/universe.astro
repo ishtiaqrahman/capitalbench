@@ -53,9 +53,9 @@ const universeVersions = [
 
 const latestUniverse = universeVersions[0];
 const universeDataset = datasetSchema({
-  name: "CapitalBench option universe",
+  name: "CapitalBench asset list",
   description:
-    "The versioned public option universe used by CapitalBench benchmark rounds, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies.",
+    "The versioned public asset list used by CapitalBench market tests, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies.",
   path: "/universe",
   datePublished: "2026-05-12",
   dateModified: "2026-05-17",
@@ -65,32 +65,32 @@ const universeDataset = datasetSchema({
 ---
 
 <BaseLayout
-  title="CapitalBench Option Universe"
-  description="Versioned CapitalBench option universes for public benchmark rounds, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies."
+  title="CapitalBench Asset List"
+  description="Versioned CapitalBench asset lists for public market tests, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies."
   structuredData={universeDataset}
 >
   <PageHeader
-    eyebrow="Versioned Universe"
-    title="Frozen Option Universes"
-    summary="Every round freezes its own option universe before model calls. Completed rounds keep their original file; future rounds can use the expanded v2.0 universe after the pre-round data checks pass."
+    eyebrow="Asset list"
+    title="Allowed Assets"
+    summary="Every test saves its own asset list before model calls. Completed tests keep the exact list the models saw."
   />
 
   <section class="section compact">
     <div class="grid-3">
       <article class="feature">
-        <span class="metric-label">Latest Universe</span>
+        <span class="metric-label">Latest asset list</span>
         <h3>{latestUniverse.label}</h3>
-        <p>{latestUniverse.rows.length} total options for future rounds.</p>
+        <p>{latestUniverse.rows.length} total choices for future tests.</p>
       </article>
       <article class="feature">
-        <span class="metric-label">Round Freeze Rule</span>
+        <span class="metric-label">Test save rule</span>
         <h3>No retroactive edits</h3>
-        <p>Universe changes apply only to new rounds. Prior model decisions are always evaluated against the universe they actually saw.</p>
+        <p>Asset-list changes apply only to new tests. Prior model picks are always evaluated against the list they actually saw.</p>
       </article>
       <article class="feature">
         <span class="metric-label">Data Gate</span>
         <h3>Tiingo EOD</h3>
-        <p>Non-cash tickers must be available in the existing Tiingo price workflow before a public round can use them.</p>
+        <p>Non-cash tickers must be available in the existing Tiingo price workflow before a public test can use them.</p>
       </article>
     </div>
   </section>
@@ -99,10 +99,10 @@ const universeDataset = datasetSchema({
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">Universe versions</span>
+          <span class="panel-kicker">Asset-list versions</span>
           <h2>Version History</h2>
           <p>
-            The site publishes the active universe catalog and keeps prior versions visible so round inputs remain
+            The site publishes the active asset catalog and keeps prior versions visible so test inputs remain
             reproducible.
           </p>
         </div>
@@ -124,11 +124,11 @@ const universeDataset = datasetSchema({
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">Latest approved universe</span>
+          <span class="panel-kicker">Latest approved asset list</span>
           <h2>{latestUniverse.label} Option Table</h2>
           <p>
-            This table is rendered from the repository configuration file. Round-specific pages remain tied to the
-            exact options frozen in each round directory.
+            This table is rendered from the repository configuration file. Test-specific pages remain tied to the
+            exact choices saved in each test directory.
           </p>
         </div>
       </div>

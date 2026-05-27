@@ -404,58 +404,58 @@ const decisionNoun = round.submission_format === "portfolio" ? "allocations" : "
 const decisionNounSingular = round.submission_format === "portfolio" ? "portfolio" : "pick";
 const allocationDisplayNote =
   round.submission_format === "single_pick"
-    ? "This round used the original single-pick protocol. For cross-round readability, each valid pick is displayed as a one-holding 100% allocation while the validated JSON remains unchanged."
-    : "This round used the portfolio protocol. Allocation weights below are the submitted model decisions.";
-const statusLabel = round.status === "resolved" ? "Resolved" : round.status === "archived" ? "Archived" : "Pending";
+    ? "This test used the original single-pick format. Each valid pick is displayed as a one-holding 100% portfolio while the validated JSON remains unchanged."
+    : "This test used the portfolio format. The weights below are the submitted model portfolios.";
+const statusLabel = round.status === "resolved" ? "Scored" : round.status === "archived" ? "Archived" : "Pending";
 const track = roundTrack(round);
 const benchmarkTrackLabel = trackLabel(track);
-const roundStateTitle = round.status === "resolved" ? "Resolved Official Score" : "Pending Official Score";
+const roundStateTitle = round.status === "resolved" ? "Final Score Published" : "Score Pending";
 const roundDataset = datasetSchema({
-  name: `${round.round_id} CapitalBench round audit dataset`,
-  description: `${round.title}: frozen model-facing inputs, prompt artifacts, official one-shot LLM submissions, entry prices, status, and published audit hashes.`,
+  name: `${round.round_id} CapitalBench proof dataset`,
+  description: `${round.title}: saved model-facing inputs, prompt artifacts, model portfolios, starting prices, status, and published proof hashes.`,
   path: `/rounds/${round.round_id}`,
   datePublished: "2026-05-12",
   temporalCoverage: `${round.entry_date}/${round.exit_date}`,
   keywords: ["LLM market benchmark", "AI market decision", "round audit", round.round_id, "CapitalBench"],
   variableMeasured: [
-    "official model pick",
+    "model pick",
     "confidence",
     "model-facing prompt",
     "input artifact",
-    "entry price",
-    "exit status",
+    "starting price",
+    "ending price status",
     "SHA-256 input hash",
-    "alpha versus S&P 500"
+    "return versus S&P 500"
   ]
 });
 const priceColumns = [
   { key: "option_id", label: "Option" },
   { key: "symbol", label: "Symbol" },
   { key: "date", label: "Date" },
-  { key: "price", label: "Entry Price", align: "right" as const },
+  { key: "price", label: "Starting Price", align: "right" as const },
   { key: "source", label: "Source" }
 ];
 ---
 
 <BaseLayout
-  title={`${round.round_id} Round Audit Packet`}
-  description={`${round.title}: official LLM decisions, model-facing inputs, prompt packet, entry prices, pending status, and published audit hashes for the ${round.horizon} benchmark round.`}
+  title={`${round.round_id} Proof Files`}
+  description={`${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`}
   structuredData={roundDataset}
 >
   <section class="dashboard-header">
     <div class="dashboard-title">
-      <p class="eyebrow">Round audit packet</p>
+      <p class="eyebrow">Test proof files</p>
       <h1>{round.round_id}</h1>
       <div class="round-meta-row compact" aria-label="Round track">
-        <span>{benchmarkTrackLabel} track</span>
+        <span>{benchmarkTrackLabel} test</span>
         <span>{round.horizon}</span>
       </div>
       <p>{round.description}</p>
     </div>
     <aside class="header-note">
       {round.status === "resolved"
-        ? "Official scores are published from the frozen run artifacts for this round."
-        : "Official decisions are collected before scoring. Exit prices and performance remain absent until the round resolves."}
+        ? "Scores are published from the saved files for this test."
+        : "Model portfolios are saved before scoring. Final returns wait for ending prices."}
     </aside>
   </section>
 
@@ -468,55 +468,55 @@ const priceColumns = [
     officialRunId={round.official_run_id}
   />
 
-  <section class="phase-band compact" aria-label="Round lifecycle">
+  <section class="phase-band compact" aria-label="Test lifecycle">
     <ol class="phase-list">
       <li class="phase-complete">
         <span>1</span>
-        <strong>Round frozen</strong>
-        <p>{roundAuditHashes.length} public input hashes are available.</p>
+        <strong>Inputs saved</strong>
+        <p>{roundAuditHashes.length} public proof hashes are available.</p>
       </li>
       <li class="phase-complete">
         <span>2</span>
-        <strong>Decisions collected</strong>
-        <p>{roundSubmissions.length} valid official {decisionNoun}.</p>
+        <strong>Portfolios collected</strong>
+        <p>{roundSubmissions.length} valid model {decisionNoun}.</p>
       </li>
       <li class="phase-complete">
         <span>3</span>
-        <strong>Entry priced</strong>
-        <p>{roundEntryPrices.length} entry rows published.</p>
+        <strong>Start priced</strong>
+        <p>{roundEntryPrices.length} starting-price rows published.</p>
       </li>
       <li class="phase-current">
         <span>4</span>
-        <strong>{round.status === "resolved" ? "Scores published" : "Exit pending"}</strong>
+        <strong>{round.status === "resolved" ? "Scores published" : "Ending prices pending"}</strong>
         <p>
           {round.status === "resolved"
-            ? "The official leaderboard is available for this resolved round."
+            ? "The scoreboard is available for this completed test."
             : `Scores publish after ${round.exit_date} prices are available.`}
         </p>
       </li>
     </ol>
   </section>
 
-  <nav class="round-tabs" aria-label="Round sections">
+  <nav class="round-tabs" aria-label="Test sections">
     <a href="#overview">Overview</a>
     <a href="#performance">Performance</a>
     <a href="#inputs">Inputs</a>
     <a href="#outputs">Outputs</a>
-    <a href="#picks">Decisions</a>
+    <a href="#picks">Picks</a>
     <a href="#prices">Prices</a>
-    <a href="#audit">Audit</a>
+    <a href="#audit">Proof</a>
   </nav>
 
   <section class="dashboard-grid" id="overview">
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">Round state</span>
+          <span class="panel-kicker">Test state</span>
           <h2>{roundStateTitle}</h2>
           <p>
             {round.status === "resolved"
-              ? "This round has official submissions, entry prices, exit prices, and scored results."
-              : "This round has frozen model-facing inputs and official decisions. The leaderboard remains unavailable until exit prices are collected and the scorer publishes results."}
+              ? "This test has model portfolios, starting prices, ending prices, and final scores."
+              : "This test has saved inputs and model portfolios. The scoreboard remains unavailable until ending prices are collected."}
           </p>
         </div>
         <span class={`status-badge status-${round.status}`}>{statusLabel}</span>
@@ -524,30 +524,30 @@ const priceColumns = [
       <div class="panel-body">
         <div class="grid-3">
           <article class="feature">
-            <span class="metric-label">Submissions</span>
-            <h3>{roundSubmissions.length} valid official {decisionNoun}</h3>
-            <p>No invalid parsed submissions are published for the official run.</p>
+            <span class="metric-label">Model portfolios</span>
+            <h3>{roundSubmissions.length} valid {decisionNoun}</h3>
+            <p>No invalid parsed submissions are published for the public run.</p>
           </article>
           <article class="feature">
-            <span class="metric-label">Universe</span>
-            <h3>{universeOptionCount} frozen options</h3>
-            <p>{round.universe_version ?? "Round-specific universe"} is preserved exactly as the model-facing option list.</p>
+            <span class="metric-label">Asset list</span>
+            <h3>{universeOptionCount} saved choices</h3>
+            <p>{round.universe_version ?? "Round-specific asset list"} is preserved exactly as the model-facing list.</p>
           </article>
           <article class="feature">
             <span class="metric-label">Scoring</span>
-            <h3>{round.status === "resolved" ? "Published" : "Exit pending"}</h3>
-            <p>Selected asset return, portfolio return when applicable, S&P 500 return, alpha, and regret publish after scoring.</p>
+            <h3>{round.status === "resolved" ? "Published" : "Ending prices pending"}</h3>
+            <p>Asset return, portfolio return, S&P 500 return, return versus S&P 500, and regret publish after scoring.</p>
           </article>
         </div>
         <div class="audit-checklist" aria-label="Round audit checklist">
           <div class="check-item complete">
             <span aria-hidden="true"></span>
-            <strong>Frozen input hashes</strong>
+            <strong>Input proof hashes</strong>
             <p>{roundAuditHashes.length} artifacts published.</p>
           </div>
           <div class="check-item complete">
             <span aria-hidden="true"></span>
-            <strong>Official run selected</strong>
+            <strong>Public run selected</strong>
             <p>{round.official_run_id}</p>
           </div>
           <div class="check-item complete">
@@ -557,8 +557,8 @@ const priceColumns = [
           </div>
           <div class="check-item pending">
             <span aria-hidden="true"></span>
-            <strong>Exit prices pending</strong>
-            <p>Leaderboard rows remain withheld.</p>
+            <strong>Ending prices pending</strong>
+            <p>Scoreboard rows remain withheld.</p>
           </div>
         </div>
       </div>
@@ -566,9 +566,9 @@ const priceColumns = [
 
     <aside class="rail">
       <div class="rail-panel highlight-panel">
-        <span class="metric-label">Primary decision</span>
+        <span class="metric-label">Most common pick</span>
         <h3>{consensusPick}</h3>
-        <p>{consensusCount} of {roundSubmissions.length} official models selected this primary {decisionNounSingular}.</p>
+        <p>{consensusCount} of {roundSubmissions.length} models selected this primary {decisionNounSingular}.</p>
         <dl class="mini-facts">
           <div>
             <dt>Symbol</dt>
@@ -583,7 +583,7 @@ const priceColumns = [
             <dd>{consensusOption?.risk_bucket}</dd>
           </div>
           <div>
-            <dt>Entry</dt>
+            <dt>Start</dt>
             <dd>{consensusPrice ? `$${consensusPrice.price.toFixed(2)}` : "Pending"}</dd>
           </div>
         </dl>
@@ -591,16 +591,16 @@ const priceColumns = [
       <div class="rail-panel">
         <span class="metric-label">Methodology</span>
         <h3>{round.methodology_version}</h3>
-        <p>{round.submission_format === "portfolio" ? "Portfolio allocation protocol." : "Single-pick official protocol."} Stability analysis remains separate.</p>
+        <p>{round.submission_format === "portfolio" ? "Portfolio format." : "Single-pick format."} Consistency checks remain separate.</p>
       </div>
       <div class="rail-panel">
         <span class="metric-label">Display rule</span>
         <p>{allocationDisplayNote}</p>
       </div>
       <div class="rail-panel">
-        <span class="metric-label">Universe</span>
+        <span class="metric-label">Asset list</span>
         <h3>{round.universe_version ?? "Round-specific"}</h3>
-        <p>{universeOptionCount} model-facing options frozen before provider calls.</p>
+        <p>{universeOptionCount} model-facing choices saved before provider calls.</p>
       </div>
       <div class="rail-panel">
         <span class="metric-label">Boundary</span>
@@ -616,8 +616,8 @@ const priceColumns = [
           <span class="panel-kicker">Interim tracking</span>
           <h2>Weekly Performance Vs S&amp;P 500</h2>
           <p>
-            Once at least one week of prices exists, this chart tracks each official model allocation against S&amp;P 500
-            from the round entry date. It is interim research context, not the final official score.
+            Once at least one week of prices exists, this chart tracks each saved model portfolio against S&amp;P 500
+            from the test start date. It is interim research context, not the final score.
           </p>
         </div>
       </div>
@@ -634,10 +634,10 @@ const priceColumns = [
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">Frozen model-facing context</span>
+          <span class="panel-kicker">Saved model-facing context</span>
           <h2>Prompt And Input Packet</h2>
           <p>
-            The shared packet below is the prompt body common to every official model call. Each provider call appends a
+            The shared packet below is the prompt body common to every model call. Each provider call appends a
             small model-specific identifier block shown after the artifacts.
           </p>
         </div>
@@ -706,11 +706,11 @@ const priceColumns = [
                   <p class="mono">{output.model_id}</p>
                 </div>
                 <div class="output-allocation-summary">
-                  <span>{allocations.length > 1 ? `${allocations.length} holdings` : "Allocation"}</span>
+                  <span>{allocations.length > 1 ? `${allocations.length} holdings` : "Portfolio"}</span>
                   <strong>
                     {primaryAllocation
                       ? optionDisplayName(primaryAllocation.option_id, roundOptionsById)
-                      : outputPickLabel(output) || "No allocation"}
+                      : outputPickLabel(output) || "No portfolio"}
                   </strong>
                   {allocations.length > 0 && (
                     <div class="allocation-chip-row compact" aria-label="Portfolio holdings">
@@ -754,7 +754,7 @@ const priceColumns = [
               </div>
               {allocations.length > 0 && (
                 <div class="output-copy">
-                  <span class="metric-label">Allocations</span>
+                  <span class="metric-label">Portfolio</span>
                   <ul>
                     {allocations.map((allocation) => (
                       <li>
@@ -787,8 +787,8 @@ const priceColumns = [
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">Official one-shot run</span>
-          <h2>Model Decisions</h2>
+          <span class="panel-kicker">Public model run</span>
+          <h2>Model Portfolios</h2>
           <p>{allocationDisplayNote} Expand a row to inspect rationale and risk lists without crowding the main table.</p>
         </div>
       </div>
@@ -807,11 +807,11 @@ const priceColumns = [
       <div class="panel-header">
         <div>
           <span class="panel-kicker">Pricing</span>
-          <h2>Entry Prices</h2>
-          <p>Exit prices are intentionally absent until the round resolves.</p>
+          <h2>Starting Prices</h2>
+          <p>Ending prices are intentionally absent until the test is complete.</p>
         </div>
       </div>
-      <TableIsland client:visible rows={roundEntryPrices} columns={priceColumns} emptyText="No entry prices are published yet." tableLabel="Entry prices" csvFilename="capitalbench-entry-prices.csv" />
+      <TableIsland client:visible rows={roundEntryPrices} columns={priceColumns} emptyText="No starting prices are published yet." tableLabel="Starting prices" csvFilename="capitalbench-starting-prices.csv" />
     </div>
   </section>
 
@@ -819,9 +819,9 @@ const priceColumns = [
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">Audit</span>
+          <span class="panel-kicker">Proof</span>
           <h2>Published Hashes</h2>
-          <p>Round inputs are hashed before model calls and mirrored into the public read model.</p>
+          <p>Test inputs are hashed before model calls and mirrored into the public read model.</p>
         </div>
       </div>
       <HashTable client:visible rows={roundAuditHashes} />

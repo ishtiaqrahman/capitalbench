@@ -24,30 +24,30 @@ const {
 const copy = {
   latest: {
     kicker: "Pending result",
-    title: "Why There Is No Score Yet",
+    title: "Scores Are Not Ready Yet",
     body:
-      `${roundId} has official allocations and entry prices, but the latest leaderboard stays empty until exit prices are collected and scored.`,
-    columns: ["Model", "Provider", "Decision", "Holdings", "Portfolio return", "S&P 500", "Alpha"],
-    sort: "Alpha versus S&P 500 descending, then lower regret, higher confidence, and model id.",
-    cta: "Review official allocations"
+      `${roundId} has saved model portfolios and starting prices. Scores appear after ending prices are collected.`,
+    columns: ["Model", "Provider", "Pick", "Holdings", "Portfolio return", "S&P 500", "Vs S&P 500"],
+    sort: "Return versus S&P 500 descending, then lower regret, higher confidence, and model id.",
+    cta: "Review model portfolios"
   },
   official: {
-    kicker: "Cumulative official",
-    title: "What Appears After Resolved Rounds",
+    kicker: "Overall results",
+    title: "What Appears After Completed Tests",
     body:
-      "This table averages one-shot official alpha across resolved rounds where each model participated. New models enter future rounds only; old outcomes are not backfilled.",
-    columns: ["Model", "Provider", "Resolved rounds", "Average alpha", "Hit rate", "Cumulative log alpha"],
-    sort: "Average official alpha descending, then cumulative log alpha and hit rate.",
-    cta: "View current round"
+      "This table averages each model's public score across completed tests where that model participated. New models enter future tests only; old outcomes are not backfilled.",
+    columns: ["Model", "Provider", "Completed tests", "Average vs S&P 500", "Hit rate", "Cumulative score"],
+    sort: "Average return versus S&P 500 descending, then cumulative score and hit rate.",
+    cta: "View current test"
   },
   stability: {
-    kicker: "Repeated-call track",
-    title: "What Stability Will Show",
+    kicker: "Consistency checks",
+    title: "What Consistency Shows",
     body:
-      "Stability rows summarize repeated calls with the same frozen inputs. They measure consistency and repeated-run alpha, separately from official one-shot performance.",
-    columns: ["Model", "Provider", "Resolved rounds", "Avg repeated alpha", "Consistency", "Modal decision alpha"],
-    sort: "Average repeated alpha descending, then consistency and modal-pick alpha.",
-    cta: "Read methodology"
+      "Consistency rows summarize repeated calls with the same saved input. They measure whether a model tends to make the same pick.",
+    columns: ["Model", "Provider", "Completed tests", "Average repeated score", "Consistency", "Most common pick score"],
+    sort: "Average repeated score descending, then consistency and most-common-pick score.",
+    cta: "Read how it works"
   }
 }[kind];
 
@@ -77,8 +77,8 @@ const href =
       />
     )}
     <div class="guide-process" aria-label="Leaderboard publication sequence">
-      <span>Allocations locked</span>
-      <span>Exit prices pending</span>
+      <span>Portfolios saved</span>
+      <span>Ending prices pending</span>
       <span>Scores published</span>
     </div>
     <a class="action-link" href={href}>{copy.cta}</a>

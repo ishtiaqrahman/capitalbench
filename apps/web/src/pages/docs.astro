@@ -5,13 +5,13 @@ import PageHeader from "../components/PageHeader.astro";
 ---
 
 <BaseLayout
-  title="CapitalBench Documentation"
-  description="Public CapitalBench documentation hub for methodology, scoring, fairness, limitations, universe data, and round audit pages."
+  title="CapitalBench Proof And Data"
+  description="CapitalBench proof and data pages for scoring, fairness, limits, asset lists, and test-round source files."
 >
   <PageHeader
-    eyebrow="Docs"
-    title="Public Reference"
-    summary="The public site surfaces the core benchmark concepts. The repository remains the source of truth for round artifacts and CLI operations."
+    eyebrow="Proof"
+    title="Proof And Data"
+    summary="Check how the tests work, how scores are calculated, and where the source files live."
   />
   <section class="section compact">
     <div class="resolution-callout">
@@ -19,38 +19,38 @@ import PageHeader from "../components/PageHeader.astro";
         <span class="panel-kicker">Start here</span>
         <h2>How To Read CapitalBench</h2>
         <p>
-          Use methodology for the protocol, scoring for result math, fairness for controls, and round packets for the
-          actual frozen evidence behind each official run.
+          Start with how it works, then scoring. Open a test round when you want the prompt, model portfolios, prices,
+          and proof hashes.
         </p>
       </div>
-      <a class="action-link action-primary" href="/rounds">Open round packets</a>
+      <a class="action-link action-primary" href="/rounds">Open test rounds</a>
     </div>
   </section>
   <section class="section">
     <div class="grid-3">
       <article class="feature">
-        <h3><a href="/methodology">Methodology</a></h3>
-        <p>Round protocol, official track, stability track, and audit model.</p>
+        <h3><a href="/methodology">How It Works</a></h3>
+        <p>The simple process: same information, saved portfolios, real market scores.</p>
       </article>
       <article class="feature">
         <h3><a href="/scoring">Scoring</a></h3>
-        <p>Alpha versus S&P 500, regret, cash comparison, and cumulative aggregation.</p>
+        <p>How returns are compared with the S&P 500.</p>
       </article>
       <article class="feature">
         <h3><a href="/fairness">Fairness</a></h3>
-        <p>Comparable input controls, run isolation, and no retroactive official backfills.</p>
+        <p>Why models get the same information and why old scores are not rewritten.</p>
       </article>
       <article class="feature">
         <h3><a href="/limitations">Limitations</a></h3>
         <p>Noise, sample size, hosted model changes, and non-advice boundaries.</p>
       </article>
       <article class="feature">
-        <h3><a href="/universe">Universe</a></h3>
-        <p>The frozen public option universe for the current round.</p>
+        <h3><a href="/universe">Asset List</a></h3>
+        <p>The public asset choices available to models in each test.</p>
       </article>
       <article class="feature">
         <h3><a href="/rounds/CB-2026-05-10-1M">Round 1</a></h3>
-        <p>Official decisions, entry prices, status, and audit hashes.</p>
+        <p>Model picks, starting prices, status, and proof hashes.</p>
       </article>
       <article class="feature">
         <h3><a href="/changelog">Changelog</a></h3>
@@ -70,7 +70,7 @@ import PageHeader from "../components/PageHeader.astro";
             Repository
           </a>
         </h3>
-        <p>CLI source, schema, local artifacts, and implementation history for the public benchmark.</p>
+        <p>Source code, schemas, local files, and implementation history.</p>
       </article>
     </div>
   </section>

@@ -5,26 +5,26 @@ import PageHeader from "../components/PageHeader.astro";
 
 <BaseLayout
   title="CapitalBench Limitations"
-  description="Limitations of one-month LLM market benchmarks, including noisy outcomes, small samples, provider changes, and the non-advice boundary."
+  description="Limitations of weekly and monthly AI market-pick tests, including noisy outcomes, small samples, provider changes, and the non-advice boundary."
 >
   <PageHeader
     eyebrow="Limitations"
     title="What The Benchmark Cannot Prove"
-    summary="One-month market outcomes are noisy. CapitalBench makes model decisions auditable, but it does not convert them into investment recommendations."
+    summary="Weekly and monthly market outcomes are noisy. CapitalBench makes model picks checkable, but it does not turn them into investment recommendations."
   />
   <section class="section doc-layout">
     <article class="doc-body">
       <h2>Market Noise</h2>
       <p>
-        A single month can be dominated by random market movement, macro shocks, liquidity shifts, earnings surprises,
+        A single week or month can be dominated by random market movement, macro shocks, liquidity shifts, earnings surprises,
         sector-specific reversals, or events not represented in the model-facing briefing. A strong or weak round does
         not prove durable investing skill by itself.
       </p>
 
       <h2>Small Samples</h2>
       <p>
-        Cumulative results become more informative as more resolved rounds are added. Early leaderboards should be read
-        as benchmark observations, not as statistically settled rankings. Participation counts matter because models may
+        Overall results become more informative as more completed tests are added. Early scoreboards should be read as
+        benchmark observations, not as statistically settled rankings. Participation counts matter because models may
         enter the benchmark at different times.
       </p>
 
@@ -35,9 +35,9 @@ import PageHeader from "../components/PageHeader.astro";
         will behave identically in a later rerun.
       </p>
 
-      <h2>Universe Limits</h2>
+      <h2>Asset List Limits</h2>
       <p>
-        The option universe is deliberately constrained. It uses broad public exposures such as cash, ETFs, sectors,
+        The asset list is deliberately constrained. It uses broad public exposures such as cash, ETFs, sectors,
         factors, bonds, commodities, and technology themes. It does not represent all tradable assets, single-name stock
         selection, options trading, leverage, transaction costs, taxes, or investor-specific constraints.
       </p>
@@ -45,7 +45,7 @@ import PageHeader from "../components/PageHeader.astro";
       <h2>Prompt Sensitivity</h2>
       <p>
         LLM outputs can be sensitive to prompt wording, schema requirements, system instructions, model routing, and
-        provider-side changes. CapitalBench reduces those degrees of freedom by freezing inputs and publishing audit
+        provider-side changes. CapitalBench reduces those degrees of freedom by saving inputs and publishing proof
         hashes, but no one benchmark captures all useful model behavior.
       </p>
 

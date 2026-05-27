@@ -41,9 +41,9 @@ export default function UniverseTable({ fallbackRows, roundId, disableRemote = f
     <TableIsland
       rows={rows}
       columns={columns}
-      tableLabel="CapitalBench option universe"
-      emptyText="No option universe is published yet."
-      csvFilename="capitalbench-universe.csv"
+      tableLabel="CapitalBench asset list"
+      emptyText="No asset list is published yet."
+      csvFilename="capitalbench-asset-list.csv"
       initialSortKey="sort_order"
     />
   );

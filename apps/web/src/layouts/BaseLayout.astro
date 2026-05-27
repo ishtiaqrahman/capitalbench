@@ -50,31 +50,19 @@ const jsonLd = jsonLdGraph([
 ]);
 
 const navItems = [
-  { href: "/leaderboards/latest", label: "Latest", active: currentPath.startsWith("/leaderboards/latest") },
-  {
-    href: "/leaderboards/cumulative-official",
-    label: "Official",
-    active: currentPath.startsWith("/leaderboards/cumulative-official"),
-    mobileSecondary: true
-  },
-  {
-    href: "/leaderboards/cumulative-stability",
-    label: "Stability",
-    active: currentPath.startsWith("/leaderboards/cumulative-stability"),
-    mobileSecondary: true
-  },
+  { href: "/leaderboards/latest", label: "Results", active: currentPath.startsWith("/leaderboards") },
+  { href: "/#current-picks", label: "Picks", active: false },
   { href: "/rounds", label: "Rounds", active: currentPath.startsWith("/rounds") },
-  { href: "/methodology", label: "Methodology", shortLabel: "Method", active: currentPath.startsWith("/methodology") },
-  { href: "/universe", label: "Universe", active: currentPath.startsWith("/universe"), mobileSecondary: true },
+  { href: "/methodology", label: "How It Works", shortLabel: "How", active: currentPath.startsWith("/methodology") },
   {
     href: "/docs",
-    label: "Docs",
+    label: "Proof",
     active:
       currentPath.startsWith("/docs") ||
       currentPath.startsWith("/scoring") ||
       currentPath.startsWith("/fairness") ||
-      currentPath.startsWith("/limitations"),
-    mobileSecondary: true
+      currentPath.startsWith("/limitations") ||
+      currentPath.startsWith("/universe")
   },
   { href: "/contribute", label: "Contribute", active: currentPath.startsWith("/contribute"), cta: true }
 ];
@@ -126,7 +114,6 @@ const navItems = [
                 <a
                   class:list={[
                     item.cta && "nav-cta",
-                    item.mobileSecondary && "nav-secondary",
                     item.shortLabel && "has-short-label"
                   ]}
                   href={item.href}
@@ -149,7 +136,7 @@ const navItems = [
             }
           </div>
           <div class="mobile-nav-controls">
-            <a class="mobile-quick-link" href="/leaderboards/latest">Latest</a>
+            <a class="mobile-quick-link" href="/leaderboards/latest">Results</a>
             <a class="mobile-contribute" href="/contribute">Contribute</a>
             <details class="mobile-menu">
               <summary aria-label="Open site menu">
@@ -164,10 +151,10 @@ const navItems = [
                     </a>
                   ))
                 }
-                <a href="/leaderboards/latest-weekly">Latest Weekly</a>
-                <a href="/leaderboards/latest-monthly">Latest Monthly</a>
-                <a href="/leaderboards/cumulative-weekly">Cumulative Weekly</a>
-                <a href="/leaderboards/cumulative-monthly">Cumulative Monthly</a>
+                <a href="/leaderboards/latest-weekly">Weekly Results</a>
+                <a href="/leaderboards/latest-monthly">Monthly Results</a>
+                <a href="/leaderboards/cumulative-weekly">Overall Weekly</a>
+                <a href="/leaderboards/cumulative-monthly">Overall Monthly</a>
               </div>
             </details>
           </div>

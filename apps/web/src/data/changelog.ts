@@ -27,6 +27,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-26-plain-language-scoreboard",
+    date: "2026-05-26",
+    title: "Landing page reframed as a plain-language AI market picks scoreboard",
+    category: "Site",
+    status: "published",
+    summary:
+      "The public website now leads with model picks, real market scores, and proof files instead of protocol-first benchmark language.",
+    details: [
+      "The homepage hero now explains CapitalBench as AI models receiving the same market information, picking portfolios, and being scored by real market prices.",
+      "Primary navigation now uses simpler labels: Results, Picks, Rounds, How It Works, Proof, and Contribute.",
+      "Homepage sections now prioritize current model portfolios, latest results, separate weekly/monthly tests, scoring timing, and proof files.",
+      "Leaderboard, scoring, methodology, rounds, asset-list, and fairness copy now use plain terms such as model portfolios, asset list, starting prices, ending prices, and return versus S&P 500."
+    ],
+    links: [
+      { label: "Homepage", href: "/" },
+      { label: "Results", href: "/leaderboards/latest" },
+      { label: "How it works", href: "/methodology" }
+    ]
+  },
+  {
     id: "2026-05-24-weekly-track-separated",
     date: "2026-05-24",
     title: "Weekly benchmark track added separately from monthly rounds",

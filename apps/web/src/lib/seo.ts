@@ -20,20 +20,20 @@ export type JsonLdRecord = Record<string, unknown>;
 
 export const siteConfig = {
   name: "CapitalBench",
-  defaultTitle: "CapitalBench - LLM Market Benchmark and Leaderboards",
+  defaultTitle: "CapitalBench - AI Market Picks Scoreboard",
   description:
-    "CapitalBench measures capital allocation ability across leading AI models in separate weekly and monthly public-market benchmark tracks.",
+    "CapitalBench gives AI models the same market information, records their portfolios, and scores them using real market returns.",
   url: "https://www.capitalbench.org",
   githubUrl: "https://github.com/ishtiaqrahman/capitalbench",
   ogImage: "/og-image.png",
   ogImageAlt:
-    "CapitalBench public LLM market benchmark showing frozen inputs, official allocations, and pending leaderboard status.",
+    "CapitalBench public AI market-picks scoreboard showing saved model portfolios, proof files, and pending results.",
   ogImageWidth: 1200,
   ogImageHeight: 630,
   themeColor: "#f4f6f5"
 };
 
-const defaultLastmod = "2026-05-24";
+const defaultLastmod = "2026-05-26";
 const publicRounds = staticRoundRecords();
 
 export const routeMeta: RouteMeta[] = [
@@ -47,105 +47,105 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: "/leaderboards",
-    title: "CapitalBench Leaderboards",
+    title: "CapitalBench Results",
     description:
-      "CapitalBench leaderboard hub for latest official results, cumulative one-shot scores, and repeated-run stability metrics.",
+      "CapitalBench results showing which AI model portfolios are winning in weekly and monthly market tests.",
     priority: 0.82,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
   {
     path: "/leaderboards/latest",
-    title: "Latest CapitalBench Leaderboards",
+    title: "Latest CapitalBench Results",
     description:
-      "Latest CapitalBench leaderboards split by weekly and monthly benchmark tracks.",
+      "Latest CapitalBench results split into one-week and one-month market tests.",
     priority: 0.9,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
   {
     path: "/leaderboards/latest-weekly",
-    title: "Latest Weekly CapitalBench Leaderboard",
+    title: "Latest Weekly CapitalBench Results",
     description:
-      "Latest one-week CapitalBench official leaderboard with weekly allocations and results kept separate from monthly rounds.",
+      "Latest one-week CapitalBench results with model portfolios and market returns kept separate from monthly tests.",
     priority: 0.9,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
   {
     path: "/leaderboards/latest-monthly",
-    title: "Latest Monthly CapitalBench Leaderboard",
+    title: "Latest Monthly CapitalBench Results",
     description:
-      "Latest one-month CapitalBench official leaderboard with monthly allocations and results kept separate from weekly rounds.",
+      "Latest one-month CapitalBench results with model portfolios and market returns kept separate from weekly tests.",
     priority: 0.9,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
   {
     path: "/leaderboards/cumulative-official",
-    title: "Cumulative Official CapitalBench Leaderboards",
+    title: "Overall CapitalBench Results",
     description:
-      "Cumulative official CapitalBench leaderboards split by weekly and monthly benchmark tracks.",
+      "Overall CapitalBench results split into weekly and monthly market tests.",
     priority: 0.86,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
   {
     path: "/leaderboards/cumulative-stability",
-    title: "Cumulative Stability CapitalBench Leaderboards",
+    title: "CapitalBench Consistency Results",
     description:
-      "Cumulative stability CapitalBench leaderboards split by weekly and monthly benchmark tracks.",
+      "CapitalBench consistency results split into weekly and monthly market tests.",
     priority: 0.82,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
   {
     path: "/leaderboards/cumulative-weekly",
-    title: "Weekly Cumulative CapitalBench Leaderboard",
-    description: "Cumulative CapitalBench results for one-week benchmark rounds only.",
+    title: "Overall Weekly CapitalBench Results",
+    description: "Overall CapitalBench results for completed one-week market tests only.",
     priority: 0.86,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
   {
     path: "/leaderboards/cumulative-monthly",
-    title: "Monthly Cumulative CapitalBench Leaderboard",
-    description: "Cumulative CapitalBench results for one-month benchmark rounds only.",
+    title: "Overall Monthly CapitalBench Results",
+    description: "Overall CapitalBench results for completed one-month market tests only.",
     priority: 0.86,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
   {
     path: "/rounds",
-    title: "CapitalBench Rounds",
+    title: "CapitalBench Test Rounds",
     description:
-      "Index of CapitalBench benchmark rounds with deadlines, horizons, official run IDs, scoring status, and audit links.",
+      "Index of CapitalBench market tests with dates, model portfolios, scoring status, and proof links.",
     priority: 0.84,
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
   ...publicRounds.map((round) => ({
     path: `/rounds/${round.round_id}`,
-    title: `${round.round_id} Round Audit Packet`,
-    description: `${round.title}: official LLM decisions, entry prices, pending status, and published audit hashes for the ${round.horizon} benchmark round.`,
+    title: `${round.round_id} Proof Files`,
+    description: `${round.title}: model portfolios, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`,
     priority: 0.8,
     changefreq: "weekly" as const,
     lastmod: defaultLastmod
   })),
   {
     path: "/methodology",
-    title: "CapitalBench Methodology",
+    title: "How CapitalBench Works",
     description:
-      "CapitalBench methodology for frozen prompts, one-shot LLM submissions, official scoring, stability runs, fairness controls, and audit artifacts.",
+      "How CapitalBench gives AI models the same market information, saves their portfolios, and scores them with real market prices.",
     priority: 0.88,
     changefreq: "monthly",
     lastmod: defaultLastmod
   },
   {
     path: "/universe",
-    title: "CapitalBench Option Universe",
+    title: "CapitalBench Asset List",
     description:
-      "Versioned CapitalBench option universes for public benchmark rounds, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies.",
+      "Versioned CapitalBench asset lists for public market tests, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies.",
     priority: 0.76,
     changefreq: "monthly",
     lastmod: defaultLastmod
@@ -154,7 +154,7 @@ export const routeMeta: RouteMeta[] = [
     path: "/scoring",
     title: "CapitalBench Scoring",
     description:
-      "Definitions for CapitalBench official scores, selected-option returns, alpha versus S&P 500, regret, cash comparison, and stability metrics.",
+      "How CapitalBench compares AI model portfolio returns with the S&P 500 in weekly and monthly tests.",
     priority: 0.72,
     changefreq: "monthly",
     lastmod: defaultLastmod
@@ -163,7 +163,7 @@ export const routeMeta: RouteMeta[] = [
     path: "/fairness",
     title: "CapitalBench Fairness Controls",
     description:
-      "Fairness controls for CapitalBench benchmark rounds: identical prompt surfaces, frozen inputs, run isolation, and no retroactive backfills.",
+      "Fairness controls for CapitalBench market tests: same information, saved inputs, separate runs, and no retroactive score changes.",
     priority: 0.7,
     changefreq: "monthly",
     lastmod: defaultLastmod
@@ -172,16 +172,16 @@ export const routeMeta: RouteMeta[] = [
     path: "/limitations",
     title: "CapitalBench Limitations",
     description:
-      "Limitations of one-month LLM market benchmarks, including noisy outcomes, small samples, provider changes, and the non-advice boundary.",
+      "Limitations of weekly and monthly AI market-pick tests, including noisy outcomes, small samples, provider changes, and the non-advice boundary.",
     priority: 0.68,
     changefreq: "monthly",
     lastmod: defaultLastmod
   },
   {
     path: "/docs",
-    title: "CapitalBench Documentation",
+    title: "CapitalBench Proof And Data",
     description:
-      "Public CapitalBench documentation hub for methodology, scoring, fairness, limitations, universe data, and round audit pages.",
+      "CapitalBench proof and data pages for scoring, fairness, limits, asset lists, and test-round source files.",
     priority: 0.74,
     changefreq: "monthly",
     lastmod: defaultLastmod
@@ -193,7 +193,7 @@ export const routeMeta: RouteMeta[] = [
       "Public CapitalBench changelog for major website, benchmark, data, methodology, security, and operations updates.",
     priority: 0.66,
     changefreq: "monthly",
-    lastmod: "2026-05-13"
+    lastmod: "2026-05-26"
   },
   {
     path: "/contribute",
@@ -236,21 +236,21 @@ export const routeMeta: RouteMeta[] = [
 ];
 
 const labelOverrides: Record<string, string> = {
-  leaderboards: "Leaderboards",
-  latest: "Latest",
-  "latest-weekly": "Latest Weekly",
-  "latest-monthly": "Latest Monthly",
-  "cumulative-official": "Cumulative Official",
-  "cumulative-stability": "Cumulative Stability",
-  "cumulative-weekly": "Cumulative Weekly",
-  "cumulative-monthly": "Cumulative Monthly",
+  leaderboards: "Results",
+  latest: "Latest Results",
+  "latest-weekly": "Weekly Results",
+  "latest-monthly": "Monthly Results",
+  "cumulative-official": "Overall Results",
+  "cumulative-stability": "Consistency Results",
+  "cumulative-weekly": "Overall Weekly",
+  "cumulative-monthly": "Overall Monthly",
   rounds: "Rounds",
-  methodology: "Methodology",
-  universe: "Universe",
+  methodology: "How It Works",
+  universe: "Asset List",
   scoring: "Scoring",
   fairness: "Fairness",
   limitations: "Limitations",
-  docs: "Docs",
+  docs: "Proof",
   changelog: "Changelog",
   contribute: "Contribute",
   thanks: "Thanks",

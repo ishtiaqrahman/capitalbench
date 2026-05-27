@@ -98,7 +98,7 @@ export default function RoundPerformanceChart({ fallbackRows, roundId, runId }: 
         <Activity size={20} aria-hidden="true" />
         <div>
           <strong>Weekly chart pending</strong>
-          <p>At least one post-entry weekly price snapshot is required before interim performance is shown.</p>
+          <p>At least one weekly price snapshot after the start date is required before interim performance is shown.</p>
         </div>
       </div>
     );
@@ -138,7 +138,7 @@ export default function RoundPerformanceChart({ fallbackRows, roundId, runId }: 
   }
 
   function exportCsv() {
-    const header = ["Model", "Provider", "Target date", "Price date", "Days elapsed", "Model return", "S&P 500 return", "Alpha vs S&P 500"].join(",");
+    const header = ["Model", "Provider", "Target date", "Price date", "Days elapsed", "Model return", "S&P 500 return", "Return vs S&P 500"].join(",");
     const body = chartRows
       .map((row) =>
         [
@@ -169,7 +169,7 @@ export default function RoundPerformanceChart({ fallbackRows, roundId, runId }: 
       <div className="performance-chart-toolbar">
         <div>
           <strong>{latestDate ? `${dateLabel(latestDate)} snapshot` : "Weekly snapshot"}</strong>
-          <span>Interim returns from entry date; final scoring still waits for exit prices.</span>
+          <span>Interim returns from the start date; final scoring still waits for ending prices.</span>
         </div>
         <button className="small-button" type="button" onClick={exportCsv}>
           <Download size={15} aria-hidden="true" />

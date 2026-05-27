@@ -32,28 +32,28 @@ export default function LeaderboardTable({ fallbackRows, kind, slot }: Props) {
   const latestColumns: Column<LeaderboardRecord>[] = [
     { key: "model_id", label: "Model", value: (row) => modelLabel(row.model_id) },
     { key: "provider", label: "Provider", value: (row) => providerLabel(row.provider) },
-    { key: "selected_option_id", label: "Decision" },
+    { key: "selected_option_id", label: "Pick" },
     { key: "holding_count", label: "Holdings", align: "right" },
     { key: "selected_asset_return", label: "Return", align: "right", value: (row) => pct(row.selected_asset_return) },
     { key: "sp500_return", label: "S&P 500", align: "right", value: (row) => pct(row.sp500_return) },
-    { key: "alpha_vs_sp500", label: "Alpha", align: "right", value: (row) => pct(row.alpha_vs_sp500) },
+    { key: "alpha_vs_sp500", label: "Vs S&P 500", align: "right", value: (row) => pct(row.alpha_vs_sp500) },
     { key: "rank_among_options", label: "Rank", align: "right" }
   ];
 
   const officialColumns: Column<LeaderboardRecord>[] = [
     { key: "model_id", label: "Model", value: (row) => modelLabel(row.model_id) },
     { key: "provider", label: "Provider", value: (row) => providerLabel(row.provider) },
-    { key: "resolved_rounds", label: "Rounds", align: "right" },
-    { key: "average_alpha_vs_sp500", label: "Avg Alpha", align: "right", value: (row) => pct(row.average_alpha_vs_sp500) }
+    { key: "resolved_rounds", label: "Tests", align: "right" },
+    { key: "average_alpha_vs_sp500", label: "Avg Vs S&P 500", align: "right", value: (row) => pct(row.average_alpha_vs_sp500) }
   ];
 
   const stabilityColumns: Column<LeaderboardRecord>[] = [
     { key: "model_id", label: "Model", value: (row) => modelLabel(row.model_id) },
     { key: "provider", label: "Provider", value: (row) => providerLabel(row.provider) },
-    { key: "resolved_rounds", label: "Rounds", align: "right" },
+    { key: "resolved_rounds", label: "Tests", align: "right" },
     {
       key: "average_repeated_alpha_vs_sp500",
-      label: "Avg Repeated Alpha",
+      label: "Avg Repeated Score",
       align: "right",
       value: (row) => pct(row.average_repeated_alpha_vs_sp500)
     },
@@ -63,14 +63,14 @@ export default function LeaderboardTable({ fallbackRows, kind, slot }: Props) {
   const columns = kind === "latest" ? latestColumns : kind === "official" ? officialColumns : stabilityColumns;
   const emptyText =
     kind === "latest"
-      ? "No resolved official round is published yet. Official decisions remain pending until exit prices are available."
-      : "No resolved rounds are published for this leaderboard yet.";
+      ? "No completed test is published yet. Model portfolios remain pending until ending prices are available."
+      : "No completed tests are published for this scoreboard yet.";
 
   if (rows.length === 0) {
     return (
       <div className="pending-state">
         <CalendarClock size={22} aria-hidden="true" />
-        <strong>{kind === "latest" ? "No resolved official leaderboard yet." : "No cumulative rows yet."}</strong>
+        <strong>{kind === "latest" ? "No completed scoreboard yet." : "No overall rows yet."}</strong>
         <span>{emptyText}</span>
       </div>
     );

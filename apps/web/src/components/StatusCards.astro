@@ -13,28 +13,29 @@ interface Props {
 
 const { roundId, status, decisionDeadline, entryDate = "2026-05-08", exitDate, officialRunId } = Astro.props;
 const tone = status === "resolved" ? "green" : status === "pending" ? "amber" : "neutral";
+const publicStatus = status === "resolved" ? "scored" : status;
 ---
 
 <section class="status-strip" aria-label="Current benchmark status">
   <div class="status-item">
-    <span>Round</span>
+    <span>Test</span>
     <strong>{roundId}</strong>
-    <Badge tone={tone}>{status}</Badge>
+    <Badge tone={tone}>{publicStatus}</Badge>
   </div>
   <div class="status-item">
-    <span>Decision Deadline</span>
+    <span>Picks Saved By</span>
     <strong>{dateOnly(decisionDeadline)}</strong>
   </div>
   <div class="status-item">
-    <span>Entry Date</span>
+    <span>Start Date</span>
     <strong>{entryDate}</strong>
   </div>
   <div class="status-item">
-    <span>Exit Date</span>
+    <span>End Date</span>
     <strong>{exitDate}</strong>
   </div>
   <div class="status-item">
-    <span>Official Run</span>
+    <span>Run ID</span>
     <strong>{officialRunId}</strong>
   </div>
 </section>

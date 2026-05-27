@@ -6,7 +6,6 @@ import {
   ArrowRight,
   BarChart3,
   Database,
-  ExternalLink,
   FileCheck2,
   Layers3,
   ShieldCheck,
@@ -105,86 +104,86 @@ function buildTrackState(
 }
 
 const trackStates = [
-  buildTrackState("weekly", "Weekly", "One-week close-to-close", latestWeeklyRound, weeklyRounds.length),
-  buildTrackState("monthly", "Monthly", "One-month close-to-close", latestMonthlyRound, monthlyRounds.length)
+  buildTrackState("weekly", "Weekly", "One-week test", latestWeeklyRound, weeklyRounds.length),
+  buildTrackState("monthly", "Monthly", "One-month test", latestMonthlyRound, monthlyRounds.length)
 ];
 const latestUniverseOptionCount = Math.max(0, ...trackStates.map((track) => track.options.length));
 const currentRound = latestMonthlyRound ?? latestWeeklyRound ?? roundRows[0] ?? fallbackRounds[0];
 const heroMetrics = [
-  { label: "Weekly rounds", value: String(weeklyRounds.length) },
-  { label: "Monthly rounds", value: String(monthlyRounds.length) },
-  { label: "Locked decisions", value: String(allOfficialSubmissions.length) },
-  { label: "Latest universe", value: `${latestUniverseOptionCount || staticUniverseOptions(currentRound.round_id).length} assets` }
+  { label: "One-week tests", value: String(weeklyRounds.length) },
+  { label: "One-month tests", value: String(monthlyRounds.length) },
+  { label: "Model portfolios", value: String(allOfficialSubmissions.length) },
+  { label: "Asset list", value: `${latestUniverseOptionCount || staticUniverseOptions(currentRound.round_id).length} assets` }
 ];
 const exploreLinks = [
   {
     href: "/leaderboards/latest",
     icon: BarChart3,
-    label: "Latest leaderboards",
-    description: "Choose weekly or monthly latest results without mixing horizons.",
-    state: "By track"
+    label: "Latest results",
+    description: "See the newest weekly and monthly scoreboards.",
+    state: "Scoreboards"
   },
   {
     href: "/rounds",
     icon: Layers3,
-    label: "All rounds",
-    description: "Round packets, prompts, model outputs, entry prices, hashes, and status history.",
-    state: `${roundRows.length} rounds`
+    label: "All test rounds",
+    description: "Open each test's picks, dates, prices, and proof files.",
+    state: `${roundRows.length} tests`
   },
   {
-    href: "/methodology",
+    href: "/scoring",
     icon: TimerReset,
-    label: "Methodology",
-    description: "Scoring rules, safeguards, data boundaries, and official-run separation.",
-    state: "Audit"
+    label: "How scoring works",
+    description: "Returns are compared with the S&P 500 over the same period.",
+    state: "Simple math"
   }
 ];
-const protocolHighlights = [
+const howItWorks = [
   {
-    label: "Separate tracks",
-    title: "Weekly and monthly never combine",
-    description: "Each horizon has its own latest view, cumulative table, round packet, and score window."
+    label: "1",
+    title: "Same information",
+    description: "Every model gets the same market brief and the same asset list."
   },
   {
-    label: "No hindsight",
-    title: "Decisions publish before outcomes",
-    description: "Allocations are public while exit prices and realized returns remain unavailable."
+    label: "2",
+    title: "Models pick portfolios",
+    description: "The picks are saved before the result is known."
   },
   {
-    label: "Same inputs",
-    title: "Frozen prompt and market packet",
-    description: "Every official model receives the same briefing, option universe, dates, and response schema."
+    label: "3",
+    title: "Markets decide",
+    description: "Real prices decide which portfolio did best."
   },
   {
-    label: "Public audit",
-    title: "Prompts, outputs, hashes public",
-    description: "Readers can inspect model-facing inputs, validated outputs, price files, and run metadata."
+    label: "Proof",
+    title: "You can check the run",
+    description: "Prompts, model outputs, prices, and hashes are public."
   }
 ];
 const safeguards = [
   {
     icon: ShieldCheck,
-    label: "Run isolation",
-    title: "One official call per model",
-    description: "Official results are never mixed with repeated stability runs, mock output, or provider smoke tests."
+    label: "Same rules",
+    title: "One public pick per model",
+    description: "The public score uses the saved portfolio for that test, not private retries or experiments."
   },
   {
     icon: Database,
-    label: "Inspection",
-    title: `${latestUniverseOptionCount} current options`,
-    description: "Each track preserves the frozen model-facing universe, prompt, outputs, entry prices, and audit hashes."
+    label: "Same choices",
+    title: `${latestUniverseOptionCount} current assets`,
+    description: "Each test keeps the exact asset list, prompt, model outputs, starting prices, and proof hashes."
   },
   {
     icon: FileCheck2,
-    label: "Score boundary",
-    title: `${pendingRoundCount} pending score windows`,
-    description: "Realized alpha appears only after exit prices are collected and the scorer publishes official results."
+    label: "No early winner",
+    title: `${pendingRoundCount} tests waiting for scores`,
+    description: "Final returns appear only after ending prices are available."
   }
 ];
 
 function statusLabel(round?: RoundRecord): string {
   if (!round) return "Not started";
-  if (round.status === "resolved") return "Resolved";
+  if (round.status === "resolved") return "Scored";
   if (round.status === "archived") return "Archived";
   return "Pending score";
 }
@@ -195,13 +194,13 @@ function statusClass(round?: RoundRecord): string {
 
 function windowLabel(round?: RoundRecord): string {
   if (!round) return "Awaiting first round";
-  return `${dateOnly(round.entry_date)} close to ${dateOnly(round.exit_date)} close`;
+  return `${dateOnly(round.entry_date)} to ${dateOnly(round.exit_date)}`;
 }
 
 function scoreLine(round?: RoundRecord): string {
   if (!round) return "No score window declared yet.";
-  if (round.status === "resolved") return "Official scores are published.";
-  return `Scores publish after the ${dateOnly(round.exit_date)} exit close.`;
+  if (round.status === "resolved") return "Scores are published.";
+  return `Scores publish after the ${dateOnly(round.exit_date)} ending close.`;
 }
 
 function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["optionsById"]): string {
@@ -215,40 +214,28 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
 ---
 
 <BaseLayout
-  title="CapitalBench - LLM Market Benchmark and Leaderboards"
-  description="CapitalBench measures capital allocation ability across leading AI models using separate weekly and monthly public-market benchmark tracks."
+  title="CapitalBench - AI Market Picks Scoreboard"
+  description="CapitalBench gives AI models the same market information, records their portfolios, and scores them using real market returns."
 >
   <section class="home-hero" aria-labelledby="home-title">
     <div class="home-hero-copy">
-      <p class="eyebrow">Auditable AI market benchmark</p>
-      <h1 id="home-title">CapitalBench</h1>
+      <p class="eyebrow">CapitalBench</p>
+      <h1 id="home-title">We Test Which AI Models Pick Better Portfolios</h1>
       <p class="home-hero-lede">
-        CapitalBench measures how leading AI models allocate capital in real public markets. Weekly and monthly
-        tracks are run separately: models receive identical frozen inputs, commit before outcomes are known, and are
-        scored only after each declared exit close.
+        Every model gets the same market information and asset list. Each one picks a portfolio. CapitalBench scores the
+        portfolios using real market prices.
       </p>
-      <p class="hero-disclaimer">Benchmark and research project. Not financial advice.</p>
+      <p class="hero-disclaimer">Research benchmark. Not financial advice.</p>
     </div>
 
     <div class="home-hero-actions" aria-label="Project resources">
-      <a class="action-link action-primary" href="/leaderboards/latest-weekly">
-        Weekly track
+      <a class="action-link action-primary" href="/leaderboards/latest">
+        See results
         <ArrowRight size={15} aria-hidden="true" />
       </a>
-      <a class="action-link" href="/leaderboards/latest-monthly">Monthly track</a>
-      <a class="action-link" href="/rounds">All rounds</a>
-      <a
-        class="action-link"
-        href={siteConfig.githubUrl}
-        target="_blank"
-        rel="noreferrer"
-        data-analytics-event="github_repository_click"
-        data-analytics-param-location="home_hero"
-      >
-        <GitHubLogo size={17} />
-        GitHub repository
-        <ExternalLink size={14} aria-hidden="true" />
-      </a>
+      <a class="action-link" href="#current-picks">Current picks</a>
+      <a class="action-link" href="#how-it-works">How it works</a>
+      <a class="action-link" href="#proof-and-data">Proof and data</a>
     </div>
 
     <div class="home-hero-console" aria-label="Current benchmark state">
@@ -256,20 +243,20 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
         <div class="console-title">
           <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="eager" />
           <div>
-            <span>Benchmark Tracks</span>
-            <strong>Weekly and Monthly</strong>
+            <span>Current tests</span>
+            <strong>Weekly and monthly</strong>
           </div>
         </div>
-        <span class="status-badge status-pending">Separated</span>
+        <span class="status-badge status-pending">Live</span>
       </div>
 
       <div class="console-track-list">
         {trackStates.map((track) => (
           <div class="console-track-row">
             <div>
-              <span>{track.label} latest</span>
+              <span>{track.label} test</span>
               <strong>{track.round?.round_id ?? "Not started"}</strong>
-              <p>{track.round ? `${windowLabel(track.round)}; ${track.submissions.length} official decisions` : "No round locked yet."}</p>
+              <p>{track.round ? `${windowLabel(track.round)}; ${track.submissions.length} model portfolios` : "No test locked yet."}</p>
             </div>
             {track.round && (
               <ScoreCountdown
@@ -278,7 +265,7 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
                 scoreEtaUtc={track.round.score_eta_utc}
                 source={track.round.score_eta_source}
                 exitDate={track.round.exit_date}
-                label="Score target"
+                label="Scores after"
                 variant="inline"
                 precision={track.key === "weekly" ? "hours" : "days"}
                 initialNowIso={initialNowIso}
@@ -304,7 +291,7 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
       <article class={`track-card track-card-${track.key}`}>
         <div class="track-card-head">
           <div>
-            <span class="panel-kicker">{track.label} track</span>
+            <span class="panel-kicker">{track.label} test</span>
             <h2>{track.round?.round_id ?? "No round yet"}</h2>
           </div>
           <span class={`status-badge ${statusClass(track.round)}`}>{statusLabel(track.round)}</span>
@@ -313,41 +300,41 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
           <>
             <p>{track.horizonLabel}. {scoreLine(track.round)}</p>
             <div class="track-card-grid">
-              <span>Window <strong>{windowLabel(track.round)}</strong></span>
-              <span>Official decisions <strong>{track.submissions.length}</strong></span>
-              <span>Universe <strong>{track.options.length} assets</strong></span>
-              <span>Official run <strong>{track.round.official_run_id}</strong></span>
+              <span>Dates <strong>{windowLabel(track.round)}</strong></span>
+              <span>Portfolios <strong>{track.submissions.length}</strong></span>
+              <span>Asset list <strong>{track.options.length} assets</strong></span>
+              <span>Run id <strong>{track.round.official_run_id}</strong></span>
             </div>
           </>
         ) : (
-          <p>No {track.label.toLowerCase()} round is published yet.</p>
+          <p>No {track.label.toLowerCase()} test is published yet.</p>
         )}
         <div class="track-card-actions">
-          <a class="small-button" href={track.latestHref}>Latest</a>
-          <a class="small-button" href={track.cumulativeHref}>Cumulative</a>
-          {track.roundHref && <a class="small-button" href={track.roundHref}>Round Packet</a>}
+          <a class="small-button" href={track.latestHref}>Results</a>
+          <a class="small-button" href={track.cumulativeHref}>Overall</a>
+          {track.roundHref && <a class="small-button" href={track.roundHref}>Proof files</a>}
         </div>
       </article>
     ))}
   </section>
 
-  <section class="home-section-heading" aria-labelledby="latest-decisions-title">
-    <span class="panel-kicker">Official decisions</span>
-    <h2 id="latest-decisions-title">Latest Allocations By Track</h2>
+  <section class="home-section-heading" id="current-picks" aria-labelledby="latest-decisions-title">
+    <span class="panel-kicker">Model portfolios</span>
+    <h2 id="latest-decisions-title">What The Models Picked</h2>
     <p>
-      Weekly and monthly decisions are displayed in separate lanes. A weekly round is its own benchmark, not an interim
-      monthly score.
+      These are the portfolios each model locked in for the active weekly and monthly tests. Scores appear after ending
+      prices are available.
     </p>
   </section>
 
-  <section class="decision-track-grid" aria-label="Latest weekly and monthly allocations">
+  <section class="decision-track-grid" aria-label="Latest weekly and monthly model portfolios">
     {trackStates.map((track) => (
       <article class={`decision-track decision-track-${track.key}`}>
         <div class="decision-track-header">
           <div>
-            <span class="panel-kicker">{track.label} decisions</span>
+            <span class="panel-kicker">{track.label} picks</span>
             <h3>{track.round?.round_id ?? "Awaiting round"}</h3>
-            <p>{track.round ? windowLabel(track.round) : "No decisions are locked yet."}</p>
+            <p>{track.round ? windowLabel(track.round) : "No picks are locked yet."}</p>
           </div>
           <span class={`status-badge ${statusClass(track.round)}`}>{statusLabel(track.round)}</span>
         </div>
@@ -380,7 +367,7 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
 
             <div class="track-exposure">
               <div>
-                <span class="metric-label">Aggregate exposure</span>
+                <span class="metric-label">Most common exposure</span>
                 <strong>{track.topExposure ? optionDisplayName(track.topExposure.optionId, track.optionsById) : "None"}</strong>
               </div>
               <div class="exposure-bars compact">
@@ -401,43 +388,53 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
           </>
         ) : (
           <div class="pending-state compact">
-            <strong>No official decisions yet.</strong>
-            <span>The latest {track.label.toLowerCase()} allocations will appear after the round is locked.</span>
+            <strong>No model picks yet.</strong>
+            <span>The latest {track.label.toLowerCase()} portfolios will appear after the test is locked.</span>
           </div>
         )}
 
         <div class="track-card-actions">
-          <a class="small-button" href={track.latestHref}>Open {track.label} Table</a>
-          {track.roundHref && <a class="small-button" href={track.roundHref}>Audit Packet</a>}
+          <a class="small-button" href={track.latestHref}>Open {track.label} Results</a>
+          {track.roundHref && <a class="small-button" href={track.roundHref}>Proof files</a>}
         </div>
+      </article>
+    ))}
+  </section>
+
+  <section class="trust-strip" id="how-it-works" aria-label="How CapitalBench works">
+    {howItWorks.map((item) => (
+      <article>
+        <span>{item.label}</span>
+        <strong>{item.title}</strong>
+        <p>{item.description}</p>
       </article>
     ))}
   </section>
 
   <section class="leaderboard-lanes" aria-labelledby="leaderboard-lanes-title">
     <div class="leaderboard-lanes-copy">
-      <span class="panel-kicker">Scores and leaderboards</span>
-      <h2 id="leaderboard-lanes-title">No Combined Horizon Score</h2>
+      <span class="panel-kicker">Results</span>
+      <h2 id="leaderboard-lanes-title">Weekly And Monthly Are Separate</h2>
       <p>
-        Latest and cumulative views are split by horizon. Pending tracks show official allocations first; performance
-        appears only after the declared exit close is priced.
+        A one-week test and a one-month test are different contests. They get separate scoreboards and separate overall
+        results.
       </p>
     </div>
     <div class="leaderboard-lane-links">
       <a href="/leaderboards/latest-weekly">
-        <span>Latest Weekly</span>
-        <strong>{latestWeeklyRound?.status === "resolved" ? "Scores live" : "Pending score"}</strong>
+        <span>Weekly results</span>
+        <strong>{latestWeeklyRound?.status === "resolved" ? "Scored" : "Waiting for prices"}</strong>
       </a>
       <a href="/leaderboards/latest-monthly">
-        <span>Latest Monthly</span>
-        <strong>{latestMonthlyRound?.status === "resolved" ? "Scores live" : "Pending score"}</strong>
+        <span>Monthly results</span>
+        <strong>{latestMonthlyRound?.status === "resolved" ? "Scored" : "Waiting for prices"}</strong>
       </a>
       <a href="/leaderboards/cumulative-weekly">
-        <span>Cumulative Weekly</span>
+        <span>Overall weekly</span>
         <strong>Weekly only</strong>
       </a>
       <a href="/leaderboards/cumulative-monthly">
-        <span>Cumulative Monthly</span>
+        <span>Overall monthly</span>
         <strong>Monthly only</strong>
       </a>
     </div>
@@ -445,11 +442,11 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
 
   <section class="timeline-lanes" aria-labelledby="track-timeline-title">
     <div class="home-section-heading">
-      <span class="panel-kicker">{roundRows.length}-round record</span>
-      <h2 id="track-timeline-title">Two Timelines, Two Score Windows</h2>
+      <span class="panel-kicker">{roundRows.length}-test record</span>
+      <h2 id="track-timeline-title">When Each Test Gets Scored</h2>
       <p>
-        Each track has its own locked decision point, price window, and resolution job. The website keeps these lanes
-        separate from first impression through cumulative reporting.
+        Each test has three moments: picks are saved, the market period passes, and final scores publish after ending
+        prices are available.
       </p>
     </div>
     <div class="timeline-lane-grid">
@@ -463,21 +460,21 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
             <li class={track.round ? "phase-complete" : ""}>
               <span>1</span>
               <div>
-                <strong>Decision locked</strong>
+                <strong>Picks saved</strong>
                 <p>{track.round ? dateOnly(track.round.decision_deadline_utc) : "Pending"}</p>
               </div>
             </li>
             <li class={track.round ? "phase-current" : ""}>
               <span>2</span>
               <div>
-                <strong>{track.horizonLabel} window</strong>
+                <strong>{track.horizonLabel}</strong>
                 <p>{track.round ? windowLabel(track.round) : "No window declared"}</p>
               </div>
             </li>
             <li class={track.round?.status === "resolved" ? "phase-complete" : "phase-current"}>
               <span>3</span>
               <div>
-                <strong>{track.round?.status === "resolved" ? "Scores published" : "Score after exit close"}</strong>
+                <strong>{track.round?.status === "resolved" ? "Scores published" : "Score after ending prices"}</strong>
                 <p>{track.round ? scoreLine(track.round) : "Resolution pending."}</p>
               </div>
             </li>
@@ -485,16 +482,6 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
         </article>
       ))}
     </div>
-  </section>
-
-  <section class="trust-strip" aria-label="Benchmark protocol snapshot">
-    {protocolHighlights.map((item) => (
-      <article>
-        <span>{item.label}</span>
-        <strong>{item.title}</strong>
-        <p>{item.description}</p>
-      </article>
-    ))}
   </section>
 
   <nav class="view-switcher enhanced" aria-label="Explore CapitalBench">
@@ -513,19 +500,19 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
     })}
   </nav>
 
-  <section class="audit-preview" aria-labelledby="audit-preview-title">
+  <section class="audit-preview" id="proof-and-data" aria-labelledby="audit-preview-title">
     <div>
-      <span class="panel-kicker">Audit snapshot</span>
-      <h2 id="audit-preview-title">Inspect Each Track Packet</h2>
+      <span class="panel-kicker">Proof and data</span>
+      <h2 id="audit-preview-title">Check The Source Files</h2>
       <p>
-        The homepage previews the current state. Round pages carry the evidence: model-facing inputs, prompts, parsed
-        outputs, entry prices, source reports, hashes, run manifests, and automation status.
+        Test pages show the market brief, prompt, model portfolios, starting prices, source reports, hashes, and run
+        status behind each public test.
       </p>
     </div>
     <div class="audit-preview-actions">
-      {latestWeeklyRound && <a class="action-link action-primary" href={`/rounds/${latestWeeklyRound.round_id}/`}>Open latest weekly packet</a>}
-      {latestMonthlyRound && <a class="action-link" href={`/rounds/${latestMonthlyRound.round_id}/`}>Open latest monthly packet</a>}
-      <a class="action-link" href="/rounds">View all rounds</a>
+      {latestWeeklyRound && <a class="action-link action-primary" href={`/rounds/${latestWeeklyRound.round_id}/`}>Open weekly proof files</a>}
+      {latestMonthlyRound && <a class="action-link" href={`/rounds/${latestMonthlyRound.round_id}/`}>Open monthly proof files</a>}
+      <a class="action-link" href="/rounds">View all tests</a>
       <a class="action-link" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
         <GitHubLogo size={15} />
         Repository
@@ -534,11 +521,11 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
   </section>
 
   <section class="home-section-heading" aria-labelledby="safeguards-title">
-    <span class="panel-kicker">Benchmark safeguards</span>
-    <h2 id="safeguards-title">Built For Public Audit, Not Advice</h2>
+    <span class="panel-kicker">Why it is fair</span>
+    <h2 id="safeguards-title">Simple Rules, Public Proof</h2>
     <p>
-      The trust model is deliberately simple: fixed inputs, isolated official runs, public hashes, and no provisional
-      performance claims before the scoring window resolves.
+      CapitalBench keeps the comparison narrow: same information, same asset list, saved picks, and no final winner
+      before the test ends.
     </p>
   </section>
 

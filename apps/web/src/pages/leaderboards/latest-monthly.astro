@@ -20,15 +20,15 @@ const initialNowIso = new Date().toISOString();
 ---
 
 <BaseLayout
-  title="Latest Monthly CapitalBench Leaderboard"
-  description="Latest one-month CapitalBench official leaderboard with monthly allocations and results kept separate from weekly rounds."
+  title="Latest Monthly CapitalBench Results"
+  description="Latest one-month CapitalBench results with model portfolios and market returns kept separate from weekly tests."
 >
   <PageHeader
-    eyebrow="Monthly track"
-    title="Latest Monthly Leaderboard"
+    eyebrow="One-month test"
+    title="Monthly Results"
     summary={currentRound
-      ? `${currentRound.round_id} is the latest monthly round. Official allocations and results are shown only for the monthly track.`
-      : "No monthly CapitalBench round is published yet."}
+      ? `${currentRound.round_id} is the latest one-month test. Its portfolios and scores are shown only with monthly results.`
+      : "No monthly CapitalBench test is published yet."}
   />
 
   {currentRound ? (
@@ -62,9 +62,9 @@ const initialNowIso = new Date().toISOString();
         <div class="panel">
           <div class="panel-header">
             <div>
-              <span class="panel-kicker">Monthly official run</span>
-              <h2>Official Allocations</h2>
-              <p>These are public monthly-track decisions, not weekly results.</p>
+              <span class="panel-kicker">Monthly model picks</span>
+              <h2>Model Portfolios</h2>
+              <p>These are the portfolios saved for this one-month test.</p>
             </div>
           </div>
           <OfficialPicksTable
@@ -80,8 +80,8 @@ const initialNowIso = new Date().toISOString();
   ) : (
     <section class="section">
       <div class="pending-state">
-        <strong>No monthly round yet.</strong>
-        <span>The monthly leaderboard will appear after the first monthly round is locked.</span>
+        <strong>No monthly test yet.</strong>
+        <span>The monthly results page will appear after the first monthly test is locked.</span>
       </div>
     </section>
   )}

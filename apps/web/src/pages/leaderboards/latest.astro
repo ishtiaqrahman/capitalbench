@@ -4,24 +4,24 @@ import PageHeader from "../../components/PageHeader.astro";
 ---
 
 <BaseLayout
-  title="Latest CapitalBench Leaderboards"
-  description="Latest CapitalBench leaderboards split by weekly and monthly benchmark tracks."
+  title="Latest CapitalBench Results"
+  description="Latest CapitalBench results split into one-week and one-month market tests."
 >
   <PageHeader
-    eyebrow="Latest official results"
-    title="Choose A Track"
-    summary="Weekly and monthly CapitalBench rounds are reported separately. Latest leaderboards never mix horizons."
+    eyebrow="Latest results"
+    title="Choose A Test"
+    summary="Weekly and monthly tests are separate because they measure different time periods."
   />
 
   <section class="section">
     <div class="grid-3">
       <article class="feature">
-        <h3><a href="/leaderboards/latest-weekly">Latest Weekly Leaderboard</a></h3>
-        <p>Newest one-week official round, with pending allocations before performance is scored.</p>
+        <h3><a href="/leaderboards/latest-weekly">Weekly Results</a></h3>
+        <p>The newest one-week test, with model portfolios shown before scores are ready.</p>
       </article>
       <article class="feature">
-        <h3><a href="/leaderboards/latest-monthly">Latest Monthly Leaderboard</a></h3>
-        <p>Newest one-month official round, kept separate from weekly results.</p>
+        <h3><a href="/leaderboards/latest-monthly">Monthly Results</a></h3>
+        <p>The newest one-month test, kept separate from weekly results.</p>
       </article>
     </div>
   </section>

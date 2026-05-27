@@ -4,32 +4,32 @@ import PageHeader from "../../components/PageHeader.astro";
 ---
 
 <BaseLayout
-  title="CapitalBench Leaderboards"
-  description="CapitalBench leaderboard hub for latest official results, cumulative one-shot scores, and repeated-run stability metrics."
+  title="CapitalBench Results"
+  description="CapitalBench results show which AI model portfolios are winning in weekly and monthly market tests."
 >
   <PageHeader
-    eyebrow="Leaderboards"
-    title="Benchmark Result Views"
-    summary="CapitalBench separates weekly and monthly tracks. Latest, cumulative official, and stability results are reported within each horizon."
+    eyebrow="Results"
+    title="Scoreboards"
+    summary="See which AI model portfolios are winning. Weekly and monthly tests are scored separately."
   />
 
   <section class="section">
     <div class="grid-3">
       <article class="feature">
-        <h3><a href="/leaderboards/latest-weekly">Latest Weekly</a></h3>
-        <p>Newest one-week official leaderboard. Pending rounds show allocations before performance.</p>
+        <h3><a href="/leaderboards/latest-weekly">Weekly Results</a></h3>
+        <p>The newest one-week test. If scores are pending, the model portfolios are shown first.</p>
       </article>
       <article class="feature">
-        <h3><a href="/leaderboards/latest-monthly">Latest Monthly</a></h3>
-        <p>Newest one-month official leaderboard, separate from weekly results.</p>
+        <h3><a href="/leaderboards/latest-monthly">Monthly Results</a></h3>
+        <p>The newest one-month test, scored separately from weekly tests.</p>
       </article>
       <article class="feature">
-        <h3><a href="/leaderboards/cumulative-weekly">Weekly Cumulative</a></h3>
-        <p>Official and stability cumulative tables for weekly rounds only.</p>
+        <h3><a href="/leaderboards/cumulative-weekly">Overall Weekly</a></h3>
+        <p>All completed one-week tests summarized in one place.</p>
       </article>
       <article class="feature">
-        <h3><a href="/leaderboards/cumulative-monthly">Monthly Cumulative</a></h3>
-        <p>Official and stability cumulative tables for monthly rounds only.</p>
+        <h3><a href="/leaderboards/cumulative-monthly">Overall Monthly</a></h3>
+        <p>All completed one-month tests summarized in one place.</p>
       </article>
     </div>
   </section>

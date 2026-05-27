@@ -37,25 +37,25 @@ export default function RoundsTable({ fallbackRows }: Props) {
       render: (row) => (
         <a className="round-link" href={row.audit_path}>
           <strong>{row.round_id}</strong>
-          <span>Open round packet</span>
+          <span>Open proof files</span>
         </a>
       )
     },
     {
       key: "track",
-      label: "Track",
+      label: "Test Type",
       value: (row) => trackLabel(roundTrack(row)),
       mobile: "primary"
     },
-    { key: "status", label: "Status", mobile: "secondary" },
-    { key: "decision_deadline_utc", label: "Decision", value: (row) => dateOnly(row.decision_deadline_utc), mobile: "secondary" },
-    { key: "horizon", label: "Horizon", mobile: "primary" },
-    { key: "exit_date", label: "Exit", value: (row) => dateOnly(row.exit_date), mobile: "primary" },
+    { key: "status", label: "Status", value: (row) => (row.status === "resolved" ? "scored" : row.status), mobile: "secondary" },
+    { key: "decision_deadline_utc", label: "Picks Saved", value: (row) => dateOnly(row.decision_deadline_utc), mobile: "secondary" },
+    { key: "horizon", label: "Length", mobile: "primary" },
+    { key: "exit_date", label: "End", value: (row) => dateOnly(row.exit_date), mobile: "primary" },
     { key: "methodology_version", label: "Methodology", mobile: "hidden" },
-    { key: "official_run_id", label: "Official Run", mobile: "hidden" },
+    { key: "official_run_id", label: "Run ID", mobile: "hidden" },
     {
       key: "audit_path",
-      label: "Audit",
+      label: "Proof",
       mobile: "hidden",
       value: (row) => row.audit_path,
       render: (row) => (
