@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import os
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
@@ -29,8 +31,20 @@ def fetch_tiingo_eod_prices(symbol: str, start_date: str, end_date: str, api_key
     query = urllib.parse.urlencode({"startDate": start_date, "endDate": end_date})
     url = f"https://api.tiingo.com/tiingo/daily/{encoded_symbol}/prices?{query}"
     request = urllib.request.Request(url, headers={"Authorization": f"Token {api_key}"})
-    with urllib.request.urlopen(request, timeout=30) as response:
-        payload = response.read().decode("utf-8")
+    for attempt in range(2):
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                payload = response.read().decode("utf-8")
+            break
+        except urllib.error.HTTPError as exc:
+            if exc.code != 429 or attempt == 1:
+                raise
+            retry_after = exc.headers.get("Retry-After")
+            try:
+                delay = float(retry_after) if retry_after else 1.0
+            except ValueError:
+                delay = 1.0
+            time.sleep(delay)
     data = json.loads(payload)
     if not isinstance(data, list):
         raise ValueError(f"Tiingo response for {symbol} was not a price row list")

@@ -289,6 +289,38 @@ def test_anthropic_provider_disables_tools_in_payload(monkeypatch) -> None:
 
     assert captured_payload["tool_choice"] == {"type": "none"}
     assert "tools" not in captured_payload
+    assert "thinking" not in captured_payload
+
+
+def test_anthropic_provider_sets_low_output_effort_without_thinking(monkeypatch) -> None:
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    provider = AnthropicProvider()
+    captured_payload = {}
+    raw_json = (
+        '{"round_id":"example-round","model_id":"anthropic-smoke","provider":"anthropic",'
+        '"mode":"closed_capability","selected_option_id":"SP500","confidence":0.5,'
+        '"rationale_summary":"Test","key_risks":["Risk"]}'
+    )
+
+    def fake_post(url, headers, payload, timeout):
+        captured_payload.update(payload)
+        return {
+            "content": [{"type": "text", "text": raw_json}],
+            "usage": {"input_tokens": 1, "output_tokens": 1},
+        }
+
+    monkeypatch.setattr(provider, "_post_json", fake_post)
+    model_config = _anthropic_model_config().model_copy(update={"reasoning_effort": "low"})
+
+    provider.run_model(
+        model_config,
+        "prompt",
+        provider_submission_schema(model_config),
+        RuntimeSettings(timeout_seconds=1, max_output_tokens=500, temperature=0, reasoning_effort="low"),
+    )
+
+    assert captured_payload["output_config"] == {"effort": "low"}
+    assert "thinking" not in captured_payload
 
 
 def test_anthropic_provider_retries_without_deprecated_temperature(monkeypatch) -> None:

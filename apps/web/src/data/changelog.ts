@@ -27,6 +27,24 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-28-claude-opus-4-8-added",
+    date: "2026-05-28",
+    title: "Claude Opus 4.8 joins future CapitalBench tests",
+    category: "Benchmark",
+    status: "published",
+    summary:
+      "Claude Opus 4.8 was added as a regular participant starting with the May 28, 2026 weekly and monthly tests.",
+    details: [
+      "The model is configured as anthropic-claude-opus-4-8 using the Anthropic API model ID claude-opus-4-8.",
+      "Eligibility begins with the May 28, 2026 weekly and monthly rounds, so older completed tests are not backfilled.",
+      "Anthropic effort is explicitly pinned to low, the lowest documented effort level, and no thinking field is sent for Claude Opus models."
+    ],
+    links: [
+      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
+      { label: "Latest monthly", href: "/leaderboards/latest-monthly" }
+    ]
+  },
+  {
     id: "2026-05-27-active-exposure-homepage",
     date: "2026-05-27",
     title: "Homepage adds active allocation map and clearer benchmark snapshot",

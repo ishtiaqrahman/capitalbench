@@ -314,6 +314,52 @@ def test_smoke_provider_uses_low_google_reasoning_effort(tmp_path: Path, monkeyp
     assert captured["runtime_reasoning_effort"] == "low"
 
 
+def test_smoke_provider_uses_low_anthropic_reasoning_effort(tmp_path: Path, monkeypatch) -> None:
+    round_path = _copy_example_round(tmp_path)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    captured = {}
+
+    class CapturingProvider:
+        def run_model(self, model_config, prompt, json_schema, runtime_limits):
+            captured["model_reasoning_effort"] = model_config.reasoning_effort
+            captured["runtime_reasoning_effort"] = runtime_limits.reasoning_effort
+            from capitalbench.schemas import Usage
+            from capitalbench.providers.base import ProviderResult
+
+            return ProviderResult(
+                raw_text=(
+                    '{"round_id":"example-round","model_id":"anthropic-smoke","provider":"anthropic",'
+                    '"mode":"closed_capability","selected_option_id":"SP500","confidence":0.5,'
+                    '"rationale_summary":"Test","key_risks":["Risk one","Risk two"]}'
+                ),
+                parsed_json={
+                    "round_id": "example-round",
+                    "model_id": "anthropic-smoke",
+                    "provider": "anthropic",
+                    "mode": "closed_capability",
+                    "selected_option_id": "SP500",
+                    "confidence": 0.5,
+                    "rationale_summary": "Test",
+                    "key_risks": ["Risk one", "Risk two"],
+                },
+                usage=Usage(latency_seconds=0.01),
+                error=None,
+            )
+
+    monkeypatch.setitem(provider_smoke_module.PROVIDER_CLASSES, "anthropic", CapturingProvider)
+
+    summary = smoke_provider(
+        provider="anthropic",
+        api_model_name="model",
+        round_path=round_path,
+        allow_real_api_calls=True,
+    )
+
+    assert summary.validation_status == "valid"
+    assert captured["model_reasoning_effort"] == "low"
+    assert captured["runtime_reasoning_effort"] == "low"
+
+
 def test_check_providers_does_not_print_secrets(monkeypatch, capsys) -> None:
     monkeypatch.setenv("OPENAI_API_KEY", "sk-secret-value")
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)

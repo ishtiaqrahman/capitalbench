@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import csv
+import json
 import os
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import Any
+import urllib.parse
+import urllib.request
 
 from .io import load_options, write_json
 from .scoring import _is_cash_option
@@ -75,15 +78,21 @@ def fetch_universe_performance(
         try:
             tiingo_rows = fetch(symbol, fetch_start.isoformat(), as_of.isoformat(), api_key)
             row = _performance_row_from_tiingo(option, symbol, as_of, lookbacks, tiingo_rows)
+            if row["status"] == "pass" and row.get("as_of_price_date") != as_of.isoformat():
+                yahoo_row = _fallback_performance_row_from_yahoo(option, symbol, as_of, lookbacks, fetch_start)
+                if yahoo_row is not None and yahoo_row.get("as_of_price_date") == as_of.isoformat():
+                    row = yahoo_row
         except Exception as exc:
-            row = _failed_performance_row(option, as_of, str(exc), symbol=symbol)
+            row = _fallback_performance_row_from_yahoo(option, symbol, as_of, lookbacks, fetch_start)
+            if row is None:
+                row = _failed_performance_row(option, as_of, str(exc), symbol=symbol)
         rows.append(row)
         if row["status"] != "pass":
             failed_options.append(option.option_id)
 
     report = {
         "generated_at_utc": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
-        "source": "tiingo_eod_adj_close",
+        "source": _performance_source(rows),
         "as_of_date_requested": as_of.isoformat(),
         "return_windows": ["7d", "30d", "6m", "1y"],
         "total_options": len(rows),
@@ -201,6 +210,67 @@ def _failed_performance_row(option: Any, as_of: date, message: str, symbol: str 
         }
     )
     return row
+
+
+def _fallback_performance_row_from_yahoo(
+    option: Any,
+    symbol: str,
+    as_of: date,
+    lookbacks: dict[str, date],
+    fetch_start: date,
+) -> dict[str, Any] | None:
+    try:
+        yahoo_rows = _fetch_yahoo_chart_adjclose(symbol, fetch_start, as_of)
+    except Exception:
+        return None
+    row = _performance_row_from_tiingo(option, symbol, as_of, lookbacks, yahoo_rows)
+    if row["status"] != "pass":
+        return None
+    row["message"] = "OK; yahoo_chart_adjclose fallback after Tiingo hourly rate limit or delayed EOD row"
+    return row
+
+
+def _fetch_yahoo_chart_adjclose(symbol: str, start_date: date, end_date: date) -> list[dict[str, Any]]:
+    period1 = int(datetime.combine(start_date, time.min, tzinfo=timezone.utc).timestamp())
+    period2 = int(datetime.combine(end_date + timedelta(days=2), time.min, tzinfo=timezone.utc).timestamp())
+    encoded_symbol = urllib.parse.quote(symbol, safe="")
+    query = urllib.parse.urlencode({"period1": period1, "period2": period2, "interval": "1d", "events": "history"})
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{encoded_symbol}?{query}"
+    request = urllib.request.Request(url, headers={"User-Agent": "CapitalBench/1.0"})
+    with urllib.request.urlopen(request, timeout=30) as response:
+        payload = response.read().decode("utf-8")
+    data = json.loads(payload)
+    result = ((data.get("chart") or {}).get("result") or [None])[0]
+    if not result:
+        raise ValueError(f"Yahoo chart returned no result for {symbol}")
+    timestamps = result.get("timestamp") or []
+    indicators = result.get("indicators") or {}
+    quote = (indicators.get("quote") or [{}])[0]
+    adjclose = (indicators.get("adjclose") or [{}])[0].get("adjclose") or []
+    closes = quote.get("close") or []
+    rows: list[dict[str, Any]] = []
+    for index, timestamp in enumerate(timestamps):
+        close = closes[index] if index < len(closes) else None
+        adj_close = adjclose[index] if index < len(adjclose) else close
+        if close is None or adj_close is None:
+            continue
+        rows.append(
+            {
+                "date": datetime.fromtimestamp(int(timestamp), tz=timezone.utc).date().isoformat(),
+                "close": close,
+                "adjClose": adj_close,
+            }
+        )
+    if not rows:
+        raise ValueError(f"Yahoo chart returned no usable adjusted close rows for {symbol}")
+    return rows
+
+
+def _performance_source(rows: list[dict[str, Any]]) -> str:
+    has_yahoo = any("yahoo_chart_adjclose fallback" in str(row.get("message") or "") for row in rows)
+    if has_yahoo:
+        return "tiingo_eod_adj_close; yahoo_chart_adjclose fallback for rows marked in CSV message"
+    return "tiingo_eod_adj_close"
 
 
 def _base_row(option: Any, symbol: str, as_of: date, status: str) -> dict[str, Any]:

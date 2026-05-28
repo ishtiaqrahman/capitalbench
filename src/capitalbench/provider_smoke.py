@@ -63,6 +63,8 @@ def smoke_provider(
         reasoning_effort = "low"
     elif provider == "openai":
         reasoning_effort = "minimal"
+    elif provider == "anthropic":
+        reasoning_effort = "low"
 
     model_config = ModelConfig(
         model_id=f"{provider}-smoke",

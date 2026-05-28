@@ -40,6 +40,8 @@ class AnthropicProvider(BaseProvider):
                 }
             ],
         }
+        if runtime_limits.reasoning_effort:
+            payload["output_config"] = {"effort": runtime_limits.reasoning_effort}
         response = self._post_anthropic(payload, runtime_limits.timeout_seconds)
         raw_text = _extract_anthropic_text(response)
         usage_data = response.get("usage") or {}
