@@ -8,6 +8,8 @@ from .io import write_json, write_yaml
 
 ROUND_FILES = ["manifest.yaml", "briefing.md", "options.yaml", "prompt.md", "hashes.json"]
 ROUND_DIRS = ["prices", "runs"]
+DEFAULT_UNIVERSE_PATH = Path("configs/universes/capitalbench_universe_v2_1.yaml")
+DEFAULT_UNIVERSE_VERSION = "v2.1"
 SubmissionFormat = Literal["single_pick", "portfolio"]
 
 
@@ -17,12 +19,18 @@ def init_round(
     universe_path: Path | None = None,
     universe_version: str | None = None,
     submission_format: SubmissionFormat = "single_pick",
+    horizon: str = "one month",
 ) -> Path:
     round_id = round_id.strip()
     if not round_id:
         raise ValueError("round_id is required")
     if submission_format not in {"single_pick", "portfolio"}:
         raise ValueError("submission_format must be one of: single_pick, portfolio")
+    horizon = _normalize_horizon(horizon)
+    horizon_label = horizon.replace(" ", "-").capitalize()
+    if universe_path is None and (default_universe_path := _default_universe_path()) is not None:
+        universe_path = default_universe_path
+        universe_version = universe_version or DEFAULT_UNIVERSE_VERSION
 
     round_path = rounds_dir / round_id
     for dirname in ROUND_DIRS:
@@ -36,10 +44,10 @@ def init_round(
             {
                 "round_id": round_id,
                 "title": f"CapitalBench {round_id}",
-                "description": "One-month market allocation evaluation round.",
+                "description": f"{horizon_label} market allocation evaluation round.",
                 "decision_date": None,
                 "decision_deadline": None,
-                "horizon": "one month",
+                "horizon": horizon,
                 "methodology_version": "portfolio-v1.0" if submission_format == "portfolio" else "single_pick-v1.0",
                 "universe_version": resolved_universe_version or None,
                 "submission_format": submission_format,
@@ -71,7 +79,7 @@ def init_round(
     prompt_path = round_path / "prompt.md"
     if not prompt_path.exists():
         prompt_path.write_text(
-            _default_prompt_text(submission_format),
+            _default_prompt_text(submission_format, horizon),
             encoding="utf-8",
         )
 
@@ -114,9 +122,32 @@ def init_round(
     return round_path
 
 
-def _default_prompt_text(submission_format: SubmissionFormat = "single_pick") -> str:
+def _normalize_horizon(horizon: str) -> str:
+    normalized = " ".join(str(horizon or "one month").strip().lower().split())
+    return normalized or "one month"
+
+
+def _default_universe_path() -> Path | None:
+    candidates = [
+        DEFAULT_UNIVERSE_PATH,
+        Path(__file__).resolve().parents[2] / DEFAULT_UNIVERSE_PATH,
+    ]
+    for path in candidates:
+        if path.exists():
+            return path
+    return None
+
+
+def _apply_horizon(prompt: str, horizon: str) -> str:
+    horizon = _normalize_horizon(horizon)
+    if horizon == "one month":
+        return prompt
+    return prompt.replace("one-month", horizon.replace(" ", "-")).replace("one month", horizon)
+
+
+def _default_prompt_text(submission_format: SubmissionFormat = "single_pick", horizon: str = "one month") -> str:
     if submission_format == "portfolio":
-        return """# CapitalBench Task
+        return _apply_horizon("""# CapitalBench Task
 
 You are participating in an offline, time-resolved CapitalBench evaluation round.
 
@@ -125,6 +156,8 @@ CapitalBench evaluates how state-of-the-art language models make one-shot market
 The scoring timeline is central to the task: the portfolio is measured from the adjusted close on the entry date to the adjusted close on the exit date, calculated after regular trading ends on the exit date. Optimize for facts, catalysts, positioning, liquidity, and risks that can plausibly affect prices before that exit close.
 
 Optimize only for the portfolio you expect to perform best over this close-to-close one-month scoring window. Use longer-horizon facts only when they are likely to affect prices before the exit close.
+
+Briefing-bias discipline: the briefing may group facts by broad asset area and include a mechanical return table. Treat inclusion, section order, grouping, row count, and trailing-return table order as context, not recommendation signals.
 
 Your objective is to allocate 100% across the allowed options to maximize expected one-month realized portfolio return, measured from the entry date to the exit date, relative to the S&P 500 benchmark. Use the briefing, option list, and any included market-data table as the common information set. The official leaderboard ranks each model by realized weighted portfolio return relative to the S&P 500 benchmark. Multi-shot stability analysis, if run, is reported separately and does not change the official one-shot leaderboard.
 
@@ -170,8 +203,8 @@ Rules:
 - Do not provide a ranked list, backup portfolio, second-best portfolio, or alternative recommendation.
 - Do not include financial-advice disclaimers. This is a benchmark response, not advice to a person.
 - The JSON object must contain no extra fields.
-"""
-    return """# CapitalBench Task
+""", horizon)
+    return _apply_horizon("""# CapitalBench Task
 
 You are participating in an offline, time-resolved CapitalBench evaluation round.
 
@@ -180,6 +213,8 @@ CapitalBench evaluates how state-of-the-art language models make one-shot market
 The scoring timeline is central to the task: the selected option is measured from the adjusted close on the entry date to the adjusted close on the exit date, calculated after regular trading ends on the exit date. Optimize for facts, catalysts, positioning, liquidity, and risks that can plausibly affect prices before that exit close.
 
 Optimize only for the option you expect to perform best over this close-to-close one-month scoring window. Use longer-horizon facts only when they are likely to affect prices before the exit close.
+
+Briefing-bias discipline: the briefing may group facts by broad asset area and include a mechanical return table. Treat inclusion, section order, grouping, row count, and trailing-return table order as context, not recommendation signals.
 
 Your objective is to choose the single allowed option you expect to produce the strongest expected one-month realized return, measured from the entry date to the exit date, relative to the S&P 500 benchmark. Use the briefing, option list, and any included market-data table as the common information set. The official leaderboard ranks each model by the realized return of its selected option relative to the S&P 500 benchmark. Multi-shot stability analysis, if run, is reported separately and does not change the official one-shot leaderboard.
 
@@ -218,4 +253,4 @@ Rules:
 - The JSON object must contain no extra fields.
 - Do not recommend a portfolio.
 - Do not choose multiple options.
-"""
+""", horizon)

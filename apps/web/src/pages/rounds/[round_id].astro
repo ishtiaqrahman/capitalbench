@@ -4,6 +4,7 @@ import { join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import StatusCards from "../../components/StatusCards.astro";
+import LeaderboardTable from "../../components/LeaderboardTable";
 import OfficialPicksTable from "../../components/OfficialPicksTable";
 import RoundPerformanceChart from "../../components/RoundPerformanceChart";
 import HashTable from "../../components/HashTable";
@@ -22,7 +23,15 @@ import {
   universeOptions
 } from "../../data/fallback";
 import { allocationThemeClass, formatAllocationPct, optionDisplayName, optionShortDisplayName } from "../../lib/allocations";
-import { repoRootPath, staticRoundRecords } from "../../lib/localRoundRecords";
+import { dateOnly, pct } from "../../lib/format";
+import {
+  repoRootPath,
+  staticRoundAllocations,
+  staticRoundLeaderboard,
+  staticRoundRecords,
+  staticRoundReturns,
+  staticScoringPrices
+} from "../../lib/localRoundRecords";
 import { datasetSchema } from "../../lib/seo";
 import { roundTrack, trackLabel } from "../../lib/tracks";
 
@@ -363,6 +372,11 @@ const roundOptionsById = Object.fromEntries(roundUniverseOptions.map((option) =>
 const roundEntryPrices = loadRoundEntryPrices();
 const roundAuditHashes = loadRoundAuditHashes();
 const weeklyPerformanceRows = loadRoundWeeklyPerformance();
+const resultRows = staticRoundLeaderboard(round.round_id, officialRunId);
+const resultWinner = resultRows[0];
+const resultReturns = staticRoundReturns(round.round_id, officialRunId);
+const allocationResultRows = staticRoundAllocations(round.round_id, officialRunId);
+const scoringPriceRows = staticScoringPrices(round.round_id, officialRunId);
 const renderedOptionsForPrompt = renderOptionsForPrompt(parsedOptions);
 const allowedOptionIds = parsedOptions
   .filter((option) => option.include_in_universe !== false)
@@ -410,6 +424,11 @@ const statusLabel = round.status === "resolved" ? "Scored" : round.status === "a
 const track = roundTrack(round);
 const benchmarkTrackLabel = trackLabel(track);
 const roundStateTitle = round.status === "resolved" ? "Final Score Published" : "Score Pending";
+const pageTitle = round.status === "resolved" ? `${round.round_id} Result And Proof` : `${round.round_id} Proof Files`;
+const pageDescription =
+  round.status === "resolved"
+    ? `${round.title}: final model portfolio scores, S&P 500 comparison, entry and exit prices, prompt packet, and proof hashes for the ${round.horizon} market test.`
+    : `${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`;
 const roundDataset = datasetSchema({
   name: `${round.round_id} CapitalBench proof dataset`,
   description: `${round.title}: saved model-facing inputs, prompt artifacts, model portfolios, starting prices, status, and published proof hashes.`,
@@ -431,20 +450,63 @@ const roundDataset = datasetSchema({
 const priceColumns = [
   { key: "option_id", label: "Option" },
   { key: "symbol", label: "Symbol" },
-  { key: "date", label: "Date" },
-  { key: "price", label: "Starting Price", align: "right" as const },
+  { key: "entry_date", label: "Entry Date" },
+  { key: "entry_price", label: "Entry Price", align: "right" as const },
+  ...(round.status === "resolved"
+    ? [
+        { key: "exit_date", label: "Exit Date" },
+        { key: "exit_price", label: "Exit Price", align: "right" as const },
+        { key: "return", label: "Return", align: "right" as const }
+      ]
+    : []),
   { key: "source", label: "Source" }
+];
+const priceTableRows = scoringPriceRows.map((row) => ({
+  ...row,
+  return: row.return === undefined ? "" : pct(row.return)
+}));
+const resultReturnRows = resultReturns.slice(0, 12).map((row) => ({
+  rank: row.rank,
+  option_id: row.option_id,
+  label: row.label,
+  symbol: row.asset_symbol,
+  return: pct(row.return),
+  entry_price: row.entry_price,
+  exit_price: row.exit_price
+}));
+const assetReturnColumns = [
+  { key: "rank", label: "Rank", align: "right" as const },
+  { key: "option_id", label: "Option" },
+  { key: "label", label: "Name" },
+  { key: "symbol", label: "Symbol" },
+  { key: "return", label: "Return", align: "right" as const },
+  { key: "entry_price", label: "Entry", align: "right" as const },
+  { key: "exit_price", label: "Exit", align: "right" as const }
+];
+const attributionRows = allocationResultRows.map((row) => ({
+  model: modelLabel(row.model_id),
+  option_id: row.option_id,
+  allocation: formatAllocationPct(row.allocation_pct),
+  option_return: pct(row.option_return),
+  contribution: pct(row.return_contribution)
+}));
+const attributionColumns = [
+  { key: "model", label: "Model" },
+  { key: "option_id", label: "Holding" },
+  { key: "allocation", label: "Allocation", align: "right" as const },
+  { key: "option_return", label: "Asset Return", align: "right" as const },
+  { key: "contribution", label: "Contribution", align: "right" as const }
 ];
 ---
 
 <BaseLayout
-  title={`${round.round_id} Proof Files`}
-  description={`${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`}
+  title={pageTitle}
+  description={pageDescription}
   structuredData={roundDataset}
 >
   <section class="dashboard-header">
     <div class="dashboard-title">
-      <p class="eyebrow">Test proof files</p>
+      <p class="eyebrow">{round.status === "resolved" ? "Final benchmark result" : "Test proof files"}</p>
       <h1>{round.round_id}</h1>
       <div class="round-meta-row compact" aria-label="Round track">
         <span>{benchmarkTrackLabel} test</span>
@@ -458,6 +520,53 @@ const priceColumns = [
         : "Model portfolios are saved before scoring. Final returns wait for ending prices."}
     </aside>
   </section>
+
+  {round.status === "resolved" && resultWinner && (
+    <section class="section result-section" id="results">
+      <div class="result-hero result-hero-round">
+        <div>
+          <span class="panel-kicker">Official result</span>
+          <h2>{modelLabel(resultWinner.model_id)} Won This {benchmarkTrackLabel} Test</h2>
+          <p>
+            Scored from {dateOnly(round.entry_date)} close to {dateOnly(round.exit_date)} close. The official score is
+            portfolio return minus the S&amp;P 500 return over the same window.
+          </p>
+        </div>
+        <div class="result-metrics" aria-label="Round final score summary">
+          <article>
+            <span>Winner</span>
+            <strong>{modelLabel(resultWinner.model_id)}</strong>
+            <em>{providerLabel(resultWinner.provider)}</em>
+          </article>
+          <article>
+            <span>Portfolio</span>
+            <strong>{pct(resultWinner.portfolio_return ?? resultWinner.selected_asset_return)}</strong>
+            <em>{resultWinner.holding_count ?? 1} holdings</em>
+          </article>
+          <article>
+            <span>S&amp;P 500</span>
+            <strong>{pct(resultWinner.sp500_return)}</strong>
+            <em>benchmark</em>
+          </article>
+          <article>
+            <span>Vs S&amp;P 500</span>
+            <strong>{pct(resultWinner.alpha_vs_sp500)}</strong>
+            <em>official score</em>
+          </article>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <span class="panel-kicker">Final leaderboard</span>
+            <h2>Official Scores</h2>
+            <p>Rows are ranked by return versus the S&amp;P 500. Higher is better.</p>
+          </div>
+        </div>
+        <LeaderboardTable client:visible fallbackRows={resultRows} kind="latest" disableFetch />
+      </div>
+    </section>
+  )}
 
   <StatusCards
     roundId={round.round_id}
@@ -485,7 +594,7 @@ const priceColumns = [
         <strong>Start priced</strong>
         <p>{roundEntryPrices.length} starting-price rows published.</p>
       </li>
-      <li class="phase-current">
+      <li class={round.status === "resolved" ? "phase-complete" : "phase-current"}>
         <span>4</span>
         <strong>{round.status === "resolved" ? "Scores published" : "Ending prices pending"}</strong>
         <p>
@@ -499,7 +608,9 @@ const priceColumns = [
 
   <nav class="round-tabs" aria-label="Test sections">
     <a href="#overview">Overview</a>
+    {round.status === "resolved" && <a href="#results">Results</a>}
     <a href="#performance">Performance</a>
+    {round.status === "resolved" && attributionRows.length > 0 && <a href="#attribution">Attribution</a>}
     <a href="#inputs">Inputs</a>
     <a href="#outputs">Outputs</a>
     <a href="#picks">Picks</a>
@@ -555,10 +666,14 @@ const priceColumns = [
             <strong>Model-facing prompt available</strong>
             <p>{sharedPromptPacket.length.toLocaleString()} shared prompt characters.</p>
           </div>
-          <div class="check-item pending">
+          <div class={`check-item ${round.status === "resolved" ? "complete" : "pending"}`}>
             <span aria-hidden="true"></span>
-            <strong>Ending prices pending</strong>
-            <p>Scoreboard rows remain withheld.</p>
+            <strong>{round.status === "resolved" ? "Ending prices saved" : "Ending prices pending"}</strong>
+            <p>
+              {round.status === "resolved"
+                ? `${scoringPriceRows.length} entry and exit price rows support the final score.`
+                : "Scoreboard rows remain withheld until the exit close is priced."}
+            </p>
           </div>
         </div>
       </div>
@@ -613,22 +728,57 @@ const priceColumns = [
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">Interim tracking</span>
-          <h2>Weekly Performance Vs S&amp;P 500</h2>
+          <span class="panel-kicker">{round.status === "resolved" ? "Realized asset returns" : "Interim tracking"}</span>
+          <h2>{round.status === "resolved" ? "What Moved During The Test" : "Weekly Performance Vs S&P 500"}</h2>
           <p>
-            Once at least one week of prices exists, this chart tracks each saved model portfolio against S&amp;P 500
-            from the test start date. It is interim research context, not the final score.
+            {round.status === "resolved"
+              ? "The table shows the top realized asset returns over the official scoring window. These returns explain the opportunity set behind the model scores."
+              : "Once at least one week of prices exists, this chart tracks each saved model portfolio against S&P 500 from the test start date. It is interim research context, not the final score."}
           </p>
         </div>
       </div>
-      <RoundPerformanceChart
-        client:visible
-        fallbackRows={weeklyPerformanceRows}
-        roundId={round.round_id}
-        runId={round.official_run_id}
-      />
+      {round.status === "resolved" ? (
+        <TableIsland
+          client:visible
+          rows={resultReturnRows}
+          columns={assetReturnColumns}
+          emptyText="No realized asset returns are published for this round yet."
+          tableLabel="Realized asset returns"
+          csvFilename={`${round.round_id}-asset-returns.csv`}
+          initialSortKey="rank"
+        />
+      ) : (
+        <RoundPerformanceChart
+          client:visible
+          fallbackRows={weeklyPerformanceRows}
+          roundId={round.round_id}
+          runId={round.official_run_id}
+        />
+      )}
     </div>
   </section>
+
+  {round.status === "resolved" && attributionRows.length > 0 && (
+    <section class="section" id="attribution">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <span class="panel-kicker">Portfolio attribution</span>
+            <h2>How Each Holding Contributed</h2>
+            <p>Contribution equals submitted allocation multiplied by the asset return over the scoring window.</p>
+          </div>
+        </div>
+        <TableIsland
+          client:visible
+          rows={attributionRows}
+          columns={attributionColumns}
+          emptyText="No portfolio attribution rows are published for this round yet."
+          tableLabel="Portfolio attribution"
+          csvFilename={`${round.round_id}-portfolio-attribution.csv`}
+        />
+      </div>
+    </section>
+  )}
 
   <section class="section" id="inputs">
     <div class="panel">
@@ -807,11 +957,22 @@ const priceColumns = [
       <div class="panel-header">
         <div>
           <span class="panel-kicker">Pricing</span>
-          <h2>Starting Prices</h2>
-          <p>Ending prices are intentionally absent until the test is complete.</p>
+          <h2>{round.status === "resolved" ? "Scoring Prices" : "Starting Prices"}</h2>
+          <p>
+            {round.status === "resolved"
+              ? "Entry and exit prices are shown for the completed close-to-close scoring window."
+              : "Ending prices are intentionally absent until the test is complete."}
+          </p>
         </div>
       </div>
-      <TableIsland client:visible rows={roundEntryPrices} columns={priceColumns} emptyText="No starting prices are published yet." tableLabel="Starting prices" csvFilename="capitalbench-starting-prices.csv" />
+      <TableIsland
+        client:visible
+        rows={priceTableRows}
+        columns={priceColumns}
+        emptyText="No pricing rows are published yet."
+        tableLabel={round.status === "resolved" ? "Scoring prices" : "Starting prices"}
+        csvFilename={round.status === "resolved" ? "capitalbench-scoring-prices.csv" : "capitalbench-starting-prices.csv"}
+      />
     </div>
   </section>
 

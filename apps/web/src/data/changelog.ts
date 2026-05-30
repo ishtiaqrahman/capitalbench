@@ -27,6 +27,46 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-29-result-presentation-upgrade",
+    date: "2026-05-29",
+    title: "Completed results now lead the public benchmark pages",
+    category: "Site",
+    status: "published",
+    summary:
+      "The website now separates completed scoreboards from open rounds and presents the latest scored result as the primary benchmark outcome.",
+    details: [
+      "Latest weekly and monthly pages now distinguish latest completed results from newer pending tests, so open portfolios no longer obscure published scoreboards.",
+      "Resolved round pages now lead with the winning model, portfolio return, S&P 500 return, alpha versus S&P 500, official leaderboard, realized asset returns, attribution, and scoring prices.",
+      "The homepage now includes a Latest Completed Scores section while keeping active allocation maps limited to tests still waiting for final prices.",
+      "Round breadcrumbs, metadata, pricing copy, and lifecycle checks now switch from pending proof language to result-and-proof language after a round is scored."
+    ],
+    links: [
+      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
+      { label: "Scored round", href: "/rounds/CB-2026-05-24-1W" },
+      { label: "Homepage", href: "/" }
+    ]
+  },
+  {
+    id: "2026-05-29-universe-v2-1-expanded",
+    date: "2026-05-29",
+    title: "Future rounds move to Universe v2.1",
+    category: "Methodology",
+    status: "published",
+    summary:
+      "CapitalBench Universe v2.1 adds five future-round ETF options to broaden the choice set while leaving completed rounds frozen.",
+    details: [
+      "The new future-round options are Broad AI Technology (AIQ), Autonomous Technology and Robotics (ARKQ), Cybersecurity (CIBR), Solar Energy (TAN), and Metals and Mining (XME).",
+      "Universe v2.1 keeps all 65 v2.0 options unchanged and adds the new ETFs as neutral exposure options, not as recommendations or performance-ranked choices.",
+      "New rounds initialized with capitalbench init-round now default to configs/universes/capitalbench_universe_v2_1.yaml and record universe_version: v2.1 unless an older or custom universe is explicitly passed.",
+      "Existing v1.5 and v2.0 round directories, manifests, option files, hashes, and public results remain unchanged."
+    ],
+    links: [
+      { label: "Asset list", href: "/assets" },
+      { label: "Methodology", href: "/methodology" },
+      { label: "Rounds", href: "/rounds" }
+    ]
+  },
+  {
     id: "2026-05-28-claude-opus-4-8-added",
     date: "2026-05-28",
     title: "Claude Opus 4.8 joins future CapitalBench tests",

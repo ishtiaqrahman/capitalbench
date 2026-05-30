@@ -14,6 +14,14 @@ from capitalbench.universe import validate_universe
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 UNIVERSE_PATH = PROJECT_ROOT / "configs" / "universes" / "capitalbench_universe_v1_5.yaml"
 UNIVERSE_V2_PATH = PROJECT_ROOT / "configs" / "universes" / "capitalbench_universe_v2_0.yaml"
+UNIVERSE_V2_1_PATH = PROJECT_ROOT / "configs" / "universes" / "capitalbench_universe_v2_1.yaml"
+UNIVERSE_V2_1_ADDED_SYMBOLS = [
+    "AIQ",
+    "ARKQ",
+    "CIBR",
+    "TAN",
+    "XME",
+]
 UNIVERSE_V2_ADDED_SYMBOLS = [
     "RSP",
     "XBI",
@@ -107,6 +115,22 @@ def test_v2_0_options_schema_accepts_expanded_universe() -> None:
     assert all(option.tiingo_symbol for option in v2_options if not option.is_cash)
 
 
+def test_v2_1_options_schema_accepts_future_universe_additions() -> None:
+    v1_options = load_options_file(UNIVERSE_PATH)
+    v2_options = load_options_file(UNIVERSE_V2_PATH)
+    v2_1_options = load_options_file(UNIVERSE_V2_1_PATH)
+
+    assert len(v2_1_options) == 70
+    assert [option.id for option in v2_1_options[:40]] == [option.id for option in v1_options]
+    assert [option.symbol for option in v2_1_options[40:45]] == UNIVERSE_V2_1_ADDED_SYMBOLS
+    assert [option.symbol for option in v2_1_options[45:]] == [option.symbol for option in v2_options[40:]]
+    assert len({option.id for option in v2_1_options}) == 70
+    assert len({option.symbol for option in v2_1_options if not option.is_cash}) == 69
+    assert sum(option.is_cash for option in v2_1_options) == 1
+    assert sum(option.is_benchmark for option in v2_1_options) == 1
+    assert all(option.tiingo_symbol for option in v2_1_options if not option.is_cash)
+
+
 def test_cash_can_have_null_symbol_and_tiingo_symbol() -> None:
     option = MarketOption.model_validate(
         {
@@ -178,6 +202,7 @@ def test_prompt_rendering_includes_descriptions_and_hides_internal_fields(tmp_pa
     assert "## Round Metadata" in prompt
     assert "Round ID: test-round" in prompt
     assert "Scoring window: 2026-01-02 to 2026-02-02; optimize for this one month window only." in prompt
+    assert "Input-bias control: treat fact inclusion, section order, grouping, and trailing-return table order" in prompt
     assert "Scoring benchmark: S&P 500 / SPY" in prompt
     assert "Symbol: N/A" in prompt
     assert "Description: Broad US large-cap equity exposure." in prompt
@@ -434,6 +459,29 @@ def test_init_round_allows_explicit_universe_version(tmp_path: Path) -> None:
     assert manifest["universe_version"] == "v2.0"
 
 
+def test_init_round_uses_latest_universe_by_default(tmp_path: Path) -> None:
+    exit_code = main(
+        [
+            "init-round",
+            "--round-id",
+            "CB-TEST-DEFAULT-UNIVERSE",
+            "--rounds-dir",
+            str(tmp_path / "rounds"),
+        ]
+    )
+
+    round_path = tmp_path / "rounds" / "CB-TEST-DEFAULT-UNIVERSE"
+    copied = round_path / "options.yaml"
+    manifest = yaml.safe_load((round_path / "manifest.yaml").read_text(encoding="utf-8"))
+    options = load_options_file(copied)
+    assert exit_code == 0
+    assert copied.read_text(encoding="utf-8") == UNIVERSE_V2_1_PATH.read_text(encoding="utf-8")
+    assert manifest["universe_version"] == "v2.1"
+    assert {option.id for option in options}.issuperset(
+        {"BROAD_AI_TECH", "AUTONOMOUS_ROBOTICS", "CYBERSECURITY", "SOLAR", "METALS_MINING"}
+    )
+
+
 def test_init_round_prompt_allows_internal_knowledge_but_blocks_live_retrieval(tmp_path: Path) -> None:
     exit_code = main(
         [
@@ -452,8 +500,35 @@ def test_init_round_prompt_allows_internal_knowledge_but_blocks_live_retrieval(t
     assert "close-to-close one-month scoring window" in prompt
     assert "calculated after regular trading ends on the exit date" in prompt
     assert "Use longer-horizon facts only when they are likely to affect prices before the exit close." in prompt
+    assert "Briefing-bias discipline" in prompt
+    assert "row count, and trailing-return table order as context, not recommendation signals" in prompt
     assert "strongest expected one-month realized return" in prompt
     assert "Use only the information in this prompt" not in prompt
+
+
+def test_init_round_can_create_weekly_prompt(tmp_path: Path) -> None:
+    exit_code = main(
+        [
+            "init-round",
+            "--round-id",
+            "CB-TEST-WEEKLY-PROMPT",
+            "--rounds-dir",
+            str(tmp_path / "rounds"),
+            "--horizon",
+            "one week",
+        ]
+    )
+
+    round_path = tmp_path / "rounds" / "CB-TEST-WEEKLY-PROMPT"
+    manifest = yaml.safe_load((round_path / "manifest.yaml").read_text(encoding="utf-8"))
+    prompt = (round_path / "prompt.md").read_text(encoding="utf-8")
+    assert exit_code == 0
+    assert manifest["horizon"] == "one week"
+    assert manifest["description"] == "One-week market allocation evaluation round."
+    assert "one-week outcome window resolves" in prompt
+    assert "close-to-close one-week scoring window" in prompt
+    assert "strongest expected one-week realized return" in prompt
+    assert "one-month" not in prompt
 
 
 def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
@@ -480,4 +555,6 @@ def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
     assert "close-to-close one-month scoring window" in prompt
     assert "calculated after regular trading ends on the exit date" in prompt
     assert "Use longer-horizon facts only when they are likely to affect prices before the exit close." in prompt
+    assert "Briefing-bias discipline" in prompt
+    assert "row count, and trailing-return table order as context, not recommendation signals" in prompt
     assert "allocation_pct values must sum to exactly 100" in prompt

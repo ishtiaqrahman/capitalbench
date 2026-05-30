@@ -1,7 +1,15 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
-import { rounds, type RoundRecord, type ScoreEtaSource, type SubmissionRecord, type UniverseOption } from "../data/fallback";
+import {
+  rounds,
+  type EntryPrice,
+  type LeaderboardRecord,
+  type RoundRecord,
+  type ScoreEtaSource,
+  type SubmissionRecord,
+  type UniverseOption
+} from "../data/fallback";
 
 type RoundManifestYaml = {
   round_id: string;
@@ -70,6 +78,44 @@ type OptionYaml = {
   include_in_universe?: boolean;
 };
 
+export interface ResultReturnRecord {
+  option_id: string;
+  label: string;
+  asset_symbol: string;
+  entry_price: number;
+  exit_price: number;
+  entry_price_source: string;
+  exit_price_source: string;
+  return: number;
+  rank: number;
+  is_benchmark: boolean;
+  is_cash: boolean;
+}
+
+export interface ResultAllocationRecord {
+  round_id: string;
+  model_id: string;
+  provider: string;
+  option_id: string;
+  allocation_bps: number;
+  allocation_pct: number;
+  allocation_rank: number;
+  option_return: number;
+  return_contribution: number;
+  rationale: string;
+}
+
+export interface ScoringPriceRecord {
+  option_id: string;
+  symbol: string;
+  entry_date: string;
+  entry_price: number;
+  exit_date?: string;
+  exit_price?: number;
+  return?: number;
+  source: string;
+}
+
 function readYamlFile<T>(path: string): T | null {
   if (!existsSync(path)) return null;
   try {
@@ -86,6 +132,63 @@ function readJsonFile<T>(path: string): T | null {
   } catch {
     return null;
   }
+}
+
+function readTextFile(path: string): string {
+  if (!existsSync(path)) return "";
+  return readFileSync(path, "utf-8").trim();
+}
+
+function parseCsvLine(line: string): string[] {
+  const cells: string[] = [];
+  let cell = "";
+  let inQuotes = false;
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index];
+    const next = line[index + 1];
+    if (char === '"' && inQuotes && next === '"') {
+      cell += '"';
+      index += 1;
+    } else if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === "," && !inQuotes) {
+      cells.push(cell);
+      cell = "";
+    } else {
+      cell += char;
+    }
+  }
+  cells.push(cell);
+  return cells;
+}
+
+function parseCsv(text: string): Array<Record<string, string>> {
+  const lines = text.trim().split(/\r?\n/).filter(Boolean);
+  const [headerLine, ...rowLines] = lines;
+  if (!headerLine) return [];
+  const headers = parseCsvLine(headerLine);
+  return rowLines.map((line) => {
+    const cells = parseCsvLine(line);
+    return Object.fromEntries(headers.map((header, index) => [header, cells[index] ?? ""]));
+  });
+}
+
+function numberFromCell(value: string | undefined): number | undefined {
+  if (value === undefined || value === "") return undefined;
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : undefined;
+}
+
+function booleanFromCell(value: string | undefined): boolean {
+  return String(value ?? "").toLowerCase() === "true";
+}
+
+function priceValue(row: Record<string, string>): number | undefined {
+  for (const key of ["price", "adj_close", "adjClose", "close", "entry_price"]) {
+    const value = numberFromCell(row[key]);
+    if (value !== undefined) return value;
+  }
+  return undefined;
 }
 
 function publicOfficialRuns(roundPath: string): Array<{ runId: string; manifest: RunManifestYaml }> {
@@ -294,6 +397,174 @@ export function staticUniverseOptions(roundId: string): UniverseOption[] {
       sort_order: index + 1
     }))
     .filter((option) => option.option_id);
+}
+
+export function staticEntryPrices(roundId: string): EntryPrice[] {
+  const roundPath = roundPathForId(roundId);
+  if (!roundPath) return [];
+  return parseCsv(readTextFile(join(roundPath, "prices", "entry_prices.csv")))
+    .map((row) => {
+      const price = priceValue(row);
+      if (!row.option_id || price === undefined) return null;
+      return {
+        option_id: row.option_id,
+        symbol: row.symbol ?? "",
+        date: row.date ?? "",
+        price,
+        source: row.source || (row.adj_close ? "adj_close" : row.close ? "close" : "")
+      };
+    })
+    .filter((row): row is EntryPrice => row !== null);
+}
+
+export function staticExitPrices(roundId: string): EntryPrice[] {
+  const roundPath = roundPathForId(roundId);
+  if (!roundPath) return [];
+  return parseCsv(readTextFile(join(roundPath, "prices", "exit_prices.csv")))
+    .map((row) => {
+      const price = priceValue(row);
+      if (!row.option_id || price === undefined) return null;
+      return {
+        option_id: row.option_id,
+        symbol: row.symbol ?? "",
+        date: row.date ?? "",
+        price,
+        source: row.source || (row.adj_close ? "adj_close" : row.close ? "close" : "")
+      };
+    })
+    .filter((row): row is EntryPrice => row !== null);
+}
+
+export function staticRoundLeaderboard(roundId: string, runId?: string): LeaderboardRecord[] {
+  const roundPath = roundPathForId(roundId);
+  if (!roundPath) return [];
+  const selectedRunId = runId || publicOfficialRuns(roundPath)[0]?.runId;
+  if (!selectedRunId) return [];
+  return parseCsv(readTextFile(join(roundPath, "runs", selectedRunId, "results", "leaderboard.csv")))
+    .map((row) => ({
+      round_id: row.round_id || roundId,
+      run_id: selectedRunId,
+      model_id: row.model_id,
+      provider: row.provider,
+      mode: row.mode,
+      selected_option_id: row.selected_option_id,
+      submission_format: row.submission_format === "portfolio" ? ("portfolio" as const) : ("single_pick" as const),
+      holding_count: numberFromCell(row.holding_count),
+      portfolio_return: numberFromCell(row.portfolio_return),
+      selected_asset_return: numberFromCell(row.selected_asset_return),
+      sp500_return: numberFromCell(row.sp500_return),
+      alpha_vs_sp500: numberFromCell(row.alpha_vs_sp500),
+      regret_vs_best_option: numberFromCell(row.regret_vs_best_option),
+      rank_among_options: numberFromCell(row.rank_among_options),
+      max_allocation_bps: numberFromCell(row.max_allocation_bps),
+      cash_allocation_bps: numberFromCell(row.cash_allocation_bps),
+      benchmark_allocation_bps: numberFromCell(row.benchmark_allocation_bps),
+      concentration_hhi: numberFromCell(row.concentration_hhi),
+      confidence: numberFromCell(row.confidence)
+    }))
+    .filter((row) => Boolean(row.model_id && row.provider))
+    .sort((a, b) => Number(b.alpha_vs_sp500 ?? -Infinity) - Number(a.alpha_vs_sp500 ?? -Infinity));
+}
+
+export function staticRoundReturns(roundId: string, runId?: string): ResultReturnRecord[] {
+  const roundPath = roundPathForId(roundId);
+  if (!roundPath) return [];
+  const selectedRunId = runId || publicOfficialRuns(roundPath)[0]?.runId;
+  if (!selectedRunId) return [];
+  return parseCsv(readTextFile(join(roundPath, "runs", selectedRunId, "results", "returns.csv")))
+    .map((row) => {
+      const entryPrice = numberFromCell(row.entry_price);
+      const exitPrice = numberFromCell(row.exit_price);
+      const resultReturn = numberFromCell(row.return);
+      const rank = numberFromCell(row.rank);
+      if (!row.option_id || entryPrice === undefined || exitPrice === undefined || resultReturn === undefined || rank === undefined) {
+        return null;
+      }
+      return {
+        option_id: row.option_id,
+        label: row.label || row.option_id,
+        asset_symbol: row.asset_symbol || "",
+        entry_price: entryPrice,
+        exit_price: exitPrice,
+        entry_price_source: row.entry_price_source || "",
+        exit_price_source: row.exit_price_source || "",
+        return: resultReturn,
+        rank,
+        is_benchmark: booleanFromCell(row.is_benchmark),
+        is_cash: booleanFromCell(row.is_cash)
+      };
+    })
+    .filter((row): row is ResultReturnRecord => row !== null)
+    .sort((a, b) => a.rank - b.rank);
+}
+
+export function staticRoundAllocations(roundId: string, runId?: string): ResultAllocationRecord[] {
+  const roundPath = roundPathForId(roundId);
+  if (!roundPath) return [];
+  const selectedRunId = runId || publicOfficialRuns(roundPath)[0]?.runId;
+  if (!selectedRunId) return [];
+  return parseCsv(readTextFile(join(roundPath, "runs", selectedRunId, "results", "allocations.csv")))
+    .map((row) => {
+      const allocationBps = numberFromCell(row.allocation_bps);
+      const allocationPct = numberFromCell(row.allocation_pct);
+      const allocationRank = numberFromCell(row.allocation_rank);
+      const optionReturn = numberFromCell(row.option_return);
+      const returnContribution = numberFromCell(row.return_contribution);
+      if (
+        !row.round_id ||
+        !row.model_id ||
+        !row.provider ||
+        !row.option_id ||
+        allocationBps === undefined ||
+        allocationPct === undefined ||
+        allocationRank === undefined ||
+        optionReturn === undefined ||
+        returnContribution === undefined
+      ) {
+        return null;
+      }
+      return {
+        round_id: row.round_id,
+        model_id: row.model_id,
+        provider: row.provider,
+        option_id: row.option_id,
+        allocation_bps: allocationBps,
+        allocation_pct: allocationPct,
+        allocation_rank: allocationRank,
+        option_return: optionReturn,
+        return_contribution: returnContribution,
+        rationale: row.rationale || ""
+      };
+    })
+    .filter((row): row is ResultAllocationRecord => row !== null)
+    .sort((a, b) => a.model_id.localeCompare(b.model_id) || a.allocation_rank - b.allocation_rank);
+}
+
+export function staticScoringPrices(roundId: string, runId?: string): ScoringPriceRecord[] {
+  const resultReturns = staticRoundReturns(roundId, runId);
+  if (resultReturns.length > 0) {
+    const entries = staticEntryPrices(roundId);
+    const exits = staticExitPrices(roundId);
+    const entryById = Object.fromEntries(entries.map((entry) => [entry.option_id, entry]));
+    const exitById = Object.fromEntries(exits.map((exit) => [exit.option_id, exit]));
+    return resultReturns.map((row) => ({
+      option_id: row.option_id,
+      symbol: row.asset_symbol,
+      entry_date: entryById[row.option_id]?.date ?? "",
+      entry_price: row.entry_price,
+      exit_date: exitById[row.option_id]?.date,
+      exit_price: row.exit_price,
+      return: row.return,
+      source: row.exit_price_source || row.entry_price_source
+    }));
+  }
+  return staticEntryPrices(roundId).map((row) => ({
+    option_id: row.option_id,
+    symbol: row.symbol,
+    entry_date: row.date,
+    entry_price: row.price,
+    source: row.source
+  }));
 }
 
 export function repoRootPath(): string {

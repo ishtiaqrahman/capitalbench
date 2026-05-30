@@ -69,6 +69,13 @@ affected-market mapping, recommendations, or option rankings. Source links and
 source ledgers should stay out of the model-facing briefing. All research
 artifacts are hashed, and `briefing.md` must match `research/final_briefing.md`.
 
+Before importing the final briefing, audit it for input salience bias. Asset-area
+context should use broad groups rather than direct option recommendations, cap
+rows per area, preserve counterbalancing source-reported facts or uncertainties
+when available, and avoid making any theme look important merely because it has
+more rows. The mechanical trailing-return table should remain complete and
+sorted by option order, not by performance.
+
 ## Full-Universe Trailing Returns
 
 CapitalBench can add one mechanical market-data artifact to the model prompt:
@@ -146,8 +153,9 @@ stability results stay separate.
 Public rounds should declare a universe version in `manifest.yaml` and freeze
 that exact option file before model calls. Round 1 uses the fixed 40-option
 universe in `configs/universes/capitalbench_universe_v1_5.yaml`. Future rounds
-can use the expanded 65-option universe in
-`configs/universes/capitalbench_universe_v2_0.yaml`.
+use the current default expanded universe in
+`configs/universes/capitalbench_universe_v2_1.yaml` unless a round explicitly
+freezes an older or custom universe.
 
 The model sees a readable neutral list of option ids, names, symbols, asset
 classes, categories, groups, risk buckets, and exposure descriptions. Tiingo

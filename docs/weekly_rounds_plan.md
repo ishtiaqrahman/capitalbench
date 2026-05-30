@@ -68,11 +68,15 @@ rounds/CB-YYYY-MM-DD-1M/
 Weekly rounds should use:
 
 - the same model roster as the monthly official run
-- the same 65-option universe unless the monthly protocol changes the universe
+- the same current default universe unless the monthly protocol changes the universe
 - the same portfolio protocol unless explicitly changed before a round freezes
 - the same no-browsing/no-tool provider execution rules
 - entry price from the last completed trading close before the decision deadline
 - exit price from the next Friday close, adjusted to the prior trading day when Friday is a market holiday
+
+As of the v2.1 universe update, new future weekly rounds initialized without an
+explicit `--universe` use `configs/universes/capitalbench_universe_v2_1.yaml`.
+Historical v2.0 weekly rounds remain frozen on their original option files.
 
 The weekly prompt must say "one week" throughout. The current default prompt text
 contains one-month wording, so weekly rounds should not use it unchanged.
@@ -114,6 +118,7 @@ capitalbench init-round \
   --rounds-dir rounds \
   --universe configs/universes/capitalbench_universe_v2_0.yaml \
   --universe-version v2.0 \
+  --horizon "one week" \
   --submission-format portfolio
 ```
 
@@ -146,7 +151,7 @@ These changes should be made before the first weekly result resolves.
 ### CLI And Prompting
 
 - Add a first-class horizon/cadence option to `init-round`, for example
-  `--horizon weekly|monthly`.
+  `--horizon "one week"` or `--horizon "one month"`.
 - Generate horizon-specific default prompt text so weekly rounds do not inherit
   one-month wording.
 - Keep `manifest.horizon`, `entry_date`, and `exit_date` as the scoring source

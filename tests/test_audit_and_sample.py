@@ -72,3 +72,18 @@ def test_hash_mismatch_detection(tmp_path: Path) -> None:
 
     assert audit.ok is False
     assert any("hashes.json matches current files: no" in line for line in audit.lines)
+
+
+def test_audit_flags_weekly_prompt_with_one_month_wording(tmp_path: Path) -> None:
+    round_path = _copy_example_round(tmp_path)
+    manifest_path = round_path / "manifest.yaml"
+    manifest = read_yaml(manifest_path)
+    manifest["horizon"] = "one week"
+    write_yaml(manifest_path, manifest)
+    (round_path / "prompt.md").write_text("Optimize for this one-month scoring window.\n", encoding="utf-8")
+    assert main(["hash-round", "--round", str(round_path)]) == 0
+
+    audit = audit_round(round_path)
+
+    assert audit.ok is False
+    assert any("Weekly prompt has no one-month wording: no" in line for line in audit.lines)

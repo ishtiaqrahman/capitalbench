@@ -193,10 +193,14 @@ It covers cash, short-duration Treasuries, US equities, US style and size
 factors, US sectors, bonds, credit, international equities, commodities, and AI
 or technology themes.
 
-CapitalBench Universe v2.0 is approved for future rounds. It keeps all 40 v1.5
+CapitalBench Universe v2.0 kept all 40 v1.5
 options and adds 25 exposures across equal-weight US equity, biotechnology,
 regional banks, aerospace and defense, country equity, bonds, commodities,
 currencies, and crypto ETF proxies.
+
+CapitalBench Universe v2.1 is the current default for future rounds. It keeps
+all 65 v2.0 options and adds five Tiingo-validated alternatives intended to
+broaden the choice set without changing completed rounds.
 
 All non-cash options are public US-listed ETFs intended to be validated through
 Tiingo EOD data before a public round. Descriptions shown to models are neutral
@@ -207,6 +211,7 @@ Canonical universe files:
 ```text
 configs/universes/capitalbench_universe_v1_5.yaml
 configs/universes/capitalbench_universe_v2_0.yaml
+configs/universes/capitalbench_universe_v2_1.yaml
 ```
 
 Universe v2.0 additions:
@@ -215,6 +220,16 @@ Universe v2.0 additions:
 RSP, XBI, KRE, ITA, EWC, EWU, EWA, EWY, EWT, EWZ, EWW, EZA,
 MBB, MUB, EMB, BNDX, SLV, CPER, DBA, USO, UUP, FXE, FXY, IBIT, ETHA
 ```
+
+Universe v2.1 additions:
+
+```text
+AIQ, ARKQ, CIBR, TAN, XME
+```
+
+`capitalbench init-round` uses Universe v2.1 by default when no explicit
+`--universe` path is provided. Pass `--universe` and `--universe-version` only
+when intentionally freezing an older or custom option set.
 
 | ID | Symbol | Name | Group |
 |---|---:|---|---|
@@ -263,7 +278,7 @@ Validate the universe before a public round:
 
 ```bash
 capitalbench validate-universe \
-  --options configs/universes/capitalbench_universe_v2_0.yaml \
+  --options configs/universes/capitalbench_universe_v2_1.yaml \
   --start-date 2026-01-01 \
   --end-date 2026-01-31
 ```
@@ -327,9 +342,7 @@ This is the high-level operator workflow.
 
 ```bash
 capitalbench init-round \
-  --round-id CB-2026-06-01-1M \
-  --universe configs/universes/capitalbench_universe_v2_0.yaml \
-  --universe-version v2.0
+  --round-id CB-2026-06-01-1M
 ```
 
 2. Import research artifacts:

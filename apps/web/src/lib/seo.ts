@@ -126,8 +126,11 @@ export const routeMeta: RouteMeta[] = [
   },
   ...publicRounds.map((round) => ({
     path: `/rounds/${round.round_id}`,
-    title: `${round.round_id} Proof Files`,
-    description: `${round.title}: model portfolios, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`,
+    title: round.status === "resolved" ? `${round.round_id} Result And Proof` : `${round.round_id} Proof Files`,
+    description:
+      round.status === "resolved"
+        ? `${round.title}: final model portfolio scores, S&P 500 comparison, scoring prices, and proof hashes for the ${round.horizon} market test.`
+        : `${round.title}: model portfolios, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`,
     priority: 0.8,
     changefreq: "weekly" as const,
     lastmod: defaultLastmod

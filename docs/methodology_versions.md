@@ -63,3 +63,20 @@ Changes from `v1.1`:
   concentration HHI.
 - Single-pick and portfolio rounds remain labeled by methodology and submission
   format in reports and website tables.
+
+## Universe v2.1 Future-Round Update
+
+Use for future rounds unless superseded. Do not apply this universe to
+completed or already-frozen rounds.
+
+Changes from `v2.0`:
+
+- Keeps all 65 `v2.0` options unchanged and in the same order.
+- Adds five Tiingo-validated ETFs after the original AI/technology theme block:
+  `BROAD_AI_TECH` (`AIQ`), `AUTONOMOUS_ROBOTICS` (`ARKQ`),
+  `CYBERSECURITY` (`CIBR`), `SOLAR` (`TAN`), and `METALS_MINING` (`XME`).
+- Descriptions remain neutral exposure descriptions and do not reference recent
+  performance, rankings, or expected returns.
+- `capitalbench init-round` now defaults to
+  `configs/universes/capitalbench_universe_v2_1.yaml` when no explicit universe
+  file is provided.

@@ -73,8 +73,11 @@ export interface HashRecord {
 }
 
 export interface LeaderboardRecord {
+  round_id?: string;
+  run_id?: string;
   model_id: string;
   provider: string;
+  mode?: string;
   selected_option_id?: string;
   submission_format?: SubmissionFormat;
   holding_count?: number;
@@ -87,6 +90,7 @@ export interface LeaderboardRecord {
   selected_asset_return?: number;
   sp500_return?: number;
   alpha_vs_sp500?: number;
+  regret_vs_best_option?: number;
   rank_among_options?: number;
   resolved_rounds?: number;
   average_alpha_vs_sp500?: number;

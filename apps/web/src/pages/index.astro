@@ -26,15 +26,23 @@ import {
   optionDisplayName,
   optionShortDisplayName
 } from "../lib/allocations";
-import { dateOnly } from "../lib/format";
+import { dateOnly, pct } from "../lib/format";
 import {
   staticAllOfficialSubmissions,
   staticOfficialSubmissions,
+  staticRoundLeaderboard,
   staticRoundRecords,
   staticUniverseOptions
 } from "../lib/localRoundRecords";
 import { siteConfig } from "../lib/seo";
-import { latestRoundForTrack, roundTrack, roundsForTrack, type BenchmarkTrack } from "../lib/tracks";
+import {
+  latestPendingRoundForTrack,
+  latestResolvedRoundForTrack,
+  latestRoundForTrack,
+  roundTrack,
+  roundsForTrack,
+  type BenchmarkTrack
+} from "../lib/tracks";
 
 type TrackHomeState = {
   key: BenchmarkTrack;
@@ -57,6 +65,10 @@ const weeklyRounds = roundsForTrack(roundRows, "weekly");
 const monthlyRounds = roundsForTrack(roundRows, "monthly");
 const latestWeeklyRound = latestRoundForTrack(roundRows, "weekly");
 const latestMonthlyRound = latestRoundForTrack(roundRows, "monthly");
+const latestResolvedWeeklyRound = latestResolvedRoundForTrack(roundRows, "weekly");
+const latestResolvedMonthlyRound = latestResolvedRoundForTrack(roundRows, "monthly");
+const latestPendingWeeklyRound = latestPendingRoundForTrack(roundRows, "weekly");
+const latestPendingMonthlyRound = latestPendingRoundForTrack(roundRows, "monthly");
 const allOfficialSubmissions = staticAllOfficialSubmissions(roundRows);
 const pendingRoundCount = roundRows.filter((round) => round.status === "pending").length;
 
@@ -106,6 +118,26 @@ const trackStates = [
   buildTrackState("weekly", "Weekly", "One-week test", latestWeeklyRound, weeklyRounds.length),
   buildTrackState("monthly", "Monthly", "One-month test", latestMonthlyRound, monthlyRounds.length)
 ];
+const publishedResults = [
+  {
+    key: "weekly" as const,
+    label: "Weekly",
+    round: latestResolvedWeeklyRound,
+    pendingRound: latestPendingWeeklyRound,
+    leaderboard: latestResolvedWeeklyRound
+      ? staticRoundLeaderboard(latestResolvedWeeklyRound.round_id, latestResolvedWeeklyRound.official_run_id)
+      : []
+  },
+  {
+    key: "monthly" as const,
+    label: "Monthly",
+    round: latestResolvedMonthlyRound,
+    pendingRound: latestPendingMonthlyRound,
+    leaderboard: latestResolvedMonthlyRound
+      ? staticRoundLeaderboard(latestResolvedMonthlyRound.round_id, latestResolvedMonthlyRound.official_run_id)
+      : []
+  }
+].map((item) => ({ ...item, winner: item.leaderboard[0] }));
 const activeExposureRounds = roundRows
   .filter((round) => round.status === "pending" && round.official_run_id)
   .map((round) => {
@@ -377,6 +409,69 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
     </div>
   </section>
 
+  <section class="home-section-heading" aria-labelledby="published-results-title">
+    <span class="panel-kicker">Published results</span>
+    <h2 id="published-results-title">Latest Completed Scores</h2>
+    <p>
+      Completed tests are shown separately from open rounds. These are the scoreboards where ending prices are already
+      collected and the winner is known.
+    </p>
+  </section>
+
+  <section class="published-results-grid" aria-label="Latest completed weekly and monthly results">
+    {publishedResults.map((result) => (
+      <article class={`published-result-card published-result-${result.key}`}>
+        <div class="published-result-head">
+          <div>
+            <span class="panel-kicker">{result.label} result</span>
+            <h3>{result.round?.round_id ?? `No completed ${result.label.toLowerCase()} result yet`}</h3>
+          </div>
+          <span class={`status-badge ${result.round ? "status-resolved" : "status-pending"}`}>
+            {result.round ? "Scored" : "Waiting"}
+          </span>
+        </div>
+        {result.round && result.winner ? (
+          <>
+            <div class="published-result-winner">
+              <span>Winner</span>
+              <strong>{modelLabel(result.winner.model_id)}</strong>
+              <em>{providerLabel(result.winner.provider)}</em>
+            </div>
+            <div class="published-result-metrics">
+              <span>
+                Portfolio <strong>{pct(result.winner.portfolio_return ?? result.winner.selected_asset_return)}</strong>
+              </span>
+              <span>
+                S&amp;P 500 <strong>{pct(result.winner.sp500_return)}</strong>
+              </span>
+              <span>
+                Vs S&amp;P 500 <strong>{pct(result.winner.alpha_vs_sp500)}</strong>
+              </span>
+            </div>
+            <p>
+              Scored from {windowLabel(result.round)}. Primary pick: {result.winner.selected_option_id}.
+            </p>
+            <div class="track-card-actions">
+              <a class="small-button" href={`/rounds/${result.round.round_id}/`}>Full result</a>
+              <a class="small-button" href={`/leaderboards/latest-${result.key}`}>Leaderboard</a>
+            </div>
+          </>
+        ) : (
+          <>
+            <p>
+              No {result.label.toLowerCase()} test has reached its final scoring date yet.
+              {result.pendingRound ? ` ${result.pendingRound.round_id} is currently waiting for ending prices.` : ""}
+            </p>
+            <div class="track-card-actions">
+              {result.pendingRound && <a class="small-button" href={`/rounds/${result.pendingRound.round_id}/`}>Open pending round</a>}
+              <a class="small-button" href={`/leaderboards/latest-${result.key}`}>Result page</a>
+            </div>
+          </>
+        )}
+      </article>
+    ))}
+  </section>
+
   <section class="home-section-heading" aria-labelledby="active-exposure-title">
     <span class="panel-kicker">Active exposure</span>
     <h2 id="active-exposure-title">Where Active Model Portfolios Are Invested</h2>
@@ -493,11 +588,11 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
     <div class="leaderboard-lane-links">
       <a href="/leaderboards/latest-weekly">
         <span>Weekly results</span>
-        <strong>{latestWeeklyRound?.status === "resolved" ? "Scored" : "Waiting for prices"}</strong>
+        <strong>{latestResolvedWeeklyRound ? "Latest scored" : "Waiting for first score"}</strong>
       </a>
       <a href="/leaderboards/latest-monthly">
         <span>Monthly results</span>
-        <strong>{latestMonthlyRound?.status === "resolved" ? "Scored" : "Waiting for prices"}</strong>
+        <strong>{latestResolvedMonthlyRound ? "Latest scored" : "Waiting for first score"}</strong>
       </a>
       <a href="/leaderboards/cumulative-weekly">
         <span>Overall weekly</span>

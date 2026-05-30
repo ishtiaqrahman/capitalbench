@@ -66,6 +66,7 @@ def _cmd_init_round(args: argparse.Namespace) -> int:
         universe_path=args.universe,
         universe_version=args.universe_version,
         submission_format=args.submission_format,
+        horizon=args.horizon,
     )
     print(f"initialized round: {round_path}")
     return 0
@@ -450,9 +451,10 @@ def build_parser() -> argparse.ArgumentParser:
     init_parser.add_argument("--universe", type=Path)
     init_parser.add_argument(
         "--universe-version",
-        help="version label written to manifest.yaml; defaults to the --universe filename stem",
+        help="version label written to manifest.yaml; defaults to v2.1 when using the built-in latest universe, or to the --universe filename stem when a custom file is passed",
     )
     init_parser.add_argument("--submission-format", choices=["single_pick", "portfolio"], default="single_pick")
+    init_parser.add_argument("--horizon", default="one month", help='round horizon label, for example "one week"')
     init_parser.set_defaults(func=_cmd_init_round)
 
     hash_parser = subparsers.add_parser("hash-round", help="hash round input files")

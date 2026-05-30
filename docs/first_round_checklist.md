@@ -8,7 +8,7 @@ Use this checklist before running a public CapitalBench round.
 - Create the round with `capitalbench init-round --round-id <id>`.
 - Fill in `manifest.yaml`, including decision deadline, horizon, entry rule, and exit rule.
 - Write the briefing using only information available before the deadline.
-- Define the complete option list in `options.yaml`, preferably by initializing with the intended versioned universe file. Round 1 uses `configs/universes/capitalbench_universe_v1_5.yaml`; future expanded rounds can use `configs/universes/capitalbench_universe_v2_0.yaml`.
+- Define the complete option list in `options.yaml`. `capitalbench init-round` defaults to the latest future-round universe, currently `configs/universes/capitalbench_universe_v2_1.yaml`; pass `--universe` only when intentionally using an older or custom universe.
 - Confirm one option is the S&P 500 benchmark.
 - Confirm cash is present if you want a cash comparison.
 - Run `capitalbench validate-universe --round rounds/<id> --start-date <date> --end-date <date>` with `TIINGO_API_KEY` set. When the prompt includes 7-day, 30-day, six-month, and one-year trailing returns, validate a window long enough to prove all required lookbacks are available.
@@ -18,6 +18,7 @@ Use this checklist before running a public CapitalBench round.
 - Confirm `market_fact_report.md` and `briefing_audit_report.md` are audit-only and not included in the model prompt.
 - Keep source links and source ledgers in audit artifacts, not in `final_briefing.md`.
 - Confirm `briefing.md` is facts-only: no interpretation, scenario analysis, "why it matters" commentary, affected-market mapping, recommendations, or rankings.
+- Confirm the final briefing passes a salience-bias check: no performance-sorted return table, no one theme dominating row count, no direct option recommendations, and counterbalancing source-reported facts preserved where available.
 - Optionally run `capitalbench fetch-universe-performance --round rounds/<id> --as-of-date <cutoff-date>` to add a mechanical full-universe trailing-return table.
 - If generated, confirm `market_data/universe_trailing_returns.md` is sorted by option order, covers all options, and contains no commentary.
 - Write the exact model prompt in `prompt.md`.

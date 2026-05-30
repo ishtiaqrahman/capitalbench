@@ -46,6 +46,10 @@ def render_round_metadata(round_path: Path, manifest) -> str:
             "and the exit price is the adjusted close on the exit date after regular trading ends."
         ),
         "Timeline focus: prioritize facts, catalysts, and risks that can plausibly affect prices before the exit close.",
+        (
+            "Input-bias control: treat fact inclusion, section order, grouping, and trailing-return table order "
+            "as context, not recommendations; do not infer expected return from mention count or placement."
+        ),
         f"Entry rule: {manifest.entry_rule or 'TBD'}",
         f"Exit rule: {manifest.exit_rule or 'TBD'}",
         f"Submission format: {submission_format}",

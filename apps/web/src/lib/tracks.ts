@@ -22,6 +22,14 @@ export function latestRoundForTrack(rounds: RoundRecord[], track: BenchmarkTrack
   return rounds.find((round) => roundTrack(round) === track);
 }
 
+export function latestResolvedRoundForTrack(rounds: RoundRecord[], track: BenchmarkTrack): RoundRecord | undefined {
+  return rounds.find((round) => roundTrack(round) === track && round.status === "resolved");
+}
+
+export function latestPendingRoundForTrack(rounds: RoundRecord[], track: BenchmarkTrack): RoundRecord | undefined {
+  return rounds.find((round) => roundTrack(round) === track && round.status === "pending");
+}
+
 export function roundsForTrack(rounds: RoundRecord[], track: BenchmarkTrack): RoundRecord[] {
   return rounds.filter((round) => roundTrack(round) === track);
 }

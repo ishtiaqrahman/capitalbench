@@ -9,6 +9,7 @@ interface Props {
   fallbackRows: LeaderboardRecord[];
   kind: "latest" | "official" | "stability";
   slot?: string;
+  disableFetch?: boolean;
 }
 
 const tableByKind = {
@@ -17,27 +18,36 @@ const tableByKind = {
   stability: "cumulative_stability_leaderboard"
 };
 
-export default function LeaderboardTable({ fallbackRows, kind, slot }: Props) {
+export default function LeaderboardTable({ fallbackRows, kind, slot, disableFetch = false }: Props) {
   const [rows, setRows] = useState<LeaderboardRecord[]>(fallbackRows);
 
   useEffect(() => {
+    if (disableFetch) {
+      setRows(fallbackRows);
+      return;
+    }
     const orderColumn =
       kind === "stability" ? "average_repeated_alpha_vs_sp500" : kind === "official" ? "average_alpha_vs_sp500" : "alpha_vs_sp500";
     fetchPublicRows<LeaderboardRecord>(tableByKind[kind], fallbackRows, {
       column: orderColumn,
       ascending: false
     }, slot ? { slot } : {}).then(setRows);
-  }, [fallbackRows, kind, slot]);
+  }, [disableFetch, fallbackRows, kind, slot]);
 
   const latestColumns: Column<LeaderboardRecord>[] = [
     { key: "model_id", label: "Model", value: (row) => modelLabel(row.model_id) },
-    { key: "provider", label: "Provider", value: (row) => providerLabel(row.provider) },
-    { key: "selected_option_id", label: "Pick" },
-    { key: "holding_count", label: "Holdings", align: "right" },
-    { key: "selected_asset_return", label: "Return", align: "right", value: (row) => pct(row.selected_asset_return) },
+    { key: "provider", label: "Provider", value: (row) => providerLabel(row.provider), mobile: "secondary" },
+    { key: "selected_option_id", label: "Primary Pick" },
+    { key: "holding_count", label: "Holdings", align: "right", mobile: "secondary" },
+    {
+      key: "portfolio_return",
+      label: "Portfolio",
+      align: "right",
+      value: (row) => pct(row.portfolio_return ?? row.selected_asset_return)
+    },
     { key: "sp500_return", label: "S&P 500", align: "right", value: (row) => pct(row.sp500_return) },
     { key: "alpha_vs_sp500", label: "Vs S&P 500", align: "right", value: (row) => pct(row.alpha_vs_sp500) },
-    { key: "rank_among_options", label: "Rank", align: "right" }
+    { key: "regret_vs_best_option", label: "Regret", align: "right", value: (row) => pct(row.regret_vs_best_option), mobile: "secondary" }
   ];
 
   const officialColumns: Column<LeaderboardRecord>[] = [
@@ -83,6 +93,14 @@ export default function LeaderboardTable({ fallbackRows, kind, slot }: Props) {
       tableLabel={`${kind} leaderboard`}
       emptyText={emptyText}
       csvFilename={`capitalbench-${kind}-leaderboard.csv`}
+      initialSortKey={
+        kind === "latest"
+          ? "alpha_vs_sp500"
+          : kind === "official"
+            ? "average_alpha_vs_sp500"
+            : "average_repeated_alpha_vs_sp500"
+      }
+      initialSortDirection="desc"
     />
   );
 }

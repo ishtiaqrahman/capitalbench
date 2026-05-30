@@ -218,6 +218,32 @@ def _audit_research(round_path: Path) -> tuple[list[AuditCheck], list[str]]:
     return checks, lines
 
 
+def _audit_prompt_horizon(round_path: Path) -> tuple[list[AuditCheck], list[str]]:
+    checks: list[AuditCheck] = []
+    lines: list[str] = []
+    prompt_path = round_path / "prompt.md"
+    try:
+        manifest = load_manifest(round_path)
+        prompt = prompt_path.read_text(encoding="utf-8").lower()
+    except Exception as exc:
+        checks.append(AuditCheck("prompt horizon readable", False, str(exc)))
+        lines.append(f"Prompt horizon readable: no ({exc})")
+        return checks, lines
+
+    horizon = manifest.horizon.lower()
+    if "week" in horizon:
+        stale = "one month" in prompt or "one-month" in prompt
+        checks.append(AuditCheck("weekly prompt has no one-month wording", not stale))
+        lines.append(f"Weekly prompt has no one-month wording: {_yes_no(not stale)}")
+    elif "month" in horizon:
+        stale = "one week" in prompt or "one-week" in prompt
+        checks.append(AuditCheck("monthly prompt has no one-week wording", not stale))
+        lines.append(f"Monthly prompt has no one-week wording: {_yes_no(not stale)}")
+    else:
+        lines.append(f"Prompt horizon wording check skipped for horizon: {manifest.horizon}")
+    return checks, lines
+
+
 def audit_round(round_path: Path, run_id: str | None = None) -> RoundAudit:
     checks: list[AuditCheck] = []
     lines: list[str] = [f"CapitalBench audit: {round_path}"]
@@ -256,6 +282,10 @@ def audit_round(round_path: Path, run_id: str | None = None) -> RoundAudit:
     research_checks, research_lines = _audit_research(round_path)
     checks.extend(research_checks)
     lines.extend(research_lines)
+
+    prompt_checks, prompt_lines = _audit_prompt_horizon(round_path)
+    checks.extend(prompt_checks)
+    lines.extend(prompt_lines)
 
     available_runs = list_runs(round_path)
     if available_runs:
