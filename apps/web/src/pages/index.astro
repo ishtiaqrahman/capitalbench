@@ -344,6 +344,13 @@ function scoreChartVerticalBarStyle(value: number | null | undefined): string {
   return `bottom: ${Math.min(zero, endpoint).toFixed(2)}%; height: ${Math.max(1.5, Math.abs(endpoint - zero)).toFixed(2)}%;`;
 }
 
+function scoreChartMobileBarStyle(value: number | null | undefined): string {
+  if (!finiteNumber(value)) return "width: 0%;";
+  const zero = scoreChartCoordinate(0);
+  const endpoint = scoreChartCoordinate(value);
+  return `width: ${Math.max(2, Math.abs(endpoint - zero)).toFixed(2)}%;`;
+}
+
 function scoreChartValueStyle(value: number | null | undefined): string {
   return `bottom: calc(${scoreChartYPosition(value)} + 8px);`;
 }
@@ -736,6 +743,39 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
                     </div>
                   ))}
                 </div>
+              </div>
+
+              <div class="score-mobile-rank-chart" aria-label="Mobile return chart">
+                {latestResultRows.map((item) => (
+                  <article
+                    class={`score-mobile-rank-row score-mobile-rank-row-${item.kind} ${
+                      item.columnClass.includes("winner") ? "score-mobile-rank-row-winner" : ""
+                    }`}
+                  >
+                    <div class="score-mobile-rank-head">
+                      <div>
+                        {item.logoSrc ? (
+                          <span class="score-chart-logo-shell">
+                            <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="124" height="28" loading="lazy" />
+                          </span>
+                        ) : item.kind === "reference" ? (
+                          <span class="score-chart-reference-chip" aria-hidden="true">MAX</span>
+                        ) : (
+                          <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
+                        )}
+                        <span>
+                          <strong>{item.detailName}</strong>
+                          <em>{item.detailMeta}</em>
+                        </span>
+                      </div>
+                      <strong>{item.returnLabel}</strong>
+                    </div>
+                    <div class="score-mobile-rank-track" aria-hidden="true">
+                      <span class={`score-mobile-rank-fill ${item.barClass}`} style={scoreChartMobileBarStyle(item.returnValue)}></span>
+                    </div>
+                    <p>{item.detailText}</p>
+                  </article>
+                ))}
               </div>
 
               <div class="score-chart-detail-panel" aria-label="Return details">
