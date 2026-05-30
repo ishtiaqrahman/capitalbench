@@ -32,6 +32,7 @@ import {
   staticAllOfficialSubmissions,
   staticOfficialSubmissions,
   staticRoundLeaderboard,
+  staticRoundReturns,
   staticRoundRecords,
   staticUniverseOptions
 } from "../lib/localRoundRecords";
@@ -145,6 +146,18 @@ const latestResultOptions = latestCompletedRound ? staticUniverseOptions(latestC
 const latestResultOptionsById: Record<string, UniverseOption | undefined> = Object.fromEntries(
   latestResultOptions.map((option) => [option.option_id, option])
 );
+const latestResultReturns = latestCompletedRound
+  ? staticRoundReturns(latestCompletedRound.round_id, latestCompletedRound.official_run_id)
+  : [];
+const bestResultAsset = latestResultReturns
+  .filter((item) => !item.is_benchmark && !item.is_cash && finiteNumber(item.return))
+  .sort((a, b) => b.return - a.return)[0];
+const latestCompletedWinnerReturn = latestCompletedWinner ? leaderboardReturn(latestCompletedWinner) : undefined;
+const latestWinnerGapToMax =
+  finiteNumber(bestResultAsset?.return) && finiteNumber(latestCompletedWinnerReturn)
+    ? bestResultAsset.return - latestCompletedWinnerReturn
+    : undefined;
+const latestResultEligibleAssetCount = latestResultOptions.length;
 const activeExposureRounds = roundRows
   .filter((round) => round.status === "pending" && round.official_run_id)
   .map((round) => {
@@ -277,10 +290,14 @@ function leaderboardReturn(row: LeaderboardRecord): number | undefined {
   return row.portfolio_return ?? row.selected_asset_return;
 }
 
-function signedPct(value: number | null | undefined): string {
+function percentagePoints(value: number | null | undefined): string {
   if (!finiteNumber(value)) return "n/a";
-  const formatted = pct(value);
-  if (!formatted) return "n/a";
+  return `${(value * 100).toFixed(2)} pp`;
+}
+
+function signedPercentagePoints(value: number | null | undefined): string {
+  if (!finiteNumber(value)) return "n/a";
+  const formatted = percentagePoints(value);
   return value > 0 ? `+${formatted}` : formatted;
 }
 
@@ -291,47 +308,133 @@ function resultOptionLabel(optionId?: string): string {
 
 const latestResultValues = [
   ...(latestPublishedResult?.leaderboard ?? []).map(leaderboardReturn).filter(finiteNumber),
-  ...(finiteNumber(latestResultBenchmarkReturn) ? [latestResultBenchmarkReturn] : [])
+  ...(finiteNumber(latestResultBenchmarkReturn) ? [latestResultBenchmarkReturn] : []),
+  ...(finiteNumber(bestResultAsset?.return) ? [bestResultAsset.return] : [])
 ];
 const scoreChartMin = Math.min(0, ...latestResultValues);
 const scoreChartMax = Math.max(0, ...latestResultValues);
+const scoreChartTickStep = scoreChartMax > 0.1 ? 0.05 : 0.02;
+const scoreChartTopTick = Math.max(scoreChartTickStep, Math.ceil(scoreChartMax / scoreChartTickStep) * scoreChartTickStep);
 const scoreChartPadding = Math.max((scoreChartMax - scoreChartMin) * 0.08, 0.005);
 const scoreChartDomainMin = scoreChartMin < 0 ? scoreChartMin - scoreChartPadding : 0;
-const scoreChartDomainMax = scoreChartMax > 0 ? scoreChartMax + scoreChartPadding : scoreChartPadding;
+const scoreChartDomainMax = scoreChartMax > 0 ? scoreChartTopTick : scoreChartPadding;
 const scoreChartRange = Math.max(scoreChartDomainMax - scoreChartDomainMin, 0.001);
+const scoreChartTicks =
+  scoreChartDomainMin < 0
+    ? [scoreChartDomainMin, 0, scoreChartDomainMax]
+    : Array.from({ length: Math.round(scoreChartDomainMax / scoreChartTickStep) + 1 }, (_, index) => index * scoreChartTickStep);
 
 function scoreChartCoordinate(value: number): number {
   return Math.min(100, Math.max(0, ((value - scoreChartDomainMin) / scoreChartRange) * 100));
 }
 
-function scoreChartPosition(value: number | null | undefined): string {
+function scoreChartYPosition(value: number | null | undefined): string {
   return `${scoreChartCoordinate(finiteNumber(value) ? value : 0).toFixed(2)}%`;
 }
 
-function scoreChartBarStyle(value: number | null | undefined): string {
-  if (!finiteNumber(value)) return "left: 0%; width: 0%;";
+function scoreChartTickLabel(value: number): string {
+  if (Math.abs(value) < 0.00001) return "0%";
+  return `${(value * 100).toFixed(scoreChartTickStep >= 0.01 ? 0 : 1)}%`;
+}
+
+function scoreChartVerticalBarStyle(value: number | null | undefined): string {
+  if (!finiteNumber(value)) return "bottom: 0%; height: 0%;";
   const zero = scoreChartCoordinate(0);
   const endpoint = scoreChartCoordinate(value);
-  return `left: ${Math.min(zero, endpoint).toFixed(2)}%; width: ${Math.max(1.5, Math.abs(endpoint - zero)).toFixed(2)}%;`;
+  return `bottom: ${Math.min(zero, endpoint).toFixed(2)}%; height: ${Math.max(1.5, Math.abs(endpoint - zero)).toFixed(2)}%;`;
 }
 
-function scoreChartBarClass(value: number | null | undefined): string {
-  return finiteNumber(value) && value < 0 ? "score-bar-negative" : "score-bar-positive";
+function scoreChartValueStyle(value: number | null | undefined): string {
+  return `bottom: calc(${scoreChartYPosition(value)} + 8px);`;
 }
 
-const latestResultRows = (latestPublishedResult?.leaderboard ?? []).map((row, index) => {
+function resultAssetLabel(asset?: { label: string; asset_symbol: string }): string {
+  if (!asset) return "Not available";
+  return asset.asset_symbol ? `${asset.label} (${asset.asset_symbol})` : asset.label;
+}
+
+function scoreChartModelColorClass(modelId: string, index: number): string {
+  const modelColors: Record<string, string> = {
+    "openai-gpt-5-5": "score-bar-openai",
+    "xai-grok-4-3": "score-bar-xai",
+    "anthropic-claude-opus-4-7": "score-bar-anthropic",
+    "anthropic-claude-opus-4-8": "score-bar-anthropic-alt",
+    "google-gemini-3-1-pro": "score-bar-google"
+  };
+  return modelColors[modelId] ?? `score-bar-model-${(index % 5) + 1}`;
+}
+
+const latestModelResultRows = (latestPublishedResult?.leaderboard ?? []).map((row, index) => {
   const returnValue = leaderboardReturn(row);
+  const providerName = providerLabel(row.provider);
+  const topHolding = resultOptionLabel(row.selected_option_id);
   return {
-    row,
-    rank: index + 1,
+    key: row.model_id,
+    kind: "model",
+    rankLabel: `${index + 1}`,
+    label: modelLabel(row.model_id),
+    detailName: modelLabel(row.model_id),
+    detailMeta: providerName,
+    detailText: `Top holding: ${topHolding}`,
+    logoSrc: providerLogoSrc(row.provider),
+    logoAlt: providerName,
     returnValue,
     returnLabel: pct(returnValue) || "n/a",
-    alphaLabel: signedPct(row.alpha_vs_sp500),
-    topHolding: resultOptionLabel(row.selected_option_id),
-    barStyle: scoreChartBarStyle(returnValue),
-    barClass: scoreChartBarClass(returnValue)
+    vsBenchmarkLabel: signedPercentagePoints(row.alpha_vs_sp500),
+    barStyle: scoreChartVerticalBarStyle(returnValue),
+    valueStyle: scoreChartValueStyle(returnValue),
+    barClass: scoreChartModelColorClass(row.model_id, index),
+    columnClass: index === 0 ? "score-vertical-column-winner" : ""
   };
 });
+const latestBenchmarkResultRow = finiteNumber(latestResultBenchmarkReturn)
+  ? {
+      key: "sp500-benchmark",
+      kind: "benchmark",
+      rankLabel: "B",
+      label: "S&P 500",
+      detailName: "S&P 500",
+      detailMeta: "Benchmark",
+      detailText: "Benchmark return over the same scoring window",
+      logoSrc: undefined,
+      logoAlt: "S&P 500",
+      returnValue: latestResultBenchmarkReturn,
+      returnLabel: pct(latestResultBenchmarkReturn) || "n/a",
+      vsBenchmarkLabel: "0.00 pp",
+      barStyle: scoreChartVerticalBarStyle(latestResultBenchmarkReturn),
+      valueStyle: scoreChartValueStyle(latestResultBenchmarkReturn),
+      barClass: "score-bar-benchmark",
+      columnClass: "score-vertical-column-benchmark"
+    }
+  : undefined;
+const latestBestAssetResultRow = bestResultAsset
+  ? {
+      key: "best-universe-asset",
+      kind: "reference",
+      rankLabel: "R",
+      label: "Max",
+      detailName: "Max possible",
+      detailMeta: bestResultAsset.asset_symbol || bestResultAsset.label,
+      detailText: `100% ${resultAssetLabel(bestResultAsset)} hindsight ceiling`,
+      logoSrc: undefined,
+      logoAlt: "Maximum possible return",
+      returnValue: bestResultAsset.return,
+      returnLabel: pct(bestResultAsset.return) || "n/a",
+      vsBenchmarkLabel:
+        finiteNumber(latestResultBenchmarkReturn) && finiteNumber(bestResultAsset.return)
+          ? signedPercentagePoints(bestResultAsset.return - latestResultBenchmarkReturn)
+          : "n/a",
+      barStyle: scoreChartVerticalBarStyle(bestResultAsset.return),
+      valueStyle: scoreChartValueStyle(bestResultAsset.return),
+      barClass: "score-bar-best-asset",
+      columnClass: "score-vertical-column-best-asset"
+    }
+  : undefined;
+const latestResultRows = [
+  ...latestModelResultRows,
+  ...(latestBenchmarkResultRow ? [latestBenchmarkResultRow] : []),
+  ...(latestBestAssetResultRow ? [latestBestAssetResultRow] : [])
+];
 
 function providerLogoSrc(provider: string): string | undefined {
   const logos: Record<string, string> = {
@@ -486,8 +589,8 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
         <span class="panel-kicker">Published result</span>
         <h2 id="published-results-title">Latest Scored Test</h2>
         <p>
-          This chart shows the most recent completed test. Open weekly and monthly rounds stay out of this score chart
-          until ending prices are collected.
+          Model portfolio returns are shown against the S&amp;P 500 benchmark on the same scale. Open weekly and monthly
+          rounds stay out of this chart until ending prices are collected.
         </p>
       </section>
 
@@ -496,81 +599,227 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
         aria-label={`Latest scored ${latestPublishedResult.label.toLowerCase()} result`}
       >
         <div class="published-score-summary">
-          <div class="published-result-head">
-            <div>
-              <span class="panel-kicker">{latestPublishedResult.label} result</span>
-              <h3>{latestCompletedRound.round_id}</h3>
-              <p>{windowLabel(latestCompletedRound)}</p>
+          <div class="published-score-summary-head">
+            <div class="published-result-head">
+              <div>
+                <span class="panel-kicker">{latestPublishedResult.label} result</span>
+                <h3>{latestCompletedRound.round_id}</h3>
+                <p>{windowLabel(latestCompletedRound)}</p>
+              </div>
+              <span class="status-badge status-resolved">Scored</span>
             </div>
-            <span class="status-badge status-resolved">Scored</span>
+
+            <div class="track-card-actions">
+              <a class="small-button" href={`/rounds/${latestCompletedRound.round_id}/`}>Full result</a>
+              <a class="small-button" href={`/leaderboards/latest-${latestPublishedResult.key}`}>Leaderboard</a>
+            </div>
           </div>
 
-          <div class="published-result-winner">
-            <span>Top model</span>
-            <strong>{modelLabel(latestCompletedWinner.model_id)}</strong>
-            <em>{providerLabel(latestCompletedWinner.provider)}</em>
+          <div class="published-score-strip" aria-label="Latest scored result summary">
+            <div class="published-score-tile published-score-tile-winner">
+              <span>Top model</span>
+              <strong>{modelLabel(latestCompletedWinner.model_id)}</strong>
+              <em>{providerLabel(latestCompletedWinner.provider)}</em>
+            </div>
+            <div class="published-score-tile">
+              <span>Portfolio return</span>
+              <strong>{pct(leaderboardReturn(latestCompletedWinner))}</strong>
+            </div>
+            <div class="published-score-tile">
+              <span>S&amp;P 500</span>
+              <strong>{pct(latestCompletedWinner.sp500_return)}</strong>
+            </div>
+            <div class="published-score-tile">
+              <span>Alpha</span>
+              <strong>{signedPercentagePoints(latestCompletedWinner.alpha_vs_sp500)}</strong>
+            </div>
+            {bestResultAsset && (
+              <div class="published-score-tile published-score-tile-reference">
+                <span>Max possible</span>
+                <strong>{bestResultAsset.asset_symbol} {pct(bestResultAsset.return)}</strong>
+              </div>
+            )}
+            {finiteNumber(latestWinnerGapToMax) && (
+              <div class="published-score-tile published-score-tile-reference">
+                <span>Gap to max</span>
+                <strong>{percentagePoints(latestWinnerGapToMax)}</strong>
+              </div>
+            )}
           </div>
 
-          <div class="published-score-metrics">
-            <span>
-              Portfolio return <strong>{pct(leaderboardReturn(latestCompletedWinner))}</strong>
-            </span>
-            <span>
-              S&amp;P 500 <strong>{pct(latestCompletedWinner.sp500_return)}</strong>
-            </span>
-            <span>
-              Alpha <strong>{signedPct(latestCompletedWinner.alpha_vs_sp500)}</strong>
-            </span>
+          <div class="published-score-context" aria-label="Scoring context">
+            <span><strong>Window</strong>{dateOnly(latestCompletedRound.entry_date)} to {dateOnly(latestCompletedRound.exit_date)}</span>
+            <span><strong>Models</strong>{latestPublishedResult.leaderboard.length}</span>
+            <span><strong>Eligible assets</strong>{latestResultEligibleAssetCount}</span>
+            <span><strong>Method</strong>{latestPublishedResult.label} close-to-close</span>
           </div>
 
           <p class="published-score-note">
-            Returns are measured close-to-close over the same dates. The S&amp;P 500 is the benchmark, not a model
-            portfolio.
+            Returns are measured over the same dates. S&amp;P 500 is the benchmark; maximum possible return is a
+            hindsight reference, not a submitted model portfolio.
           </p>
-
-          <div class="track-card-actions">
-            <a class="small-button" href={`/rounds/${latestCompletedRound.round_id}/`}>Full result</a>
-            <a class="small-button" href={`/leaderboards/latest-${latestPublishedResult.key}`}>Leaderboard</a>
-          </div>
         </div>
 
         <div class="published-score-chart">
           <div class="score-chart-head">
             <div>
               <span class="panel-kicker">Leaderboard chart</span>
-              <h3>Portfolio Return by Model</h3>
+              <h3>Portfolio Return vs S&amp;P 500</h3>
+              <p>Latest completed test, scored over the same close-to-close window.</p>
             </div>
             <div class="score-chart-legend" aria-label="Chart legend">
-              <span class="legend-model">Model return</span>
-              <span class="legend-benchmark">S&amp;P 500 {pct(latestResultBenchmarkReturn)}</span>
+              <span class="legend-model">Model portfolios</span>
+              <span class="legend-benchmark">S&amp;P 500 benchmark</span>
+              <span class="legend-best-asset">Maximum possible return</span>
             </div>
           </div>
 
-          <div class="score-chart-list">
-            {latestResultRows.map((item) => (
-              <div class={`score-chart-row ${item.rank === 1 ? "score-chart-row-winner" : ""}`}>
-                <div class="score-chart-label">
-                  <span>{item.rank}</span>
-                  <div>
-                    <strong>{modelLabel(item.row.model_id)}</strong>
-                    <em>{providerLabel(item.row.provider)} · Top holding: {item.topHolding}</em>
+          <div class="score-chart-callouts" aria-label="Result annotations">
+            <article>
+              <span>Winning model portfolio</span>
+              <strong>{modelLabel(latestCompletedWinner.model_id)} returned {pct(leaderboardReturn(latestCompletedWinner))}</strong>
+              <p>Highest-scoring model portfolio in this test.</p>
+            </article>
+            {bestResultAsset && (
+              <article>
+                <span>Maximum possible return</span>
+                <strong>{resultAssetLabel(bestResultAsset)} returned {pct(bestResultAsset.return)}</strong>
+                <p>Hindsight ceiling from putting 100% into the highest-returning eligible asset; not a submitted model portfolio.</p>
+              </article>
+            )}
+          </div>
+
+          <div class="score-chart-frame">
+            <div class="score-vertical-inner">
+              <div class="score-vertical-plot-row">
+                <div class="score-vertical-y-axis" aria-hidden="true">
+                  {scoreChartTicks.map((tick) => (
+                    <span style={`bottom: ${scoreChartYPosition(tick)};`}>{scoreChartTickLabel(tick)}</span>
+                  ))}
+                </div>
+                <div class="score-vertical-plot" aria-hidden="true">
+                  {scoreChartTicks.map((tick) => (
+                    <span class="score-vertical-gridline" style={`bottom: ${scoreChartYPosition(tick)};`}></span>
+                  ))}
+                  <span class="score-vertical-zero-line" style={`bottom: ${scoreChartYPosition(0)};`}></span>
+                  <div class="score-vertical-bars" style={`--score-column-count: ${latestResultRows.length};`}>
+                    {latestResultRows.map((item) => (
+                      <div class={`score-vertical-column ${item.columnClass}`}>
+                        <span class="score-vertical-value" style={item.valueStyle}>{item.returnLabel}</span>
+                        <span class={`score-vertical-bar ${item.barClass}`} style={item.barStyle}></span>
+                      </div>
+                    ))}
                   </div>
                 </div>
+              </div>
 
-                <div class="score-bar-track" aria-hidden="true">
-                  <span class="score-zero-line" style={`left: ${scoreChartPosition(0)};`}></span>
-                  <span class={`score-bar-fill ${item.barClass}`} style={item.barStyle}></span>
-                  {finiteNumber(latestResultBenchmarkReturn) && (
-                    <span class="score-benchmark-marker" style={`left: ${scoreChartPosition(latestResultBenchmarkReturn)};`}></span>
-                  )}
-                </div>
-
-                <div class="score-chart-values">
-                  <strong>{item.returnLabel}</strong>
-                  <span>{item.alphaLabel} vs S&amp;P 500</span>
+              <div class="score-vertical-label-row">
+                <span></span>
+                <div class="score-vertical-labels" style={`--score-column-count: ${latestResultRows.length};`}>
+                  {latestResultRows.map((item) => (
+                    <div
+                      class={`score-vertical-label ${item.kind === "benchmark" ? "score-vertical-label-benchmark" : ""} ${
+                        item.kind === "reference" ? "score-vertical-label-reference" : ""
+                      }`}
+                      title={`${item.detailName}: ${item.returnLabel}. ${item.vsBenchmarkLabel} vs S&P 500. ${item.detailText}`}
+                    >
+                      {item.logoSrc ? (
+                        <span class="score-chart-logo-shell">
+                          <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="124" height="28" loading="lazy" />
+                        </span>
+                      ) : item.kind === "reference" ? (
+                        <span class="score-chart-reference-chip" aria-hidden="true">MAX</span>
+                      ) : (
+                        <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
+                      )}
+                      <strong>{item.label}</strong>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
+
+              <div class="score-chart-detail-panel" aria-label="Return details">
+                <div class="score-chart-detail-title">
+                  <span>Return details</span>
+                  <p>Alpha is shown in percentage points versus the S&amp;P 500.</p>
+                </div>
+
+                <div class="score-detail-shelf">
+                  <section class="score-detail-group score-detail-group-models" aria-label="Model portfolio details">
+                    <div class="score-detail-group-head">
+                      <span>Model portfolios</span>
+                      <p>Top holding is the largest position in the submitted portfolio.</p>
+                    </div>
+
+                    <div class="score-detail-list">
+                      {latestResultRows.filter((item) => item.kind === "model").map((item, index) => (
+                        <article class="score-detail-row">
+                          <span class="score-detail-rank">{index + 1}</span>
+                          <span class="score-chart-logo-shell">
+                            <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="124" height="28" loading="lazy" />
+                          </span>
+                          <div class="score-detail-name">
+                            <strong>{item.detailName}</strong>
+                            <span>{item.detailMeta}</span>
+                          </div>
+                          <p>{item.detailText.replace("Top holding: ", "")}</p>
+                          <div class="score-detail-values">
+                            <span>
+                              <em>Return</em>
+                              <strong>{item.returnLabel}</strong>
+                            </span>
+                            <span>
+                              <em>vs S&amp;P</em>
+                              <strong>{item.vsBenchmarkLabel}</strong>
+                            </span>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+
+                  <section class="score-detail-group score-detail-group-reference" aria-label="Benchmark and reference details">
+                    <div class="score-detail-group-head">
+                      <span>Reference points</span>
+                      <p>Not model portfolios.</p>
+                    </div>
+
+                    <div class="score-reference-list">
+                      {latestResultRows.filter((item) => item.kind !== "model").map((item) => (
+                        <article class={`score-reference-row score-reference-row-${item.kind}`}>
+                          <div class="score-reference-row-head">
+                            {item.kind === "reference" ? (
+                              <span class="score-chart-reference-chip" aria-hidden="true">MAX</span>
+                            ) : (
+                              <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
+                            )}
+                            <div>
+                              <strong>{item.detailName}</strong>
+                              <span>{item.detailMeta}</span>
+                            </div>
+                          </div>
+                          <div class="score-detail-values">
+                            <span>
+                              <em>Return</em>
+                              <strong>{item.returnLabel}</strong>
+                            </span>
+                            <span>
+                              <em>vs S&amp;P</em>
+                              <strong>{item.vsBenchmarkLabel}</strong>
+                            </span>
+                          </div>
+                          <p>{item.detailText}</p>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+              </div>
+              <p class="score-chart-footnote">
+                Maximum possible return is a hindsight reference from the frozen asset universe for the same scored
+                window. Model scores are based only on submitted portfolios.
+              </p>
+            </div>
           </div>
         </div>
       </section>

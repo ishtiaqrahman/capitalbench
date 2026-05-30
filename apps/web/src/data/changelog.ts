@@ -27,6 +27,29 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-30-unified-score-chart",
+    date: "2026-05-30",
+    title: "Homepage score chart switches to a shared vertical plot",
+    category: "Site",
+    status: "published",
+    summary:
+      "The latest scored-test chart now compares every model portfolio and the S&P 500 benchmark in one shared vertical bar chart.",
+    details: [
+      "The homepage result view now uses one shared vertical plot with a common y-axis, grid, baseline, and logo-based x-axis labels.",
+      "The S&P 500 now appears as its own benchmark bar on the same scale as the model portfolios.",
+      "The maximum possible single-asset return from the frozen universe now appears as a distinct hindsight reference bar, separate from model portfolios and the S&P 500 benchmark.",
+      "Each model bar uses a distinct color and includes the model lab logo, return, alpha versus S&P 500, provider, and top holding.",
+      "The chart annotations now separate the winning model portfolio from the maximum possible return in the same scoring window.",
+      "The chart axis labels now show only logos and short names, while return, alpha, top-holding, benchmark, and maximum-return details move into a grouped return-details shelf below the chart.",
+      "The latest-result summary now sits above the chart as a compact score strip with scoring-window context, eligible asset count, model count, maximum possible return, and winner gap to maximum."
+    ],
+    links: [
+      { label: "Homepage", href: "/" },
+      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
+      { label: "Scored round", href: "/rounds/CB-2026-05-24-1W" }
+    ]
+  },
+  {
     id: "2026-05-29-latest-score-chart",
     date: "2026-05-29",
     title: "Homepage adds a scored-result chart",
