@@ -1383,6 +1383,10 @@ h3 {
   box-shadow: var(--shadow);
 }
 
+.round-score-panel {
+  margin: 0;
+}
+
 .published-score-summary {
   display: grid;
   min-width: 0;
@@ -1990,6 +1994,50 @@ h3 {
   font-size: 0.68rem;
   line-height: 1.28;
   overflow-wrap: anywhere;
+}
+
+.score-detail-holdings {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.score-detail-holding {
+  display: inline-flex;
+  max-width: 100%;
+  min-height: 24px;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgb(213 223 219 / 90%);
+  border-radius: 999px;
+  padding: 3px 8px 3px 6px;
+  background: rgb(255 255 255 / 74%);
+  color: var(--muted);
+  line-height: 1.1;
+}
+
+.score-detail-holding strong {
+  min-width: 0;
+  color: var(--ink-strong);
+  font-size: 0.68rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.score-detail-holding span:last-child {
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.score-detail-holding .allocation-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
 }
 
 .score-reference-list {
@@ -5648,8 +5696,14 @@ tbody tr:hover {
     grid-area: name;
   }
 
-  .score-detail-row p {
+  .score-detail-row p,
+  .score-detail-holdings,
+  .score-detail-empty-holding {
     grid-area: holding;
+  }
+
+  .score-detail-holdings {
+    justify-content: flex-start;
   }
 
   .pending-result-note {

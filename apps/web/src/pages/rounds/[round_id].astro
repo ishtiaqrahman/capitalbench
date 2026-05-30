@@ -7,6 +7,7 @@ import StatusCards from "../../components/StatusCards.astro";
 import LeaderboardTable from "../../components/LeaderboardTable";
 import OfficialPicksTable from "../../components/OfficialPicksTable";
 import RoundPerformanceChart from "../../components/RoundPerformanceChart";
+import ScoreReturnChart from "../../components/ScoreReturnChart.astro";
 import HashTable from "../../components/HashTable";
 import TableIsland from "../../components/TableIsland";
 import {
@@ -32,6 +33,7 @@ import {
   staticRoundReturns,
   staticScoringPrices
 } from "../../lib/localRoundRecords";
+import { buildScoreReturnChartData } from "../../lib/scoreReturnChart";
 import { datasetSchema } from "../../lib/seo";
 import { roundTrack, trackLabel } from "../../lib/tracks";
 
@@ -376,6 +378,12 @@ const resultRows = staticRoundLeaderboard(round.round_id, officialRunId);
 const resultWinner = resultRows[0];
 const resultReturns = staticRoundReturns(round.round_id, officialRunId);
 const allocationResultRows = staticRoundAllocations(round.round_id, officialRunId);
+const roundScoreChart = buildScoreReturnChartData({
+  leaderboard: resultRows,
+  returns: resultReturns,
+  optionsById: roundOptionsById,
+  allocations: allocationResultRows
+});
 const scoringPriceRows = staticScoringPrices(round.round_id, officialRunId);
 const renderedOptionsForPrompt = renderOptionsForPrompt(parsedOptions);
 const allowedOptionIds = parsedOptions
@@ -539,22 +547,29 @@ const attributionColumns = [
             <em>{providerLabel(resultWinner.provider)}</em>
           </article>
           <article>
-            <span>Portfolio</span>
-            <strong>{pct(resultWinner.portfolio_return ?? resultWinner.selected_asset_return)}</strong>
-            <em>{resultWinner.holding_count ?? 1} holdings</em>
+            <span>Window</span>
+            <strong>{dateOnly(round.entry_date)}</strong>
+            <em>to {dateOnly(round.exit_date)}</em>
           </article>
           <article>
-            <span>S&amp;P 500</span>
-            <strong>{pct(resultWinner.sp500_return)}</strong>
-            <em>benchmark</em>
+            <span>Models</span>
+            <strong>{resultRows.length}</strong>
+            <em>scored portfolios</em>
           </article>
           <article>
-            <span>Vs S&amp;P 500</span>
-            <strong>{pct(resultWinner.alpha_vs_sp500)}</strong>
-            <em>official score</em>
+            <span>Assets</span>
+            <strong>{universeOptionCount}</strong>
+            <em>eligible choices</em>
           </article>
         </div>
       </div>
+
+      {roundScoreChart.rows.length > 0 && (
+        <div class="published-score-panel round-score-panel">
+          <ScoreReturnChart chart={roundScoreChart} label={`${benchmarkTrackLabel} result`} />
+        </div>
+      )}
+
       <div class="panel">
         <div class="panel-header">
           <div>

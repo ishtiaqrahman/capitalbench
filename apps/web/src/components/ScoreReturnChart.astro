@@ -1,0 +1,197 @@
+---
+import type { ScoreReturnChartData } from "../lib/scoreReturnChart";
+
+interface Props {
+  chart: ScoreReturnChartData;
+  label: string;
+  title?: string;
+  description?: string;
+  statusLabel?: string;
+  showStatus?: boolean;
+}
+
+const {
+  chart,
+  label,
+  title = "Portfolio Return vs S&P 500",
+  description = "All return bars use one shared scale.",
+  statusLabel = "Scored",
+  showStatus = true
+} = Astro.props;
+
+const modelRows = chart.rows.filter((item) => item.kind === "model");
+const referenceRows = chart.rows.filter((item) => item.kind !== "model");
+const zeroPosition = chart.ticks.find((tick) => Math.abs(tick.value) < 0.00001)?.position ?? "0%";
+const columnCount = Math.max(chart.rows.length, 1);
+---
+
+<div class="published-score-chart">
+  <div class="score-chart-head">
+    <div>
+      <span class="panel-kicker">{label}</span>
+      <h3>{title}</h3>
+      <p>{description}</p>
+    </div>
+    <div class="score-chart-head-side">
+      {showStatus && <span class="status-badge status-resolved">{statusLabel}</span>}
+      <div class="score-chart-legend" aria-label="Chart legend">
+        <span class="legend-model">Model portfolios</span>
+        <span class="legend-benchmark">S&amp;P 500 benchmark</span>
+        <span class="legend-best-asset">Maximum possible return</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-chart-frame">
+    <div class="score-vertical-inner">
+      <div class="score-vertical-plot-row">
+        <div class="score-vertical-y-axis" aria-hidden="true">
+          {chart.ticks.map((tick) => <span style={`bottom: ${tick.position};`}>{tick.label}</span>)}
+        </div>
+        <div class="score-vertical-plot" aria-hidden="true">
+          {chart.ticks.map((tick) => <span class="score-vertical-gridline" style={`bottom: ${tick.position};`}></span>)}
+          <span class="score-vertical-zero-line" style={`bottom: ${zeroPosition};`}></span>
+          <div class="score-vertical-bars" style={`--score-column-count: ${columnCount};`}>
+            {chart.rows.map((item) => (
+              <div class={`score-vertical-column ${item.columnClass}`}>
+                <span class="score-vertical-value" style={item.valueStyle}>{item.returnLabel}</span>
+                <span class={`score-vertical-bar ${item.barClass}`} style={item.barStyle}></span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="score-vertical-label-row">
+        <span></span>
+        <div class="score-vertical-labels" style={`--score-column-count: ${columnCount};`}>
+          {chart.rows.map((item) => (
+            <div
+              class={`score-vertical-label ${item.kind === "benchmark" ? "score-vertical-label-benchmark" : ""} ${
+                item.kind === "reference" ? "score-vertical-label-reference" : ""
+              }`}
+              title={`${item.detailName}: ${item.returnLabel}. ${item.vsBenchmarkLabel} vs S&P 500. ${item.detailText}`}
+            >
+              {item.logoSrc ? (
+                <span class="score-chart-logo-shell">
+                  <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="124" height="28" loading="lazy" />
+                </span>
+              ) : item.kind === "reference" ? (
+                <span class="score-chart-reference-chip" aria-hidden="true">MAX</span>
+              ) : (
+                <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
+              )}
+              <strong>{item.label}</strong>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="score-mobile-rank-chart" aria-label="Mobile return chart">
+        {chart.rows.map((item) => (
+          <article
+            class={`score-mobile-rank-row score-mobile-rank-row-${item.kind} ${
+              item.columnClass.includes("winner") ? "score-mobile-rank-row-winner" : ""
+            }`}
+          >
+            <div class="score-mobile-rank-head">
+              <div>
+                {item.logoSrc ? (
+                  <span class="score-chart-logo-shell">
+                    <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="124" height="28" loading="lazy" />
+                  </span>
+                ) : item.kind === "reference" ? (
+                  <span class="score-chart-reference-chip" aria-hidden="true">MAX</span>
+                ) : (
+                  <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
+                )}
+                <span>
+                  <strong>{item.detailName}</strong>
+                  <em>{item.detailMeta}</em>
+                </span>
+              </div>
+              <strong>{item.returnLabel}</strong>
+            </div>
+            <div class="score-mobile-rank-track" aria-hidden="true">
+              <span class={`score-mobile-rank-fill ${item.barClass}`} style={item.mobileBarStyle}></span>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="score-chart-detail-panel" aria-label="Return details">
+        <div class="score-chart-detail-title">
+          <span>Portfolio context</span>
+          <p>Shows each model's saved portfolio weights.</p>
+        </div>
+
+        <div class="score-detail-shelf">
+          <section class="score-detail-group score-detail-group-models" aria-label="Model portfolio details">
+            <div class="score-detail-group-head">
+              <span>Model portfolios</span>
+              <p>Ranked in the same order as the chart.</p>
+            </div>
+
+            <div class="score-detail-list">
+              {modelRows.map((item, index) => (
+                <article class="score-detail-row">
+                  <span class="score-detail-rank">{index + 1}</span>
+                  {item.logoSrc ? (
+                    <span class="score-chart-logo-shell">
+                      <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="124" height="28" loading="lazy" />
+                    </span>
+                  ) : (
+                    <span class="score-chart-benchmark-chip" aria-hidden="true">{item.detailMeta.slice(0, 3).toUpperCase()}</span>
+                  )}
+                  <div class="score-detail-name">
+                    <strong>{item.detailName}</strong>
+                    <span>{item.detailMeta}</span>
+                  </div>
+                  {item.holdings.length > 0 ? (
+                    <div class="score-detail-holdings" aria-label={`${item.detailName} holdings`}>
+                      {item.holdings.map((holding) => (
+                        <span class="score-detail-holding" title={holding.fullLabel}>
+                          <span class={`allocation-dot ${holding.themeClass}`} aria-hidden="true"></span>
+                          <strong>{holding.label}</strong>
+                          <span>{holding.allocationLabel}</span>
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p class="score-detail-empty-holding">{item.detailText}</p>
+                  )}
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="score-detail-group score-detail-group-reference" aria-label="Benchmark and reference details">
+            <div class="score-detail-group-head">
+              <span>Reference points</span>
+              <p>Not model portfolios.</p>
+            </div>
+
+            <div class="score-reference-list">
+              {referenceRows.map((item) => (
+                <article class={`score-reference-row score-reference-row-${item.kind}`}>
+                  <div class="score-reference-row-head">
+                    {item.kind === "reference" ? (
+                      <span class="score-chart-reference-chip" aria-hidden="true">MAX</span>
+                    ) : (
+                      <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
+                    )}
+                    <div>
+                      <strong>{item.detailName}</strong>
+                      <span>{item.detailMeta}</span>
+                    </div>
+                  </div>
+                  <p>{item.detailText}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
