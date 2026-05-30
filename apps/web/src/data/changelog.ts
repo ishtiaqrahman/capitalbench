@@ -27,6 +27,25 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-05-29-latest-score-chart",
+    date: "2026-05-29",
+    title: "Homepage adds a scored-result chart",
+    category: "Site",
+    status: "published",
+    summary:
+      "The landing page now shows the latest completed benchmark result as a model-by-model return chart.",
+    details: [
+      "The new chart compares each model's portfolio return with the S&P 500 return over the same scored window.",
+      "Open weekly and monthly rounds are excluded from the completed-score chart until ending prices are collected.",
+      "The previous incomplete monthly placeholder has been removed from the landing page so published scores only show finalized results."
+    ],
+    links: [
+      { label: "Homepage", href: "/" },
+      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
+      { label: "Scored round", href: "/rounds/CB-2026-05-24-1W" }
+    ]
+  },
+  {
     id: "2026-05-29-result-presentation-upgrade",
     date: "2026-05-29",
     title: "Completed results now lead the public benchmark pages",

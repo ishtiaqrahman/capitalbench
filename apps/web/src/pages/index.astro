@@ -14,6 +14,7 @@ import {
 import {
   modelLabel,
   providerLabel,
+  type LeaderboardRecord,
   rounds as fallbackRounds,
   type RoundRecord,
   type SubmissionRecord,
@@ -36,7 +37,6 @@ import {
 } from "../lib/localRoundRecords";
 import { siteConfig } from "../lib/seo";
 import {
-  latestPendingRoundForTrack,
   latestResolvedRoundForTrack,
   latestRoundForTrack,
   roundTrack,
@@ -67,8 +67,6 @@ const latestWeeklyRound = latestRoundForTrack(roundRows, "weekly");
 const latestMonthlyRound = latestRoundForTrack(roundRows, "monthly");
 const latestResolvedWeeklyRound = latestResolvedRoundForTrack(roundRows, "weekly");
 const latestResolvedMonthlyRound = latestResolvedRoundForTrack(roundRows, "monthly");
-const latestPendingWeeklyRound = latestPendingRoundForTrack(roundRows, "weekly");
-const latestPendingMonthlyRound = latestPendingRoundForTrack(roundRows, "monthly");
 const allOfficialSubmissions = staticAllOfficialSubmissions(roundRows);
 const pendingRoundCount = roundRows.filter((round) => round.status === "pending").length;
 
@@ -123,7 +121,6 @@ const publishedResults = [
     key: "weekly" as const,
     label: "Weekly",
     round: latestResolvedWeeklyRound,
-    pendingRound: latestPendingWeeklyRound,
     leaderboard: latestResolvedWeeklyRound
       ? staticRoundLeaderboard(latestResolvedWeeklyRound.round_id, latestResolvedWeeklyRound.official_run_id)
       : []
@@ -132,12 +129,22 @@ const publishedResults = [
     key: "monthly" as const,
     label: "Monthly",
     round: latestResolvedMonthlyRound,
-    pendingRound: latestPendingMonthlyRound,
     leaderboard: latestResolvedMonthlyRound
       ? staticRoundLeaderboard(latestResolvedMonthlyRound.round_id, latestResolvedMonthlyRound.official_run_id)
       : []
   }
 ].map((item) => ({ ...item, winner: item.leaderboard[0] }));
+const completedPublishedResults = publishedResults
+  .filter((result) => result.round && result.winner)
+  .sort((a, b) => (b.round?.exit_date ?? "").localeCompare(a.round?.exit_date ?? ""));
+const latestPublishedResult = completedPublishedResults[0];
+const latestCompletedRound = latestPublishedResult?.round;
+const latestCompletedWinner = latestPublishedResult?.winner;
+const latestResultBenchmarkReturn = latestCompletedWinner?.sp500_return;
+const latestResultOptions = latestCompletedRound ? staticUniverseOptions(latestCompletedRound.round_id) : [];
+const latestResultOptionsById: Record<string, UniverseOption | undefined> = Object.fromEntries(
+  latestResultOptions.map((option) => [option.option_id, option])
+);
 const activeExposureRounds = roundRows
   .filter((round) => round.status === "pending" && round.official_run_id)
   .map((round) => {
@@ -261,6 +268,70 @@ function scoreShortLine(round?: RoundRecord): string {
   if (round.status === "resolved") return "Scored";
   return `Scores after ${shortMonthDay(round.exit_date)} close`;
 }
+
+function finiteNumber(value: number | null | undefined): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function leaderboardReturn(row: LeaderboardRecord): number | undefined {
+  return row.portfolio_return ?? row.selected_asset_return;
+}
+
+function signedPct(value: number | null | undefined): string {
+  if (!finiteNumber(value)) return "n/a";
+  const formatted = pct(value);
+  if (!formatted) return "n/a";
+  return value > 0 ? `+${formatted}` : formatted;
+}
+
+function resultOptionLabel(optionId?: string): string {
+  if (!optionId) return "No top holding reported";
+  return optionDisplayName(optionId, latestResultOptionsById);
+}
+
+const latestResultValues = [
+  ...(latestPublishedResult?.leaderboard ?? []).map(leaderboardReturn).filter(finiteNumber),
+  ...(finiteNumber(latestResultBenchmarkReturn) ? [latestResultBenchmarkReturn] : [])
+];
+const scoreChartMin = Math.min(0, ...latestResultValues);
+const scoreChartMax = Math.max(0, ...latestResultValues);
+const scoreChartPadding = Math.max((scoreChartMax - scoreChartMin) * 0.08, 0.005);
+const scoreChartDomainMin = scoreChartMin < 0 ? scoreChartMin - scoreChartPadding : 0;
+const scoreChartDomainMax = scoreChartMax > 0 ? scoreChartMax + scoreChartPadding : scoreChartPadding;
+const scoreChartRange = Math.max(scoreChartDomainMax - scoreChartDomainMin, 0.001);
+
+function scoreChartCoordinate(value: number): number {
+  return Math.min(100, Math.max(0, ((value - scoreChartDomainMin) / scoreChartRange) * 100));
+}
+
+function scoreChartPosition(value: number | null | undefined): string {
+  return `${scoreChartCoordinate(finiteNumber(value) ? value : 0).toFixed(2)}%`;
+}
+
+function scoreChartBarStyle(value: number | null | undefined): string {
+  if (!finiteNumber(value)) return "left: 0%; width: 0%;";
+  const zero = scoreChartCoordinate(0);
+  const endpoint = scoreChartCoordinate(value);
+  return `left: ${Math.min(zero, endpoint).toFixed(2)}%; width: ${Math.max(1.5, Math.abs(endpoint - zero)).toFixed(2)}%;`;
+}
+
+function scoreChartBarClass(value: number | null | undefined): string {
+  return finiteNumber(value) && value < 0 ? "score-bar-negative" : "score-bar-positive";
+}
+
+const latestResultRows = (latestPublishedResult?.leaderboard ?? []).map((row, index) => {
+  const returnValue = leaderboardReturn(row);
+  return {
+    row,
+    rank: index + 1,
+    returnValue,
+    returnLabel: pct(returnValue) || "n/a",
+    alphaLabel: signedPct(row.alpha_vs_sp500),
+    topHolding: resultOptionLabel(row.selected_option_id),
+    barStyle: scoreChartBarStyle(returnValue),
+    barClass: scoreChartBarClass(returnValue)
+  };
+});
 
 function providerLogoSrc(provider: string): string | undefined {
   const logos: Record<string, string> = {
@@ -409,68 +480,102 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
     </div>
   </section>
 
-  <section class="home-section-heading" aria-labelledby="published-results-title">
-    <span class="panel-kicker">Published results</span>
-    <h2 id="published-results-title">Latest Completed Scores</h2>
-    <p>
-      Completed tests are shown separately from open rounds. These are the scoreboards where ending prices are already
-      collected and the winner is known.
-    </p>
-  </section>
+  {latestPublishedResult && latestCompletedRound && latestCompletedWinner && (
+    <>
+      <section class="home-section-heading" aria-labelledby="published-results-title">
+        <span class="panel-kicker">Published result</span>
+        <h2 id="published-results-title">Latest Scored Test</h2>
+        <p>
+          This chart shows the most recent completed test. Open weekly and monthly rounds stay out of this score chart
+          until ending prices are collected.
+        </p>
+      </section>
 
-  <section class="published-results-grid" aria-label="Latest completed weekly and monthly results">
-    {publishedResults.map((result) => (
-      <article class={`published-result-card published-result-${result.key}`}>
-        <div class="published-result-head">
-          <div>
-            <span class="panel-kicker">{result.label} result</span>
-            <h3>{result.round?.round_id ?? `No completed ${result.label.toLowerCase()} result yet`}</h3>
+      <section
+        class="published-score-panel"
+        aria-label={`Latest scored ${latestPublishedResult.label.toLowerCase()} result`}
+      >
+        <div class="published-score-summary">
+          <div class="published-result-head">
+            <div>
+              <span class="panel-kicker">{latestPublishedResult.label} result</span>
+              <h3>{latestCompletedRound.round_id}</h3>
+              <p>{windowLabel(latestCompletedRound)}</p>
+            </div>
+            <span class="status-badge status-resolved">Scored</span>
           </div>
-          <span class={`status-badge ${result.round ? "status-resolved" : "status-pending"}`}>
-            {result.round ? "Scored" : "Waiting"}
-          </span>
+
+          <div class="published-result-winner">
+            <span>Top model</span>
+            <strong>{modelLabel(latestCompletedWinner.model_id)}</strong>
+            <em>{providerLabel(latestCompletedWinner.provider)}</em>
+          </div>
+
+          <div class="published-score-metrics">
+            <span>
+              Portfolio return <strong>{pct(leaderboardReturn(latestCompletedWinner))}</strong>
+            </span>
+            <span>
+              S&amp;P 500 <strong>{pct(latestCompletedWinner.sp500_return)}</strong>
+            </span>
+            <span>
+              Alpha <strong>{signedPct(latestCompletedWinner.alpha_vs_sp500)}</strong>
+            </span>
+          </div>
+
+          <p class="published-score-note">
+            Returns are measured close-to-close over the same dates. The S&amp;P 500 is the benchmark, not a model
+            portfolio.
+          </p>
+
+          <div class="track-card-actions">
+            <a class="small-button" href={`/rounds/${latestCompletedRound.round_id}/`}>Full result</a>
+            <a class="small-button" href={`/leaderboards/latest-${latestPublishedResult.key}`}>Leaderboard</a>
+          </div>
         </div>
-        {result.round && result.winner ? (
-          <>
-            <div class="published-result-winner">
-              <span>Winner</span>
-              <strong>{modelLabel(result.winner.model_id)}</strong>
-              <em>{providerLabel(result.winner.provider)}</em>
+
+        <div class="published-score-chart">
+          <div class="score-chart-head">
+            <div>
+              <span class="panel-kicker">Leaderboard chart</span>
+              <h3>Portfolio Return by Model</h3>
             </div>
-            <div class="published-result-metrics">
-              <span>
-                Portfolio <strong>{pct(result.winner.portfolio_return ?? result.winner.selected_asset_return)}</strong>
-              </span>
-              <span>
-                S&amp;P 500 <strong>{pct(result.winner.sp500_return)}</strong>
-              </span>
-              <span>
-                Vs S&amp;P 500 <strong>{pct(result.winner.alpha_vs_sp500)}</strong>
-              </span>
+            <div class="score-chart-legend" aria-label="Chart legend">
+              <span class="legend-model">Model return</span>
+              <span class="legend-benchmark">S&amp;P 500 {pct(latestResultBenchmarkReturn)}</span>
             </div>
-            <p>
-              Scored from {windowLabel(result.round)}. Primary pick: {result.winner.selected_option_id}.
-            </p>
-            <div class="track-card-actions">
-              <a class="small-button" href={`/rounds/${result.round.round_id}/`}>Full result</a>
-              <a class="small-button" href={`/leaderboards/latest-${result.key}`}>Leaderboard</a>
-            </div>
-          </>
-        ) : (
-          <>
-            <p>
-              No {result.label.toLowerCase()} test has reached its final scoring date yet.
-              {result.pendingRound ? ` ${result.pendingRound.round_id} is currently waiting for ending prices.` : ""}
-            </p>
-            <div class="track-card-actions">
-              {result.pendingRound && <a class="small-button" href={`/rounds/${result.pendingRound.round_id}/`}>Open pending round</a>}
-              <a class="small-button" href={`/leaderboards/latest-${result.key}`}>Result page</a>
-            </div>
-          </>
-        )}
-      </article>
-    ))}
-  </section>
+          </div>
+
+          <div class="score-chart-list">
+            {latestResultRows.map((item) => (
+              <div class={`score-chart-row ${item.rank === 1 ? "score-chart-row-winner" : ""}`}>
+                <div class="score-chart-label">
+                  <span>{item.rank}</span>
+                  <div>
+                    <strong>{modelLabel(item.row.model_id)}</strong>
+                    <em>{providerLabel(item.row.provider)} · Top holding: {item.topHolding}</em>
+                  </div>
+                </div>
+
+                <div class="score-bar-track" aria-hidden="true">
+                  <span class="score-zero-line" style={`left: ${scoreChartPosition(0)};`}></span>
+                  <span class={`score-bar-fill ${item.barClass}`} style={item.barStyle}></span>
+                  {finiteNumber(latestResultBenchmarkReturn) && (
+                    <span class="score-benchmark-marker" style={`left: ${scoreChartPosition(latestResultBenchmarkReturn)};`}></span>
+                  )}
+                </div>
+
+                <div class="score-chart-values">
+                  <strong>{item.returnLabel}</strong>
+                  <span>{item.alphaLabel} vs S&amp;P 500</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  )}
 
   <section class="home-section-heading" aria-labelledby="active-exposure-title">
     <span class="panel-kicker">Active exposure</span>
