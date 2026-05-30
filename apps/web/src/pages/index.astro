@@ -152,11 +152,6 @@ const latestResultReturns = latestCompletedRound
 const bestResultAsset = latestResultReturns
   .filter((item) => !item.is_benchmark && !item.is_cash && finiteNumber(item.return))
   .sort((a, b) => b.return - a.return)[0];
-const latestCompletedWinnerReturn = latestCompletedWinner ? leaderboardReturn(latestCompletedWinner) : undefined;
-const latestWinnerGapToMax =
-  finiteNumber(bestResultAsset?.return) && finiteNumber(latestCompletedWinnerReturn)
-    ? bestResultAsset.return - latestCompletedWinnerReturn
-    : undefined;
 const latestResultEligibleAssetCount = latestResultOptions.length;
 const activeExposureRounds = roundRows
   .filter((round) => round.status === "pending" && round.official_run_id)
@@ -605,95 +600,21 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
         class="published-score-panel"
         aria-label={`Latest scored ${latestPublishedResult.label.toLowerCase()} result`}
       >
-        <div class="published-score-summary">
-          <div class="published-score-summary-head">
-            <div class="published-result-head">
-              <div>
-                <span class="panel-kicker">{latestPublishedResult.label} result</span>
-                <h3>{latestCompletedRound.round_id}</h3>
-                <p>{windowLabel(latestCompletedRound)}</p>
-              </div>
-              <span class="status-badge status-resolved">Scored</span>
-            </div>
-
-            <div class="track-card-actions">
-              <a class="small-button" href={`/rounds/${latestCompletedRound.round_id}/`}>Full result</a>
-              <a class="small-button" href={`/leaderboards/latest-${latestPublishedResult.key}`}>Leaderboard</a>
-            </div>
-          </div>
-
-          <div class="published-score-strip" aria-label="Latest scored result summary">
-            <div class="published-score-tile published-score-tile-winner">
-              <span>Top model</span>
-              <strong>{modelLabel(latestCompletedWinner.model_id)}</strong>
-              <em>{providerLabel(latestCompletedWinner.provider)}</em>
-            </div>
-            <div class="published-score-tile">
-              <span>Portfolio return</span>
-              <strong>{pct(leaderboardReturn(latestCompletedWinner))}</strong>
-            </div>
-            <div class="published-score-tile">
-              <span>S&amp;P 500</span>
-              <strong>{pct(latestCompletedWinner.sp500_return)}</strong>
-            </div>
-            <div class="published-score-tile">
-              <span>Alpha</span>
-              <strong>{signedPercentagePoints(latestCompletedWinner.alpha_vs_sp500)}</strong>
-            </div>
-            {bestResultAsset && (
-              <div class="published-score-tile published-score-tile-reference">
-                <span>Max possible</span>
-                <strong>{bestResultAsset.asset_symbol} {pct(bestResultAsset.return)}</strong>
-              </div>
-            )}
-            {finiteNumber(latestWinnerGapToMax) && (
-              <div class="published-score-tile published-score-tile-reference">
-                <span>Gap to max</span>
-                <strong>{percentagePoints(latestWinnerGapToMax)}</strong>
-              </div>
-            )}
-          </div>
-
-          <div class="published-score-context" aria-label="Scoring context">
-            <span><strong>Window</strong>{dateOnly(latestCompletedRound.entry_date)} to {dateOnly(latestCompletedRound.exit_date)}</span>
-            <span><strong>Models</strong>{latestPublishedResult.leaderboard.length}</span>
-            <span><strong>Eligible assets</strong>{latestResultEligibleAssetCount}</span>
-            <span><strong>Method</strong>{latestPublishedResult.label} close-to-close</span>
-          </div>
-
-          <p class="published-score-note">
-            Returns are measured over the same dates. S&amp;P 500 is the benchmark; maximum possible return is a
-            hindsight reference, not a submitted model portfolio.
-          </p>
-        </div>
-
         <div class="published-score-chart">
           <div class="score-chart-head">
             <div>
-              <span class="panel-kicker">Leaderboard chart</span>
+              <span class="panel-kicker">{latestPublishedResult.label} result</span>
               <h3>Portfolio Return vs S&amp;P 500</h3>
-              <p>Latest completed test, scored over the same close-to-close window.</p>
+              <p>All return bars use one shared scale.</p>
             </div>
-            <div class="score-chart-legend" aria-label="Chart legend">
-              <span class="legend-model">Model portfolios</span>
-              <span class="legend-benchmark">S&amp;P 500 benchmark</span>
-              <span class="legend-best-asset">Maximum possible return</span>
+            <div class="score-chart-head-side">
+              <span class="status-badge status-resolved">Scored</span>
+              <div class="score-chart-legend" aria-label="Chart legend">
+                <span class="legend-model">Model portfolios</span>
+                <span class="legend-benchmark">S&amp;P 500 benchmark</span>
+                <span class="legend-best-asset">Maximum possible return</span>
+              </div>
             </div>
-          </div>
-
-          <div class="score-chart-callouts" aria-label="Result annotations">
-            <article>
-              <span>Winning model portfolio</span>
-              <strong>{modelLabel(latestCompletedWinner.model_id)} returned {pct(leaderboardReturn(latestCompletedWinner))}</strong>
-              <p>Highest-scoring model portfolio in this test.</p>
-            </article>
-            {bestResultAsset && (
-              <article>
-                <span>Maximum possible return</span>
-                <strong>{resultAssetLabel(bestResultAsset)} returned {pct(bestResultAsset.return)}</strong>
-                <p>Hindsight ceiling from putting 100% into the highest-returning eligible asset; not a submitted model portfolio.</p>
-              </article>
-            )}
           </div>
 
           <div class="score-chart-frame">
@@ -773,22 +694,21 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
                     <div class="score-mobile-rank-track" aria-hidden="true">
                       <span class={`score-mobile-rank-fill ${item.barClass}`} style={scoreChartMobileBarStyle(item.returnValue)}></span>
                     </div>
-                    <p>{item.detailText}</p>
                   </article>
                 ))}
               </div>
 
               <div class="score-chart-detail-panel" aria-label="Return details">
                 <div class="score-chart-detail-title">
-                  <span>Return details</span>
-                  <p>Alpha is shown in percentage points versus the S&amp;P 500.</p>
+                  <span>Portfolio context</span>
+                  <p>Top holding is the largest submitted position.</p>
                 </div>
 
                 <div class="score-detail-shelf">
                   <section class="score-detail-group score-detail-group-models" aria-label="Model portfolio details">
                     <div class="score-detail-group-head">
                       <span>Model portfolios</span>
-                      <p>Top holding is the largest position in the submitted portfolio.</p>
+                      <p>Ranked in the same order as the chart.</p>
                     </div>
 
                     <div class="score-detail-list">
@@ -803,16 +723,6 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
                             <span>{item.detailMeta}</span>
                           </div>
                           <p>{item.detailText.replace("Top holding: ", "")}</p>
-                          <div class="score-detail-values">
-                            <span>
-                              <em>Return</em>
-                              <strong>{item.returnLabel}</strong>
-                            </span>
-                            <span>
-                              <em>vs S&amp;P</em>
-                              <strong>{item.vsBenchmarkLabel}</strong>
-                            </span>
-                          </div>
                         </article>
                       ))}
                     </div>
@@ -838,16 +748,6 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
                               <span>{item.detailMeta}</span>
                             </div>
                           </div>
-                          <div class="score-detail-values">
-                            <span>
-                              <em>Return</em>
-                              <strong>{item.returnLabel}</strong>
-                            </span>
-                            <span>
-                              <em>vs S&amp;P</em>
-                              <strong>{item.vsBenchmarkLabel}</strong>
-                            </span>
-                          </div>
                           <p>{item.detailText}</p>
                         </article>
                       ))}
@@ -855,11 +755,31 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
                   </section>
                 </div>
               </div>
-              <p class="score-chart-footnote">
-                Maximum possible return is a hindsight reference from the frozen asset universe for the same scored
-                window. Model scores are based only on submitted portfolios.
-              </p>
             </div>
+          </div>
+        </div>
+
+        <div class="published-score-summary published-score-run-details">
+          <div class="published-score-summary-head">
+            <div class="published-result-head">
+              <div>
+                <span class="panel-kicker">Run details</span>
+                <h3>{latestCompletedRound.round_id}</h3>
+                <p>Round metadata and audit links.</p>
+              </div>
+            </div>
+
+            <div class="track-card-actions">
+              <a class="small-button" href={`/rounds/${latestCompletedRound.round_id}/`}>Full result</a>
+              <a class="small-button" href={`/leaderboards/latest-${latestPublishedResult.key}`}>Leaderboard</a>
+            </div>
+          </div>
+
+          <div class="published-score-context" aria-label="Scoring context">
+            <span><strong>Window</strong>{dateOnly(latestCompletedRound.entry_date)} to {dateOnly(latestCompletedRound.exit_date)}</span>
+            <span><strong>Models</strong>{latestPublishedResult.leaderboard.length}</span>
+            <span><strong>Eligible assets</strong>{latestResultEligibleAssetCount}</span>
+            <span><strong>Method</strong>{latestPublishedResult.label} close-to-close</span>
           </div>
         </div>
       </section>
