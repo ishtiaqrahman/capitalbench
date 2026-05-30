@@ -53,7 +53,13 @@ const navItems = [
   { href: "/leaderboards/latest", label: "Results", active: currentPath.startsWith("/leaderboards") },
   { href: "/#current-picks", label: "Picks", active: false },
   { href: "/rounds", label: "Rounds", active: currentPath.startsWith("/rounds") },
-  { href: "/methodology", label: "How It Works", shortLabel: "How", active: currentPath.startsWith("/methodology") },
+  {
+    href: "/methodology",
+    label: "How It Works",
+    shortLabel: "How",
+    active: currentPath.startsWith("/methodology"),
+    analyticsEvent: "methodology_click"
+  },
   {
     href: "/docs",
     label: "Proof",
@@ -64,7 +70,21 @@ const navItems = [
       currentPath.startsWith("/limitations") ||
       currentPath.startsWith("/universe")
   },
-  { href: "/contribute", label: "Contribute", active: currentPath.startsWith("/contribute"), cta: true }
+  {
+    href: siteConfig.githubUrl,
+    label: "GitHub",
+    active: false,
+    external: true,
+    repository: true,
+    analyticsEvent: "github_repository_click"
+  },
+  {
+    href: "/contribute",
+    label: "Contribute",
+    active: currentPath.startsWith("/contribute"),
+    cta: true,
+    analyticsEvent: "contribute_click"
+  }
 ];
 ---
 
@@ -114,21 +134,17 @@ const navItems = [
                 <a
                   class:list={[
                     item.cta && "nav-cta",
+                    item.repository && "nav-repository",
                     item.shortLabel && "has-short-label"
                   ]}
                   href={item.href}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noreferrer" : undefined}
                   aria-current={item.active ? "page" : undefined}
-                  data-analytics-event={
-                    item.href === "/contribute"
-                      ? "contribute_click"
-                      : item.href === "/methodology"
-                        ? "methodology_click"
-                        : undefined
-                  }
-                  data-analytics-param-location={
-                    item.href === "/contribute" || item.href === "/methodology" ? "primary_nav" : undefined
-                  }
+                  data-analytics-event={item.analyticsEvent}
+                  data-analytics-param-location={item.analyticsEvent ? "primary_nav" : undefined}
                 >
+                  {item.repository && <GitHubLogo size={15} />}
                   <span class="nav-label-full">{item.label}</span>
                   {item.shortLabel && <span class="nav-label-short">{item.shortLabel}</span>}
                 </a>
@@ -146,7 +162,16 @@ const navItems = [
               <div class="mobile-menu-panel">
                 {
                   navItems.map((item) => (
-                    <a href={item.href} aria-current={item.active ? "page" : undefined}>
+                    <a
+                      class:list={[item.repository && "mobile-repository-link"]}
+                      href={item.href}
+                      target={item.external ? "_blank" : undefined}
+                      rel={item.external ? "noreferrer" : undefined}
+                      aria-current={item.active ? "page" : undefined}
+                      data-analytics-event={item.analyticsEvent}
+                      data-analytics-param-location={item.analyticsEvent ? "mobile_menu" : undefined}
+                    >
+                      {item.repository && <GitHubLogo size={14} />}
                       {item.label}
                     </a>
                   ))

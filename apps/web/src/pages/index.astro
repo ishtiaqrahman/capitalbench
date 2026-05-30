@@ -6,9 +6,12 @@ import ScoreReturnChart from "../components/ScoreReturnChart.astro";
 import {
   ArrowRight,
   BarChart3,
+  ClipboardCheck,
   Database,
   FileCheck2,
   Layers3,
+  LineChart,
+  LockKeyhole,
   ShieldCheck,
   TimerReset
 } from "lucide-react";
@@ -204,6 +207,23 @@ const exploreLinks = [
     state: "Simple math"
   }
 ];
+const heroProofSteps = [
+  {
+    icon: ClipboardCheck,
+    title: "Same brief",
+    detail: "Brief and ETF list"
+  },
+  {
+    icon: LockKeyhole,
+    title: "Locked picks",
+    detail: "Saved before scoring"
+  },
+  {
+    icon: LineChart,
+    title: "Real prices",
+    detail: "Closing prices score"
+  }
+];
 const howItWorks = [
   {
     label: "1",
@@ -303,34 +323,41 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
       <p class="eyebrow">CapitalBench</p>
       <h1 id="home-title">Benchmarking AI Models With Public Market Portfolios</h1>
       <p class="home-hero-lede">
-        Every model gets the same market information and asset list. Each one picks a portfolio. CapitalBench scores the
-        portfolios using real market prices.
+        Same brief. Same ETF list. Each model picks a portfolio. Real prices decide the score.
       </p>
       <p class="hero-disclaimer">Research benchmark. Not financial advice.</p>
 
       <div class="home-hero-actions" aria-label="Project resources">
         <a class="action-link action-primary" href="/leaderboards/latest">
-          See results
+          Latest scores
           <ArrowRight size={15} aria-hidden="true" />
         </a>
-        <a class="action-link" href="#current-picks">Current picks</a>
-        <a class="action-link" href="#how-it-works">How it works</a>
-        <a class="action-link" href="#proof-and-data">Proof and data</a>
+        <a class="action-link" href="#current-picks">Active portfolios</a>
+        <a class="action-link" href="#how-it-works">Scoring rules</a>
+        <a class="action-link" href="#proof-and-data">Proof files</a>
       </div>
 
-      <div class="hero-proof-strip" aria-label="Benchmark proof points">
-        <span>
-          <strong>Same input</strong>
-          Frozen brief
-        </span>
-        <span>
-          <strong>Saved picks</strong>
-          Public files
-        </span>
-        <span>
-          <strong>Real prices</strong>
-          Market scoring
-        </span>
+      <div class="hero-proof-strip" aria-label="How the test works">
+        <div class="hero-proof-strip-head">
+          <span>How it works</span>
+          <strong>Brief. Picks. Prices.</strong>
+        </div>
+        <ol class="hero-proof-steps">
+          {heroProofSteps.map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <li class={`hero-proof-step hero-proof-step-${index + 1}`}>
+                <span class="hero-proof-icon" aria-hidden="true">
+                  <Icon size={16} />
+                </span>
+                <span class="hero-proof-copy">
+                  <strong>{step.title}</strong>
+                  <span>{step.detail}</span>
+                </span>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </div>
 
@@ -340,7 +367,7 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
           <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="eager" />
           <div>
             <span>Benchmark snapshot</span>
-            <strong>Same rules for every model</strong>
+            <strong>Models, timelines, assets, open tests</strong>
           </div>
         </div>
         <span class="status-badge status-pending">Live</span>
