@@ -10,7 +10,7 @@ const changelogSchema: JsonLdRecord = {
   "@id": `${canonicalUrl("/changelog")}#changelog`,
   name: "CapitalBench Changelog",
   description:
-    "Public log of major CapitalBench website, benchmark, data, methodology, security, and operations changes.",
+    "Public log of major CapitalBench benchmark, data, methodology, security, and operations changes.",
   itemListOrder: "https://schema.org/ItemListOrderDescending",
   numberOfItems: changelogEntries.length,
   itemListElement: changelogEntries.map((entry, index) => ({
@@ -31,7 +31,7 @@ const changelogSchema: JsonLdRecord = {
 
 <BaseLayout
   title="CapitalBench Changelog"
-  description="Public CapitalBench changelog for major website, benchmark, data, methodology, security, and operations updates."
+  description="Public CapitalBench changelog for major benchmark, data, methodology, security, and operations updates."
   structuredData={changelogSchema}
 >
   <PageHeader
@@ -45,7 +45,7 @@ const changelogSchema: JsonLdRecord = {
       <article>
         <span class="metric-label">Cadence</span>
         <h2>Event-Based</h2>
-        <p>Updates are posted for material benchmark, data, methodology, website, security, or operational changes.</p>
+        <p>Updates are posted for material benchmark, data, methodology, security, or operational changes.</p>
       </article>
       <article>
         <span class="metric-label">Latest Entry</span>
@@ -66,7 +66,7 @@ const changelogSchema: JsonLdRecord = {
       <h2>What Gets Logged</h2>
       <p>
         The changelog is for changes a reader would reasonably care about when interpreting CapitalBench results or
-        trusting the public site.
+        trusting the public record.
       </p>
       <div class="changelog-category-list">
         {changelogCategories.map((category) => <span>{category}</span>)}

@@ -4,8 +4,7 @@ export type ChangelogCategory =
   | "Methodology"
   | "Operations"
   | "Research"
-  | "Security"
-  | "Site";
+  | "Security";
 
 export type ChangelogStatus = "published" | "updated" | "deprecated";
 
@@ -26,68 +25,6 @@ export interface ChangelogEntry {
 }
 
 export const changelogEntries: ChangelogEntry[] = [
-  {
-    id: "2026-05-30-unified-score-chart",
-    date: "2026-05-30",
-    title: "Homepage score chart switches to a shared vertical plot",
-    category: "Site",
-    status: "published",
-    summary:
-      "The latest scored-test chart now compares every model portfolio and the S&P 500 benchmark in one shared vertical bar chart.",
-    details: [
-      "The homepage result view now uses one shared vertical plot with a common y-axis, grid, baseline, and logo-based x-axis labels.",
-      "The S&P 500 now appears as its own benchmark bar on the same scale as the model portfolios.",
-      "The maximum possible single-asset return from the frozen universe now appears as a distinct hindsight reference bar, separate from model portfolios and the S&P 500 benchmark.",
-      "Each model bar uses a distinct color and includes the model lab logo, return, alpha versus S&P 500, provider, and top holding.",
-      "The chart annotations now separate the winning model portfolio from the maximum possible return in the same scoring window.",
-      "The chart axis labels now show only logos and short names, while return, alpha, top-holding, benchmark, and maximum-return details move into a grouped return-details shelf below the chart.",
-      "The latest-result summary now sits above the chart as a compact score strip with scoring-window context, eligible asset count, model count, maximum possible return, and winner gap to maximum."
-    ],
-    links: [
-      { label: "Homepage", href: "/" },
-      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
-      { label: "Scored round", href: "/rounds/CB-2026-05-24-1W" }
-    ]
-  },
-  {
-    id: "2026-05-29-latest-score-chart",
-    date: "2026-05-29",
-    title: "Homepage adds a scored-result chart",
-    category: "Site",
-    status: "published",
-    summary:
-      "The landing page now shows the latest completed benchmark result as a model-by-model return chart.",
-    details: [
-      "The new chart compares each model's portfolio return with the S&P 500 return over the same scored window.",
-      "Open weekly and monthly rounds are excluded from the completed-score chart until ending prices are collected.",
-      "The previous incomplete monthly placeholder has been removed from the landing page so published scores only show finalized results."
-    ],
-    links: [
-      { label: "Homepage", href: "/" },
-      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
-      { label: "Scored round", href: "/rounds/CB-2026-05-24-1W" }
-    ]
-  },
-  {
-    id: "2026-05-29-result-presentation-upgrade",
-    date: "2026-05-29",
-    title: "Completed results now lead the public benchmark pages",
-    category: "Site",
-    status: "published",
-    summary:
-      "The website now separates completed scoreboards from open rounds and presents the latest scored result as the primary benchmark outcome.",
-    details: [
-      "Latest weekly and monthly pages now distinguish latest completed results from newer pending tests, so open portfolios no longer obscure published scoreboards.",
-      "Resolved round pages now lead with the winning model, portfolio return, S&P 500 return, alpha versus S&P 500, official leaderboard, realized asset returns, attribution, and scoring prices.",
-      "The homepage now includes a Latest Completed Scores section while keeping active allocation maps limited to tests still waiting for final prices.",
-      "Round breadcrumbs, metadata, pricing copy, and lifecycle checks now switch from pending proof language to result-and-proof language after a round is scored."
-    ],
-    links: [
-      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
-      { label: "Scored round", href: "/rounds/CB-2026-05-24-1W" },
-      { label: "Homepage", href: "/" }
-    ]
-  },
   {
     id: "2026-05-29-universe-v2-1-expanded",
     date: "2026-05-29",
@@ -124,46 +61,6 @@ export const changelogEntries: ChangelogEntry[] = [
     links: [
       { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
       { label: "Latest monthly", href: "/leaderboards/latest-monthly" }
-    ]
-  },
-  {
-    id: "2026-05-27-active-exposure-homepage",
-    date: "2026-05-27",
-    title: "Homepage adds active allocation map and clearer benchmark snapshot",
-    category: "Site",
-    status: "published",
-    summary:
-      "The landing page now shows where active model portfolios are invested and explains the benchmark setup more directly.",
-    details: [
-      "A new active allocation map counts only pending weekly and monthly tests, excluding completed rounds from current exposure totals.",
-      "The hero snapshot now lists the official model labs, scoring windows, asset choices, and latest pending weekly/monthly tests.",
-      "Model lab logos were added to the hero snapshot, including icon-plus-wordmark marks for OpenAI and Anthropic.",
-      "Homepage layout spacing was tightened so hero actions, proof points, active allocations, latest picks, and track status sections read in a clearer order."
-    ],
-    links: [
-      { label: "Homepage", href: "/" },
-      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
-      { label: "Latest monthly", href: "/leaderboards/latest-monthly" }
-    ]
-  },
-  {
-    id: "2026-05-26-plain-language-scoreboard",
-    date: "2026-05-26",
-    title: "Landing page reframed as a plain-language AI market picks scoreboard",
-    category: "Site",
-    status: "published",
-    summary:
-      "The public website now leads with model picks, real market scores, and proof files instead of protocol-first benchmark language.",
-    details: [
-      "The homepage hero now explains CapitalBench as AI models receiving the same market information, picking portfolios, and being scored by real market prices.",
-      "Primary navigation now uses simpler labels: Results, Picks, Rounds, How It Works, Proof, and Contribute.",
-      "Homepage sections now prioritize current model portfolios, latest results, separate weekly/monthly tests, scoring timing, and proof files.",
-      "Leaderboard, scoring, methodology, rounds, asset-list, and fairness copy now use plain terms such as model portfolios, asset list, starting prices, ending prices, and return versus S&P 500."
-    ],
-    links: [
-      { label: "Homepage", href: "/" },
-      { label: "Results", href: "/leaderboards/latest" },
-      { label: "How it works", href: "/methodology" }
     ]
   },
   {
@@ -226,25 +123,6 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    id: "2026-05-17-multi-round-allocation-homepage",
-    date: "2026-05-17",
-    title: "Homepage redesigned for multi-round allocation reporting",
-    category: "Site",
-    status: "published",
-    summary:
-      "The public landing page now reports two official rounds and displays every model decision as an allocation.",
-    details: [
-      "Round 2 portfolio submissions are surfaced on the homepage and latest leaderboard page with allocation bars, model-level weights, and aggregate exposure summaries.",
-      "Round 1 remains historically labeled as a single-pick round, but is displayed as a one-holding 100% Semiconductors allocation for cross-round readability.",
-      "Pending-score language was updated across the homepage and latest leaderboard so the site clearly separates locked decisions from future realized performance."
-    ],
-    links: [
-      { label: "Homepage", href: "/" },
-      { label: "Latest round", href: "/leaderboards/latest" },
-      { label: "Rounds", href: "/rounds" }
-    ]
-  },
-  {
     id: "2026-05-17-universe-v2-approved",
     date: "2026-05-17",
     title: "Universe v2.0 approved for future rounds",
@@ -284,14 +162,14 @@ export const changelogEntries: ChangelogEntry[] = [
     id: "2026-05-13-changelog-established",
     date: "2026-05-13",
     title: "Public changelog format established",
-    category: "Site",
+    category: "Operations",
     status: "published",
     summary:
-      "CapitalBench now has a dedicated public changelog for user-approved major changes to the site, benchmark protocol, round data, scoring, and operations.",
+      "CapitalBench now has a dedicated public changelog for user-approved major changes to benchmark protocol, round data, scoring, and operations.",
     details: [
       "Entries are reverse chronological and anchored so individual updates can be linked directly.",
       "Each entry includes a category, status, concise impact summary, implementation notes, and relevant links.",
-      "Only major changes that are explicitly selected for public reporting should be added here."
+      "Routine UI, UX, copy, and visual-design changes are excluded unless they materially affect benchmark interpretation."
     ],
     links: [
       { label: "Public docs", href: "/docs" },
@@ -306,6 +184,5 @@ export const changelogCategories: ChangelogCategory[] = [
   "Methodology",
   "Operations",
   "Research",
-  "Security",
-  "Site"
+  "Security"
 ];
