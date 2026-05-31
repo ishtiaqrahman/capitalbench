@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
+import EmailAlertWidget from "../components/EmailAlertWidget.astro";
 import EmailSignup from "../components/EmailSignup.astro";
 import GitHubLogo from "../components/GitHubLogo.astro";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
@@ -87,6 +88,14 @@ const navItems = [
     analyticsEvent: "contribute_click"
   }
 ];
+const emailWidgetContext =
+  currentPath === "/"
+    ? "home"
+    : currentPath.startsWith("/rounds")
+      ? "round"
+      : currentPath.startsWith("/leaderboards")
+        ? "leaderboard"
+        : null;
 ---
 
 <!doctype html>
@@ -190,6 +199,7 @@ const navItems = [
         <Breadcrumbs currentPath={currentPath} />
         <slot />
       </main>
+      {emailWidgetContext && <EmailAlertWidget context={emailWidgetContext} />}
       <footer class="site-footer">
         <EmailSignup source="footer" variant="footer" />
         <div class="footer-inner">

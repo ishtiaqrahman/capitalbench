@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ActiveExposureMap from "../components/ActiveExposureMap";
-import EmailSignup from "../components/EmailSignup.astro";
 import GitHubLogo from "../components/GitHubLogo.astro";
 import ScoreReturnChart from "../components/ScoreReturnChart.astro";
 import {
@@ -448,8 +447,6 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
       </div>
     </div>
   </section>
-
-  <EmailSignup source="homepage" />
 
   {latestPublishedResult && latestCompletedRound && latestCompletedWinner && (
     <>

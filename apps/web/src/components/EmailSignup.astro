@@ -1,18 +1,30 @@
 ---
 interface Props {
-  source: "homepage" | "footer" | "round_page";
+  source: "homepage" | "footer" | "round_page" | "score_alert_home" | "score_alert_round" | "score_alert_leaderboard";
   variant?: "panel" | "footer";
 }
 
 const { source, variant = "panel" } = Astro.props;
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
+const copy =
+  source === "homepage"
+    ? {
+        kicker: "Score alerts",
+        title: "Get new scores when they publish",
+        description: "Occasional benchmark results and product updates. Unsubscribe anytime."
+      }
+    : {
+        kicker: "Email updates",
+        title: "Get CapitalBench updates",
+        description: "Occasional benchmark results and product updates. Unsubscribe anytime."
+      };
 ---
 
 <section class:list={["email-signup", `email-signup-${variant}`]} aria-label="Email updates">
   <div class="email-signup-copy">
-    <span class="panel-kicker">Email updates</span>
-    <h2>Get CapitalBench updates</h2>
-    <p>Occasional benchmark results and product updates. Unsubscribe anytime.</p>
+    <span class="panel-kicker">{copy.kicker}</span>
+    <h2>{copy.title}</h2>
+    <p>{copy.description}</p>
   </div>
 
   <form class="email-signup-form" data-email-signup>
@@ -91,6 +103,17 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? ""
           status.textContent = "You're on the list.";
           status.dataset.state = "success";
         }
+        try {
+          window.localStorage.setItem("capitalbench_email_subscribed", "true");
+        } catch {
+          // Storage can be unavailable in private or restricted browser modes.
+        }
+        window.dispatchEvent(new CustomEvent("capitalbench:email_subscribed", {
+          detail: {
+            source: payload.source,
+            group: result.group || "Website Collection"
+          }
+        }));
       } catch {
         if (status) {
           status.textContent = "Subscription failed. Please try again.";
