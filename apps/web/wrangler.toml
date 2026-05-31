@@ -1,3 +1,17 @@
 name = "capitalbench-web"
+compatibility_date = "2026-05-31"
 pages_build_output_dir = "dist"
-compatibility_date = "2026-05-12"
+
+[vars]
+EMAIL_PROVIDER = "resend"
+EMAIL_GROUP_DEFAULT = "website_collection"
+RESEND_DAILY_SEND_LIMIT = "100"
+EMAIL_PUBLIC_BASE_URL = "https://www.capitalbench.org"
+EMAIL_FROM = "updates@capitalbench.org"
+EMAIL_REPLY_TO = "updates@capitalbench.org"
+EMAIL_MAILING_ADDRESS = "Toronto, Ontario, CA"
+
+[[d1_databases]]
+binding = "EMAIL_DB"
+database_name = "capitalbench_email"
+database_id = "0c172a0c-d78c-4ff7-9cbe-efff1c528c4b"

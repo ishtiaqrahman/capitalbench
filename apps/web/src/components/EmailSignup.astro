@@ -1,0 +1,104 @@
+---
+interface Props {
+  source: "homepage" | "footer" | "round_page";
+  variant?: "panel" | "footer";
+}
+
+const { source, variant = "panel" } = Astro.props;
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
+---
+
+<section class:list={["email-signup", `email-signup-${variant}`]} aria-label="Email updates">
+  <div class="email-signup-copy">
+    <span class="panel-kicker">Email updates</span>
+    <h2>Get CapitalBench updates</h2>
+    <p>Occasional benchmark results and product updates. Unsubscribe anytime.</p>
+  </div>
+
+  <form class="email-signup-form" data-email-signup>
+    <input type="hidden" name="source" value={source} />
+    <label class="sr-only" for={`email-${source}`}>Email address</label>
+    <input
+      id={`email-${source}`}
+      type="email"
+      name="email"
+      inputmode="email"
+      autocomplete="email"
+      placeholder="Email address"
+      required
+    />
+    <label class="email-signup-trap" aria-hidden="true">
+      Company
+      <input type="text" name="company" tabindex="-1" autocomplete="off" />
+    </label>
+    {turnstileSiteKey && <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-size="compact"></div>}
+    <button type="submit">Subscribe</button>
+    <p class="email-signup-status" data-email-signup-status aria-live="polite"></p>
+    <p class="email-signup-consent">
+      By subscribing, you agree to receive occasional CapitalBench emails.
+    </p>
+  </form>
+</section>
+
+<script is:inline>
+  if (document.querySelector(".cf-turnstile") && !window.__capitalbenchTurnstileScript) {
+    window.__capitalbenchTurnstileScript = true;
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
+  if (!window.__capitalbenchEmailSignup) {
+    window.__capitalbenchEmailSignup = true;
+    document.addEventListener("submit", async (event) => {
+      const form = event.target;
+      if (!(form instanceof HTMLFormElement) || !form.matches("[data-email-signup]")) return;
+      event.preventDefault();
+
+      const button = form.querySelector("button[type='submit']");
+      const status = form.querySelector("[data-email-signup-status]");
+      const formData = new FormData(form);
+      const payload = {
+        email: String(formData.get("email") || ""),
+        source: String(formData.get("source") || "website"),
+        company: String(formData.get("company") || ""),
+        turnstileToken: String(formData.get("cf-turnstile-response") || "")
+      };
+
+      if (button) button.disabled = true;
+      if (status) {
+        status.textContent = "Subscribing...";
+        status.dataset.state = "pending";
+      }
+
+      try {
+        const response = await fetch("/api/subscribe", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.ok) {
+          throw new Error(result.error || "subscription_failed");
+        }
+        form.reset();
+        if (window.turnstile) {
+          window.turnstile.reset(form.querySelector(".cf-turnstile"));
+        }
+        if (status) {
+          status.textContent = "You're on the list.";
+          status.dataset.state = "success";
+        }
+      } catch {
+        if (status) {
+          status.textContent = "Subscription failed. Please try again.";
+          status.dataset.state = "error";
+        }
+      } finally {
+        if (button) button.disabled = false;
+      }
+    });
+  }
+</script>

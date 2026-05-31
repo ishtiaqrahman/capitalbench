@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "astro dev --host 0.0.0.0",
     "build": "astro check && astro build",
+    "email:campaign": "node scripts/email-campaign.mjs",
+    "email:test": "node --test tests/email-system.test.mjs",
     "seo:check": "node scripts/validate-seo.mjs",
     "preview": "astro preview --host 0.0.0.0"
   },

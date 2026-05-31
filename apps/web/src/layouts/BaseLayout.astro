@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
+import EmailSignup from "../components/EmailSignup.astro";
 import GitHubLogo from "../components/GitHubLogo.astro";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 import {
@@ -190,6 +191,7 @@ const navItems = [
         <slot />
       </main>
       <footer class="site-footer">
+        <EmailSignup source="footer" variant="footer" />
         <div class="footer-inner">
           <span>CapitalBench is a benchmark and research project, not financial advice.</span>
           <span class="footer-links">
