@@ -94,6 +94,7 @@ const copy = {
     const EXPANDED_SESSION_KEY = "capitalbench_email_widget_expanded_session";
     const DISMISS_MS = 30 * 24 * 60 * 60 * 1000;
     const MIN_ACTIVE_MS = 30 * 1000;
+    const MIN_SCROLL_PROGRESS = 0.2;
 
     const safeStorage = {
       get(storage, key) {
@@ -166,8 +167,12 @@ const copy = {
         );
       }
 
+      function hasScrolledEnough() {
+        return scrollProgress() >= MIN_SCROLL_PROGRESS;
+      }
+
       function show(reason) {
-        if (visible || shouldSuppress()) return;
+        if (visible || shouldSuppress() || !hasScrolledEnough()) return;
         widget.hidden = false;
         visible = true;
         if (!seenMetricSent) {
@@ -177,7 +182,7 @@ const copy = {
       }
 
       function expand(reason) {
-        if (expanded || shouldSuppress() || userIsTyping()) return;
+        if (expanded || shouldSuppress() || !hasScrolledEnough() || userIsTyping()) return;
         if (safeStorage.get(window.sessionStorage, EXPANDED_SESSION_KEY) === "true") {
           show(reason);
           return;
@@ -246,7 +251,7 @@ const copy = {
 
       const onScroll = () => {
         const progress = scrollProgress();
-        if (context === "home" && progress > 0.2) show("scroll");
+        if (progress >= MIN_SCROLL_PROGRESS) show("scroll");
         if (progress > 0.55) expand("deep_scroll");
         if (Date.now() - activeStart > MIN_ACTIVE_MS && progress > 0.35) expand("active_time_and_scroll");
       };
