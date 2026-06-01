@@ -30,7 +30,7 @@ import {
   optionDisplayName,
   optionShortDisplayName
 } from "../lib/allocations";
-import { dateOnly, pct } from "../lib/format";
+import { dateOnly } from "../lib/format";
 import {
   staticAllOfficialSubmissions,
   staticOfficialSubmissions,
@@ -330,16 +330,6 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
         Same brief. Same ETF list. Each model picks a portfolio. Real prices decide the score.
       </p>
       <p class="hero-disclaimer">Research benchmark. Not financial advice.</p>
-
-      {latestPublishedResult && latestCompletedRound && latestCompletedWinner && (
-        <a class="hero-result-strip" href={`/leaderboards/latest-${latestPublishedResult.key}`}>
-          <span>{latestPublishedResult.label} latest score</span>
-          <strong>
-            {modelLabel(latestCompletedWinner.model_id)} finished first at {pct(latestCompletedWinner.portfolio_return)}
-          </strong>
-          <em>{latestCompletedRound.round_id}</em>
-        </a>
-      )}
 
       <div class="home-hero-actions" aria-label="Project resources">
         <a class="action-link action-primary" href="/leaderboards/latest">
