@@ -1,0 +1,767 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CapitalBench Data API",
+    "version": "1.0.0",
+    "description": "Structured access to CapitalBench model portfolios, active positioning, cumulative allocation behavior, benchmark scores, asset universes, and proof metadata."
+  },
+  "servers": [
+    {
+      "url": "https://api.capitalbench.org",
+      "description": "Production API"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Positioning",
+      "description": "Where model capital is allocated across active and historical rounds."
+    },
+    {
+      "name": "Rounds",
+      "description": "Round metadata, portfolios, prices, and resolved scores."
+    },
+    {
+      "name": "Models",
+      "description": "Model records, holdings, and allocation behavior."
+    },
+    {
+      "name": "Assets",
+      "description": "Asset universe, asset metadata, and model-holder views."
+    },
+    {
+      "name": "Leaderboards",
+      "description": "Latest and cumulative model scores."
+    }
+  ],
+  "paths": {
+    "/v1/positioning/active": {
+      "get": {
+        "tags": ["Positioning"],
+        "summary": "Active capital positioning",
+        "description": "Current live model allocations across unresolved weekly and monthly rounds.",
+        "parameters": [
+          { "$ref": "#/components/parameters/Track" },
+          { "$ref": "#/components/parameters/GroupBy" },
+          { "$ref": "#/components/parameters/AsOf" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Active positioning response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PositioningResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/positioning/cumulative": {
+      "get": {
+        "tags": ["Positioning"],
+        "summary": "Cumulative capital positioning",
+        "description": "Historical model allocations across completed and active rounds.",
+        "parameters": [
+          { "$ref": "#/components/parameters/Track" },
+          { "$ref": "#/components/parameters/ModelId" },
+          { "$ref": "#/components/parameters/GroupBy" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cumulative positioning response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PositioningResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/positioning/consensus": {
+      "get": {
+        "tags": ["Positioning"],
+        "summary": "Consensus positioning",
+        "description": "Assets and categories with the highest cross-model allocation concentration.",
+        "parameters": [
+          { "$ref": "#/components/parameters/Track" },
+          { "$ref": "#/components/parameters/Scope" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consensus positioning response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PositioningResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/positioning/by-model/{model_id}": {
+      "get": {
+        "tags": ["Positioning"],
+        "summary": "Positioning by model",
+        "description": "Active or cumulative allocations for one model.",
+        "parameters": [
+          { "$ref": "#/components/parameters/ModelIdPath" },
+          { "$ref": "#/components/parameters/Track" },
+          { "$ref": "#/components/parameters/Scope" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model positioning response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PositioningResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/positioning/by-asset/{option_id}": {
+      "get": {
+        "tags": ["Positioning"],
+        "summary": "Positioning by asset",
+        "description": "Models currently or historically allocating to a specific asset option.",
+        "parameters": [
+          { "$ref": "#/components/parameters/OptionIdPath" },
+          { "$ref": "#/components/parameters/Track" },
+          { "$ref": "#/components/parameters/Scope" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset positioning response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PositioningResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/positioning/by-category": {
+      "get": {
+        "tags": ["Positioning"],
+        "summary": "Positioning by asset category",
+        "description": "Allocation grouped by asset class, region, sector, factor, or other CapitalBench categories.",
+        "parameters": [
+          { "$ref": "#/components/parameters/Track" },
+          { "$ref": "#/components/parameters/Scope" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category positioning response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PositioningResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/positioning/changes": {
+      "get": {
+        "tags": ["Positioning"],
+        "summary": "Positioning changes",
+        "description": "Change in allocation by asset, category, or model between recent rounds.",
+        "parameters": [
+          { "$ref": "#/components/parameters/Track" },
+          {
+            "name": "window",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["latest", "4_rounds", "all"] },
+            "description": "Comparison window."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Positioning change response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PositioningChangeResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/rounds": {
+      "get": {
+        "tags": ["Rounds"],
+        "summary": "List rounds",
+        "description": "Round metadata with track, status, dates, universe version, and proof links.",
+        "parameters": [
+          { "$ref": "#/components/parameters/Track" },
+          { "$ref": "#/components/parameters/Status" },
+          { "$ref": "#/components/parameters/Limit" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Round list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Round" }
+                    },
+                    "next_cursor": { "type": ["string", "null"] }
+                  },
+                  "required": ["data", "next_cursor"]
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/rounds/{round_id}": {
+      "get": {
+        "tags": ["Rounds"],
+        "summary": "Get round",
+        "description": "Round metadata, input hashes, model count, track, status, and timing.",
+        "parameters": [{ "$ref": "#/components/parameters/RoundIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Round details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Round" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/rounds/{round_id}/portfolios": {
+      "get": {
+        "tags": ["Rounds"],
+        "summary": "Round portfolios",
+        "description": "Saved model allocations for a round.",
+        "parameters": [{ "$ref": "#/components/parameters/RoundIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Round portfolio response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PortfolioResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/rounds/{round_id}/results": {
+      "get": {
+        "tags": ["Rounds"],
+        "summary": "Round results",
+        "description": "Resolved returns, benchmark comparison, and scoring prices for a completed round.",
+        "parameters": [{ "$ref": "#/components/parameters/RoundIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Round results response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RoundResultResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/leaderboards/latest": {
+      "get": {
+        "tags": ["Leaderboards"],
+        "summary": "Latest leaderboard",
+        "description": "Most recent resolved round leaderboard for the requested track.",
+        "parameters": [{ "$ref": "#/components/parameters/Track" }],
+        "responses": {
+          "200": {
+            "description": "Latest leaderboard response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LeaderboardResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/leaderboards/cumulative": {
+      "get": {
+        "tags": ["Leaderboards"],
+        "summary": "Cumulative leaderboard",
+        "description": "Aggregate model score history by weekly track, monthly track, or combined view.",
+        "parameters": [{ "$ref": "#/components/parameters/Track" }],
+        "responses": {
+          "200": {
+            "description": "Cumulative leaderboard response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LeaderboardResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/models": {
+      "get": {
+        "tags": ["Models"],
+        "summary": "List models",
+        "description": "Models included in CapitalBench rounds with provider metadata and active status.",
+        "responses": {
+          "200": {
+            "description": "Model list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/Model" } }
+                  },
+                  "required": ["data"]
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/models/{model_id}": {
+      "get": {
+        "tags": ["Models"],
+        "summary": "Get model",
+        "description": "Model profile, record, provider, and proof links.",
+        "parameters": [{ "$ref": "#/components/parameters/ModelIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Model details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Model" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/models/{model_id}/holdings": {
+      "get": {
+        "tags": ["Models"],
+        "summary": "Model holdings",
+        "description": "Active and historical holdings for one model, split by weekly and monthly tests.",
+        "parameters": [
+          { "$ref": "#/components/parameters/ModelIdPath" },
+          { "$ref": "#/components/parameters/Track" },
+          { "$ref": "#/components/parameters/Scope" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model holdings response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PortfolioResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/models/{model_id}/style": {
+      "get": {
+        "tags": ["Models"],
+        "summary": "Model style profile",
+        "description": "Allocation fingerprint including cash use, equity weight, thematic concentration, country exposure, and risk appetite score.",
+        "parameters": [{ "$ref": "#/components/parameters/ModelIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Model style response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ModelStyle" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/universe/current": {
+      "get": {
+        "tags": ["Assets"],
+        "summary": "Current asset universe",
+        "description": "Current ETF, cash, commodity, currency, and crypto-proxy options available to models.",
+        "responses": {
+          "200": {
+            "description": "Current universe response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "universe_version": { "type": "string" },
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/Asset" } }
+                  },
+                  "required": ["universe_version", "data"]
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/assets/{option_id}": {
+      "get": {
+        "tags": ["Assets"],
+        "summary": "Get asset",
+        "description": "Asset metadata, category tags, current universe status, and ticker mapping.",
+        "parameters": [{ "$ref": "#/components/parameters/OptionIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Asset details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Asset" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/assets/{option_id}/model-holders": {
+      "get": {
+        "tags": ["Assets"],
+        "summary": "Model holders for asset",
+        "description": "Models with active or cumulative allocation to a selected asset.",
+        "parameters": [
+          { "$ref": "#/components/parameters/OptionIdPath" },
+          { "$ref": "#/components/parameters/Track" },
+          { "$ref": "#/components/parameters/Scope" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset holders response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PositioningResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API key"
+      }
+    },
+    "parameters": {
+      "Track": {
+        "name": "track",
+        "in": "query",
+        "schema": { "type": "string", "enum": ["weekly", "monthly", "all"], "default": "all" },
+        "description": "Benchmark track."
+      },
+      "Scope": {
+        "name": "scope",
+        "in": "query",
+        "schema": { "type": "string", "enum": ["active", "cumulative"], "default": "active" },
+        "description": "Whether to use live unresolved rounds or all historical rounds."
+      },
+      "Status": {
+        "name": "status",
+        "in": "query",
+        "schema": { "type": "string", "enum": ["active", "resolved", "all"], "default": "all" },
+        "description": "Round status filter."
+      },
+      "GroupBy": {
+        "name": "group_by",
+        "in": "query",
+        "schema": { "type": "string", "enum": ["asset", "category", "model"], "default": "asset" },
+        "description": "Aggregation dimension."
+      },
+      "ModelId": {
+        "name": "model_id",
+        "in": "query",
+        "schema": { "type": "string" },
+        "description": "Optional model identifier."
+      },
+      "ModelIdPath": {
+        "name": "model_id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "CapitalBench model identifier."
+      },
+      "OptionIdPath": {
+        "name": "option_id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "CapitalBench asset option identifier."
+      },
+      "RoundIdPath": {
+        "name": "round_id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "CapitalBench round identifier."
+      },
+      "AsOf": {
+        "name": "as_of",
+        "in": "query",
+        "schema": { "type": "string", "format": "date-time" },
+        "description": "Optional timestamp for reproducible active-position snapshots."
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "schema": { "type": "integer", "minimum": 1, "maximum": 250, "default": 100 },
+        "description": "Maximum records to return."
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Missing or invalid API key.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Requested object was not found.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Round": {
+        "type": "object",
+        "properties": {
+          "round_id": { "type": "string", "examples": ["CB-2026-05-28-W1"] },
+          "track": { "type": "string", "enum": ["weekly", "monthly"] },
+          "status": { "type": "string", "enum": ["active", "resolved"] },
+          "start_at": { "type": "string", "format": "date-time" },
+          "end_at": { "type": ["string", "null"], "format": "date-time" },
+          "universe_version": { "type": "string" },
+          "model_count": { "type": "integer" },
+          "benchmark_option_id": { "type": "string" },
+          "proof": { "$ref": "#/components/schemas/Proof" }
+        },
+        "required": ["round_id", "track", "status", "start_at", "universe_version", "model_count"]
+      },
+      "Model": {
+        "type": "object",
+        "properties": {
+          "model_id": { "type": "string", "examples": ["openai-gpt-5"] },
+          "label": { "type": "string" },
+          "provider": { "type": "string" },
+          "active": { "type": "boolean" },
+          "first_round_id": { "type": ["string", "null"] },
+          "latest_round_id": { "type": ["string", "null"] }
+        },
+        "required": ["model_id", "label", "provider", "active"]
+      },
+      "Asset": {
+        "type": "object",
+        "properties": {
+          "option_id": { "type": "string", "examples": ["SEMICONDUCTORS"] },
+          "label": { "type": "string", "examples": ["Semiconductors"] },
+          "ticker": { "type": ["string", "null"], "examples": ["SMH"] },
+          "asset_class": { "type": "string" },
+          "category": { "type": "string" },
+          "region": { "type": ["string", "null"] },
+          "in_current_universe": { "type": "boolean" }
+        },
+        "required": ["option_id", "label", "asset_class", "category", "in_current_universe"]
+      },
+      "Allocation": {
+        "type": "object",
+        "properties": {
+          "round_id": { "type": "string" },
+          "model_id": { "type": "string" },
+          "option_id": { "type": "string" },
+          "label": { "type": "string" },
+          "ticker": { "type": ["string", "null"] },
+          "allocation_pct": { "type": "number", "description": "Portfolio weight in percentage points." },
+          "track": { "type": "string", "enum": ["weekly", "monthly"] },
+          "status": { "type": "string", "enum": ["active", "resolved"] }
+        },
+        "required": ["round_id", "model_id", "option_id", "label", "allocation_pct", "track", "status"]
+      },
+      "PositioningRow": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "label": { "type": "string" },
+          "allocation_pct": { "type": "number" },
+          "model_count": { "type": "integer" },
+          "round_count": { "type": "integer" },
+          "tracks": { "type": "array", "items": { "type": "string", "enum": ["weekly", "monthly"] } },
+          "models": { "type": "array", "items": { "$ref": "#/components/schemas/ModelWeight" } }
+        },
+        "required": ["key", "label", "allocation_pct", "model_count", "round_count", "tracks"]
+      },
+      "PositioningResponse": {
+        "type": "object",
+        "properties": {
+          "as_of": { "type": "string", "format": "date-time" },
+          "scope": { "type": "string", "enum": ["active", "cumulative"] },
+          "track": { "type": "string", "enum": ["weekly", "monthly", "all"] },
+          "group_by": { "type": "string", "enum": ["asset", "category", "model"] },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/PositioningRow" } }
+        },
+        "required": ["as_of", "scope", "track", "group_by", "data"]
+      },
+      "PositioningChangeResponse": {
+        "type": "object",
+        "properties": {
+          "as_of": { "type": "string", "format": "date-time" },
+          "window": { "type": "string" },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": { "type": "string" },
+                "label": { "type": "string" },
+                "allocation_pct": { "type": "number" },
+                "prior_allocation_pct": { "type": "number" },
+                "change_pp": { "type": "number" }
+              },
+              "required": ["key", "label", "allocation_pct", "prior_allocation_pct", "change_pp"]
+            }
+          }
+        },
+        "required": ["as_of", "window", "data"]
+      },
+      "PortfolioResponse": {
+        "type": "object",
+        "properties": {
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/Allocation" } }
+        },
+        "required": ["data"]
+      },
+      "RoundResultResponse": {
+        "type": "object",
+        "properties": {
+          "round_id": { "type": "string" },
+          "benchmark_return_pct": { "type": "number" },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/LeaderboardRow" } }
+        },
+        "required": ["round_id", "benchmark_return_pct", "data"]
+      },
+      "LeaderboardResponse": {
+        "type": "object",
+        "properties": {
+          "track": { "type": "string", "enum": ["weekly", "monthly", "all"] },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/LeaderboardRow" } }
+        },
+        "required": ["track", "data"]
+      },
+      "LeaderboardRow": {
+        "type": "object",
+        "properties": {
+          "rank": { "type": "integer" },
+          "model_id": { "type": "string" },
+          "label": { "type": "string" },
+          "portfolio_return_pct": { "type": "number" },
+          "benchmark_return_pct": { "type": "number" },
+          "alpha_pp": { "type": "number", "description": "Portfolio return minus benchmark return, in percentage points." },
+          "round_count": { "type": "integer" },
+          "win_rate_pct": { "type": ["number", "null"] }
+        },
+        "required": ["rank", "model_id", "label", "portfolio_return_pct", "benchmark_return_pct", "alpha_pp"]
+      },
+      "ModelWeight": {
+        "type": "object",
+        "properties": {
+          "model_id": { "type": "string" },
+          "label": { "type": "string" },
+          "allocation_pct": { "type": "number" }
+        },
+        "required": ["model_id", "label", "allocation_pct"]
+      },
+      "ModelStyle": {
+        "type": "object",
+        "properties": {
+          "model_id": { "type": "string" },
+          "risk_appetite_score": { "type": "number", "minimum": 0, "maximum": 100 },
+          "cash_allocation_pct": { "type": "number" },
+          "equity_allocation_pct": { "type": "number" },
+          "thematic_allocation_pct": { "type": "number" },
+          "top_category": { "type": ["string", "null"] },
+          "sample_round_count": { "type": "integer" }
+        },
+        "required": ["model_id", "risk_appetite_score", "sample_round_count"]
+      },
+      "Proof": {
+        "type": "object",
+        "properties": {
+          "prompt_sha256": { "type": ["string", "null"] },
+          "report_sha256": { "type": ["string", "null"] },
+          "portfolio_file_url": { "type": ["string", "null"], "format": "uri" },
+          "round_page_url": { "type": ["string", "null"], "format": "uri" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "required": ["error", "message"]
+      }
+    }
+  }
+}

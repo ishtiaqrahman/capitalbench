@@ -569,8 +569,8 @@ function getDailySendLimit(env, provider) {
   return Math.floor(parsed);
 }
 
-async function sendEmail({ env, provider, to, subject, html, text, headers = {}, idempotencyKey }) {
-  const replyTo = env.EMAIL_REPLY_TO || env.EMAIL_FROM;
+export async function sendEmail({ env, provider, to, subject, html, text, headers = {}, idempotencyKey, replyTo }) {
+  const effectiveReplyTo = replyTo || env.EMAIL_REPLY_TO || env.EMAIL_FROM;
 
   if (provider === "cloudflare") {
     const response = await env.EMAIL.send({
@@ -580,7 +580,7 @@ async function sendEmail({ env, provider, to, subject, html, text, headers = {},
       html,
       text,
       headers: {
-        "Reply-To": replyTo,
+        "Reply-To": effectiveReplyTo,
         ...headers
       }
     });
@@ -600,7 +600,7 @@ async function sendEmail({ env, provider, to, subject, html, text, headers = {},
       subject,
       html,
       text,
-      reply_to: replyTo,
+      reply_to: effectiveReplyTo,
       headers
     })
   });

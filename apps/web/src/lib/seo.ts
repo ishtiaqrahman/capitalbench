@@ -135,6 +135,15 @@ export const routeMeta: RouteMeta[] = [
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
+  {
+    path: "/api",
+    title: "CapitalBench Data API",
+    description:
+      "CapitalBench Data API documentation for AI model portfolios, active positioning, cumulative allocation behavior, benchmark scores, asset universes, and proof metadata.",
+    priority: 0.84,
+    changefreq: "weekly",
+    lastmod: defaultLastmod
+  },
   ...publicModels.map((profile) => ({
     path: `/models/${profile.modelId}`,
     title: `${profile.label} CapitalBench Model Profile`,
@@ -268,6 +277,7 @@ const labelOverrides: Record<string, string> = {
   "cumulative-monthly": "Overall Monthly",
   rounds: "Rounds",
   models: "Models",
+  api: "API",
   methodology: "How It Works",
   universe: "Asset List",
   scoring: "Scoring",

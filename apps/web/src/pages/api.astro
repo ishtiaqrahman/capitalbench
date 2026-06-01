@@ -1,0 +1,457 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const activePositioningExample = `GET /v1/positioning/active?track=all&group_by=asset
+
+{
+  "as_of": "2026-06-01T20:30:00Z",
+  "scope": "active",
+  "track": "all",
+  "group_by": "asset",
+  "data": [
+    {
+      "key": "SEMICONDUCTORS",
+      "label": "Semiconductors",
+      "allocation_pct": 24.2,
+      "model_count": 3,
+      "round_count": 2,
+      "tracks": ["weekly", "monthly"],
+      "models": [
+        { "model_id": "openai-gpt-5", "label": "OpenAI GPT-5", "allocation_pct": 30.0 },
+        { "model_id": "anthropic-claude-opus-4-7", "label": "Claude Opus 4.7", "allocation_pct": 22.5 }
+      ]
+    }
+  ]
+}`;
+
+const assetHoldersExample = `GET /v1/positioning/by-asset/SEMICONDUCTORS?scope=active&track=weekly
+
+{
+  "scope": "active",
+  "track": "weekly",
+  "group_by": "model",
+  "data": [
+    {
+      "key": "openai-gpt-5",
+      "label": "OpenAI GPT-5",
+      "allocation_pct": 30.0,
+      "model_count": 1,
+      "round_count": 1
+    }
+  ]
+}`;
+
+const leaderboardExample = `GET /v1/leaderboards/latest?track=weekly
+
+{
+  "track": "weekly",
+  "data": [
+    {
+      "rank": 1,
+      "model_id": "google-gemini-3-1-pro",
+      "label": "Gemini 3.1 Pro",
+      "portfolio_return_pct": 2.84,
+      "benchmark_return_pct": 1.13,
+      "alpha_pp": 1.71
+    }
+  ]
+}`;
+
+const endpointGroups = [
+  {
+    title: "Positioning",
+    description: "Where model capital is allocated now and how that has accumulated over time.",
+    endpoints: [
+      ["GET", "/v1/positioning/active", "Live exposure across unresolved weekly and monthly rounds."],
+      ["GET", "/v1/positioning/cumulative", "Historical allocation behavior across all available rounds."],
+      ["GET", "/v1/positioning/consensus", "Assets and categories where model allocations cluster."],
+      ["GET", "/v1/positioning/by-model/{model_id}", "One model's active or cumulative allocation pattern."],
+      ["GET", "/v1/positioning/by-asset/{option_id}", "Models allocating to a selected asset."],
+      ["GET", "/v1/positioning/by-category", "Exposure grouped by sector, region, asset class, or theme."],
+      ["GET", "/v1/positioning/changes", "Allocation changes between recent rounds."]
+    ]
+  },
+  {
+    title: "Rounds And Results",
+    description: "The published test record: timing, inputs, model portfolios, prices, and scores.",
+    endpoints: [
+      ["GET", "/v1/rounds", "Round index with track, status, dates, universe version, and proof links."],
+      ["GET", "/v1/rounds/{round_id}", "One round's metadata and input hashes."],
+      ["GET", "/v1/rounds/{round_id}/portfolios", "Saved model allocations for a round."],
+      ["GET", "/v1/rounds/{round_id}/results", "Resolved returns and benchmark comparison."],
+      ["GET", "/v1/leaderboards/latest", "Most recent scored weekly or monthly leaderboard."],
+      ["GET", "/v1/leaderboards/cumulative", "Aggregate model record by track."]
+    ]
+  },
+  {
+    title: "Models And Assets",
+    description: "The entities behind the benchmark: models, holdings, style metrics, and asset metadata.",
+    endpoints: [
+      ["GET", "/v1/models", "Model list with provider metadata and active status."],
+      ["GET", "/v1/models/{model_id}", "Model profile and proof links."],
+      ["GET", "/v1/models/{model_id}/holdings", "Active and historical holdings for one model."],
+      ["GET", "/v1/models/{model_id}/style", "Risk appetite and allocation fingerprint metrics."],
+      ["GET", "/v1/universe/current", "Current list of valid model choices."],
+      ["GET", "/v1/assets/{option_id}", "Asset metadata and ticker mapping."],
+      ["GET", "/v1/assets/{option_id}/model-holders", "Models holding a selected asset."]
+    ]
+  }
+];
+
+const concepts = [
+  ["Active", "Only unresolved rounds. Use this for live model positioning."],
+  ["Cumulative", "All saved allocations. Use this for model behavior and style analysis."],
+  ["Track", "Weekly and monthly tests stay separate because they measure different horizons."],
+  ["Positioning", "Portfolio weights aggregated by asset, category, model, or track."],
+  ["Proof", "Round files, hashes, timestamps, prompt inputs, prices, and portfolio records."],
+  ["Alpha", "Model portfolio return minus the benchmark return, in percentage points."]
+];
+
+const fields = [
+  ["allocation_pct", "Portfolio or aggregate weight, in percentage points."],
+  ["alpha_pp", "Portfolio return less S&P 500 return, in percentage points."],
+  ["model_id", "Stable CapitalBench model identifier."],
+  ["next_cursor", "Pagination cursor returned when more records are available."],
+  ["option_id", "Stable asset identifier from the saved universe."],
+  ["round_id", "Stable test identifier for one weekly or monthly round."],
+  ["scope", "active or cumulative."],
+  ["track", "weekly, monthly, or all."],
+  ["proof", "Hashes and URLs for public verification artifacts."]
+];
+
+const statusCodes = [
+  ["200", "Request succeeded."],
+  ["400", "Invalid parameter, invalid cursor, or malformed request."],
+  ["401", "Missing, expired, or invalid API key."],
+  ["404", "Requested model, round, or asset was not found."],
+  ["429", "Rate limit exceeded."],
+  ["500", "Temporary service error."]
+];
+
+const curlExample = `curl "https://api.capitalbench.org/v1/positioning/active?track=all&group_by=asset" \\
+  -H "Authorization: Bearer $CAPITALBENCH_API_KEY"`;
+---
+
+<BaseLayout
+  title="CapitalBench Data API"
+  description="CapitalBench Data API documentation for AI model portfolios, active positioning, cumulative allocation behavior, benchmark scores, asset universes, and proof metadata."
+>
+  <section class="api-hero" aria-labelledby="api-title">
+    <div class="api-hero-copy">
+      <span class="panel-kicker">Data API</span>
+      <h1 id="api-title">CapitalBench Data API</h1>
+      <p>
+        AI model portfolios, active positioning, cumulative allocation behavior, benchmark scores, and proof metadata
+        as structured data.
+      </p>
+      <div class="api-hero-actions">
+        <a class="action-link action-primary" href="#request-access">Request API Access</a>
+        <a class="action-link" href="/api/openapi.json">OpenAPI JSON</a>
+      </div>
+    </div>
+    <div class="api-code-panel" aria-label="API request example">
+      <div class="api-code-topline">
+        <span>Production endpoint</span>
+        <code>https://api.capitalbench.org</code>
+      </div>
+      <pre><code>{activePositioningExample}</code></pre>
+    </div>
+  </section>
+
+  <section class="api-proof-strip" aria-label="API value summary">
+    <article>
+      <span>01</span>
+      <strong>Live Positioning</strong>
+      <p>Where model capital is allocated across active weekly and monthly rounds.</p>
+    </article>
+    <article>
+      <span>02</span>
+      <strong>Model Behavior</strong>
+      <p>Cumulative allocation patterns, risk appetite, and model-level holdings.</p>
+    </article>
+    <article>
+      <span>03</span>
+      <strong>Scores</strong>
+      <p>Resolved portfolio returns, S&amp;P 500 comparisons, and leaderboard history.</p>
+    </article>
+    <article>
+      <span>04</span>
+      <strong>Proof Data</strong>
+      <p>Round files, prompt hashes, universe versions, prices, and audit metadata.</p>
+    </article>
+  </section>
+
+  <section class="api-shell" aria-label="API documentation">
+    <aside class="api-toc" aria-label="API page sections">
+      <span class="panel-kicker">Docs</span>
+      <a href="#use-cases">Use Cases</a>
+      <a href="#concepts">Core Concepts</a>
+      <a href="#auth">Auth</a>
+      <a href="#endpoints">Endpoints</a>
+      <a href="#examples">Examples</a>
+      <a href="#fields">Fields</a>
+      <a href="#errors">Errors</a>
+      <a href="#freshness">Freshness</a>
+      <a href="#request-access">Access</a>
+    </aside>
+
+    <div class="api-docs">
+      <section id="use-cases" class="api-section">
+        <span class="panel-kicker">Use cases</span>
+        <h2>Built For Model Positioning Data</h2>
+        <div class="api-card-grid">
+          <article>
+            <h3>Active Exposure</h3>
+            <p>Track where current model portfolios are allocated before the round is scored.</p>
+          </article>
+          <article>
+            <h3>Consensus Signals</h3>
+            <p>See which assets, sectors, and themes multiple models are choosing at the same time.</p>
+          </article>
+          <article>
+            <h3>Model Comparison</h3>
+            <p>Compare model records, current holdings, historical behavior, and risk appetite.</p>
+          </article>
+          <article>
+            <h3>Research Pipelines</h3>
+            <p>Pull round data, proof metadata, and scored returns into internal dashboards or notebooks.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="concepts" class="api-section">
+        <span class="panel-kicker">Core concepts</span>
+        <h2>How The Data Is Organized</h2>
+        <div class="api-concept-grid">
+          {
+            concepts.map(([title, body]) => (
+              <article>
+                <strong>{title}</strong>
+                <p>{body}</p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section id="auth" class="api-section">
+        <span class="panel-kicker">Authentication</span>
+        <h2>Authentication And Versioning</h2>
+        <div class="api-auth-panel">
+          <div>
+            <h3>Bearer API Keys</h3>
+            <p>
+              API requests use bearer tokens. Credentials are provisioned per organization, and keys can be scoped by
+              use case, rate limit, and data access level.
+            </p>
+          </div>
+          <pre><code>{curlExample}</code></pre>
+        </div>
+        <div class="api-convention-grid">
+          <article>
+            <strong>Versioned paths</strong>
+            <p>All endpoints use <code>/v1</code> so downstream pipelines can pin behavior.</p>
+          </article>
+          <article>
+            <strong>Stable identifiers</strong>
+            <p>Use <code>model_id</code>, <code>round_id</code>, and <code>option_id</code> instead of display names.</p>
+          </article>
+          <article>
+            <strong>Pagination</strong>
+            <p>List endpoints return <code>next_cursor</code> when more records are available.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="endpoints" class="api-section">
+        <span class="panel-kicker">Endpoint map</span>
+        <h2>Available Resources</h2>
+        <div class="api-endpoint-groups">
+          {
+            endpointGroups.map((group) => (
+              <article class="api-endpoint-group">
+                <header>
+                  <h3>{group.title}</h3>
+                  <p>{group.description}</p>
+                </header>
+                <div class="api-endpoint-list">
+                  {group.endpoints.map(([method, path, description]) => (
+                    <div class="api-endpoint">
+                      <span class="api-method">{method}</span>
+                      <code>{path}</code>
+                      <p>{description}</p>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section id="examples" class="api-section">
+        <span class="panel-kicker">Examples</span>
+        <h2>Common Queries</h2>
+        <div class="api-example-grid">
+          <article class="api-example">
+            <h3>Active Allocation By Asset</h3>
+            <pre><code>{activePositioningExample}</code></pre>
+          </article>
+          <article class="api-example">
+            <h3>Which Models Hold An Asset</h3>
+            <pre><code>{assetHoldersExample}</code></pre>
+          </article>
+          <article class="api-example">
+            <h3>Latest Scored Test</h3>
+            <pre><code>{leaderboardExample}</code></pre>
+          </article>
+        </div>
+      </section>
+
+      <section id="fields" class="api-section">
+        <span class="panel-kicker">Schema</span>
+        <h2>Important Fields</h2>
+        <div class="api-table-shell">
+          <table class="api-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                fields.map(([field, meaning]) => (
+                  <tr>
+                    <td><code>{field}</code></td>
+                    <td>{meaning}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="errors" class="api-section">
+        <span class="panel-kicker">Errors</span>
+        <h2>Status Codes</h2>
+        <div class="api-table-shell">
+          <table class="api-table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                statusCodes.map(([status, meaning]) => (
+                  <tr>
+                    <td><code>{status}</code></td>
+                    <td>{meaning}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="freshness" class="api-section api-freshness">
+        <div>
+          <span class="panel-kicker">Freshness and proof</span>
+          <h2>Publication Rules</h2>
+          <p>
+            Active-position endpoints update when a new public weekly or monthly round is registered. Result endpoints
+            update after the round closes, end prices are collected, and the scored output is published.
+          </p>
+        </div>
+        <ul>
+          <li>Weekly and monthly tests remain separate in scoring and cumulative views.</li>
+          <li>Completed rounds stop contributing to active exposure and remain in cumulative history.</li>
+          <li>Proof links expose the saved files, hashes, universe version, model outputs, and price records.</li>
+        </ul>
+      </section>
+
+      <section id="request-access" class="api-section api-access-panel">
+        <div class="api-access-copy">
+          <span class="panel-kicker">Access</span>
+          <h2>Request API Access</h2>
+          <p>
+            API credentials are provisioned directly for research teams, funds, data partners, and builders using
+            CapitalBench model-positioning data.
+          </p>
+        </div>
+        <form class="api-access-form" data-api-access-form>
+          <input type="hidden" name="source" value="api_page" />
+          <input type="hidden" name="pageUrl" value={Astro.url.toString()} />
+          <label class="api-field">
+            <span>Name</span>
+            <input name="name" type="text" autocomplete="name" placeholder="Your name" required minlength="2" maxlength="120" />
+          </label>
+          <label class="api-field">
+            <span>Email</span>
+            <input name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@firm.com" required />
+          </label>
+          <label class="email-signup-trap" aria-hidden="true">
+            Company
+            <input type="text" name="company" tabindex="-1" autocomplete="off" />
+          </label>
+          <button type="submit">Request API Access</button>
+          <p class="api-access-status" data-api-access-status aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+  </section>
+
+  <script is:inline>
+    if (!window.__capitalbenchApiAccess) {
+      window.__capitalbenchApiAccess = true;
+      document.addEventListener("submit", async (event) => {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement) || !form.matches("[data-api-access-form]")) return;
+        event.preventDefault();
+
+        const button = form.querySelector("button[type='submit']");
+        const status = form.querySelector("[data-api-access-status]");
+        const formData = new FormData(form);
+        const payload = {
+          name: String(formData.get("name") || ""),
+          email: String(formData.get("email") || ""),
+          source: String(formData.get("source") || "api_page"),
+          pageUrl: String(formData.get("pageUrl") || window.location.href),
+          company: String(formData.get("company") || "")
+        };
+
+        if (button) button.disabled = true;
+        if (status) {
+          status.textContent = "Sending request...";
+          status.dataset.state = "pending";
+        }
+
+        try {
+          const response = await fetch("/api/api-access", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.ok) throw new Error(result.error || "api_access_failed");
+          form.reset();
+          if (status) {
+            status.textContent = "Request received.";
+            status.dataset.state = "success";
+          }
+        } catch {
+          if (status) {
+            status.textContent = "Request failed. Please try again.";
+            status.dataset.state = "error";
+          }
+        } finally {
+          if (button) button.disabled = false;
+        }
+      });
+    }
+  </script>
+</BaseLayout>

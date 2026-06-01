@@ -3,6 +3,10 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import test from "node:test";
 import {
+  createMemoryApiAccessRepository,
+  handleApiAccessRequest
+} from "../src/lib/apiAccess.js";
+import {
   WEBSITE_COLLECTION_GROUP,
   createMemoryEmailRepository,
   createUnsubscribeToken,
@@ -72,6 +76,19 @@ async function subscribe(repo, env, email = "reader@example.com", source = "home
   });
 }
 
+async function requestApiAccess(
+  repo,
+  env,
+  body = { name: "Research Team", email: "research@example.com", source: "api_page" }
+) {
+  return await handleApiAccessRequest({
+    request: jsonRequest("https://www.capitalbench.org/api/api-access", body),
+    env,
+    repo,
+    now: new Date("2026-06-01T12:00:00Z")
+  });
+}
+
 test("subscribes an email into Website Collection", async () => {
   const repo = createMemoryEmailRepository();
   const env = makeEnv();
@@ -130,6 +147,92 @@ test("invalid email is rejected", async () => {
   assert.equal(result.status, 400);
   assert.equal(result.body.error, "invalid_email");
   assert.equal(repo.subscribers.size, 0);
+});
+
+test("API access request stores requester and sends notification", async () => {
+  const repo = createMemoryApiAccessRepository();
+  const env = makeEnv();
+
+  const result = await requestApiAccess(repo, env, {
+    name: "Jane Analyst",
+    email: "jane@example.com",
+    source: "api_page",
+    pageUrl: "https://www.capitalbench.org/api"
+  });
+
+  assert.equal(result.status, 200);
+  assert.equal(result.body.ok, true);
+  assert.equal(repo.requests.size, 1);
+  const accessRequest = Array.from(repo.requests.values())[0];
+  assert.equal(accessRequest.name, "Jane Analyst");
+  assert.equal(accessRequest.email_normalized, "jane@example.com");
+  assert.equal(accessRequest.notification_status, "sent");
+  assert.equal(accessRequest.notification_provider, "cloudflare");
+  assert.equal(env.sent.length, 1);
+  assert.equal(env.sent[0].to, "ishtiaq@capitalbench.org");
+  assert.equal(env.sent[0].headers["Reply-To"], "jane@example.com");
+  assert.match(env.sent[0].subject, /Jane Analyst/);
+});
+
+test("duplicate API access request updates the existing row", async () => {
+  const repo = createMemoryApiAccessRepository();
+  const env = makeEnv();
+
+  await requestApiAccess(repo, env, {
+    name: "Jane Analyst",
+    email: "jane@example.com",
+    source: "api_page"
+  });
+  await requestApiAccess(repo, env, {
+    name: "Jane Research",
+    email: "JANE@example.com",
+    source: "footer"
+  });
+
+  assert.equal(repo.requests.size, 1);
+  const accessRequest = Array.from(repo.requests.values())[0];
+  assert.equal(accessRequest.name, "Jane Research");
+  assert.equal(accessRequest.email, "JANE@example.com");
+  assert.equal(accessRequest.source, "footer");
+  assert.equal(accessRequest.notification_status, "sent");
+  assert.equal(env.sent.length, 2);
+});
+
+test("API access request rejects invalid name and email", async () => {
+  const repo = createMemoryApiAccessRepository();
+  const env = makeEnv();
+
+  const invalidName = await requestApiAccess(repo, env, {
+    name: "J",
+    email: "jane@example.com"
+  });
+  const invalidEmail = await requestApiAccess(repo, env, {
+    name: "Jane Analyst",
+    email: "not-an-email"
+  });
+
+  assert.equal(invalidName.status, 400);
+  assert.equal(invalidName.body.error, "invalid_name");
+  assert.equal(invalidEmail.status, 400);
+  assert.equal(invalidEmail.body.error, "invalid_email");
+  assert.equal(repo.requests.size, 0);
+  assert.equal(env.sent.length, 0);
+});
+
+test("API access honeypot submission returns success without storing", async () => {
+  const repo = createMemoryApiAccessRepository();
+  const env = makeEnv();
+
+  const result = await requestApiAccess(repo, env, {
+    name: "Bot",
+    email: "bot@example.com",
+    company: "Bot Corp"
+  });
+
+  assert.equal(result.status, 200);
+  assert.equal(result.body.ok, true);
+  assert.equal(repo.requests.size, 0);
+  assert.equal(env.sent.length, 0);
 });
 
 test("unsubscribe token marks subscriber and membership unsubscribed", async () => {
