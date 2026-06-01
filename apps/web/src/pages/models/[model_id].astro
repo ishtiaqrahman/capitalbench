@@ -1,0 +1,353 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ModelLiveHoldings from "../../components/ModelLiveHoldings";
+import { siteConfig } from "../../lib/seo";
+import { staticModelProfiles, type ModelProfile, type ModelResultRow, type ModelTrackScore } from "../../lib/modelProfiles";
+
+export function getStaticPaths() {
+  return staticModelProfiles().map((profile) => ({
+    params: { model_id: profile.modelId },
+    props: { profile }
+  }));
+}
+
+type Props = {
+  profile: ModelProfile;
+};
+
+const { profile } = Astro.props;
+const repoRoot = `${siteConfig.githubUrl}/tree/main`;
+const repoBlob = `${siteConfig.githubUrl}/blob/main`;
+const resultRows = [...profile.allResults].sort((a, b) => a.entryDate.localeCompare(b.entryDate));
+const maxAlphaPct = Math.max(1, ...resultRows.map((row) => Math.abs((row.alphaVsSp500 ?? 0) * 100)));
+
+function pctDecimal(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  const scaled = value * 100;
+  return `${scaled > 0 ? "+" : ""}${scaled.toFixed(2)}%`;
+}
+
+function ppDecimal(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  const scaled = value * 100;
+  return `${scaled > 0 ? "+" : ""}${scaled.toFixed(2)} pp`;
+}
+
+function pctValue(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  if (Math.abs(value) >= 10) return `${value.toFixed(1)}%`;
+  if (Math.abs(value) >= 1) return `${value.toFixed(1)}%`;
+  return `${value.toFixed(2)}%`;
+}
+
+function numberValue(value: number | null | undefined, digits = 1): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return value.toFixed(digits);
+}
+
+function plural(count: number, singular: string, pluralLabel = `${singular}s`): string {
+  return `${count} ${count === 1 ? singular : pluralLabel}`;
+}
+
+function scorecardLabel(scorecard: ModelTrackScore): string {
+  if (scorecard.completedTests === 0) return "No completed tests";
+  return `${scorecard.wins} wins / ${scorecard.completedTests} completed`;
+}
+
+function alphaBarStyle(row: ModelResultRow): string {
+  const alphaPct = (row.alphaVsSp500 ?? 0) * 100;
+  const width = Math.min(50, (Math.abs(alphaPct) / maxAlphaPct) * 50);
+  const left = alphaPct >= 0 ? 50 : 50 - width;
+  return `left: ${left}%; width: ${width}%;`;
+}
+---
+
+<BaseLayout
+  title={`${profile.label} CapitalBench Model Profile`}
+  description={`${profile.label} live holdings, weekly and monthly CapitalBench results, historical portfolio pattern, and public proof files.`}
+>
+  <section class={`model-profile-hero model-profile-${profile.provider}`} aria-labelledby="model-title">
+    <div class="model-profile-identity">
+      <span class="model-logo-shell large">
+        {profile.logoSrc && <img src={profile.logoSrc} alt={profile.providerLabel} loading="lazy" />}
+      </span>
+      <div>
+        <span class="panel-kicker">{profile.providerLabel}</span>
+        <h1 id="model-title">{profile.label}</h1>
+        <p class="mono">{profile.modelId}</p>
+        <div class="round-meta-row compact">
+          <span class:list={["model-live-indicator", profile.live.all.portfolioCount > 0 ? "is-live" : "is-idle"]}>
+            <i aria-hidden="true"></i>
+            {profile.live.all.portfolioCount > 0 ? "Live portfolios" : "No live portfolios"}
+          </span>
+          {profile.tracksEntered.map((track) => <span>{track === "weekly" ? "Weekly" : "Monthly"}</span>)}
+          {profile.firstDecisionDate && <span>First run {profile.firstDecisionDate}</span>}
+        </div>
+      </div>
+    </div>
+
+    <div class="model-profile-stats" aria-label={`${profile.label} headline statistics`}>
+      <div>
+        <span>Live portfolios</span>
+        <strong>{profile.live.all.portfolioCount}</strong>
+        <small>{plural(profile.live.all.roundCount, "open test")}</small>
+      </div>
+      <div>
+        <span>Completed tests</span>
+        <strong>{profile.allResults.length}</strong>
+        <small>scored rounds</small>
+      </div>
+      <div>
+        <span>Beat S&amp;P 500</span>
+        <strong>
+          {profile.allResults.length > 0
+            ? pctValue((profile.allResults.filter((row) => (row.alphaVsSp500 ?? 0) > 0).length / profile.allResults.length) * 100)
+            : "n/a"}
+        </strong>
+        <small>all completed tracks</small>
+      </div>
+      <div>
+        <span>Avg alpha</span>
+        <strong>
+          {profile.allResults.length > 0
+            ? ppDecimal(profile.allResults.reduce((total, row) => total + (row.alphaVsSp500 ?? 0), 0) / profile.allResults.length)
+            : "n/a"}
+        </strong>
+        <small>vs S&amp;P 500</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="section model-section" id="live-holdings" aria-labelledby="live-holdings-title">
+    <div class="model-section-heading">
+      <div>
+        <span class="panel-kicker">Current live holdings</span>
+        <h2 id="live-holdings-title">Open Portfolios Waiting For Scores</h2>
+      </div>
+      <p>Completed tests are excluded here, so this view shows only the model's still-open weekly and monthly portfolios.</p>
+    </div>
+    <ModelLiveHoldings client:visible scopes={profile.live} />
+  </section>
+
+  <section class="section model-scorecards" aria-labelledby="model-scorecards-title">
+    <div class="model-section-heading">
+      <div>
+        <span class="panel-kicker">Scored record</span>
+        <h2 id="model-scorecards-title">Weekly And Monthly Results Stay Separate</h2>
+      </div>
+    </div>
+    {(["weekly", "monthly"] as const).map((track) => {
+      const card = profile.scorecards[track];
+      return (
+        <article class={`model-scorecard scorecard-${track}`}>
+          <div>
+            <span class="metric-label">{track === "weekly" ? "Weekly record" : "Monthly record"}</span>
+            <h3>{scorecardLabel(card)}</h3>
+          </div>
+          <div class="model-scorecard-grid">
+            <div>
+              <span>Avg return</span>
+              <strong>{pctDecimal(card.averageReturn)}</strong>
+            </div>
+            <div>
+              <span>S&amp;P 500</span>
+              <strong>{pctDecimal(card.averageSp500Return)}</strong>
+            </div>
+            <div>
+              <span>Avg alpha</span>
+              <strong>{ppDecimal(card.averageAlpha)}</strong>
+            </div>
+            <div>
+              <span>Hit rate</span>
+              <strong>{card.hitRate === null ? "n/a" : pctValue(card.hitRate * 100)}</strong>
+            </div>
+            <div>
+              <span>Avg rank</span>
+              <strong>{numberValue(card.averageRank)}</strong>
+            </div>
+            <div>
+              <span>Best round</span>
+              <strong>{card.bestRound?.roundId ?? "n/a"}</strong>
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </section>
+
+  <section class="section model-performance-panel" aria-labelledby="model-performance-title">
+    <div class="model-section-heading">
+      <div>
+        <span class="panel-kicker">Performance chart</span>
+        <h2 id="model-performance-title">Return Versus S&amp;P 500 By Completed Round</h2>
+      </div>
+      <p>Bars to the right beat the S&amp;P 500 over the same close-to-close period. Bars to the left lagged it.</p>
+    </div>
+
+    {resultRows.length > 0 ? (
+      <div class="model-alpha-chart" aria-label={`${profile.label} alpha by round`}>
+        {resultRows.map((row) => (
+          <a class="model-alpha-row" href={`/rounds/${row.roundId}/`}>
+            <span>
+              <strong>{row.roundId}</strong>
+              <small>{row.track} / rank {row.modelRank} of {row.modelCount}</small>
+            </span>
+            <em class="model-alpha-track" aria-hidden="true">
+              <i class={row.alphaVsSp500 && row.alphaVsSp500 >= 0 ? "is-positive" : "is-negative"} style={alphaBarStyle(row)} />
+            </em>
+            <b>{ppDecimal(row.alphaVsSp500)}</b>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="model-empty-panel">
+        <strong>No completed score yet.</strong>
+        <span>This chart appears after at least one test has ending prices.</span>
+      </div>
+    )}
+  </section>
+
+  <section class="section model-fingerprint" aria-labelledby="model-fingerprint-title">
+    <div class="model-section-heading">
+      <div>
+        <span class="panel-kicker">Portfolio pattern</span>
+        <h2 id="model-fingerprint-title">What This Model Has Tended To Hold</h2>
+      </div>
+      <p>Calculated from all saved official portfolios for this model, including open and completed tests.</p>
+    </div>
+
+    <div class="model-fingerprint-grid">
+      <article class="model-fingerprint-summary">
+        <div>
+          <span>Saved portfolios</span>
+          <strong>{profile.fingerprint.portfolioCount}</strong>
+        </div>
+        <div>
+          <span>Avg holdings</span>
+          <strong>{numberValue(profile.fingerprint.averageHoldingCount)}</strong>
+        </div>
+        <div>
+          <span>Avg top holding</span>
+          <strong>{pctValue(profile.fingerprint.averageTopHoldingPct)}</strong>
+        </div>
+        <div>
+          <span>Most common top holding</span>
+          <strong>{profile.fingerprint.mostCommonTopHolding?.label ?? "n/a"}</strong>
+        </div>
+      </article>
+
+      <article class="model-fingerprint-list">
+        <span class="metric-label">Most frequently held assets</span>
+        {profile.fingerprint.assets.slice(0, 7).map((asset) => (
+          <div>
+            <span>
+              <strong>{asset.label}</strong>
+              <small>{asset.group}</small>
+            </span>
+            <em>{pctValue(asset.frequencyPct)} held</em>
+            <b>{pctValue(asset.averageAllocationPct)} avg</b>
+          </div>
+        ))}
+      </article>
+
+      <article class="model-fingerprint-list compact">
+        <span class="metric-label">Average allocation by category</span>
+        {profile.fingerprint.categories.slice(0, 7).map((category) => (
+          <div>
+            <span><strong>{category.group}</strong></span>
+            <b>{pctValue(category.averageAllocationPct)}</b>
+          </div>
+        ))}
+      </article>
+    </div>
+  </section>
+
+  <section class="section model-history" aria-labelledby="model-history-title">
+    <div class="model-section-heading">
+      <div>
+        <span class="panel-kicker">Round history</span>
+        <h2 id="model-history-title">Saved Portfolios And Results</h2>
+      </div>
+    </div>
+
+    <div class="model-history-table" role="table" aria-label={`${profile.label} round history`}>
+      <div class="model-history-head" role="row">
+        <span>Round</span>
+        <span>Track</span>
+        <span>Window</span>
+        <span>Portfolio</span>
+        <span>Result</span>
+      </div>
+      {profile.history.map((row) => (
+        <details class="model-history-row">
+          <summary>
+            <span>
+              <strong><a href={`/rounds/${row.roundId}/`}>{row.roundId}</a></strong>
+              <small>{row.runId}</small>
+            </span>
+            <span>{row.track}</span>
+            <span>{row.entryDate} to {row.exitDate}</span>
+            <span class="model-history-holdings">
+              {row.portfolioSummary.slice(0, 4).map((holding) => (
+                <em><i class={holding.themeClass}></i>{holding.optionId} {pctValue(holding.allocationPct)}</em>
+              ))}
+            </span>
+            <span>
+              {row.result ? (
+                <strong>{ppDecimal(row.result.alphaVsSp500)}</strong>
+              ) : (
+                <em>{row.status === "pending" ? "Pending" : "Not scored"}</em>
+              )}
+            </span>
+          </summary>
+          <div class="model-history-detail">
+            <div>
+              <span class="metric-label">Full portfolio</span>
+              <div class="allocation-chip-row compact">
+                {row.portfolioSummary.map((holding) => (
+                  <span class="allocation-chip">
+                    <i class={holding.themeClass}></i>
+                    {holding.label} {pctValue(holding.allocationPct)}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div>
+              <span class="metric-label">Rationale</span>
+              <p>{row.rationale || "No rationale text available."}</p>
+            </div>
+            <div>
+              <span class="metric-label">Proof files</span>
+              <div class="model-proof-links">
+                <a href={`${repoBlob}/${row.parsedPath}`} target="_blank" rel="noreferrer">Parsed submission</a>
+                <a href={`${repoBlob}/${row.rawPath}`} target="_blank" rel="noreferrer">Raw submission</a>
+                <a href={`${repoRoot}/rounds/${row.roundId}`} target="_blank" rel="noreferrer">Round files</a>
+              </div>
+            </div>
+          </div>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <section class="section model-proof-drawer" aria-labelledby="model-proof-title">
+    <details>
+      <summary>
+        <span>
+          <span class="panel-kicker">Proof and data</span>
+          <strong id="model-proof-title">Public Files For This Model</strong>
+        </span>
+      </summary>
+      <div class="model-proof-grid">
+        {profile.history.slice(0, 10).map((row) => (
+          <div>
+            <strong>{row.roundId}</strong>
+            <a href={`${repoBlob}/${row.parsedPath}`} target="_blank" rel="noreferrer">Parsed JSON</a>
+            <a href={`${repoBlob}/${row.rawPath}`} target="_blank" rel="noreferrer">Raw response</a>
+            <a href={`/rounds/${row.roundId}/`}>Round page</a>
+          </div>
+        ))}
+      </div>
+    </details>
+  </section>
+</BaseLayout>

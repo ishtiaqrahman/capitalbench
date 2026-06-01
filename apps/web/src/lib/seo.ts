@@ -1,4 +1,5 @@
 import { staticRoundRecords } from "./localRoundRecords";
+import { staticModelProfiles } from "./modelProfiles";
 
 export type RouteMeta = {
   path: string;
@@ -35,6 +36,7 @@ export const siteConfig = {
 
 const defaultLastmod = "2026-05-26";
 const publicRounds = staticRoundRecords();
+const publicModels = staticModelProfiles();
 
 export const routeMeta: RouteMeta[] = [
   {
@@ -124,6 +126,23 @@ export const routeMeta: RouteMeta[] = [
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
+  {
+    path: "/models",
+    title: "CapitalBench Model Profiles",
+    description:
+      "CapitalBench model profiles showing each AI model's live holdings, weekly and monthly records, portfolio patterns, and proof links.",
+    priority: 0.86,
+    changefreq: "weekly",
+    lastmod: defaultLastmod
+  },
+  ...publicModels.map((profile) => ({
+    path: `/models/${profile.modelId}`,
+    title: `${profile.label} CapitalBench Model Profile`,
+    description: `${profile.label} live holdings, weekly and monthly CapitalBench results, historical portfolio pattern, and public proof files.`,
+    priority: 0.78,
+    changefreq: "weekly" as const,
+    lastmod: defaultLastmod
+  })),
   ...publicRounds.map((round) => ({
     path: `/rounds/${round.round_id}`,
     title: round.status === "resolved" ? `${round.round_id} Result And Proof` : `${round.round_id} Proof Files`,
@@ -248,6 +267,7 @@ const labelOverrides: Record<string, string> = {
   "cumulative-weekly": "Overall Weekly",
   "cumulative-monthly": "Overall Monthly",
   rounds: "Rounds",
+  models: "Models",
   methodology: "How It Works",
   universe: "Asset List",
   scoring: "Scoring",

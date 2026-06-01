@@ -304,6 +304,10 @@ function scoreShortLine(round?: RoundRecord): string {
   return `Scores after ${shortMonthDay(round.exit_date)} close`;
 }
 
+function modelProfileHref(modelId: string): string {
+  return `/models/${modelId}/#live-holdings`;
+}
+
 function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["optionsById"]): string {
   const allocations = decisionAllocations(submission)
     .sort((a, b) => b.allocation_bps - a.allocation_bps);
@@ -381,8 +385,9 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
           </div>
           <div class="snapshot-model-list" aria-label="Official model roster">
             {modelRoster.map((submission) => (
-              <span
+              <a
                 class={`snapshot-model-chip snapshot-model-${submission.provider}`}
+                href={modelProfileHref(submission.model_id)}
                 aria-label={`${providerLabel(submission.provider)}: ${modelLabel(submission.model_id)}`}
               >
                 {providerLogoSrc(submission.provider) ? (
@@ -398,7 +403,7 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
                   <span>{providerLabel(submission.provider)}</span>
                 )}
                 <strong>{modelLabel(submission.model_id)}</strong>
-              </span>
+              </a>
             ))}
           </div>
         </section>
@@ -492,13 +497,16 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
     </>
   )}
 
-  <section class="home-section-heading" aria-labelledby="active-exposure-title">
-    <span class="panel-kicker">Active exposure</span>
-    <h2 id="active-exposure-title">Where Active Model Portfolios Are Invested</h2>
-    <p>
-      This counts only tests still waiting for final prices. Completed tests are excluded, so the view shows where open
-      model capital is currently allocated.
-    </p>
+  <section class="home-section-heading home-section-heading-with-action" aria-labelledby="active-exposure-title">
+    <div>
+      <span class="panel-kicker">Active exposure</span>
+      <h2 id="active-exposure-title">Where Active Model Portfolios Are Invested</h2>
+      <p>
+        This counts only tests still waiting for final prices. Completed tests are excluded, so the view shows where open
+        model capital is currently allocated.
+      </p>
+    </div>
+    <a class="section-profile-link" href="/models">View model profiles</a>
   </section>
 
   <ActiveExposureMap client:visible rounds={activeExposureRounds} />
@@ -533,7 +541,9 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
                   <div class="decision-row">
                     <div class="decision-row-meta">
                       <span class={`provider-badge provider-${submission.provider}`}>{providerLabel(submission.provider)}</span>
-                      <strong>{modelLabel(submission.model_id)}</strong>
+                      <a class="decision-model-link" href={modelProfileHref(submission.model_id)}>
+                        {modelLabel(submission.model_id)}
+                      </a>
                       <p>{topHoldings(submission, track.optionsById)}</p>
                     </div>
                     <div class="allocation-stack mini" aria-hidden="true">

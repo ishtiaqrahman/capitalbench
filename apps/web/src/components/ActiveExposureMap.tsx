@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { modelLabel, providerLabel, type RoundRecord, type SubmissionRecord, type UniverseOption } from "../data/fallback";
 import { decisionAllocations, optionDisplayName, optionShortDisplayName, type OptionLabelMap } from "../lib/allocations";
+import { providerLogoSrc } from "../lib/scoreReturnChart";
 
 type ActiveTrack = "all" | "weekly" | "monthly";
 type ActiveView = "asset" | "model";
@@ -360,6 +361,10 @@ function trackLabel(track: ActiveTrack): string {
   return "All Active";
 }
 
+function modelProfileHref(modelId: string): string {
+  return `/models/${modelId}/#live-holdings`;
+}
+
 export default function ActiveExposureMap({ rounds }: Props) {
   const [track, setTrack] = useState<ActiveTrack>("all");
   const [view, setView] = useState<ActiveView>("asset");
@@ -656,7 +661,9 @@ export default function ActiveExposureMap({ rounds }: Props) {
                     {visibleHolderRows.map((contribution) => (
                       <div key={`${contribution.portfolioKey}:${contribution.optionId}`}>
                         <div>
-                          <strong>{modelLabel(contribution.modelId)}</strong>
+                          <a className="active-model-inline-link" href={modelProfileHref(contribution.modelId)}>
+                            {modelLabel(contribution.modelId)}
+                          </a>
                           <span>
                             {providerLabel(contribution.provider)} / {contribution.roundId}
                           </span>
@@ -724,14 +731,23 @@ export default function ActiveExposureMap({ rounds }: Props) {
                   const modelKey = `${model.provider}:${model.modelId}`;
                   const segments = topModelSegments(model);
                   const expanded = expandedModelKey === modelKey;
+                  const logoSrc = providerLogoSrc(model.provider);
                   return (
                     <article className={`active-model-card ${expanded ? "is-expanded" : ""}`} key={modelKey}>
                       <div className="active-model-card-head">
-                        <div>
-                          <span>{providerLabel(model.provider)}</span>
-                          <strong>{modelLabel(model.modelId)}</strong>
+                        <a className="active-model-identity-link" href={modelProfileHref(model.modelId)}>
+                          <span className="active-model-logo-shell" aria-hidden="true">
+                            {logoSrc ? <img src={logoSrc} alt="" loading="lazy" /> : providerLabel(model.provider).slice(0, 1)}
+                          </span>
+                          <span>
+                            <span>{providerLabel(model.provider)}</span>
+                            <strong>{modelLabel(model.modelId)}</strong>
+                          </span>
+                        </a>
+                        <div className="active-model-head-actions">
+                          <span>{model.portfolioCount} active</span>
+                          <a href={modelProfileHref(model.modelId)}>Profile</a>
                         </div>
-                        <span>{model.portfolioCount} active</span>
                       </div>
 
                       <div className="active-model-meta">

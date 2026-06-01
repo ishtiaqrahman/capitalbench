@@ -53,6 +53,7 @@ const jsonLd = jsonLdGraph([
 
 const navItems = [
   { href: "/leaderboards/latest", label: "Results", active: currentPath.startsWith("/leaderboards") },
+  { href: "/models", label: "Models", active: currentPath.startsWith("/models") },
   { href: "/#current-picks", label: "Picks", active: false },
   { href: "/rounds", label: "Rounds", active: currentPath.startsWith("/rounds") },
   {
@@ -163,6 +164,7 @@ const emailWidgetContext =
           </div>
           <div class="mobile-nav-controls">
             <a class="mobile-quick-link" href="/leaderboards/latest">Results</a>
+            <a class="mobile-quick-link" href="/models">Models</a>
             <a class="mobile-contribute" href="/contribute">Contribute</a>
             <details class="mobile-menu">
               <summary aria-label="Open site menu">

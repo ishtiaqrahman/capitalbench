@@ -1,0 +1,94 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import { staticModelProfiles } from "../../lib/modelProfiles";
+
+const profiles = staticModelProfiles();
+
+function pctValue(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return `${value.toFixed(value >= 10 ? 1 : 2)}%`;
+}
+
+function pctDecimal(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  const scaled = value * 100;
+  return `${scaled > 0 ? "+" : ""}${scaled.toFixed(2)}%`;
+}
+---
+
+<BaseLayout
+  title="CapitalBench Model Profiles"
+  description="CapitalBench model profiles showing each AI model's live holdings, weekly and monthly records, portfolio patterns, and proof links."
+>
+  <PageHeader
+    eyebrow="Model profiles"
+    title="Models"
+    summary="Each profile shows current live holdings first, then scored weekly and monthly records, historical picks, and public proof files."
+  />
+
+  <section class="section model-directory" aria-label="CapitalBench model profiles">
+    {
+      profiles.map((profile) => {
+        const live = profile.live.all;
+        const weekly = profile.scorecards.weekly;
+        const monthly = profile.scorecards.monthly;
+        return (
+          <article class={`model-card model-card-${profile.provider}`}>
+            <div class="model-card-head">
+              <a class="model-card-main" href={`/models/${profile.modelId}/`}>
+                <span class="model-logo-shell">
+                  {profile.logoSrc && <img src={profile.logoSrc} alt={profile.providerLabel} loading="lazy" />}
+                </span>
+                <span>
+                  <span class="model-card-provider">{profile.providerLabel}</span>
+                  <strong>{profile.label}</strong>
+                  <small>{profile.modelId}</small>
+                </span>
+              </a>
+              <span class:list={["model-live-indicator", live.portfolioCount > 0 ? "is-live" : "is-idle"]}>
+                <i aria-hidden="true"></i>
+                {live.portfolioCount > 0 ? "Live" : "No live"}
+              </span>
+            </div>
+
+            <div class="model-card-stats" aria-label={`${profile.label} model summary`}>
+              <div>
+                <span>Live portfolios</span>
+                <strong>{live.portfolioCount}</strong>
+              </div>
+              <div>
+                <span>Completed</span>
+                <strong>{profile.allResults.length}</strong>
+              </div>
+              <div>
+                <span>Weekly alpha</span>
+                <strong>{pctDecimal(weekly.averageAlpha)}</strong>
+              </div>
+              <div>
+                <span>Monthly alpha</span>
+                <strong>{pctDecimal(monthly.averageAlpha)}</strong>
+              </div>
+            </div>
+
+            <div class="model-card-live">
+              <div>
+                <span class="metric-label">Current live exposure</span>
+                <strong>{live.topHolding ? `${live.topHolding.label} ${pctValue(live.topHolding.exposurePct)}` : "No live holdings"}</strong>
+              </div>
+              {live.holdings.length > 0 && (
+                <div class="model-card-stack" aria-hidden="true">
+                  {live.holdings.slice(0, 8).map((holding) => (
+                    <span class={holding.themeClass} style={`flex-basis: ${Math.max(holding.exposurePct, 1)}%`} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <a class="small-button model-card-link" href={`/models/${profile.modelId}/`}>View model</a>
+          </article>
+        );
+      })
+    }
+  </section>
+</BaseLayout>
