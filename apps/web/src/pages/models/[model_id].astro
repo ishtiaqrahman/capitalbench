@@ -84,21 +84,21 @@ function alphaBarStyle(row: ModelResultRow): string {
 >
   <section class={`model-profile-hero model-profile-${profile.provider}`} aria-labelledby="model-title">
     <div class="model-profile-identity">
-      <span class="model-logo-shell large">
-        {profile.logoSrc && <img src={profile.logoSrc} alt={profile.providerLabel} loading="lazy" />}
-      </span>
-      <div>
-        <span class="panel-kicker">{profile.providerLabel}</span>
+      <span class="panel-kicker">{profile.providerLabel}</span>
+      <div class="model-profile-name-row">
+        <span class="model-logo-shell large">
+          {profile.logoSrc && <img src={profile.logoSrc} alt={profile.providerLabel} loading="lazy" />}
+        </span>
         <h1 id="model-title">{profile.label}</h1>
-        <p class="mono">{profile.modelId}</p>
-        <div class="round-meta-row compact">
-          <span class:list={["model-live-indicator", profile.live.all.portfolioCount > 0 ? "is-live" : "is-idle"]}>
-            <i aria-hidden="true"></i>
-            {profile.live.all.portfolioCount > 0 ? "Live portfolios" : "No live portfolios"}
-          </span>
-          {profile.tracksEntered.map((track) => <span>{track === "weekly" ? "Weekly" : "Monthly"}</span>)}
-          {profile.firstDecisionDate && <span>First run {profile.firstDecisionDate}</span>}
-        </div>
+      </div>
+      <p class="mono">{profile.modelId}</p>
+      <div class="round-meta-row compact">
+        <span class:list={["model-live-indicator", profile.live.all.portfolioCount > 0 ? "is-live" : "is-idle"]}>
+          <i aria-hidden="true"></i>
+          {profile.live.all.portfolioCount > 0 ? "Live portfolios" : "No live portfolios"}
+        </span>
+        {profile.tracksEntered.map((track) => <span>{track === "weekly" ? "Weekly" : "Monthly"}</span>)}
+        {profile.firstDecisionDate && <span>First run {profile.firstDecisionDate}</span>}
       </div>
     </div>
 

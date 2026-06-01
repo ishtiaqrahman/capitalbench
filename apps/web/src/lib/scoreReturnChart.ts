@@ -78,10 +78,10 @@ function signedPercentagePoints(value: number | null | undefined): string {
 
 export function providerLogoSrc(provider: string): string | undefined {
   const logos: Record<string, string> = {
-    anthropic: "/labs/anthropic.svg",
-    google: "/labs/google.svg",
-    openai: "/labs/openai.svg",
-    xai: "/labs/xai.svg"
+    anthropic: "/labs/icons/claude-icon.svg",
+    google: "/labs/icons/gemini-icon.svg",
+    openai: "/labs/icons/openai-icon.svg",
+    xai: "/labs/icons/xai-icon.svg"
   };
   return logos[provider];
 }

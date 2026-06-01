@@ -54,7 +54,10 @@ const copy = {
   >
     <div class="score-alert-copy">
       <span class="panel-kicker">{copy.label}</span>
-      <h2 id={`score-alert-title-${context}`}>{copy.title}</h2>
+      <h2 id={`score-alert-title-${context}`}>
+        <span class="score-alert-title-full">{copy.title}</span>
+        <span class="score-alert-title-short">Get score alerts</span>
+      </h2>
       <p>{copy.description}</p>
     </div>
 

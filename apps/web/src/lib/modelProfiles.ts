@@ -157,18 +157,13 @@ type RoundContext = {
 };
 
 const PROVIDER_LOGOS: Record<string, string> = {
-  anthropic: "/labs/anthropic.svg",
-  google: "/labs/google.svg",
-  openai: "/labs/openai.svg",
-  xai: "/labs/xai.svg"
-};
-
-const PROVIDER_ICONS: Record<string, string> = {
   anthropic: "/labs/icons/claude-icon.svg",
   google: "/labs/icons/gemini-icon.svg",
   openai: "/labs/icons/openai-icon.svg",
   xai: "/labs/icons/xai-icon.svg"
 };
+
+const PROVIDER_ICONS: Record<string, string> = PROVIDER_LOGOS;
 
 const GROUP_LABELS: Record<string, string> = {
   ai_and_technology: "AI and Technology",
