@@ -95,6 +95,7 @@ const copy = {
     const DISMISS_MS = 30 * 24 * 60 * 60 * 1000;
     const MIN_ACTIVE_MS = 30 * 1000;
     const MIN_SCROLL_PROGRESS = 0.2;
+    const MOBILE_QUERY = "(max-width: 760px)";
 
     const safeStorage = {
       get(storage, key) {
@@ -148,6 +149,17 @@ const copy = {
       return active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement || active instanceof HTMLSelectElement;
     }
 
+    function isMobileViewport() {
+      return window.matchMedia?.(MOBILE_QUERY).matches ?? window.innerWidth <= 760;
+    }
+
+    function footerSignupIsVisible() {
+      const footerSignup = document.querySelector(".site-footer .email-signup, .site-footer");
+      if (!footerSignup) return false;
+      const rect = footerSignup.getBoundingClientRect();
+      return rect.top < window.innerHeight - 80;
+    }
+
     function setupWidget(widget) {
       const chip = widget.querySelector("[data-score-alert-chip]");
       const panel = widget.querySelector("[data-score-alert-panel]");
@@ -172,8 +184,9 @@ const copy = {
       }
 
       function show(reason) {
-        if (visible || shouldSuppress() || !hasScrolledEnough()) return;
+        if (visible || shouldSuppress() || !hasScrolledEnough() || footerSignupIsVisible()) return;
         widget.hidden = false;
+        if (!expanded) widget.dataset.state = "collapsed";
         visible = true;
         if (!seenMetricSent) {
           seenMetricSent = true;
@@ -182,7 +195,13 @@ const copy = {
       }
 
       function expand(reason) {
+        const isManual = reason === "chip_click";
         if (expanded || shouldSuppress() || !hasScrolledEnough() || userIsTyping()) return;
+        if (isMobileViewport() && !isManual) {
+          show(reason);
+          return;
+        }
+        if (footerSignupIsVisible() && !isManual) return;
         if (safeStorage.get(window.sessionStorage, EXPANDED_SESSION_KEY) === "true") {
           show(reason);
           return;
@@ -201,6 +220,12 @@ const copy = {
         chip.setAttribute("aria-expanded", "false");
         widget.dataset.state = "collapsed";
         expanded = false;
+      }
+
+      function hideNearFooter() {
+        if (expanded) return;
+        widget.hidden = true;
+        visible = false;
       }
 
       function dismiss(reason) {
@@ -244,12 +269,22 @@ const copy = {
       window.addEventListener("click", (event) => {
         const link = event.target instanceof Element ? event.target.closest("a") : null;
         const href = link?.getAttribute("href") || "";
-        if (href.includes("/leaderboards") || href.includes("/rounds") || href.includes("proof") || href.includes("current-picks")) {
+        if (
+          href.includes("/leaderboards") ||
+          href.includes("/rounds") ||
+          href.includes("proof") ||
+          href.includes("current-picks") ||
+          href.includes("active-exposure")
+        ) {
           safeStorage.set(window.sessionStorage, "capitalbench_email_intent_click", "true");
         }
       }, { capture: true });
 
       const onScroll = () => {
+        if (footerSignupIsVisible()) {
+          hideNearFooter();
+          return;
+        }
         const progress = scrollProgress();
         if (progress >= MIN_SCROLL_PROGRESS) show("scroll");
         if (progress > 0.55) expand("deep_scroll");

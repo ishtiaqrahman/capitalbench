@@ -30,7 +30,7 @@ import {
   optionDisplayName,
   optionShortDisplayName
 } from "../lib/allocations";
-import { dateOnly } from "../lib/format";
+import { dateOnly, pct } from "../lib/format";
 import {
   staticAllOfficialSubmissions,
   staticOfficialSubmissions,
@@ -331,12 +331,22 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
       </p>
       <p class="hero-disclaimer">Research benchmark. Not financial advice.</p>
 
+      {latestPublishedResult && latestCompletedRound && latestCompletedWinner && (
+        <a class="hero-result-strip" href={`/leaderboards/latest-${latestPublishedResult.key}`}>
+          <span>{latestPublishedResult.label} latest score</span>
+          <strong>
+            {modelLabel(latestCompletedWinner.model_id)} finished first at {pct(latestCompletedWinner.portfolio_return)}
+          </strong>
+          <em>{latestCompletedRound.round_id}</em>
+        </a>
+      )}
+
       <div class="home-hero-actions" aria-label="Project resources">
         <a class="action-link action-primary" href="/leaderboards/latest">
           Latest scores
           <ArrowRight size={15} aria-hidden="true" />
         </a>
-        <a class="action-link" href="#current-picks">Active portfolios</a>
+        <a class="action-link" href="#active-exposure">Active portfolios</a>
         <a class="action-link" href="#how-it-works">Scoring rules</a>
         <a class="action-link" href="#proof-and-data">Proof files</a>
       </div>
@@ -497,7 +507,7 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
     </>
   )}
 
-  <section class="home-section-heading home-section-heading-with-action" aria-labelledby="active-exposure-title">
+  <section class="home-section-heading home-section-heading-with-action" id="active-exposure" aria-labelledby="active-exposure-title">
     <div>
       <span class="panel-kicker">Active exposure</span>
       <h2 id="active-exposure-title">Where Active Model Portfolios Are Invested</h2>
@@ -589,7 +599,9 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
         )}
 
         <div class="track-card-actions">
-          <a class="small-button" href={track.latestHref}>Open {track.label} Results</a>
+          <a class="small-button" href={track.latestHref}>
+            {track.round?.status === "resolved" ? `Open ${track.label} Results` : `${track.label} Scoreboard`}
+          </a>
           {track.roundHref && <a class="small-button" href={track.roundHref}>Proof files</a>}
         </div>
       </article>

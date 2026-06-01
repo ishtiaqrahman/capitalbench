@@ -469,12 +469,65 @@ h3 {
   line-height: 1.35;
 }
 
+.hero-result-strip {
+  min-width: 0;
+  max-width: 710px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 14px;
+  margin-top: 14px;
+  border: 1px solid rgb(0 107 95 / 20%);
+  border-radius: 8px;
+  padding: 11px 13px;
+  background:
+    linear-gradient(135deg, rgb(0 107 95 / 8%), rgb(47 95 168 / 7%)),
+    #ffffff;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.hero-result-strip span,
+.hero-result-strip em {
+  color: var(--muted-2);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.hero-result-strip strong {
+  min-width: 0;
+  color: var(--ink-strong);
+  font-size: 0.93rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.hero-result-strip em {
+  align-self: start;
+  font-style: normal;
+  text-align: right;
+}
+
+.hero-result-strip:hover {
+  border-color: rgb(0 107 95 / 34%);
+  box-shadow: inset 3px 0 0 var(--accent), var(--shadow);
+}
+
 .home-hero-actions {
   min-width: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 18px;
+}
+
+#active-exposure,
+#current-picks,
+#how-it-works,
+#proof-and-data {
+  scroll-margin-top: 88px;
 }
 
 .hero-proof-strip {
@@ -5797,17 +5850,33 @@ tbody tr:hover {
   .score-alert-widget {
     right: 14px;
     bottom: 14px;
-    width: calc(100vw - 28px);
+    width: auto;
+    max-width: calc(100vw - 28px);
+  }
+
+  .score-alert-widget[data-state="expanded"] {
+    right: 14px;
+    left: 14px;
+    width: auto;
+    max-width: none;
   }
 
   .score-alert-chip {
     width: auto;
+    min-height: 44px;
     min-width: 142px;
     margin-left: auto;
   }
 
   .score-alert-panel {
+    max-height: min(360px, calc(100vh - 96px));
+    overflow: auto;
     padding: 15px;
+  }
+
+  .score-alert-close {
+    width: 40px;
+    height: 40px;
   }
 
   .score-alert-form {
@@ -5816,6 +5885,7 @@ tbody tr:hover {
 
   .score-alert-form button[type="submit"],
   .score-alert-form input[type="email"] {
+    height: 44px;
     width: 100%;
   }
 
@@ -5846,13 +5916,17 @@ tbody tr:hover {
     margin-left: auto;
   }
 
+  .brand {
+    min-height: 44px;
+  }
+
   .mobile-quick-link {
     display: none;
   }
 
   .mobile-contribute,
   .mobile-menu summary {
-    min-height: 34px;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -5922,7 +5996,7 @@ tbody tr:hover {
   }
 
   .mobile-menu-panel a {
-    min-height: 36px;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     gap: 7px;
@@ -5977,6 +6051,17 @@ tbody tr:hover {
     line-height: 1.55;
   }
 
+  .hero-result-strip {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    margin-top: 12px;
+    padding: 10px 11px;
+  }
+
+  .hero-result-strip em {
+    text-align: left;
+  }
+
   .home-hero-actions {
     width: 100%;
     display: grid;
@@ -5984,28 +6069,25 @@ tbody tr:hover {
     gap: 8px;
   }
 
+  #active-exposure,
+  #current-picks,
+  #how-it-works,
+  #proof-and-data {
+    scroll-margin-top: 148px;
+  }
+
   .hero-proof-strip {
-    margin-top: 14px;
-    padding-top: 11px;
+    margin-top: 12px;
+    padding-top: 10px;
   }
 
   .hero-proof-strip-head {
-    grid-template-columns: 1fr;
-    align-items: flex-start;
-    gap: 3px;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-  }
-
-  .hero-proof-strip-head strong {
-    grid-column: 1;
-    justify-self: start;
-    text-align: left;
+    display: none;
   }
 
   .hero-proof-steps {
-    grid-template-columns: 1fr;
-    gap: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .hero-proof-steps::before {
@@ -6013,15 +6095,19 @@ tbody tr:hover {
   }
 
   .hero-proof-step {
-    min-height: auto;
-    border-right: 0;
-    border-bottom: 1px solid rgb(213 223 219 / 74%);
-    padding: 9px 0;
+    min-height: 84px;
+    display: grid;
+    align-content: start;
+    gap: 7px;
+    border: 1px solid rgb(213 223 219 / 74%);
+    border-radius: 8px;
+    padding: 9px;
+    background: rgb(255 255 255 / 54%);
   }
 
   .hero-proof-step:last-child {
-    border-bottom: 0;
-    padding-bottom: 0;
+    border-bottom: 1px solid rgb(213 223 219 / 74%);
+    padding-bottom: 9px;
   }
 
   .hero-proof-icon {
@@ -6034,7 +6120,7 @@ tbody tr:hover {
   }
 
   .hero-proof-copy span {
-    font-size: 0.74rem;
+    display: none;
   }
 
   .published-result-card,
@@ -6290,9 +6376,18 @@ tbody tr:hover {
   }
 
   .home-hero-actions .action-link {
-    min-height: 38px;
+    min-height: 44px;
     padding: 0 10px;
     font-size: 0.84rem;
+  }
+
+  .small-button,
+  .section-profile-link,
+  .active-exposure-tabs button,
+  .active-exposure-clear,
+  .active-exposure-expand,
+  .active-model-toggle {
+    min-height: 44px;
   }
 
   .home-hero-actions .action-primary {
@@ -6863,6 +6958,10 @@ tbody tr:hover {
     grid-template-columns: 1fr;
   }
 
+  .mobile-contribute {
+    display: none;
+  }
+
   h1 {
     font-size: 2.12rem;
   }
@@ -6883,7 +6982,7 @@ tbody tr:hover {
   }
 
   .home-hero-actions .action-link {
-    min-height: 36px;
+    min-height: 44px;
     padding: 0 8px;
     font-size: 0.8rem;
   }
@@ -8341,6 +8440,12 @@ tbody tr:hover {
     padding: 11px;
   }
 
+  .active-exposure-stat-grid strong {
+    font-size: 1.1rem;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
   .active-exposure-ribbon-panel,
   .active-exposure-ranking,
   .active-exposure-detail,
@@ -8354,6 +8459,12 @@ tbody tr:hover {
     display: grid;
     grid-template-columns: 1fr;
     gap: 8px;
+  }
+
+  .active-exposure-panel-head > *,
+  .active-exposure-ranking-head > *,
+  .active-model-panel-head > * {
+    min-width: 0;
   }
 
   .active-model-panel-head > span {
@@ -8391,6 +8502,20 @@ tbody tr:hover {
   .active-exposure-segment:nth-child(2n),
   .active-exposure-segment:last-child {
     border-right: 0;
+  }
+
+  .active-exposure-segment:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .active-exposure-panel-head strong,
+  .active-exposure-ranking-head strong {
+    overflow-wrap: break-word;
+  }
+
+  .active-exposure-ranking-head > span {
+    width: fit-content;
+    max-width: 100%;
   }
 
   .active-exposure-bars button {
