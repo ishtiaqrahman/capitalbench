@@ -91,10 +91,21 @@ export type ModelFingerprintCategory = {
   averageAllocationPct: number;
 };
 
+export type ModelRiskAppetite = {
+  score: number | null;
+  percentile: number | null;
+  label: string;
+  description: string;
+  highRiskPct: number;
+  defensivePct: number;
+  techPct: number;
+};
+
 export type ModelFingerprint = {
   portfolioCount: number;
   averageHoldingCount: number | null;
   averageTopHoldingPct: number | null;
+  riskAppetite: ModelRiskAppetite;
   mostCommonTopHolding?: ModelFingerprintAsset;
   assets: ModelFingerprintAsset[];
   categories: ModelFingerprintCategory[];
@@ -127,6 +138,7 @@ export type ModelProfile = {
   provider: string;
   providerLabel: string;
   logoSrc?: string;
+  iconSrc?: string;
   firstDecisionDate?: string;
   tracksEntered: BenchmarkTrack[];
   live: Record<ModelScopeKey, ModelLiveScope>;
@@ -151,6 +163,13 @@ const PROVIDER_LOGOS: Record<string, string> = {
   xai: "/labs/xai.svg"
 };
 
+const PROVIDER_ICONS: Record<string, string> = {
+  anthropic: "/labs/icons/claude-icon.svg",
+  google: "/labs/icons/gemini-icon.svg",
+  openai: "/labs/icons/openai-icon.svg",
+  xai: "/labs/icons/xai-icon.svg"
+};
+
 const GROUP_LABELS: Record<string, string> = {
   ai_and_technology: "AI and Technology",
   bonds_and_rates: "Bonds and Rates",
@@ -172,6 +191,21 @@ const GROUP_LABELS: Record<string, string> = {
   us_style_factor: "US Style Factor"
 };
 
+const TECH_OPTION_IDS = new Set(["NASDAQ100", "LARGE_GROWTH", "TECHNOLOGY", "SEMICONDUCTORS", "SOFTWARE"]);
+const DEFENSIVE_OPTION_IDS = new Set([
+  "CASH",
+  "SHORT_TREASURY",
+  "INTERMEDIATE_TREASURY",
+  "TIPS",
+  "INVESTMENT_GRADE_CREDIT",
+  "AGGREGATE_BONDS",
+  "GOLD",
+  "DIVIDEND",
+  "LOW_VOL",
+  "CONSUMER_STAPLES",
+  "UTILITIES"
+]);
+
 function percentFromBps(bps: number, denominatorBps: number): number {
   if (denominatorBps <= 0) return 0;
   return (bps / denominatorBps) * 100;
@@ -181,6 +215,83 @@ function average(values: Array<number | null | undefined>): number | null {
   const finite = values.filter((value): value is number => typeof value === "number" && Number.isFinite(value));
   if (finite.length === 0) return null;
   return finite.reduce((total, value) => total + value, 0) / finite.length;
+}
+
+function clampPercent(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.min(100, Math.max(0, value));
+}
+
+function riskBucketScore(option: UniverseOption | undefined): number {
+  if (!option) return 3;
+  if (option.is_cash) return 1;
+  const group = option.option_group.toLowerCase();
+  if (group === "crypto" || option.asset_class.toLowerCase() === "crypto") return 5;
+  switch (option.risk_bucket.toLowerCase()) {
+    case "cash":
+      return 1;
+    case "low":
+      return 2;
+    case "medium":
+      return 3;
+    case "high":
+      return 4;
+    case "very_high":
+    case "very-high":
+    case "speculative":
+      return 5;
+    default:
+      return 3;
+  }
+}
+
+function isDefensiveOption(optionId: string, option: UniverseOption | undefined): boolean {
+  if (DEFENSIVE_OPTION_IDS.has(optionId)) return true;
+  if (option?.is_cash) return true;
+  const group = option?.option_group.toLowerCase() ?? "";
+  return group.includes("cash") || group.includes("bond") || group.includes("credit");
+}
+
+function isTechnologyOption(optionId: string, option: UniverseOption | undefined): boolean {
+  if (TECH_OPTION_IDS.has(optionId)) return true;
+  const group = option?.option_group.toLowerCase() ?? "";
+  const name = option?.name.toLowerCase() ?? "";
+  return group.includes("technology") || group.includes("ai") || name.includes("technology") || name.includes("software");
+}
+
+function riskAppetiteLabel(score: number | null): string {
+  if (score === null) return "Not enough history";
+  if (score < 2.15) return "Defensive";
+  if (score < 3.15) return "Balanced";
+  if (score < 4.15) return "Growth";
+  return "Aggressive";
+}
+
+function riskAppetiteDescription(label: string): string {
+  if (label === "Defensive") return "Usually favors cash, bonds, gold, or lower-volatility exposure.";
+  if (label === "Balanced") return "Mixes equity risk with defensive ballast.";
+  if (label === "Growth") return "Usually favors equities, sectors, or thematic growth exposure.";
+  if (label === "Aggressive") return "Frequently leans into high-beta or narrow thematic exposure.";
+  return "Calculated after the model has at least one saved official portfolio.";
+}
+
+function buildRiskAppetite(
+  score: number | null,
+  denominatorBps: number,
+  highRiskBps: number,
+  defensiveBps: number,
+  techBps: number
+): ModelRiskAppetite {
+  const label = riskAppetiteLabel(score);
+  return {
+    score,
+    percentile: score === null ? null : clampPercent(((score - 1) / 4) * 100),
+    label,
+    description: riskAppetiteDescription(label),
+    highRiskPct: percentFromBps(highRiskBps, denominatorBps),
+    defensivePct: percentFromBps(defensiveBps, denominatorBps),
+    techPct: percentFromBps(techBps, denominatorBps)
+  };
 }
 
 function optionGroup(optionId: string, optionsById: Record<string, UniverseOption | undefined>): string {
@@ -383,6 +494,11 @@ function buildFingerprint(modelId: string, contexts: RoundContext[]): ModelFinge
   const portfolioKeys = new Set<string>();
   const holdingCounts: number[] = [];
   const topHoldingBps: number[] = [];
+  const portfolioRiskScores: number[] = [];
+  let totalPortfolioBps = 0;
+  let highRiskBps = 0;
+  let defensiveBps = 0;
+  let techBps = 0;
 
   for (const context of contexts) {
     for (const submission of context.submissions.filter((row) => row.model_id === modelId)) {
@@ -392,7 +508,16 @@ function buildFingerprint(modelId: string, contexts: RoundContext[]): ModelFinge
       portfolioKeys.add(portfolioKey);
       holdingCounts.push(allocations.length);
       topHoldingBps.push(allocations[0]?.allocationBps ?? 0);
+      const portfolioBps = allocations.reduce((total, allocation) => total + allocation.allocationBps, 0);
+      totalPortfolioBps += portfolioBps;
+      let portfolioRiskScore = 0;
       allocations.forEach((allocation, index) => {
+        const option = context.optionsById[allocation.optionId];
+        const score = riskBucketScore(option);
+        portfolioRiskScore += portfolioBps > 0 ? (allocation.allocationBps / portfolioBps) * score : 0;
+        if (score >= 4) highRiskBps += allocation.allocationBps;
+        if (isDefensiveOption(allocation.optionId, option)) defensiveBps += allocation.allocationBps;
+        if (isTechnologyOption(allocation.optionId, option)) techBps += allocation.allocationBps;
         const existing =
           assetRows.get(allocation.optionId) ??
           ({
@@ -414,6 +539,7 @@ function buildFingerprint(modelId: string, contexts: RoundContext[]): ModelFinge
         const group = optionGroup(allocation.optionId, context.optionsById);
         categoryBps.set(group, (categoryBps.get(group) ?? 0) + allocation.allocationBps);
       });
+      portfolioRiskScores.push(portfolioRiskScore);
     }
   }
 
@@ -436,6 +562,7 @@ function buildFingerprint(modelId: string, contexts: RoundContext[]): ModelFinge
     portfolioCount,
     averageHoldingCount: average(holdingCounts),
     averageTopHoldingPct: average(topHoldingBps.map((value) => value / 100)),
+    riskAppetite: buildRiskAppetite(average(portfolioRiskScores), totalPortfolioBps, highRiskBps, defensiveBps, techBps),
     mostCommonTopHolding: [...assets].sort((a, b) => b.topPickCount - a.topPickCount || b.averageAllocationPct - a.averageAllocationPct)[0],
     assets,
     categories: Array.from(categoryBps.entries())
@@ -499,6 +626,7 @@ export function staticModelProfiles(): ModelProfile[] {
         provider,
         providerLabel: providerLabel(provider),
         logoSrc: PROVIDER_LOGOS[provider],
+        iconSrc: PROVIDER_ICONS[provider],
         firstDecisionDate: [...modelContexts].sort((a, b) => a.round.decision_date.localeCompare(b.round.decision_date))[0]?.round.decision_date,
         tracksEntered,
         live: {

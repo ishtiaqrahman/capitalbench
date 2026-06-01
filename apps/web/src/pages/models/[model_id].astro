@@ -20,6 +20,7 @@ const repoRoot = `${siteConfig.githubUrl}/tree/main`;
 const repoBlob = `${siteConfig.githubUrl}/blob/main`;
 const resultRows = [...profile.allResults].sort((a, b) => a.entryDate.localeCompare(b.entryDate));
 const maxAlphaPct = Math.max(1, ...resultRows.map((row) => Math.abs((row.alphaVsSp500 ?? 0) * 100)));
+const riskAppetite = profile.fingerprint.riskAppetite;
 
 function pctDecimal(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
@@ -43,6 +44,21 @@ function pctValue(value: number | null | undefined): string {
 function numberValue(value: number | null | undefined, digits = 1): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
   return value.toFixed(digits);
+}
+
+function riskScoreValue(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return `${value.toFixed(2)} / 5`;
+}
+
+function riskScoreShort(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return value.toFixed(2);
+}
+
+function riskWidth(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "0%";
+  return `${Math.min(100, Math.max(0, value)).toFixed(2)}%`;
 }
 
 function plural(count: number, singular: string, pluralLabel = `${singular}s`): string {
@@ -207,7 +223,7 @@ function alphaBarStyle(row: ModelResultRow): string {
     )}
   </section>
 
-  <section class="section model-fingerprint" aria-labelledby="model-fingerprint-title">
+  <section class="section model-fingerprint" id="model-fingerprint" aria-labelledby="model-fingerprint-title">
     <div class="model-section-heading">
       <div>
         <span class="panel-kicker">Portfolio pattern</span>
@@ -217,7 +233,58 @@ function alphaBarStyle(row: ModelResultRow): string {
     </div>
 
     <div class="model-fingerprint-grid">
+      <article class={`model-risk-panel model-risk-${profile.provider}`}>
+        <div class="model-risk-copy">
+          <span class="metric-label">Cumulative risk appetite</span>
+          <h3>{riskAppetite.label}</h3>
+          <p>{riskAppetite.description}</p>
+        </div>
+        <div class="model-risk-visual" aria-label={`${profile.label} cumulative risk appetite scale`}>
+          <div>
+            <strong>{riskScoreValue(riskAppetite.score)}</strong>
+            <span>allocation-weighted score</span>
+          </div>
+          <div
+            class="risk-scale-stage risk-scale-stage-compact"
+            style={`--risk-position: ${riskWidth(riskAppetite.percentile)};`}
+          >
+            <div class="risk-axis-rail" aria-hidden="true"></div>
+            <a
+              class={`risk-axis-marker risk-axis-marker-${profile.provider}`}
+              href="#model-fingerprint"
+              aria-label={`${profile.label}: ${riskScoreValue(riskAppetite.score)}, ${riskAppetite.label}`}
+              title={`${profile.label}: ${riskScoreValue(riskAppetite.score)}, ${riskAppetite.label}`}
+              style={`--risk-position: ${riskWidth(riskAppetite.percentile)}; --risk-lane-offset: 0px; --risk-mobile-lane: 76px;`}
+            >
+              <span class="risk-axis-logo">
+                {(profile.iconSrc ?? profile.logoSrc) && <img src={profile.iconSrc ?? profile.logoSrc} alt="" loading="lazy" />}
+              </span>
+              <span class="risk-axis-marker-label">
+                <strong>{profile.label}</strong>
+                <em>{riskScoreShort(riskAppetite.score)}</em>
+              </span>
+            </a>
+            <div class="risk-axis-ticks" aria-hidden="true">
+              <span><b>1</b> Defensive</span>
+              <span><b>2</b></span>
+              <span><b>3</b> Balanced</span>
+              <span><b>4</b> Growth</span>
+              <span><b>5</b> Aggressive</span>
+            </div>
+          </div>
+        </div>
+        <div class="model-risk-breakdown" aria-label="Risk appetite inputs">
+          <span><strong>{pctValue(riskAppetite.highRiskPct)}</strong> high-risk exposure</span>
+          <span><strong>{pctValue(riskAppetite.techPct)}</strong> technology exposure</span>
+          <span><strong>{pctValue(riskAppetite.defensivePct)}</strong> defensive ballast</span>
+        </div>
+      </article>
+
       <article class="model-fingerprint-summary">
+        <div>
+          <span>Risk appetite</span>
+          <strong>{riskScoreValue(riskAppetite.score)}</strong>
+        </div>
         <div>
           <span>Saved portfolios</span>
           <strong>{profile.fingerprint.portfolioCount}</strong>

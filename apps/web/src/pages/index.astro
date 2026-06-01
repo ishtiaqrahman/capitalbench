@@ -42,6 +42,7 @@ import {
 } from "../lib/localRoundRecords";
 import { buildScoreReturnChartData, providerLogoSrc } from "../lib/scoreReturnChart";
 import { siteConfig } from "../lib/seo";
+import { staticModelProfiles } from "../lib/modelProfiles";
 import {
   latestResolvedRoundForTrack,
   latestRoundForTrack,
@@ -73,6 +74,7 @@ const latestWeeklyRound = latestRoundForTrack(roundRows, "weekly");
 const latestMonthlyRound = latestRoundForTrack(roundRows, "monthly");
 const latestResolvedWeeklyRound = latestResolvedRoundForTrack(roundRows, "weekly");
 const latestResolvedMonthlyRound = latestResolvedRoundForTrack(roundRows, "monthly");
+const modelProfiles = staticModelProfiles();
 const allOfficialSubmissions = staticAllOfficialSubmissions(roundRows);
 const pendingRoundCount = roundRows.filter((round) => round.status === "pending").length;
 
@@ -175,6 +177,14 @@ const activeExposureRounds = roundRows
     };
   })
   .filter((item) => (item.track === "weekly" || item.track === "monthly") && item.submissions.length > 0);
+const riskAppetiteProfiles = [...modelProfiles]
+  .filter((profile) => profile.fingerprint.riskAppetite.score !== null)
+  .sort(
+    (a, b) =>
+      (a.fingerprint.riskAppetite.score ?? 0) - (b.fingerprint.riskAppetite.score ?? 0) ||
+      a.label.localeCompare(b.label)
+  );
+const riskPortfolioCount = riskAppetiteProfiles.reduce((total, profile) => total + profile.fingerprint.portfolioCount, 0);
 const latestUniverseOptionCount = Math.max(0, ...trackStates.map((track) => track.options.length));
 const currentRound = latestMonthlyRound ?? latestWeeklyRound ?? roundRows[0] ?? fallbackRounds[0];
 const currentUniverseOptionCount = latestUniverseOptionCount || staticUniverseOptions(currentRound.round_id).length;
@@ -306,6 +316,32 @@ function scoreShortLine(round?: RoundRecord): string {
 
 function modelProfileHref(modelId: string): string {
   return `/models/${modelId}/#live-holdings`;
+}
+
+function modelFingerprintHref(modelId: string): string {
+  return `/models/${modelId}/#model-fingerprint`;
+}
+
+function pctValue(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  if (Math.abs(value) >= 10) return `${value.toFixed(1)}%`;
+  if (Math.abs(value) >= 1) return `${value.toFixed(1)}%`;
+  return `${value.toFixed(2)}%`;
+}
+
+function riskScoreValue(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return `${value.toFixed(2)} / 5`;
+}
+
+function riskScoreShort(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return value.toFixed(2);
+}
+
+function riskWidth(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "0%";
+  return `${Math.min(100, Math.max(0, value)).toFixed(2)}%`;
 }
 
 function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["optionsById"]): string {
@@ -510,6 +546,119 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
   </section>
 
   <ActiveExposureMap client:visible rounds={activeExposureRounds} />
+
+  {riskAppetiteProfiles.length > 0 && (
+    <section class="risk-appetite-panel" aria-labelledby="risk-appetite-title">
+      <div class="risk-appetite-head">
+        <div>
+          <span class="panel-kicker">Cumulative model style</span>
+          <h3 id="risk-appetite-title">Risk Appetite By Model</h3>
+          <p>
+            Allocation-weighted from every official saved portfolio, including open and completed tests. It does not use
+            future returns.
+          </p>
+        </div>
+        <span class="risk-appetite-count">{riskPortfolioCount} saved portfolios</span>
+      </div>
+
+      <div class="risk-scale-stage" aria-label="Cumulative model risk appetite scale">
+        <div class="risk-axis-rail" aria-hidden="true"></div>
+        <div class="risk-axis-markers">
+          {riskAppetiteProfiles.map((profile, index) => {
+            const risk = profile.fingerprint.riskAppetite;
+            return (
+              <a
+                class={`risk-axis-marker risk-axis-marker-${profile.provider}`}
+                href={modelFingerprintHref(profile.modelId)}
+                aria-label={`${profile.label}: ${riskScoreValue(risk.score)}, ${risk.label}`}
+                title={`${profile.label}: ${riskScoreValue(risk.score)}, ${risk.label}`}
+                style={`--risk-position: ${riskWidth(risk.percentile)}; --risk-lane-offset: ${index * 58}px; --risk-mobile-lane: ${(index % 5) * 52}px; --risk-mobile-lane-narrow: ${(index % 5) * 44}px;`}
+              >
+                <span class="risk-axis-logo">
+                  {(profile.iconSrc ?? profile.logoSrc) && <img src={profile.iconSrc ?? profile.logoSrc} alt="" loading="lazy" />}
+                </span>
+                <span class="risk-axis-marker-label">
+                  <strong>{profile.label}</strong>
+                  <em>{riskScoreShort(risk.score)}</em>
+                </span>
+              </a>
+            );
+          })}
+        </div>
+        <div class="risk-axis-ticks" aria-hidden="true">
+          <span><b>1</b> Defensive</span>
+          <span><b>2</b></span>
+          <span><b>3</b> Balanced</span>
+          <span><b>4</b> Growth</span>
+          <span><b>5</b> Aggressive</span>
+        </div>
+      </div>
+
+      <div class="risk-mobile-scale" aria-label="Cumulative model risk appetite scale by model">
+        <div class="risk-mobile-scale-axis" aria-hidden="true">
+          <span>1 Defensive</span>
+          <span>3 Balanced</span>
+          <span>5 Aggressive</span>
+        </div>
+        <div class="risk-mobile-scale-list">
+          {riskAppetiteProfiles.map((profile) => {
+            const risk = profile.fingerprint.riskAppetite;
+            return (
+              <a
+                class={`risk-mobile-scale-card risk-axis-marker-${profile.provider}`}
+                href={modelFingerprintHref(profile.modelId)}
+                aria-label={`${profile.label}: ${riskScoreValue(risk.score)}, ${risk.label}`}
+                style={`--risk-position: ${riskWidth(risk.percentile)};`}
+              >
+                <span class="risk-axis-logo">
+                  {(profile.iconSrc ?? profile.logoSrc) && <img src={profile.iconSrc ?? profile.logoSrc} alt="" loading="lazy" />}
+                </span>
+                <span class="risk-mobile-scale-copy">
+                  <strong>{profile.label}</strong>
+                  <small>{profile.providerLabel}</small>
+                </span>
+                <span class="risk-mobile-scale-score">
+                  <strong>{riskScoreShort(risk.score)}</strong>
+                  <small>{risk.label}</small>
+                </span>
+                <span class="risk-mobile-scale-meter" aria-hidden="true"></span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+
+      <div class="risk-scale-table" aria-label="Cumulative risk appetite detail by model">
+        <div class="risk-scale-row risk-scale-row-head" aria-hidden="true">
+          <span>Model</span>
+          <span>Score</span>
+          <span>High risk</span>
+          <span>Tech</span>
+          <span>Defensive</span>
+        </div>
+        {riskAppetiteProfiles.map((profile) => {
+          const risk = profile.fingerprint.riskAppetite;
+          return (
+            <a class="risk-scale-row" href={modelFingerprintHref(profile.modelId)}>
+              <span class="risk-scale-model">
+                <span class="risk-axis-logo">
+                  {(profile.iconSrc ?? profile.logoSrc) && <img src={profile.iconSrc ?? profile.logoSrc} alt="" loading="lazy" />}
+                </span>
+                <span>
+                  <strong>{profile.label}</strong>
+                  <small>{profile.providerLabel}</small>
+                </span>
+              </span>
+              <span><strong>{riskScoreValue(risk.score)}</strong><small>{risk.label}</small></span>
+              <span data-label="High risk">{pctValue(risk.highRiskPct)}</span>
+              <span data-label="Tech">{pctValue(risk.techPct)}</span>
+              <span data-label="Defensive">{pctValue(risk.defensivePct)}</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  )}
 
   <section class="home-section-heading" id="current-picks" aria-labelledby="latest-decisions-title">
     <span class="panel-kicker">Latest model portfolios</span>
