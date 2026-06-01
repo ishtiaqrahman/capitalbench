@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-01-data-api-v1",
+    date: "2026-06-01",
+    title: "CapitalBench Data API v1 added",
+    category: "Data",
+    status: "published",
+    summary:
+      "CapitalBench now has a protected read-only API for published model portfolios, active positioning, cumulative allocation behavior, results, assets, and proof metadata.",
+    details: [
+      "The web build now generates a static API read model from the same public round files used by the website, so API data refreshes when round artifacts are deployed.",
+      "Versioned v1 endpoints expose active and cumulative positioning, model holdings, asset holders, rounds, portfolios, latest and cumulative leaderboards, current universe data, and model style metrics.",
+      "API requests require bearer keys backed by Cloudflare D1, with per-minute and daily fixed-window rate limits.",
+      "A local API-key CLI can generate one-time keys and insert them into the production D1 database when Cloudflare credentials are available."
+    ],
+    links: [
+      { label: "API docs", href: "/api" },
+      { label: "OpenAPI spec", href: "/api/openapi.json" },
+      { label: "Rounds", href: "/rounds" }
+    ]
+  },
+  {
     id: "2026-05-29-universe-v2-1-expanded",
     date: "2026-05-29",
     title: "Future rounds move to Universe v2.1",
