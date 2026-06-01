@@ -1,0 +1,203 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const usageRows = [
+  ["Today", "0", "No customer key connected"],
+  ["This month", "0", "Usage appears after keys are issued"],
+  ["Rate limit", "120/min", "Default approved account limit"]
+];
+
+const dataViews = [
+  ["Active Exposure", "Where unresolved weekly and monthly model portfolios are invested now."],
+  ["Consensus", "Assets and categories receiving capital from multiple models."],
+  ["Model Style", "Cumulative risk appetite, concentration, and holding patterns."],
+  ["Round Results", "Resolved portfolio returns, benchmark comparison, and proof metadata."]
+];
+---
+
+<BaseLayout
+  title="CapitalBench Customer Dashboard"
+  description="CapitalBench customer dashboard for API access requests, usage monitoring, API keys, and premium model-positioning data."
+  noindex={true}
+  hideFooterSignup={true}
+>
+  <section class="dashboard-hero" aria-labelledby="dashboard-title">
+    <div class="dashboard-hero-copy">
+      <span class="panel-kicker">Customer Dashboard</span>
+      <h1 id="dashboard-title">CapitalBench Data Workspace</h1>
+      <p>
+        API access, usage monitoring, key management, and premium model-positioning views in one private workspace.
+      </p>
+      <div class="dashboard-hero-actions">
+        <a class="action-link action-primary" href="#dashboard-signup">Request Access</a>
+        <a class="action-link" href="/api">API Docs</a>
+      </div>
+    </div>
+
+    <form id="dashboard-signup" class="dashboard-signup-card" data-api-access-form>
+      <input type="hidden" name="source" value="dashboard_signup" />
+      <input type="hidden" name="pageUrl" value={Astro.url.toString()} />
+      <div>
+        <span class="panel-kicker">Workspace Access</span>
+        <h2>Get A Dashboard Login</h2>
+        <p>
+          Request customer access for API keys, usage history, and premium CapitalBench data views.
+        </p>
+      </div>
+      <label class="api-field">
+        <span>Name</span>
+        <input name="name" type="text" autocomplete="name" placeholder="Your name" required minlength="2" maxlength="120" />
+      </label>
+      <label class="api-field">
+        <span>Email</span>
+        <input name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@firm.com" required />
+      </label>
+      <label class="email-signup-trap" aria-hidden="true">
+        Company
+        <input type="text" name="company" tabindex="-1" autocomplete="off" />
+      </label>
+      <button type="submit">Request API Access</button>
+      <p class="api-access-status" data-api-access-status aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="dashboard-workspace" aria-label="Dashboard workspace">
+    <aside class="dashboard-sidebar" aria-label="Dashboard sections">
+      <div class="dashboard-account-pill">
+        <span aria-hidden="true"></span>
+        Access-request mode
+      </div>
+      <a href="#usage" aria-current="page">Usage</a>
+      <a href="#keys">API Keys</a>
+      <a href="#data">Premium Data</a>
+      <a href="#docs">Docs</a>
+    </aside>
+
+    <div class="dashboard-main">
+      <section id="usage" class="dashboard-panel dashboard-panel-usage">
+        <div class="dashboard-panel-head">
+          <div>
+            <span class="panel-kicker">Usage</span>
+            <h2>API Activity</h2>
+          </div>
+          <span class="dashboard-status-badge">Pending account</span>
+        </div>
+        <div class="dashboard-metric-grid">
+          {
+            usageRows.map(([label, value, note]) => (
+              <article>
+                <span>{label}</span>
+                <strong>{value}</strong>
+                <p>{note}</p>
+              </article>
+            ))
+          }
+        </div>
+        <div class="dashboard-usage-chart" aria-label="Example usage chart">
+          <span style="--bar-height: 22%"></span>
+          <span style="--bar-height: 36%"></span>
+          <span style="--bar-height: 30%"></span>
+          <span style="--bar-height: 58%"></span>
+          <span style="--bar-height: 52%"></span>
+          <span style="--bar-height: 74%"></span>
+          <span style="--bar-height: 68%"></span>
+        </div>
+      </section>
+
+      <section id="keys" class="dashboard-panel">
+        <div class="dashboard-panel-head">
+          <div>
+            <span class="panel-kicker">Keys</span>
+            <h2>API Key Management</h2>
+          </div>
+          <button class="dashboard-disabled-button" type="button" disabled>Generate Key</button>
+        </div>
+        <div class="dashboard-key-row">
+          <code>cb_live_••••••••••••••••••••</code>
+          <span>Keys can be generated after access is approved.</span>
+        </div>
+      </section>
+
+      <section id="data" class="dashboard-panel">
+        <div class="dashboard-panel-head">
+          <div>
+            <span class="panel-kicker">Premium Data</span>
+            <h2>Model-Positioning Views</h2>
+          </div>
+        </div>
+        <div class="dashboard-data-grid">
+          {
+            dataViews.map(([title, body]) => (
+              <article>
+                <strong>{title}</strong>
+                <p>{body}</p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section id="docs" class="dashboard-panel dashboard-doc-panel">
+        <div>
+          <span class="panel-kicker">Docs</span>
+          <h2>Production API</h2>
+          <p>
+            Approved workspaces use bearer keys against the versioned CapitalBench Data API.
+          </p>
+        </div>
+        <pre><code>GET /api/v1/positioning/active
+Authorization: Bearer $CAPITALBENCH_API_KEY</code></pre>
+      </section>
+    </div>
+  </section>
+
+  <script is:inline>
+    if (!window.__capitalbenchApiAccess) {
+      window.__capitalbenchApiAccess = true;
+      document.addEventListener("submit", async (event) => {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement) || !form.matches("[data-api-access-form]")) return;
+        event.preventDefault();
+
+        const button = form.querySelector("button[type='submit']");
+        const status = form.querySelector("[data-api-access-status]");
+        const formData = new FormData(form);
+        const payload = {
+          name: String(formData.get("name") || ""),
+          email: String(formData.get("email") || ""),
+          source: String(formData.get("source") || "dashboard_signup"),
+          pageUrl: String(formData.get("pageUrl") || window.location.href),
+          company: String(formData.get("company") || "")
+        };
+
+        if (button) button.disabled = true;
+        if (status) {
+          status.textContent = "Sending request...";
+          status.dataset.state = "pending";
+        }
+
+        try {
+          const response = await fetch("/api/api-access", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.ok) throw new Error(result.error || "api_access_failed");
+          form.reset();
+          if (status) {
+            status.textContent = "Request received.";
+            status.dataset.state = "success";
+          }
+        } catch {
+          if (status) {
+            status.textContent = "Request failed. Please try again.";
+            status.dataset.state = "error";
+          }
+        } finally {
+          if (button) button.disabled = false;
+        }
+      });
+    }
+  </script>
+</BaseLayout>

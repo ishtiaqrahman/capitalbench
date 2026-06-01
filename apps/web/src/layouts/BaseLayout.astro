@@ -25,6 +25,7 @@ interface Props {
   image?: string;
   imageAlt?: string;
   noindex?: boolean;
+  hideFooterSignup?: boolean;
   structuredData?: JsonLdRecord | JsonLdRecord[];
 }
 
@@ -36,6 +37,7 @@ const {
   image = siteConfig.ogImage,
   imageAlt = siteConfig.ogImageAlt,
   noindex = routeMeta?.noindex ?? false,
+  hideFooterSignup = false,
   structuredData = []
 } = Astro.props;
 const resolvedTitle = pageTitle(title);
@@ -204,7 +206,7 @@ const emailWidgetContext =
       </main>
       {emailWidgetContext && <EmailAlertWidget context={emailWidgetContext} />}
       <footer class="site-footer">
-        <EmailSignup source="footer" variant="footer" />
+        {!hideFooterSignup && <EmailSignup source="footer" variant="footer" />}
         <div class="footer-inner">
           <span>CapitalBench is a benchmark and research project, not financial advice.</span>
           <span class="footer-links">
