@@ -1,0 +1,106 @@
+name: Interim Performance Refresh
+
+on:
+  schedule:
+    - cron: "15 3 * * 2-6"
+  workflow_dispatch:
+    inputs:
+      snapshot_date:
+        description: "Optional close date to fetch or reuse, YYYY-MM-DD. Defaults to yesterday UTC."
+        required: false
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+concurrency:
+  group: capitalbench-interim-performance
+  cancel-in-progress: false
+
+jobs:
+  refresh-interim-performance:
+    runs-on: ubuntu-latest
+    env:
+      TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      CLOUDFLARE_PAGES_DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_PAGES_PROJECT: capitalbench-web
+      PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+      PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+      PUBLIC_GA_MEASUREMENT_ID: ${{ secrets.PUBLIC_GA_MEASUREMENT_ID }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install CapitalBench
+        run: python -m pip install -e ".[web-sync]"
+
+      - name: Determine snapshot date
+        id: snapshot
+        run: |
+          SNAPSHOT_DATE="${{ github.event.inputs.snapshot_date || '' }}"
+          if [ -z "$SNAPSHOT_DATE" ]; then
+            SNAPSHOT_DATE="$(date -u -d 'yesterday' +%F)"
+          fi
+          echo "snapshot_date=$SNAPSHOT_DATE" >> "$GITHUB_OUTPUT"
+          echo "Using snapshot date: $SNAPSHOT_DATE"
+
+      - name: Refresh active monthly interim performance
+        run: |
+          capitalbench update-interim-performance \
+            --rounds-dir rounds \
+            --snapshot-date "${{ steps.snapshot.outputs.snapshot_date }}" \
+            --track monthly \
+            --soft-fail
+
+      - name: Audit public repository contents
+        run: python scripts/public_repo_audit.py
+
+      - name: Commit generated interim artifacts
+        id: commit-artifacts
+        run: |
+          git config user.name "capitalbench-bot"
+          git config user.email "actions@capitalbench.org"
+          git add market_data/daily_price_snapshots rounds || true
+          if git diff --cached --quiet; then
+            echo "No interim artifacts changed."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "Update interim CapitalBench performance"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Build web for interim artifacts
+        if: steps.commit-artifacts.outputs.changed == 'true' && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
+        working-directory: apps/web
+        run: |
+          npm ci
+          npm run build
+          npm run seo:check
+
+      - name: Deploy interim artifacts to Cloudflare Pages
+        if: steps.commit-artifacts.outputs.changed == 'true' && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
+        working-directory: apps/web
+        run: npx wrangler pages deploy dist --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch main --commit-dirty=true
+
+      - name: Trigger Cloudflare Pages rebuild
+        if: steps.commit-artifacts.outputs.changed == 'true' && env.CLOUDFLARE_PAGES_DEPLOY_HOOK != ''
+        run: curl -fsS -X POST "$CLOUDFLARE_PAGES_DEPLOY_HOOK"
