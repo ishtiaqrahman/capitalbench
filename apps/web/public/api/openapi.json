@@ -281,6 +281,26 @@
         }
       }
     },
+    "/v1/rounds/{round_id}/concentration": {
+      "get": {
+        "tags": ["Rounds"],
+        "summary": "Round concentration",
+        "description": "Run-level consensus allocation, category mix, and concentration summary for one round.",
+        "parameters": [{ "$ref": "#/components/parameters/RoundIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Round concentration response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RoundConcentrationResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
     "/v1/rounds/{round_id}/results": {
       "get": {
         "tags": ["Rounds"],
@@ -695,6 +715,87 @@
           "data": { "type": "array", "items": { "$ref": "#/components/schemas/Allocation" } }
         },
         "required": ["data"]
+      },
+      "RoundConcentrationResponse": {
+        "type": "object",
+        "properties": {
+          "as_of": { "type": "string", "format": "date-time" },
+          "round_id": { "type": "string" },
+          "run_id": { "type": ["string", "null"] },
+          "track": { "type": "string", "enum": ["weekly", "monthly"] },
+          "status": { "type": "string", "enum": ["active", "resolved"] },
+          "model_count": { "type": "integer" },
+          "portfolio_count": { "type": "integer" },
+          "summary": { "$ref": "#/components/schemas/ConcentrationSummary" },
+          "assets": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ConcentrationAsset" }
+          },
+          "categories": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ConcentrationCategory" }
+          }
+        },
+        "required": [
+          "as_of",
+          "round_id",
+          "run_id",
+          "track",
+          "status",
+          "model_count",
+          "portfolio_count",
+          "summary",
+          "assets",
+          "categories"
+        ]
+      },
+      "ConcentrationSummary": {
+        "type": "object",
+        "properties": {
+          "top_asset_share_pct": { "type": "number" },
+          "top_three_share_pct": { "type": "number" },
+          "effective_asset_count": {
+            "type": "number",
+            "description": "One divided by the sum of squared asset shares."
+          }
+        },
+        "required": ["top_asset_share_pct", "top_three_share_pct", "effective_asset_count"]
+      },
+      "ConcentrationAsset": {
+        "type": "object",
+        "properties": {
+          "option_id": { "type": "string" },
+          "label": { "type": "string" },
+          "ticker": { "type": ["string", "null"] },
+          "category": { "type": "string" },
+          "allocation_pct": { "type": "number" },
+          "model_count": { "type": "integer" },
+          "models": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ConcentrationModelWeight" }
+          }
+        },
+        "required": ["option_id", "label", "ticker", "category", "allocation_pct", "model_count", "models"]
+      },
+      "ConcentrationCategory": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "label": { "type": "string" },
+          "allocation_pct": { "type": "number" },
+          "asset_count": { "type": "integer" }
+        },
+        "required": ["key", "label", "allocation_pct", "asset_count"]
+      },
+      "ConcentrationModelWeight": {
+        "type": "object",
+        "properties": {
+          "model_id": { "type": "string" },
+          "label": { "type": "string" },
+          "provider": { "type": ["string", "null"] },
+          "allocation_pct": { "type": "number" }
+        },
+        "required": ["model_id", "label", "provider", "allocation_pct"]
       },
       "RoundResultResponse": {
         "type": "object",

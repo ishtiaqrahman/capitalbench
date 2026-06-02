@@ -135,6 +135,24 @@ test("round portfolios and current universe endpoints return real data", async (
   assert.ok(universe.body.data.length >= 60);
 });
 
+test("round concentration endpoint returns consensus and concentration data", async () => {
+  const latestWeeklyRoundId = latestRoundId("weekly");
+  const result = await apiGet(`/api/v1/rounds/${latestWeeklyRoundId}/concentration`);
+
+  assert.equal(result.status, 200);
+  assert.equal(result.body.round_id, latestWeeklyRoundId);
+  assert.equal(result.body.track, "weekly");
+  assert.ok(result.body.model_count >= 5);
+  assert.equal(result.body.portfolio_count, result.body.model_count);
+  assert.ok(result.body.summary.top_asset_share_pct > 0);
+  assert.ok(result.body.summary.top_three_share_pct >= result.body.summary.top_asset_share_pct);
+  assert.ok(result.body.summary.effective_asset_count > 0);
+  assert.ok(result.body.assets.length > 0);
+  assert.ok(result.body.assets[0].allocation_pct > 0);
+  assert.ok(result.body.assets[0].models.length > 0);
+  assert.ok(result.body.categories.length > 0);
+});
+
 test("model holdings and asset holder endpoints filter correctly", async () => {
   const holdings = await apiGet("/api/v1/models/openai-gpt-5-5/holdings?scope=active&track=weekly");
   const holders = await apiGet("/api/v1/assets/SEMICONDUCTORS/model-holders?scope=active&track=all");

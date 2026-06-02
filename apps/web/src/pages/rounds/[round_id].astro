@@ -35,6 +35,7 @@ import {
 } from "../../lib/localRoundRecords";
 import { buildScoreReturnChartData } from "../../lib/scoreReturnChart";
 import { datasetSchema } from "../../lib/seo";
+import { buildRunConcentration, type ConcentrationAsset } from "../../lib/runConcentration";
 import { roundTrack, trackLabel } from "../../lib/tracks";
 
 const repoRoot = repoRootPath();
@@ -355,6 +356,19 @@ function submissionFromOutput(output: ModelOutput): SubmissionRecord {
   };
 }
 
+function holderSummary(asset: ConcentrationAsset, maxItems = 4): string {
+  const visible = asset.holders
+    .slice(0, maxItems)
+    .map((holder) => `${modelLabel(holder.modelId)} ${formatAllocationPct(holder.allocationPct)}`);
+  const hiddenCount = asset.holders.length - visible.length;
+  return `${visible.join(" / ")}${hiddenCount > 0 ? ` / +${hiddenCount} more` : ""}`;
+}
+
+function effectiveSpreadLabel(value: number): string {
+  if (!Number.isFinite(value) || value <= 0) return "0 assets";
+  return `${value.toFixed(1)} assets`;
+}
+
 const promptInstructions = readRoundText("prompt.md");
 const modelInputText = readRoundText("model_input.md");
 const briefingText = readRoundText("briefing.md");
@@ -403,6 +417,8 @@ const reconstructedSharedPromptPacket = [
 const sharedPromptPacket = modelInputText || reconstructedSharedPromptPacket;
 const modelOutputs = loadModelOutputs();
 const roundSubmissions = modelOutputs.map(submissionFromOutput);
+const runConcentration = buildRunConcentration(roundSubmissions, roundOptionsById);
+const topConcentrationAssets = runConcentration.assets.slice(0, 8);
 const inputArtifacts = [
   { label: "Base Instructions", path: "prompt.md", text: promptInstructions },
   { label: "Round Manifest", path: "manifest.yaml", text: manifestYamlText },
@@ -623,6 +639,7 @@ const attributionColumns = [
 
   <nav class="round-tabs" aria-label="Test sections">
     <a href="#overview">Overview</a>
+    <a href="#consensus">Consensus</a>
     {round.status === "resolved" && <a href="#results">Results</a>}
     <a href="#performance">Performance</a>
     {round.status === "resolved" && attributionRows.length > 0 && <a href="#attribution">Attribution</a>}
@@ -737,6 +754,102 @@ const attributionColumns = [
         <p>Benchmark output is research data and should not be interpreted as a trading recommendation.</p>
       </div>
     </aside>
+  </section>
+
+  <section class="section round-consensus-section" id="consensus">
+    <div class="panel consensus-panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Model consensus</span>
+          <h2>Where Models Concentrated In This Test</h2>
+          <p>
+            Each model has equal weight. This shows the combined portfolio created by averaging all valid model
+            portfolios in this {benchmarkTrackLabel.toLowerCase()} test.
+          </p>
+        </div>
+        <span class={`status-badge status-${round.status}`}>
+          {round.status === "resolved" ? "Pre-score consensus" : "Score pending"}
+        </span>
+      </div>
+
+      {runConcentration.assets.length > 0 ? (
+        <div class="consensus-body">
+          <div class="consensus-summary-grid" aria-label="Run concentration summary">
+            <article>
+              <span>Top exposure</span>
+              <strong>{formatAllocationPct(runConcentration.topAssetSharePct)}</strong>
+              <p>{runConcentration.topAsset ? optionDisplayName(runConcentration.topAsset.optionId, roundOptionsById) : "None"}</p>
+            </article>
+            <article>
+              <span>Top 3 exposures</span>
+              <strong>{formatAllocationPct(runConcentration.topThreeSharePct)}</strong>
+              <p>Combined average allocation to the three largest assets.</p>
+            </article>
+            <article>
+              <span>Effective spread</span>
+              <strong>{effectiveSpreadLabel(runConcentration.effectiveAssetCount)}</strong>
+              <p>Higher means model capital was spread across more assets.</p>
+            </article>
+          </div>
+
+          <div class="consensus-layout">
+            <div class="consensus-bars" aria-label="Average model allocation by asset">
+              <div class="consensus-subhead">
+                <span>Average allocation across {runConcentration.modelCount} model portfolios</span>
+                <strong>Assets</strong>
+              </div>
+              <div class="consensus-bar-list">
+                {topConcentrationAssets.map((asset) => (
+                  <div class="consensus-bar-row">
+                    <div class="consensus-asset-label">
+                      <strong>{optionDisplayName(asset.optionId, roundOptionsById)}</strong>
+                      <span>{asset.modelCount} model{asset.modelCount === 1 ? "" : "s"}: {holderSummary(asset)}</span>
+                    </div>
+                    <div class="consensus-bar-track" aria-hidden="true">
+                      <span
+                        class={allocationThemeClass(asset.optionId)}
+                        style={`width: ${runConcentration.topAsset ? Math.max(3, (asset.averagePct / runConcentration.topAsset.averagePct) * 100) : 0}%`}
+                      />
+                    </div>
+                    <strong>{formatAllocationPct(asset.averagePct)}</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <aside class="consensus-category-panel" aria-label="Consensus category mix">
+              <div class="consensus-subhead">
+                <span>Broader allocation mix</span>
+                <strong>Categories</strong>
+              </div>
+              <div class="consensus-category-stack" aria-hidden="true">
+                {runConcentration.categories.map((category) => (
+                  <span
+                    class={`consensus-category-${category.key}`}
+                    style={`width: ${category.averagePct}%`}
+                    title={`${category.label} ${formatAllocationPct(category.averagePct)}`}
+                  />
+                ))}
+              </div>
+              <div class="consensus-category-list">
+                {runConcentration.categories.map((category) => (
+                  <div>
+                    <span class={`consensus-category-dot consensus-category-${category.key}`} aria-hidden="true"></span>
+                    <strong>{category.label}</strong>
+                    <em>{formatAllocationPct(category.averagePct)}</em>
+                  </div>
+                ))}
+              </div>
+            </aside>
+          </div>
+        </div>
+      ) : (
+        <div class="pending-state compact">
+          <strong>No model portfolios are available yet.</strong>
+          <span>Consensus concentration appears after valid model outputs are saved.</span>
+        </div>
+      )}
+    </div>
   </section>
 
   <section class="section" id="performance">

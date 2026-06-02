@@ -41,6 +41,7 @@ import {
   staticUniverseOptions
 } from "../lib/localRoundRecords";
 import { buildScoreReturnChartData, providerLogoSrc } from "../lib/scoreReturnChart";
+import { buildRunConcentration, type ConcentrationAsset, type RunConcentration } from "../lib/runConcentration";
 import { siteConfig } from "../lib/seo";
 import { staticModelProfiles } from "../lib/modelProfiles";
 import {
@@ -59,8 +60,9 @@ type TrackHomeState = {
   submissions: SubmissionRecord[];
   options: UniverseOption[];
   optionsById: Record<string, UniverseOption | undefined>;
-  exposures: Array<{ optionId: string; averagePct: number }>;
-  topExposure?: { optionId: string; averagePct: number };
+  concentration: RunConcentration;
+  exposures: ConcentrationAsset[];
+  topExposure?: ConcentrationAsset;
   latestHref: string;
   cumulativeHref: string;
   roundHref?: string;
@@ -78,21 +80,6 @@ const modelProfiles = staticModelProfiles();
 const allOfficialSubmissions = staticAllOfficialSubmissions(roundRows);
 const pendingRoundCount = roundRows.filter((round) => round.status === "pending").length;
 
-function aggregateExposure(submissions: SubmissionRecord[]) {
-  const totals = new Map<string, number>();
-  for (const submission of submissions) {
-    for (const allocation of decisionAllocations(submission)) {
-      totals.set(allocation.option_id, (totals.get(allocation.option_id) ?? 0) + allocation.allocation_bps);
-    }
-  }
-  return Array.from(totals.entries())
-    .map(([optionId, totalBps]) => ({
-      optionId,
-      averagePct: submissions.length > 0 ? totalBps / submissions.length / 100 : 0
-    }))
-    .sort((a, b) => b.averagePct - a.averagePct);
-}
-
 function buildTrackState(
   key: BenchmarkTrack,
   label: string,
@@ -102,7 +89,9 @@ function buildTrackState(
 ): TrackHomeState {
   const submissions = round ? staticOfficialSubmissions(round.round_id, round.official_run_id) : [];
   const options = round ? staticUniverseOptions(round.round_id) : [];
-  const exposures = aggregateExposure(submissions).slice(0, 6);
+  const optionsById = Object.fromEntries(options.map((option) => [option.option_id, option]));
+  const concentration = buildRunConcentration(submissions, optionsById);
+  const exposures = concentration.assets.slice(0, 6);
   return {
     key,
     label,
@@ -110,9 +99,10 @@ function buildTrackState(
     round,
     submissions,
     options,
-    optionsById: Object.fromEntries(options.map((option) => [option.option_id, option])),
+    optionsById,
+    concentration,
     exposures,
-    topExposure: exposures[0],
+    topExposure: concentration.topAsset,
     latestHref: `/leaderboards/latest-${key}`,
     cumulativeHref: `/leaderboards/cumulative-${key}`,
     roundHref: round ? `/rounds/${round.round_id}/` : undefined,
@@ -711,22 +701,38 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
 
             <div class="track-exposure">
               <div>
-                <span class="metric-label">Most common exposure</span>
+                <span class="metric-label">Consensus allocation</span>
                 <strong>{track.topExposure ? optionDisplayName(track.topExposure.optionId, track.optionsById) : "None"}</strong>
+                <small>Average across {track.concentration.modelCount} model portfolios.</small>
               </div>
-              <div class="exposure-bars compact">
-                {track.exposures.slice(0, 4).map((item) => (
-                  <div class="exposure-bar-row">
-                    <span>{optionDisplayName(item.optionId, track.optionsById)}</span>
-                    <div class="exposure-bar-track" aria-hidden="true">
-                      <span
-                        class={allocationThemeClass(item.optionId)}
-                        style={`width: ${track.topExposure ? Math.max(4, (item.averagePct / track.topExposure.averagePct) * 100) : 0}%`}
-                      />
+              <div>
+                <div class="allocation-stack track-consensus-stack" aria-label={`${track.label} consensus allocation stack`}>
+                  {track.concentration.assets.map((item) => (
+                    <span
+                      class={allocationThemeClass(item.optionId)}
+                      style={`width: ${item.averagePct}%`}
+                      title={`${optionDisplayName(item.optionId, track.optionsById)} ${formatAllocationPct(item.averagePct)}`}
+                    />
+                  ))}
+                </div>
+                <div class="track-consensus-stats" aria-label={`${track.label} concentration summary`}>
+                  <span>Top 3 <strong>{formatAllocationPct(track.concentration.topThreeSharePct)}</strong></span>
+                  <span>Spread <strong>{track.concentration.effectiveAssetCount.toFixed(1)} assets</strong></span>
+                </div>
+                <div class="exposure-bars compact">
+                  {track.exposures.slice(0, 4).map((item) => (
+                    <div class="exposure-bar-row">
+                      <span>{optionDisplayName(item.optionId, track.optionsById)}</span>
+                      <div class="exposure-bar-track" aria-hidden="true">
+                        <span
+                          class={allocationThemeClass(item.optionId)}
+                          style={`width: ${track.topExposure ? Math.max(4, (item.averagePct / track.topExposure.averagePct) * 100) : 0}%`}
+                        />
+                      </div>
+                      <strong>{formatAllocationPct(item.averagePct)}</strong>
                     </div>
-                    <strong>{formatAllocationPct(item.averagePct)}</strong>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </>

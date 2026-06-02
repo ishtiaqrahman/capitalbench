@@ -57,6 +57,29 @@ const leaderboardExample = `GET /v1/leaderboards/latest?track=weekly
   ]
 }`;
 
+const roundConcentrationExample = `GET /v1/rounds/CB-2026-06-02-1W/concentration
+
+{
+  "round_id": "CB-2026-06-02-1W",
+  "track": "weekly",
+  "model_count": 5,
+  "portfolio_count": 5,
+  "summary": {
+    "top_asset_share_pct": 20.0,
+    "top_three_share_pct": 55.0,
+    "effective_asset_count": 7.25
+  },
+  "assets": [
+    {
+      "option_id": "SEMICONDUCTORS",
+      "label": "Semiconductors",
+      "ticker": "SMH",
+      "allocation_pct": 20.0,
+      "model_count": 4
+    }
+  ]
+}`;
+
 const endpointGroups = [
   {
     title: "Positioning",
@@ -78,6 +101,7 @@ const endpointGroups = [
       ["GET", "/v1/rounds", "Round index with track, status, dates, universe version, and proof links."],
       ["GET", "/v1/rounds/{round_id}", "One round's metadata and input hashes."],
       ["GET", "/v1/rounds/{round_id}/portfolios", "Saved model allocations for a round."],
+      ["GET", "/v1/rounds/{round_id}/concentration", "Run-level allocation consensus and concentration summary."],
       ["GET", "/v1/rounds/{round_id}/results", "Resolved returns and benchmark comparison."],
       ["GET", "/v1/leaderboards/latest", "Most recent scored weekly or monthly leaderboard."],
       ["GET", "/v1/leaderboards/cumulative", "Aggregate model record by track."]
@@ -110,11 +134,14 @@ const concepts = [
 const fields = [
   ["allocation_pct", "Portfolio or aggregate weight, in percentage points."],
   ["alpha_pp", "Portfolio return less S&P 500 return, in percentage points."],
+  ["effective_asset_count", "Concentration metric equal to one divided by summed squared asset shares."],
   ["model_id", "Stable CapitalBench model identifier."],
   ["next_cursor", "Pagination cursor returned when more records are available."],
   ["option_id", "Stable asset identifier from the saved universe."],
+  ["portfolio_count", "Number of model portfolios included in an aggregate calculation."],
   ["round_id", "Stable test identifier for one weekly or monthly round."],
   ["scope", "active or cumulative."],
+  ["top_asset_share_pct", "Average share of the round allocated to the largest asset."],
   ["track", "weekly, monthly, or all."],
   ["proof", "Hashes and URLs for public verification artifacts."]
 ];
@@ -304,6 +331,10 @@ const curlExample = `curl "https://www.capitalbench.org/api/v1/positioning/activ
           <article class="api-example">
             <h3>Latest Scored Test</h3>
             <pre><code>{leaderboardExample}</code></pre>
+          </article>
+          <article class="api-example">
+            <h3>Run Concentration</h3>
+            <pre><code>{roundConcentrationExample}</code></pre>
           </article>
         </div>
       </section>

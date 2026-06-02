@@ -273,6 +273,26 @@ function pageRows(rows, url) {
 const assetById = new Map(apiReadModel.assets.map((asset) => [asset.option_id, asset]));
 const modelById = new Map(apiReadModel.models.map((model) => [model.model_id, model]));
 const styleByModelId = new Map(apiReadModel.model_styles.map((style) => [style.model_id, style]));
+const CATEGORY_LABEL_OVERRIDES = new Map([
+  ["ai_and_technology", "AI and Technology"],
+  ["cash", "Cash"],
+  ["cash_and_short_duration", "Cash and Short Duration"],
+  ["country_equity", "Country Equity"],
+  ["us_broad_market", "US Broad Market"],
+  ["us_factor_equity", "US Factor Equity"],
+  ["us_growth_and_technology", "US Growth and Technology"],
+  ["us_sector", "US Sector"]
+]);
+
+function readableCategory(category) {
+  const normalized = category || "unknown";
+  if (CATEGORY_LABEL_OVERRIDES.has(normalized)) return CATEGORY_LABEL_OVERRIDES.get(normalized);
+  return normalized
+    .split("_")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
 
 function enrichedModel(model) {
   if (!model) return null;
@@ -550,6 +570,92 @@ function roundPortfolios(roundId) {
   });
 }
 
+function roundConcentration(roundId) {
+  const round = apiReadModel.rounds.find((item) => item.round_id === roundId);
+  if (!round) return errorResult(404, "not_found", "Round not found.");
+
+  const rows = apiReadModel.allocations.filter(
+    (row) => row.round_id === roundId && (!round.official_run_id || row.run_id === round.official_run_id)
+  );
+  const portfolioKeys = new Set(rows.map(portfolioKey));
+  const denominator = Math.max(1, portfolioKeys.size);
+  const byAsset = new Map();
+
+  for (const row of rows) {
+    const asset = assetById.get(row.option_id);
+    const category = asset?.category ?? row.category ?? "unknown";
+    const existing =
+      byAsset.get(row.option_id) ??
+      {
+        option_id: row.option_id,
+        label: asset?.label ?? row.label ?? row.option_id,
+        ticker: asset?.ticker ?? row.ticker ?? null,
+        category,
+        allocation_pct: 0,
+        models: new Map()
+      };
+    existing.allocation_pct += row.allocation_pct / denominator;
+
+    const model = modelById.get(row.model_id);
+    const modelWeight =
+      existing.models.get(row.model_id) ??
+      {
+        model_id: row.model_id,
+        label: model?.label ?? row.model_id,
+        provider: model?.provider ?? row.provider ?? null,
+        allocation_pct: 0
+      };
+    modelWeight.allocation_pct += row.allocation_pct / denominator;
+    existing.models.set(row.model_id, modelWeight);
+    byAsset.set(row.option_id, existing);
+  }
+
+  const assets = Array.from(byAsset.values())
+    .map((row) => ({
+      option_id: row.option_id,
+      label: row.label,
+      ticker: row.ticker,
+      category: row.category,
+      allocation_pct: row.allocation_pct,
+      model_count: row.models.size,
+      models: Array.from(row.models.values()).sort((a, b) => b.allocation_pct - a.allocation_pct || a.label.localeCompare(b.label))
+    }))
+    .sort((a, b) => b.allocation_pct - a.allocation_pct || a.label.localeCompare(b.label));
+
+  const byCategory = new Map();
+  for (const asset of assets) {
+    const existing =
+      byCategory.get(asset.category) ??
+      {
+        key: asset.category,
+        label: readableCategory(asset.category),
+        allocation_pct: 0,
+        asset_count: 0
+      };
+    existing.allocation_pct += asset.allocation_pct;
+    existing.asset_count += 1;
+    byCategory.set(asset.category, existing);
+  }
+
+  const concentrationScore = assets.reduce((total, asset) => total + (asset.allocation_pct / 100) ** 2, 0);
+  return jsonApiResult(200, {
+    as_of: apiReadModel.generated_at,
+    round_id: roundId,
+    run_id: round.official_run_id ?? null,
+    track: round.track,
+    status: round.status,
+    model_count: portfolioKeys.size,
+    portfolio_count: portfolioKeys.size,
+    summary: {
+      top_asset_share_pct: assets[0]?.allocation_pct ?? 0,
+      top_three_share_pct: assets.slice(0, 3).reduce((total, asset) => total + asset.allocation_pct, 0),
+      effective_asset_count: concentrationScore > 0 ? 1 / concentrationScore : 0
+    },
+    assets,
+    categories: Array.from(byCategory.values()).sort((a, b) => b.allocation_pct - a.allocation_pct || a.label.localeCompare(b.label))
+  });
+}
+
 function roundResults(roundId) {
   const round = apiReadModel.rounds.find((item) => item.round_id === roundId);
   if (!round) return errorResult(404, "not_found", "Round not found.");
@@ -617,6 +723,7 @@ function indexResponse() {
       "/v1/positioning/active",
       "/v1/positioning/cumulative",
       "/v1/rounds",
+      "/v1/rounds/{round_id}/concentration",
       "/v1/models",
       "/v1/universe/current",
       "/v1/leaderboards/latest"
@@ -643,6 +750,7 @@ function routeGet(request) {
     if (parts.length === 1) return listRounds(url);
     if (parts.length === 2) return roundDetails(parts[1]);
     if (parts.length === 3 && parts[2] === "portfolios") return roundPortfolios(parts[1]);
+    if (parts.length === 3 && parts[2] === "concentration") return roundConcentration(parts[1]);
     if (parts.length === 3 && parts[2] === "results") return roundResults(parts[1]);
   }
 

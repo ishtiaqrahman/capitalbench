@@ -26,6 +26,25 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-02-run-concentration-analytics",
+    date: "2026-06-02",
+    title: "Run concentration analytics added",
+    category: "Data",
+    status: "published",
+    summary:
+      "CapitalBench now reports how concentrated each round is across the model portfolios submitted for that round.",
+    details: [
+      "Round pages and the latest scored-test view now show run-level consensus allocation, including the largest shared asset, top-three asset share, and effective asset count.",
+      "Completed rounds remain available for concentration review, while active exposure still excludes completed rounds from live positioning.",
+      "The Data API now exposes GET /v1/rounds/{round_id}/concentration for round-level concentration summaries, asset weights, category mix, and model-level holders."
+    ],
+    links: [
+      { label: "API docs", href: "/api" },
+      { label: "Rounds", href: "/rounds" },
+      { label: "Latest results", href: "/leaderboards/latest" }
+    ]
+  },
+  {
     id: "2026-06-01-data-api-v1",
     date: "2026-06-01",
     title: "CapitalBench Data API v1 added",
