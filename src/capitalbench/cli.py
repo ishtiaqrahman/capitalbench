@@ -16,6 +16,7 @@ from .automation import (
 )
 from .cumulative import cumulative_status, publish_cumulative, publish_latest
 from .hashing import write_round_hashes
+from .interim import DEFAULT_SNAPSHOTS_DIR, update_interim_performance
 from .performance import fetch_universe_performance
 from .prices import fetch_selected_prices
 from .provider_smoke import check_provider_keys, smoke_provider
@@ -179,6 +180,41 @@ def _cmd_update_weekly_performance(args: argparse.Namespace) -> int:
     print(f"wrote weekly performance: {output.weekly_performance_path}")
     if not args.no_sync:
         optional_sync_round(args.round, run_id=args.run_id, event_type="update_weekly_performance")
+    return 0
+
+
+def _cmd_update_interim_performance(args: argparse.Namespace) -> int:
+    output = update_interim_performance(
+        rounds_dir=args.rounds_dir,
+        snapshot_date=args.snapshot_date,
+        snapshots_dir=args.snapshots_dir,
+        universe_round=args.universe_round,
+        track=args.track,
+        skip_fetch=args.skip_fetch,
+        overwrite_snapshot=args.overwrite_snapshot,
+        sync=not args.no_sync,
+        soft_fail=args.soft_fail,
+    )
+    print(f"snapshot date: {output.snapshot_date}")
+    print(f"snapshot file: {output.snapshot_path}")
+    print(f"snapshot status: {output.snapshot_status}")
+    print(f"discovered reusable snapshots: {output.discovered_snapshot_count}")
+    print(f"updated rounds: {len(output.updated_rounds)}")
+    for item in output.updated_rounds:
+        sync_note = f", sync={item.sync_status}" if item.sync_status else ""
+        print(
+            f"updated {item.round_id}/{item.run_id}: "
+            f"{item.latest_snapshot_date}, snapshots={item.snapshot_count}, rows={item.performance_row_count}{sync_note}"
+        )
+        if item.sync_status == "failed" and item.sync_message:
+            print(f"warning: {item.round_id} Supabase sync failed: {item.sync_message}", file=sys.stderr)
+    skipped = [item for item in output.skipped_rounds if item.status != "skipped" or item.message != "not a monthly round"]
+    print(f"skipped rounds: {len(skipped)}")
+    for item in skipped:
+        label = f"{item.round_id}/{item.run_id}" if item.run_id else item.round_id
+        print(f"skipped {label}: {item.status}: {item.message}")
+    for warning in output.warnings:
+        print(f"warning: {warning}", file=sys.stderr)
     return 0
 
 
@@ -542,6 +578,42 @@ def build_parser() -> argparse.ArgumentParser:
     )
     weekly_parser.add_argument("--no-sync", action="store_true", help="write local artifacts without Supabase sync")
     weekly_parser.set_defaults(func=_cmd_update_weekly_performance)
+
+    interim_parser = subparsers.add_parser(
+        "update-interim-performance",
+        help="fetch one reusable daily snapshot and update active interim performance charts",
+    )
+    interim_parser.add_argument("--rounds-dir", type=Path, required=True)
+    interim_parser.add_argument("--snapshot-date", required=True, help="daily close date to fetch or reuse, YYYY-MM-DD")
+    interim_parser.add_argument(
+        "--snapshots-dir",
+        type=Path,
+        default=DEFAULT_SNAPSHOTS_DIR,
+        help=f"directory for reusable full-universe daily snapshots; defaults to {DEFAULT_SNAPSHOTS_DIR}",
+    )
+    interim_parser.add_argument(
+        "--universe-round",
+        type=Path,
+        help="round whose options.yaml should define the daily snapshot universe; defaults to newest round",
+    )
+    interim_parser.add_argument("--track", choices=["monthly", "all"], default="monthly")
+    interim_parser.add_argument(
+        "--skip-fetch",
+        action="store_true",
+        help="reuse existing central/round price snapshots without calling Tiingo",
+    )
+    interim_parser.add_argument(
+        "--overwrite-snapshot",
+        action="store_true",
+        help="replace an existing central daily snapshot for the requested date",
+    )
+    interim_parser.add_argument("--no-sync", action="store_true", help="write local artifacts without Supabase sync")
+    interim_parser.add_argument(
+        "--soft-fail",
+        action="store_true",
+        help="log snapshot-fetch failures and keep the workflow green when market data is unavailable",
+    )
+    interim_parser.set_defaults(func=_cmd_update_interim_performance)
 
     report_parser = subparsers.add_parser("publish-report", help="write a Markdown report")
     report_parser.add_argument("--round", type=Path, required=True)

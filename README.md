@@ -717,6 +717,27 @@ project ref, account details, and service credentials in local CLI state,
 GitHub Actions secrets, Supabase secrets, or Cloudflare Pages env vars, not in
 committed documentation.
 
+### Automated Interim Performance
+
+Active monthly round charts can be refreshed before final scoring from reusable
+full-universe price snapshots. The command fetches or reuses one daily close
+snapshot and applies it to every active monthly round whose entry-to-exit
+window includes that date:
+
+```bash
+capitalbench update-interim-performance \
+  --rounds-dir rounds \
+  --snapshot-date 2026-06-01 \
+  --track monthly
+```
+
+Existing full-universe entry and exit price files are also reused as snapshots,
+so a newer round's entry package can update older active monthly charts without
+another Tiingo pull. The scheduled `Interim Performance Refresh` GitHub Actions
+workflow runs after U.S. market close, commits changed interim artifacts, syncs
+round rows to Supabase when credentials are available, and deploys the website
+only when refreshed data changes. Pass `--skip-fetch` for local reuse-only runs.
+
 ### Automated Resolution
 
 Provider model runs are still started manually. After a run is valid, accept it
@@ -786,6 +807,7 @@ rounds:
 | `validate-submissions` | Validate raw submissions |
 | `fetch-prices` | Fetch selected or full-universe scoring prices |
 | `score-round` | Score parsed submissions |
+| `update-interim-performance` | Refresh active interim charts from reusable price snapshots |
 | `publish-report` | Generate a run report |
 | `publish-round-summary` | Generate a round summary with official and stability sections |
 | `publish-latest` | Publish latest resolved official leaderboard |

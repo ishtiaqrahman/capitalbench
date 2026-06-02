@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-02-interim-performance-automation",
+    date: "2026-06-02",
+    title: "Monthly interim performance refresh automated",
+    category: "Operations",
+    status: "published",
+    summary:
+      "Active monthly round charts now refresh from reusable daily full-universe price snapshots instead of manual per-round updates.",
+    details: [
+      "A new update-interim-performance command creates or reuses one daily price snapshot and applies it to every active monthly round whose timeline includes that close date.",
+      "The scheduled GitHub Actions refresh runs after U.S. market close, commits changed interim artifacts, and deploys the website only when refreshed data changes.",
+      "Existing full-universe entry and exit price packages can also serve as reusable snapshots, reducing Tiingo calls while keeping each round's frozen entry prices unchanged.",
+      "Per-round Supabase sync failures are reported as warnings so one stale or mismatched round does not block other active monthly charts from updating."
+    ],
+    links: [
+      { label: "Rounds", href: "/rounds" },
+      { label: "Methodology", href: "/methodology" },
+      { label: "Scoring", href: "/scoring" }
+    ]
+  },
+  {
     id: "2026-06-02-run-concentration-analytics",
     date: "2026-06-02",
     title: "Run concentration analytics added",

@@ -11,6 +11,7 @@ tokens, and raw provider responses.
 - Cloudflare Pages project: `capitalbench-web`
 - Supabase project: dedicated CapitalBench production project
 - Scheduled resolver: GitHub Actions workflow `CapitalBench Resolver`
+- Scheduled interim refresh: GitHub Actions workflow `Interim Performance Refresh`
 - Production health check: GitHub Actions workflow `Site Health`
 
 ## New Round Checklist
@@ -92,6 +93,38 @@ Check status:
 gh run list --repo ishtiaqrahman/capitalbench --workflow "CapitalBench Resolver" --limit 5
 gh run view <run_id> --repo ishtiaqrahman/capitalbench --log
 ```
+
+## Interim Monthly Charts
+
+The scheduled interim refresh runs after U.S. market close on market weekdays.
+It fetches or reuses one full-universe daily price snapshot, updates every
+active monthly round whose timeline includes that close date, syncs public rows
+to Supabase when credentials are configured, commits changed artifacts, and
+deploys the website only when generated files changed.
+
+Manual reuse-only refresh:
+
+```bash
+capitalbench update-interim-performance \
+  --rounds-dir rounds \
+  --snapshot-date YYYY-MM-DD \
+  --track monthly \
+  --skip-fetch
+```
+
+Manual fetch-and-refresh:
+
+```bash
+capitalbench update-interim-performance \
+  --rounds-dir rounds \
+  --snapshot-date YYYY-MM-DD \
+  --track monthly
+```
+
+The command reuses full-universe `entry_prices.csv` and `exit_prices.csv`
+packages from other rounds as eligible snapshots. That keeps free-tier Tiingo
+usage low: one new daily full-universe pull can update all active monthly
+charts.
 
 ## Manual Recovery
 
@@ -179,4 +212,3 @@ If a Cloudflare token is exposed or suspected exposed:
 
 3. Revoke the old token in Cloudflare.
 4. Run `Deploy Web` manually and verify production.
-
