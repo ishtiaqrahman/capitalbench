@@ -6,6 +6,7 @@ import {
   handleDataApiRequest,
   hashApiKey
 } from "../src/lib/dataApi.js";
+import apiReadModel from "../src/generated/apiReadModel.js";
 
 function getRequest(path, token) {
   return new Request(`https://www.capitalbench.org${path}`, {
@@ -33,6 +34,12 @@ async function authRepoForToken(token, overrides = {}) {
       ...overrides
     }
   ]);
+}
+
+function latestRoundId(track) {
+  const round = apiReadModel.rounds.find((item) => item.track === track && item.official_run_id);
+  assert.ok(round, `expected a generated ${track} round with an official run`);
+  return round.round_id;
 }
 
 test("API rejects missing bearer key when auth is required", async () => {
@@ -115,14 +122,16 @@ test("latest weekly leaderboard returns resolved scored rows", async () => {
 });
 
 test("round portfolios and current universe endpoints return real data", async () => {
-  const portfolios = await apiGet("/api/v1/rounds/CB-2026-06-01-1W/portfolios");
+  const latestWeeklyRoundId = latestRoundId("weekly");
+  const portfolios = await apiGet(`/api/v1/rounds/${latestWeeklyRoundId}/portfolios`);
   const universe = await apiGet("/api/v1/universe/current");
 
   assert.equal(portfolios.status, 200);
+  assert.equal(portfolios.body.round_id, latestWeeklyRoundId);
   assert.ok(portfolios.body.data.length >= 5);
   assert.ok(portfolios.body.data[0].allocations.length > 0);
   assert.equal(universe.status, 200);
-  assert.equal(universe.body.round_id, "CB-2026-06-01-1M");
+  assert.equal(universe.body.round_id, apiReadModel.current_universe_round_id);
   assert.ok(universe.body.data.length >= 60);
 });
 

@@ -1,0 +1,29 @@
+round_id: CB-2026-06-02-1M
+title: CapitalBench June 2 2026 One-Month Portfolio Round
+description: One-month CapitalBench portfolio evaluation round scored from the June
+  1, 2026 adjusted close to the July 1, 2026 adjusted close.
+decision_date: '2026-06-02'
+decision_deadline: '2026-06-02T08:00:00Z'
+horizon: one month
+methodology_version: portfolio-v1.0
+universe_version: v2.1
+submission_format: portfolio
+portfolio_constraints:
+  min_holdings: 1
+  max_holdings: 5
+  allocation_increment_pct: 5
+  min_allocation_pct: 5
+  max_total_allocation_pct: 100
+  allow_cash: true
+  allow_benchmark_asset: true
+entry_rule: Use adjusted close on Monday, June 1, 2026 for each option; CASH return
+  is 0 unless explicitly priced.
+exit_rule: Use adjusted close on Wednesday, July 1, 2026 for each selected option;
+  CASH return is 0 unless explicitly priced.
+entry_date: '2026-06-01'
+exit_date: '2026-07-01'
+created_at: '2026-06-02T03:40:15.579400+00:00'
+notes: Research inputs were refreshed on June 1, 2026 after the U.S. market close.
+  This is a monthly-track round using the latest available adjusted close before the
+  decision deadline, with a June 1 close to July 1 close scoring window and separate
+  manifest, prompt, model input, hashes, run folder, prices, and resolution job.
