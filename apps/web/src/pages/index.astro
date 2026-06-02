@@ -174,6 +174,28 @@ const riskAppetiteProfiles = [...modelProfiles]
       (a.fingerprint.riskAppetite.score ?? 0) - (b.fingerprint.riskAppetite.score ?? 0) ||
       a.label.localeCompare(b.label)
   );
+const riskScores = riskAppetiteProfiles
+  .map((profile) => profile.fingerprint.riskAppetite.score)
+  .filter((score): score is number => score !== null && Number.isFinite(score));
+const riskMinScore = riskScores.length > 0 ? Math.min(...riskScores) : null;
+const riskMaxScore = riskScores.length > 0 ? Math.max(...riskScores) : null;
+const rawRiskRange = riskMinScore !== null && riskMaxScore !== null ? riskMaxScore - riskMinScore : 0;
+const riskFocusPadding = Math.max(0.06, Math.min(0.18, rawRiskRange * 0.18));
+let riskFocusMin = riskMinScore !== null ? Math.max(1, riskMinScore - riskFocusPadding) : 1;
+let riskFocusMax = riskMaxScore !== null ? Math.min(5, riskMaxScore + riskFocusPadding) : 5;
+if (riskFocusMax - riskFocusMin < 0.36) {
+  const center = riskMinScore !== null && riskMaxScore !== null ? (riskMinScore + riskMaxScore) / 2 : 3;
+  riskFocusMin = Math.max(1, center - 0.18);
+  riskFocusMax = Math.min(5, center + 0.18);
+  if (riskFocusMax - riskFocusMin < 0.36) {
+    if (riskFocusMin <= 1) riskFocusMax = Math.min(5, riskFocusMin + 0.36);
+    if (riskFocusMax >= 5) riskFocusMin = Math.max(1, riskFocusMax - 0.36);
+  }
+}
+const lowestRiskProfile = riskAppetiteProfiles[0];
+const highestRiskProfile = riskAppetiteProfiles[riskAppetiteProfiles.length - 1];
+const riskLabelSet = Array.from(new Set(riskAppetiteProfiles.map((profile) => profile.fingerprint.riskAppetite.label)));
+const riskClusterLabel = riskLabelSet.length === 1 ? `All ${riskLabelSet[0]}` : riskLabelSet.join(" / ");
 const riskPortfolioCount = riskAppetiteProfiles.reduce((total, profile) => total + profile.fingerprint.portfolioCount, 0);
 const latestUniverseOptionCount = Math.max(0, ...trackStates.map((track) => track.options.length));
 const currentRound = latestMonthlyRound ?? latestWeeklyRound ?? roundRows[0] ?? fallbackRounds[0];
@@ -332,6 +354,13 @@ function riskScoreShort(value: number | null | undefined): string {
 function riskWidth(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "0%";
   return `${Math.min(100, Math.max(0, value)).toFixed(2)}%`;
+}
+
+function riskFocusWidth(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "0%";
+  const denominator = riskFocusMax - riskFocusMin;
+  if (denominator <= 0) return "50%";
+  return riskWidth(((value - riskFocusMin) / denominator) * 100);
 }
 
 function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["optionsById"]): string {
@@ -552,35 +581,93 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
       </div>
 
       <div class="risk-scale-stage" aria-label="Cumulative model risk appetite scale">
-        <div class="risk-axis-rail" aria-hidden="true"></div>
-        <div class="risk-axis-markers">
-          {riskAppetiteProfiles.map((profile, index) => {
-            const risk = profile.fingerprint.riskAppetite;
-            return (
-              <a
-                class={`risk-axis-marker risk-axis-marker-${profile.provider}`}
-                href={modelFingerprintHref(profile.modelId)}
-                aria-label={`${profile.label}: ${riskScoreValue(risk.score)}, ${risk.label}`}
-                title={`${profile.label}: ${riskScoreValue(risk.score)}, ${risk.label}`}
-                style={`--risk-position: ${riskWidth(risk.percentile)}; --risk-lane-offset: ${index * 58}px; --risk-mobile-lane: ${(index % 5) * 52}px; --risk-mobile-lane-narrow: ${(index % 5) * 44}px;`}
-              >
-                <span class="risk-axis-logo">
-                  {(profile.iconSrc ?? profile.logoSrc) && <img src={profile.iconSrc ?? profile.logoSrc} alt="" loading="lazy" />}
-                </span>
-                <span class="risk-axis-marker-label">
-                  <strong>{profile.label}</strong>
-                  <em>{riskScoreShort(risk.score)}</em>
-                </span>
-              </a>
-            );
-          })}
-        </div>
-        <div class="risk-axis-ticks" aria-hidden="true">
-          <span><b>1</b> Defensive</span>
-          <span><b>2</b></span>
-          <span><b>3</b> Balanced</span>
-          <span><b>4</b> Growth</span>
-          <span><b>5</b> Aggressive</span>
+        <aside class="risk-focus-summary" aria-label="Risk appetite summary">
+          <span class="panel-kicker">Current pattern</span>
+          <strong>{riskClusterLabel}</strong>
+          <p>
+            Current model scores cluster near the high-risk end, so the main chart zooms into the active range instead
+            of spending most of the canvas on unused defensive space.
+          </p>
+          <div class="risk-focus-summary-grid">
+            <div>
+              <span>Range</span>
+              <b>{riskScoreShort(riskMinScore)}-{riskScoreShort(riskMaxScore)}</b>
+            </div>
+            <div>
+              <span>Highest</span>
+              <b>{highestRiskProfile?.label ?? "n/a"}</b>
+            </div>
+            <div>
+              <span>Lowest</span>
+              <b>{lowestRiskProfile?.label ?? "n/a"}</b>
+            </div>
+          </div>
+        </aside>
+
+        <div class="risk-focus-chart" aria-label="Focused cumulative model risk appetite comparison">
+          <div class="risk-focus-chart-head">
+            <span>Focused current range</span>
+            <strong>{riskScoreShort(riskFocusMin)}-{riskScoreShort(riskFocusMax)}</strong>
+          </div>
+          <div class="risk-focus-list">
+            {riskAppetiteProfiles.map((profile) => {
+              const risk = profile.fingerprint.riskAppetite;
+              return (
+                <a
+                  class={`risk-focus-row risk-axis-marker-${profile.provider}`}
+                  href={modelFingerprintHref(profile.modelId)}
+                  aria-label={`${profile.label}: ${riskScoreValue(risk.score)}, ${risk.label}`}
+                  style={`--risk-focus-position: ${riskFocusWidth(risk.score)}; --risk-full-position: ${riskWidth(risk.percentile)};`}
+                >
+                  <span class="risk-focus-model">
+                    <span class="risk-axis-logo">
+                      {(profile.iconSrc ?? profile.logoSrc) && <img src={profile.iconSrc ?? profile.logoSrc} alt="" loading="lazy" />}
+                    </span>
+                    <span>
+                      <strong>{profile.label}</strong>
+                      <small>{profile.providerLabel}</small>
+                    </span>
+                  </span>
+                  <span class="risk-focus-track" aria-hidden="true">
+                    <span class="risk-focus-fill"></span>
+                    <span class="risk-focus-dot"></span>
+                  </span>
+                  <span class="risk-focus-score">
+                    <strong>{riskScoreShort(risk.score)}</strong>
+                    <small>{risk.label}</small>
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+          <div class="risk-focus-axis" aria-hidden="true">
+            <span>{riskScoreShort(riskFocusMin)}</span>
+            <span>zoomed comparison</span>
+            <span>{riskScoreShort(riskFocusMax)}</span>
+          </div>
+
+          <div class="risk-full-context" aria-label="Full 1 to 5 risk appetite reference">
+            <div class="risk-full-context-head">
+              <span>Full scale reference</span>
+              <strong>1-5</strong>
+            </div>
+            <div class="risk-full-rail" aria-hidden="true">
+              {riskAppetiteProfiles.map((profile) => {
+                const risk = profile.fingerprint.riskAppetite;
+                return (
+                  <span
+                    class={`risk-full-dot risk-full-dot-${profile.provider}`}
+                    style={`--risk-full-position: ${riskWidth(risk.percentile)};`}
+                  ></span>
+                );
+              })}
+            </div>
+            <div class="risk-full-ticks" aria-hidden="true">
+              <span>1 Defensive</span>
+              <span>3 Balanced</span>
+              <span>5 Aggressive</span>
+            </div>
+          </div>
         </div>
       </div>
 
