@@ -731,7 +731,7 @@ def _read_csv(path: Path) -> list[dict[str, str]]:
 def _write_csv(path: Path, columns: list[str], rows: list[dict[str, object]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=columns)
+        writer = csv.DictWriter(handle, fieldnames=columns, lineterminator="\n")
         writer.writeheader()
         for row in rows:
             writer.writerow({column: _csv_value(row.get(column)) for column in columns})

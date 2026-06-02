@@ -239,7 +239,7 @@ def _write_returns_csv(
         "is_cash",
     ]
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         available_options = [option for option in options if option.option_id in option_returns]
         for option in sorted(available_options, key=lambda item: ranks.get(item.option_id, 10**9)):
@@ -286,7 +286,7 @@ def _write_leaderboard_csv(path: Path, scores: list[ScoreRecord]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = list(ScoreRecord.model_fields.keys())
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for score in scores:
             row = score.model_dump(mode="json")
@@ -314,7 +314,7 @@ def _write_allocations_csv(
         "rationale",
     ]
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for submission in sorted(submissions, key=lambda item: (item.model_id, item.replicate_index or 1)):
             for allocation in allocation_views(submission):
@@ -421,7 +421,7 @@ def _write_stability_returns_csv(
         )
     ]
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for submission, score in rows:
             writer.writerow(
@@ -503,7 +503,7 @@ def _write_stability_csv(
 
     model_ids = sorted(set(raw_attempts) | set(by_model))
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for model_id in model_ids:
             pairs = sorted(by_model.get(model_id, []), key=lambda item: item[0].replicate_index or 0)

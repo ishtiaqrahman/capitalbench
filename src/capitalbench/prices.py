@@ -206,6 +206,6 @@ def _normalize_tiingo_date(raw_date: Any) -> str | None:
 def _write_price_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     fieldnames = ["option_id", "symbol", "date", "close", "adj_close", "source"]
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
