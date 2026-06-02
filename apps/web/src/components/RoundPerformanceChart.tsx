@@ -55,6 +55,10 @@ function csvEscape(value: string | number): string {
   return text;
 }
 
+function latestTargetDate(rows: WeeklyPerformanceRecord[]): string {
+  return rows.reduce((latest, row) => (row.target_date > latest ? row.target_date : latest), "");
+}
+
 export default function RoundPerformanceChart({ fallbackRows, roundId, runId }: Props) {
   const [rows, setRows] = useState<WeeklyPerformanceRecord[]>(fallbackRows);
 
@@ -69,9 +73,15 @@ export default function RoundPerformanceChart({ fallbackRows, roundId, runId }: 
       .eq("run_id", runId)
       .order("target_date", { ascending: true })
       .then(({ data, error }) => {
-        if (!error && data) setRows(data as WeeklyPerformanceRecord[]);
+        if (error || !data) return;
+        const remoteRows = data as WeeklyPerformanceRecord[];
+        const remoteLatest = latestTargetDate(remoteRows);
+        const fallbackLatest = latestTargetDate(fallbackRows);
+        if (remoteLatest > fallbackLatest || (remoteLatest === fallbackLatest && remoteRows.length >= fallbackRows.length)) {
+          setRows(remoteRows);
+        }
       });
-  }, [roundId, runId]);
+  }, [fallbackRows, roundId, runId]);
 
   const chartRows = useMemo(() => rows.map(normalize), [rows]);
   const dates = useMemo(
