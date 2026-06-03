@@ -116,9 +116,11 @@ const trackStates = [
   buildTrackState("weekly", "Weekly", "One-week test", latestWeeklyRound, weeklyRounds.length),
   buildTrackState("monthly", "Monthly", "One-month test", latestMonthlyRound, monthlyRounds.length)
 ];
+const weeklyScorecard = buildTrackScorecard(roundRows, "weekly");
+const monthlyScorecard = buildTrackScorecard(roundRows, "monthly");
 const aggregateScorecards = [
-  buildTrackScorecard(roundRows, "weekly"),
-  buildTrackScorecard(roundRows, "monthly")
+  weeklyScorecard,
+  monthlyScorecard
 ].filter((scorecard): scorecard is NonNullable<typeof scorecard> => scorecard !== null);
 const publishedResults = [
   {
@@ -377,6 +379,37 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
     .map((allocation) => `${optionShortDisplayName(allocation.option_id, optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`)
     .join(", ");
 }
+
+const trackLaneCards = trackStates.map((track) => {
+  const trackRounds = track.key === "weekly" ? weeklyRounds : monthlyRounds;
+  const scorecard = track.key === "weekly" ? weeklyScorecard : monthlyScorecard;
+  const resolvedRounds = trackRounds.filter((round) => round.status === "resolved");
+  const liveRounds = trackRounds
+    .filter((round) => round.status === "pending")
+    .sort((left, right) => right.decision_deadline_utc.localeCompare(left.decision_deadline_utc));
+  const latestResolvedRound = track.key === "weekly" ? latestResolvedWeeklyRound : latestResolvedMonthlyRound;
+  const latestLiveRound = liveRounds[0];
+  const leader = scorecard?.topNormalizedRow;
+  const score = leader?.averageScore;
+  return {
+    ...track,
+    scorecard,
+    leader,
+    leaderScore: typeof score === "number" && Number.isFinite(score) ? score.toFixed(1) : null,
+    leaderLogo: leader?.logoSrc,
+    completedCount: resolvedRounds.length,
+    liveCount: liveRounds.length,
+    latestResolvedRound,
+    latestLiveRound,
+    latestScoredLabel: latestResolvedRound?.round_id ?? "No completed score yet",
+    latestLiveLabel: latestLiveRound?.round_id ?? "No live round",
+    nextScoreLabel: latestLiveRound
+      ? `After ${shortMonthDay(latestLiveRound.exit_date)} close`
+      : latestResolvedRound
+        ? "No active round"
+        : "Waiting for first score"
+  };
+});
 ---
 
 <BaseLayout
@@ -884,24 +917,78 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
         A one-week test and a one-month test are different contests. They get separate scoreboards and separate overall
         results.
       </p>
+      <ul class="leaderboard-lanes-principles" aria-label="Track separation rules">
+        <li>
+          <strong>Weekly</strong>
+          <span>Short-window contest</span>
+        </li>
+        <li>
+          <strong>Monthly</strong>
+          <span>Longer market window</span>
+        </li>
+        <li>
+          <strong>No mixing</strong>
+          <span>Scores stay within track</span>
+        </li>
+      </ul>
     </div>
-    <div class="leaderboard-lane-links">
-      <a href="/leaderboards/latest-weekly">
-        <span>Weekly results</span>
-        <strong>{latestResolvedWeeklyRound ? "Latest scored" : "Waiting for first score"}</strong>
-      </a>
-      <a href="/leaderboards/latest-monthly">
-        <span>Monthly results</span>
-        <strong>{latestResolvedMonthlyRound ? "Latest scored" : "Waiting for first score"}</strong>
-      </a>
-      <a href="/leaderboards/cumulative-weekly">
-        <span>Overall weekly</span>
-        <strong>Weekly only</strong>
-      </a>
-      <a href="/leaderboards/cumulative-monthly">
-        <span>Overall monthly</span>
-        <strong>Monthly only</strong>
-      </a>
+    <div class="leaderboard-lane-cards" aria-label="Weekly and monthly result lanes">
+      {trackLaneCards.map((track) => (
+        <article class={`leaderboard-lane-card lane-${track.key}`}>
+          <div class="leaderboard-lane-card-head">
+            <div>
+              <span class="panel-kicker">{track.label} track</span>
+              <h3>{track.label} Results</h3>
+            </div>
+            <span class={`status-badge ${track.completedCount > 0 ? "status-resolved" : "status-pending"}`}>
+              {track.completedCount} completed / {track.liveCount} live
+            </span>
+          </div>
+
+          <div class="leaderboard-lane-card-body">
+            <div class="leaderboard-lane-leader">
+              {track.leaderLogo ? (
+                <span class="leaderboard-lane-logo">
+                  <img src={track.leaderLogo} alt={track.leader?.providerLabel ?? track.label} width="42" height="42" loading="eager" />
+                </span>
+              ) : (
+                <span class="leaderboard-lane-logo leaderboard-lane-logo-empty">{track.label.slice(0, 1)}</span>
+              )}
+              <div>
+                <span>{track.leader ? "Current leader" : "Current state"}</span>
+                <strong>{track.leader?.label ?? "Waiting for first completed score"}</strong>
+                <em>{track.leaderScore ? `${track.leaderScore} CapitalBench Score` : scoreShortLine(track.latestLiveRound)}</em>
+              </div>
+            </div>
+
+            <div class="leaderboard-lane-facts">
+              <span>
+                <em>Latest scored</em>
+                <strong>{track.latestScoredLabel}</strong>
+              </span>
+              <span>
+                <em>Live round</em>
+                <strong>{track.latestLiveLabel}</strong>
+              </span>
+              <span>
+                <em>Next score</em>
+                <strong>{track.nextScoreLabel}</strong>
+              </span>
+            </div>
+
+            <ol class="leaderboard-lane-flow" aria-label={`${track.label} scoring flow`}>
+              <li class={track.round ? "is-complete" : ""}><span></span>Locked</li>
+              <li class={track.latestLiveRound ? "is-current" : track.latestResolvedRound ? "is-complete" : ""}><span></span>Live</li>
+              <li class={track.latestResolvedRound ? "is-complete" : ""}><span></span>Scores</li>
+            </ol>
+          </div>
+
+          <div class="leaderboard-lane-actions">
+            <a class="small-button" href={track.latestHref}>Latest {track.label.toLowerCase()}</a>
+            <a class="small-button" href={track.cumulativeHref}>Overall {track.label.toLowerCase()}</a>
+          </div>
+        </article>
+      ))}
     </div>
   </section>
 
