@@ -7,10 +7,13 @@ import {
   ArrowRight,
   BarChart3,
   CalendarDays,
+  CheckCircle2,
   FileCheck2,
   Layers3,
   LineChart,
-  LockKeyhole
+  LockKeyhole,
+  Radio,
+  Trophy
 } from "lucide-react";
 import {
   modelLabel,
@@ -123,6 +126,17 @@ const latestScoreChart = buildScoreReturnChartData({
 });
 const liveTracks = trackStates.filter((track) => track.pendingRound);
 const currentLiveTestCount = liveTracks.length;
+const weeklyTrack = trackStates.find((track) => track.key === "weekly") ?? trackStates[0];
+const weeklyLeaderLogoSrc = trackLeaderLogo(weeklyTrack);
+const currentUniverseRound = [...roundRows].sort((left, right) => right.decision_deadline_utc.localeCompare(left.decision_deadline_utc))[0];
+const currentUniverseOptionCount = currentUniverseRound
+  ? staticUniverseOptions(currentUniverseRound.round_id).length
+  : latestResultOptions.length;
+const latestScoredRoundLabel = latestResultRound?.round_id ?? "Pending";
+const liveRoundLabel = liveTracks
+  .map((track) => track.pendingRound?.round_id)
+  .filter(Boolean)
+  .join(" / ") || "None";
 
 function trackStateLabel(track: ResultsTrackState): string {
   if (track.scorecard) return `${track.completedCount} scored`;
@@ -240,23 +254,79 @@ const proofLinks = [
       </div>
     </div>
 
-    <div class="results-hub-metrics" aria-label="Results status">
-      <article>
-        <span>Completed tests</span>
-        <strong>{completedRoundCount}</strong>
-      </article>
-      <article>
-        <span>Live tests</span>
-        <strong>{currentLiveTestCount}</strong>
-      </article>
-      <article>
-        <span>Models compared</span>
-        <strong>{modelCount}</strong>
-      </article>
-      <article>
-        <span>Tracks</span>
-        <strong>Weekly / Monthly</strong>
-      </article>
+    <div class="results-hub-metrics" aria-label="Benchmark result status">
+      <div class="results-status-main">
+        <span class="panel-kicker">Benchmark status</span>
+        <div class="results-status-counts" aria-label="Completed and live tests">
+          <span>
+            <strong>{completedRoundCount}</strong>
+            <em>completed</em>
+          </span>
+          <span class="results-status-live-count">
+            <i aria-hidden="true"></i>
+            <strong>{currentLiveTestCount}</strong>
+            <em>live</em>
+          </span>
+        </div>
+        <p>Weekly and monthly tracks are scored separately.</p>
+      </div>
+
+      <div class="results-status-leader">
+        <span class="metric-label">Current weekly leader</span>
+        <div class="results-status-leader-row">
+          {weeklyLeaderLogoSrc ? (
+            <span class="results-track-logo">
+              <img src={weeklyLeaderLogoSrc} alt={trackLeaderProvider(weeklyTrack)} width="48" height="48" loading="eager" />
+            </span>
+          ) : (
+            <span class="results-track-logo results-track-logo-empty">W</span>
+          )}
+          <div>
+            <strong>{trackLeaderName(weeklyTrack)}</strong>
+            <span>{scoreValue(weeklyTrack)} CapitalBench Score</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-status-facts" aria-label="Benchmark facts">
+        <span>
+          <em>Latest scored</em>
+          <strong>{latestScoredRoundLabel}</strong>
+        </span>
+        <span>
+          <em>Live rounds</em>
+          <strong>{liveRoundLabel}</strong>
+        </span>
+        <span>
+          <em>Models</em>
+          <strong>{modelCount}</strong>
+        </span>
+        <span>
+          <em>Universe</em>
+          <strong>{currentUniverseOptionCount} options</strong>
+        </span>
+      </div>
+
+      <ol class="results-status-flow" aria-label="Benchmark scoring flow">
+        <li>
+          <CheckCircle2 size={15} aria-hidden="true" />
+          <span>Completed</span>
+        </li>
+        <li>
+          <Radio size={15} aria-hidden="true" />
+          <span>Live</span>
+        </li>
+        <li>
+          <Trophy size={15} aria-hidden="true" />
+          <span>Scored</span>
+        </li>
+      </ol>
+
+      <div class="results-status-actions" aria-label="Benchmark status links">
+        <a class="small-button" href={weeklyTrack.latestHref}>Latest weekly result</a>
+        <a class="small-button" href={weeklyTrack.cumulativeHref}>Overall weekly scorecard</a>
+        <a class="small-button" href="/rounds">All rounds</a>
+      </div>
     </div>
   </section>
 
