@@ -211,89 +211,121 @@ const currentUniverseOptionCount = latestUniverseOptionCount || staticUniverseOp
 const modelRoster = Array.from(new Map(allOfficialSubmissions.map((submission) => [submission.model_id, submission])).values())
   .sort((a, b) => providerLabel(a.provider).localeCompare(providerLabel(b.provider)));
 const scoringWindows = [
-  { label: "Weekly", value: "One market week" },
-  { label: "Monthly", value: "One market month" }
+  { label: "Weekly", value: "7 days" },
+  { label: "Monthly", value: "1 month" }
 ];
 const exploreLinks = [
   {
     href: "/leaderboards/latest",
     icon: BarChart3,
-    label: "Latest results",
-    description: "See the newest weekly and monthly scoreboards.",
-    state: "Scoreboards"
+    label: "Latest scores",
+    description: "See which model did best in finished tests.",
+    state: "Results"
   },
   {
     href: "/rounds",
     icon: Layers3,
-    label: "All test rounds",
-    description: "Open each test's picks, dates, prices, and proof files.",
+    label: "All tests",
+    description: "Open saved reports, model picks, prices, and results.",
     state: `${roundRows.length} tests`
   },
   {
     href: "/scoring",
     icon: TimerReset,
-    label: "How scoring works",
-    description: "Returns are compared with the S&P 500 over the same period.",
-    state: "Simple math"
+    label: "How the test works",
+    description: "Same report, same choices, saved picks, real prices.",
+    state: "Plain rules"
   }
 ];
 const heroProofSteps = [
   {
     icon: ClipboardCheck,
-    title: "Same brief",
-    detail: "Brief and ETF list"
+    title: "Same report",
+    detail: "Same report for every model"
   },
   {
     icon: LockKeyhole,
-    title: "Locked picks",
-    detail: "Saved before scoring"
+    title: "Saved picks",
+    detail: "Locked before results"
   },
   {
     icon: LineChart,
     title: "Real prices",
-    detail: "Closing prices score"
+    detail: "7 days or 1 month"
+  }
+];
+const heroTestSteps = [
+  {
+    icon: ClipboardCheck,
+    label: "1",
+    title: "Same report",
+    description: "Every model reads the same market report."
+  },
+  {
+    icon: Database,
+    label: "2",
+    title: "Same choices",
+    description: `Every model chooses from the same ${currentUniverseOptionCount} assets.`
+  },
+  {
+    icon: LockKeyhole,
+    label: "3",
+    title: "Models pick",
+    description: "Each model saves one portfolio."
+  },
+  {
+    icon: TimerReset,
+    label: "4",
+    title: "We wait",
+    description: "The test runs for 7 days or 1 month."
+  },
+  {
+    icon: LineChart,
+    label: "5",
+    title: "Prices score it",
+    description: "Real market prices show which model did best."
   }
 ];
 const howItWorks = [
   {
     label: "1",
-    title: "Same information",
-    description: "Every model gets the same market brief and the same asset list."
+    title: "Same report",
+    description: "Every model gets the same market report."
   },
   {
     label: "2",
-    title: "Models pick portfolios",
-    description: "The picks are saved before the result is known."
+    title: "Same choices",
+    description: "Every model picks from the same asset list."
   },
   {
     label: "3",
-    title: "Markets decide",
-    description: "Real prices decide which portfolio did best."
+    title: "Saved picks",
+    description: "The picks are locked before results are known."
   },
   {
-    label: "Proof",
-    title: "You can check the run",
-    description: "Prompts, model outputs, prices, and hashes are public."
+    label: "4",
+    title: "Real prices score",
+    description: "After 7 days or 1 month, real prices decide the result."
   }
 ];
 const safeguards = [
   {
     icon: ShieldCheck,
     label: "Same rules",
-    title: "One public pick per model",
-    description: "The public score uses the saved portfolio for that test, not private retries or experiments."
+    title: "One saved pick per model",
+    description: "The public score uses the saved portfolio, not private retries or experiments."
   },
   {
     icon: Database,
     label: "Same choices",
     title: `${latestUniverseOptionCount} current assets`,
-    description: "Each test keeps the exact asset list, prompt, model outputs, starting prices, and proof hashes."
+    description: "Each test keeps the exact asset list, report, model output, starting prices, and proof hashes."
   },
   {
     icon: FileCheck2,
     label: "No early winner",
-    title: `${pendingRoundCount} tests waiting for scores`,
-    description: "Final returns appear only after ending prices are available."
+    title: `${pendingRoundCount} tests waiting for results`,
+    description: "Final results appear only after ending prices are available."
   }
 ];
 
@@ -301,7 +333,7 @@ function statusLabel(round?: RoundRecord): string {
   if (!round) return "Not started";
   if (round.status === "resolved") return "Scored";
   if (round.status === "archived") return "Archived";
-  return "Pending score";
+  return "Waiting for result";
 }
 
 function statusClass(round?: RoundRecord): string {
@@ -316,7 +348,7 @@ function windowLabel(round?: RoundRecord): string {
 function scoreLine(round?: RoundRecord): string {
   if (!round) return "No score window declared yet.";
   if (round.status === "resolved") return "Scores are published.";
-  return `Scores publish after the ${dateOnly(round.exit_date)} ending close.`;
+  return `Results publish after the ${dateOnly(round.exit_date)} ending close.`;
 }
 
 function shortMonthDay(value?: string): string {
@@ -331,7 +363,7 @@ function shortMonthDay(value?: string): string {
 function scoreShortLine(round?: RoundRecord): string {
   if (!round) return "No score date";
   if (round.status === "resolved") return "Scored";
-  return `Scores after ${shortMonthDay(round.exit_date)} close`;
+  return `Results after ${shortMonthDay(round.exit_date)} close`;
 }
 
 function modelProfileHref(modelId: string): string {
@@ -374,7 +406,7 @@ function riskFocusWidth(value: number | null | undefined): string {
 function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["optionsById"]): string {
   const allocations = decisionAllocations(submission)
     .sort((a, b) => b.allocation_bps - a.allocation_bps);
-  if (allocations.length === 0) return "No allocation";
+  if (allocations.length === 0) return "No pick";
   return allocations
     .map((allocation) => `${optionShortDisplayName(allocation.option_id, optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`)
     .join(", ");
@@ -406,7 +438,7 @@ const trackLaneCards = trackStates.map((track) => {
     nextScoreLabel: latestLiveRound
       ? `After ${shortMonthDay(latestLiveRound.exit_date)} close`
       : latestResolvedRound
-        ? "No active round"
+        ? "No open round"
         : "Waiting for first score"
   };
 });
@@ -414,14 +446,15 @@ const trackLaneCards = trackStates.map((track) => {
 
 <BaseLayout
   title="CapitalBench - AI Market Picks Scoreboard"
-  description="CapitalBench gives AI models the same market information, records their portfolios, and scores them using real market returns."
+  description="CapitalBench gives AI models the same market report and asset list, saves their portfolios, and scores them using real market prices."
 >
   <section class="home-hero" aria-labelledby="home-title">
     <div class="home-hero-copy">
       <p class="eyebrow">CapitalBench</p>
       <h1 id="home-title">Benchmarking AI Models With Public Market Portfolios</h1>
       <p class="home-hero-lede">
-        Same brief. Same ETF list. Each model picks a portfolio. Real prices decide the score.
+        Every AI model gets the same market report and the same asset list. Each model picks a portfolio. After 7 days
+        or 1 month, real market prices show which model did best.
       </p>
       <p class="hero-disclaimer">Research benchmark. Not financial advice.</p>
 
@@ -430,15 +463,15 @@ const trackLaneCards = trackStates.map((track) => {
           Latest scores
           <ArrowRight size={15} aria-hidden="true" />
         </a>
-        <a class="action-link" href="#active-exposure">Active portfolios</a>
-        <a class="action-link" href="#how-it-works">Scoring rules</a>
-        <a class="action-link" href="#proof-and-data">Proof files</a>
+        <a class="action-link" href="#how-it-works">How it works</a>
+        <a class="action-link" href="#current-picks">Open picks</a>
+        <a class="action-link" href="#proof-and-data">Saved files</a>
       </div>
 
       <div class="hero-proof-strip" aria-label="How the test works">
         <div class="hero-proof-strip-head">
           <span>How it works</span>
-          <strong>Brief. Picks. Prices.</strong>
+          <strong>Report. Picks. Prices.</strong>
         </div>
         <ol class="hero-proof-steps">
           {heroProofSteps.map((step, index) => {
@@ -459,90 +492,39 @@ const trackLaneCards = trackStates.map((track) => {
       </div>
     </div>
 
-    <div class="home-hero-console" aria-label="Benchmark snapshot">
+    <div class="home-hero-console benchmark-process-card" id="how-it-works" aria-label="How CapitalBench tests AI models">
       <div class="console-header">
         <div class="console-title">
           <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="eager" />
           <div>
-            <span>Benchmark snapshot</span>
-            <strong>Models, timelines, assets, open tests</strong>
+            <span>How the test works</span>
+            <strong>Same report, same choices, real prices</strong>
           </div>
         </div>
-        <span class="status-badge status-pending">Live</span>
+        <span class="status-badge status-pending">Running</span>
       </div>
 
-      <div class="snapshot-body">
-        <section class="snapshot-section snapshot-models" aria-labelledby="snapshot-models-title">
-          <div class="snapshot-section-head">
-            <span id="snapshot-models-title">Models compared</span>
-            <strong>{modelRoster.length} official models</strong>
-          </div>
-          <div class="snapshot-model-list" aria-label="Official model roster">
-            {modelRoster.map((submission) => (
-              <a
-                class={`snapshot-model-chip snapshot-model-${submission.provider}`}
-                href={modelProfileHref(submission.model_id)}
-                aria-label={`${providerLabel(submission.provider)}: ${modelLabel(submission.model_id)}`}
-              >
-                {providerLogoSrc(submission.provider) ? (
-                  <img
-                    class="snapshot-lab-logo"
-                    src={providerLogoSrc(submission.provider)}
-                    alt={providerLabel(submission.provider)}
-                    width="40"
-                    height="40"
-                    loading="eager"
-                  />
-                ) : (
-                  <span>{providerLabel(submission.provider)}</span>
-                )}
-                <strong>{modelLabel(submission.model_id)}</strong>
-              </a>
-            ))}
-          </div>
-        </section>
-
-        <div class="snapshot-split">
-          <section class="snapshot-section" aria-labelledby="snapshot-windows-title">
-            <div class="snapshot-section-head">
-              <span id="snapshot-windows-title">Scoring windows</span>
-              <strong>Close-to-close</strong>
+      <ol class="benchmark-process-list">
+        {heroTestSteps.map((step) => {
+          const Icon = step.icon;
+          return (
+          <li>
+            <span class="benchmark-process-index">{step.label}</span>
+            <span class="benchmark-process-icon" aria-hidden="true">
+              <Icon size={17} />
+            </span>
+            <div>
+              <strong>{step.title}</strong>
+              <p>{step.description}</p>
             </div>
-            <div class="snapshot-window-list">
-              {scoringWindows.map((window) => (
-                <span>
-                  <strong>{window.label}</strong>
-                  <span>{window.value}</span>
-                </span>
-              ))}
-            </div>
-          </section>
+          </li>
+          );
+        })}
+      </ol>
 
-          <section class="snapshot-section" aria-labelledby="snapshot-assets-title">
-            <div class="snapshot-section-head">
-              <span id="snapshot-assets-title">Asset choices</span>
-              <strong>{currentUniverseOptionCount} public-market assets</strong>
-            </div>
-            <p>ETFs, sectors, themes, commodities, bonds, cash, and benchmarks.</p>
-            <a href="/universe">View asset list</a>
-          </section>
-        </div>
-
-        <section class="snapshot-section snapshot-rounds" aria-labelledby="snapshot-rounds-title">
-          <div class="snapshot-section-head">
-            <span id="snapshot-rounds-title">Latest test windows</span>
-            <strong>{pendingRoundCount} pending score{pendingRoundCount === 1 ? "" : "s"}</strong>
-          </div>
-          <div class="snapshot-round-list">
-            {trackStates.map((track) => (
-              <a href={track.roundHref ?? "/rounds"}>
-                <span>{track.label}</span>
-                <strong>{track.round?.round_id ?? "Not started"}</strong>
-                <em>{scoreShortLine(track.round)}</em>
-              </a>
-            ))}
-          </div>
-        </section>
+      <div class="benchmark-process-note">
+        <strong>No guessing after the fact.</strong>
+        <span>Picks are saved first. Results appear only after the test period ends.</span>
       </div>
     </div>
   </section>
@@ -551,14 +533,14 @@ const trackLaneCards = trackStates.map((track) => {
     <>
       <section class="home-section-heading home-section-heading-with-action" id="track-scorecards" aria-labelledby="track-scorecards-title">
         <div>
-          <span class="panel-kicker">Combined completed results</span>
-          <h2 id="track-scorecards-title">CapitalBench Scores</h2>
+          <span class="panel-kicker">Finished tests</span>
+          <h2 id="track-scorecards-title">Model Scores</h2>
           <p>
-            These charts combine completed tests by track. CapitalBench Score is the main benchmark score: 100 means
-            the highest-returning scored option in each completed window.
+            These charts combine finished weekly tests and finished monthly tests separately. A score of 100 means
+            matching the best-performing asset in that test.
           </p>
         </div>
-        <a class="section-profile-link" href="/leaderboards">All scoreboards</a>
+        <a class="section-profile-link" href="/leaderboards">All scores</a>
       </section>
 
       <div class="track-scorecard-stack" aria-label="Combined completed track scorecards">
@@ -570,11 +552,11 @@ const trackLaneCards = trackStates.map((track) => {
   {latestPublishedResult && latestCompletedRound && latestCompletedWinner && (
     <>
       <section class="home-section-heading" aria-labelledby="published-results-title">
-        <span class="panel-kicker">Published result</span>
-        <h2 id="published-results-title">Latest Scored Test</h2>
+        <span class="panel-kicker">Latest result</span>
+        <h2 id="published-results-title">Most Recent Finished Test</h2>
         <p>
-          Model portfolio returns are shown against the S&amp;P 500 benchmark on the same scale. Open weekly and monthly
-          rounds stay out of this chart until ending prices are collected.
+          This chart shows how each saved portfolio performed after the test ended. Open tests stay out until final
+          prices are available.
         </p>
       </section>
 
@@ -588,9 +570,9 @@ const trackLaneCards = trackStates.map((track) => {
           <div class="published-score-summary-head">
             <div class="published-result-head">
               <div>
-                <span class="panel-kicker">Run details</span>
+                <span class="panel-kicker">Saved test</span>
                 <h3>{latestCompletedRound.round_id}</h3>
-                <p>Round metadata and audit links.</p>
+                <p>Dates, asset choices, and saved files.</p>
               </div>
             </div>
 
@@ -601,23 +583,107 @@ const trackLaneCards = trackStates.map((track) => {
           </div>
 
           <div class="published-score-context" aria-label="Scoring context">
-            <span><strong>Window</strong>{dateOnly(latestCompletedRound.entry_date)} to {dateOnly(latestCompletedRound.exit_date)}</span>
+            <span><strong>Dates</strong>{dateOnly(latestCompletedRound.entry_date)} to {dateOnly(latestCompletedRound.exit_date)}</span>
             <span><strong>Models</strong>{latestPublishedResult.leaderboard.length}</span>
-            <span><strong>Eligible assets</strong>{latestResultEligibleAssetCount}</span>
-            <span><strong>Method</strong>{latestPublishedResult.label} close-to-close</span>
+            <span><strong>Asset choices</strong>{latestResultEligibleAssetCount}</span>
+            <span><strong>Test length</strong>{latestPublishedResult.label}</span>
           </div>
         </div>
       </section>
     </>
   )}
 
+  <section class="current-setup-panel" aria-labelledby="current-setup-title">
+    <div class="current-setup-head">
+      <span class="panel-kicker">Current setup</span>
+      <h2 id="current-setup-title">What Models Are Picking From</h2>
+      <p>
+        Models get the same report, choose from the same assets, and wait for weekly or monthly results.
+      </p>
+    </div>
+
+    <div class="current-setup-stat-row" aria-label="Current CapitalBench setup summary">
+      <div>
+        <span>Models</span>
+        <strong>{modelRoster.length}</strong>
+      </div>
+      <div>
+        <span>Asset choices</span>
+        <strong>{currentUniverseOptionCount}</strong>
+      </div>
+      <div>
+        <span>Test lengths</span>
+        <strong>2</strong>
+      </div>
+      <div>
+        <span>Open tests</span>
+        <strong>{pendingRoundCount}</strong>
+      </div>
+    </div>
+
+    <div class="current-setup-detail-grid" aria-label="Current CapitalBench test details">
+      <article class="current-setup-detail-card current-setup-model-card">
+        <div class="current-setup-detail-head">
+          <div>
+            <span class="panel-kicker">Models in the test</span>
+            <strong>{modelRoster.length} AI models</strong>
+          </div>
+          <a href="/models">Model pages</a>
+        </div>
+        <div class="current-setup-model-list" aria-label="Models currently compared">
+          {modelRoster.map((submission) => (
+            <a href={modelProfileHref(submission.model_id)} aria-label={`${providerLabel(submission.provider)}: ${modelLabel(submission.model_id)}`}>
+              {providerLogoSrc(submission.provider) && (
+                <img src={providerLogoSrc(submission.provider)} alt={providerLabel(submission.provider)} width="34" height="34" loading="lazy" />
+              )}
+              <span>
+                <strong>{modelLabel(submission.model_id)}</strong>
+                <em>{providerLabel(submission.provider)}</em>
+              </span>
+            </a>
+          ))}
+        </div>
+      </article>
+
+      <article class="current-setup-detail-card current-setup-live-card">
+        <div class="current-setup-detail-head">
+          <div>
+            <span class="panel-kicker">Open tests waiting for results</span>
+            <strong>Latest weekly and monthly tests</strong>
+          </div>
+          <span class="current-setup-count-badge">{pendingRoundCount} open total</span>
+        </div>
+        <div class="current-setup-rule-strip" aria-label="Shared setup rules">
+          <span>
+            <strong>{currentUniverseOptionCount}</strong>
+            asset choices
+          </span>
+          {scoringWindows.map((window) => (
+            <span>
+              <strong>{window.label}</strong>
+              {window.value}
+            </span>
+          ))}
+        </div>
+        <div class="current-setup-round-list">
+          {trackStates.map((track) => (
+            <a href={track.roundHref ?? "/rounds"}>
+              <span>{track.label}</span>
+              <strong>{track.round?.round_id ?? "Not started"}</strong>
+              <em>{scoreShortLine(track.round)}</em>
+            </a>
+          ))}
+        </div>
+      </article>
+    </div>
+  </section>
+
   <section class="home-section-heading home-section-heading-with-action" id="active-exposure" aria-labelledby="active-exposure-title">
     <div>
-      <span class="panel-kicker">Active exposure</span>
-      <h2 id="active-exposure-title">Where Active Model Portfolios Are Invested</h2>
+      <span class="panel-kicker">Open picks</span>
+      <h2 id="active-exposure-title">Where The Open Picks Are Invested</h2>
       <p>
-        This counts only tests still waiting for final prices. Completed tests are excluded, so the view shows where open
-        model capital is currently allocated.
+        This counts only tests that have started but do not have final prices yet. Finished tests are excluded.
       </p>
     </div>
     <a class="section-profile-link" href="/models">View model profiles</a>
@@ -797,11 +863,10 @@ const trackLaneCards = trackStates.map((track) => {
   )}
 
   <section class="home-section-heading" id="current-picks" aria-labelledby="latest-decisions-title">
-    <span class="panel-kicker">Latest model portfolios</span>
-    <h2 id="latest-decisions-title">What The Models Picked In The Latest Tests</h2>
+    <span class="panel-kicker">Open picks</span>
+    <h2 id="latest-decisions-title">What The Models Picked</h2>
     <p>
-      These are the portfolios each model locked in for the most recent weekly and monthly tests only. Older tests remain
-      available on the round pages.
+      These are the saved picks for the newest weekly and monthly tests. They are waiting for final prices.
     </p>
   </section>
 
@@ -847,12 +912,12 @@ const trackLaneCards = trackStates.map((track) => {
 
             <div class="track-exposure">
               <div>
-                <span class="metric-label">Consensus allocation</span>
+                <span class="metric-label">Shared top pick</span>
                 <strong>{track.topExposure ? optionDisplayName(track.topExposure.optionId, track.optionsById) : "None"}</strong>
                 <small>Average across {track.concentration.modelCount} model portfolios.</small>
               </div>
               <div>
-                <div class="allocation-stack track-consensus-stack" aria-label={`${track.label} consensus allocation stack`}>
+                <div class="allocation-stack track-consensus-stack" aria-label={`${track.label} shared pick stack`}>
                   {track.concentration.assets.map((item) => (
                     <span
                       class={allocationThemeClass(item.optionId)}
@@ -891,15 +956,15 @@ const trackLaneCards = trackStates.map((track) => {
 
         <div class="track-card-actions">
           <a class="small-button" href={track.latestHref}>
-            {track.round?.status === "resolved" ? `Open ${track.label} Results` : `${track.label} Scoreboard`}
+            {track.round?.status === "resolved" ? `Open ${track.label} Results` : `${track.label} Scores`}
           </a>
-          {track.roundHref && <a class="small-button" href={track.roundHref}>Proof files</a>}
+          {track.roundHref && <a class="small-button" href={track.roundHref}>Saved files</a>}
         </div>
       </article>
     ))}
   </section>
 
-  <section class="trust-strip" id="how-it-works" aria-label="How CapitalBench works">
+  <section class="trust-strip" aria-label="How CapitalBench works">
     {howItWorks.map((item) => (
       <article>
         <span>{item.label}</span>
@@ -914,23 +979,34 @@ const trackLaneCards = trackStates.map((track) => {
       <span class="panel-kicker">Results</span>
       <h2 id="leaderboard-lanes-title">Weekly And Monthly Are Separate</h2>
       <p>
-        A one-week test and a one-month test are different contests. They get separate scoreboards and separate overall
-        results.
+        A 7-day test and a 1-month test are different contests. They get separate scores and separate overall results.
       </p>
       <ul class="leaderboard-lanes-principles" aria-label="Track separation rules">
         <li>
           <strong>Weekly</strong>
-          <span>Short-window contest</span>
+          <span>7-day test</span>
         </li>
         <li>
           <strong>Monthly</strong>
-          <span>Longer market window</span>
+          <span>1-month test</span>
         </li>
         <li>
           <strong>No mixing</strong>
-          <span>Scores stay within track</span>
+          <span>Scores stay separate</span>
         </li>
       </ul>
+      <div class="leaderboard-lanes-status" aria-label="Current weekly and monthly score state">
+        <span class="metric-label">Current score state</span>
+        <div class="leaderboard-lanes-status-grid">
+          {trackLaneCards.map((track) => (
+            <a href={track.latestHref}>
+              <strong>{track.label}</strong>
+              <span>{track.completedCount} completed / {track.liveCount} open</span>
+              <em>{track.latestResolvedRound ? `Latest: ${track.latestResolvedRound.round_id}` : "First result pending"}</em>
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
     <div class="leaderboard-lane-cards" aria-label="Weekly and monthly result lanes">
       {trackLaneCards.map((track) => (
@@ -946,7 +1022,7 @@ const trackLaneCards = trackStates.map((track) => {
           </div>
 
           <div class="leaderboard-lane-card-body">
-            <div class="leaderboard-lane-leader">
+            <div class={`leaderboard-lane-leader ${track.leader ? "" : "leaderboard-lane-leader-pending"}`}>
               {track.leaderLogo ? (
                 <span class="leaderboard-lane-logo">
                   <img src={track.leaderLogo} alt={track.leader?.providerLabel ?? track.label} width="42" height="42" loading="eager" />
@@ -956,12 +1032,12 @@ const trackLaneCards = trackStates.map((track) => {
               )}
               <div>
                 <span>{track.leader ? "Current leader" : "Current state"}</span>
-                <strong>{track.leader?.label ?? "Waiting for first completed score"}</strong>
+                <strong>{track.leader?.label ?? "Waiting for first result"}</strong>
                 <em>{track.leaderScore ? `${track.leaderScore} CapitalBench Score` : scoreShortLine(track.latestLiveRound)}</em>
               </div>
             </div>
 
-            <div class="leaderboard-lane-facts">
+            <div class={`leaderboard-lane-facts ${track.leader ? "" : "leaderboard-lane-facts-pending"}`}>
               <span>
                 <em>Latest scored</em>
                 <strong>{track.latestScoredLabel}</strong>
@@ -993,11 +1069,10 @@ const trackLaneCards = trackStates.map((track) => {
   </section>
 
   <section class="home-section-heading track-summary-heading" aria-labelledby="current-tests-title">
-    <span class="panel-kicker">Current test windows</span>
+    <span class="panel-kicker">Open tests</span>
     <h2 id="current-tests-title">Latest Weekly And Monthly Tests</h2>
     <p>
-      These cards summarize the newest open or recently scored tests for each track, with direct links to results and
-      proof files.
+      These are the newest tests. Each one already has saved model picks and waits for final prices.
     </p>
   </section>
 
@@ -1027,7 +1102,7 @@ const trackLaneCards = trackStates.map((track) => {
         <div class="track-card-actions">
           <a class="small-button" href={track.latestHref}>Results</a>
           <a class="small-button" href={track.cumulativeHref}>Overall</a>
-          {track.roundHref && <a class="small-button" href={track.roundHref}>Proof files</a>}
+          {track.roundHref && <a class="small-button" href={track.roundHref}>Saved files</a>}
         </div>
       </article>
     ))}
@@ -1038,8 +1113,8 @@ const trackLaneCards = trackStates.map((track) => {
       <span class="panel-kicker">{roundRows.length}-test record</span>
       <h2 id="track-timeline-title">When Each Test Gets Scored</h2>
       <p>
-        Each test has three moments: picks are saved, the market period passes, and final scores publish after ending
-        prices are available.
+        Each test has three moments: picks are saved, time passes, and final results publish after ending prices are
+        available.
       </p>
     </div>
     <div class="timeline-lane-grid">
@@ -1096,15 +1171,15 @@ const trackLaneCards = trackStates.map((track) => {
   <section class="audit-preview" id="proof-and-data" aria-labelledby="audit-preview-title">
     <div>
       <span class="panel-kicker">Proof and data</span>
-      <h2 id="audit-preview-title">Check The Source Files</h2>
+      <h2 id="audit-preview-title">Check The Saved Files</h2>
       <p>
-        Test pages show the market brief, prompt, model portfolios, starting prices, source reports, hashes, and run
-        status behind each public test.
+        Test pages show the report, prompt, model picks, starting prices, source reports, hashes, and result status
+        behind each public test.
       </p>
     </div>
     <div class="audit-preview-actions">
-      {latestWeeklyRound && <a class="action-link action-primary" href={`/rounds/${latestWeeklyRound.round_id}/`}>Open weekly proof files</a>}
-      {latestMonthlyRound && <a class="action-link" href={`/rounds/${latestMonthlyRound.round_id}/`}>Open monthly proof files</a>}
+      {latestWeeklyRound && <a class="action-link action-primary" href={`/rounds/${latestWeeklyRound.round_id}/`}>Open weekly saved files</a>}
+      {latestMonthlyRound && <a class="action-link" href={`/rounds/${latestMonthlyRound.round_id}/`}>Open monthly saved files</a>}
       <a class="action-link" href="/rounds">View all tests</a>
       <a class="action-link" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
         <GitHubLogo size={15} />
@@ -1117,8 +1192,8 @@ const trackLaneCards = trackStates.map((track) => {
     <span class="panel-kicker">Why it is fair</span>
     <h2 id="safeguards-title">Simple Rules, Public Proof</h2>
     <p>
-      CapitalBench keeps the comparison narrow: same information, same asset list, saved picks, and no final winner
-      before the test ends.
+      CapitalBench keeps the comparison narrow: same report, same asset list, saved picks, and no final result before
+      the test ends.
     </p>
   </section>
 
