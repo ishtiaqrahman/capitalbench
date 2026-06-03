@@ -74,7 +74,7 @@ const columnCount = Math.max(chart.rows.length, 1);
             >
               {item.logoSrc ? (
                 <span class="score-chart-logo-shell">
-                  <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="40" height="40" loading="lazy" />
+                  <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="40" height="40" loading="eager" />
                 </span>
               ) : item.kind === "reference" ? (
                 <span class="score-chart-reference-chip" aria-hidden="true">MAX</span>
@@ -98,7 +98,7 @@ const columnCount = Math.max(chart.rows.length, 1);
               <div>
                 {item.logoSrc ? (
                   <span class="score-chart-logo-shell">
-                    <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="40" height="40" loading="lazy" />
+                    <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="40" height="40" loading="eager" />
                   </span>
                 ) : item.kind === "reference" ? (
                   <span class="score-chart-reference-chip" aria-hidden="true">MAX</span>
@@ -138,7 +138,7 @@ const columnCount = Math.max(chart.rows.length, 1);
                   <span class="score-detail-rank">{index + 1}</span>
                   {item.logoSrc ? (
                     <span class="score-chart-logo-shell">
-                      <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="40" height="40" loading="lazy" />
+                      <img class="score-chart-logo" src={item.logoSrc} alt={item.logoAlt} width="40" height="40" loading="eager" />
                     </span>
                   ) : (
                     <span class="score-chart-benchmark-chip" aria-hidden="true">{item.detailMeta.slice(0, 3).toUpperCase()}</span>

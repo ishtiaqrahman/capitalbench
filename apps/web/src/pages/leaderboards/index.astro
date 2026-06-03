@@ -1,36 +1,468 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import PageHeader from "../../components/PageHeader.astro";
+import GitHubLogo from "../../components/GitHubLogo.astro";
+import ScoreReturnChart from "../../components/ScoreReturnChart.astro";
+import TrackScorecard from "../../components/TrackScorecard.astro";
+import {
+  ArrowRight,
+  BarChart3,
+  CalendarDays,
+  FileCheck2,
+  Layers3,
+  LineChart,
+  LockKeyhole
+} from "lucide-react";
+import {
+  modelLabel,
+  providerLabel,
+  type LeaderboardRecord,
+  type RoundRecord
+} from "../../data/fallback";
+import { dateOnly, pct } from "../../lib/format";
+import {
+  staticAllOfficialSubmissions,
+  staticRoundAllocations,
+  staticRoundLeaderboard,
+  staticRoundRecords,
+  staticRoundReturns,
+  staticUniverseOptions
+} from "../../lib/localRoundRecords";
+import { buildScoreReturnChartData, providerLogoSrc } from "../../lib/scoreReturnChart";
+import { buildTrackScorecard, type TrackScorecardData } from "../../lib/trackScorecard";
+import {
+  latestPendingRoundForTrack,
+  latestResolvedRoundForTrack,
+  roundsForTrack,
+  type BenchmarkTrack
+} from "../../lib/tracks";
+import { siteConfig } from "../../lib/seo";
+
+type ResultsTrackState = {
+  key: BenchmarkTrack;
+  label: string;
+  horizon: string;
+  latestResultRound?: RoundRecord;
+  pendingRound?: RoundRecord;
+  scorecard: TrackScorecardData | null;
+  leaderboard: LeaderboardRecord[];
+  winner?: LeaderboardRecord;
+  winnerReturn?: number;
+  completedCount: number;
+  totalCount: number;
+  latestHref: string;
+  cumulativeHref: string;
+};
+
+const roundRows = staticRoundRecords();
+const weeklyScorecard = buildTrackScorecard(roundRows, "weekly");
+const monthlyScorecard = buildTrackScorecard(roundRows, "monthly");
+const scorecards = [weeklyScorecard, monthlyScorecard].filter(
+  (scorecard): scorecard is TrackScorecardData => scorecard !== null
+);
+const allSubmissions = staticAllOfficialSubmissions(roundRows);
+const modelCount = new Set(allSubmissions.map((submission) => submission.model_id)).size;
+const completedRoundCount = roundRows.filter((round) => round.status === "resolved").length;
+
+function leaderboardReturn(row: LeaderboardRecord | undefined): number | undefined {
+  return row ? row.portfolio_return ?? row.selected_asset_return : undefined;
+}
+
+function buildTrackState(
+  key: BenchmarkTrack,
+  label: string,
+  horizon: string,
+  scorecard: TrackScorecardData | null
+): ResultsTrackState {
+  const latestResultRound = latestResolvedRoundForTrack(roundRows, key);
+  const pendingRound = latestPendingRoundForTrack(roundRows, key);
+  const leaderboard = latestResultRound
+    ? staticRoundLeaderboard(latestResultRound.round_id, latestResultRound.official_run_id)
+    : [];
+  const winner = leaderboard[0];
+  const trackRounds = roundsForTrack(roundRows, key);
+  return {
+    key,
+    label,
+    horizon,
+    latestResultRound,
+    pendingRound,
+    scorecard,
+    leaderboard,
+    winner,
+    winnerReturn: leaderboardReturn(winner),
+    completedCount: scorecard?.completedRoundCount ?? trackRounds.filter((round) => round.status === "resolved").length,
+    totalCount: trackRounds.length,
+    latestHref: `/leaderboards/latest-${key}`,
+    cumulativeHref: `/leaderboards/cumulative-${key}`
+  };
+}
+
+const trackStates = [
+  buildTrackState("weekly", "Weekly", "One market week", weeklyScorecard),
+  buildTrackState("monthly", "Monthly", "One market month", monthlyScorecard)
+];
+
+const latestPublishedResult = trackStates
+  .filter((track) => track.latestResultRound && track.winner)
+  .sort((left, right) => (right.latestResultRound?.exit_date ?? "").localeCompare(left.latestResultRound?.exit_date ?? ""))[0];
+
+const latestResultRound = latestPublishedResult?.latestResultRound;
+const latestResultOptions = latestResultRound ? staticUniverseOptions(latestResultRound.round_id) : [];
+const latestResultOptionsById = Object.fromEntries(latestResultOptions.map((option) => [option.option_id, option]));
+const latestResultReturns = latestResultRound
+  ? staticRoundReturns(latestResultRound.round_id, latestResultRound.official_run_id)
+  : [];
+const latestResultAllocations = latestResultRound
+  ? staticRoundAllocations(latestResultRound.round_id, latestResultRound.official_run_id)
+  : [];
+const latestScoreChart = buildScoreReturnChartData({
+  leaderboard: latestPublishedResult?.leaderboard ?? [],
+  returns: latestResultReturns,
+  optionsById: latestResultOptionsById,
+  allocations: latestResultAllocations
+});
+const liveTracks = trackStates.filter((track) => track.pendingRound);
+const currentLiveTestCount = liveTracks.length;
+
+function trackStateLabel(track: ResultsTrackState): string {
+  if (track.scorecard) return `${track.completedCount} scored`;
+  if (track.pendingRound) return "Waiting for first score";
+  return "Not started";
+}
+
+function trackWindowLabel(round?: RoundRecord): string {
+  if (!round) return "No window yet";
+  return `${dateOnly(round.entry_date)} to ${dateOnly(round.exit_date)}`;
+}
+
+function scoreEtaLine(round?: RoundRecord): string {
+  if (!round) return "No active test.";
+  if (round.status === "resolved") return "Scores are published.";
+  return `Scores after the ${dateOnly(round.exit_date)} close.`;
+}
+
+function scoreValue(track: ResultsTrackState): string {
+  const value = track.scorecard?.topNormalizedRow?.averageScore;
+  return typeof value === "number" && Number.isFinite(value) ? value.toFixed(1) : "n/a";
+}
+
+function averageReturnValue(track: ResultsTrackState): string {
+  return pct(track.scorecard?.topAverageRow?.averageReturn) || "n/a";
+}
+
+function trackLeaderName(track: ResultsTrackState): string {
+  if (track.scorecard?.topNormalizedRow?.label) return track.scorecard.topNormalizedRow.label;
+  if (track.winner) return modelLabel(track.winner.model_id);
+  return "Awaiting score";
+}
+
+function trackLeaderProvider(track: ResultsTrackState): string {
+  return track.scorecard?.topNormalizedRow?.providerLabel ?? (track.winner ? providerLabel(track.winner.provider) : track.label);
+}
+
+function trackLeaderLogo(track: ResultsTrackState): string | undefined {
+  return track.scorecard?.topNormalizedRow?.logoSrc ?? (track.winner ? providerLogoSrc(track.winner.provider) : undefined);
+}
+
+function routeDescription(track: ResultsTrackState, kind: "latest" | "overall"): string {
+  if (kind === "latest") {
+    if (track.latestResultRound) return `${track.latestResultRound.round_id}, ${trackWindowLabel(track.latestResultRound)}`;
+    if (track.pendingRound) return `${track.pendingRound.round_id} is live. ${scoreEtaLine(track.pendingRound)}`;
+    return "No published test yet.";
+  }
+  if (track.scorecard) return `${track.completedCount} completed ${track.label.toLowerCase()} tests combined.`;
+  return track.pendingRound ? "Overall chart appears after the first scored test." : "No completed tests yet.";
+}
+
+const routeCards = trackStates.flatMap((track) => [
+  {
+    href: track.latestHref,
+    kicker: `${track.label} result`,
+    title: `Latest ${track.label}`,
+    state: track.latestResultRound ? "Scored" : "Pending",
+    description: routeDescription(track, "latest"),
+    icon: BarChart3,
+    className: `results-route-${track.key}`
+  },
+  {
+    href: track.cumulativeHref,
+    kicker: `${track.label} aggregate`,
+    title: `Overall ${track.label}`,
+    state: track.scorecard ? `${track.completedCount} tests` : "Not ready",
+    description: routeDescription(track, "overall"),
+    icon: LineChart,
+    className: `results-route-${track.key}`
+  }
+]);
+
+const proofLinks = [
+  {
+    href: "/rounds",
+    label: "Round index",
+    description: `${roundRows.length} public tests with dates, prices, and proof files.`,
+    icon: Layers3
+  },
+  {
+    href: "/scoring",
+    label: "Scoring rules",
+    description: "How model portfolios are compared with market returns.",
+    icon: LockKeyhole
+  },
+  {
+    href: "/api",
+    label: "API docs",
+    description: "Published data endpoints for results, rounds, models, and exposures.",
+    icon: FileCheck2
+  }
+];
 ---
 
 <BaseLayout
   title="CapitalBench Results"
-  description="CapitalBench results show which AI model portfolios are winning in weekly and monthly market tests."
+  description="CapitalBench results show weekly and monthly AI model portfolio scores, latest winners, active tests, and public proof files."
 >
-  <PageHeader
-    eyebrow="Results"
-    title="Scoreboards"
-    summary="See which AI model portfolios are winning. Weekly and monthly tests are scored separately."
-  />
+  <section class="results-hub-hero" aria-labelledby="results-hub-title">
+    <div class="results-hub-copy">
+      <p class="eyebrow">Results</p>
+      <h1 id="results-hub-title">Benchmark Results</h1>
+      <p>
+        AI model portfolios are scored in separate weekly and monthly tracks using the same rules, saved picks, and real
+        public-market prices.
+      </p>
+      <div class="results-hub-actions" aria-label="Primary result pages">
+        <a class="action-link action-primary" href="/leaderboards/latest-weekly">
+          Latest weekly
+          <ArrowRight size={15} aria-hidden="true" />
+        </a>
+        <a class="action-link" href="/leaderboards/cumulative-weekly">Weekly scorecard</a>
+        <a class="action-link" href="#combined-results">Combined results</a>
+        <a class="action-link" href="#proof-data">Proof and data</a>
+      </div>
+    </div>
 
-  <section class="section">
-    <div class="grid-3">
-      <article class="feature">
-        <h3><a href="/leaderboards/latest-weekly">Weekly Results</a></h3>
-        <p>The latest completed one-week scoreboard. Pending weekly portfolios are shown separately.</p>
+    <div class="results-hub-metrics" aria-label="Results status">
+      <article>
+        <span>Completed tests</span>
+        <strong>{completedRoundCount}</strong>
       </article>
-      <article class="feature">
-        <h3><a href="/leaderboards/latest-monthly">Monthly Results</a></h3>
-        <p>The latest completed one-month scoreboard, scored separately from weekly tests.</p>
+      <article>
+        <span>Live tests</span>
+        <strong>{currentLiveTestCount}</strong>
       </article>
-      <article class="feature">
-        <h3><a href="/leaderboards/cumulative-weekly">Overall Weekly</a></h3>
-        <p>All completed one-week tests summarized in one place.</p>
+      <article>
+        <span>Models compared</span>
+        <strong>{modelCount}</strong>
       </article>
-      <article class="feature">
-        <h3><a href="/leaderboards/cumulative-monthly">Overall Monthly</a></h3>
-        <p>All completed one-month tests summarized in one place.</p>
+      <article>
+        <span>Tracks</span>
+        <strong>Weekly / Monthly</strong>
       </article>
+    </div>
+  </section>
+
+  <section class="results-track-leaders" aria-label="Current track leaders">
+    {trackStates.map((track) => {
+      const logoSrc = trackLeaderLogo(track);
+      return (
+        <article class={`results-track-card results-track-card-${track.key}`}>
+          <div class="results-track-card-head">
+            <div>
+              <span class="panel-kicker">{track.label} track</span>
+              <h2>{track.scorecard ? `${trackLeaderName(track)} Leads` : `${track.label} Track`}</h2>
+              <p>{track.scorecard ? "CapitalBench Score leader across completed tests." : "Waiting for the first completed score."}</p>
+            </div>
+            <span class={`status-badge ${track.scorecard ? "status-resolved" : "status-pending"}`}>{trackStateLabel(track)}</span>
+          </div>
+
+          <div class="results-track-leader-row">
+            {logoSrc ? (
+              <span class="results-track-logo">
+                <img src={logoSrc} alt={trackLeaderProvider(track)} width="48" height="48" loading="eager" />
+              </span>
+            ) : (
+              <span class="results-track-logo results-track-logo-empty">{track.label.slice(0, 1)}</span>
+            )}
+            <div>
+              <strong>{trackLeaderName(track)}</strong>
+              <span>{trackLeaderProvider(track)}</span>
+            </div>
+          </div>
+
+          <div class="results-track-stat-grid" aria-label={`${track.label} summary`}>
+            <span>
+              <small>CapitalBench Score</small>
+              <strong>{scoreValue(track)}</strong>
+            </span>
+            <span>
+              <small>Avg return leader</small>
+              <strong>{averageReturnValue(track)}</strong>
+            </span>
+            <span>
+              <small>Latest result</small>
+              <strong>{track.latestResultRound?.round_id ?? "Pending"}</strong>
+            </span>
+            <span>
+              <small>Timeline</small>
+              <strong>{track.horizon}</strong>
+            </span>
+          </div>
+
+          <div class="track-card-actions">
+            <a class="small-button" href={track.latestHref}>Latest result</a>
+            <a class="small-button" href={track.cumulativeHref}>Overall scorecard</a>
+            {track.latestResultRound && <a class="small-button" href={`/rounds/${track.latestResultRound.round_id}/`}>Proof files</a>}
+          </div>
+        </article>
+      );
+    })}
+  </section>
+
+  {scorecards.length > 0 && (
+    <>
+      <section class="home-section-heading home-section-heading-with-action" id="combined-results" aria-labelledby="combined-results-title">
+        <div>
+          <span class="panel-kicker">Combined completed results</span>
+          <h2 id="combined-results-title">CapitalBench Scores</h2>
+          <p>
+            The primary benchmark score averages completed tests. 100 means matching the best eligible asset in each
+            completed window.
+          </p>
+        </div>
+        <a class="section-profile-link" href="/leaderboards/cumulative-weekly">Open weekly scorecard</a>
+      </section>
+
+      <div class="track-scorecard-stack results-scorecard-stack" aria-label="Combined completed result charts">
+        {scorecards.map((scorecard) => <TrackScorecard scorecard={scorecard} />)}
+      </div>
+    </>
+  )}
+
+  {latestPublishedResult && latestResultRound && latestScoreChart.rows.length > 0 && (
+    <>
+      <section class="home-section-heading" aria-labelledby="latest-scored-result-title">
+        <span class="panel-kicker">Latest scored test</span>
+        <h2 id="latest-scored-result-title">Most Recent Published Result</h2>
+        <p>
+          This chart shows the newest completed test only. Live tests stay out of this chart until ending prices are
+          collected.
+        </p>
+      </section>
+
+      <section class="published-score-panel results-latest-score-panel" aria-label="Most recent scored test chart">
+        <ScoreReturnChart
+          chart={latestScoreChart}
+          label={`${latestPublishedResult.label} result`}
+          title={`${latestPublishedResult.label} Portfolio Returns`}
+          description="Models, S&P 500, and maximum possible return are shown on one scale."
+        />
+
+        <div class="published-score-summary published-score-run-details">
+          <div class="published-score-summary-head">
+            <div class="published-result-head">
+              <div>
+                <span class="panel-kicker">Run details</span>
+                <h3>{latestResultRound.round_id}</h3>
+                <p>{trackWindowLabel(latestResultRound)}</p>
+              </div>
+            </div>
+            <div class="track-card-actions">
+              <a class="small-button" href={`/rounds/${latestResultRound.round_id}/`}>Full result</a>
+              <a class="small-button" href={latestPublishedResult.latestHref}>Leaderboard</a>
+            </div>
+          </div>
+
+          <div class="published-score-context" aria-label="Latest result context">
+            <span><strong>Winner</strong>{latestPublishedResult.winner ? modelLabel(latestPublishedResult.winner.model_id) : "n/a"}</span>
+            <span><strong>Return</strong>{pct(latestPublishedResult.winnerReturn) || "n/a"}</span>
+            <span><strong>Models</strong>{latestPublishedResult.leaderboard.length}</span>
+            <span><strong>Eligible assets</strong>{latestResultOptions.length}</span>
+          </div>
+        </div>
+      </section>
+    </>
+  )}
+
+  <section class="home-section-heading home-section-heading-with-action" aria-labelledby="results-routes-title">
+    <div>
+      <span class="panel-kicker">Scoreboard paths</span>
+      <h2 id="results-routes-title">Choose The Result View</h2>
+      <p>Latest pages show one completed test. Overall pages combine completed tests within the same track.</p>
+    </div>
+    <a class="section-profile-link" href="/rounds">All tests</a>
+  </section>
+
+  <section class="results-route-grid" aria-label="Leaderboard pages">
+    {routeCards.map((card) => {
+      const Icon = card.icon;
+      return (
+        <a class={`results-route-card ${card.className}`} href={card.href}>
+          <span class="results-route-icon" aria-hidden="true"><Icon size={18} /></span>
+          <span class="panel-kicker">{card.kicker}</span>
+          <strong>{card.title}</strong>
+          <p>{card.description}</p>
+          <em>{card.state}</em>
+        </a>
+      );
+    })}
+  </section>
+
+  {liveTracks.length > 0 && (
+    <>
+      <section class="home-section-heading" aria-labelledby="live-tests-title">
+        <span class="panel-kicker">Live tests</span>
+        <h2 id="live-tests-title">Waiting For Final Prices</h2>
+        <p>These tests are open or pending score. They are not counted in completed result charts yet.</p>
+      </section>
+
+      <section class="results-live-grid" aria-label="Live tests waiting for scoring">
+        {liveTracks.map((track) => (
+          <article class={`results-live-card results-live-card-${track.key}`}>
+            <div>
+              <span class="panel-kicker">{track.label} live test</span>
+              <h3>{track.pendingRound?.round_id}</h3>
+              <p>{scoreEtaLine(track.pendingRound)}</p>
+            </div>
+            <div class="results-live-meta">
+              <span>
+                <CalendarDays size={15} aria-hidden="true" />
+                {trackWindowLabel(track.pendingRound)}
+              </span>
+              <span>{track.pendingRound?.official_run_id}</span>
+            </div>
+            <a class="small-button" href={track.pendingRound ? `/rounds/${track.pendingRound.round_id}/` : "/rounds"}>
+              View locked portfolios
+            </a>
+          </article>
+        ))}
+      </section>
+    </>
+  )}
+
+  <section class="results-proof-panel" id="proof-data" aria-labelledby="results-proof-title">
+    <div>
+      <span class="panel-kicker">Proof and data</span>
+      <h2 id="results-proof-title">Every Result Has Public Files</h2>
+      <p>
+        Results link back to prompts, model outputs, portfolio decisions, prices, audit hashes, and scoring records.
+      </p>
+    </div>
+
+    <div class="results-proof-links">
+      {proofLinks.map((link) => {
+        const Icon = link.icon;
+        return (
+          <a href={link.href}>
+            <span aria-hidden="true"><Icon size={17} /></span>
+            <strong>{link.label}</strong>
+            <em>{link.description}</em>
+          </a>
+        );
+      })}
+      <a href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
+        <span aria-hidden="true"><GitHubLogo size={17} /></span>
+        <strong>GitHub repository</strong>
+        <em>Source files, generated reports, and public benchmark artifacts.</em>
+      </a>
     </div>
   </section>
 </BaseLayout>

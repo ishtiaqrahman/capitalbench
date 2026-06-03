@@ -19,6 +19,7 @@ interface Props {
   roundId: string;
   runId: string;
   options?: UniverseOption[];
+  rankedModelIds?: string[];
 }
 
 function csvEscape(value: string | number): string {
@@ -71,13 +72,17 @@ function AllocationPortfolioView({
   );
 }
 
-export default function OfficialPicksTable({ fallbackRows, roundId, runId, options = [] }: Props) {
+export default function OfficialPicksTable({ fallbackRows, roundId, runId, options = [], rankedModelIds = [] }: Props) {
   const [rows, setRows] = useState<SubmissionRecord[]>(fallbackRows);
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState<string | null>(null);
   const optionsById = useMemo<OptionLabelMap>(
     () => Object.fromEntries(options.map((option) => [option.option_id, option])),
     [options]
+  );
+  const rankByModelId = useMemo(
+    () => new Map(rankedModelIds.map((modelId, index) => [modelId, index])),
+    [rankedModelIds]
   );
 
   useEffect(() => {
@@ -97,7 +102,16 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId, optio
 
   const filteredRows = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    const sorted = [...rows].sort((a, b) => providerLabel(a.provider).localeCompare(providerLabel(b.provider)));
+    const sorted = [...rows].sort((a, b) => {
+      if (rankByModelId.size > 0) {
+        const aRank = rankByModelId.get(a.model_id);
+        const bRank = rankByModelId.get(b.model_id);
+        if (aRank !== undefined || bRank !== undefined) {
+          return (aRank ?? 9999) - (bRank ?? 9999);
+        }
+      }
+      return providerLabel(a.provider).localeCompare(providerLabel(b.provider));
+    });
     if (!normalized) return sorted;
     return sorted.filter((row) =>
       [
@@ -113,7 +127,7 @@ export default function OfficialPicksTable({ fallbackRows, roundId, runId, optio
         .toLowerCase()
         .includes(normalized)
     );
-  }, [optionsById, query, rows]);
+  }, [optionsById, query, rankByModelId, rows]);
 
   function exportCsv() {
     const header = ["Model", "Provider", "Primary pick", "Portfolio", "Confidence", "Protocol", "Rationale", "Key risks"].join(",");

@@ -67,6 +67,12 @@ function rowMeta(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow): s
   return `${row.providerLabel ?? "Model"} · ${testsLabel(row.testsIncluded)}`;
 }
 
+function averageRowLabel(row: TrackScorecardAverageRow): string {
+  if (row.kind === "reference") return "Max possible";
+  if (row.kind === "benchmark") return "S&P 500";
+  return row.label;
+}
+
 function scoreBarClass(row: TrackScorecardNormalizedRow, index: number): string {
   if (row.kind === "benchmark") return "score-bar-benchmark";
   const providerClasses: Record<string, string> = {
@@ -87,7 +93,6 @@ function scoreColumnClass(row: TrackScorecardNormalizedRow, index: number): stri
 }
 
 const scoreRows = scorecard.normalizedRows;
-const benchmarkScoreRow = scoreRows.find((row) => row.kind === "benchmark");
 const scoreValues = scoreRows.map((row) => row.averageScore).filter(finiteNumber);
 const scoreDomainMin = Math.min(0, ...scoreValues);
 const scoreDomainMax = Math.max(100, ...scoreValues);
@@ -114,11 +119,10 @@ function scoreMobileBarStyle(value: number): string {
 <section class={`track-scorecard-panel track-scorecard-${scorecard.track}`} aria-labelledby={`${scorecard.track}-track-scorecard-title`}>
   <div class="track-scorecard-head">
     <div>
-      <span class="panel-kicker">{scorecard.label} results</span>
-      <h3 id={`${scorecard.track}-track-scorecard-title`}>{scorecard.label} CapitalBench Scorecard</h3>
+      <span class="panel-kicker">{scorecard.label} track</span>
+      <h3 id={`${scorecard.track}-track-scorecard-title`}>Benchmark Results</h3>
       <p>
-        CapitalBench Score is the primary benchmark result. A score of 100 means the best eligible asset in that
-        completed window; model and S&amp;P 500 scores are averaged across completed tests.
+        CapitalBench Score averages completed tests. 100 equals the best eligible asset in each window.
       </p>
     </div>
     <div class="track-scorecard-badges" aria-label={`${scorecard.label} scorecard status`}>
@@ -126,24 +130,6 @@ function scoreMobileBarStyle(value: number): string {
       <span>Latest: {scorecard.latestRoundId}</span>
       <span>Auto-updates</span>
     </div>
-  </div>
-
-  <div class="track-scorecard-summary" aria-label={`${scorecard.label} aggregate summary`}>
-    <article>
-      <span>CapitalBench leader</span>
-      <strong>{scorecard.topNormalizedRow?.label ?? "n/a"}</strong>
-      <em>{scorecard.topNormalizedRow ? `${scoreLabel(scorecard.topNormalizedRow.averageScore)} / 100` : "n/a"}</em>
-    </article>
-    <article>
-      <span>Completed tests</span>
-      <strong>{scorecard.completedRoundCount}</strong>
-      <em>latest: {scorecard.latestRoundId}</em>
-    </article>
-    <article>
-      <span>S&amp;P 500 score</span>
-      <strong>{benchmarkScoreRow ? scoreLabel(benchmarkScoreRow.averageScore) : "n/a"}</strong>
-      <em>market benchmark</em>
-    </article>
   </div>
 
   <div class="track-scorecard-grid">
@@ -190,7 +176,7 @@ function scoreMobileBarStyle(value: number): string {
                 >
                   {row.kind === "model" && row.logoSrc ? (
                     <span class="score-chart-logo-shell">
-                      <img class="score-chart-logo" src={row.logoSrc} alt={row.providerLabel ?? row.label} width="40" height="40" loading="lazy" />
+                      <img class="score-chart-logo" src={row.logoSrc} alt={row.providerLabel ?? row.label} width="40" height="40" loading="eager" />
                     </span>
                   ) : (
                     <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
@@ -212,7 +198,7 @@ function scoreMobileBarStyle(value: number): string {
                   <div>
                     {row.kind === "model" && row.logoSrc ? (
                       <span class="score-chart-logo-shell">
-                        <img class="score-chart-logo" src={row.logoSrc} alt={row.providerLabel ?? row.label} width="40" height="40" loading="lazy" />
+                        <img class="score-chart-logo" src={row.logoSrc} alt={row.providerLabel ?? row.label} width="40" height="40" loading="eager" />
                       </span>
                     ) : (
                       <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
@@ -235,15 +221,19 @@ function scoreMobileBarStyle(value: number): string {
     </article>
 
     <article class="track-scorecard-chart track-scorecard-return-chart" aria-labelledby={`${scorecard.track}-average-return-title`}>
-      <div class="track-scorecard-chart-head">
+      <div class="track-scorecard-chart-head track-scorecard-return-head">
         <div>
           <span>Return context</span>
-          <h4 id={`${scorecard.track}-average-return-title`}>Average Return</h4>
+          <h4 id={`${scorecard.track}-average-return-title`}>Return Context</h4>
+          <p>Average raw return across completed tests.</p>
         </div>
-        <p>
-          Return leader: {scorecard.topAverageRow?.label ?? "n/a"}
-          {scorecard.topAverageRow ? `, ${pct(scorecard.topAverageRow.averageReturn)} mean return.` : "."}
-        </p>
+        {scorecard.topAverageRow && (
+          <div class="track-scorecard-return-leader" aria-label={`${scorecard.label} return leader`}>
+            <span>Return leader</span>
+            <strong>{scorecard.topAverageRow.label}</strong>
+            <em>{pct(scorecard.topAverageRow.averageReturn)}</em>
+          </div>
+        )}
       </div>
 
       <div class="track-scorecard-axis" aria-hidden="true">
@@ -260,14 +250,13 @@ function scoreMobileBarStyle(value: number): string {
             <div class="track-scorecard-row-label">
               {row.logoSrc ? (
                 <span class="track-scorecard-logo-shell">
-                  <img src={row.logoSrc} alt={row.providerLabel ?? row.label} width="34" height="34" loading="lazy" />
+                  <img src={row.logoSrc} alt={row.providerLabel ?? row.label} width="34" height="34" loading="eager" />
                 </span>
               ) : (
                 <span class={`track-scorecard-chip track-scorecard-chip-${row.kind}`}>{chipLabel(row)}</span>
               )}
               <span>
-                <strong>{row.label}</strong>
-                <em>{rowMeta(row)}</em>
+                <strong title={rowMeta(row)}>{averageRowLabel(row)}</strong>
               </span>
             </div>
             <div class="track-scorecard-bar-cell">
