@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ActiveExposureMap from "../components/ActiveExposureMap";
 import GitHubLogo from "../components/GitHubLogo.astro";
 import ScoreReturnChart from "../components/ScoreReturnChart.astro";
+import TrackScorecard from "../components/TrackScorecard.astro";
 import {
   ArrowRight,
   BarChart3,
@@ -41,6 +42,7 @@ import {
   staticUniverseOptions
 } from "../lib/localRoundRecords";
 import { buildScoreReturnChartData, providerLogoSrc } from "../lib/scoreReturnChart";
+import { buildTrackScorecard } from "../lib/trackScorecard";
 import { buildRunConcentration, type ConcentrationAsset, type RunConcentration } from "../lib/runConcentration";
 import { siteConfig } from "../lib/seo";
 import { staticModelProfiles } from "../lib/modelProfiles";
@@ -114,6 +116,10 @@ const trackStates = [
   buildTrackState("weekly", "Weekly", "One-week test", latestWeeklyRound, weeklyRounds.length),
   buildTrackState("monthly", "Monthly", "One-month test", latestMonthlyRound, monthlyRounds.length)
 ];
+const aggregateScorecards = [
+  buildTrackScorecard(roundRows, "weekly"),
+  buildTrackScorecard(roundRows, "monthly")
+].filter((scorecard): scorecard is NonNullable<typeof scorecard> => scorecard !== null);
 const publishedResults = [
   {
     key: "weekly" as const,
@@ -507,6 +513,26 @@ function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["
       </div>
     </div>
   </section>
+
+  {aggregateScorecards.length > 0 && (
+    <>
+      <section class="home-section-heading home-section-heading-with-action" id="track-scorecards" aria-labelledby="track-scorecards-title">
+        <div>
+          <span class="panel-kicker">Combined completed results</span>
+          <h2 id="track-scorecards-title">CapitalBench Scores</h2>
+          <p>
+            These charts combine completed tests by track. CapitalBench Score is the main benchmark score: 100 means
+            the best eligible asset in each completed window, and model scores are averaged across completed tests.
+          </p>
+        </div>
+        <a class="section-profile-link" href="/leaderboards">All scoreboards</a>
+      </section>
+
+      <div class="track-scorecard-stack" aria-label="Combined completed track scorecards">
+        {aggregateScorecards.map((scorecard) => <TrackScorecard scorecard={scorecard} />)}
+      </div>
+    </>
+  )}
 
   {latestPublishedResult && latestCompletedRound && latestCompletedWinner && (
     <>

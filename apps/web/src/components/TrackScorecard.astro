@@ -1,0 +1,288 @@
+---
+import type {
+  TrackScorecardAverageRow,
+  TrackScorecardData,
+  TrackScorecardNormalizedRow
+} from "../lib/trackScorecard";
+import { pct } from "../lib/format";
+
+interface Props {
+  scorecard: TrackScorecardData;
+}
+
+const { scorecard } = Astro.props;
+
+function finiteNumber(value: number | null | undefined): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function scoreLabel(value: number): string {
+  return `${value.toFixed(1)}`;
+}
+
+function testsLabel(count: number): string {
+  return `${count} completed test${count === 1 ? "" : "s"}`;
+}
+
+function valueCoordinate(value: number, minimum: number, maximum: number): number {
+  const range = Math.max(maximum - minimum, 0.0001);
+  return Math.min(100, Math.max(0, ((value - minimum) / range) * 100));
+}
+
+const averageValues = scorecard.averageRows.map((row) => row.averageReturn).filter(finiteNumber);
+const averageMinimum = Math.min(0, ...averageValues);
+const averageMaximum = Math.max(0, ...averageValues);
+const averagePadding = Math.max((averageMaximum - averageMinimum) * 0.08, 0.005);
+const averageDomainMin = averageMinimum < 0 ? averageMinimum - averagePadding : 0;
+const averageDomainMax = averageMaximum > 0 ? averageMaximum + averagePadding : averagePadding;
+const averageZero = valueCoordinate(0, averageDomainMin, averageDomainMax);
+const averageTicks = averageDomainMin < 0
+  ? [averageDomainMin, 0, averageDomainMax]
+  : [0, averageDomainMax / 2, averageDomainMax];
+
+function averageBarStyle(value: number): string {
+  const endpoint = valueCoordinate(value, averageDomainMin, averageDomainMax);
+  const left = Math.min(averageZero, endpoint);
+  const width = Math.max(1.5, Math.abs(endpoint - averageZero));
+  return `--bar-left: ${left.toFixed(2)}%; --bar-width: ${width.toFixed(2)}%;`;
+}
+
+function averageRowClass(row: TrackScorecardAverageRow): string {
+  return [
+    "track-scorecard-row",
+    `track-scorecard-row-${row.kind}`,
+    row.provider ? `track-scorecard-row-${row.provider}` : ""
+  ].filter(Boolean).join(" ");
+}
+
+function chipLabel(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow): string {
+  if (row.kind === "benchmark") return "S&P";
+  if (row.kind === "reference") return "MAX";
+  return row.providerLabel?.slice(0, 3).toUpperCase() ?? "AI";
+}
+
+function rowMeta(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow): string {
+  if (row.kind === "reference") return "Hindsight ceiling, not a model";
+  if (row.kind === "benchmark") return `Market benchmark, ${testsLabel(row.testsIncluded)}`;
+  return `${row.providerLabel ?? "Model"} · ${testsLabel(row.testsIncluded)}`;
+}
+
+function scoreBarClass(row: TrackScorecardNormalizedRow, index: number): string {
+  if (row.kind === "benchmark") return "score-bar-benchmark";
+  const providerClasses: Record<string, string> = {
+    anthropic: row.key.includes("4-8") ? "score-bar-anthropic-alt" : "score-bar-anthropic",
+    google: "score-bar-google",
+    openai: "score-bar-openai",
+    xai: "score-bar-xai"
+  };
+  return providerClasses[row.provider ?? ""] ?? `score-bar-model-${(index % 5) + 1}`;
+}
+
+function scoreColumnClass(row: TrackScorecardNormalizedRow, index: number): string {
+  return [
+    "score-vertical-column",
+    row.kind === "benchmark" ? "score-vertical-column-benchmark" : "",
+    row.kind === "model" && index === 0 ? "score-vertical-column-winner" : ""
+  ].filter(Boolean).join(" ");
+}
+
+const scoreRows = scorecard.normalizedRows;
+const benchmarkScoreRow = scoreRows.find((row) => row.kind === "benchmark");
+const scoreValues = scoreRows.map((row) => row.averageScore).filter(finiteNumber);
+const scoreDomainMin = Math.min(0, ...scoreValues);
+const scoreDomainMax = Math.max(100, ...scoreValues);
+const scoreZero = valueCoordinate(0, scoreDomainMin, scoreDomainMax);
+const scoreTicks = scoreDomainMin < 0 ? [scoreDomainMin, 0, 50, 100] : [0, 25, 50, 75, 100];
+
+function scoreVerticalBarStyle(value: number): string {
+  const endpoint = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
+  const bottom = Math.min(scoreZero, endpoint);
+  const height = Math.max(1.5, Math.abs(endpoint - scoreZero));
+  return `bottom: ${bottom.toFixed(2)}%; height: ${height.toFixed(2)}%;`;
+}
+
+function scoreValueStyle(value: number): string {
+  return `bottom: calc(${valueCoordinate(value, scoreDomainMin, scoreDomainMax).toFixed(2)}% + 8px);`;
+}
+
+function scoreMobileBarStyle(value: number): string {
+  const endpoint = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
+  return `width: ${Math.max(2, Math.abs(endpoint - scoreZero)).toFixed(2)}%;`;
+}
+---
+
+<section class={`track-scorecard-panel track-scorecard-${scorecard.track}`} aria-labelledby={`${scorecard.track}-track-scorecard-title`}>
+  <div class="track-scorecard-head">
+    <div>
+      <span class="panel-kicker">{scorecard.label} results</span>
+      <h3 id={`${scorecard.track}-track-scorecard-title`}>{scorecard.label} CapitalBench Scorecard</h3>
+      <p>
+        CapitalBench Score is the primary benchmark result. A score of 100 means the best eligible asset in that
+        completed window; model and S&amp;P 500 scores are averaged across completed tests.
+      </p>
+    </div>
+    <div class="track-scorecard-badges" aria-label={`${scorecard.label} scorecard status`}>
+      <span>{scorecard.completedRoundCount} completed</span>
+      <span>Latest: {scorecard.latestRoundId}</span>
+      <span>Auto-updates</span>
+    </div>
+  </div>
+
+  <div class="track-scorecard-summary" aria-label={`${scorecard.label} aggregate summary`}>
+    <article>
+      <span>CapitalBench leader</span>
+      <strong>{scorecard.topNormalizedRow?.label ?? "n/a"}</strong>
+      <em>{scorecard.topNormalizedRow ? `${scoreLabel(scorecard.topNormalizedRow.averageScore)} / 100` : "n/a"}</em>
+    </article>
+    <article>
+      <span>Completed tests</span>
+      <strong>{scorecard.completedRoundCount}</strong>
+      <em>latest: {scorecard.latestRoundId}</em>
+    </article>
+    <article>
+      <span>S&amp;P 500 score</span>
+      <strong>{benchmarkScoreRow ? scoreLabel(benchmarkScoreRow.averageScore) : "n/a"}</strong>
+      <em>market benchmark</em>
+    </article>
+  </div>
+
+  <div class="track-scorecard-grid">
+    <article class="track-scorecard-chart track-scorecard-score-chart" aria-labelledby={`${scorecard.track}-normalized-score-title`}>
+      <div class="track-scorecard-chart-head">
+        <div>
+          <span>Primary benchmark</span>
+          <h4 id={`${scorecard.track}-normalized-score-title`}>CapitalBench Score</h4>
+        </div>
+        <p>
+          Scores are out of 100. A score of 100 means matching the best eligible asset in each completed test.
+        </p>
+      </div>
+
+      <div class="score-chart-frame track-score-benchmark-frame">
+        <div class="score-vertical-inner track-score-vertical-inner">
+          <div class="score-vertical-plot-row">
+            <div class="score-vertical-y-axis" aria-hidden="true">
+              {scoreTicks.map((tick) => <span style={`bottom: ${valueCoordinate(tick, scoreDomainMin, scoreDomainMax).toFixed(2)}%;`}>{scoreLabel(tick)}</span>)}
+            </div>
+            <div class="score-vertical-plot" aria-hidden="true">
+              {scoreTicks.map((tick) => (
+                <span class="score-vertical-gridline" style={`bottom: ${valueCoordinate(tick, scoreDomainMin, scoreDomainMax).toFixed(2)}%;`}></span>
+              ))}
+              <span class="score-vertical-zero-line" style={`bottom: ${scoreZero.toFixed(2)}%;`}></span>
+              <div class="score-vertical-bars" style={`--score-column-count: ${scoreRows.length};`}>
+                {scoreRows.map((row, index) => (
+                  <div class={scoreColumnClass(row, index)}>
+                    <span class="score-vertical-value" style={scoreValueStyle(row.averageScore)}>{scoreLabel(row.averageScore)}</span>
+                    <span class={`score-vertical-bar ${scoreBarClass(row, index)}`} style={scoreVerticalBarStyle(row.averageScore)}></span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div class="score-vertical-label-row">
+            <span></span>
+            <div class="score-vertical-labels" style={`--score-column-count: ${scoreRows.length};`}>
+              {scoreRows.map((row) => (
+                <div
+                  class={`score-vertical-label ${row.kind === "benchmark" ? "score-vertical-label-benchmark" : ""}`}
+                  title={`${row.label}: ${scoreLabel(row.averageScore)} out of 100. ${rowMeta(row)}`}
+                >
+                  {row.kind === "model" && row.logoSrc ? (
+                    <span class="score-chart-logo-shell">
+                      <img class="score-chart-logo" src={row.logoSrc} alt={row.providerLabel ?? row.label} width="40" height="40" loading="lazy" />
+                    </span>
+                  ) : (
+                    <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
+                  )}
+                  <strong>{row.label}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="score-mobile-rank-chart" aria-label={`${scorecard.label} CapitalBench Score mobile chart`}>
+            {scoreRows.map((row, index) => (
+              <article
+                class={`score-mobile-rank-row score-mobile-rank-row-${row.kind} ${
+                  row.kind === "model" && index === 0 ? "score-mobile-rank-row-winner" : ""
+                }`}
+              >
+                <div class="score-mobile-rank-head">
+                  <div>
+                    {row.kind === "model" && row.logoSrc ? (
+                      <span class="score-chart-logo-shell">
+                        <img class="score-chart-logo" src={row.logoSrc} alt={row.providerLabel ?? row.label} width="40" height="40" loading="lazy" />
+                      </span>
+                    ) : (
+                      <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
+                    )}
+                    <span>
+                      <strong>{row.label}</strong>
+                      <em>{rowMeta(row)}</em>
+                    </span>
+                  </div>
+                  <strong>{scoreLabel(row.averageScore)}</strong>
+                </div>
+                <div class="score-mobile-rank-track" aria-hidden="true">
+                  <span class={`score-mobile-rank-fill ${scoreBarClass(row, index)}`} style={scoreMobileBarStyle(row.averageScore)}></span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="track-scorecard-chart track-scorecard-return-chart" aria-labelledby={`${scorecard.track}-average-return-title`}>
+      <div class="track-scorecard-chart-head">
+        <div>
+          <span>Return context</span>
+          <h4 id={`${scorecard.track}-average-return-title`}>Average Return</h4>
+        </div>
+        <p>
+          Return leader: {scorecard.topAverageRow?.label ?? "n/a"}
+          {scorecard.topAverageRow ? `, ${pct(scorecard.topAverageRow.averageReturn)} mean return.` : "."}
+        </p>
+      </div>
+
+      <div class="track-scorecard-axis" aria-hidden="true">
+        {averageTicks.map((tick) => (
+          <span style={`left: ${valueCoordinate(tick, averageDomainMin, averageDomainMax).toFixed(2)}%;`}>
+            {pct(tick)}
+          </span>
+        ))}
+      </div>
+
+      <div class="track-scorecard-list">
+        {scorecard.averageRows.map((row) => (
+          <div class={averageRowClass(row)}>
+            <div class="track-scorecard-row-label">
+              {row.logoSrc ? (
+                <span class="track-scorecard-logo-shell">
+                  <img src={row.logoSrc} alt={row.providerLabel ?? row.label} width="34" height="34" loading="lazy" />
+                </span>
+              ) : (
+                <span class={`track-scorecard-chip track-scorecard-chip-${row.kind}`}>{chipLabel(row)}</span>
+              )}
+              <span>
+                <strong>{row.label}</strong>
+                <em>{rowMeta(row)}</em>
+              </span>
+            </div>
+            <div class="track-scorecard-bar-cell">
+              <span class="track-scorecard-zero-line" style={`left: ${averageZero.toFixed(2)}%;`}></span>
+              <span class="track-scorecard-bar" style={averageBarStyle(row.averageReturn)}></span>
+            </div>
+            <strong class="track-scorecard-value">{pct(row.averageReturn)}</strong>
+          </div>
+        ))}
+      </div>
+    </article>
+  </div>
+
+  <div class="track-scorecard-notes" aria-label={`${scorecard.label} scorecard notes`}>
+    <span><strong>Completed only:</strong> {scorecard.completedRoundIds.join(", ")}</span>
+    <span><strong>No backfill:</strong> models are averaged only over tests they actually entered.</span>
+  </div>
+</section>
