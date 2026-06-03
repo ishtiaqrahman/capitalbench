@@ -344,7 +344,7 @@
       "get": {
         "tags": ["Leaderboards"],
         "summary": "Cumulative leaderboard",
-        "description": "Aggregate model score history by weekly track, monthly track, or combined view.",
+        "description": "Aggregate model score history by weekly track, monthly track, or combined view, ranked by CapitalBench Score where available.",
         "parameters": [{ "$ref": "#/components/parameters/Track" }],
         "responses": {
           "200": {
@@ -823,6 +823,8 @@
           "portfolio_return_pct": { "type": "number" },
           "benchmark_return_pct": { "type": "number" },
           "alpha_pp": { "type": "number", "description": "Portfolio return minus benchmark return, in percentage points." },
+          "max_possible_return_pct": { "type": ["number", "null"], "description": "Highest realized return among scored options in the saved universe, in percentage points." },
+          "capitalbench_score": { "type": ["number", "null"], "description": "Score where 100 means matching the maximum possible return in that window." },
           "round_count": { "type": "integer" },
           "win_rate_pct": { "type": ["number", "null"] }
         },

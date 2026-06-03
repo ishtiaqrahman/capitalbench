@@ -114,6 +114,20 @@ function percentReturnValue(value) {
   return numeric === null ? null : numeric * 100;
 }
 
+function normalizedCapitalBenchScore(returnPct, maxPossibleReturnPct) {
+  if (typeof returnPct !== "number" || typeof maxPossibleReturnPct !== "number") return null;
+  if (Math.abs(maxPossibleReturnPct) < 0.0000001) {
+    return Math.abs(returnPct - maxPossibleReturnPct) < 0.0000001 ? 100 : 0;
+  }
+  return (returnPct / maxPossibleReturnPct) * 100;
+}
+
+function maxPossibleReturnPct(roundPath, selectedRun) {
+  const rows = parseCsv(readText(join(roundPath, "runs", selectedRun.run_id, "results", "returns.csv")));
+  const values = rows.map((row) => percentReturnValue(row.return)).filter((value) => typeof value === "number");
+  return values.length ? Math.max(...values) : null;
+}
+
 function modelLabel(modelId) {
   if (MODEL_LABELS[modelId]) return MODEL_LABELS[modelId];
   return modelId
@@ -384,25 +398,31 @@ function loadSubmissions({ roundPath, round, selectedRun, assetsById }) {
 
 function loadResults({ roundPath, round, selectedRun }) {
   const rows = parseCsv(readText(join(roundPath, "runs", selectedRun.run_id, "results", "leaderboard.csv")));
+  const maxReturnPct = maxPossibleReturnPct(roundPath, selectedRun);
   return rows
-    .map((row, index) => ({
-      round_id: row.round_id || round.round_id,
-      run_id: selectedRun.run_id,
-      track: round.track,
-      model_id: row.model_id,
-      provider: row.provider,
-      rank: index + 1,
-      selected_option_id: row.selected_option_id || "",
-      submission_format: row.submission_format || "",
-      holding_count: numberValue(row.holding_count),
-      portfolio_return_pct: percentReturnValue(row.portfolio_return || row.selected_asset_return),
-      selected_asset_return_pct: percentReturnValue(row.selected_asset_return),
-      benchmark_return_pct: percentReturnValue(row.sp500_return),
-      alpha_pp: percentReturnValue(row.alpha_vs_sp500),
-      regret_vs_best_option_pct: percentReturnValue(row.regret_vs_best_option),
-      rank_among_options: numberValue(row.rank_among_options),
-      confidence: numberValue(row.confidence)
-    }))
+    .map((row, index) => {
+      const portfolioReturnPct = percentReturnValue(row.portfolio_return || row.selected_asset_return);
+      return {
+        round_id: row.round_id || round.round_id,
+        run_id: selectedRun.run_id,
+        track: round.track,
+        model_id: row.model_id,
+        provider: row.provider,
+        rank: index + 1,
+        selected_option_id: row.selected_option_id || "",
+        submission_format: row.submission_format || "",
+        holding_count: numberValue(row.holding_count),
+        portfolio_return_pct: portfolioReturnPct,
+        selected_asset_return_pct: percentReturnValue(row.selected_asset_return),
+        benchmark_return_pct: percentReturnValue(row.sp500_return),
+        alpha_pp: percentReturnValue(row.alpha_vs_sp500),
+        max_possible_return_pct: maxReturnPct,
+        capitalbench_score: normalizedCapitalBenchScore(portfolioReturnPct, maxReturnPct),
+        regret_vs_best_option_pct: percentReturnValue(row.regret_vs_best_option),
+        rank_among_options: numberValue(row.rank_among_options),
+        confidence: numberValue(row.confidence)
+      };
+    })
     .filter((row) => row.model_id && row.provider);
 }
 

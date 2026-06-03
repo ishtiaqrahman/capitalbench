@@ -126,7 +126,7 @@ does not replace the official leaderboard.
   `cumulative_selection.yaml` and identify the exact official and stability run
   for each included round.
 - Remember that the latest leaderboard is only the newest resolved round.
-- Remember that the cumulative official leaderboard averages official alpha
+- Remember that the cumulative official scorecard averages CapitalBench Score
   across resolved rounds where each model participated.
 - Remember that the cumulative stability leaderboard averages repeated-run alpha
   and consistency across resolved rounds where each model participated.

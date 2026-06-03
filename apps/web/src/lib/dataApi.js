@@ -513,12 +513,16 @@ function cumulativeLeaderboard(url) {
         portfolio_return_values: [],
         benchmark_return_values: [],
         alpha_values: [],
+        max_possible_return_values: [],
+        capitalbench_score_values: [],
         wins: 0,
         positive_alpha: 0,
         round_count: 0
       };
     if (typeof row.portfolio_return_pct === "number") existing.portfolio_return_values.push(row.portfolio_return_pct);
     if (typeof row.benchmark_return_pct === "number") existing.benchmark_return_values.push(row.benchmark_return_pct);
+    if (typeof row.max_possible_return_pct === "number") existing.max_possible_return_values.push(row.max_possible_return_pct);
+    if (typeof row.capitalbench_score === "number") existing.capitalbench_score_values.push(row.capitalbench_score);
     if (typeof row.alpha_pp === "number") {
       existing.alpha_values.push(row.alpha_pp);
       if (row.alpha_pp > 0) existing.positive_alpha += 1;
@@ -535,11 +539,16 @@ function cumulativeLeaderboard(url) {
       portfolio_return_pct: average(row.portfolio_return_values),
       benchmark_return_pct: average(row.benchmark_return_values),
       alpha_pp: average(row.alpha_values),
+      max_possible_return_pct: average(row.max_possible_return_values),
+      capitalbench_score: average(row.capitalbench_score_values),
       round_count: row.round_count,
       wins: row.wins,
       win_rate_pct: row.round_count ? (row.positive_alpha / row.round_count) * 100 : null
     }))
-    .sort((a, b) => Number(b.alpha_pp ?? -Infinity) - Number(a.alpha_pp ?? -Infinity))
+    .sort((a, b) =>
+      Number(b.capitalbench_score ?? -Infinity) - Number(a.capitalbench_score ?? -Infinity) ||
+      Number(b.alpha_pp ?? -Infinity) - Number(a.alpha_pp ?? -Infinity)
+    )
     .map((row, index) => ({ rank: index + 1, ...row }));
   return jsonApiResult(200, { track, data });
 }

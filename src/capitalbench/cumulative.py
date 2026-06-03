@@ -534,9 +534,9 @@ def publish_cumulative_report(
                 ["Round", "Official Run", "Stability Run", "Official Included", "Stability Included", "Warnings"],
             ),
             "## Methodology\n\n"
-            "Official cumulative score: For each model, we average its official one-shot alpha versus the S&P 500 across the rounds where each model participated.\n\n"
+            "Official cumulative score: For each model, the public website averages CapitalBench Score across completed rounds where each model participated. CapitalBench Score compares the model return with the maximum possible return from the scored universe in that window.\n\n"
             "Stability cumulative score: For each model, we average its repeated-run alpha and consistency across the rounds where each model participated.\n\n"
-            "The cumulative official leaderboard is sorted by average alpha versus the S&P 500 across the rounds where each model participated.\n\n"
+            "The CSV cumulative official leaderboard keeps average alpha versus the S&P 500 as supporting context for compatibility; the website scorecard is the primary benchmark view.\n\n"
             "The cumulative stability leaderboard is sorted by average repeated-run alpha versus the S&P 500 across the rounds where each model participated.\n\n"
             "The official leaderboard measures one-shot decision quality. The stability leaderboard measures consistency under repeated calls. They are not combined.",
             "## Limitations\n\n"

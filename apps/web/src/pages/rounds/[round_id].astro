@@ -552,8 +552,8 @@ const attributionColumns = [
           <span class="panel-kicker">Official result</span>
           <h2>{modelLabel(resultWinner.model_id)} Won This {benchmarkTrackLabel} Test</h2>
           <p>
-            Scored from {dateOnly(round.entry_date)} close to {dateOnly(round.exit_date)} close. The official score is
-            portfolio return minus the S&amp;P 500 return over the same window.
+            Scored from {dateOnly(round.entry_date)} close to {dateOnly(round.exit_date)} close. This page shows raw
+            portfolio return, S&amp;P 500 comparison, and the maximum possible return for the saved asset universe.
           </p>
         </div>
         <div class="result-metrics" aria-label="Round final score summary">
@@ -591,7 +591,7 @@ const attributionColumns = [
           <div>
             <span class="panel-kicker">Final leaderboard</span>
             <h2>Official Scores</h2>
-            <p>Rows are ranked by return versus the S&amp;P 500. Higher is better.</p>
+            <p>Rows show portfolio return, S&amp;P 500 comparison, and regret versus the maximum possible return.</p>
           </div>
         </div>
         <LeaderboardTable client:visible fallbackRows={resultRows} kind="latest" disableFetch />
@@ -679,7 +679,7 @@ const attributionColumns = [
           <article class="feature">
             <span class="metric-label">Scoring</span>
             <h3>{round.status === "resolved" ? "Published" : "Ending prices pending"}</h3>
-            <p>Asset return, portfolio return, S&P 500 return, return versus S&P 500, and regret publish after scoring.</p>
+            <p>Portfolio return, S&P 500 return, maximum possible return, CapitalBench context, and regret publish after scoring.</p>
           </article>
         </div>
         <div class="audit-checklist" aria-label="Round audit checklist">

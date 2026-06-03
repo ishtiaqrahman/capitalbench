@@ -53,8 +53,8 @@ const initialNowIso = new Date().toISOString();
                 <span class="panel-kicker">Latest published monthly result</span>
                 <h2>{modelLabel(winner.model_id)} Won {resultRound.round_id}</h2>
                 <p>
-                  The official score is portfolio return versus the S&amp;P 500 over the same close-to-close window.
-                  Current monthly tests remain separate until their ending prices are collected.
+                  The completed result shows portfolio return, S&amp;P 500 comparison, and regret versus the maximum
+                  possible return. Current monthly tests remain separate until their ending prices are collected.
                 </p>
               </div>
               <div class="result-metrics" aria-label="Latest monthly result summary">
@@ -129,7 +129,7 @@ const initialNowIso = new Date().toISOString();
               <h2>{resultRound ? `${resultRound.round_id} Final Scores` : "No Monthly Score Yet"}</h2>
               <p>
                 {resultRound
-                  ? "Rows are ranked by return versus the S&P 500. The table is monthly only."
+                  ? "Rows show portfolio return, S&P 500 comparison, and regret versus the maximum possible return. The table is monthly only."
                   : "The leaderboard appears after the first monthly test is scored."}
               </p>
             </div>

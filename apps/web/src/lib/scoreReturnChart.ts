@@ -119,7 +119,7 @@ export function buildScoreReturnChartData({
     modelAllocations.sort((a, b) => a.allocation_rank - b.allocation_rank || b.allocation_bps - a.allocation_bps);
   }
   const bestResultAsset = returns
-    .filter((item) => !item.is_benchmark && !item.is_cash && finiteNumber(item.return))
+    .filter((item) => finiteNumber(item.return))
     .sort((a, b) => b.return - a.return)[0];
   const values = [
     ...leaderboard.map(leaderboardReturn).filter(finiteNumber),

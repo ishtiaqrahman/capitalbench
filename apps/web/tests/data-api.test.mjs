@@ -36,8 +36,10 @@ async function authRepoForToken(token, overrides = {}) {
   ]);
 }
 
-function latestRoundId(track) {
-  const round = apiReadModel.rounds.find((item) => item.track === track && item.official_run_id);
+function latestRoundId(track, { status } = {}) {
+  const round = apiReadModel.rounds.find(
+    (item) => item.track === track && (!status || item.status === status) && item.official_run_id
+  );
   assert.ok(round, `expected a generated ${track} round with an official run`);
   return round.round_id;
 }
@@ -111,14 +113,31 @@ test("active positioning returns live model allocation data", async () => {
 });
 
 test("latest weekly leaderboard returns resolved scored rows", async () => {
+  const latestWeeklyRoundId = latestRoundId("weekly", { status: "resolved" });
   const result = await apiGet("/api/v1/leaderboards/latest?track=weekly");
 
   assert.equal(result.status, 200);
   assert.equal(result.body.track, "weekly");
-  assert.equal(result.body.round_id, "CB-2026-05-24-1W");
+  assert.equal(result.body.round_id, latestWeeklyRoundId);
   assert.equal(result.body.data.length, 4);
   assert.equal(result.body.data[0].rank, 1);
   assert.equal(typeof result.body.data[0].alpha_pp, "number");
+  assert.equal(typeof result.body.data[0].max_possible_return_pct, "number");
+  assert.equal(typeof result.body.data[0].capitalbench_score, "number");
+});
+
+test("cumulative weekly leaderboard ranks by CapitalBench Score", async () => {
+  const result = await apiGet("/api/v1/leaderboards/cumulative?track=weekly");
+
+  assert.equal(result.status, 200);
+  assert.equal(result.body.track, "weekly");
+  assert.ok(result.body.data.length > 0);
+  assert.equal(result.body.data[0].rank, 1);
+  assert.equal(typeof result.body.data[0].capitalbench_score, "number");
+  assert.equal(typeof result.body.data[0].max_possible_return_pct, "number");
+  for (let index = 1; index < result.body.data.length; index += 1) {
+    assert.ok(result.body.data[index - 1].capitalbench_score >= result.body.data[index].capitalbench_score);
+  }
 });
 
 test("round portfolios and current universe endpoints return real data", async () => {

@@ -72,7 +72,7 @@ function leaderboardReturn(row: LeaderboardRecord): number | undefined {
 
 function bestUniverseReturn(rows: ResultReturnRecord[]): number | undefined {
   return rows
-    .filter((row) => !row.is_benchmark && !row.is_cash && finiteNumber(row.return))
+    .filter((row) => finiteNumber(row.return))
     .sort((left, right) => right.return - left.return)[0]?.return;
 }
 

@@ -26,6 +26,25 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-03-capitalbench-score-max-possible",
+    date: "2026-06-03",
+    title: "CapitalBench Score documented as the primary benchmark score",
+    category: "Methodology",
+    status: "published",
+    summary:
+      "Overall weekly and monthly results now explain CapitalBench Score as the primary benchmark score against the maximum possible return in each completed window.",
+    details: [
+      "Scoring documentation now separates raw portfolio return, S&P 500 comparison, regret, and CapitalBench Score instead of describing overall results as average alpha only.",
+      "Overall weekly and monthly pages now lead with the CapitalBench Score chart, with average return versus S&P 500 kept as supporting context.",
+      "The Data API read model and OpenAPI schema include max_possible_return_pct and capitalbench_score for resolved result rows and cumulative leaderboards."
+    ],
+    links: [
+      { label: "Scoring", href: "/scoring" },
+      { label: "Overall weekly", href: "/leaderboards/cumulative-weekly" },
+      { label: "API docs", href: "/api" }
+    ]
+  },
+  {
     id: "2026-06-02-interim-performance-automation",
     date: "2026-06-02",
     title: "Monthly interim performance refresh automated",

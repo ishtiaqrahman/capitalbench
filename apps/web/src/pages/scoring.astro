@@ -5,27 +5,41 @@ import PageHeader from "../components/PageHeader.astro";
 
 <BaseLayout
   title="CapitalBench Scoring"
-  description="How CapitalBench compares AI model portfolio returns with the S&P 500 in weekly and monthly tests."
+  description="How CapitalBench scores AI model portfolio returns, S&P 500 comparisons, and the maximum-possible-return benchmark used for overall results."
 >
   <PageHeader
     eyebrow="Scoring"
     title="How Scores Work"
-    summary="Each model's portfolio return is compared with the S&P 500 over the same one-week or one-month test."
+    summary="Each test records portfolio return, S&P 500 comparison, and a CapitalBench Score that scales the result against the highest-returning scored option in that window."
   />
   <section class="section doc-layout">
     <article class="doc-body">
-      <h2>Public Score</h2>
+      <h2>Single-Test Result</h2>
       <p>
-        The public score is the model portfolio return minus the S&amp;P 500 return over the same test period. Each
-        model gets one saved portfolio for a test, and that portfolio is what appears on the public scoreboard.
+        Each model gets one saved portfolio for a test, and that portfolio is what appears on the public scoreboard.
+        For a completed test, CapitalBench reports the raw portfolio return, the S&amp;P 500 return over the same
+        close-to-close window, return versus S&amp;P 500, and regret versus the highest-returning scored option.
       </p>
       <ul>
         <li>Single-pick return: selected option ending price divided by starting price, minus one.</li>
         <li>Portfolio return: weighted sum of holding returns, using the submitted allocation percentages.</li>
         <li>Return versus S&P 500: portfolio return minus S&P 500 return.</li>
-        <li>Regret: best available asset return minus the model's return, when full asset-list prices exist.</li>
+        <li>Maximum possible return: the highest realized return among scored options in the saved universe.</li>
+        <li>Regret: maximum possible return minus the model's return, when full asset-list prices exist.</li>
         <li>Cash comparison: whether the model's return beats a cash return.</li>
       </ul>
+
+      <h2>CapitalBench Score</h2>
+      <p>
+        CapitalBench Score is the primary cumulative benchmark score. It asks how much of the best available return in
+        each completed test a model captured. A score of 100 for a test means the model matched the highest-returning
+        scored option in that same window. The S&amp;P 500 can also be plotted on this scale as a benchmark reference.
+      </p>
+      <p>
+        The maximum possible return is a hindsight ceiling, not a model portfolio and not an investable recommendation.
+        It exists to normalize different market windows: a one-week test where the best asset rises 2% and another
+        where the best asset rises 12% can be compared on the same 0-to-100 scale.
+      </p>
 
       <h2>Price Inputs</h2>
       <p>
@@ -47,21 +61,29 @@ import PageHeader from "../components/PageHeader.astro";
           <code>portfolio_return - sp500_return</code>
         </div>
         <div>
+          <span>Max possible return</span>
+          <code>max(scored_universe_returns)</code>
+        </div>
+        <div>
+          <span>CapitalBench Score</span>
+          <code>100 * portfolio_return / max_possible_return</code>
+        </div>
+        <div>
           <span>Regret</span>
-          <code>best_asset_return - portfolio_return</code>
+          <code>max_possible_return - portfolio_return</code>
         </div>
       </div>
 
       <h2>Overall Results</h2>
       <p>
-        Overall results average a model's return versus the S&amp;P 500 across completed tests where that model
-        participated. Models are not backfilled into earlier tests; they begin accumulating public history only from
-        the tests where they were actually run.
+        Overall results keep weekly and monthly tracks separate. For each completed test, CapitalBench computes the
+        model's CapitalBench Score using that test's maximum possible return. The overall score is the average of those
+        per-test scores across completed tests where the model actually participated.
       </p>
       <p>
-        The overall view is intentionally simple. It reports participation count, average return versus S&amp;P 500, and
-        related completed-test aggregates. It does not introduce hidden weighting, qualified tiers, or a single combined
-        score that merges public picks and consistency checks.
+        The overall view also shows average raw return and S&amp;P 500 context, but those are supporting context. The
+        headline benchmark score is not a hidden weighting system, and it does not merge weekly tests with monthly
+        tests or public picks with consistency checks.
       </p>
 
       <h2>Consistency Tests</h2>
@@ -78,15 +100,16 @@ import PageHeader from "../components/PageHeader.astro";
       <p>
         Pending tests can show model portfolios, confidence values, rationale summaries, starting prices, and proof hashes.
         After at least one interim price snapshot exists, a test page may also show interim return tracking versus
-        S&amp;P 500. That chart is explicitly provisional and separate from the final scoreboard. Rank, regret, and final
-        return versus S&amp;P 500 remain withheld until ending prices are present and the scorer publishes the result files.
+        S&amp;P 500. That chart is explicitly provisional and separate from the final scoreboard. CapitalBench Score,
+        rank, regret, maximum possible return, and final return versus S&amp;P 500 remain withheld until ending prices are
+        present and the scorer publishes the result files.
       </p>
     </article>
     <aside class="side-panel">
-      <strong>No qualified tier</strong>
+      <strong>Main score</strong>
       <p>
-        The public site intentionally avoids provisional tiers, maturity labels, and weighted mega-scores. A row is
-        either pending, public result, overall result, or consistency check.
+        CapitalBench Score is normalized to the highest-returning scored option in each completed window. Raw return
+        and S&amp;P 500 comparison remain visible as context.
       </p>
     </aside>
   </section>

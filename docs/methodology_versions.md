@@ -57,7 +57,7 @@ Changes from `v1.1`:
 - No shorting, leverage, negative weights, or unfrozen option ids are allowed.
 - CASH and benchmark allocations are controlled by the round manifest and must
   be present in `options.yaml`.
-- Scoring uses the weighted realized portfolio return versus the S&P 500 return.
+- Scoring records weighted realized portfolio return, S&P 500 comparison, and max-possible-return context.
 - Public artifacts include holding-level allocation rows, portfolio rationale,
   holding count, largest allocation, cash allocation, benchmark allocation, and
   concentration HHI.

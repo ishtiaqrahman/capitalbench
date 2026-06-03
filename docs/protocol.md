@@ -142,7 +142,7 @@ into one weighted score.
 CapitalBench publishes three result views:
 
 - Latest Round Leaderboard: the newest resolved round's official one-shot result.
-- Cumulative Official Leaderboard: average official alpha versus the S&P 500 across resolved rounds where each model participated.
+- Cumulative Official Leaderboard: average CapitalBench Score across resolved rounds where each model participated.
 - Cumulative Stability Leaderboard: average repeated-run alpha and average consistency across resolved rounds where each model participated.
 
 There is no qualified leaderboard and no weighted mega-score. Official and
@@ -318,8 +318,8 @@ result. It is secondary analysis and does not alter the official leaderboard.
 Each resolved round is one game. Across resolved rounds, CapitalBench can publish
 two cumulative leaderboards:
 
-- Cumulative official leaderboard: average official one-shot alpha versus the
-  S&P 500 across resolved rounds.
+- Cumulative official leaderboard: average CapitalBench Score across resolved
+  rounds where each model participated.
 - Cumulative stability leaderboard: average repeated-run alpha and average
   consistency across resolved rounds.
 

@@ -617,8 +617,8 @@ capitalbench fetch-prices \
   --exit-date 2026-07-02
 ```
 
-To calculate `regret_vs_best_option` and `rank_among_options`, fetch every
-option in the frozen universe:
+To calculate `regret_vs_best_option`, `rank_among_options`, and max-possible
+score context, fetch every option in the frozen universe:
 
 ```bash
 capitalbench fetch-prices \

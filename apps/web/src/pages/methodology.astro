@@ -26,8 +26,8 @@ import PageHeader from "../components/PageHeader.astro";
     </div>
     <div>
       <span class="metric-label">Scoring rule</span>
-      <strong>Return versus S&amp;P 500</strong>
-      <p>The portfolio return is compared with the S&amp;P 500 over the same test period.</p>
+      <strong>Best-asset scale</strong>
+      <p>CapitalBench Score compares the portfolio return with the highest-returning scored option in that same window.</p>
     </div>
   </section>
 
@@ -312,8 +312,16 @@ import PageHeader from "../components/PageHeader.astro";
             <code>portfolio_return - sp500_return</code>
           </div>
           <div>
-            <span>Regret versus best asset</span>
-            <code>best_asset_return - portfolio_return</code>
+            <span>Maximum possible return</span>
+            <code>max(scored_universe_returns)</code>
+          </div>
+          <div>
+            <span>CapitalBench Score</span>
+            <code>100 * portfolio_return / max_possible_return</code>
+          </div>
+          <div>
+            <span>Regret versus max possible</span>
+            <code>max_possible_return - portfolio_return</code>
           </div>
           <div>
             <span>Score per dollar</span>
@@ -322,8 +330,9 @@ import PageHeader from "../components/PageHeader.astro";
         </div>
         <p>
           Cash is treated as a zero return unless cash prices are explicitly supplied. Portfolio tests use the weighted
-          realized return of the submitted portfolio. The main scoreboard is sorted by return versus S&amp;P 500
-          descending. Ties are resolved by lower regret, higher confidence, and then model id.
+          realized return of the submitted portfolio. Latest-test tables show raw portfolio return, S&amp;P 500 comparison,
+          and regret. Combined track scorecards use CapitalBench Score, where 100 means matching the highest-returning
+          scored option in that completed window.
         </p>
         <p>
           Interim tracking can be generated from reusable price snapshots after the start date and before the final end
@@ -347,7 +356,7 @@ import PageHeader from "../components/PageHeader.astro";
           </div>
           <div>
             <h3>Overall Scoreboard</h3>
-            <p>Average return versus S&amp;P 500 across completed tests where each model has a public result. New models are not backfilled into old tests.</p>
+            <p>Average CapitalBench Score across completed tests in the same track where each model has a public result. New models are not backfilled into old tests.</p>
           </div>
           <div>
             <h3>Consistency Scoreboard</h3>

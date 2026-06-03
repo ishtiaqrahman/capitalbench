@@ -87,7 +87,7 @@ export const routeMeta: RouteMeta[] = [
     path: "/leaderboards/cumulative-official",
     title: "Overall CapitalBench Results",
     description:
-      "Overall CapitalBench results split into weekly and monthly market tests.",
+      "Overall CapitalBench scorecards split into weekly and monthly market tests.",
     priority: 0.86,
     changefreq: "weekly",
     lastmod: defaultLastmod
@@ -104,7 +104,7 @@ export const routeMeta: RouteMeta[] = [
   {
     path: "/leaderboards/cumulative-weekly",
     title: "Overall Weekly CapitalBench Results",
-    description: "Overall CapitalBench results for completed one-week market tests only.",
+    description: "Overall CapitalBench Score results for completed one-week market tests only.",
     priority: 0.86,
     changefreq: "weekly",
     lastmod: defaultLastmod
@@ -112,7 +112,7 @@ export const routeMeta: RouteMeta[] = [
   {
     path: "/leaderboards/cumulative-monthly",
     title: "Overall Monthly CapitalBench Results",
-    description: "Overall CapitalBench results for completed one-month market tests only.",
+    description: "Overall CapitalBench Score results for completed one-month market tests only.",
     priority: 0.86,
     changefreq: "weekly",
     lastmod: defaultLastmod
@@ -157,7 +157,7 @@ export const routeMeta: RouteMeta[] = [
     title: round.status === "resolved" ? `${round.round_id} Result And Proof` : `${round.round_id} Proof Files`,
     description:
       round.status === "resolved"
-        ? `${round.title}: final model portfolio scores, S&P 500 comparison, scoring prices, and proof hashes for the ${round.horizon} market test.`
+        ? `${round.title}: final model portfolio scores, S&P 500 comparison, maximum possible return context, scoring prices, and proof hashes for the ${round.horizon} market test.`
         : `${round.title}: model portfolios, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`,
     priority: 0.8,
     changefreq: "weekly" as const,
@@ -185,7 +185,7 @@ export const routeMeta: RouteMeta[] = [
     path: "/scoring",
     title: "CapitalBench Scoring",
     description:
-      "How CapitalBench compares AI model portfolio returns with the S&P 500 in weekly and monthly tests.",
+      "How CapitalBench scores AI model portfolio returns, S&P 500 comparisons, and maximum possible return context in weekly and monthly tests.",
     priority: 0.72,
     changefreq: "monthly",
     lastmod: defaultLastmod

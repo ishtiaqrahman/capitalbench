@@ -48,7 +48,7 @@ CapitalBench does not prove that a model is good at investing. It measures a
 narrow task under a specific prompt, option set, and time window.
 
 Cumulative leaderboards reduce single-round noise but do not remove it. The
-cumulative official leaderboard averages one-shot alpha across rounds. The
+cumulative official scorecard averages CapitalBench Score across rounds. The
 cumulative stability leaderboard averages repeated-run alpha and consistency
 across rounds. They remain separate.
 

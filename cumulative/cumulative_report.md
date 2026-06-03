@@ -26,11 +26,11 @@ _No rows._
 
 ## Methodology
 
-Official cumulative score: For each model, we average its official one-shot alpha versus the S&P 500 across the rounds where each model participated.
+Official cumulative score: For each model, the public website averages CapitalBench Score across completed rounds where each model participated. CapitalBench Score compares the model return with the maximum possible return from the scored universe in that window.
 
 Stability cumulative score: For each model, we average its repeated-run alpha and consistency across the rounds where each model participated.
 
-The cumulative official leaderboard is sorted by average alpha versus the S&P 500 across the rounds where each model participated.
+The CSV cumulative official leaderboard keeps average alpha versus the S&P 500 as supporting context for compatibility; the website scorecard is the primary benchmark view.
 
 The cumulative stability leaderboard is sorted by average repeated-run alpha versus the S&P 500 across the rounds where each model participated.
 

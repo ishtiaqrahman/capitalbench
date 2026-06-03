@@ -119,8 +119,10 @@ For each official model submission:
 - `beats_cash`: whether the decision return beat cash
 - `alpha_per_dollar`: alpha divided by cost, only when `cost_usd > 0`
 
-The main leaderboard is sorted by `alpha_vs_sp500` descending. Ties are resolved
-by lower regret, higher confidence, and then model id.
+Latest-test tables sort by `alpha_vs_sp500` descending. Ties are resolved by
+lower regret, higher confidence, and then model id. Overall scorecards use
+CapitalBench Score, defined as `100 * selected_asset_return / max_possible_return`
+for each completed test where full-universe scoring returns exist.
 
 The benchmark option must be identifiable as S&P 500, usually with
 `is_benchmark: true` and `asset_symbol: SPY`.
@@ -128,8 +130,8 @@ The benchmark option must be identifiable as S&P 500, usually with
 ## Official One-Shot Leaderboard
 
 The official leaderboard uses exactly one valid submission per model from a run
-with `run_type: official`. It is the headline score. Stability runs do not feed
-into this leaderboard.
+with `run_type: official`. It is the public one-shot result for a completed
+test. Stability runs do not feed into this leaderboard.
 
 Official scoring writes:
 
@@ -201,30 +203,44 @@ latest/
 ## Cumulative Official Leaderboard
 
 Across multiple resolved rounds, each round counts as one game. For each model,
-CapitalBench averages official one-shot alpha versus the S&P 500 across all
-resolved rounds where that model has an official result.
+CapitalBench computes a per-round CapitalBench Score:
+
+```text
+capitalbench_score = 100 * selected_asset_return / max_possible_return
+```
+
+`max_possible_return` is the highest realized return among scored options in the
+frozen universe for that round. A score of 100 means the model matched the
+maximum possible return in that completed window. The cumulative score averages
+the per-round CapitalBench Scores across resolved rounds where that model has
+an official result.
 
 Example:
 
 ```text
 Round 1:
-Model A official alpha = +2%
+Model A return = +4%
+Max possible return = +8%
+Model A CapitalBench Score = 50
 
 Round 2:
-Model A official alpha = -1%
+Model A return = +3%
+Max possible return = +6%
+Model A CapitalBench Score = 50
 
-Cumulative average official alpha:
-(+2 + -1) / 2 = +0.5%
+Cumulative CapitalBench Score:
+(50 + 50) / 2 = 50
 ```
 
-The cumulative official table also includes compounded model return, compounded
-S&P 500 return, cumulative log alpha, hit rates, regret, and cost summaries
-when cost data exists.
+The cumulative official view also includes average model return, S&P 500
+comparison, hit rates, regret, and cost summaries when cost data exists. Those
+fields are supporting context, not the primary benchmark score.
 
 Models may have different `resolved_rounds` counts because new models enter
 only in future rounds. CapitalBench does not backfill new models into old
-official rounds. The cumulative official leaderboard is sorted by average alpha
-versus the S&P 500, then cumulative log alpha, then hit rate versus the S&P 500.
+official rounds. The primary cumulative scorecard is sorted by average
+CapitalBench Score. Supporting alpha tables may sort by average alpha versus
+the S&P 500.
 
 ## Cumulative Stability Leaderboard
 
