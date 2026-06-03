@@ -10,6 +10,7 @@ responses, generated screenshots, or deployment-only identifiers.
 from __future__ import annotations
 
 import fnmatch
+import hashlib
 import json
 import re
 import subprocess
@@ -80,6 +81,7 @@ FORBIDDEN_GLOBS = {
 }
 
 RAW_RESPONSE_README_GLOB = "rounds/*/runs/*/raw_responses/README.md"
+LF_ONLY_SUFFIXES = {".csv", ".json", ".jsonl", ".md", ".py", ".yaml", ".yml"}
 RUN_LOG_DENIED_KEYS = {
     "api_key",
     "authorization",
@@ -151,6 +153,36 @@ def file_text(path: Path) -> str | None:
         return data.decode("utf-8", errors="ignore")
 
 
+def flat_yaml(path: Path) -> dict[str, str]:
+    """Parse the simple top-level YAML files used by automation metadata.
+
+    This audit script runs in GitHub Actions before package dependencies are
+    installed, so keep this intentionally narrow instead of importing PyYAML.
+    """
+    data: dict[str, str] = {}
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        key = key.strip()
+        if not key or raw_line[: len(raw_line) - len(raw_line.lstrip())]:
+            continue
+        data[key] = value.strip().strip("'").strip('"')
+    return data
+
+
+def bool_field(value: str | None) -> bool:
+    return (value or "").strip().lower() in {"true", "yes", "1"}
+
+
+def int_field(value: str | None) -> int:
+    try:
+        return int(str(value or "0"))
+    except ValueError:
+        return 0
+
+
 def audit_path(path: Path) -> list[Finding]:
     path_str = rel(path)
     findings: list[Finding] = []
@@ -205,6 +237,108 @@ def audit_run_log(path: Path, text: str) -> list[Finding]:
     return findings
 
 
+def audit_line_endings(path: Path) -> list[Finding]:
+    path_str = rel(path)
+    if path.suffix.lower() not in LF_ONLY_SUFFIXES:
+        return []
+    try:
+        data = path.read_bytes()
+    except OSError as exc:
+        return [Finding(path_str, f"could not read file for line-ending audit: {exc}")]
+    if b"\r\n" in data:
+        return [Finding(path_str, "CRLF line endings are not allowed; .gitattributes requires LF")]
+    return []
+
+
+def audit_round_hashes() -> list[Finding]:
+    findings: list[Finding] = []
+    for hashes_path in sorted((ROOT / "rounds").glob("*/hashes.json")):
+        path_str = rel(hashes_path)
+        try:
+            stored = json.loads(hashes_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            findings.append(Finding(path_str, f"hashes.json is not readable JSON: {exc}"))
+            continue
+
+        files = stored.get("files") if isinstance(stored, dict) else None
+        if not isinstance(files, dict):
+            findings.append(Finding(path_str, "hashes.json must contain a files object"))
+            continue
+
+        round_path = hashes_path.parent
+        for filename, expected in sorted(files.items()):
+            if not isinstance(filename, str) or not isinstance(expected, str):
+                findings.append(Finding(path_str, "hashes.json file entries must be string-to-string mappings"))
+                continue
+            target = round_path / filename
+            if not target.exists():
+                findings.append(Finding(path_str, f"hash entry points to missing file: {filename}"))
+                continue
+            actual = hashlib.sha256(target.read_bytes()).hexdigest()
+            if actual != expected:
+                findings.append(
+                    Finding(
+                        path_str,
+                        f"stored hash for `{filename}` does not match current file bytes",
+                    )
+                )
+    return findings
+
+
+def audit_automation_readiness() -> list[Finding]:
+    findings: list[Finding] = []
+    for job_path in sorted((ROOT / "rounds").glob("*/automation/resolution_job.yaml")):
+        path_str = rel(job_path)
+        try:
+            job = flat_yaml(job_path)
+        except OSError as exc:
+            findings.append(Finding(path_str, f"automation job is not readable: {exc}"))
+            continue
+
+        status = job.get("status", "")
+        if status not in {"scheduled", "failed"}:
+            continue
+        if status == "failed":
+            findings.append(Finding(path_str, "automation job is failed; retry, resolve, or cancel it before publishing"))
+
+        round_path = job_path.parents[1]
+        run_id = job.get("run_id", "")
+        if not run_id:
+            findings.append(Finding(path_str, "automation job is missing run_id"))
+            continue
+        run_manifest_path = round_path / "runs" / run_id / "run_manifest.yaml"
+        if not run_manifest_path.exists():
+            findings.append(Finding(path_str, f"accepted run manifest is missing: runs/{run_id}/run_manifest.yaml"))
+            continue
+
+        try:
+            run_manifest = flat_yaml(run_manifest_path)
+        except OSError as exc:
+            findings.append(Finding(rel(run_manifest_path), f"run manifest is not readable: {exc}"))
+            continue
+
+        if not bool_field(run_manifest.get("operator_selected_official")):
+            findings.append(Finding(rel(run_manifest_path), "scheduled automation run is not marked operator_selected_official"))
+        if not bool_field(run_manifest.get("official_score_eligible")):
+            findings.append(Finding(rel(run_manifest_path), "scheduled automation run is not official_score_eligible"))
+
+        model_count = int_field(run_manifest.get("model_count"))
+        valid_submissions = int_field(run_manifest.get("valid_submissions"))
+        invalid_submissions = int_field(run_manifest.get("invalid_submissions"))
+        if model_count <= 0:
+            findings.append(Finding(rel(run_manifest_path), "scheduled automation run has no model_count"))
+        if valid_submissions != model_count:
+            findings.append(
+                Finding(rel(run_manifest_path), f"valid submissions do not match model_count: {valid_submissions} != {model_count}")
+            )
+        if invalid_submissions != 0:
+            findings.append(Finding(rel(run_manifest_path), f"scheduled automation run has invalid submissions: {invalid_submissions}"))
+
+        if not (round_path / "prices" / "entry_prices.csv").exists():
+            findings.append(Finding(path_str, "scheduled automation round is missing prices/entry_prices.csv"))
+    return findings
+
+
 def audit_text(path: Path, text: str) -> list[Finding]:
     path_str = rel(path)
     findings: list[Finding] = []
@@ -244,11 +378,15 @@ def main() -> int:
         if not path.exists() or path.is_dir():
             continue
         findings.extend(audit_path(path))
+        findings.extend(audit_line_endings(path))
         text = file_text(path)
         if text is None:
             continue
         scanned_text_files += 1
         findings.extend(audit_text(path, text))
+
+    findings.extend(audit_round_hashes())
+    findings.extend(audit_automation_readiness())
 
     if findings:
         print("Public repo audit failed:\n")
