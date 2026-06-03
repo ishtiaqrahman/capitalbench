@@ -484,128 +484,6 @@ h3 {
   scroll-margin-top: 88px;
 }
 
-.hero-proof-strip {
-  min-width: 0;
-  max-width: 710px;
-  margin-top: 18px;
-  border-top: 1px solid rgb(0 107 95 / 18%);
-  padding-top: 12px;
-}
-
-.hero-proof-strip-head {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: end;
-  gap: 0;
-  margin-bottom: 12px;
-  border-bottom: 1px solid rgb(213 223 219 / 72%);
-  padding: 0 0 11px;
-}
-
-.hero-proof-strip-head span {
-  color: var(--accent-strong);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  line-height: 1.15;
-  text-transform: uppercase;
-}
-
-.hero-proof-strip-head strong {
-  grid-column: 2 / -1;
-  justify-self: end;
-  color: var(--ink-strong);
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  font-weight: 800;
-  line-height: 1.15;
-  text-align: right;
-}
-
-.hero-proof-steps {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.hero-proof-steps::before {
-  display: none;
-}
-
-.hero-proof-step {
-  --proof-accent: var(--accent);
-  --proof-tint: rgb(231 246 242 / 88%);
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 8px;
-  align-items: center;
-  border-right: 1px solid rgb(213 223 219 / 82%);
-  padding: 0 14px;
-  background: transparent;
-  color: var(--muted);
-  overflow: hidden;
-}
-
-.hero-proof-step:first-child {
-  padding-left: 0;
-}
-
-.hero-proof-step:last-child {
-  border-right: 0;
-  padding-right: 0;
-}
-
-.hero-proof-step-2 {
-  --proof-accent: #3163a8;
-  --proof-tint: rgb(234 241 252 / 90%);
-}
-
-.hero-proof-step-3 {
-  --proof-accent: #a76600;
-  --proof-tint: rgb(255 244 217 / 92%);
-}
-
-.hero-proof-step::before {
-  display: none;
-}
-
-.hero-proof-icon {
-  display: inline-grid;
-  width: 28px;
-  height: 28px;
-  place-items: center;
-  border: 0;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--proof-accent) 12%, white);
-  color: var(--proof-accent);
-}
-
-.hero-proof-copy {
-  display: grid;
-  min-width: 0;
-  gap: 2px;
-}
-
-.hero-proof-copy strong {
-  color: var(--ink-strong);
-  font-size: 0.82rem;
-  line-height: 1.14;
-}
-
-.hero-proof-copy span {
-  color: var(--muted);
-  font-size: 0.74rem;
-  font-weight: 700;
-  line-height: 1.18;
-}
-
 .email-signup {
   min-width: 0;
   display: grid;
@@ -1116,6 +994,10 @@ a.snapshot-model-chip:hover {
 }
 
 .benchmark-process-list {
+  --process-node-size: 34px;
+  --process-node-left: 12px;
+  --process-node-inset: 12px;
+  position: relative;
   display: grid;
   gap: 10px;
   margin: 0;
@@ -1123,11 +1005,29 @@ a.snapshot-model-chip:hover {
   list-style: none;
 }
 
+.benchmark-process-list::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: calc(var(--process-node-inset) + (var(--process-node-size) / 2));
+  bottom: calc(12px + var(--process-node-inset) + (var(--process-node-size) / 2));
+  left: calc(16px + var(--process-node-left) + (var(--process-node-size) / 2));
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    rgb(167 234 220 / 34%),
+    rgb(167 234 220 / 20%),
+    rgb(242 197 114 / 28%)
+  );
+}
+
 .benchmark-process-list li {
+  position: relative;
+  z-index: 0;
   min-width: 0;
   display: grid;
-  grid-template-columns: 34px 38px minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: var(--process-node-size) minmax(0, 1fr);
+  gap: 12px;
   align-items: center;
   border: 1px solid #2f4b45;
   border-radius: 8px;
@@ -1135,39 +1035,39 @@ a.snapshot-model-chip:hover {
   background: #13211f;
 }
 
-.benchmark-process-index,
-.benchmark-process-icon {
+.benchmark-process-index {
   display: inline-grid;
   place-items: center;
   border-radius: 999px;
 }
 
 .benchmark-process-index {
-  width: 34px;
-  height: 34px;
+  position: relative;
+  z-index: 2;
+  width: var(--process-node-size);
+  height: var(--process-node-size);
   border: 1px solid rgb(244 251 248 / 16%);
-  background: rgb(0 107 95 / 24%);
+  background: #0b3e38;
+  box-shadow: 0 0 0 4px #13211f;
   color: #a7eadc;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   font-weight: 850;
 }
 
-.benchmark-process-icon {
-  width: 38px;
-  height: 38px;
-  border: 1px solid rgb(167 234 220 / 18%);
-  background:
-    linear-gradient(135deg, rgb(167 234 220 / 14%), rgb(242 197 114 / 8%)),
-    rgb(255 255 255 / 4%);
-  color: #d6f6ee;
-}
-
 .benchmark-process-list strong {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 7px;
   color: var(--dark-text);
   font-size: 0.95rem;
   line-height: 1.2;
+}
+
+.benchmark-process-list strong svg {
+  flex: 0 0 auto;
+  color: #a7eadc;
+  opacity: 0.86;
 }
 
 .benchmark-process-list p {
@@ -2230,6 +2130,7 @@ a.snapshot-model-chip:hover {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
+  align-items: start;
   padding: 14px;
 }
 
@@ -8268,53 +8169,6 @@ tbody tr:hover {
     scroll-margin-top: 148px;
   }
 
-  .hero-proof-strip {
-    margin-top: 12px;
-    padding-top: 10px;
-  }
-
-  .hero-proof-strip-head {
-    display: none;
-  }
-
-  .hero-proof-steps {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .hero-proof-steps::before {
-    display: none;
-  }
-
-  .hero-proof-step {
-    min-height: 84px;
-    display: grid;
-    align-content: start;
-    gap: 7px;
-    border: 1px solid rgb(213 223 219 / 74%);
-    border-radius: 8px;
-    padding: 9px;
-    background: rgb(255 255 255 / 54%);
-  }
-
-  .hero-proof-step:last-child {
-    border-bottom: 1px solid rgb(213 223 219 / 74%);
-    padding-bottom: 9px;
-  }
-
-  .hero-proof-icon {
-    width: 30px;
-    height: 30px;
-  }
-
-  .hero-proof-copy strong {
-    font-size: 0.8rem;
-  }
-
-  .hero-proof-copy span {
-    display: none;
-  }
-
   .published-result-card,
   .published-score-panel,
   .result-hero,
@@ -8780,23 +8634,21 @@ tbody tr:hover {
   }
 
   .benchmark-process-list {
+    --process-node-size: 30px;
+    --process-node-left: 10px;
+    --process-node-inset: 10px;
     padding: 0 12px 12px;
   }
 
+  .benchmark-process-list::before {
+    bottom: calc(12px + var(--process-node-size) / 2);
+    left: calc(12px + var(--process-node-left) + (var(--process-node-size) / 2));
+  }
+
   .benchmark-process-list li {
-    grid-template-columns: 30px 34px minmax(0, 1fr);
-    gap: 8px;
+    grid-template-columns: var(--process-node-size) minmax(0, 1fr);
+    gap: 10px;
     padding: 10px;
-  }
-
-  .benchmark-process-index {
-    width: 30px;
-    height: 30px;
-  }
-
-  .benchmark-process-icon {
-    width: 34px;
-    height: 34px;
   }
 
   .benchmark-process-note {

@@ -237,23 +237,6 @@ const exploreLinks = [
     state: "Plain rules"
   }
 ];
-const heroProofSteps = [
-  {
-    icon: ClipboardCheck,
-    title: "Same report",
-    detail: "Same report for every model"
-  },
-  {
-    icon: LockKeyhole,
-    title: "Saved picks",
-    detail: "Locked before results"
-  },
-  {
-    icon: LineChart,
-    title: "Real prices",
-    detail: "7 days or 1 month"
-  }
-];
 const heroTestSteps = [
   {
     icon: ClipboardCheck,
@@ -467,29 +450,6 @@ const trackLaneCards = trackStates.map((track) => {
         <a class="action-link" href="#current-picks">Open picks</a>
         <a class="action-link" href="#proof-and-data">Saved files</a>
       </div>
-
-      <div class="hero-proof-strip" aria-label="How the test works">
-        <div class="hero-proof-strip-head">
-          <span>How it works</span>
-          <strong>Report. Picks. Prices.</strong>
-        </div>
-        <ol class="hero-proof-steps">
-          {heroProofSteps.map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <li class={`hero-proof-step hero-proof-step-${index + 1}`}>
-                <span class="hero-proof-icon" aria-hidden="true">
-                  <Icon size={16} />
-                </span>
-                <span class="hero-proof-copy">
-                  <strong>{step.title}</strong>
-                  <span>{step.detail}</span>
-                </span>
-              </li>
-            );
-          })}
-        </ol>
-      </div>
     </div>
 
     <div class="home-hero-console benchmark-process-card" id="how-it-works" aria-label="How CapitalBench tests AI models">
@@ -510,11 +470,11 @@ const trackLaneCards = trackStates.map((track) => {
           return (
           <li>
             <span class="benchmark-process-index">{step.label}</span>
-            <span class="benchmark-process-icon" aria-hidden="true">
-              <Icon size={17} />
-            </span>
             <div>
-              <strong>{step.title}</strong>
+              <strong>
+                <Icon size={15} aria-hidden="true" />
+                {step.title}
+              </strong>
               <p>{step.description}</p>
             </div>
           </li>
