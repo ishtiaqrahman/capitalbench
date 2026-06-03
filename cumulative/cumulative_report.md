@@ -8,10 +8,10 @@ Each round is a separate one-month market decision. Official results use one cal
 
 | Rank | Model | Provider | Resolved Rounds | Avg Return | Avg S&P Return | Avg Alpha | Hit Rate vs S&P | Avg Regret | Cumulative Return | Cumulative S&P Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | openai-gpt-5-5 | openai | 1 | 5.09% | 1.45% | 3.63% | 100.00% | 7.99% | 5.09% | 1.45% |
-| 2 | xai-grok-4-3 | xai | 1 | 3.69% | 1.45% | 2.24% | 100.00% | 9.38% | 3.69% | 1.45% |
-| 3 | anthropic-claude-opus-4-7 | anthropic | 1 | 3.11% | 1.45% | 1.66% | 100.00% | 9.96% | 3.11% | 1.45% |
-| 4 | google-gemini-3-1-pro | google | 1 | 2.79% | 1.45% | 1.34% | 100.00% | 10.28% | 2.79% | 1.45% |
+| 1 | openai-gpt-5-5 | openai | 2 | 5.29% | 1.33% | 3.97% | 100.00% | 6.93% | 10.86% | 2.67% |
+| 2 | xai-grok-4-3 | xai | 2 | 4.37% | 1.33% | 3.05% | 100.00% | 7.84% | 8.93% | 2.67% |
+| 3 | google-gemini-3-1-pro | google | 2 | 4.03% | 1.33% | 2.70% | 100.00% | 8.19% | 8.20% | 2.67% |
+| 4 | anthropic-claude-opus-4-7 | anthropic | 2 | 4.01% | 1.33% | 2.68% | 100.00% | 8.21% | 8.17% | 2.67% |
 
 ## Cumulative Stability Leaderboard
 
@@ -22,6 +22,7 @@ _No rows._
 | Round | Official Run | Stability Run | Official Included | Stability Included | Warnings |
 | --- | --- | --- | --- | --- | --- |
 | CB-2026-05-24-1W | official-20260524-1W |  | yes | no |  |
+| CB-2026-05-27-1W | official-20260527-1W |  | yes | no |  |
 
 ## Methodology
 
@@ -46,6 +47,8 @@ The official leaderboard measures one-shot decision quality. The stability leade
 
 ## Warnings
 
-- Round CB-2026-05-27-1W has no scored official or stability runs.
 - Round CB-2026-05-28-1W has no scored official or stability runs.
 - Round CB-2026-05-29-1W has no scored official or stability runs.
+- Round CB-2026-06-01-1W has no scored official or stability runs.
+- Round CB-2026-06-02-1W has no scored official or stability runs.
+- Round CB-2026-06-03-1W has no scored official or stability runs.
