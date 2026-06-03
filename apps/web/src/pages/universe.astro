@@ -1,11 +1,11 @@
 ---
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
 import UniverseTable from "../components/UniverseTable";
-import { rounds, type UniverseOption } from "../data/fallback";
+import { type UniverseOption } from "../data/fallback";
 import { repoRootPath } from "../lib/localRoundRecords";
 import { datasetSchema } from "../lib/seo";
 
@@ -20,8 +20,10 @@ type UniverseYamlOption = {
   is_benchmark?: boolean;
 };
 
+const universeConfigDir = resolve(repoRootPath(), "configs", "universes");
+
 function loadUniverseConfig(filename: string): UniverseOption[] {
-  const path = resolve(repoRootPath(), "configs", "universes", filename);
+  const path = resolve(universeConfigDir, filename);
   const data = parseYaml(readFileSync(path, "utf-8")) as { options?: UniverseYamlOption[] };
   return (data.options ?? []).map((option, index) => ({
     option_id: option.id,
@@ -36,20 +38,58 @@ function loadUniverseConfig(filename: string): UniverseOption[] {
   }));
 }
 
-const universeVersions = [
-  {
-    label: "v2.0",
-    file: "capitalbench_universe_v2_0.yaml",
-    status: "Approved for future rounds",
-    summary: "65 options: the original 40 plus 25 country, sector, bond, commodity, currency, and crypto-proxy exposures."
-  },
-  {
-    label: "v1.5",
-    file: "capitalbench_universe_v1_5.yaml",
-    status: "Frozen for Round 1",
-    summary: "40 options covering cash, broad US equity, factors, sectors, bonds, international equity, commodities, and AI themes."
+function labelFromFilename(filename: string): string {
+  const match = /^capitalbench_universe_(v\d+_\d+)\.yaml$/.exec(filename);
+  return match ? match[1].replace("_", ".") : filename;
+}
+
+function versionParts(label: string): number[] {
+  return label
+    .replace(/^v/i, "")
+    .split(".")
+    .map((part) => Number(part))
+    .filter((part) => Number.isFinite(part));
+}
+
+function compareVersionsDesc(left: string, right: string): number {
+  const leftParts = versionParts(left);
+  const rightParts = versionParts(right);
+  const length = Math.max(leftParts.length, rightParts.length);
+  for (let index = 0; index < length; index += 1) {
+    const diff = (rightParts[index] ?? 0) - (leftParts[index] ?? 0);
+    if (diff !== 0) return diff;
   }
-].map((version) => ({ ...version, rows: loadUniverseConfig(version.file) }));
+  return right.localeCompare(left);
+}
+
+const universeMetadata: Record<string, { status: string; detail: string }> = {
+  "v2.1": {
+    status: "Current default for new tests",
+    detail: "v2.0 plus Broad AI Technology, Autonomous Technology and Robotics, Cybersecurity, Solar Energy, and Metals and Mining."
+  },
+  "v2.0": {
+    status: "Frozen for v2.0 tests",
+    detail: "v1.5 plus country, sector, bond, commodity, currency, and crypto-proxy exposures."
+  },
+  "v1.5": {
+    status: "Frozen for Round 1",
+    detail: "Cash, broad US equity, factors, sectors, bonds, international equity, commodities, and AI themes."
+  }
+};
+
+const universeVersions = readdirSync(universeConfigDir)
+  .filter((filename) => /^capitalbench_universe_v\d+_\d+\.yaml$/.test(filename))
+  .map((file) => {
+    const label = labelFromFilename(file);
+    return {
+      label,
+      file,
+      status: universeMetadata[label]?.status ?? "Versioned asset list",
+      detail: universeMetadata[label]?.detail ?? "Versioned CapitalBench asset list.",
+      rows: loadUniverseConfig(file)
+    };
+  })
+  .sort((left, right) => compareVersionsDesc(left.label, right.label));
 
 const latestUniverse = universeVersions[0];
 const universeDataset = datasetSchema({
@@ -58,7 +98,7 @@ const universeDataset = datasetSchema({
     "The versioned public asset list used by CapitalBench market tests, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies.",
   path: "/universe",
   datePublished: "2026-05-12",
-  dateModified: "2026-05-17",
+  dateModified: "2026-05-29",
   keywords: ["LLM benchmark", "market options", "ETF universe", "AI market benchmark", "CapitalBench"],
   variableMeasured: ["option id", "ticker symbol", "asset class", "option group", "risk bucket"]
 });
@@ -80,7 +120,7 @@ const universeDataset = datasetSchema({
       <article class="feature">
         <span class="metric-label">Latest asset list</span>
         <h3>{latestUniverse.label}</h3>
-        <p>{latestUniverse.rows.length} total choices for future tests.</p>
+        <p>{latestUniverse.rows.length} total choices for new public tests.</p>
       </article>
       <article class="feature">
         <span class="metric-label">Test save rule</span>
@@ -112,7 +152,7 @@ const universeDataset = datasetSchema({
           <article class="feature">
             <span class="metric-label">{version.status}</span>
             <h3>{version.label}</h3>
-            <p>{version.summary}</p>
+            <p>{version.rows.length} options: {version.detail}</p>
             <p class="mono">{version.file}</p>
           </article>
         ))}
@@ -132,7 +172,7 @@ const universeDataset = datasetSchema({
           </p>
         </div>
       </div>
-      <UniverseTable client:visible fallbackRows={latestUniverse.rows} roundId={rounds[0].round_id} disableRemote />
+      <UniverseTable client:visible fallbackRows={latestUniverse.rows} disableRemote />
     </div>
   </section>
 </BaseLayout>

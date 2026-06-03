@@ -36,6 +36,7 @@ export const changelogEntries: ChangelogEntry[] = [
     details: [
       "A new update-interim-performance command creates or reuses one daily price snapshot and applies it to every active monthly round whose timeline includes that close date.",
       "The scheduled GitHub Actions refresh runs after U.S. market close, commits changed interim artifacts, and deploys the website only when refreshed data changes.",
+      "The website deploy workflow now watches universe configs, round artifacts, latest snapshots, and cumulative data so data-only updates can publish without an app-code edit.",
       "Existing full-universe entry and exit price packages can also serve as reusable snapshots, reducing Tiingo calls while keeping each round's frozen entry prices unchanged.",
       "Per-round Supabase sync failures are reported as warnings so one stale or mismatched round does not block other active monthly charts from updating."
     ],
@@ -99,7 +100,7 @@ export const changelogEntries: ChangelogEntry[] = [
       "Existing v1.5 and v2.0 round directories, manifests, option files, hashes, and public results remain unchanged."
     ],
     links: [
-      { label: "Asset list", href: "/assets" },
+      { label: "Asset list", href: "/universe" },
       { label: "Methodology", href: "/methodology" },
       { label: "Rounds", href: "/rounds" }
     ]
