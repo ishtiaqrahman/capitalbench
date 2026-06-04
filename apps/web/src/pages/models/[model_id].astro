@@ -1,8 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ModelLiveHoldings from "../../components/ModelLiveHoldings";
+import { staticAllWeeklyPerformance } from "../../lib/localRoundRecords";
 import { siteConfig } from "../../lib/seo";
-import { staticModelProfiles, type ModelProfile, type ModelResultRow, type ModelTrackScore } from "../../lib/modelProfiles";
+import { staticModelProfiles, type ModelResultRow, type ModelTrackScore } from "../../lib/modelProfiles";
 
 export function getStaticPaths() {
   return staticModelProfiles().map((profile) => ({
@@ -11,16 +12,23 @@ export function getStaticPaths() {
   }));
 }
 
-type Props = {
-  profile: ModelProfile;
-};
-
 const { profile } = Astro.props;
 const repoRoot = `${siteConfig.githubUrl}/tree/main`;
 const repoBlob = `${siteConfig.githubUrl}/blob/main`;
 const resultRows = [...profile.allResults].sort((a, b) => a.entryDate.localeCompare(b.entryDate));
 const maxAlphaPct = Math.max(1, ...resultRows.map((row) => Math.abs((row.alphaVsSp500 ?? 0) * 100)));
 const riskAppetite = profile.fingerprint.riskAppetite;
+const liveMarkRows = latestLiveMarkRows(profile.modelId);
+const liveMarkTrackRows = (["weekly", "monthly"] as const).map((track) => {
+  const rows = liveMarkRows.filter((row) => row.track === track);
+  return {
+    track,
+    rows,
+    averageReturn: averageDecimal(rows.map((row) => row.model_return)),
+    averageSp500: averageDecimal(rows.map((row) => row.sp500_return)),
+    averageAlpha: averageDecimal(rows.map((row) => row.alpha_vs_sp500))
+  };
+});
 
 function pctDecimal(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
@@ -63,6 +71,32 @@ function riskWidth(value: number | null | undefined): string {
 
 function plural(count: number, singular: string, pluralLabel = `${singular}s`): string {
   return `${count} ${count === 1 ? singular : pluralLabel}`;
+}
+
+function averageDecimal(values: number[]): number | null {
+  const finite = values.filter((value) => Number.isFinite(value));
+  return finite.length ? finite.reduce((total, value) => total + value, 0) / finite.length : null;
+}
+
+function latestLiveMarkRows(modelId: string) {
+  const rows = staticAllWeeklyPerformance().filter(
+    (row) =>
+      row.model_id === modelId &&
+      row.status === "pending" &&
+      row.published !== false &&
+      row.days_elapsed > 0 &&
+      row.target_date > row.entry_date &&
+      row.target_date < row.exit_date
+  );
+  const latestByRound = new Map<string, (typeof rows)[number]>();
+  for (const row of rows) {
+    const key = `${row.round_id}:${row.run_id}:${row.model_id}`;
+    const existing = latestByRound.get(key);
+    if (!existing || row.target_date > existing.target_date || (row.target_date === existing.target_date && row.price_date > existing.price_date)) {
+      latestByRound.set(key, row);
+    }
+  }
+  return Array.from(latestByRound.values()).sort((a, b) => b.exit_date.localeCompare(a.exit_date) || b.round_id.localeCompare(a.round_id));
 }
 
 function scorecardLabel(scorecard: ModelTrackScore): string {
@@ -123,13 +157,13 @@ function alphaBarStyle(row: ModelResultRow): string {
         <small>all completed tracks</small>
       </div>
       <div>
-        <span>Avg alpha</span>
+        <span>Portfolio Minus S&amp;P 500</span>
         <strong>
           {profile.allResults.length > 0
             ? ppDecimal(profile.allResults.reduce((total, row) => total + (row.alphaVsSp500 ?? 0), 0) / profile.allResults.length)
             : "n/a"}
         </strong>
-        <small>vs S&amp;P 500</small>
+        <small>completed average</small>
       </div>
     </div>
   </section>
@@ -143,6 +177,70 @@ function alphaBarStyle(row: ModelResultRow): string {
       <p>Completed tests are excluded here, so this view shows only the model's still-open weekly and monthly portfolios.</p>
     </div>
     <ModelLiveHoldings client:visible scopes={profile.live} />
+  </section>
+
+  <section class="section model-section" id="live-performance" aria-labelledby="live-performance-title">
+    <div class="model-section-heading">
+      <div>
+        <span class="panel-kicker">Live mark-to-market</span>
+        <h2 id="live-performance-title">Current Return Before Final Scores</h2>
+      </div>
+      <p>Latest available close for open tests only. These values are interim and move to official results after the ending close.</p>
+    </div>
+
+    {liveMarkRows.length > 0 ? (
+      <div class="model-live-performance-card">
+        <div class="model-live-performance-summary" aria-label={`${profile.label} live mark-to-market summary`}>
+          {liveMarkTrackRows.map((item) => (
+            <div>
+              <span>{item.track === "weekly" ? "Weekly live" : "Monthly live"}</span>
+              <dl>
+                <div>
+                  <dt>Portfolio</dt>
+                  <dd>{pctDecimal(item.averageReturn)}</dd>
+                </div>
+                <div>
+                  <dt>S&amp;P 500</dt>
+                  <dd>{pctDecimal(item.averageSp500)}</dd>
+                </div>
+                <div>
+                  <dt>Portfolio Minus S&amp;P 500</dt>
+                  <dd>{ppDecimal(item.averageAlpha)}</dd>
+                </div>
+              </dl>
+              <small>{item.rows.length} open {item.rows.length === 1 ? "test" : "tests"}</small>
+            </div>
+          ))}
+        </div>
+        <div class="model-live-performance-list" aria-label={`${profile.label} live round returns`}>
+          {liveMarkRows.map((row) => (
+            <a href={`/rounds/${row.round_id}/#performance`}>
+              <span>
+                <strong>{row.round_id}</strong>
+                <small>{row.track} / close {row.price_date}</small>
+              </span>
+              <span>
+                <em>Portfolio</em>
+                <b>{pctDecimal(row.model_return)}</b>
+              </span>
+              <span>
+                <em>S&amp;P 500</em>
+                <b>{pctDecimal(row.sp500_return)}</b>
+              </span>
+              <span>
+                <em>Portfolio Minus S&amp;P 500</em>
+                <b>{ppDecimal(row.alpha_vs_sp500)}</b>
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <div class="model-empty-panel">
+        <strong>No live price snapshot yet.</strong>
+        <span>Live returns appear after a market close inside one of this model's open test windows.</span>
+      </div>
+    )}
   </section>
 
   <section class="section model-scorecards" aria-labelledby="model-scorecards-title">
@@ -170,7 +268,7 @@ function alphaBarStyle(row: ModelResultRow): string {
               <strong>{pctDecimal(card.averageSp500Return)}</strong>
             </div>
             <div>
-              <span>Avg alpha</span>
+              <span>Avg Portfolio Minus S&amp;P 500</span>
               <strong>{ppDecimal(card.averageAlpha)}</strong>
             </div>
             <div>
@@ -195,13 +293,13 @@ function alphaBarStyle(row: ModelResultRow): string {
     <div class="model-section-heading">
       <div>
         <span class="panel-kicker">Performance chart</span>
-        <h2 id="model-performance-title">Return Versus S&amp;P 500 By Completed Round</h2>
+        <h2 id="model-performance-title">Portfolio Minus S&amp;P 500 By Completed Round</h2>
       </div>
-      <p>Bars to the right beat the S&amp;P 500 over the same close-to-close period. Bars to the left lagged it.</p>
+      <p>Bars to the right mean the portfolio return was higher than the S&amp;P 500 return. Bars to the left mean it was lower.</p>
     </div>
 
     {resultRows.length > 0 ? (
-      <div class="model-alpha-chart" aria-label={`${profile.label} alpha by round`}>
+      <div class="model-alpha-chart" aria-label={`${profile.label} portfolio minus S&P 500 by round`}>
         {resultRows.map((row) => (
           <a class="model-alpha-row" href={`/rounds/${row.roundId}/`}>
             <span>

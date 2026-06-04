@@ -719,20 +719,20 @@ committed documentation.
 
 ### Automated Interim Performance
 
-Active monthly round charts can be refreshed before final scoring from reusable
+Active weekly and monthly round charts can be refreshed before final scoring from reusable
 full-universe price snapshots. The command fetches or reuses one daily close
-snapshot and applies it to every active monthly round whose entry-to-exit
+snapshot and applies it to every active round whose entry-to-exit
 window includes that date:
 
 ```bash
 capitalbench update-interim-performance \
   --rounds-dir rounds \
   --snapshot-date 2026-06-01 \
-  --track monthly
+  --track all
 ```
 
 Existing full-universe entry and exit price files are also reused as snapshots,
-so a newer round's entry package can update older active monthly charts without
+so a newer round's entry package can update older active charts without
 another Tiingo pull. The scheduled `Interim Performance Refresh` GitHub Actions
 workflow runs after U.S. market close, commits changed interim artifacts, syncs
 round rows to Supabase when credentials are available, and deploys the website

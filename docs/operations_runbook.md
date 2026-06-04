@@ -94,11 +94,11 @@ gh run list --repo ishtiaqrahman/capitalbench --workflow "CapitalBench Resolver"
 gh run view <run_id> --repo ishtiaqrahman/capitalbench --log
 ```
 
-## Interim Monthly Charts
+## Interim Weekly And Monthly Charts
 
 The scheduled interim refresh runs after U.S. market close on market weekdays.
 It fetches or reuses one full-universe daily price snapshot, updates every
-active monthly round whose timeline includes that close date, syncs public rows
+active weekly or monthly round whose timeline includes that close date, syncs public rows
 to Supabase when credentials are configured, commits changed artifacts, and
 deploys the website only when generated files changed.
 
@@ -108,7 +108,7 @@ Manual reuse-only refresh:
 capitalbench update-interim-performance \
   --rounds-dir rounds \
   --snapshot-date YYYY-MM-DD \
-  --track monthly \
+  --track all \
   --skip-fetch
 ```
 
@@ -118,7 +118,7 @@ Manual fetch-and-refresh:
 capitalbench update-interim-performance \
   --rounds-dir rounds \
   --snapshot-date YYYY-MM-DD \
-  --track monthly
+  --track all
 ```
 
 The command reuses full-universe `entry_prices.csv` and `exit_prices.csv`

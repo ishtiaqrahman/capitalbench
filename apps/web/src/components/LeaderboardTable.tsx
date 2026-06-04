@@ -46,7 +46,7 @@ export default function LeaderboardTable({ fallbackRows, kind, slot, disableFetc
       value: (row) => pct(row.portfolio_return ?? row.selected_asset_return)
     },
     { key: "sp500_return", label: "S&P 500", align: "right", value: (row) => pct(row.sp500_return) },
-    { key: "alpha_vs_sp500", label: "Vs S&P 500", align: "right", value: (row) => pct(row.alpha_vs_sp500) },
+    { key: "alpha_vs_sp500", label: "Portfolio Minus S&P 500", align: "right", value: (row) => pct(row.alpha_vs_sp500) },
     { key: "regret_vs_best_option", label: "Regret", align: "right", value: (row) => pct(row.regret_vs_best_option), mobile: "secondary" }
   ];
 
@@ -54,7 +54,7 @@ export default function LeaderboardTable({ fallbackRows, kind, slot, disableFetc
     { key: "model_id", label: "Model", value: (row) => modelLabel(row.model_id) },
     { key: "provider", label: "Provider", value: (row) => providerLabel(row.provider) },
     { key: "resolved_rounds", label: "Tests", align: "right" },
-    { key: "average_alpha_vs_sp500", label: "Avg Vs S&P 500", align: "right", value: (row) => pct(row.average_alpha_vs_sp500) }
+    { key: "average_alpha_vs_sp500", label: "Avg Portfolio Minus S&P 500", align: "right", value: (row) => pct(row.average_alpha_vs_sp500) }
   ];
 
   const stabilityColumns: Column<LeaderboardRecord>[] = [

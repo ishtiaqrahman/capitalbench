@@ -8,8 +8,10 @@ import {
   type RoundRecord,
   type ScoreEtaSource,
   type SubmissionRecord,
-  type UniverseOption
+  type UniverseOption,
+  type WeeklyPerformanceRecord
 } from "../data/fallback";
+import { roundTrack, type BenchmarkTrack } from "./tracks";
 
 type RoundManifestYaml = {
   round_id: string;
@@ -115,6 +117,13 @@ export interface ScoringPriceRecord {
   return?: number;
   source: string;
 }
+
+export type LivePerformanceRecord = WeeklyPerformanceRecord & {
+  track: BenchmarkTrack;
+  status: RoundRecord["status"];
+  entry_date: string;
+  exit_date: string;
+};
 
 function readYamlFile<T>(path: string): T | null {
   if (!existsSync(path)) return null;
@@ -538,6 +547,63 @@ export function staticRoundAllocations(roundId: string, runId?: string): ResultA
     })
     .filter((row): row is ResultAllocationRecord => row !== null)
     .sort((a, b) => a.model_id.localeCompare(b.model_id) || a.allocation_rank - b.allocation_rank);
+}
+
+export function staticRoundWeeklyPerformance(roundId: string, runId?: string): LivePerformanceRecord[] {
+  const round = staticRoundRecords().find((item) => item.round_id === roundId);
+  const track = round ? roundTrack(round) : "other";
+  if (!round || (track !== "weekly" && track !== "monthly")) return [];
+  const roundPath = roundPathForId(roundId);
+  if (!roundPath) return [];
+  const selectedRunId = runId || publicOfficialRuns(roundPath)[0]?.runId;
+  if (!selectedRunId) return [];
+  return parseCsv(readTextFile(join(roundPath, "runs", selectedRunId, "results", "weekly_performance.csv")))
+    .map((row): LivePerformanceRecord | null => {
+      const daysElapsed = numberFromCell(row.days_elapsed);
+      const modelReturn = numberFromCell(row.model_return);
+      const sp500Return = numberFromCell(row.sp500_return);
+      const alpha = numberFromCell(row.alpha_vs_sp500);
+      if (
+        !row.round_id ||
+        !row.model_id ||
+        !row.provider ||
+        !row.target_date ||
+        daysElapsed === undefined ||
+        modelReturn === undefined ||
+        sp500Return === undefined ||
+        alpha === undefined
+      ) {
+        return null;
+      }
+      return {
+        round_id: row.round_id || roundId,
+        run_id: row.run_id || selectedRunId,
+        model_id: row.model_id,
+        provider: row.provider,
+        target_date: row.target_date,
+        price_date: row.price_date || row.target_date,
+        days_elapsed: daysElapsed,
+        run_type: row.run_type || undefined,
+        submission_format: row.submission_format === "portfolio" ? ("portfolio" as const) : ("single_pick" as const),
+        selected_option_id: row.selected_option_id || "",
+        holding_count: numberFromCell(row.holding_count),
+        model_return: modelReturn,
+        sp500_return: sp500Return,
+        alpha_vs_sp500: alpha,
+        price_status: row.price_status || undefined,
+        published: booleanFromCell(row.published),
+        track,
+        status: round.status,
+        entry_date: round.entry_date,
+        exit_date: round.exit_date
+      };
+    })
+    .filter((row): row is LivePerformanceRecord => row !== null)
+    .sort((a, b) => a.target_date.localeCompare(b.target_date) || a.model_id.localeCompare(b.model_id));
+}
+
+export function staticAllWeeklyPerformance(roundRows = staticRoundRecords()): LivePerformanceRecord[] {
+  return roundRows.flatMap((round) => staticRoundWeeklyPerformance(round.round_id, round.official_run_id));
 }
 
 export function staticScoringPrices(roundId: string, runId?: string): ScoringPriceRecord[] {

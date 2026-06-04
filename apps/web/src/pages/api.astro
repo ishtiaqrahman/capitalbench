@@ -41,6 +41,26 @@ const assetHoldersExample = `GET /v1/positioning/by-asset/SEMICONDUCTORS?scope=a
   ]
 }`;
 
+const livePerformanceExample = `GET /v1/live/performance?track=all
+
+{
+  "status": "live_not_final",
+  "latest_price_date": "2026-06-02",
+  "round_count": 6,
+  "benchmark": { "label": "S&P 500", "return_pct": 1.24 },
+  "data": [
+    {
+      "rank": 1,
+      "model_id": "openai-gpt-5-5",
+      "label": "GPT-5.5",
+      "portfolio_return_pct": 4.83,
+      "sp500_return_pct": 1.24,
+      "alpha_pp": 3.59,
+      "live_round_count": 4
+    }
+  ]
+}`;
+
 const leaderboardExample = `GET /v1/leaderboards/latest?track=weekly
 
 {
@@ -88,6 +108,7 @@ const endpointGroups = [
     description: "Where model capital is allocated now and how that has accumulated over time.",
     endpoints: [
       ["GET", "/v1/positioning/active", "Live exposure across unresolved weekly and monthly rounds."],
+      ["GET", "/v1/live/performance", "Open tests marked to the latest available close; not official final scores."],
       ["GET", "/v1/positioning/cumulative", "Historical allocation behavior across all available rounds."],
       ["GET", "/v1/positioning/consensus", "Assets and categories where model allocations cluster."],
       ["GET", "/v1/positioning/by-model/{model_id}", "One model's active or cumulative allocation pattern."],
@@ -104,7 +125,8 @@ const endpointGroups = [
       ["GET", "/v1/rounds/{round_id}", "One round's metadata and input hashes."],
       ["GET", "/v1/rounds/{round_id}/portfolios", "Saved model allocations for a round."],
       ["GET", "/v1/rounds/{round_id}/concentration", "Run-level allocation consensus and concentration summary."],
-      ["GET", "/v1/rounds/{round_id}/results", "Resolved returns, S&P 500 comparison, regret, and max-possible context."],
+      ["GET", "/v1/rounds/{round_id}/live-performance", "Interim mark-to-market rows for an unresolved round."],
+      ["GET", "/v1/rounds/{round_id}/results", "Resolved portfolio returns, S&P 500 returns, Portfolio Minus S&P 500, regret, and max-possible context."],
       ["GET", "/v1/leaderboards/latest", "Most recent scored weekly or monthly leaderboard."],
       ["GET", "/v1/leaderboards/cumulative", "Aggregate model record by track, ranked by CapitalBench Score where available."]
     ]
@@ -116,6 +138,7 @@ const endpointGroups = [
       ["GET", "/v1/models", "Model list with provider metadata and active status."],
       ["GET", "/v1/models/{model_id}", "Model profile and proof links."],
       ["GET", "/v1/models/{model_id}/holdings", "Active and historical holdings for one model."],
+      ["GET", "/v1/models/{model_id}/live-performance", "One model's live return across open tests."],
       ["GET", "/v1/models/{model_id}/style", "Risk appetite and allocation fingerprint metrics."],
       ["GET", "/v1/universe/current", "Current list of valid model choices."],
       ["GET", "/v1/assets/{option_id}", "Asset metadata and ticker mapping."],
@@ -130,13 +153,13 @@ const concepts = [
   ["Track", "Weekly and monthly tests stay separate because they measure different horizons."],
   ["Positioning", "Portfolio weights aggregated by asset, category, model, or track."],
   ["Proof", "Round files, hashes, timestamps, prompt inputs, prices, and portfolio records."],
-  ["Alpha", "Model portfolio return minus the S&P 500 return, in percentage points."],
+  ["Portfolio Minus S&P 500", "Model portfolio return minus the S&P 500 return, in percentage points."],
   ["CapitalBench Score", "Model return scaled to the maximum possible return in each completed window."]
 ];
 
 const fields = [
   ["allocation_pct", "Portfolio or aggregate weight, in percentage points."],
-  ["alpha_pp", "Portfolio return less S&P 500 return, in percentage points."],
+  ["alpha_pp", "Portfolio Minus S&P 500, in percentage points."],
   ["capitalbench_score", "Score where 100 means matching the maximum possible return in that window."],
   ["effective_asset_count", "Concentration metric equal to one divided by summed squared asset shares."],
   ["max_possible_return_pct", "Highest realized return among scored options in the saved universe."],
@@ -332,6 +355,10 @@ const curlExample = `curl "https://www.capitalbench.org/api/v1/positioning/activ
           <article class="api-example">
             <h3>Which Models Hold An Asset</h3>
             <pre><code>{assetHoldersExample}</code></pre>
+          </article>
+          <article class="api-example">
+            <h3>Live Mark-To-Market</h3>
+            <pre><code>{livePerformanceExample}</code></pre>
           </article>
           <article class="api-example">
             <h3>Latest Scored Test</h3>

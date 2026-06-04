@@ -112,6 +112,36 @@ test("active positioning returns live model allocation data", async () => {
   assert.ok(result.body.data[0].allocation_pct > 0);
 });
 
+test("live performance returns interim mark-to-market data for open tests", async () => {
+  const generatedLiveRows = apiReadModel.interim_performance.filter(
+    (row) => row.status === "active" && row.days_elapsed > 0
+  );
+  assert.ok(generatedLiveRows.length > 0);
+
+  const result = await apiGet("/api/v1/live/performance?track=all");
+
+  assert.equal(result.status, 200);
+  assert.equal(result.body.status, "live_not_final");
+  assert.equal(result.body.track, "all");
+  assert.ok(result.body.round_count > 0);
+  assert.ok(result.body.model_count > 0);
+  assert.equal(typeof result.body.benchmark.return_pct, "number");
+  assert.ok(result.body.data.length > 0);
+  assert.equal(typeof result.body.data[0].portfolio_return_pct, "number");
+  assert.equal(typeof result.body.data[0].sp500_return_pct, "number");
+  assert.equal(typeof result.body.data[0].alpha_pp, "number");
+
+  const roundResult = await apiGet(`/api/v1/rounds/${generatedLiveRows[0].round_id}/live-performance`);
+  assert.equal(roundResult.status, 200);
+  assert.equal(roundResult.body.round_id, generatedLiveRows[0].round_id);
+  assert.ok(roundResult.body.history.length > 0);
+
+  const modelResult = await apiGet(`/api/v1/models/${result.body.data[0].model_id}/live-performance?track=all`);
+  assert.equal(modelResult.status, 200);
+  assert.equal(modelResult.body.model_id, result.body.data[0].model_id);
+  assert.ok(modelResult.body.data.length <= 1);
+});
+
 test("latest weekly leaderboard returns resolved scored rows", async () => {
   const latestWeeklyRoundId = latestRoundId("weekly", { status: "resolved" });
   const result = await apiGet("/api/v1/leaderboards/latest?track=weekly");

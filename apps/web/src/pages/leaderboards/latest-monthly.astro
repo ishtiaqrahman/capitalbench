@@ -74,9 +74,9 @@ const initialNowIso = new Date().toISOString();
                   <em>same window</em>
                 </article>
                 <article>
-                  <span>Vs S&amp;P 500</span>
+                  <span>Portfolio Minus S&amp;P 500</span>
                   <strong>{pct(winner.alpha_vs_sp500)}</strong>
-                  <em>official score</em>
+                  <em>difference</em>
                 </article>
               </div>
             </div>
@@ -129,7 +129,7 @@ const initialNowIso = new Date().toISOString();
               <h2>{resultRound ? `${resultRound.round_id} Final Scores` : "No Monthly Score Yet"}</h2>
               <p>
                 {resultRound
-                  ? "Rows show portfolio return, S&P 500 comparison, and regret versus the maximum possible return. The table is monthly only."
+                  ? "Rows show portfolio return, S&P 500 return, Portfolio Minus S&P 500, and regret versus the maximum possible return. The table is monthly only."
                   : "The leaderboard appears after the first monthly test is scored."}
               </p>
             </div>

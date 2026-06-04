@@ -325,6 +325,11 @@ function filterByRoundStatus(rounds, status) {
   return rounds.filter((round) => round.status === status);
 }
 
+function average(values) {
+  const finite = values.filter((value) => typeof value === "number" && Number.isFinite(value));
+  return finite.length ? finite.reduce((total, value) => total + value, 0) / finite.length : null;
+}
+
 function positioningKey(row, groupBy) {
   if (groupBy === "model") {
     const model = modelById.get(row.model_id);
@@ -496,6 +501,179 @@ function latestLeaderboard(url) {
     round_id: round?.round_id ?? null,
     benchmark_option_id: round?.benchmark_option_id ?? "SP500",
     data: leaderboardRowsForRound(round)
+  });
+}
+
+function isUsableLiveRow(row) {
+  return (
+    row.status === "active" &&
+    row.published !== false &&
+    Number(row.days_elapsed ?? 0) > 0 &&
+    row.target_date > row.entry_date &&
+    row.target_date < row.exit_date &&
+    typeof row.model_return_pct === "number" &&
+    typeof row.sp500_return_pct === "number" &&
+    typeof row.alpha_pp === "number"
+  );
+}
+
+function latestLiveSnapshots({ track = "all", roundId = null, modelId = null } = {}) {
+  const latestByKey = new Map();
+  for (const row of apiReadModel.interim_performance ?? []) {
+    if (track !== "all" && row.track !== track) continue;
+    if (roundId && row.round_id !== roundId) continue;
+    if (modelId && row.model_id !== modelId) continue;
+    if (!isUsableLiveRow(row)) continue;
+    const key = `${row.round_id}:${row.run_id}:${row.model_id}`;
+    const existing = latestByKey.get(key);
+    if (!existing || row.target_date > existing.target_date || (row.target_date === existing.target_date && row.price_date > existing.price_date)) {
+      latestByKey.set(key, row);
+    }
+  }
+  return Array.from(latestByKey.values()).sort(
+    (a, b) => {
+      const aLabel = modelById.get(a.model_id)?.label ?? a.model_id;
+      const bLabel = modelById.get(b.model_id)?.label ?? b.model_id;
+      return b.target_date.localeCompare(a.target_date) || b.round_id.localeCompare(a.round_id) || aLabel.localeCompare(bLabel);
+    }
+  );
+}
+
+function aggregateLivePerformance(rows, track) {
+  const byModel = new Map();
+  const byRound = new Map();
+  for (const row of rows) {
+    const model = modelById.get(row.model_id);
+    const modelRow =
+      byModel.get(row.model_id) ??
+      {
+        model_id: row.model_id,
+        label: model?.label ?? row.model_id,
+        provider: row.provider,
+        provider_label: model?.provider_label ?? row.provider,
+        logo_src: model?.logo_src ?? null,
+        portfolio_return_values: [],
+        sp500_return_values: [],
+        alpha_values: [],
+        roundIds: new Set(),
+        tracks: new Set(),
+        latest_price_date: "",
+        rounds: []
+      };
+    modelRow.portfolio_return_values.push(row.model_return_pct);
+    modelRow.sp500_return_values.push(row.sp500_return_pct);
+    modelRow.alpha_values.push(row.alpha_pp);
+    modelRow.roundIds.add(row.round_id);
+    modelRow.tracks.add(row.track);
+    modelRow.latest_price_date = row.price_date > modelRow.latest_price_date ? row.price_date : modelRow.latest_price_date;
+    modelRow.rounds.push({
+      round_id: row.round_id,
+      run_id: row.run_id,
+      track: row.track,
+      target_date: row.target_date,
+      price_date: row.price_date,
+      days_elapsed: row.days_elapsed,
+      entry_date: row.entry_date,
+      exit_date: row.exit_date,
+      portfolio_return_pct: row.model_return_pct,
+      sp500_return_pct: row.sp500_return_pct,
+      alpha_pp: row.alpha_pp,
+      selected_option_id: row.selected_option_id,
+      holding_count: row.holding_count
+    });
+    byModel.set(row.model_id, modelRow);
+
+    const roundKey = `${row.round_id}:${row.run_id}`;
+    const roundRow =
+      byRound.get(roundKey) ??
+      {
+        round_id: row.round_id,
+        run_id: row.run_id,
+        track: row.track,
+        target_date: row.target_date,
+        price_date: row.price_date,
+        entry_date: row.entry_date,
+        exit_date: row.exit_date,
+        sp500_return_pct: row.sp500_return_pct,
+        model_count: 0
+      };
+    roundRow.target_date = row.target_date > roundRow.target_date ? row.target_date : roundRow.target_date;
+    roundRow.price_date = row.price_date > roundRow.price_date ? row.price_date : roundRow.price_date;
+    roundRow.model_count += 1;
+    byRound.set(roundKey, roundRow);
+  }
+
+  const data = Array.from(byModel.values())
+    .map((row) => ({
+      model_id: row.model_id,
+      label: row.label,
+      provider: row.provider,
+      provider_label: row.provider_label,
+      logo_src: row.logo_src,
+      portfolio_return_pct: average(row.portfolio_return_values),
+      sp500_return_pct: average(row.sp500_return_values),
+      alpha_pp: average(row.alpha_values),
+      live_round_count: row.roundIds.size,
+      tracks: Array.from(row.tracks).sort(),
+      latest_price_date: row.latest_price_date || null,
+      rounds: row.rounds.sort((a, b) => b.exit_date.localeCompare(a.exit_date) || b.round_id.localeCompare(a.round_id))
+    }))
+    .sort(
+      (a, b) =>
+        Number(b.portfolio_return_pct ?? -Infinity) - Number(a.portfolio_return_pct ?? -Infinity) ||
+        Number(b.alpha_pp ?? -Infinity) - Number(a.alpha_pp ?? -Infinity) ||
+        a.label.localeCompare(b.label)
+    )
+    .map((row, index) => ({ rank: index + 1, ...row }));
+
+  const roundRows = Array.from(byRound.values()).sort((a, b) => b.exit_date.localeCompare(a.exit_date) || b.round_id.localeCompare(a.round_id));
+  return {
+    as_of: apiReadModel.generated_at,
+    track,
+    status: "live_not_final",
+    latest_price_date: rows.reduce((latest, row) => (row.price_date > latest ? row.price_date : latest), "") || null,
+    round_count: roundRows.length,
+    model_count: data.length,
+    snapshot_count: rows.length,
+    benchmark: {
+      label: "S&P 500",
+      return_pct: average(roundRows.map((row) => row.sp500_return_pct)),
+      round_count: roundRows.length
+    },
+    data,
+    rounds: roundRows
+  };
+}
+
+function livePerformance(url, options = {}) {
+  const track = options.track ?? normalizedTrack(url);
+  if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  const rows = latestLiveSnapshots({ track, roundId: options.roundId ?? null, modelId: options.modelId ?? null });
+  return jsonApiResult(200, aggregateLivePerformance(rows, track));
+}
+
+function roundLivePerformance(roundId) {
+  const round = apiReadModel.rounds.find((item) => item.round_id === roundId);
+  if (!round) return errorResult(404, "not_found", "Round not found.");
+  const rows = latestLiveSnapshots({ track: "all", roundId });
+  const history = (apiReadModel.interim_performance ?? [])
+    .filter((row) => row.round_id === roundId)
+    .sort((a, b) => a.target_date.localeCompare(b.target_date) || a.model_id.localeCompare(b.model_id));
+  return jsonApiResult(200, {
+    round_id: roundId,
+    ...aggregateLivePerformance(rows, round.track),
+    history
+  });
+}
+
+function modelLivePerformance(modelId, url) {
+  if (!modelById.has(modelId)) return errorResult(404, "not_found", "Model not found.");
+  const track = normalizedTrack(url);
+  if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  const rows = latestLiveSnapshots({ track, modelId });
+  return jsonApiResult(200, {
+    model_id: modelId,
+    ...aggregateLivePerformance(rows, track)
   });
 }
 
@@ -731,6 +909,7 @@ function indexResponse() {
     endpoints: [
       "/v1/positioning/active",
       "/v1/positioning/cumulative",
+      "/v1/live/performance",
       "/v1/rounds",
       "/v1/rounds/{round_id}/concentration",
       "/v1/models",
@@ -755,11 +934,14 @@ function routeGet(request) {
     if (parts[1] === "by-category") return positioningResponse(url, { groupBy: "category" });
   }
 
+  if (parts[0] === "live" && parts[1] === "performance") return livePerformance(url);
+
   if (parts[0] === "rounds") {
     if (parts.length === 1) return listRounds(url);
     if (parts.length === 2) return roundDetails(parts[1]);
     if (parts.length === 3 && parts[2] === "portfolios") return roundPortfolios(parts[1]);
     if (parts.length === 3 && parts[2] === "concentration") return roundConcentration(parts[1]);
+    if (parts.length === 3 && parts[2] === "live-performance") return roundLivePerformance(parts[1]);
     if (parts.length === 3 && parts[2] === "results") return roundResults(parts[1]);
   }
 
@@ -772,6 +954,7 @@ function routeGet(request) {
     if (parts.length === 1) return listModels();
     if (parts.length === 2) return modelDetails(parts[1]);
     if (parts.length === 3 && parts[2] === "holdings") return modelHoldings(parts[1], url);
+    if (parts.length === 3 && parts[2] === "live-performance") return modelLivePerformance(parts[1], url);
     if (parts.length === 3 && parts[2] === "style") return modelStyle(parts[1]);
   }
 

@@ -208,6 +208,25 @@
         }
       }
     },
+    "/v1/live/performance": {
+      "get": {
+        "tags": ["Positioning"],
+        "summary": "Live mark-to-market performance",
+        "description": "Open tests marked to the latest available close. These are interim values, not official final scores.",
+        "parameters": [{ "$ref": "#/components/parameters/Track" }],
+        "responses": {
+          "200": {
+            "description": "Live performance response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LivePerformanceResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
     "/v1/rounds": {
       "get": {
         "tags": ["Rounds"],
@@ -293,6 +312,26 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/RoundConcentrationResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/rounds/{round_id}/live-performance": {
+      "get": {
+        "tags": ["Rounds"],
+        "summary": "Round live performance",
+        "description": "Interim mark-to-market rows for an unresolved round, plus the latest live snapshot by model.",
+        "parameters": [{ "$ref": "#/components/parameters/RoundIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Round live performance response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LivePerformanceResponse" }
               }
             }
           },
@@ -419,6 +458,29 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/PortfolioResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/models/{model_id}/live-performance": {
+      "get": {
+        "tags": ["Models"],
+        "summary": "Model live performance",
+        "description": "One model's interim return across open weekly or monthly tests.",
+        "parameters": [
+          { "$ref": "#/components/parameters/ModelIdPath" },
+          { "$ref": "#/components/parameters/Track" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model live performance response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LivePerformanceResponse" }
               }
             }
           },
@@ -709,6 +771,62 @@
         },
         "required": ["as_of", "window", "data"]
       },
+      "LivePerformanceResponse": {
+        "type": "object",
+        "properties": {
+          "as_of": { "type": "string", "format": "date-time" },
+          "track": { "type": "string", "enum": ["weekly", "monthly", "all"] },
+          "status": { "type": "string", "enum": ["live_not_final"] },
+          "latest_price_date": { "type": ["string", "null"], "format": "date" },
+          "round_count": { "type": "integer" },
+          "model_count": { "type": "integer" },
+          "snapshot_count": { "type": "integer" },
+          "benchmark": {
+            "type": "object",
+            "properties": {
+              "label": { "type": "string" },
+              "return_pct": { "type": ["number", "null"] },
+              "round_count": { "type": "integer" }
+            },
+            "required": ["label", "return_pct", "round_count"]
+          },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LivePerformanceRow" }
+          }
+        },
+        "required": ["as_of", "track", "status", "latest_price_date", "round_count", "model_count", "snapshot_count", "benchmark", "data"]
+      },
+      "LivePerformanceRow": {
+        "type": "object",
+        "properties": {
+          "rank": { "type": "integer" },
+          "model_id": { "type": "string" },
+          "label": { "type": "string" },
+          "provider": { "type": "string" },
+          "portfolio_return_pct": { "type": ["number", "null"] },
+          "sp500_return_pct": { "type": ["number", "null"] },
+          "alpha_pp": { "type": ["number", "null"], "description": "Portfolio Minus S&P 500, in percentage points." },
+          "live_round_count": { "type": "integer" },
+          "latest_price_date": { "type": ["string", "null"], "format": "date" },
+          "rounds": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "round_id": { "type": "string" },
+                "track": { "type": "string", "enum": ["weekly", "monthly"] },
+                "price_date": { "type": "string", "format": "date" },
+                "portfolio_return_pct": { "type": "number" },
+                "sp500_return_pct": { "type": "number" },
+                "alpha_pp": { "type": "number", "description": "Portfolio Minus S&P 500, in percentage points." }
+              },
+              "required": ["round_id", "track", "price_date", "portfolio_return_pct", "sp500_return_pct", "alpha_pp"]
+            }
+          }
+        },
+        "required": ["rank", "model_id", "label", "provider", "portfolio_return_pct", "sp500_return_pct", "alpha_pp", "live_round_count"]
+      },
       "PortfolioResponse": {
         "type": "object",
         "properties": {
@@ -822,7 +940,7 @@
           "label": { "type": "string" },
           "portfolio_return_pct": { "type": "number" },
           "benchmark_return_pct": { "type": "number" },
-          "alpha_pp": { "type": "number", "description": "Portfolio return minus benchmark return, in percentage points." },
+          "alpha_pp": { "type": "number", "description": "Portfolio Minus S&P 500, in percentage points." },
           "max_possible_return_pct": { "type": ["number", "null"], "description": "Highest realized return among scored options in the saved universe, in percentage points." },
           "capitalbench_score": { "type": ["number", "null"], "description": "Score where 100 means matching the maximum possible return in that window." },
           "round_count": { "type": "integer" },

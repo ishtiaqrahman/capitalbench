@@ -447,6 +447,46 @@ function loadReturns({ roundPath, round, selectedRun }) {
     .filter((row) => row.option_id);
 }
 
+function loadInterimPerformance({ roundPath, round, selectedRun }) {
+  return parseCsv(readText(join(roundPath, "runs", selectedRun.run_id, "results", "weekly_performance.csv")))
+    .map((row) => {
+      const modelReturnPct = percentReturnValue(row.model_return);
+      const sp500ReturnPct = percentReturnValue(row.sp500_return);
+      const alphaPp = percentReturnValue(row.alpha_vs_sp500);
+      return {
+        round_id: row.round_id || round.round_id,
+        run_id: row.run_id || selectedRun.run_id,
+        track: round.track,
+        status: round.status,
+        entry_date: round.entry_date,
+        exit_date: round.exit_date,
+        model_id: row.model_id,
+        provider: row.provider,
+        target_date: row.target_date || "",
+        price_date: row.price_date || row.target_date || "",
+        days_elapsed: numberValue(row.days_elapsed),
+        run_type: row.run_type || "",
+        submission_format: row.submission_format || "",
+        selected_option_id: row.selected_option_id || "",
+        holding_count: numberValue(row.holding_count),
+        model_return_pct: modelReturnPct,
+        sp500_return_pct: sp500ReturnPct,
+        alpha_pp: alphaPp,
+        price_status: row.price_status || "",
+        published: boolValue(row.published)
+      };
+    })
+    .filter(
+      (row) =>
+        row.model_id &&
+        row.provider &&
+        row.target_date &&
+        typeof row.model_return_pct === "number" &&
+        typeof row.sp500_return_pct === "number" &&
+        typeof row.alpha_pp === "number"
+    );
+}
+
 function buildModelStyles(models, allocations, assetsById) {
   const styles = [];
   for (const model of models) {
@@ -523,6 +563,7 @@ function buildReadModel() {
   const allocations = [];
   const results = [];
   const returns = [];
+  const interimPerformance = [];
   const proof = [];
 
   for (const item of roundRows) {
@@ -533,6 +574,7 @@ function buildReadModel() {
     allocations.push(...loaded.allocations);
     results.push(...loadResults(item));
     returns.push(...loadReturns(item));
+    interimPerformance.push(...loadInterimPerformance(item));
     proof.push({
       round_id: item.round.round_id,
       run_id: item.selectedRun.run_id,
@@ -577,6 +619,7 @@ function buildReadModel() {
     allocations,
     results,
     returns,
+    interim_performance: interimPerformance,
     model_styles: modelStyles,
     proof
   };

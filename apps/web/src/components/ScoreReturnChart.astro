@@ -13,7 +13,7 @@ interface Props {
 const {
   chart,
   label,
-  title = "Portfolio Return vs S&P 500",
+  title = "Portfolio Return And S&P 500",
   description = "All return bars use one shared scale.",
   statusLabel = "Scored",
   showStatus = true
@@ -70,7 +70,7 @@ const columnCount = Math.max(chart.rows.length, 1);
               class={`score-vertical-label ${item.kind === "benchmark" ? "score-vertical-label-benchmark" : ""} ${
                 item.kind === "reference" ? "score-vertical-label-reference" : ""
               }`}
-              title={`${item.detailName}: ${item.returnLabel}. ${item.vsBenchmarkLabel} vs S&P 500. ${item.detailText}`}
+              title={`${item.detailName}: ${item.returnLabel}. Portfolio Minus S&P 500: ${item.vsBenchmarkLabel}. ${item.detailText}`}
             >
               {item.logoSrc ? (
                 <span class="score-chart-logo-shell">

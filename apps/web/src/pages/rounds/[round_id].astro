@@ -451,7 +451,7 @@ const roundStateTitle = round.status === "resolved" ? "Final Score Published" : 
 const pageTitle = round.status === "resolved" ? `${round.round_id} Result And Proof` : `${round.round_id} Proof Files`;
 const pageDescription =
   round.status === "resolved"
-    ? `${round.title}: final model portfolio scores, S&P 500 comparison, entry and exit prices, prompt packet, and proof hashes for the ${round.horizon} market test.`
+    ? `${round.title}: final model portfolio scores, S&P 500 return, Portfolio Minus S&P 500, entry and exit prices, prompt packet, and proof hashes for the ${round.horizon} market test.`
     : `${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`;
 const roundDataset = datasetSchema({
   name: `${round.round_id} CapitalBench proof dataset`,
@@ -468,7 +468,7 @@ const roundDataset = datasetSchema({
     "starting price",
     "ending price status",
     "SHA-256 input hash",
-    "return versus S&P 500"
+    "Portfolio Minus S&P 500"
   ]
 });
 const priceColumns = [
@@ -857,11 +857,11 @@ const attributionColumns = [
       <div class="panel-header">
         <div>
           <span class="panel-kicker">{round.status === "resolved" ? "Realized asset returns" : "Interim tracking"}</span>
-          <h2>{round.status === "resolved" ? "What Moved During The Test" : "Weekly Performance Vs S&P 500"}</h2>
+          <h2>{round.status === "resolved" ? "What Moved During The Test" : "Live Portfolio And S&P 500 Returns"}</h2>
           <p>
             {round.status === "resolved"
               ? "The table shows the top realized asset returns over the official scoring window. These returns explain the opportunity set behind the model scores."
-              : "Once at least one week of prices exists, this chart tracks each saved model portfolio against S&P 500 from the test start date. It is interim research context, not the final score."}
+              : "Once at least one post-entry price snapshot exists, this chart tracks each saved model portfolio against S&P 500 from the test start date. It is interim research context, not the final score."}
           </p>
         </div>
       </div>

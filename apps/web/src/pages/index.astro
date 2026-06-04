@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ActiveExposureMap from "../components/ActiveExposureMap";
 import GitHubLogo from "../components/GitHubLogo.astro";
+import LivePerformanceChart from "../components/LivePerformanceChart";
 import ScoreReturnChart from "../components/ScoreReturnChart.astro";
 import TrackScorecard from "../components/TrackScorecard.astro";
 import {
@@ -34,6 +35,7 @@ import {
 import { dateOnly } from "../lib/format";
 import {
   staticAllOfficialSubmissions,
+  staticAllWeeklyPerformance,
   staticOfficialSubmissions,
   staticRoundAllocations,
   staticRoundLeaderboard,
@@ -175,6 +177,7 @@ const activeExposureRounds = roundRows
     };
   })
   .filter((item) => (item.track === "weekly" || item.track === "monthly") && item.submissions.length > 0);
+const livePerformanceRows = staticAllWeeklyPerformance(roundRows).filter((row) => row.status === "pending");
 const riskAppetiteProfiles = [...modelProfiles]
   .filter((profile) => profile.fingerprint.riskAppetite.score !== null)
   .sort(
@@ -648,6 +651,8 @@ const trackLaneCards = trackStates.map((track) => {
     </div>
     <a class="section-profile-link" href="/models">View model profiles</a>
   </section>
+
+  <LivePerformanceChart client:visible rows={livePerformanceRows} />
 
   <ActiveExposureMap client:visible rounds={activeExposureRounds} />
 

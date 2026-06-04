@@ -203,6 +203,79 @@ def test_update_interim_performance_skips_weekly_track_by_default(tmp_path: Path
     assert any(item.round_id == "weekly-round" and item.message == "not a monthly round" for item in output.skipped_rounds)
 
 
+def test_update_interim_performance_track_all_includes_weekly_rounds(tmp_path: Path) -> None:
+    rounds_dir = tmp_path / "rounds"
+    weekly = _create_round(
+        rounds_dir,
+        "weekly-round",
+        entry_date="2026-01-02",
+        exit_date="2026-01-09",
+        horizon="one week",
+    )
+    monthly = _create_round(rounds_dir, "monthly-round", entry_date="2026-01-02", exit_date="2026-02-02")
+    snapshots_dir = tmp_path / "snapshots"
+    _write_prices(
+        snapshots_dir / "2026-01-06.csv",
+        [
+            {"option_id": "opt_a", "price": 110, "date": "2026-01-06", "source": "fixture"},
+            {"option_id": "opt_b", "price": 97, "date": "2026-01-06", "source": "fixture"},
+            {"option_id": "sp500", "price": 105, "date": "2026-01-06", "source": "fixture"},
+            {"option_id": "cash", "price": 1, "date": "2026-01-06", "source": "cash"},
+        ],
+    )
+
+    output = update_interim_performance(
+        rounds_dir=rounds_dir,
+        snapshot_date="2026-01-06",
+        snapshots_dir=snapshots_dir,
+        track="all",
+        skip_fetch=True,
+        sync=False,
+        min_snapshot_rows=1,
+    )
+
+    assert {item.round_id for item in output.updated_rounds} == {"weekly-round", "monthly-round"}
+    assert (weekly / "runs" / "official" / "results" / "weekly_performance.csv").exists()
+    assert (monthly / "runs" / "official" / "results" / "weekly_performance.csv").exists()
+
+
+def test_update_interim_performance_weekly_track_skips_monthly_rounds(tmp_path: Path) -> None:
+    rounds_dir = tmp_path / "rounds"
+    weekly = _create_round(
+        rounds_dir,
+        "weekly-round",
+        entry_date="2026-01-02",
+        exit_date="2026-01-09",
+        horizon="one week",
+    )
+    monthly = _create_round(rounds_dir, "monthly-round", entry_date="2026-01-02", exit_date="2026-02-02")
+    snapshots_dir = tmp_path / "snapshots"
+    _write_prices(
+        snapshots_dir / "2026-01-06.csv",
+        [
+            {"option_id": "opt_a", "price": 110, "date": "2026-01-06", "source": "fixture"},
+            {"option_id": "opt_b", "price": 97, "date": "2026-01-06", "source": "fixture"},
+            {"option_id": "sp500", "price": 105, "date": "2026-01-06", "source": "fixture"},
+            {"option_id": "cash", "price": 1, "date": "2026-01-06", "source": "cash"},
+        ],
+    )
+
+    output = update_interim_performance(
+        rounds_dir=rounds_dir,
+        snapshot_date="2026-01-06",
+        snapshots_dir=snapshots_dir,
+        track="weekly",
+        skip_fetch=True,
+        sync=False,
+        min_snapshot_rows=1,
+    )
+
+    assert {item.round_id for item in output.updated_rounds} == {"weekly-round"}
+    assert (weekly / "runs" / "official" / "results" / "weekly_performance.csv").exists()
+    assert not (monthly / "runs" / "official" / "results" / "weekly_performance.csv").exists()
+    assert any(item.round_id == "monthly-round" and item.message == "not a weekly round" for item in output.skipped_rounds)
+
+
 def test_update_interim_performance_keeps_sync_failure_as_round_warning(tmp_path: Path) -> None:
     rounds_dir = tmp_path / "rounds"
     _create_round(rounds_dir, "round-one", entry_date="2026-01-02", exit_date="2026-02-02")

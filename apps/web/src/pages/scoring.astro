@@ -5,12 +5,12 @@ import PageHeader from "../components/PageHeader.astro";
 
 <BaseLayout
   title="CapitalBench Scoring"
-  description="How CapitalBench scores AI model portfolio returns, S&P 500 comparisons, and the maximum-possible-return benchmark used for overall results."
+  description="How CapitalBench scores AI model portfolio returns, S&P 500 returns, Portfolio Minus S&P 500, and the maximum-possible-return benchmark used for overall results."
 >
   <PageHeader
     eyebrow="Scoring"
     title="How Scores Work"
-    summary="Each test records portfolio return, S&P 500 comparison, and a CapitalBench Score that scales the result against the highest-returning scored option in that window."
+    summary="Each test records portfolio return, S&P 500 return, Portfolio Minus S&P 500, and a CapitalBench Score that scales the result against the highest-returning scored option in that window."
   />
   <section class="section doc-layout">
     <article class="doc-body">
@@ -18,12 +18,12 @@ import PageHeader from "../components/PageHeader.astro";
       <p>
         Each model gets one saved portfolio for a test, and that portfolio is what appears on the public scoreboard.
         For a completed test, CapitalBench reports the raw portfolio return, the S&amp;P 500 return over the same
-        close-to-close window, return versus S&amp;P 500, and regret versus the highest-returning scored option.
+        close-to-close window, Portfolio Minus S&amp;P 500, and regret versus the highest-returning scored option.
       </p>
       <ul>
         <li>Single-pick return: selected option ending price divided by starting price, minus one.</li>
         <li>Portfolio return: weighted sum of holding returns, using the submitted allocation percentages.</li>
-        <li>Return versus S&P 500: portfolio return minus S&P 500 return.</li>
+        <li>Portfolio Minus S&P 500: portfolio return minus S&P 500 return.</li>
         <li>Maximum possible return: the highest realized return among scored options in the saved universe.</li>
         <li>Regret: maximum possible return minus the model's return, when full asset-list prices exist.</li>
         <li>Cash comparison: whether the model's return beats a cash return.</li>
@@ -57,7 +57,7 @@ import PageHeader from "../components/PageHeader.astro";
           <code>sum(weight * option_return)</code>
         </div>
         <div>
-          <span>Return vs S&amp;P 500</span>
+          <span>Portfolio Minus S&amp;P 500</span>
           <code>portfolio_return - sp500_return</code>
         </div>
         <div>

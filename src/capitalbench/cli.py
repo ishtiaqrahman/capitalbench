@@ -596,7 +596,7 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="round whose options.yaml should define the daily snapshot universe; defaults to newest round",
     )
-    interim_parser.add_argument("--track", choices=["monthly", "all"], default="monthly")
+    interim_parser.add_argument("--track", choices=["weekly", "monthly", "all"], default="monthly")
     interim_parser.add_argument(
         "--skip-fetch",
         action="store_true",

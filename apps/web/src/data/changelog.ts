@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-04-live-mark-to-market",
+    date: "2026-06-04",
+    title: "Live mark-to-market added for open tests",
+    category: "Data",
+    status: "published",
+    summary:
+      "Open weekly and monthly tests can now show interim portfolio returns from the latest available close while remaining separate from official final scores.",
+    details: [
+      "The homepage now includes a Live Portfolio Returns chart for open tests, with filters for all live, weekly, and monthly tracks.",
+      "Model pages now show each model's current live return before final scoring, using only unresolved rounds and excluding completed results.",
+      "The Data API exposes GET /v1/live/performance, GET /v1/rounds/{round_id}/live-performance, and GET /v1/models/{model_id}/live-performance for interim mark-to-market data.",
+      "The scheduled interim refresh now updates all active tracks instead of only active monthly tests."
+    ],
+    links: [
+      { label: "Homepage", href: "/" },
+      { label: "API docs", href: "/api" },
+      { label: "Models", href: "/models" }
+    ]
+  },
+  {
     id: "2026-06-03-capitalbench-score-max-possible",
     date: "2026-06-03",
     title: "CapitalBench Score documented as the primary benchmark score",
@@ -34,8 +54,8 @@ export const changelogEntries: ChangelogEntry[] = [
     summary:
       "Overall weekly and monthly results now explain CapitalBench Score as the primary benchmark score against the maximum possible return in each completed window.",
     details: [
-      "Scoring documentation now separates raw portfolio return, S&P 500 comparison, regret, and CapitalBench Score instead of describing overall results as average alpha only.",
-      "Overall weekly and monthly pages now lead with the CapitalBench Score chart, with average return versus S&P 500 kept as supporting context.",
+      "Scoring documentation now separates raw portfolio return, S&P 500 return, Portfolio Minus S&P 500, regret, and CapitalBench Score.",
+      "Overall weekly and monthly pages now lead with the CapitalBench Score chart, with average portfolio return and S&P 500 return kept as supporting context.",
       "The Data API read model and OpenAPI schema include max_possible_return_pct and capitalbench_score for resolved result rows and cumulative leaderboards."
     ],
     links: [
@@ -171,7 +191,7 @@ export const changelogEntries: ChangelogEntry[] = [
     category: "Benchmark",
     status: "published",
     summary:
-      "Round pages can now show interim model allocation returns versus S&P 500 when weekly price snapshots are available.",
+      "Round pages can now show interim model allocation returns, S&P 500 returns, and Portfolio Minus S&P 500 when price snapshots are available.",
     details: [
       "The CLI can calculate weekly performance from existing price snapshots without resolving the official one-month leaderboard early.",
       "Supabase now stores published weekly price and model-performance rows so round pages can render the chart from the public read model.",

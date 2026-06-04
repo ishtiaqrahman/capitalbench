@@ -74,8 +74,8 @@ def update_interim_performance(
     """Update interim performance charts for active rounds from reusable price snapshots."""
 
     _validate_iso_date(snapshot_date, "snapshot date")
-    if track not in {"monthly", "all"}:
-        raise ValueError("track must be one of: monthly, all")
+    if track not in {"weekly", "monthly", "all"}:
+        raise ValueError("track must be one of: weekly, monthly, all")
 
     snapshot_path = snapshots_dir / f"{snapshot_date}.csv"
     snapshot_status = "missing"
@@ -221,8 +221,8 @@ def _update_interim_round(
     round_id = manifest.round_id
     if not manifest.entry_date or not manifest.exit_date:
         return InterimRoundSummary(round_id, None, "skipped", "missing entry_date or exit_date")
-    if track == "monthly" and not _is_monthly_round(manifest.entry_date, manifest.exit_date, manifest.horizon):
-        return InterimRoundSummary(round_id, None, "skipped", "not a monthly round")
+    if not _track_matches(track, manifest.entry_date, manifest.exit_date, manifest.horizon):
+        return InterimRoundSummary(round_id, None, "skipped", f"not a {track} round")
     if _parse_date(snapshot_date) >= _parse_date(manifest.exit_date):
         return InterimRoundSummary(round_id, None, "skipped", "snapshot date is on or after exit_date")
     if not (round_path / "prices" / "entry_prices.csv").exists():
@@ -385,6 +385,19 @@ def _round_paths(rounds_dir: Path) -> list[Path]:
 def _is_monthly_round(entry_date: str, exit_date: str, horizon: str) -> bool:
     days = (_parse_date(exit_date) - _parse_date(entry_date)).days
     return days >= 28 or "month" in horizon.lower()
+
+
+def _is_weekly_round(entry_date: str, exit_date: str, horizon: str) -> bool:
+    days = (_parse_date(exit_date) - _parse_date(entry_date)).days
+    return days < 28 and "week" in horizon.lower()
+
+
+def _track_matches(track: str, entry_date: str, exit_date: str, horizon: str) -> bool:
+    if track == "all":
+        return _is_weekly_round(entry_date, exit_date, horizon) or _is_monthly_round(entry_date, exit_date, horizon)
+    if track == "weekly":
+        return _is_weekly_round(entry_date, exit_date, horizon)
+    return _is_monthly_round(entry_date, exit_date, horizon)
 
 
 def _safe_round_id(round_path: Path) -> str:

@@ -99,16 +99,16 @@ export default function RoundPerformanceChart({ fallbackRows, roundId, runId }: 
         .filter((row): row is ChartPoint => Boolean(row))
         .sort((a, b) => b.alpha_vs_sp500 - a.alpha_vs_sp500 || modelLabel(a.model_id).localeCompare(modelLabel(b.model_id)))
     : [];
-  const hasAtLeastOneWeek = chartRows.some((row) => row.days_elapsed >= 7);
-  const isRenderable = dates.length >= 2 && hasAtLeastOneWeek && chartRows.length > 0;
+  const hasPostEntrySnapshot = chartRows.some((row) => row.days_elapsed > 0);
+  const isRenderable = dates.length >= 2 && hasPostEntrySnapshot && chartRows.length > 0;
 
   if (!isRenderable) {
     return (
       <div className="performance-empty">
         <Activity size={20} aria-hidden="true" />
         <div>
-          <strong>Weekly chart pending</strong>
-          <p>At least one weekly price snapshot after the start date is required before interim performance is shown.</p>
+          <strong>Live chart pending</strong>
+          <p>At least one price snapshot after the start date is required before interim performance is shown.</p>
         </div>
       </div>
     );
@@ -148,7 +148,7 @@ export default function RoundPerformanceChart({ fallbackRows, roundId, runId }: 
   }
 
   function exportCsv() {
-    const header = ["Model", "Provider", "Target date", "Price date", "Days elapsed", "Model return", "S&P 500 return", "Return vs S&P 500"].join(",");
+    const header = ["Model", "Provider", "Target date", "Price date", "Days elapsed", "Portfolio return", "S&P 500 return", "Portfolio Minus S&P 500"].join(",");
     const body = chartRows
       .map((row) =>
         [
@@ -178,8 +178,8 @@ export default function RoundPerformanceChart({ fallbackRows, roundId, runId }: 
     <div className="performance-chart-shell">
       <div className="performance-chart-toolbar">
         <div>
-          <strong>{latestDate ? `${dateLabel(latestDate)} snapshot` : "Weekly snapshot"}</strong>
-          <span>Interim returns from the start date; final scoring still waits for ending prices.</span>
+          <strong>{latestDate ? `${dateLabel(latestDate)} snapshot` : "Live snapshot"}</strong>
+          <span>Live returns from the start date; final scoring still waits for ending prices.</span>
         </div>
         <button className="small-button" type="button" onClick={exportCsv}>
           <Download size={15} aria-hidden="true" />
@@ -188,7 +188,7 @@ export default function RoundPerformanceChart({ fallbackRows, roundId, runId }: 
       </div>
       <div className="performance-chart-grid">
         <div className="performance-svg-wrap">
-          <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Model returns compared with S&P 500 at weekly intervals">
+          <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Model returns compared with S&P 500 during the open test">
             <line x1={pad.left} x2={width - pad.right} y1={zeroY} y2={zeroY} className="chart-zero-line" />
             {ticks.map((tick) => (
               <g key={tick}>
@@ -243,18 +243,22 @@ export default function RoundPerformanceChart({ fallbackRows, roundId, runId }: 
           })}
         </div>
       </div>
-      <div className="performance-table" aria-label="Latest weekly performance snapshot">
+      <div className="performance-table" aria-label="Latest live performance snapshot">
         {latestRows.map((row) => (
           <article key={row.model_id}>
             <span className={`provider-badge provider-${row.provider}`}>{providerLabel(row.provider)}</span>
             <strong>{modelLabel(row.model_id)}</strong>
             <dl>
               <div>
-                <dt>Return</dt>
+                <dt>Portfolio</dt>
                 <dd>{formatSignedPct(row.model_return)}</dd>
               </div>
               <div>
-                <dt>Vs S&P 500</dt>
+                <dt>S&P 500</dt>
+                <dd>{formatSignedPct(row.sp500_return)}</dd>
+              </div>
+              <div>
+                <dt>Portfolio Minus S&P 500</dt>
                 <dd className={row.alpha_vs_sp500 >= 0 ? "positive" : "negative"}>{formatSignedPct(row.alpha_vs_sp500)}</dd>
               </div>
               <div>
