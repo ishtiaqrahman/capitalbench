@@ -648,7 +648,7 @@ def _submission_rows(run_paths: Any, *, published: bool) -> list[dict[str, Any]]
                 "cash_allocation_bps": metrics.cash_allocation_bps,
                 "benchmark_allocation_bps": metrics.benchmark_allocation_bps,
                 "concentration_hhi": _decimal(metrics.concentration_hhi),
-                "portfolio": _jsonable(payload.get("portfolio") or []),
+                "portfolio": _jsonable(_submission_portfolio_payload(submission)),
                 "portfolio_rationale": payload.get("portfolio_rationale") or None,
                 "confidence": _decimal(payload.get("confidence")),
                 "rationale_summary": payload["rationale_summary"],
@@ -661,6 +661,18 @@ def _submission_rows(run_paths: Any, *, published: bool) -> list[dict[str, Any]]
             }
         )
     return rows
+
+
+def _submission_portfolio_payload(submission: ModelSubmission) -> list[dict[str, Any]]:
+    return [
+        {
+            "option_id": allocation.option_id,
+            "allocation_bps": allocation.allocation_bps,
+            "allocation_pct": allocation.allocation_bps / 100,
+            "rationale": allocation.rationale,
+        }
+        for allocation in allocation_views(submission)
+    ]
 
 
 def _submission_allocation_rows(run_paths: Any, *, published: bool) -> list[dict[str, Any]]:

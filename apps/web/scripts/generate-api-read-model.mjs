@@ -361,6 +361,8 @@ function loadSubmissions({ roundPath, round, selectedRun, assetsById }) {
       run_id: selectedRun.run_id,
       model_id: modelId,
       provider,
+      mode: String(payload.mode ?? selectedRun.manifest.mode ?? ""),
+      run_type: String(payload.run_type ?? selectedRun.manifest.run_type ?? ""),
       track: round.track,
       status: round.status,
       entry_date: round.entry_date,

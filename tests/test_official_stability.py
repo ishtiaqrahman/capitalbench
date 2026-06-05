@@ -283,7 +283,7 @@ def test_publish_report_labels_official_and_stability_modes(tmp_path: Path) -> N
     official_report = publish_report(round_path, run_id="official-report").read_text(encoding="utf-8")
     stability_report = publish_report(round_path, run_id="stability-report").read_text(encoding="utf-8")
 
-    assert "Official One-Shot Leaderboard" in official_report
+    assert "Official Public Leaderboard" in official_report
     assert "This is the official CapitalBench score for this run." in official_report
     assert "Multi-Run Stability Analysis" in stability_report
     assert "This is not the official leaderboard" in stability_report
@@ -299,7 +299,7 @@ def test_publish_round_summary_includes_official_and_stability_sections(tmp_path
     summary_path = publish_round_summary(round_path, "official-summary", "stability-summary")
     summary = summary_path.read_text(encoding="utf-8")
 
-    assert "Official One-Shot Leaderboard" in summary
+    assert "Official Public Leaderboard" in summary
     assert "Multi-Run Stability Analysis" in summary
     assert "does not create a combined weighted score" in summary
 

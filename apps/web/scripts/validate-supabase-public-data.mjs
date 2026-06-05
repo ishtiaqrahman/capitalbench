@@ -311,10 +311,16 @@ function normalizedPortfolio(row) {
   return source
     .map((allocation) => ({
       option_id: allocation.option_id,
-      allocation_bps: Number(allocation.allocation_bps ?? Number(allocation.allocation_pct ?? 0) * 100)
+      allocation_bps: Number(allocation.allocation_bps ?? Number(allocation.allocation_pct ?? 0) * 100),
+      rationale: String(allocation.rationale ?? allocation.rationale_summary ?? "")
     }))
     .filter((allocation) => allocation.option_id && allocation.allocation_bps > 0)
     .sort((left, right) => left.option_id.localeCompare(right.option_id));
+}
+
+function normalizedStringArray(value) {
+  if (!Array.isArray(value)) return [];
+  return value.map((item) => String(item)).sort();
 }
 
 function roundOptions(roundId) {
@@ -387,9 +393,19 @@ function compareSubmissions(rows) {
       continue;
     }
     assertEqual(actual.provider, expected.provider, `Supabase submissions ${key} provider`);
+    assertEqual(actual.mode ?? "", expected.mode ?? "", `Supabase submissions ${key} mode`);
+    assertEqual(actual.run_type ?? "", "official", `Supabase submissions ${key} run_type`);
     assertEqual(actual.selected_option_id, expected.selected_option_id, `Supabase submissions ${key} selected option`);
     assertEqual(actual.submission_format, expected.submission_format, `Supabase submissions ${key} submission format`);
     assertEqual(Number(actual.holding_count ?? 1), Number(expected.holding_count ?? 1), `Supabase submissions ${key} holding count`);
+    assertNear(actual.confidence, expected.confidence, `Supabase submissions ${key} confidence`);
+    assertEqual(actual.rationale_summary ?? "", expected.rationale_summary ?? "", `Supabase submissions ${key} rationale summary`);
+    assertEqual(actual.portfolio_rationale ?? "", expected.portfolio_rationale ?? "", `Supabase submissions ${key} portfolio rationale`);
+    assertEqual(
+      JSON.stringify(normalizedStringArray(actual.key_risks)),
+      JSON.stringify(normalizedStringArray(expected.key_risks)),
+      `Supabase submissions ${key} key risks`
+    );
 
     const actualPortfolio = normalizedPortfolio(actual);
     const expectedPortfolio = normalizedPortfolio(expected);
@@ -397,6 +413,7 @@ function compareSubmissions(rows) {
     for (let index = 0; index < expectedPortfolio.length; index += 1) {
       assertEqual(actualPortfolio[index]?.option_id, expectedPortfolio[index]?.option_id, `Supabase submissions ${key} allocation ${index + 1} option`);
       assertEqual(actualPortfolio[index]?.allocation_bps, expectedPortfolio[index]?.allocation_bps, `Supabase submissions ${key} allocation ${index + 1} bps`);
+      assertEqual(actualPortfolio[index]?.rationale ?? "", expectedPortfolio[index]?.rationale ?? "", `Supabase submissions ${key} allocation ${index + 1} rationale`);
     }
   }
 
@@ -477,7 +494,7 @@ const cumulativeStability = await select("cumulative_stability_leaderboard", {
 compareCumulativeStability(cumulativeStability);
 
 const submissions = await select("submissions", {
-  select: "round_id,run_id,model_id,provider,selected_option_id,submission_format,holding_count,portfolio",
+  select: "round_id,run_id,model_id,provider,mode,run_type,selected_option_id,submission_format,holding_count,confidence,rationale_summary,portfolio_rationale,key_risks,portfolio",
   published: "eq.true",
   order: "round_id.desc"
 });

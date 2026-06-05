@@ -130,6 +130,9 @@ def test_sync_round_publishes_pending_round_without_leaderboard(tmp_path: Path) 
     assert len(sink.upserts["submission_allocations"]) == 4
     assert {row["option_id"] for row in sink.upserts["submission_allocations"]} == {"SEMICONDUCTORS"}
     assert {row["allocation_bps"] for row in sink.upserts["submission_allocations"]} == {10000}
+    assert all(len(row["portfolio"]) == 1 for row in sink.upserts["submissions"])
+    assert all(row["portfolio"][0]["allocation_bps"] == 10000 for row in sink.upserts["submissions"])
+    assert all(row["portfolio"][0]["rationale"] == row["rationale_summary"] for row in sink.upserts["submissions"])
     assert len(sink.upserts["official_results"]) == 0
     assert any(row["option_id"] == "SEMICONDUCTORS" and row["entry_price"] for row in sink.upserts["options"])
     assert any(row["path"] == "hashes.json" for row in sink.upserts["audit_artifacts"])
@@ -284,6 +287,10 @@ def test_sync_round_publishes_portfolio_allocations(tmp_path: Path) -> None:
     assert sink.upserts["options"][0]["sort_order"] == 1
     assert sink.upserts["submissions"][0]["submission_format"] == "portfolio"
     assert sink.upserts["submissions"][0]["holding_count"] == 2
+    assert sink.upserts["submissions"][0]["portfolio"] == [
+        {"option_id": "opt_a", "allocation_bps": 6000, "allocation_pct": 60.0, "rationale": "Upside."},
+        {"option_id": "sp500", "allocation_bps": 4000, "allocation_pct": 40.0, "rationale": "Benchmark."},
+    ]
     assert len(sink.upserts["submission_allocations"]) == 2
     assert {row["allocation_bps"] for row in sink.upserts["submission_allocations"]} == {6000, 4000}
     assert len(sink.upserts["round_weekly_prices"]) == 6
