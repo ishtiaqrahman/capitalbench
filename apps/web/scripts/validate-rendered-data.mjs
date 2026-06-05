@@ -73,6 +73,10 @@ function modelLabel(modelId) {
   return apiReadModel.models.find((model) => model.model_id === modelId)?.label ?? modelId;
 }
 
+function providerLabelForModel(modelId) {
+  return apiReadModel.models.find((model) => model.model_id === modelId)?.provider_label ?? modelId;
+}
+
 function uniquePortfolioKey(row) {
   return `${row.round_id}:${row.run_id}:${row.model_id}`;
 }
@@ -265,6 +269,16 @@ function pctValue(value) {
   return `${numeric.toFixed(2)}%`;
 }
 
+function riskScoreValue(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? `${numeric.toFixed(2)} / 5` : "n/a";
+}
+
+function riskScoreShort(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric.toFixed(2) : "n/a";
+}
+
 function modelLiveExposure(modelId) {
   const allocations = apiReadModel.allocations.filter((row) => row.model_id === modelId && row.status === "active");
   const portfolioKeys = new Set(allocations.map(uniquePortfolioKey));
@@ -361,6 +375,15 @@ function portfolioHoldingLine(portfolio) {
     .sort((left, right) => right.allocation_bps - left.allocation_bps)
     .map((allocation) => `${optionShortDisplay(allocation)} ${allocationPctLabel(allocation.allocation_pct)}`)
     .join(", ");
+}
+
+function homepageRiskProfiles() {
+  return [...apiReadModel.model_styles]
+    .filter((row) => typeof row.risk_appetite_score === "number")
+    .sort(
+      (left, right) =>
+        left.risk_appetite_score - right.risk_appetite_score || modelLabel(left.model_id).localeCompare(modelLabel(right.model_id))
+    );
 }
 
 const indexHtml = readHtml("index.html");
@@ -606,6 +629,53 @@ if (livePerformance.modelRows.length > 0) {
   includes(indexHtml, signedPercentPointLabel(liveLeader.alpha_pp), "homepage live performance leader alpha");
   includes(indexHtml, signedPercentPointLabel(livePerformance.benchmark_return_pct), "homepage live performance S&P 500 return");
   includes(indexHtml, "Interim returns use open tests only", "homepage live performance scope");
+}
+
+const riskProfiles = homepageRiskProfiles();
+if (riskProfiles.length > 0) {
+  const context = "homepage risk appetite";
+  const riskScores = riskProfiles.map((row) => row.risk_appetite_score);
+  const riskMinScore = Math.min(...riskScores);
+  const riskMaxScore = Math.max(...riskScores);
+  const rawRiskRange = riskMaxScore - riskMinScore;
+  const riskFocusPadding = Math.max(0.06, Math.min(0.18, rawRiskRange * 0.18));
+  let riskFocusMin = Math.max(1, riskMinScore - riskFocusPadding);
+  let riskFocusMax = Math.min(5, riskMaxScore + riskFocusPadding);
+  if (riskFocusMax - riskFocusMin < 0.36) {
+    const center = (riskMinScore + riskMaxScore) / 2;
+    riskFocusMin = Math.max(1, center - 0.18);
+    riskFocusMax = Math.min(5, center + 0.18);
+    if (riskFocusMax - riskFocusMin < 0.36) {
+      if (riskFocusMin <= 1) riskFocusMax = Math.min(5, riskFocusMin + 0.36);
+      if (riskFocusMax >= 5) riskFocusMin = Math.max(1, riskFocusMax - 0.36);
+    }
+  }
+  const riskLabelSet = Array.from(new Set(riskProfiles.map((row) => row.risk_appetite_label)));
+  const riskClusterLabel = riskLabelSet.length === 1 ? `All ${riskLabelSet[0]}` : riskLabelSet.join(" / ");
+  const riskPortfolioCount = riskProfiles.reduce((total, row) => total + row.portfolio_count, 0);
+  const lowestRisk = riskProfiles[0];
+  const highestRisk = riskProfiles[riskProfiles.length - 1];
+
+  includes(indexHtml, "Risk Appetite By Model", context);
+  includes(indexHtml, `${riskPortfolioCount} saved portfolios`, `${context} saved portfolio count`);
+  includes(indexHtml, riskClusterLabel, `${context} cluster label`);
+  includes(indexHtml, `<b>${riskScoreShort(riskMinScore)}-${riskScoreShort(riskMaxScore)}</b>`, `${context} score range`);
+  includes(indexHtml, modelLabel(highestRisk.model_id), `${context} highest risk model`);
+  includes(indexHtml, modelLabel(lowestRisk.model_id), `${context} lowest risk model`);
+  includes(indexHtml, `<strong>${riskScoreShort(riskFocusMin)}-${riskScoreShort(riskFocusMax)}</strong>`, `${context} focused range`);
+
+  for (const row of riskProfiles) {
+    const modelContext = `${context} ${row.model_id}`;
+    includes(indexHtml, `/models/${row.model_id}/#model-fingerprint`, `${modelContext} fingerprint link`);
+    includes(indexHtml, modelLabel(row.model_id), `${modelContext} model label`);
+    includes(indexHtml, providerLabelForModel(row.model_id), `${modelContext} provider label`);
+    includes(indexHtml, riskScoreValue(row.risk_appetite_score), `${modelContext} score`);
+    includes(indexHtml, riskScoreShort(row.risk_appetite_score), `${modelContext} short score`);
+    includes(indexHtml, row.risk_appetite_label, `${modelContext} risk label`);
+    includes(indexHtml, pctValue(row.high_risk_pct), `${modelContext} high-risk exposure`);
+    includes(indexHtml, pctValue(row.tech_pct), `${modelContext} technology exposure`);
+    includes(indexHtml, pctValue(row.defensive_pct), `${modelContext} defensive exposure`);
+  }
 }
 
 const latestResolvedWeeklyRound = latestRound("weekly", "resolved");
