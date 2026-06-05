@@ -51,6 +51,17 @@ const resultScoreChart = resultRound
     })
   : { rows: [], ticks: [] };
 const winnerReturn = winner ? winner.portfolio_return ?? winner.selected_asset_return : undefined;
+const maxPossibleReturn = resultReturns
+  .filter((row) => typeof row.return === "number" && Number.isFinite(row.return))
+  .sort((left, right) => right.return - left.return)[0]?.return;
+const winnerScore =
+  typeof winnerReturn === "number" && typeof maxPossibleReturn === "number" && Number.isFinite(maxPossibleReturn)
+    ? Math.abs(maxPossibleReturn) < 0.0000001
+      ? Math.abs(winnerReturn - maxPossibleReturn) < 0.0000001
+        ? 100
+        : 0
+      : (winnerReturn / maxPossibleReturn) * 100
+    : undefined;
 const resultRankByModel = new Map(resultRows.map((row, index) => [row.model_id, index]));
 const portfolioCards = officialSubmissions
   .map((submission) => {
@@ -121,6 +132,13 @@ const initialNowIso = new Date().toISOString();
                   <span>S&amp;P 500</span>
                   <strong>{pct(winner.sp500_return)}</strong>
                 </article>
+                {typeof winnerScore === "number" && typeof maxPossibleReturn === "number" && (
+                  <article class="latest-weekly-score-audit">
+                    <span>CapitalBench Score</span>
+                    <strong>{winnerScore.toFixed(1)}</strong>
+                    <small>{pct(winnerReturn)} / {pct(maxPossibleReturn)} max</small>
+                  </article>
+                )}
               </div>
             </div>
 

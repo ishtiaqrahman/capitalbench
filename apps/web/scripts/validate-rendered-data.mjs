@@ -1241,6 +1241,13 @@ if (latestResolvedWeeklyRound) {
     includes(latestWeeklyHtml, modelLabel(latestWeeklyWinner.model_id), "latest weekly page winner");
     includes(latestWeeklyHtml, percentPointLabel(latestWeeklyWinner.portfolio_return_pct), "latest weekly page winner return");
     includes(latestWeeklyHtml, percentPointLabel(latestWeeklyWinner.benchmark_return_pct), "latest weekly page benchmark return");
+    includes(latestWeeklyHtml, "CapitalBench Score", "latest weekly page score audit label");
+    includes(latestWeeklyHtml, scoreLabel(latestWeeklyWinner.capitalbench_score), "latest weekly page winner score audit");
+    includes(
+      latestWeeklyHtml,
+      `${percentPointLabel(latestWeeklyWinner.portfolio_return_pct)} / ${percentPointLabel(latestWeeklyWinner.max_possible_return_pct)} max`,
+      "latest weekly page score audit formula values"
+    );
   }
   for (const row of latestWeeklyRows) {
     includes(latestWeeklyHtml, modelLabel(row.model_id), `latest weekly page result ${row.model_id}`);
