@@ -80,6 +80,20 @@ function excludes(html, unexpected, context) {
   if (html.includes(unexpected)) failures.push(`${context} contains stale rendered text: ${unexpected}`);
 }
 
+function htmlSection(html, startNeedle, context) {
+  const start = html.indexOf(startNeedle);
+  if (start === -1) {
+    failures.push(`${context} missing section start: ${startNeedle}`);
+    return "";
+  }
+  const end = html.indexOf("</section>", start);
+  if (end === -1) {
+    failures.push(`${context} missing section end after: ${startNeedle}`);
+    return html.slice(start);
+  }
+  return html.slice(start, end + "</section>".length);
+}
+
 function expectEqual(actual, expected, context) {
   if (actual !== expected) failures.push(`${context} expected ${JSON.stringify(expected)} but found ${JSON.stringify(actual)}`);
 }
@@ -1026,6 +1040,12 @@ function scoreEtaLine(round) {
   return `Scores after the ${round.exit_date} close.`;
 }
 
+function homepageScoreLine(round) {
+  if (!round) return "No score window declared yet.";
+  if (round.status === "resolved") return "Scores are published.";
+  return `Results publish after the ${dateOnly(round.exit_date)} ending close.`;
+}
+
 function trackStatusLabel(round) {
   if (!round) return "Not started";
   if (round.status === "resolved") return "Scored";
@@ -1694,82 +1714,102 @@ for (const track of ["weekly", "monthly"]) {
   const countLabel = resolvedLabel(cumulative.comparison.comparison_round_count);
   const pagePath = `leaderboards/cumulative-${track}/index.html`;
   const cumulativeHtml = readHtml(pagePath);
+  const cumulativeScorecardHtml = htmlSection(
+    cumulativeHtml,
+    `<section class="track-scorecard-panel track-scorecard-${track}"`,
+    `${track} cumulative scorecard`
+  );
   const context = `${track} cumulative page`;
 
   includes(cumulativeHtml, `${cumulative.comparison.comparison_round_count} resolved`, context);
-  includes(cumulativeHtml, score, context);
-  includes(cumulativeHtml, "This combines every resolved", context);
-  includes(cumulativeHtml, `Latest round included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
+  includes(cumulativeScorecardHtml, score, context);
+  includes(cumulativeScorecardHtml, "Every resolved", context);
+  includes(cumulativeScorecardHtml, `Latest round included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
   for (const roundId of cumulative.comparison.comparison_round_ids) {
-    includes(cumulativeHtml, roundId, context);
+    includes(cumulativeScorecardHtml, roundId, context);
   }
   for (const row of cumulative.data) {
-    includes(cumulativeHtml, row.label, `${context} ${row.model_id}`);
+    includes(cumulativeScorecardHtml, row.label, `${context} ${row.model_id}`);
     if (typeof row.capitalbench_score === "number") {
-      includes(cumulativeHtml, scoreLabel(row.capitalbench_score), `${context} ${row.model_id} CapitalBench Score`);
+      includes(cumulativeScorecardHtml, scoreLabel(row.capitalbench_score), `${context} ${row.model_id} CapitalBench Score`);
     }
-    includes(cumulativeHtml, `${row.tests_included}/${row.tests_required}`, `${context} ${row.model_id} scored tests`);
+    includes(cumulativeScorecardHtml, `${row.tests_included}/${row.tests_required}`, `${context} ${row.model_id} scored tests`);
   }
-  includes(cumulativeHtml, "Average Return Details", `${context} average return chart`);
+  includes(cumulativeScorecardHtml, "Average Return Details", `${context} average return chart`);
   for (const row of scorecard.averageRows) {
     if (typeof row.value === "number") {
-      includesAny(cumulativeHtml, htmlTextVariants(row.label), `${context} average return ${row.key} label`);
-      includes(cumulativeHtml, percentPointLabel(row.value), `${context} average return ${row.key} value`);
+      includesAny(cumulativeScorecardHtml, htmlTextVariants(row.label), `${context} average return ${row.key} label`);
+      includes(cumulativeScorecardHtml, percentPointLabel(row.value), `${context} average return ${row.key} value`);
     }
   }
   const benchmarkScore = scorecard.normalizedRows.find((row) => row.key === "sp500");
   if (benchmarkScore && typeof benchmarkScore.value === "number") {
-    includes(cumulativeHtml, scoreLabel(benchmarkScore.value), `${context} S&P 500 CapitalBench Score`);
+    includes(cumulativeScorecardHtml, scoreLabel(benchmarkScore.value), `${context} S&P 500 CapitalBench Score`);
   }
   if (scorecard.topReturnModel && typeof scorecard.topReturnModel.portfolio_return_pct === "number") {
-    includes(cumulativeHtml, "Return leader", `${context} return leader label`);
-    includes(cumulativeHtml, scorecard.topReturnModel.label, `${context} return leader model`);
-    includes(cumulativeHtml, percentPointLabel(scorecard.topReturnModel.portfolio_return_pct), `${context} return leader value`);
+    includes(cumulativeScorecardHtml, "Return leader", `${context} return leader label`);
+    includes(cumulativeScorecardHtml, scorecard.topReturnModel.label, `${context} return leader model`);
+    includes(cumulativeScorecardHtml, percentPointLabel(scorecard.topReturnModel.portfolio_return_pct), `${context} return leader value`);
   }
 
   const provisionalRows = cumulative.data.filter((row) => !row.is_rank_eligible);
   if (provisionalRows.length > 0) {
-    includes(cumulativeHtml, "Not ranked yet", `${context} provisional section`);
+    includes(cumulativeScorecardHtml, "Not ranked yet", `${context} provisional section`);
   }
   for (const row of provisionalRows) {
-    includes(cumulativeHtml, `${row.tests_included}/${row.tests_required}`, `${context} provisional marker`);
-    includes(cumulativeHtml, "short history", `${context} provisional marker`);
+    includes(cumulativeScorecardHtml, `${row.tests_included}/${row.tests_required}`, `${context} provisional marker`);
+    includes(cumulativeScorecardHtml, "short history", `${context} provisional marker`);
     if (typeof row.portfolio_return_pct === "number") {
-      includes(cumulativeHtml, percentPointLabel(row.portfolio_return_pct), `${context} provisional average return ${row.model_id}`);
+      includes(cumulativeScorecardHtml, percentPointLabel(row.portfolio_return_pct), `${context} provisional average return ${row.model_id}`);
     }
   }
 
   if (track === "weekly") {
+    const homepageWeeklyScorecardHtml = htmlSection(
+      indexHtml,
+      '<section class="track-scorecard-panel track-scorecard-weekly"',
+      "homepage weekly cumulative scorecard"
+    );
     includes(indexHtml, "Full-history leader", "homepage weekly lane");
     includes(indexHtml, `${score} score · ${countLabel}`, "homepage weekly lane");
     includes(indexHtml, leader.label, "homepage weekly lane");
-    includes(indexHtml, "Each bar is an average across the finished tests in that track", "homepage scorecard average explanation");
-    includes(indexHtml, "It is not average return divided by average max", "homepage scorecard ratio explanation");
-    includes(indexHtml, `Latest round included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative latest included");
+    includes(indexHtml, "Each bar is an average across all resolved tests in that track", "homepage scorecard average explanation");
+    includes(homepageWeeklyScorecardHtml, "All Resolved Model Scores", "homepage weekly cumulative chart title");
+    includes(homepageWeeklyScorecardHtml, `Latest round included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative latest included");
     for (const row of cumulative.data) {
-      includes(indexHtml, row.label, `homepage weekly cumulative ${row.model_id}`);
+      includes(homepageWeeklyScorecardHtml, row.label, `homepage weekly cumulative ${row.model_id}`);
       if (typeof row.capitalbench_score === "number") {
-        includes(indexHtml, scoreLabel(row.capitalbench_score), `homepage weekly cumulative ${row.model_id} CapitalBench Score`);
+        includes(homepageWeeklyScorecardHtml, scoreLabel(row.capitalbench_score), `homepage weekly cumulative ${row.model_id} CapitalBench Score`);
       }
-      includes(indexHtml, `${row.tests_included}/${row.tests_required}`, `homepage weekly cumulative ${row.model_id} scored tests`);
+      includes(homepageWeeklyScorecardHtml, `${row.tests_included}/${row.tests_required}`, `homepage weekly cumulative ${row.model_id} scored tests`);
     }
     if (provisionalRows.length > 0) {
-      includes(indexHtml, "Not ranked yet", "homepage weekly scorecard provisional section");
+      includes(homepageWeeklyScorecardHtml, "Not ranked yet", "homepage weekly scorecard provisional section");
     }
-    includes(indexHtml, "Average Return Details", "homepage weekly scorecard average return chart");
+    includes(homepageWeeklyScorecardHtml, "Average Return Details", "homepage weekly scorecard average return chart");
     for (const row of scorecard.averageRows) {
       if (typeof row.value === "number") {
-        includesAny(indexHtml, htmlTextVariants(row.label), `homepage weekly average return ${row.key} label`);
-        includes(indexHtml, percentPointLabel(row.value), `homepage weekly average return ${row.key} value`);
+        includesAny(homepageWeeklyScorecardHtml, htmlTextVariants(row.label), `homepage weekly average return ${row.key} label`);
+        includes(homepageWeeklyScorecardHtml, percentPointLabel(row.value), `homepage weekly average return ${row.key} value`);
       }
     }
     if (benchmarkScore && typeof benchmarkScore.value === "number") {
-      includes(indexHtml, scoreLabel(benchmarkScore.value), "homepage weekly S&P 500 CapitalBench Score");
+      includes(homepageWeeklyScorecardHtml, scoreLabel(benchmarkScore.value), "homepage weekly S&P 500 CapitalBench Score");
     }
     if (scorecard.topReturnModel && typeof scorecard.topReturnModel.portfolio_return_pct === "number") {
-      includes(indexHtml, "Return leader", "homepage weekly return leader label");
-      includes(indexHtml, scorecard.topReturnModel.label, "homepage weekly return leader model");
-      includes(indexHtml, percentPointLabel(scorecard.topReturnModel.portfolio_return_pct), "homepage weekly return leader value");
+      includes(homepageWeeklyScorecardHtml, "Return leader", "homepage weekly return leader label");
+      includes(homepageWeeklyScorecardHtml, scorecard.topReturnModel.label, "homepage weekly return leader model");
+      includes(homepageWeeklyScorecardHtml, percentPointLabel(scorecard.topReturnModel.portfolio_return_pct), "homepage weekly return leader value");
+    }
+    const cumulativeScoreLabels = new Set(
+      scorecard.normalizedRows.filter((row) => typeof row.value === "number").map((row) => scoreLabel(row.value))
+    );
+    for (const row of latestResultForTrack(track).leaderboard) {
+      if (typeof row.capitalbench_score !== "number") continue;
+      const latestOnlyScore = scoreLabel(row.capitalbench_score);
+      if (!cumulativeScoreLabels.has(latestOnlyScore)) {
+        excludes(homepageWeeklyScorecardHtml, latestOnlyScore, `homepage weekly scorecard latest-only ${row.model_id} score`);
+      }
     }
   }
   includes(leaderboardsHtml, leader.label, `leaderboards index ${track} leader`);
@@ -1798,6 +1838,9 @@ const latestResolvedRound = apiReadModel.rounds
   .sort((left, right) => roundSortKey(right).localeCompare(roundSortKey(left)))[0];
 const latestActiveWeekly = latestRound("weekly", "active");
 const latestActiveMonthly = latestRound("monthly", "active");
+const homepageTrackRounds = ["weekly", "monthly"]
+  .map((track) => latestRoundByTrack(track))
+  .filter(Boolean);
 includes(leaderboardsHtml, `<strong>${resolvedRoundCount}</strong>`, "leaderboards index completed count");
 includes(leaderboardsHtml, `<strong>${activeRoundCount}</strong>`, "leaderboards index live count");
 includes(leaderboardsHtml, `<strong>${apiReadModel.models.length}</strong>`, "leaderboards index model count");
@@ -1805,6 +1848,26 @@ includes(leaderboardsHtml, `<strong>${currentUniverseOptionCount} options</stron
 if (latestResolvedRound) includes(leaderboardsHtml, latestResolvedRound.round_id, "leaderboards index latest scored round");
 if (latestActiveWeekly) includes(leaderboardsHtml, latestActiveWeekly.round_id, "leaderboards index latest active weekly round");
 if (latestActiveMonthly) includes(leaderboardsHtml, latestActiveMonthly.round_id, "leaderboards index latest active monthly round");
+
+includes(indexHtml, `${apiReadModel.rounds.length} tests`, "homepage all-tests link count");
+includes(indexHtml, `same ${currentUniverseOptionCount} assets`, "homepage process asset count");
+includes(indexHtml, `${currentUniverseOptionCount} current assets`, "homepage safeguard current asset count");
+includes(indexHtml, `${activeRoundCount} tests waiting for results`, "homepage safeguard open test count");
+includes(indexHtml, `${apiReadModel.rounds.length}-test record`, "homepage timeline total test count");
+includes(indexHtml, `<strong>${apiReadModel.models.length}</strong>`, "homepage current setup model count");
+includes(indexHtml, `<strong>${currentUniverseOptionCount}</strong>`, "homepage current setup asset count");
+includes(indexHtml, `<strong>${activeRoundCount}</strong>`, "homepage current setup open test count");
+includes(indexHtml, `${activeRoundCount} open total`, "homepage current setup open total");
+includes(indexHtml, "<strong>Weekly</strong>", "homepage current setup weekly label");
+includes(indexHtml, "7 days", "homepage current setup weekly duration");
+includes(indexHtml, "<strong>Monthly</strong>", "homepage current setup monthly label");
+includes(indexHtml, "1 month", "homepage current setup monthly duration");
+for (const round of homepageTrackRounds) {
+  includes(indexHtml, round.round_id, `homepage current setup latest ${round.track} round`);
+  includes(indexHtml, dateOnly(round.decision_deadline_utc), `homepage timeline ${round.round_id} decision date`);
+  includes(indexHtml, trackWindowLabel(round), `homepage timeline ${round.round_id} window`);
+  includes(indexHtml, homepageScoreLine(round), `homepage timeline ${round.round_id} score line`);
+}
 
 const resultStates = ["weekly", "monthly"].map(resultTrackState);
 const latestPublishedResult = resultStates

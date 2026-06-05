@@ -129,14 +129,14 @@ function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | un
   <div class="track-scorecard-head">
     <div>
       <span class="panel-kicker">{scorecard.label} track</span>
-      <h3 id={`${scorecard.track}-track-scorecard-title`}>All Finished {scorecard.label} Scores</h3>
+      <h3 id={`${scorecard.track}-track-scorecard-title`}>All Resolved {scorecard.label} Scores</h3>
       <p>
-        This combines every resolved {scorecard.label.toLowerCase()} test, not just the newest result. Models with fewer
-        finished tests are marked short history.
+        Every resolved {scorecard.label.toLowerCase()} test is included here. The newest single-test result is shown
+        separately below.
       </p>
     </div>
     <div class="track-scorecard-badges" aria-label={`${scorecard.label} scorecard status`}>
-      <span>All {scorecard.comparisonRoundCount} resolved tests included</span>
+      <span>{scorecard.comparisonRoundCount} resolved tests included</span>
       <span>{scorecard.comparisonModelCount} models scored</span>
       <span>Latest round included: {scorecard.latestRoundId}</span>
     </div>
@@ -146,11 +146,11 @@ function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | un
     <article class="track-scorecard-chart track-scorecard-score-chart" aria-labelledby={`${scorecard.track}-normalized-score-title`}>
       <div class="track-scorecard-chart-head">
         <div>
-          <span>Average score</span>
-          <h4 id={`${scorecard.track}-normalized-score-title`}>Average CapitalBench Score</h4>
+          <span>All resolved tests</span>
+          <h4 id={`${scorecard.track}-normalized-score-title`}>All Resolved Model Scores</h4>
         </div>
         <p>
-          Each bar averages that model's per-test score ratios across all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"}. It is not average return divided by average max.
+          Each bar averages that model's per-test CapitalBench Score across the {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"} listed below.
         </p>
       </div>
 
