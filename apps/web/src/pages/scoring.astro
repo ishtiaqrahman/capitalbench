@@ -77,13 +77,13 @@ import PageHeader from "../components/PageHeader.astro";
       <h2>Overall Results</h2>
       <p>
         Overall results keep weekly and monthly tracks separate. For each completed test, CapitalBench computes the
-        model's CapitalBench Score using that test's maximum possible return. The overall score is the average of those
-        per-test scores across completed tests where the model actually participated.
+        model's CapitalBench Score using that test's maximum possible return. The headline overall score uses the latest
+        comparable model cohort, so a newly added model is not averaged against older tests it never entered.
       </p>
       <p>
         The overall view also shows average raw return and S&amp;P 500 context, but those are supporting context. The
-        headline benchmark score is not a hidden weighting system, and it does not merge weekly tests with monthly
-        tests or public picks with consistency checks.
+        headline benchmark score is not a hidden weighting system, and it does not merge different model rosters, weekly
+        tests with monthly tests, or public picks with consistency checks.
       </p>
 
       <h2>Consistency Tests</h2>

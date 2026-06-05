@@ -128,7 +128,7 @@ const endpointGroups = [
       ["GET", "/v1/rounds/{round_id}/live-performance", "Interim mark-to-market rows for an unresolved round."],
       ["GET", "/v1/rounds/{round_id}/results", "Resolved portfolio returns, S&P 500 returns, Portfolio Minus S&P 500, regret, and max-possible context."],
       ["GET", "/v1/leaderboards/latest", "Most recent scored weekly or monthly leaderboard."],
-      ["GET", "/v1/leaderboards/cumulative", "Aggregate model record by track, ranked by CapitalBench Score where available."]
+      ["GET", "/v1/leaderboards/cumulative", "Same-roster cohort model record by track, ranked by CapitalBench Score where available."]
     ]
   },
   {
@@ -154,13 +154,15 @@ const concepts = [
   ["Positioning", "Portfolio weights aggregated by asset, category, model, or track."],
   ["Proof", "Round files, hashes, timestamps, prompt inputs, prices, and portfolio records."],
   ["Portfolio Minus S&P 500", "Model portfolio return minus the S&P 500 return, in percentage points."],
-  ["CapitalBench Score", "Model return scaled to the maximum possible return in each completed window."]
+  ["CapitalBench Score", "Model return scaled to the maximum possible return in each completed window."],
+  ["Comparison cohort", "The latest same-roster set of completed tests used for headline cumulative scores."]
 ];
 
 const fields = [
   ["allocation_pct", "Portfolio or aggregate weight, in percentage points."],
   ["alpha_pp", "Portfolio Minus S&P 500, in percentage points."],
   ["capitalbench_score", "Score where 100 means matching the maximum possible return in that window."],
+  ["comparison", "Cumulative leaderboard metadata showing included rounds, excluded older-roster rounds, and cohort mode."],
   ["effective_asset_count", "Concentration metric equal to one divided by summed squared asset shares."],
   ["max_possible_return_pct", "Highest realized return among scored options in the saved universe."],
   ["model_id", "Stable CapitalBench model identifier."],

@@ -24,6 +24,9 @@ export type TrackScorecardAverageRow = {
   averageReturn: number;
   averageAlphaVsSp500?: number;
   testsIncluded: number;
+  testsRequired: number;
+  isRankEligible: boolean;
+  sampleStatus: "eligible" | "provisional" | "reference";
   roundsIncluded: string[];
 };
 
@@ -37,6 +40,9 @@ export type TrackScorecardNormalizedRow = {
   averageScore: number;
   averageReturn: number;
   testsIncluded: number;
+  testsRequired: number;
+  isRankEligible: boolean;
+  sampleStatus: "eligible" | "provisional";
   roundsIncluded: string[];
 };
 
@@ -45,6 +51,12 @@ export type TrackScorecardData = {
   label: string;
   completedRoundCount: number;
   completedRoundIds: string[];
+  comparisonRoundCount: number;
+  comparisonRoundIds: string[];
+  excludedRoundIds: string[];
+  comparisonModelCount: number;
+  comparisonMode: "latest_model_cohort";
+  isEarlyCohort: boolean;
   latestRoundId: string;
   averageRows: TrackScorecardAverageRow[];
   normalizedRows: TrackScorecardNormalizedRow[];
@@ -60,6 +72,20 @@ type ModelAccumulator = {
   alphas: number[];
   scores: number[];
   rounds: string[];
+};
+
+type RoundScoreInput = {
+  round: RoundRecord;
+  participants: Array<{
+    kind: "model";
+    modelId: string;
+    provider: string;
+    returnValue: number;
+    alphaValue: number | undefined;
+  }>;
+  rosterModelIds: string[];
+  maxReturn: number;
+  benchmarkReturn: number | undefined;
 };
 
 function finiteNumber(value: number | null | undefined): value is number {
@@ -91,12 +117,77 @@ function trackLabel(track: BenchmarkTrack): string {
   return track === "weekly" ? "Weekly" : "Monthly";
 }
 
+function sameRoster(left: string[], right: string[]): boolean {
+  if (left.length !== right.length) return false;
+  const rightIds = new Set(right);
+  return left.every((item) => rightIds.has(item));
+}
+
+function latestComparableCohort(rounds: RoundScoreInput[]): RoundScoreInput[] {
+  const latest = rounds[rounds.length - 1];
+  if (!latest) return [];
+  const cohort: RoundScoreInput[] = [];
+  for (let index = rounds.length - 1; index >= 0; index -= 1) {
+    const candidate = rounds[index];
+    if (!sameRoster(candidate.rosterModelIds, latest.rosterModelIds)) break;
+    cohort.unshift(candidate);
+  }
+  return cohort;
+}
+
+type RankEligibility = {
+  testsRequired: number;
+  isRankEligible: boolean;
+  sampleStatus: "eligible" | "provisional";
+};
+
+function rankEligibility(testsIncluded: number, testsRequired: number): RankEligibility {
+  const isRankEligible = testsRequired > 0 && testsIncluded === testsRequired;
+  return {
+    testsRequired,
+    isRankEligible,
+    sampleStatus: isRankEligible ? "eligible" : "provisional"
+  };
+}
+
 export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTrack): TrackScorecardData | null {
   const completedRounds = roundRows
     .filter((round) => round.status === "resolved" && roundTrack(round) === track)
     .sort((left, right) => left.decision_deadline_utc.localeCompare(right.decision_deadline_utc));
 
   if (completedRounds.length === 0) return null;
+
+  const scoredRounds = completedRounds
+    .map((round): RoundScoreInput | null => {
+      const leaderboard = staticRoundLeaderboard(round.round_id, round.official_run_id);
+      const participants: RoundScoreInput["participants"] = leaderboard
+        .map((row) => ({
+          kind: "model" as const,
+          modelId: row.model_id,
+          provider: row.provider,
+          returnValue: leaderboardReturn(row),
+          alphaValue: row.alpha_vs_sp500
+        }))
+        .filter((row): row is typeof row & { returnValue: number } => finiteNumber(row.returnValue));
+
+      const maxReturn = bestUniverseReturn(staticRoundReturns(round.round_id, round.official_run_id));
+      if (participants.length === 0 || !finiteNumber(maxReturn)) return null;
+
+      return {
+        round,
+        participants,
+        rosterModelIds: participants.map((participant) => participant.modelId).sort(),
+        maxReturn,
+        benchmarkReturn: leaderboard.find((row) => finiteNumber(row.sp500_return))?.sp500_return
+      };
+    })
+    .filter((item): item is RoundScoreInput => item !== null);
+
+  if (scoredRounds.length === 0) return null;
+
+  const comparisonRounds = latestComparableCohort(scoredRounds);
+  const comparisonRoundCount = comparisonRounds.length;
+  if (comparisonRoundCount === 0) return null;
 
   const modelAccumulators = new Map<string, ModelAccumulator>();
   const benchmarkReturns: number[] = [];
@@ -105,29 +196,14 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
   const maxPossibleReturns: number[] = [];
   const maxPossibleRounds: string[] = [];
 
-  for (const round of completedRounds) {
-    const leaderboard = staticRoundLeaderboard(round.round_id, round.official_run_id);
-    const roundParticipants = leaderboard
-      .map((row) => ({
-        kind: "model" as const,
-        modelId: row.model_id,
-        provider: row.provider,
-        returnValue: leaderboardReturn(row),
-        alphaValue: row.alpha_vs_sp500
-      }))
-      .filter((row): row is typeof row & { returnValue: number } => finiteNumber(row.returnValue));
-
-    const maxReturn = bestUniverseReturn(staticRoundReturns(round.round_id, round.official_run_id));
-    if (!finiteNumber(maxReturn)) continue;
-
-    const benchmarkReturn = leaderboard.find((row) => finiteNumber(row.sp500_return))?.sp500_return;
-    if (finiteNumber(benchmarkReturn)) {
-      benchmarkReturns.push(benchmarkReturn);
-      benchmarkScores.push(normalizedScore(benchmarkReturn, maxReturn));
-      benchmarkRounds.push(round.round_id);
+  for (const roundScore of comparisonRounds) {
+    if (finiteNumber(roundScore.benchmarkReturn)) {
+      benchmarkReturns.push(roundScore.benchmarkReturn);
+      benchmarkScores.push(normalizedScore(roundScore.benchmarkReturn, roundScore.maxReturn));
+      benchmarkRounds.push(roundScore.round.round_id);
     }
 
-    for (const participant of roundParticipants) {
+    for (const participant of roundScore.participants) {
       const existing = modelAccumulators.get(participant.modelId) ?? {
         modelId: participant.modelId,
         provider: participant.provider,
@@ -138,13 +214,13 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
       };
       existing.returns.push(participant.returnValue);
       if (finiteNumber(participant.alphaValue)) existing.alphas.push(participant.alphaValue);
-      existing.scores.push(normalizedScore(participant.returnValue, maxReturn));
-      existing.rounds.push(round.round_id);
+      existing.scores.push(normalizedScore(participant.returnValue, roundScore.maxReturn));
+      existing.rounds.push(roundScore.round.round_id);
       modelAccumulators.set(participant.modelId, existing);
     }
 
-    maxPossibleReturns.push(maxReturn);
-    maxPossibleRounds.push(round.round_id);
+    maxPossibleReturns.push(roundScore.maxReturn);
+    maxPossibleRounds.push(roundScore.round.round_id);
   }
 
   const modelAverageRows: TrackScorecardAverageRow[] = Array.from(modelAccumulators.values())
@@ -158,9 +234,15 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
       averageReturn: average(item.returns),
       averageAlphaVsSp500: item.alphas.length ? average(item.alphas) : undefined,
       testsIncluded: item.returns.length,
+      ...rankEligibility(item.returns.length, comparisonRoundCount),
       roundsIncluded: item.rounds
     }))
-    .sort((left, right) => right.averageReturn - left.averageReturn || left.label.localeCompare(right.label));
+    .sort(
+      (left, right) =>
+        Number(right.isRankEligible) - Number(left.isRankEligible) ||
+        right.averageReturn - left.averageReturn ||
+        left.label.localeCompare(right.label)
+    );
 
   const modelNormalizedRows: TrackScorecardNormalizedRow[] = Array.from(modelAccumulators.values())
     .map((item) => ({
@@ -173,9 +255,15 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
       averageScore: average(item.scores),
       averageReturn: average(item.returns),
       testsIncluded: item.scores.length,
+      ...rankEligibility(item.scores.length, comparisonRoundCount),
       roundsIncluded: item.rounds
     }))
-    .sort((left, right) => right.averageScore - left.averageScore || left.label.localeCompare(right.label));
+    .sort(
+      (left, right) =>
+        Number(right.isRankEligible) - Number(left.isRankEligible) ||
+        right.averageScore - left.averageScore ||
+        left.label.localeCompare(right.label)
+    );
 
   const benchmarkAverageRow: TrackScorecardAverageRow | undefined = benchmarkReturns.length
     ? {
@@ -186,6 +274,9 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
         averageReturn: average(benchmarkReturns),
         averageAlphaVsSp500: 0,
         testsIncluded: benchmarkReturns.length,
+        testsRequired: comparisonRoundCount,
+        isRankEligible: benchmarkReturns.length === comparisonRoundCount,
+        sampleStatus: benchmarkReturns.length === comparisonRoundCount ? "eligible" : "provisional",
         roundsIncluded: benchmarkRounds
       }
     : undefined;
@@ -199,6 +290,9 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
         averageScore: average(benchmarkScores),
         averageReturn: average(benchmarkReturns),
         testsIncluded: benchmarkScores.length,
+        testsRequired: comparisonRoundCount,
+        isRankEligible: benchmarkScores.length === comparisonRoundCount,
+        sampleStatus: benchmarkScores.length === comparisonRoundCount ? "eligible" : "provisional",
         roundsIncluded: benchmarkRounds
       }
     : undefined;
@@ -211,6 +305,9 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
         providerLabel: "Best asset in universe",
         averageReturn: average(maxPossibleReturns),
         testsIncluded: maxPossibleReturns.length,
+        testsRequired: comparisonRoundCount,
+        isRankEligible: true,
+        sampleStatus: "reference",
         roundsIncluded: maxPossibleRounds
       }
     : undefined;
@@ -230,13 +327,21 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
   return {
     track,
     label: trackLabel(track),
-    completedRoundCount: completedRounds.length,
-    completedRoundIds: completedRounds.map((round) => round.round_id),
+    completedRoundCount: scoredRounds.length,
+    completedRoundIds: scoredRounds.map((roundScore) => roundScore.round.round_id),
+    comparisonRoundCount,
+    comparisonRoundIds: comparisonRounds.map((roundScore) => roundScore.round.round_id),
+    excludedRoundIds: scoredRounds
+      .map((roundScore) => roundScore.round.round_id)
+      .filter((roundId) => !comparisonRounds.some((roundScore) => roundScore.round.round_id === roundId)),
+    comparisonModelCount: comparisonRounds[comparisonRounds.length - 1]?.rosterModelIds.length ?? 0,
+    comparisonMode: "latest_model_cohort",
+    isEarlyCohort: comparisonRoundCount === 1,
     latestRoundId: completedRounds[completedRounds.length - 1]?.round_id ?? "",
     averageRows,
     normalizedRows,
-    topAverageRow: modelAverageRows[0],
-    topNormalizedRow: modelNormalizedRows[0],
+    topAverageRow: modelAverageRows.find((row) => row.isRankEligible),
+    topNormalizedRow: modelNormalizedRows.find((row) => row.isRankEligible),
     benchmarkAverageRow
   };
 }

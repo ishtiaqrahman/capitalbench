@@ -184,7 +184,9 @@ function routeDescription(track: ResultsTrackState, kind: "latest" | "overall"):
     if (track.pendingRound) return `${track.pendingRound.round_id} is live. ${scoreEtaLine(track.pendingRound)}`;
     return "No published test yet.";
   }
-  if (track.scorecard) return `${track.completedCount} completed ${track.label.toLowerCase()} tests combined.`;
+  if (track.scorecard) {
+    return `${track.scorecard.comparisonRoundCount} comparable ${track.label.toLowerCase()} test${track.scorecard.comparisonRoundCount === 1 ? "" : "s"} in the current model cohort.`;
+  }
   return track.pendingRound ? "Overall chart appears after the first scored test." : "No completed tests yet.";
 }
 
@@ -339,7 +341,7 @@ const proofLinks = [
             <div>
               <span class="panel-kicker">{track.label} track</span>
               <h2>{track.scorecard ? `${trackLeaderName(track)} Leads` : `${track.label} Track`}</h2>
-              <p>{track.scorecard ? "CapitalBench Score leader across completed tests." : "Waiting for the first completed score."}</p>
+              <p>{track.scorecard ? "CapitalBench Score leader in the current comparable model cohort." : "Waiting for the first completed score."}</p>
             </div>
             <span class={`status-badge ${track.scorecard ? "status-resolved" : "status-pending"}`}>{trackStateLabel(track)}</span>
           </div>
@@ -391,11 +393,11 @@ const proofLinks = [
     <>
       <section class="home-section-heading home-section-heading-with-action" id="combined-results" aria-labelledby="combined-results-title">
         <div>
-          <span class="panel-kicker">Combined completed results</span>
+          <span class="panel-kicker">Comparable completed results</span>
           <h2 id="combined-results-title">CapitalBench Scores</h2>
           <p>
-            The primary benchmark score averages completed tests. 100 means matching the highest-returning scored option
-            in each completed window.
+            The primary benchmark score uses same-roster completed tests. 100 means matching the highest-returning scored
+            option in each comparable window.
           </p>
         </div>
         <a class="section-profile-link" href="/leaderboards/cumulative-weekly">Open weekly scorecard</a>

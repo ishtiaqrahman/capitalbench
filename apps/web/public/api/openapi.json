@@ -383,7 +383,7 @@
       "get": {
         "tags": ["Leaderboards"],
         "summary": "Cumulative leaderboard",
-        "description": "Aggregate model score history by weekly track, monthly track, or combined view, ranked by CapitalBench Score where available.",
+        "description": "Same-roster model score cohort by weekly track, monthly track, or combined view, ranked by CapitalBench Score where available.",
         "parameters": [{ "$ref": "#/components/parameters/Track" }],
         "responses": {
           "200": {
@@ -928,9 +928,34 @@
         "type": "object",
         "properties": {
           "track": { "type": "string", "enum": ["weekly", "monthly", "all"] },
+          "comparison": { "$ref": "#/components/schemas/CumulativeComparison" },
           "data": { "type": "array", "items": { "$ref": "#/components/schemas/LeaderboardRow" } }
         },
         "required": ["track", "data"]
+      },
+      "CumulativeComparison": {
+        "type": "object",
+        "description": "Metadata for cumulative leaderboards that use the latest same-roster comparison cohort.",
+        "properties": {
+          "mode": { "type": "string", "enum": ["latest_model_cohort"] },
+          "completed_round_count": { "type": "integer" },
+          "completed_round_ids": { "type": "array", "items": { "type": "string" } },
+          "comparison_round_count": { "type": "integer" },
+          "comparison_round_ids": { "type": "array", "items": { "type": "string" } },
+          "excluded_round_ids": { "type": "array", "items": { "type": "string" } },
+          "comparison_model_count": { "type": "integer" },
+          "is_early_cohort": { "type": "boolean" }
+        },
+        "required": [
+          "mode",
+          "completed_round_count",
+          "completed_round_ids",
+          "comparison_round_count",
+          "comparison_round_ids",
+          "excluded_round_ids",
+          "comparison_model_count",
+          "is_early_cohort"
+        ]
       },
       "LeaderboardRow": {
         "type": "object",
@@ -944,6 +969,10 @@
           "max_possible_return_pct": { "type": ["number", "null"], "description": "Highest realized return among scored options in the saved universe, in percentage points." },
           "capitalbench_score": { "type": ["number", "null"], "description": "Score where 100 means matching the maximum possible return in that window." },
           "round_count": { "type": "integer" },
+          "tests_required": { "type": "integer", "description": "Number of same-roster tests required for this cumulative comparison." },
+          "tests_included": { "type": "integer", "description": "Number of same-roster tests included for this row." },
+          "is_rank_eligible": { "type": "boolean", "description": "Whether this row can lead the cumulative scorecard." },
+          "sample_status": { "type": "string", "enum": ["eligible", "provisional"] },
           "win_rate_pct": { "type": ["number", "null"] }
         },
         "required": ["rank", "model_id", "label", "portfolio_return_pct", "benchmark_return_pct", "alpha_pp"]

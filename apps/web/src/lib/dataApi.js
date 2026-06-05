@@ -504,6 +504,133 @@ function latestLeaderboard(url) {
   });
 }
 
+function sameModelSet(left, right) {
+  if (left.length !== right.length) return false;
+  const rightIds = new Set(right);
+  return left.every((item) => rightIds.has(item));
+}
+
+function resultRoundSortValue(round) {
+  return `${round?.exit_date ?? ""}:${round?.decision_deadline_utc ?? ""}:${round?.round_id ?? ""}`;
+}
+
+function currentComparableResultCohort(readModel, track) {
+  const rows = track === "all" ? readModel.results : readModel.results.filter((row) => row.track === track);
+  const roundById = new Map(readModel.rounds.map((round) => [round.round_id, round]));
+  const byRound = new Map();
+  for (const row of rows) {
+    const existing = byRound.get(row.round_id) ?? [];
+    existing.push(row);
+    byRound.set(row.round_id, existing);
+  }
+  const scoredRoundIds = Array.from(byRound.keys()).sort((left, right) =>
+    resultRoundSortValue(roundById.get(left)).localeCompare(resultRoundSortValue(roundById.get(right)))
+  );
+  const latestRoundId = scoredRoundIds[scoredRoundIds.length - 1];
+  if (!latestRoundId) {
+    return {
+      rows: [],
+      completedRoundIds: [],
+      comparisonRoundIds: [],
+      excludedRoundIds: [],
+      comparisonModelCount: 0
+    };
+  }
+
+  const latestRoster = Array.from(new Set(byRound.get(latestRoundId).map((row) => row.model_id))).sort();
+  const comparisonRoundIds = [];
+  for (let index = scoredRoundIds.length - 1; index >= 0; index -= 1) {
+    const roundId = scoredRoundIds[index];
+    const roster = Array.from(new Set(byRound.get(roundId).map((row) => row.model_id))).sort();
+    if (!sameModelSet(roster, latestRoster)) break;
+    comparisonRoundIds.unshift(roundId);
+  }
+  const comparisonRoundSet = new Set(comparisonRoundIds);
+  return {
+    rows: rows.filter((row) => comparisonRoundSet.has(row.round_id)),
+    completedRoundIds: scoredRoundIds,
+    comparisonRoundIds,
+    excludedRoundIds: scoredRoundIds.filter((roundId) => !comparisonRoundSet.has(roundId)),
+    comparisonModelCount: latestRoster.length
+  };
+}
+
+export function buildCumulativeLeaderboardData(readModel, track) {
+  const cohort = currentComparableResultCohort(readModel, track);
+  const byModel = new Map();
+  const localModelById = new Map(readModel.models.map((model) => [model.model_id, model]));
+  for (const row of cohort.rows) {
+    const existing =
+      byModel.get(row.model_id) ??
+      {
+        model_id: row.model_id,
+        label: localModelById.get(row.model_id)?.label ?? row.model_id,
+        portfolio_return_values: [],
+        benchmark_return_values: [],
+        alpha_values: [],
+        max_possible_return_values: [],
+        capitalbench_score_values: [],
+        wins: 0,
+        positive_alpha: 0,
+        round_count: 0
+      };
+    if (typeof row.portfolio_return_pct === "number") existing.portfolio_return_values.push(row.portfolio_return_pct);
+    if (typeof row.benchmark_return_pct === "number") existing.benchmark_return_values.push(row.benchmark_return_pct);
+    if (typeof row.max_possible_return_pct === "number") existing.max_possible_return_values.push(row.max_possible_return_pct);
+    if (typeof row.capitalbench_score === "number") existing.capitalbench_score_values.push(row.capitalbench_score);
+    if (typeof row.alpha_pp === "number") {
+      existing.alpha_values.push(row.alpha_pp);
+      if (row.alpha_pp > 0) existing.positive_alpha += 1;
+    }
+    if (row.rank === 1) existing.wins += 1;
+    existing.round_count += 1;
+    byModel.set(row.model_id, existing);
+  }
+
+  const testsRequired = cohort.comparisonRoundIds.length;
+  const data = Array.from(byModel.values())
+    .map((row) => {
+      const isRankEligible = testsRequired > 0 && row.round_count === testsRequired;
+      return {
+        model_id: row.model_id,
+        label: row.label,
+        portfolio_return_pct: average(row.portfolio_return_values),
+        benchmark_return_pct: average(row.benchmark_return_values),
+        alpha_pp: average(row.alpha_values),
+        max_possible_return_pct: average(row.max_possible_return_values),
+        capitalbench_score: average(row.capitalbench_score_values),
+        round_count: row.round_count,
+        tests_required: testsRequired,
+        tests_included: row.round_count,
+        is_rank_eligible: isRankEligible,
+        sample_status: isRankEligible ? "eligible" : "provisional",
+        wins: row.wins,
+        win_rate_pct: row.round_count ? (row.positive_alpha / row.round_count) * 100 : null
+      };
+    })
+    .sort((a, b) =>
+      Number(b.is_rank_eligible) - Number(a.is_rank_eligible) ||
+      Number(b.capitalbench_score ?? -Infinity) - Number(a.capitalbench_score ?? -Infinity) ||
+      Number(b.alpha_pp ?? -Infinity) - Number(a.alpha_pp ?? -Infinity)
+    )
+    .map((row, index) => ({ rank: index + 1, ...row }));
+
+  return {
+    track,
+    comparison: {
+      mode: "latest_model_cohort",
+      completed_round_count: cohort.completedRoundIds.length,
+      completed_round_ids: cohort.completedRoundIds,
+      comparison_round_count: testsRequired,
+      comparison_round_ids: cohort.comparisonRoundIds,
+      excluded_round_ids: cohort.excludedRoundIds,
+      comparison_model_count: cohort.comparisonModelCount,
+      is_early_cohort: testsRequired === 1
+    },
+    data
+  };
+}
+
 function isUsableLiveRow(row) {
   return (
     row.status === "active" &&
@@ -680,55 +807,7 @@ function modelLivePerformance(modelId, url) {
 function cumulativeLeaderboard(url) {
   const track = normalizedTrack(url);
   if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
-  const rows = filterByTrack(apiReadModel.results, track);
-  const byModel = new Map();
-  for (const row of rows) {
-    const existing =
-      byModel.get(row.model_id) ??
-      {
-        model_id: row.model_id,
-        label: modelById.get(row.model_id)?.label ?? row.model_id,
-        portfolio_return_values: [],
-        benchmark_return_values: [],
-        alpha_values: [],
-        max_possible_return_values: [],
-        capitalbench_score_values: [],
-        wins: 0,
-        positive_alpha: 0,
-        round_count: 0
-      };
-    if (typeof row.portfolio_return_pct === "number") existing.portfolio_return_values.push(row.portfolio_return_pct);
-    if (typeof row.benchmark_return_pct === "number") existing.benchmark_return_values.push(row.benchmark_return_pct);
-    if (typeof row.max_possible_return_pct === "number") existing.max_possible_return_values.push(row.max_possible_return_pct);
-    if (typeof row.capitalbench_score === "number") existing.capitalbench_score_values.push(row.capitalbench_score);
-    if (typeof row.alpha_pp === "number") {
-      existing.alpha_values.push(row.alpha_pp);
-      if (row.alpha_pp > 0) existing.positive_alpha += 1;
-    }
-    if (row.rank === 1) existing.wins += 1;
-    existing.round_count += 1;
-    byModel.set(row.model_id, existing);
-  }
-  const average = (values) => (values.length ? values.reduce((total, value) => total + value, 0) / values.length : null);
-  const data = Array.from(byModel.values())
-    .map((row) => ({
-      model_id: row.model_id,
-      label: row.label,
-      portfolio_return_pct: average(row.portfolio_return_values),
-      benchmark_return_pct: average(row.benchmark_return_values),
-      alpha_pp: average(row.alpha_values),
-      max_possible_return_pct: average(row.max_possible_return_values),
-      capitalbench_score: average(row.capitalbench_score_values),
-      round_count: row.round_count,
-      wins: row.wins,
-      win_rate_pct: row.round_count ? (row.positive_alpha / row.round_count) * 100 : null
-    }))
-    .sort((a, b) =>
-      Number(b.capitalbench_score ?? -Infinity) - Number(a.capitalbench_score ?? -Infinity) ||
-      Number(b.alpha_pp ?? -Infinity) - Number(a.alpha_pp ?? -Infinity)
-    )
-    .map((row, index) => ({ rank: index + 1, ...row }));
-  return jsonApiResult(200, { track, data });
+  return jsonApiResult(200, buildCumulativeLeaderboardData(apiReadModel, track));
 }
 
 function listRounds(url) {

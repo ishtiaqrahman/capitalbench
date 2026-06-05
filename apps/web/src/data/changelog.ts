@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-04-comparable-score-cohorts",
+    date: "2026-06-04",
+    title: "Overall scorecards now use comparable model cohorts",
+    category: "Methodology",
+    status: "updated",
+    summary:
+      "Headline weekly and monthly scorecards now avoid mixing a newly added model's short history with older models' longer history.",
+    details: [
+      "CapitalBench Score leaderboards now use the latest same-roster cohort for headline cumulative rankings.",
+      "Scorecard labels show comparable test count, total scored test count, and any older scored tests excluded because the model roster changed.",
+      "The Data API cumulative leaderboard now includes comparison metadata and rank-eligibility fields for downstream audits.",
+      "The website build now validates that generated public result rows have matching canonical leaderboard and return files."
+    ],
+    links: [
+      { label: "Scoring", href: "/scoring" },
+      { label: "Overall weekly", href: "/leaderboards/cumulative-weekly" },
+      { label: "API docs", href: "/api" }
+    ]
+  },
+  {
     id: "2026-06-04-live-mark-to-market",
     date: "2026-06-04",
     title: "Live mark-to-market added for open tests",

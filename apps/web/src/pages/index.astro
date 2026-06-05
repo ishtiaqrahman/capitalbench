@@ -409,11 +409,13 @@ const trackLaneCards = trackStates.map((track) => {
   const latestLiveRound = liveRounds[0];
   const leader = scorecard?.topNormalizedRow;
   const score = leader?.averageScore;
+  const comparableCount = scorecard?.comparisonRoundCount ?? 0;
   return {
     ...track,
     scorecard,
     leader,
     leaderScore: typeof score === "number" && Number.isFinite(score) ? score.toFixed(1) : null,
+    comparableCount,
     leaderLogo: leader?.logoSrc,
     completedCount: resolvedRounds.length,
     liveCount: liveRounds.length,
@@ -996,9 +998,13 @@ const trackLaneCards = trackStates.map((track) => {
                 <span class="leaderboard-lane-logo leaderboard-lane-logo-empty">{track.label.slice(0, 1)}</span>
               )}
               <div>
-                <span>{track.leader ? "Current leader" : "Current state"}</span>
+                <span>{track.leader ? "Comparable leader" : "Current state"}</span>
                 <strong>{track.leader?.label ?? "Waiting for first result"}</strong>
-                <em>{track.leaderScore ? `${track.leaderScore} CapitalBench Score` : scoreShortLine(track.latestLiveRound)}</em>
+                <em>
+                  {track.leaderScore
+                    ? `${track.leaderScore} score · ${track.comparableCount} comparable test${track.comparableCount === 1 ? "" : "s"}`
+                    : scoreShortLine(track.latestLiveRound)}
+                </em>
               </div>
             </div>
 
