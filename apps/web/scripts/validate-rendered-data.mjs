@@ -80,6 +80,18 @@ function excludes(html, unexpected, context) {
   if (html.includes(unexpected)) failures.push(`${context} contains stale rendered text: ${unexpected}`);
 }
 
+function expectEqual(actual, expected, context) {
+  if (actual !== expected) failures.push(`${context} expected ${JSON.stringify(expected)} but found ${JSON.stringify(actual)}`);
+}
+
+function expectClose(actual, expected, context, epsilon = 0.00000001) {
+  const actualNumber = Number(actual);
+  const expectedNumber = Number(expected);
+  if (!Number.isFinite(actualNumber) || !Number.isFinite(expectedNumber) || Math.abs(actualNumber - expectedNumber) > epsilon) {
+    failures.push(`${context} expected ${expectedNumber} but found ${actualNumber}`);
+  }
+}
+
 function scoreLabel(value) {
   return Number(value).toFixed(1);
 }
@@ -116,6 +128,64 @@ function htmlTextVariants(value) {
     escaped.replaceAll("'", "&#39;"),
     escaped.replaceAll("'", "&#x27;")
   ];
+}
+
+function decodeHtmlAttribute(value) {
+  return String(value)
+    .replaceAll("&quot;", '"')
+    .replaceAll("&#34;", '"')
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
+    .replaceAll("&#39;", "'")
+    .replaceAll("&#x27;", "'")
+    .replaceAll("&amp;", "&");
+}
+
+function decodeAstroProps(value) {
+  function decodeArray(items) {
+    return items.map(decodeTuple);
+  }
+  function decodeObject(item) {
+    if (typeof item !== "object" || item === null) return item;
+    return Object.fromEntries(Object.entries(item).map(([key, tuple]) => [key, decodeTuple(tuple)]));
+  }
+  const decoders = {
+    0: decodeObject,
+    1: decodeArray,
+    2: (item) => new RegExp(item),
+    3: (item) => new Date(item),
+    4: (item) => new Map(decodeArray(item)),
+    5: (item) => new Set(decodeArray(item)),
+    6: (item) => BigInt(item),
+    7: (item) => new URL(item),
+    8: (item) => new Uint8Array(item),
+    9: (item) => new Uint16Array(item),
+    10: (item) => new Uint32Array(item),
+    11: (item) => Infinity * item
+  };
+  function decodeTuple(tuple) {
+    const [type, payload] = tuple;
+    return Object.hasOwn(decoders, type) ? decoders[type](payload) : undefined;
+  }
+  return decodeObject(JSON.parse(decodeHtmlAttribute(value)));
+}
+
+function astroIslandProps(html, componentName) {
+  const pattern = new RegExp(
+    `<astro-island(?=[^>]*component-url="[^"]*${componentName}[^"]*")[^>]*\\sprops="([^"]*)"`,
+    "s"
+  );
+  const match = html.match(pattern);
+  if (!match) {
+    failures.push(`homepage ${componentName} island props were not found`);
+    return {};
+  }
+  try {
+    return decodeAstroProps(match[1]);
+  } catch (error) {
+    failures.push(`homepage ${componentName} island props could not be decoded: ${error.message}`);
+    return {};
+  }
 }
 
 async function dataApiBody(path) {
@@ -325,6 +395,163 @@ function buildLivePerformanceSummary() {
   };
 }
 
+function validateLivePerformanceIsland(html) {
+  const props = astroIslandProps(html, "LivePerformanceChart");
+  const pageRows = Array.isArray(props.rows) ? props.rows : [];
+  const expectedRows = (apiReadModel.interim_performance ?? []).filter((row) => row.status === "active");
+  expectEqual(pageRows.length, expectedRows.length, "homepage live performance island row count");
+
+  const pageByKey = new Map(
+    pageRows.map((row) => [`${row.round_id}:${row.run_id}:${row.model_id}:${row.target_date}:${row.price_date}`, row])
+  );
+  for (const expected of expectedRows) {
+    const key = `${expected.round_id}:${expected.run_id}:${expected.model_id}:${expected.target_date}:${expected.price_date}`;
+    const actual = pageByKey.get(key);
+    if (!actual) {
+      failures.push(`homepage live performance island missing row ${key}`);
+      continue;
+    }
+    expectEqual(actual.round_id, expected.round_id, `homepage live performance ${key} round_id`);
+    expectEqual(actual.run_id, expected.run_id, `homepage live performance ${key} run_id`);
+    expectEqual(actual.model_id, expected.model_id, `homepage live performance ${key} model_id`);
+    expectEqual(actual.provider, expected.provider, `homepage live performance ${key} provider`);
+    expectEqual(actual.target_date, expected.target_date, `homepage live performance ${key} target_date`);
+    expectEqual(actual.price_date, expected.price_date, `homepage live performance ${key} price_date`);
+    expectEqual(actual.days_elapsed, expected.days_elapsed, `homepage live performance ${key} days_elapsed`);
+    expectEqual(actual.selected_option_id, expected.selected_option_id, `homepage live performance ${key} selected option`);
+    expectEqual(actual.holding_count, expected.holding_count, `homepage live performance ${key} holding count`);
+    expectEqual(actual.price_status, expected.price_status, `homepage live performance ${key} price status`);
+    expectEqual(actual.published, expected.published, `homepage live performance ${key} published`);
+    expectEqual(actual.track, expected.track, `homepage live performance ${key} track`);
+    expectEqual(actual.status, "pending", `homepage live performance ${key} local status`);
+    expectEqual(actual.entry_date, expected.entry_date, `homepage live performance ${key} entry date`);
+    expectEqual(actual.exit_date, expected.exit_date, `homepage live performance ${key} exit date`);
+    expectClose(actual.model_return, expected.model_return_pct / 100, `homepage live performance ${key} model return`);
+    expectClose(actual.sp500_return, expected.sp500_return_pct / 100, `homepage live performance ${key} S&P 500 return`);
+    expectClose(actual.alpha_vs_sp500, expected.alpha_pp / 100, `homepage live performance ${key} alpha`);
+  }
+
+  for (const actual of pageRows) {
+    const key = `${actual.round_id}:${actual.run_id}:${actual.model_id}:${actual.target_date}:${actual.price_date}`;
+    if (!expectedRows.some((row) => `${row.round_id}:${row.run_id}:${row.model_id}:${row.target_date}:${row.price_date}` === key)) {
+      failures.push(`homepage live performance island has unexpected row ${key}`);
+    }
+  }
+}
+
+function validateActiveExposureIsland(html) {
+  function effectiveActualAllocations(submission) {
+    const rawAllocations = Array.isArray(submission.portfolio) ? submission.portfolio : [];
+    if (rawAllocations.length > 0) return rawAllocations;
+    if (!submission.selected_option_id) return [];
+    return [
+      {
+        option_id: submission.selected_option_id,
+        allocation_pct: 100,
+        allocation_bps: 10000
+      }
+    ];
+  }
+  function allocationStats(allocations) {
+    return {
+      max_allocation_bps: allocations.length ? Math.max(...allocations.map((allocation) => allocation.allocation_bps ?? 0)) : 0,
+      cash_allocation_bps: allocations
+        .filter((allocation) => String(allocation.option_id).toUpperCase() === "CASH")
+        .reduce((total, allocation) => total + Number(allocation.allocation_bps ?? 0), 0),
+      benchmark_allocation_bps: allocations
+        .filter((allocation) => String(allocation.option_id).toUpperCase() === "SP500")
+        .reduce((total, allocation) => total + Number(allocation.allocation_bps ?? 0), 0)
+    };
+  }
+  const props = astroIslandProps(html, "ActiveExposureMap");
+  const pageRounds = Array.isArray(props.rounds) ? props.rounds : [];
+  const expectedRounds = apiReadModel.rounds.filter(
+    (round) => round.status === "active" && ["weekly", "monthly"].includes(round.track) && round.official_run_id
+  );
+  expectEqual(pageRounds.length, expectedRounds.length, "homepage active exposure island round count");
+
+  const pageByRoundId = new Map(pageRounds.map((item) => [item.round?.round_id, item]));
+  for (const expectedRound of expectedRounds) {
+    const actualRound = pageByRoundId.get(expectedRound.round_id);
+    if (!actualRound) {
+      failures.push(`homepage active exposure island missing round ${expectedRound.round_id}`);
+      continue;
+    }
+    expectEqual(actualRound.track, expectedRound.track, `homepage active exposure ${expectedRound.round_id} track`);
+    expectEqual(actualRound.round.round_id, expectedRound.round_id, `homepage active exposure ${expectedRound.round_id} round_id`);
+    expectEqual(actualRound.round.title, expectedRound.title, `homepage active exposure ${expectedRound.round_id} title`);
+    expectEqual(actualRound.round.entry_date, expectedRound.entry_date, `homepage active exposure ${expectedRound.round_id} entry date`);
+    expectEqual(actualRound.round.exit_date, expectedRound.exit_date, `homepage active exposure ${expectedRound.round_id} exit date`);
+    expectEqual(actualRound.round.status, "pending", `homepage active exposure ${expectedRound.round_id} local status`);
+    expectEqual(actualRound.round.official_run_id, expectedRound.official_run_id, `homepage active exposure ${expectedRound.round_id} official run`);
+
+    const expectedPortfolios = apiReadModel.portfolios
+      .filter((portfolio) => portfolio.round_id === expectedRound.round_id && portfolio.run_id === expectedRound.official_run_id)
+      .sort((left, right) => left.model_id.localeCompare(right.model_id));
+    const actualSubmissions = [...(actualRound.submissions ?? [])].sort((left, right) => left.model_id.localeCompare(right.model_id));
+    expectEqual(actualSubmissions.length, expectedPortfolios.length, `homepage active exposure ${expectedRound.round_id} submission count`);
+
+    const actualSubmissionByModel = new Map(actualSubmissions.map((submission) => [submission.model_id, submission]));
+    for (const expectedPortfolio of expectedPortfolios) {
+      const actualSubmission = actualSubmissionByModel.get(expectedPortfolio.model_id);
+      const context = `homepage active exposure ${expectedRound.round_id} ${expectedPortfolio.model_id}`;
+      if (!actualSubmission) {
+        failures.push(`${context} missing submission`);
+        continue;
+      }
+      expectEqual(actualSubmission.round_id, expectedPortfolio.round_id, `${context} round_id`);
+      expectEqual(actualSubmission.run_id, expectedPortfolio.run_id, `${context} run_id`);
+      expectEqual(actualSubmission.provider, expectedPortfolio.provider, `${context} provider`);
+      expectEqual(actualSubmission.selected_option_id, expectedPortfolio.selected_option_id, `${context} selected option`);
+      expectEqual(actualSubmission.holding_count, expectedPortfolio.holding_count, `${context} holding count`);
+      const expectedStats = allocationStats(expectedPortfolio.allocations);
+      expectEqual(actualSubmission.max_allocation_bps, expectedStats.max_allocation_bps, `${context} max allocation`);
+      expectEqual(actualSubmission.cash_allocation_bps, expectedStats.cash_allocation_bps, `${context} cash allocation`);
+      expectEqual(actualSubmission.benchmark_allocation_bps, expectedStats.benchmark_allocation_bps, `${context} benchmark allocation`);
+
+      const actualAllocations = new Map(effectiveActualAllocations(actualSubmission).map((allocation) => [allocation.option_id, allocation]));
+      expectEqual(actualAllocations.size, expectedPortfolio.allocations.length, `${context} allocation count`);
+      for (const expectedAllocation of expectedPortfolio.allocations) {
+        const actualAllocation = actualAllocations.get(expectedAllocation.option_id);
+        const allocationContext = `${context} allocation ${expectedAllocation.option_id}`;
+        if (!actualAllocation) {
+          failures.push(`${allocationContext} missing`);
+          continue;
+        }
+        expectClose(actualAllocation.allocation_pct, expectedAllocation.allocation_pct, `${allocationContext} pct`);
+        expectEqual(actualAllocation.allocation_bps, expectedAllocation.allocation_bps, `${allocationContext} bps`);
+      }
+    }
+
+    const expectedOptions = roundUniverseOptions(expectedRound.round_id);
+    const actualOptions = [...(actualRound.options ?? [])].sort((left, right) => left.sort_order - right.sort_order);
+    expectEqual(actualOptions.length, expectedOptions.length, `homepage active exposure ${expectedRound.round_id} option count`);
+    const actualOptionById = new Map(actualOptions.map((option) => [option.option_id, option]));
+    for (const expectedOption of expectedOptions) {
+      const actualOption = actualOptionById.get(expectedOption.option_id);
+      const optionContext = `homepage active exposure ${expectedRound.round_id} option ${expectedOption.option_id}`;
+      if (!actualOption) {
+        failures.push(`${optionContext} missing`);
+        continue;
+      }
+      expectEqual(actualOption.name, expectedOption.name, `${optionContext} name`);
+      expectEqual(actualOption.symbol, expectedOption.symbol, `${optionContext} symbol`);
+      expectEqual(actualOption.asset_class, expectedOption.asset_class, `${optionContext} asset class`);
+      expectEqual(actualOption.option_group, expectedOption.option_group, `${optionContext} option group`);
+      expectEqual(actualOption.risk_bucket, expectedOption.risk_bucket, `${optionContext} risk bucket`);
+      expectEqual(actualOption.is_cash, expectedOption.is_cash, `${optionContext} cash flag`);
+      expectEqual(actualOption.is_benchmark, expectedOption.is_benchmark, `${optionContext} benchmark flag`);
+      expectEqual(actualOption.sort_order, expectedOption.sort_order, `${optionContext} sort order`);
+    }
+  }
+
+  for (const actualRound of pageRounds) {
+    if (!expectedRounds.some((round) => round.round_id === actualRound.round?.round_id)) {
+      failures.push(`homepage active exposure island has unexpected round ${actualRound.round?.round_id}`);
+    }
+  }
+}
+
 function roundSortKey(round) {
   return `${round.exit_date ?? ""}:${round.decision_deadline_utc ?? ""}:${round.round_id ?? ""}`;
 }
@@ -416,6 +643,29 @@ function roundOptionCount(roundId) {
   } catch {
     return null;
   }
+}
+
+function roundUniverseOptions(roundId) {
+  const text = readRepoText("rounds", roundId, "options.yaml");
+  if (!text) return [];
+  const parsed = parseYamlText(text);
+  return (parsed?.options ?? [])
+    .filter((option) => option?.include_in_universe !== false)
+    .map((option, index) => {
+      const optionId = String(option.id ?? option.option_id ?? "");
+      return {
+        option_id: optionId,
+        name: String(option.name ?? option.label ?? optionId),
+        symbol: String(option.symbol ?? option.asset_symbol ?? ""),
+        asset_class: String(option.asset_class ?? "unknown"),
+        option_group: String(option.option_group ?? option.category ?? "unknown"),
+        risk_bucket: String(option.risk_bucket ?? "medium"),
+        is_cash: Boolean(option.is_cash),
+        is_benchmark: Boolean(option.is_benchmark) || optionId.toUpperCase() === "SP500",
+        sort_order: index + 1
+      };
+    })
+    .filter((option) => option.option_id);
 }
 
 function universeLabelFromFilename(filename) {
@@ -1287,6 +1537,8 @@ for (const track of ["weekly", "monthly"]) {
 }
 
 const activeExposure = buildActiveExposureSummary();
+validateLivePerformanceIsland(indexHtml);
+validateActiveExposureIsland(indexHtml);
 const largestActiveExposure = activeExposure.rows[0];
 if (largestActiveExposure) {
   includes(indexHtml, "Open picks map", "homepage active exposure");
