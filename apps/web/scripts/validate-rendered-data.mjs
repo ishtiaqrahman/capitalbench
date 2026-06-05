@@ -2326,6 +2326,12 @@ if (latestResolvedWeeklyRound) {
     includes(latestWeeklyHtml, percentPointLabel(row.benchmark_return_pct), `latest weekly page benchmark return ${row.model_id}`);
     includes(latestWeeklyHtml, percentPointLabel(row.alpha_pp), `latest weekly page alpha ${row.model_id}`);
     includes(latestWeeklyHtml, percentPointLabel(row.regret_vs_best_option_pct), `latest weekly page regret ${row.model_id}`);
+    includes(latestWeeklyHtml, "CapitalBench Score audit", `latest weekly page score audit ${row.model_id}`);
+    includes(
+      latestWeeklyHtml,
+      `${scoreLabel(row.capitalbench_score)} score = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max`,
+      `latest weekly page score formula ${row.model_id}`
+    );
   }
   if (latestActiveWeeklyRound && latestActiveWeeklyRound.round_id !== latestResolvedWeeklyRound.round_id) {
     includes(latestWeeklyHtml, latestActiveWeeklyRound.round_id, "latest weekly page current active round");
