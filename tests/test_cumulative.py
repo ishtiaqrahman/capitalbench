@@ -46,6 +46,7 @@ def _create_round(
     official_run_type: str = "official",
     stability_run_type: str = "stability",
     official_score_eligible: bool = True,
+    decision_deadline: str = "2026-01-01T20:00:00Z",
     entry_date: str = "2026-01-02",
     exit_date: str = "2026-02-02",
     horizon: str = "one month",
@@ -57,7 +58,7 @@ def _create_round(
             {
                 "round_id": round_id,
                 "title": round_id,
-                "decision_deadline": "2026-01-01T20:00:00Z",
+                "decision_deadline": decision_deadline,
                 "entry_date": entry_date,
                 "exit_date": exit_date,
                 "horizon": horizon,
@@ -606,6 +607,54 @@ def test_publish_latest_selects_newest_resolved_round(tmp_path: Path) -> None:
     assert output.selected_round.round_id == "round-2"
     assert output.latest_leaderboard_path.exists()
     assert output.latest_report_path.exists()
+
+
+def test_publish_latest_uses_scoring_end_date_before_decision_deadline(tmp_path: Path) -> None:
+    rounds_dir = tmp_path / "rounds"
+    _create_round(
+        rounds_dir,
+        "round-later-decision-earlier-end",
+        model_alpha=0.02,
+        model_return=0.05,
+        sp500_return=0.03,
+        beats_sp500=True,
+        beats_cash=True,
+        stability_alpha=0.014,
+        stability_return=0.044,
+        consistency=0.6,
+        modal_alpha=0.01,
+        modal_return=0.04,
+        best_replicate=0.08,
+        worst_replicate=-0.01,
+        decision_deadline="2026-03-01T20:00:00Z",
+        entry_date="2026-03-02",
+        exit_date="2026-03-09",
+        horizon="one week",
+    )
+    _create_round(
+        rounds_dir,
+        "round-earlier-decision-later-end",
+        model_alpha=-0.01,
+        model_return=0.01,
+        sp500_return=0.02,
+        beats_sp500=False,
+        beats_cash=True,
+        stability_alpha=0.008,
+        stability_return=0.028,
+        consistency=0.8,
+        modal_alpha=0.012,
+        modal_return=0.032,
+        best_replicate=0.05,
+        worst_replicate=0.0,
+        decision_deadline="2026-02-01T20:00:00Z",
+        entry_date="2026-03-10",
+        exit_date="2026-03-17",
+        horizon="one week",
+    )
+
+    output = publish_latest(rounds_dir, tmp_path / "latest")
+
+    assert output.selected_round.round_id == "round-earlier-decision-later-end"
 
 
 def test_publish_latest_and_cumulative_can_filter_by_track(tmp_path: Path) -> None:

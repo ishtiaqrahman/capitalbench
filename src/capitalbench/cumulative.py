@@ -76,6 +76,7 @@ class CumulativeRoundSelection:
     round_id: str
     round_path: Path
     decision_deadline_utc: str
+    exit_date: str
     horizon_days: int | None
     official_run_id: str | None
     stability_run_id: str | None
@@ -186,6 +187,7 @@ def select_runs_for_round(
                 round_id=round_id,
                 round_path=round_path,
                 decision_deadline_utc=manifest.decision_deadline or "",
+                exit_date=manifest.exit_date or "",
                 horizon_days=horizon_days,
                 official_run_id=None,
                 stability_run_id=None,
@@ -210,6 +212,7 @@ def select_runs_for_round(
         round_id=round_id,
         round_path=round_path,
         decision_deadline_utc=manifest.decision_deadline or "",
+        exit_date=manifest.exit_date or "",
         horizon_days=horizon_days,
         official_run_id=official_run_id,
         stability_run_id=stability_run_id,
@@ -414,10 +417,7 @@ def publish_latest(
     status = latest_status(rounds_dir, selection_path, track=track)
     if not status.selections:
         raise ValueError("no resolved official rounds found for latest leaderboard")
-    selected = max(
-        status.selections,
-        key=lambda item: (item.decision_deadline_utc, item.round_id),
-    )
+    selected = max(status.selections, key=latest_selection_sort_key)
     if not selected.official_rows or selected.official_run_id is None:
         raise ValueError("newest resolved round does not have a selected official run")
 
@@ -598,6 +598,7 @@ def _select_latest_run_for_round(
         round_id=round_id,
         round_path=round_path,
         decision_deadline_utc=manifest.decision_deadline or "",
+        exit_date=manifest.exit_date or "",
         horizon_days=horizon_days,
         official_run_id=official_run_id,
         stability_run_id=None,
@@ -634,8 +635,12 @@ def _require_selected_run(
 def _latest_round_id(selections: list[CumulativeRoundSelection]) -> str | None:
     if not selections:
         return None
-    selected = max(selections, key=lambda item: (item.decision_deadline_utc, item.round_id))
+    selected = max(selections, key=latest_selection_sort_key)
     return selected.round_id
+
+
+def latest_selection_sort_key(selection: CumulativeRoundSelection) -> tuple[str, str, str]:
+    return (selection.exit_date or "", selection.decision_deadline_utc, selection.round_id)
 
 
 def _build_round_index(

@@ -37,7 +37,15 @@ class FakeSink:
         self.uploads.append((local_path, storage_path))
 
 
-def _write_resolved_round(rounds_dir: Path, round_id: str, *, entry_date: str, exit_date: str, horizon: str) -> None:
+def _write_resolved_round(
+    rounds_dir: Path,
+    round_id: str,
+    *,
+    entry_date: str,
+    exit_date: str,
+    horizon: str,
+    decision_deadline: str = "2026-01-01T20:00:00Z",
+) -> None:
     round_path = rounds_dir / round_id
     results_dir = round_path / "runs" / "official" / "results"
     results_dir.mkdir(parents=True)
@@ -46,7 +54,7 @@ def _write_resolved_round(rounds_dir: Path, round_id: str, *, entry_date: str, e
             {
                 "round_id": round_id,
                 "title": round_id,
-                "decision_deadline": "2026-01-01T20:00:00Z",
+                "decision_deadline": decision_deadline,
                 "entry_date": entry_date,
                 "exit_date": exit_date,
                 "horizon": horizon,
@@ -339,3 +347,29 @@ def test_sync_latest_and_cumulative_use_track_slots(tmp_path: Path) -> None:
     assert ("cumulative_official_leaderboard", {"slot": "cumulative_weekly"}) in sink.deletes
     assert sink.upserts["cumulative_official_leaderboard"][0]["slot"] == "cumulative_weekly"
     assert sink.upserts["cumulative_official_leaderboard"][0]["rounds_included"] == "CB-2026-01-01-1W"
+
+
+def test_sync_latest_uses_scoring_end_date_for_hydrated_latest_table(tmp_path: Path) -> None:
+    rounds_dir = tmp_path / "rounds"
+    _write_resolved_round(
+        rounds_dir,
+        "CB-2026-03-01-1W",
+        entry_date="2026-03-02",
+        exit_date="2026-03-09",
+        horizon="one week",
+        decision_deadline="2026-03-01T20:00:00Z",
+    )
+    _write_resolved_round(
+        rounds_dir,
+        "CB-2026-02-01-1W",
+        entry_date="2026-03-10",
+        exit_date="2026-03-17",
+        horizon="one week",
+        decision_deadline="2026-02-01T20:00:00Z",
+    )
+    sink = FakeSink()
+
+    sync_latest_leaderboard(rounds_dir, sink=sink, track="weekly")
+
+    assert sink.upserts["latest_leaderboard"][0]["slot"] == "latest_weekly"
+    assert sink.upserts["latest_leaderboard"][0]["round_id"] == "CB-2026-02-01-1W"

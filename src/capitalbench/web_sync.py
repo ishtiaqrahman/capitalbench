@@ -16,6 +16,7 @@ from .cumulative import (
     build_cumulative_stability,
     cumulative_status,
     latest_status,
+    latest_selection_sort_key,
 )
 from .hashing import round_hashes_match, sha256_file
 from .io import load_manifest, load_options, read_json, read_yaml
@@ -319,7 +320,7 @@ def sync_latest_leaderboard(
                 row_counts={"latest_leaderboard": 0},
             ),
         )
-    selected = max(status.selections, key=lambda item: (item.decision_deadline_utc, item.round_id))
+    selected = max(status.selections, key=latest_selection_sort_key)
     rows = [_latest_row(selected.round_id, selected.official_run_id or "", row, slot=slot) for row in selected.official_rows]
     sink.delete_eq("latest_leaderboard", {"slot": slot})
     sink.upsert("latest_leaderboard", rows, on_conflict="slot,model_id")

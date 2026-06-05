@@ -26,6 +26,25 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-05-latest-result-selection-audit",
+    date: "2026-06-05",
+    title: "Latest-result selection hardened",
+    category: "Data",
+    status: "updated",
+    summary:
+      "CapitalBench now uses the scoring-window end date as the first rule for choosing the latest resolved test across local reports, synced tables, and public pages.",
+    details: [
+      "Latest leaderboard publishing and Supabase sync now share the same exit-date-first ordering used by the website and Data API.",
+      "Regression tests cover overlapping rounds where a later decision date and a later scoring end date point to different tests.",
+      "This prevents hydrated latest-result tables from drifting away from the static latest-result page when schedules overlap."
+    ],
+    links: [
+      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
+      { label: "Latest monthly", href: "/leaderboards/latest-monthly" },
+      { label: "API docs", href: "/api" }
+    ]
+  },
+  {
     id: "2026-06-05-public-data-contract-audit",
     date: "2026-06-05",
     title: "Public data contract validation expanded",
