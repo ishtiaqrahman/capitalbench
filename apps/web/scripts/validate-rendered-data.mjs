@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
@@ -56,6 +56,14 @@ function numberFromCell(value) {
   if (value === undefined || value === "") return null;
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric : null;
+}
+
+function parseYamlText(text) {
+  try {
+    return parseYaml(text);
+  } catch {
+    return null;
+  }
 }
 
 function includes(html, expected, context) {
@@ -299,6 +307,10 @@ function dateLabel(value) {
   return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", timeZone: "UTC" }).format(date);
 }
 
+function dateOnly(value) {
+  return value ? String(value).slice(0, 10) : "";
+}
+
 function latestRound(track, status) {
   return apiReadModel.rounds
     .filter((round) => round.track === track && round.status === status)
@@ -315,6 +327,10 @@ function roundsForTrack(track) {
 
 function trackLabel(track) {
   return track === "weekly" ? "Weekly" : "Monthly";
+}
+
+function roundTrackLabel(round) {
+  return round.track === "weekly" ? "Weekly" : round.track === "monthly" ? "Monthly" : "Other";
 }
 
 function trackWindowLabel(round) {
@@ -367,6 +383,74 @@ function roundOptionCount(roundId) {
   } catch {
     return null;
   }
+}
+
+function universeLabelFromFilename(filename) {
+  const match = /^capitalbench_universe_(v\d+_\d+)\.yaml$/.exec(filename);
+  return match ? match[1].replace("_", ".") : filename;
+}
+
+function universeVersionParts(label) {
+  return label
+    .replace(/^v/i, "")
+    .split(".")
+    .map((part) => Number(part))
+    .filter((part) => Number.isFinite(part));
+}
+
+function compareUniverseVersionsDesc(left, right) {
+  const leftParts = universeVersionParts(left);
+  const rightParts = universeVersionParts(right);
+  const length = Math.max(leftParts.length, rightParts.length);
+  for (let index = 0; index < length; index += 1) {
+    const diff = (rightParts[index] ?? 0) - (leftParts[index] ?? 0);
+    if (diff !== 0) return diff;
+  }
+  return right.localeCompare(left);
+}
+
+const universeMetadata = {
+  "v2.1": {
+    status: "Current default for new tests",
+    detail: "v2.0 plus Broad AI Technology, Autonomous Technology and Robotics, Cybersecurity, Solar Energy, and Metals and Mining."
+  },
+  "v2.0": {
+    status: "Frozen for v2.0 tests",
+    detail: "v1.5 plus country, sector, bond, commodity, currency, and crypto-proxy exposures."
+  },
+  "v1.5": {
+    status: "Frozen for Round 1",
+    detail: "Cash, broad US equity, factors, sectors, bonds, international equity, commodities, and AI themes."
+  }
+};
+
+function loadUniverseVersions() {
+  const universePath = join(repoRoot, "configs", "universes");
+  return readdirSync(universePath)
+    .filter((filename) => /^capitalbench_universe_v\d+_\d+\.yaml$/.test(filename))
+    .map((file) => {
+      const label = universeLabelFromFilename(file);
+      const parsed = parseYamlText(readRepoText("configs", "universes", file));
+      const rows = (parsed?.options ?? []).map((option, index) => ({
+        option_id: option.id,
+        label: option.name,
+        ticker: option.symbol ?? "",
+        asset_class: option.asset_class,
+        category: option.option_group,
+        risk_bucket: option.risk_bucket,
+        is_cash: Boolean(option.is_cash),
+        is_benchmark: Boolean(option.is_benchmark) || String(option.id ?? "").toUpperCase() === "SP500",
+        sort_order: index + 1
+      }));
+      return {
+        label,
+        file,
+        status: universeMetadata[label]?.status ?? "Versioned asset list",
+        detail: universeMetadata[label]?.detail ?? "Versioned CapitalBench asset list.",
+        rows
+      };
+    })
+    .sort((left, right) => compareUniverseVersionsDesc(left.label, right.label));
 }
 
 function roundEntryPriceRows(roundId) {
@@ -793,15 +877,43 @@ if (monthlyState.pendingRound && !monthlyState.latestResultRound) {
 }
 
 for (const round of apiReadModel.rounds) {
-  includes(roundsIndexHtml, round.round_id, "rounds index");
+  const context = `rounds index ${round.round_id}`;
+  includes(roundsIndexHtml, round.round_id, context);
+  includes(roundsIndexHtml, `/rounds/${round.round_id}/`, `${context} proof link`);
+  includes(roundsIndexHtml, roundTrackLabel(round), `${context} track`);
+  includes(roundsIndexHtml, round.status === "resolved" ? "scored" : round.status, `${context} status`);
+  includes(roundsIndexHtml, dateOnly(round.decision_deadline_utc), `${context} decision deadline`);
+  includes(roundsIndexHtml, round.horizon, `${context} horizon`);
+  includes(roundsIndexHtml, dateOnly(round.exit_date), `${context} exit date`);
+  includes(roundsIndexHtml, round.methodology_version, `${context} methodology`);
+  includes(roundsIndexHtml, round.official_run_id, `${context} official run`);
 }
 
+const universeVersions = loadUniverseVersions();
+const latestUniverse = universeVersions[0];
+if (latestUniverse) {
+  includes(universeHtml, latestUniverse.label, "universe page latest label");
+  includes(universeHtml, `${latestUniverse.rows.length} total choices for new public tests`, "universe page latest count");
+  includes(universeHtml, `${latestUniverse.label} Option Table`, "universe page latest table title");
+}
 if (apiReadModel.current_universe_round_id) {
   includes(universeHtml, apiReadModel.current_universe_round_id, "universe page current round");
 }
-for (const asset of apiReadModel.assets.filter((row) => row.in_current_universe)) {
-  includes(universeHtml, asset.option_id, `universe page asset ${asset.option_id}`);
-  if (asset.ticker) includes(universeHtml, asset.ticker, `universe page asset ${asset.option_id}`);
+for (const version of universeVersions) {
+  const context = `universe page version ${version.label}`;
+  includes(universeHtml, version.status, `${context} status`);
+  includes(universeHtml, version.label, `${context} label`);
+  includes(universeHtml, `${version.rows.length} options: ${version.detail}`, `${context} count and detail`);
+  includes(universeHtml, version.file, `${context} file`);
+}
+for (const asset of latestUniverse?.rows ?? []) {
+  const context = `universe page latest asset ${asset.option_id}`;
+  includes(universeHtml, asset.option_id, `${context} option id`);
+  includesAny(universeHtml, [asset.label, htmlText(asset.label)], `${context} name`);
+  if (asset.ticker) includes(universeHtml, asset.ticker, `${context} ticker`);
+  includes(universeHtml, asset.asset_class, `${context} asset class`);
+  includes(universeHtml, asset.category, `${context} group`);
+  includes(universeHtml, asset.risk_bucket, `${context} risk bucket`);
 }
 
 const latestActiveWeeklyRound = latestRound("weekly", "active");
