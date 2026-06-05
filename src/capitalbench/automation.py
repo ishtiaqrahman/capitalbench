@@ -248,14 +248,16 @@ def resolve_accepted_round(
     _validate_resolution_gate(round_path, run_manifest)
 
     if fetch_exit_prices:
+        # Refresh both sides together so final adjusted-close ETF returns use one
+        # post-window price basis, not a stale entry snapshot plus a fresh exit.
         fetch_selected_prices(
             round_path=round_path,
             run_id=run_id,
-            entry_date=None,
+            entry_date=manifest.entry_date,
             exit_date=manifest.exit_date,
-            overwrite_prices=overwrite_prices,
+            overwrite_prices=True,
             full_universe=full_universe_prices,
-            price_side="exit",
+            price_side="both",
         )
     elif not (round_path / "prices" / "exit_prices.csv").exists():
         raise FileNotFoundError("missing exit prices and fetch_exit_prices is false")

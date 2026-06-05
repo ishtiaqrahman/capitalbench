@@ -26,6 +26,25 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-05-adjusted-close-price-refresh",
+    date: "2026-06-05",
+    title: "Final scoring prices now refresh both adjusted-close endpoints",
+    category: "Data",
+    status: "updated",
+    summary:
+      "Resolved weekly scoring files were refreshed onto one adjusted-close basis, and future automated resolution now fetches both start and end prices before final scoring.",
+    details: [
+      "Final automated resolution now refreshes both entry and exit adjusted closes together after the scoring window closes, avoiding stale entry snapshots when ETF adjusted histories update for distributions.",
+      "The three resolved weekly rounds were regenerated from same-source adjusted-close price files; Gemini's latest weekly CapitalBench Score remains 85.1, while OpenAI's latest weekly score moved from 53.6 to 53.5 after the price-basis correction.",
+      "The external price audit now verifies all resolved weekly rounds against adjusted-close data, including local model returns, maximum possible returns, and CapitalBench Scores."
+    ],
+    links: [
+      { label: "Scoring", href: "/scoring" },
+      { label: "Methodology", href: "/methodology" },
+      { label: "Latest weekly", href: "/leaderboards/latest-weekly" }
+    ]
+  },
+  {
     id: "2026-06-05-selected-asset-return-correction",
     date: "2026-06-05",
     title: "Selected-asset return field corrected for portfolio tests",

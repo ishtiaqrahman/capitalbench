@@ -48,8 +48,10 @@ Full-universe scoring prices are different from the prompt-context trailing
 return artifact. They write `prices/entry_prices.csv` and
 `prices/exit_prices.csv` for every option in `options.yaml`.
 For an unresolved round, use `--side entry --full-universe` to write only
-`prices/entry_prices.csv` for the full frozen universe; fetch exit prices only
-after the exit date resolves.
+`prices/entry_prices.csv` as the model-facing starting-price snapshot. When the
+round resolves, fetch both entry and exit prices together before final scoring.
+This keeps ETF adjusted-close returns on one post-window price basis, including
+any distribution adjustments that are only known after the entry date.
 
 Price fetching is strict about dates. For each Tiingo request, CapitalBench
 requires a returned row whose date exactly matches the requested `entry-date`

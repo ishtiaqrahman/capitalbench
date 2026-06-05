@@ -1,5 +1,6 @@
 from pathlib import Path
 from shutil import copytree
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
@@ -120,3 +121,65 @@ def test_resolve_accepted_round_scores_publishes_and_marks_job(tmp_path: Path) -
     assert (tmp_path / "cumulative" / "official_leaderboard.csv").exists()
     local_job = yaml.safe_load((round_path / "automation" / "resolution_job.yaml").read_text(encoding="utf-8"))
     assert local_job["status"] == "succeeded"
+
+
+def test_resolve_accepted_round_refreshes_entry_and_exit_prices(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    round_path = _copy_due_round(tmp_path)
+    accept_run(
+        round_path,
+        run_id="official-round-1-clean",
+        due_at_utc="2026-05-11T23:30:00+00:00",
+        store=FakeAutomationStore(),
+        sync_pending=False,
+    )
+    calls: list[dict[str, Any]] = []
+
+    def fake_fetch_selected_prices(**kwargs: Any) -> Any:
+        calls.append(kwargs)
+        prices_dir = round_path / "prices"
+        prices_dir.mkdir(exist_ok=True)
+        (prices_dir / "entry_prices.csv").write_text(
+            "\n".join(
+                [
+                    "option_id,symbol,date,close,adj_close,source",
+                    "CASH,,2026-05-08,1.0,1.0,cash",
+                    "SP500,SPY,2026-05-08,100.0,100.0,test",
+                    "SEMICONDUCTORS,SMH,2026-05-08,100.0,100.0,test",
+                    "",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        (prices_dir / "exit_prices.csv").write_text(
+            "\n".join(
+                [
+                    "option_id,symbol,date,close,adj_close,source",
+                    "CASH,,2026-05-11,1.0,1.0,cash",
+                    "SP500,SPY,2026-05-11,101.0,101.0,test",
+                    "SEMICONDUCTORS,SMH,2026-05-11,110.0,110.0,test",
+                    "",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        return SimpleNamespace()
+
+    monkeypatch.setattr("capitalbench.automation.fetch_selected_prices", fake_fetch_selected_prices)
+
+    summary = resolve_accepted_round(
+        tmp_path,
+        round_id="CB-2026-05-10-1M",
+        run_id="official-round-1-clean",
+        latest_output=tmp_path / "latest",
+        cumulative_output=tmp_path / "cumulative",
+        fetch_exit_prices=True,
+        sync=False,
+    )
+
+    assert summary.status == "succeeded"
+    assert len(calls) == 1
+    assert calls[0]["entry_date"] == "2026-05-08"
+    assert calls[0]["exit_date"] == "2026-05-11"
+    assert calls[0]["price_side"] == "both"
+    assert calls[0]["overwrite_prices"] is True
+    assert calls[0]["full_universe"] is True

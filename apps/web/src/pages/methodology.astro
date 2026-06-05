@@ -353,7 +353,9 @@ const earlierUniverseText = joinWithAnd(
         <p>
           CapitalBench scores valid submissions against local price files. Adjusted close is preferred. If only close is
           supplied, scoring may continue but records a warning in the result artifacts. Tiingo fetching is strict about
-          dates and requires rows matching the manifest start and end dates.
+          dates and requires rows matching the manifest start and end dates. Final automated scoring refreshes both
+          start and end adjusted closes together after the test window ends, so ETF distribution adjustments are on one
+          post-window price basis.
         </p>
         <div class="formula-grid">
           <div>

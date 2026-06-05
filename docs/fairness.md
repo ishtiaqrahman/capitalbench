@@ -20,7 +20,7 @@ Use these rules for a fair round:
 - Preserve invalid raw submissions instead of deleting them.
 - Use provider-native deterministic settings: temperature `0` where supported, tools/search disabled in API payloads, and the lowest provider-supported reasoning or thinking setting that still produces valid structured output.
 - Record token usage, including reasoning or thinking tokens when exposed, but do not treat hidden reasoning counts as directly comparable across providers.
-- Use the same local entry and exit price source for every option.
+- Use the same local entry and exit price source for every option, and refresh both final adjusted-close prices after the scoring window ends.
 - State the entry and exit rules in `manifest.yaml`.
 - Identify exactly one official model-call run for public reporting.
 - Mark incomplete or invalid official attempts as not official-score eligible.

@@ -723,7 +723,11 @@ def build_parser() -> argparse.ArgumentParser:
     automation_resolve_parser.add_argument("--cumulative-output", type=Path, default=Path("cumulative"))
     automation_resolve_parser.add_argument("--selection", type=Path)
     automation_resolve_parser.add_argument("--skip-fetch-prices", action="store_true")
-    automation_resolve_parser.add_argument("--overwrite-prices", action="store_true")
+    automation_resolve_parser.add_argument(
+        "--overwrite-prices",
+        action="store_true",
+        help="accepted for compatibility; automated resolution refreshes final scoring prices",
+    )
     automation_resolve_parser.add_argument("--selected-prices-only", action="store_true")
     automation_resolve_parser.add_argument("--no-sync", action="store_true")
     automation_resolve_parser.set_defaults(func=_cmd_automation_resolve)

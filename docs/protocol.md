@@ -393,8 +393,8 @@ level where the provider exposes that control:
 ## Scoring Window
 
 CapitalBench is time-resolved. The decision is made before the outcome window is
-known. After the window ends, the operator adds local entry and exit prices and
-runs `capitalbench score-round`.
+known. After the window ends, final scoring refreshes the entry and exit
+adjusted closes together and then runs `capitalbench score-round`.
 
 For Tiingo scoring prices, `capitalbench fetch-prices` defaults to decision-only
 fetching: selected options or portfolio holdings, plus the S&P 500 benchmark
@@ -404,8 +404,10 @@ and `rank_among_options`; this fetches every option in the frozen
 `options.yaml`. Scoring price fetches require Tiingo rows to exactly match the
 requested entry and exit dates, and do not silently use nearest available dates.
 Use `--side entry` or `--side exit` when only one side of the pricing window is
-available. This is useful for locking full-universe entry prices before the
-one-month exit date has resolved.
+available. `--side entry` is useful for publishing a model-facing starting-price
+snapshot before the exit date has resolved; final official scoring should fetch
+both dates together so ETF distribution adjustments are on one post-window price
+basis.
 
 Round 1 supports a one-month single-option decision only. Future methodology
 versions can use the portfolio protocol. Live market-data fetching remains an

@@ -798,11 +798,13 @@ for (const row of apiReadModel.interim_performance ?? []) {
       }
     }
 
-    const entryPriceFileRows = priceRowsByOption(round, "entry");
-    for (const [optionId, weeklyEntryRow] of entryRows ?? []) {
-      const entryPriceRow = entryPriceFileRows.get(optionId);
-      if (entryPriceRow && !approxEqual(priceValue(weeklyEntryRow), priceValue(entryPriceRow))) {
-        failures.push(`${context} weekly entry snapshot ${optionId} price ${priceValue(weeklyEntryRow)} does not match entry_prices.csv ${priceValue(entryPriceRow)}`);
+    if (round.status === "active") {
+      const entryPriceFileRows = priceRowsByOption(round, "entry");
+      for (const [optionId, weeklyEntryRow] of entryRows ?? []) {
+        const entryPriceRow = entryPriceFileRows.get(optionId);
+        if (entryPriceRow && !approxEqual(priceValue(weeklyEntryRow), priceValue(entryPriceRow))) {
+          failures.push(`${context} weekly entry snapshot ${optionId} price ${priceValue(weeklyEntryRow)} does not match entry_prices.csv ${priceValue(entryPriceRow)}`);
+        }
       }
     }
 
