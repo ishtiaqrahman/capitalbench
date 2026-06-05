@@ -26,6 +26,13 @@ from .validation import iter_submission_files
 
 SUPABASE_SKIP_MESSAGE = "Supabase sync skipped: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured."
 PUBLIC_ARTIFACT_BUCKET = "capitalbench-public-artifacts"
+MODEL_DISPLAY_NAMES = {
+    "anthropic-claude-opus-4-7": "Claude Opus 4.7",
+    "anthropic-claude-opus-4-8": "Claude Opus 4.8",
+    "google-gemini-3-1-pro": "Gemini 3.1 Pro",
+    "openai-gpt-5-5": "GPT-5.5",
+    "xai-grok-4-3": "Grok 4.3",
+}
 
 
 class WebSyncSink(Protocol):
@@ -700,7 +707,9 @@ def _submission_allocation_rows(run_paths: Any, *, published: bool) -> list[dict
 
 def _official_result_rows(round_id: str, run_id: str, run_paths: Any) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
+    submissions_by_model = _parsed_submission_payloads_by_model(run_paths)
     for row in _read_csv(run_paths.results_dir / "leaderboard.csv"):
+        submission_payload = submissions_by_model.get(row["model_id"], {})
         rows.append(
             {
                 "round_id": round_id,
@@ -726,11 +735,20 @@ def _official_result_rows(round_id: str, run_id: str, run_paths: Any) -> list[di
                 "beats_cash": _bool(row.get("beats_cash")),
                 "cost_usd": _decimal(row.get("cost_usd")),
                 "alpha_per_dollar": _decimal(row.get("alpha_per_dollar")),
-                "rationale_summary": row.get("rationale_summary") or "",
-                "key_risks": _key_risks(row.get("key_risks")),
+                "rationale_summary": submission_payload.get("rationale_summary") or row.get("rationale_summary") or "",
+                "key_risks": submission_payload.get("key_risks") or _key_risks(row.get("key_risks")),
                 "published": True,
             }
         )
+    return rows
+
+
+def _parsed_submission_payloads_by_model(run_paths: Any) -> dict[str, dict[str, Any]]:
+    rows: dict[str, dict[str, Any]] = {}
+    for submission_path in iter_submission_files(run_paths.parsed_dir):
+        payload = read_json(submission_path)
+        if payload.get("model_id"):
+            rows[str(payload["model_id"])] = payload
     return rows
 
 
@@ -1045,6 +1063,8 @@ def _artifact_type(path: Path) -> str:
 
 
 def _display_model_name(model_id: str) -> str:
+    if model_id in MODEL_DISPLAY_NAMES:
+        return MODEL_DISPLAY_NAMES[model_id]
     replacements = {"gpt": "GPT", "xai": "xAI", "openai": "OpenAI"}
     words = []
     for word in model_id.replace("_", "-").split("-"):

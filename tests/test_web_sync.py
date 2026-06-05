@@ -264,7 +264,7 @@ def test_sync_round_publishes_portfolio_allocations(tmp_path: Path) -> None:
                 "confidence": 0.5,
                 "portfolio_rationale": "Portfolio rationale.",
                 "rationale_summary": "Summary.",
-                "key_risks": ["Risk"],
+                "key_risks": ["Risk clause; still one risk."],
             }
         ),
         encoding="utf-8",
@@ -296,6 +296,7 @@ def test_sync_round_publishes_portfolio_allocations(tmp_path: Path) -> None:
     assert len(sink.upserts["round_weekly_prices"]) == 6
     assert len(sink.upserts["round_weekly_performance"]) == 2
     assert sink.upserts["round_weekly_performance"][1]["submission_format"] == "portfolio"
+    assert sink.upserts["official_results"][0]["key_risks"] == ["Risk clause; still one risk."]
 
 
 def test_sync_latest_clears_stale_rows_when_no_public_resolved_round(tmp_path: Path) -> None:

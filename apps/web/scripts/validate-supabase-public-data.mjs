@@ -54,6 +54,7 @@ function normalizeTimestamp(value) {
 }
 
 function finiteNumber(value) {
+  if (value === null || value === undefined || value === "") return null;
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric : null;
 }
@@ -83,8 +84,36 @@ function assertNear(actual, expected, context, tolerance = 0.000001) {
   }
 }
 
+function assertNullableNear(actual, expected, context, tolerance = 0.000001) {
+  if (actual === null || actual === undefined || actual === "") {
+    if (expected !== null && expected !== undefined && expected !== "") fail(`${context}: expected ${expected}, got ${actual}`);
+    return;
+  }
+  if (expected === null || expected === undefined || expected === "") {
+    fail(`${context}: expected ${expected}, got ${actual}`);
+    return;
+  }
+  assertNear(actual, expected, context, tolerance);
+}
+
 function uniquePortfolioKey(row) {
   return `${row.round_id}:${row.run_id}:${row.model_id}`;
+}
+
+function runKey(row) {
+  return `${row.round_id}:${row.run_id}`;
+}
+
+function resultKey(row) {
+  return `${row.round_id}:${row.run_id}:${row.model_id}`;
+}
+
+function returnKey(row) {
+  return `${row.round_id}:${row.run_id}:${row.option_id}`;
+}
+
+function allocationKey(row) {
+  return `${row.round_id}:${row.run_id}:${row.model_id}:${row.allocation_rank}:${row.option_id}`;
 }
 
 function interimPerformanceKey(row) {
@@ -170,6 +199,84 @@ function compareRounds(rows) {
 
   for (const actualId of actualIds) {
     if (!expectedIds.has(actualId)) fail(`Supabase rounds has extra published round ${actualId}`);
+  }
+}
+
+function expectedRuns() {
+  return apiReadModel.rounds.map((round) => {
+    const manifestPath = join(repoRoot, "rounds", round.round_id, "runs", round.official_run_id, "run_manifest.yaml");
+    const manifest = readYaml(manifestPath, {});
+    return {
+      round_id: round.round_id,
+      run_id: round.official_run_id,
+      run_type: String(manifest.run_type ?? ""),
+      mode: String(manifest.mode ?? ""),
+      mock: Boolean(manifest.mock),
+      official_score_eligible: Boolean(manifest.official_score_eligible),
+      operator_selected_official: Boolean(manifest.operator_selected_official),
+      methodology_version: String(manifest.methodology_version ?? ""),
+      replicates: Number(manifest.replicates ?? 1),
+      model_count: finiteNumber(manifest.model_count),
+      valid_submissions: finiteNumber(manifest.valid_submissions),
+      invalid_submissions: finiteNumber(manifest.invalid_submissions),
+      created_at_utc: manifest.created_at_utc ?? "",
+      completed_at_utc: manifest.completed_at_utc ?? ""
+    };
+  });
+}
+
+function compareRuns(rows) {
+  const expectedRows = expectedRuns();
+  const byKey = new Map(rows.map((row) => [runKey(row), row]));
+  const expectedKeys = new Set(expectedRows.map(runKey));
+  const actualKeys = new Set(rows.map(runKey));
+  assertEqual(rows.length, expectedRows.length, "Supabase runs row count");
+
+  for (const expected of expectedRows) {
+    const key = runKey(expected);
+    const actual = byKey.get(key);
+    if (!actual) {
+      fail(`Supabase runs missing ${key}`);
+      continue;
+    }
+    assertEqual(actual.run_type ?? "", expected.run_type, `Supabase runs ${key} run_type`);
+    assertEqual(actual.mode ?? "", expected.mode, `Supabase runs ${key} mode`);
+    assertEqual(Boolean(actual.mock), expected.mock, `Supabase runs ${key} mock`);
+    assertEqual(Boolean(actual.official_score_eligible), expected.official_score_eligible, `Supabase runs ${key} official_score_eligible`);
+    assertEqual(Boolean(actual.operator_selected_official), expected.operator_selected_official, `Supabase runs ${key} operator_selected_official`);
+    assertEqual(actual.methodology_version ?? "", expected.methodology_version, `Supabase runs ${key} methodology_version`);
+    assertEqual(Number(actual.replicates ?? 1), expected.replicates, `Supabase runs ${key} replicates`);
+    assertEqual(finiteNumber(actual.model_count), expected.model_count, `Supabase runs ${key} model_count`);
+    assertEqual(finiteNumber(actual.valid_submissions), expected.valid_submissions, `Supabase runs ${key} valid_submissions`);
+    assertEqual(finiteNumber(actual.invalid_submissions), expected.invalid_submissions, `Supabase runs ${key} invalid_submissions`);
+    assertEqual(normalizeTimestamp(actual.created_at_utc), normalizeTimestamp(expected.created_at_utc), `Supabase runs ${key} created_at_utc`);
+    assertEqual(normalizeTimestamp(actual.completed_at_utc), normalizeTimestamp(expected.completed_at_utc), `Supabase runs ${key} completed_at_utc`);
+  }
+
+  for (const actualKey of actualKeys) {
+    if (!expectedKeys.has(actualKey)) fail(`Supabase runs has extra published row ${actualKey}`);
+  }
+}
+
+function compareModels(rows) {
+  const expectedRows = apiReadModel.models;
+  const byId = new Map(rows.map((row) => [row.model_id, row]));
+  const expectedIds = new Set(expectedRows.map((row) => row.model_id));
+  const actualIds = new Set(rows.map((row) => row.model_id));
+  assertEqual(rows.length, expectedRows.length, "Supabase models row count");
+
+  for (const expected of expectedRows) {
+    const actual = byId.get(expected.model_id);
+    if (!actual) {
+      fail(`Supabase models missing ${expected.model_id}`);
+      continue;
+    }
+    assertEqual(actual.provider, expected.provider, `Supabase models ${expected.model_id} provider`);
+    assertEqual(actual.display_name ?? "", expected.label, `Supabase models ${expected.model_id} display_name`);
+  }
+
+  for (const actualId of actualIds) {
+    if (!expectedIds.has(actualId)) fail(`Supabase models has extra published model ${actualId}`);
   }
 }
 
@@ -422,6 +529,136 @@ function compareSubmissions(rows) {
   }
 }
 
+function portfolioByKey() {
+  return new Map(apiReadModel.portfolios.map((row) => [uniquePortfolioKey(row), row]));
+}
+
+function expectedPortfolioMetrics(portfolio) {
+  const assets = new Map(apiReadModel.assets.map((asset) => [asset.option_id, asset]));
+  const allocations = Array.isArray(portfolio?.allocations) ? portfolio.allocations : [];
+  let maxAllocationBps = 0;
+  let cashAllocationBps = 0;
+  let benchmarkAllocationBps = 0;
+  let concentrationHhi = 0;
+  for (const allocation of allocations) {
+    const allocationBps = Number(allocation.allocation_bps ?? 0);
+    const asset = assets.get(allocation.option_id);
+    maxAllocationBps = Math.max(maxAllocationBps, allocationBps);
+    if (asset?.is_cash) cashAllocationBps += allocationBps;
+    if (asset?.is_benchmark || allocation.option_id === "SP500") benchmarkAllocationBps += allocationBps;
+    const weight = allocationBps / 10_000;
+    concentrationHhi += weight * weight;
+  }
+  return {
+    max_allocation_bps: maxAllocationBps || 10_000,
+    cash_allocation_bps: cashAllocationBps,
+    benchmark_allocation_bps: benchmarkAllocationBps,
+    concentration_hhi: concentrationHhi || null
+  };
+}
+
+function compareSubmissionAllocations(rows) {
+  const expectedRows = apiReadModel.allocations;
+  const byKey = new Map(rows.map((row) => [allocationKey(row), row]));
+  const expectedKeys = new Set(expectedRows.map(allocationKey));
+  const actualKeys = new Set(rows.map(allocationKey));
+  assertEqual(rows.length, expectedRows.length, "Supabase submission_allocations row count");
+
+  for (const expected of expectedRows) {
+    const key = allocationKey(expected);
+    const actual = byKey.get(key);
+    if (!actual) {
+      fail(`Supabase submission_allocations missing ${key}`);
+      continue;
+    }
+    assertEqual(Number(actual.allocation_bps), Number(expected.allocation_bps), `Supabase submission_allocations ${key} allocation_bps`);
+    assertEqual(actual.rationale_summary ?? "", expected.rationale ?? "", `Supabase submission_allocations ${key} rationale`);
+  }
+
+  for (const actualKey of actualKeys) {
+    if (!expectedKeys.has(actualKey)) fail(`Supabase submission_allocations has extra published row ${actualKey}`);
+  }
+}
+
+function compareOfficialResults(rows) {
+  const expectedRows = apiReadModel.results;
+  const portfolios = portfolioByKey();
+  const byKey = new Map(rows.map((row) => [resultKey(row), row]));
+  const expectedKeys = new Set(expectedRows.map(resultKey));
+  const actualKeys = new Set(rows.map(resultKey));
+  assertEqual(rows.length, expectedRows.length, "Supabase official_results row count");
+
+  for (const expected of expectedRows) {
+    const key = resultKey(expected);
+    const actual = byKey.get(key);
+    const portfolio = portfolios.get(key);
+    if (!actual) {
+      fail(`Supabase official_results missing ${key}`);
+      continue;
+    }
+    assertEqual(actual.provider, expected.provider, `Supabase official_results ${key} provider`);
+    if (portfolio) assertEqual(actual.mode ?? "", portfolio.mode ?? "", `Supabase official_results ${key} mode`);
+    assertEqual(actual.submission_format ?? "", expected.submission_format ?? "", `Supabase official_results ${key} submission_format`);
+    assertEqual(actual.selected_option_id ?? "", expected.selected_option_id ?? "", `Supabase official_results ${key} selected_option_id`);
+    assertEqual(Number(actual.holding_count ?? 1), Number(expected.holding_count ?? 1), `Supabase official_results ${key} holding_count`);
+    assertNullableNear(actual.confidence, expected.confidence, `Supabase official_results ${key} confidence`);
+    assertNullableNear(actual.selected_asset_return, expected.selected_asset_return_pct / 100, `Supabase official_results ${key} selected_asset_return`);
+    assertNullableNear(actual.portfolio_return, expected.portfolio_return_pct / 100, `Supabase official_results ${key} portfolio_return`);
+    assertNullableNear(actual.sp500_return, expected.benchmark_return_pct / 100, `Supabase official_results ${key} sp500_return`);
+    assertNullableNear(actual.alpha_vs_sp500, expected.alpha_pp / 100, `Supabase official_results ${key} alpha_vs_sp500`);
+    assertNullableNear(actual.regret_vs_best_option, expected.regret_vs_best_option_pct / 100, `Supabase official_results ${key} regret_vs_best_option`);
+    assertEqual(finiteNumber(actual.rank_among_options), finiteNumber(expected.rank_among_options), `Supabase official_results ${key} rank_among_options`);
+    const metrics = expectedPortfolioMetrics(portfolio);
+    assertEqual(Number(actual.max_allocation_bps ?? 10_000), metrics.max_allocation_bps, `Supabase official_results ${key} max_allocation_bps`);
+    assertEqual(Number(actual.cash_allocation_bps ?? 0), metrics.cash_allocation_bps, `Supabase official_results ${key} cash_allocation_bps`);
+    assertEqual(Number(actual.benchmark_allocation_bps ?? 0), metrics.benchmark_allocation_bps, `Supabase official_results ${key} benchmark_allocation_bps`);
+    assertNullableNear(actual.concentration_hhi, metrics.concentration_hhi, `Supabase official_results ${key} concentration_hhi`);
+    if (portfolio) {
+      assertEqual(actual.rationale_summary ?? "", portfolio.rationale_summary ?? "", `Supabase official_results ${key} rationale_summary`);
+      assertEqual(
+        JSON.stringify(normalizedStringArray(actual.key_risks)),
+        JSON.stringify(normalizedStringArray(portfolio.key_risks)),
+        `Supabase official_results ${key} key_risks`
+      );
+    }
+  }
+
+  for (const actualKey of actualKeys) {
+    if (!expectedKeys.has(actualKey)) fail(`Supabase official_results has extra published row ${actualKey}`);
+  }
+}
+
+function compareOptionReturns(rows) {
+  const expectedRows = apiReadModel.returns;
+  const byKey = new Map(rows.map((row) => [returnKey(row), row]));
+  const expectedKeys = new Set(expectedRows.map(returnKey));
+  const actualKeys = new Set(rows.map(returnKey));
+  assertEqual(rows.length, expectedRows.length, "Supabase option_returns row count");
+
+  for (const expected of expectedRows) {
+    const key = returnKey(expected);
+    const actual = byKey.get(key);
+    if (!actual) {
+      fail(`Supabase option_returns missing ${key}`);
+      continue;
+    }
+    assertEqual(actual.label ?? "", expected.label ?? "", `Supabase option_returns ${key} label`);
+    assertEqual(actual.asset_symbol ?? "", expected.ticker ?? "", `Supabase option_returns ${key} asset_symbol`);
+    assertNullableNear(actual.entry_price, expected.entry_price, `Supabase option_returns ${key} entry_price`);
+    assertNullableNear(actual.exit_price, expected.exit_price, `Supabase option_returns ${key} exit_price`);
+    assertEqual(actual.entry_price_source ?? "", expected.entry_price_source ?? "", `Supabase option_returns ${key} entry_price_source`);
+    assertEqual(actual.exit_price_source ?? "", expected.exit_price_source ?? "", `Supabase option_returns ${key} exit_price_source`);
+    assertNullableNear(actual.realized_return, expected.return_pct / 100, `Supabase option_returns ${key} realized_return`);
+    assertEqual(Number(actual.rank), Number(expected.rank), `Supabase option_returns ${key} rank`);
+    assertEqual(Boolean(actual.is_benchmark), Boolean(expected.is_benchmark), `Supabase option_returns ${key} is_benchmark`);
+    assertEqual(Boolean(actual.is_cash), Boolean(expected.is_cash), `Supabase option_returns ${key} is_cash`);
+  }
+
+  for (const actualKey of actualKeys) {
+    if (!expectedKeys.has(actualKey)) fail(`Supabase option_returns has extra published row ${actualKey}`);
+  }
+}
+
 function compareRoundWeeklyPerformance(rows) {
   const expectedRows = (apiReadModel.interim_performance ?? []).filter((row) => row.published === true);
   const byKey = new Map(rows.map((row) => [interimPerformanceKey(row), row]));
@@ -461,12 +698,43 @@ const rounds = await select("rounds", {
 });
 compareRounds(rounds);
 
+const runs = await select("runs", {
+  select:
+    "round_id,run_id,run_type,mode,mock,official_score_eligible,operator_selected_official,methodology_version,replicates,model_count,valid_submissions,invalid_submissions,created_at_utc,completed_at_utc",
+  published: "eq.true",
+  order: "round_id.desc,run_id.asc"
+});
+compareRuns(runs);
+
+const models = await select("models", {
+  select: "model_id,provider,display_name",
+  published: "eq.true",
+  order: "model_id.asc"
+});
+compareModels(models);
+
 const options = await select("options", {
   select: "round_id,option_id,name,symbol,asset_class,option_group,risk_bucket,is_cash,is_benchmark,include_in_universe,sort_order",
   published: "eq.true",
   order: "round_id.desc,sort_order.asc"
 });
 compareOptions(options);
+
+const officialResults = await select("official_results", {
+  select:
+    "round_id,run_id,model_id,provider,mode,submission_format,selected_option_id,confidence,selected_asset_return,portfolio_return,sp500_return,alpha_vs_sp500,regret_vs_best_option,rank_among_options,holding_count,max_allocation_bps,cash_allocation_bps,benchmark_allocation_bps,concentration_hhi,rationale_summary,key_risks",
+  published: "eq.true",
+  order: "round_id.desc,model_id.asc"
+});
+compareOfficialResults(officialResults);
+
+const optionReturns = await select("option_returns", {
+  select:
+    "round_id,run_id,option_id,label,asset_symbol,entry_price,exit_price,entry_price_source,exit_price_source,realized_return,rank,is_benchmark,is_cash",
+  published: "eq.true",
+  order: "round_id.desc,rank.asc"
+});
+compareOptionReturns(optionReturns);
 
 for (const track of ["weekly", "monthly"]) {
   const rows = await select("latest_leaderboard", {
@@ -500,6 +768,13 @@ const submissions = await select("submissions", {
 });
 compareSubmissions(submissions);
 
+const submissionAllocations = await select("submission_allocations", {
+  select: "round_id,run_id,model_id,replicate_index,option_id,allocation_bps,allocation_rank,rationale_summary",
+  published: "eq.true",
+  order: "round_id.desc,model_id.asc,allocation_rank.asc"
+});
+compareSubmissionAllocations(submissionAllocations);
+
 const weeklyPerformance = await select("round_weekly_performance", {
   select:
     "round_id,run_id,model_id,provider,target_date,price_date,days_elapsed,run_type,submission_format,selected_option_id,holding_count,model_return,sp500_return,alpha_vs_sp500,price_status",
@@ -518,8 +793,13 @@ console.log(
     ok: true,
     supabase_public_data_checks: true,
     rounds: rounds.length,
+    runs: runs.length,
+    models: models.length,
     options: options.length,
+    official_results: officialResults.length,
+    option_returns: optionReturns.length,
     submissions: submissions.length,
+    submission_allocations: submissionAllocations.length,
     weekly_performance: weeklyPerformance.length,
     cumulative_official: cumulativeOfficial.length,
     cumulative_stability: cumulativeStability.length
