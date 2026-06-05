@@ -732,6 +732,18 @@ const universeHtml = readHtml("universe/index.html");
 const apiHtml = readHtml("api/index.html");
 const methodologyHtml = readHtml("methodology/index.html");
 const scoringHtml = readHtml("scoring/index.html");
+const changelogHtml = readHtml("changelog/index.html");
+const changelogSource = readRepoText("apps", "web", "src", "data", "changelog.ts");
+const latestChangelogMatch = changelogSource.match(/id:\s*"([^"]+)"[\s\S]*?date:\s*"(\d{4}-\d{2}-\d{2})"[\s\S]*?title:\s*"([^"]+)"/);
+const changelogEntryCount = [...changelogSource.matchAll(/^\s*id:\s*"/gm)].length;
+if (latestChangelogMatch) {
+  includes(changelogHtml, latestChangelogMatch[1], "changelog latest entry id");
+  includes(changelogHtml, latestChangelogMatch[2], "changelog latest entry date");
+  includes(changelogHtml, latestChangelogMatch[3], "changelog latest entry title");
+  includes(changelogHtml, `"numberOfItems":${changelogEntryCount}`, "changelog structured data item count");
+} else {
+  failures.push("changelog source latest entry could not be parsed");
+}
 
 for (const track of ["weekly", "monthly"]) {
   const cumulative = buildCumulativeLeaderboardData(apiReadModel, track);

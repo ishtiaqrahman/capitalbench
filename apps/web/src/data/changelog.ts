@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-05-public-data-contract-audit",
+    date: "2026-06-05",
+    title: "Public data contract validation expanded",
+    category: "Data",
+    status: "published",
+    summary:
+      "CapitalBench expanded automated checks for displayed benchmark data, documentation examples, sitemap metadata, and API contract behavior.",
+    details: [
+      "Rendered-page validation now checks homepage, leaderboards, round pages, model pages, universe data, methodology/scoring claims, and API documentation examples against generated source data.",
+      "The OpenAPI spec now lists only the working production API host and documents only implemented parameters for leaderboard and positioning-change endpoints.",
+      "The Data API now rejects mixed weekly/monthly leaderboard requests and unknown model or asset identifiers instead of returning misleading empty success responses.",
+      "The website build and API tests now verify that documented API endpoints are actually served by the runtime handler with current model, asset, and round IDs."
+    ],
+    links: [
+      { label: "API docs", href: "/api" },
+      { label: "OpenAPI spec", href: "/api/openapi.json" },
+      { label: "Scoring", href: "/scoring" }
+    ]
+  },
+  {
     id: "2026-06-04-all-resolved-scorecards",
     date: "2026-06-04",
     title: "Overall scorecards now combine all resolved tests",

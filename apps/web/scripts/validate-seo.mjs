@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const distDir = new URL("../dist/", import.meta.url).pathname;
+const changelogSourcePath = new URL("../src/data/changelog.ts", import.meta.url).pathname;
 const siteUrl = "https://www.capitalbench.org";
 
 function walk(dir) {
@@ -32,13 +33,43 @@ const sitemapPath = join(distDir, "sitemap.xml");
 const robotsPath = join(distDir, "robots.txt");
 const sitemap = readFileSync(sitemapPath, "utf8");
 const robots = readFileSync(robotsPath, "utf8");
+const changelogSource = readFileSync(changelogSourcePath, "utf8");
 const htmlFiles = walk(distDir).filter((file) => file.endsWith(".html"));
 const titles = new Map();
 const descriptions = new Map();
 const sitemapUrls = new Set([...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]));
+const sitemapLastmodByUrl = new Map(
+  [...sitemap.matchAll(/<url>\s*<loc>(.*?)<\/loc>\s*<lastmod>(.*?)<\/lastmod>/g)].map((match) => [match[1], match[2]])
+);
+const latestChangelogDate = matchOne(changelogSource, /date:\s*"(\d{4}-\d{2}-\d{2})"/, "latest changelog date", "src/data/changelog.ts");
+const coreDataPaths = [
+  "/",
+  "/leaderboards/",
+  "/leaderboards/latest/",
+  "/leaderboards/latest-weekly/",
+  "/leaderboards/latest-monthly/",
+  "/leaderboards/cumulative-official/",
+  "/leaderboards/cumulative-weekly/",
+  "/leaderboards/cumulative-monthly/",
+  "/rounds/",
+  "/models/",
+  "/api/",
+  "/methodology/",
+  "/universe/",
+  "/scoring/",
+  "/changelog/"
+];
 
 if (!robots.includes(`${siteUrl}/sitemap.xml`)) {
   throw new Error("robots.txt does not reference the canonical sitemap URL.");
+}
+
+for (const path of coreDataPaths) {
+  const url = `${siteUrl}${path}`;
+  const lastmod = sitemapLastmodByUrl.get(url);
+  if (lastmod !== latestChangelogDate) {
+    throw new Error(`stale sitemap lastmod for ${url}: ${lastmod} !== ${latestChangelogDate}`);
+  }
 }
 
 for (const file of htmlFiles) {

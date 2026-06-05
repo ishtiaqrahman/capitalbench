@@ -1,5 +1,6 @@
 import { staticRoundRecords } from "./localRoundRecords";
 import { staticModelProfiles } from "./modelProfiles";
+import { changelogEntries } from "../data/changelog";
 
 export type RouteMeta = {
   path: string;
@@ -34,7 +35,8 @@ export const siteConfig = {
   themeColor: "#f4f6f5"
 };
 
-const defaultLastmod = "2026-05-26";
+const latestPublicChangeDate = changelogEntries[0]?.date ?? "2026-05-26";
+const defaultLastmod = latestPublicChangeDate;
 const publicRounds = staticRoundRecords();
 const publicModels = staticModelProfiles();
 
@@ -224,7 +226,7 @@ export const routeMeta: RouteMeta[] = [
       "Public CapitalBench changelog for major website, benchmark, data, methodology, security, and operations updates.",
     priority: 0.66,
     changefreq: "monthly",
-    lastmod: "2026-05-26"
+    lastmod: latestPublicChangeDate
   },
   {
     path: "/contribute",
