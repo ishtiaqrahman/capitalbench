@@ -8,6 +8,7 @@
     "api:generate": "node scripts/generate-api-read-model.mjs",
     "api:key": "node scripts/api-key.mjs",
     "audit:score": "node scripts/audit-score-math.mjs",
+    "audit:external-prices": "node scripts/audit-external-prices.mjs",
     "api:test": "node scripts/generate-api-read-model.mjs && node scripts/validate-public-data.mjs && node --test tests/*.test.mjs",
     "build": "node scripts/generate-api-read-model.mjs && node scripts/validate-public-data.mjs && astro check && astro build && node scripts/validate-rendered-data.mjs",
     "email:campaign": "node scripts/email-campaign.mjs",
