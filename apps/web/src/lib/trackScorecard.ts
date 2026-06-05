@@ -117,6 +117,10 @@ function trackLabel(track: BenchmarkTrack): string {
   return track === "weekly" ? "Weekly" : "Monthly";
 }
 
+function roundSortKey(round: RoundRecord): string {
+  return `${round.exit_date ?? ""}:${round.decision_deadline_utc ?? ""}:${round.round_id}`;
+}
+
 type RankEligibility = {
   testsRequired: number;
   isRankEligible: boolean;
@@ -135,7 +139,7 @@ function rankEligibility(testsIncluded: number, testsRequired: number): RankElig
 export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTrack): TrackScorecardData | null {
   const completedRounds = roundRows
     .filter((round) => round.status === "resolved" && roundTrack(round) === track)
-    .sort((left, right) => left.decision_deadline_utc.localeCompare(right.decision_deadline_utc));
+    .sort((left, right) => roundSortKey(left).localeCompare(roundSortKey(right)));
 
   if (completedRounds.length === 0) return null;
 
@@ -317,7 +321,7 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
     comparisonModelCount: new Set(comparisonRounds.flatMap((roundScore) => roundScore.rosterModelIds)).size,
     comparisonMode: "all_resolved_rounds",
     isEarlyCohort: comparisonRoundCount === 1,
-    latestRoundId: completedRounds[completedRounds.length - 1]?.round_id ?? "",
+    latestRoundId: comparisonRounds[comparisonRounds.length - 1]?.round.round_id ?? "",
     averageRows,
     normalizedRows,
     topAverageRow: modelAverageRows.find((row) => row.isRankEligible),

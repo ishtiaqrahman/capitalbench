@@ -1724,7 +1724,10 @@ for (const track of ["weekly", "monthly"]) {
   includes(cumulativeHtml, `${cumulative.comparison.comparison_round_count} resolved`, context);
   includes(cumulativeScorecardHtml, score, context);
   includes(cumulativeScorecardHtml, "Every resolved", context);
-  includes(cumulativeScorecardHtml, `Latest round included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
+  includes(cumulativeScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved tests averaged`, context);
+  includes(cumulativeScorecardHtml, "Full history, not latest only", context);
+  includes(cumulativeScorecardHtml, `Newest resolved test: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
+  includes(cumulativeScorecardHtml, "Rounds averaged:", context);
   for (const roundId of cumulative.comparison.comparison_round_ids) {
     includes(cumulativeScorecardHtml, roundId, context);
   }
@@ -1775,7 +1778,10 @@ for (const track of ["weekly", "monthly"]) {
     includes(indexHtml, leader.label, "homepage weekly lane");
     includes(indexHtml, "Each bar is an average across all resolved tests in that track", "homepage scorecard average explanation");
     includes(homepageWeeklyScorecardHtml, "All Resolved Model Scores", "homepage weekly cumulative chart title");
-    includes(homepageWeeklyScorecardHtml, `Latest round included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative latest included");
+    includes(homepageWeeklyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved tests averaged`, "homepage weekly cumulative averaged count");
+    includes(homepageWeeklyScorecardHtml, "Full history, not latest only", "homepage weekly cumulative scope");
+    includes(homepageWeeklyScorecardHtml, `Newest resolved test: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative newest included");
+    includes(homepageWeeklyScorecardHtml, "Rounds averaged:", "homepage weekly cumulative included rounds");
     for (const row of cumulative.data) {
       includes(homepageWeeklyScorecardHtml, row.label, `homepage weekly cumulative ${row.model_id}`);
       if (typeof row.capitalbench_score === "number") {

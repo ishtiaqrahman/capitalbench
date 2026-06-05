@@ -131,14 +131,15 @@ function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | un
       <span class="panel-kicker">{scorecard.label} track</span>
       <h3 id={`${scorecard.track}-track-scorecard-title`}>All Resolved {scorecard.label} Scores</h3>
       <p>
-        Every resolved {scorecard.label.toLowerCase()} test is included here. The newest single-test result is shown
-        separately below.
+        This is the full {scorecard.label.toLowerCase()} history. Every resolved test is averaged here; the newest
+        single-test result is shown separately below.
       </p>
     </div>
     <div class="track-scorecard-badges" aria-label={`${scorecard.label} scorecard status`}>
-      <span>{scorecard.comparisonRoundCount} resolved tests included</span>
+      <span>{scorecard.comparisonRoundCount} resolved tests averaged</span>
       <span>{scorecard.comparisonModelCount} models scored</span>
-      <span>Latest round included: {scorecard.latestRoundId}</span>
+      <span>Full history, not latest only</span>
+      <span>Newest resolved test: {scorecard.latestRoundId}</span>
     </div>
   </div>
 
@@ -321,7 +322,7 @@ function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | un
   )}
 
   <div class="track-scorecard-notes" aria-label={`${scorecard.label} scorecard notes`}>
-    <span><strong>Included tests:</strong> {scorecard.comparisonRoundIds.join(", ")}</span>
+    <span><strong>Rounds averaged:</strong> {scorecard.comparisonRoundIds.join(", ")}</span>
     {scorecard.excludedRoundIds.length > 0 && (
       <span><strong>Excluded tests:</strong> {scorecard.excludedRoundIds.join(", ")}</span>
     )}
