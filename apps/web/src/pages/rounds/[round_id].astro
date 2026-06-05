@@ -630,13 +630,14 @@ const attributionColumns = [
                 <div>
                   <span class="panel-kicker">CapitalBench Score audit</span>
                   <h3>Score Formula</h3>
+                  <p>Scores are out of 100, not portfolio returns.</p>
                 </div>
               </div>
               <div class="published-score-context">
                 {scoreAuditRows.map((row) => (
                   <span>
                     <strong>{modelLabel(row.modelId)}</strong>
-                    {row.capitalBenchScore.toFixed(1)} score = {pct(row.portfolioReturn)} / {pct(row.maxPossibleReturn)} max
+                    {row.capitalBenchScore.toFixed(1)} / 100 = {pct(row.portfolioReturn)} / {pct(row.maxPossibleReturn)} max
                     asset: {row.maxPossibleReturnLabel}
                   </span>
                 ))}

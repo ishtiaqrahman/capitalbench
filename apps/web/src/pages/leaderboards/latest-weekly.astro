@@ -162,7 +162,7 @@ const initialNowIso = new Date().toISOString();
                   <article class="latest-weekly-score-audit">
                     <span>CapitalBench Score</span>
                     <strong>{winnerScore.toFixed(1)}</strong>
-                    <small>{pct(winnerReturn)} / {pct(maxPossibleReturn)} max</small>
+                    <small>0-100 score, not return % · {pct(winnerReturn)} / {pct(maxPossibleReturn)} max</small>
                   </article>
                 )}
               </div>
@@ -230,13 +230,14 @@ const initialNowIso = new Date().toISOString();
                 <div>
                   <span class="panel-kicker">CapitalBench Score audit</span>
                   <h3>Score Formula</h3>
+                  <p>Scores are out of 100, not portfolio returns.</p>
                 </div>
               </div>
               <div class="published-score-context">
                 {scoreAuditRows.map((row) => (
                   <span>
                     <strong>{modelLabel(row.modelId)}</strong>
-                    {row.capitalBenchScore.toFixed(1)} score = {pct(row.portfolioReturn)} / {pct(row.maxPossibleReturn)} max asset: {row.maxPossibleLabel}
+                    {row.capitalBenchScore.toFixed(1)} / 100 = {pct(row.portfolioReturn)} / {pct(row.maxPossibleReturn)} max asset: {row.maxPossibleLabel}
                   </span>
                 ))}
               </div>

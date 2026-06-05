@@ -164,7 +164,7 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
           <h4 id={`${scorecard.track}-normalized-score-title`}>Full-History Model Scores</h4>
         </div>
         <p>
-          Bars include only models with all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"}. A model added later is listed below until it has full history.
+          This is a 0-100 score, not return percent. Bars include only models with all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"}.
         </p>
       </div>
 
@@ -337,7 +337,7 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
   {leaderScoreAuditText && (
     <div class="track-scorecard-calculation" aria-label={`${scorecard.label} score calculation audit`}>
       <strong>Leader audit</strong>
-      <span>{leaderScoreAuditText}</span>
+      <span>{leaderScoreAuditText} Scores are out of 100, not portfolio returns.</span>
     </div>
   )}
 

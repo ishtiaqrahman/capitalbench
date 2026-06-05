@@ -436,7 +436,7 @@ function cumulativeLeaderScoreAuditText(track, leader) {
     .map(scoreLabel);
   if (values.length === 0) return "";
   if (values.length === 1) return `${leader.label} ${scoreLabel(leader.capitalbench_score)} from one resolved test.`;
-  return `${leader.label} ${scoreLabel(leader.capitalbench_score)} = average of ${values.join(", ")}.`;
+  return `${leader.label} ${scoreLabel(leader.capitalbench_score)} = average of ${values.join(", ")}. Scores are out of 100, not portfolio returns.`;
 }
 
 function shortDate(value) {
@@ -2110,6 +2110,8 @@ for (const [context, html] of [
   includesAny(html, ["all resolved tests", "every resolved test", "resolved test in that track"], `${context} cumulative scope`);
   includes(html, "short history", `${context} late-added model scope`);
 }
+includes(scoringHtml, "The score is not a return percentage", "scoring score scale explanation");
+includes(scoringHtml, "3.93 divided by 4.62", "scoring score scale example");
 
 includes(apiHtml, "cumulative rows average per-test score ratios", "API docs cumulative CapitalBench Score definition");
 includes(apiHtml, "cumulative rows report the average of per-test max values", "API docs cumulative max possible definition");
@@ -2391,6 +2393,8 @@ if (latestResolvedWeeklyRound) {
     includes(latestWeeklyHtml, percentPointLabel(latestWeeklyWinner.portfolio_return_pct), "latest weekly page winner return");
     includes(latestWeeklyHtml, percentPointLabel(latestWeeklyWinner.benchmark_return_pct), "latest weekly page benchmark return");
     includes(latestWeeklyHtml, "CapitalBench Score", "latest weekly page score audit label");
+    includes(latestWeeklyHtml, "0-100 score, not return %", "latest weekly page score scale label");
+    includes(latestWeeklyHtml, "Scores are out of 100, not portfolio returns.", "latest weekly page score scale explanation");
     includes(latestWeeklyHtml, scoreLabel(latestWeeklyWinner.capitalbench_score), "latest weekly page winner score audit");
     includes(
       latestWeeklyHtml,
@@ -2408,7 +2412,7 @@ if (latestResolvedWeeklyRound) {
     includes(latestWeeklyHtml, "CapitalBench Score audit", `latest weekly page score audit ${row.model_id}`);
     includes(
       latestWeeklyHtml,
-      `${scoreLabel(row.capitalbench_score)} score = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max asset: ${assetDisplay(latestWeeklyMaxReturnRow)}`,
+      `${scoreLabel(row.capitalbench_score)} / 100 = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max asset: ${assetDisplay(latestWeeklyMaxReturnRow)}`,
       `latest weekly page score formula ${row.model_id}`
     );
   }
@@ -2530,9 +2534,10 @@ for (const round of apiReadModel.rounds) {
       includes(html, percentPointLabel(row.alpha_pp), `${context} result ${row.model_id} alpha`);
       includes(html, percentPointLabel(row.regret_vs_best_option_pct), `${context} result ${row.model_id} regret`);
       includes(html, "CapitalBench Score audit", `${context} CapitalBench Score audit`);
+      includes(html, "Scores are out of 100, not portfolio returns.", `${context} CapitalBench Score scale explanation`);
       includesCollapsed(
         html,
-        `${scoreLabel(row.capitalbench_score)} score = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max asset: ${assetDisplay(maxReturnRow)}`,
+        `${scoreLabel(row.capitalbench_score)} / 100 = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max asset: ${assetDisplay(maxReturnRow)}`,
         `${context} result ${row.model_id} CapitalBench Score formula`
       );
     }
