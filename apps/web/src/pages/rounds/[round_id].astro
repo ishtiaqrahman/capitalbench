@@ -393,6 +393,30 @@ const resultRows = staticRoundLeaderboard(round.round_id, officialRunId);
 const resultWinner = resultRows[0];
 const resultReturns = staticRoundReturns(round.round_id, officialRunId);
 const allocationResultRows = staticRoundAllocations(round.round_id, officialRunId);
+const maxPossibleReturn = resultReturns
+  .filter((row) => Number.isFinite(row.return))
+  .sort((left, right) => right.return - left.return)[0]?.return;
+const scoreAuditRows =
+  typeof maxPossibleReturn === "number" && Number.isFinite(maxPossibleReturn)
+    ? resultRows
+        .map((row) => {
+          const portfolioReturn = row.portfolio_return ?? row.selected_asset_return;
+          if (typeof portfolioReturn !== "number" || !Number.isFinite(portfolioReturn)) return null;
+          const capitalBenchScore =
+            Math.abs(maxPossibleReturn) < 0.0000001
+              ? Math.abs(portfolioReturn - maxPossibleReturn) < 0.0000001
+                ? 100
+                : 0
+              : (portfolioReturn / maxPossibleReturn) * 100;
+          return {
+            modelId: row.model_id,
+            portfolioReturn,
+            maxPossibleReturn,
+            capitalBenchScore
+          };
+        })
+        .filter((row): row is NonNullable<typeof row> => row !== null)
+    : [];
 const roundScoreChart = buildScoreReturnChartData({
   leaderboard: resultRows,
   returns: resultReturns,
@@ -584,6 +608,24 @@ const attributionColumns = [
       {roundScoreChart.rows.length > 0 && (
         <div class="published-score-panel round-score-panel">
           <ScoreReturnChart chart={roundScoreChart} label={`${benchmarkTrackLabel} result`} />
+          {scoreAuditRows.length > 0 && (
+            <div class="published-score-summary published-score-run-details" aria-label="CapitalBench score audit">
+              <div class="published-score-summary-head">
+                <div>
+                  <span class="panel-kicker">CapitalBench Score audit</span>
+                  <h3>Score Formula</h3>
+                </div>
+              </div>
+              <div class="published-score-context">
+                {scoreAuditRows.map((row) => (
+                  <span>
+                    <strong>{modelLabel(row.modelId)}</strong>
+                    {row.capitalBenchScore.toFixed(1)} score = {pct(row.portfolioReturn)} / {pct(row.maxPossibleReturn)} max
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

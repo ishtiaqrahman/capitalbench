@@ -2359,6 +2359,12 @@ for (const round of apiReadModel.rounds) {
       includes(html, percentPointLabel(row.benchmark_return_pct), `${context} result ${row.model_id} benchmark`);
       includes(html, percentPointLabel(row.alpha_pp), `${context} result ${row.model_id} alpha`);
       includes(html, percentPointLabel(row.regret_vs_best_option_pct), `${context} result ${row.model_id} regret`);
+      includes(html, "CapitalBench Score audit", `${context} CapitalBench Score audit`);
+      includes(
+        html,
+        `${scoreLabel(row.capitalbench_score)} score = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max`,
+        `${context} result ${row.model_id} CapitalBench Score formula`
+      );
     }
     for (const allocation of roundAllocations(round)) {
       const returnRow = returns.find((row) => row.option_id === allocation.option_id);
