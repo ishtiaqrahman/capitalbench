@@ -1,13 +1,61 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
 import { buildCumulativeLeaderboardData } from "../src/lib/dataApi.js";
 
 const failures = [];
 const distRoot = join(process.cwd(), "dist");
+const repoRoot = join(process.cwd(), "..", "..");
 
 function readHtml(path) {
   return readFileSync(join(distRoot, path), "utf8");
+}
+
+function readRepoText(...segments) {
+  const path = join(repoRoot, ...segments);
+  if (!existsSync(path)) return "";
+  return readFileSync(path, "utf8").trim();
+}
+
+function parseCsvLine(line) {
+  const cells = [];
+  let cell = "";
+  let inQuotes = false;
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index];
+    const next = line[index + 1];
+    if (char === '"' && inQuotes && next === '"') {
+      cell += '"';
+      index += 1;
+    } else if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === "," && !inQuotes) {
+      cells.push(cell);
+      cell = "";
+    } else {
+      cell += char;
+    }
+  }
+  cells.push(cell);
+  return cells;
+}
+
+function parseCsvRows(text) {
+  const lines = text.trim().split(/\r?\n/).filter(Boolean);
+  const [headerLine, ...rowLines] = lines;
+  if (!headerLine) return [];
+  const headers = parseCsvLine(headerLine);
+  return rowLines.map((line) => {
+    const cells = parseCsvLine(line);
+    return Object.fromEntries(headers.map((header, index) => [header, cells[index] ?? ""]));
+  });
+}
+
+function numberFromCell(value) {
+  if (value === undefined || value === "") return null;
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : null;
 }
 
 function includes(html, expected, context) {
@@ -245,6 +293,12 @@ function roundSortKey(round) {
   return `${round.exit_date ?? ""}:${round.decision_deadline_utc ?? ""}:${round.round_id ?? ""}`;
 }
 
+function dateLabel(value) {
+  const date = new Date(`${String(value).slice(0, 10)}T00:00:00Z`);
+  if (!Number.isFinite(date.getTime())) return String(value).slice(0, 10);
+  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", timeZone: "UTC" }).format(date);
+}
+
 function latestRound(track, status) {
   return apiReadModel.rounds
     .filter((round) => round.track === track && round.status === status)
@@ -277,6 +331,133 @@ function riskScoreValue(value) {
 function riskScoreShort(value) {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric.toFixed(2) : "n/a";
+}
+
+function effectiveSpreadLabel(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric <= 0) return "0 assets";
+  return `${numeric.toFixed(1)} assets`;
+}
+
+function roundOptionCount(roundId) {
+  const text = readRepoText("rounds", roundId, "options.yaml");
+  if (!text) return null;
+  try {
+    const parsed = parseYaml(text);
+    return (parsed?.options ?? []).filter((option) => option?.include_in_universe !== false).length;
+  } catch {
+    return null;
+  }
+}
+
+function roundEntryPriceRows(roundId) {
+  const text = readRepoText("rounds", roundId, "prices", "entry_prices.csv");
+  if (!text) return [];
+  return parseCsvRows(text)
+    .map((row) => ({
+      option_id: row.option_id,
+      symbol: row.symbol ?? "",
+      date: row.date ?? "",
+      price: numberFromCell(row.price) ?? numberFromCell(row.adj_close) ?? numberFromCell(row.adjClose) ?? numberFromCell(row.close),
+      source: row.source || row.price_source || (row.adj_close || row.adjClose ? "adj_close" : "close")
+    }))
+    .filter((row) => row.option_id && typeof row.price === "number");
+}
+
+function roundProofFileCount(round) {
+  const proof = apiReadModel.proof.find((row) => row.round_id === round.round_id && row.run_id === round.official_run_id);
+  return proof?.hashes?.files ? Object.keys(proof.hashes.files).length : null;
+}
+
+function roundPortfolios(round) {
+  return apiReadModel.portfolios.filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id);
+}
+
+function roundAllocations(round) {
+  return apiReadModel.allocations.filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id);
+}
+
+function buildRoundConcentration(round) {
+  const portfolios = roundPortfolios(round);
+  const allocations = roundAllocations(round);
+  const modelCount = portfolios.length;
+  const byAsset = new Map();
+  for (const allocation of allocations) {
+    const existing =
+      byAsset.get(allocation.option_id) ??
+      {
+        option_id: allocation.option_id,
+        label: allocation.label,
+        ticker: allocation.ticker,
+        is_cash: allocation.option_id === "CASH",
+        total_bps: 0,
+        holders: []
+      };
+    existing.total_bps += allocation.allocation_bps;
+    existing.holders.push({
+      model_id: allocation.model_id,
+      provider: allocation.provider,
+      allocation_pct: allocation.allocation_pct,
+      allocation_bps: allocation.allocation_bps
+    });
+    byAsset.set(allocation.option_id, existing);
+  }
+  const assets = Array.from(byAsset.values())
+    .map((row) => ({
+      ...row,
+      holders: row.holders.sort((left, right) => right.allocation_bps - left.allocation_bps),
+      average_pct: modelCount > 0 ? row.total_bps / modelCount / 100 : 0
+    }))
+    .sort((left, right) => right.average_pct - left.average_pct || left.option_id.localeCompare(right.option_id));
+  const concentrationScore = assets.reduce((total, asset) => total + (asset.average_pct / 100) ** 2, 0);
+  return {
+    model_count: modelCount,
+    assets,
+    top_asset_share_pct: assets[0]?.average_pct ?? 0,
+    top_three_share_pct: assets.slice(0, 3).reduce((total, asset) => total + asset.average_pct, 0),
+    effective_asset_count: concentrationScore > 0 ? 1 / concentrationScore : 0
+  };
+}
+
+function latestRoundPerformanceSnapshot(round) {
+  const rows = (apiReadModel.interim_performance ?? [])
+    .filter(
+      (row) =>
+        row.round_id === round.round_id &&
+        row.run_id === round.official_run_id &&
+        row.published !== false &&
+        typeof row.model_return_pct === "number" &&
+        typeof row.sp500_return_pct === "number" &&
+        typeof row.alpha_pp === "number"
+    )
+    .sort((left, right) => left.target_date.localeCompare(right.target_date) || modelLabel(left.model_id).localeCompare(modelLabel(right.model_id)));
+  const dates = Array.from(new Set(rows.map((row) => row.target_date))).sort();
+  const latestDate = dates.at(-1);
+  const latestRows = latestDate
+    ? rows
+        .filter((row) => row.target_date === latestDate)
+        .sort((left, right) => right.alpha_pp - left.alpha_pp || modelLabel(left.model_id).localeCompare(modelLabel(right.model_id)))
+    : [];
+  return {
+    rows,
+    dates,
+    latest_date: latestDate,
+    latest_rows: latestRows,
+    is_renderable: dates.length >= 2 && rows.some((row) => row.days_elapsed > 0) && rows.length > 0
+  };
+}
+
+function primaryPickCounts(portfolios) {
+  const counts = new Map();
+  for (const portfolio of portfolios) {
+    if (!portfolio.selected_option_id) continue;
+    counts.set(portfolio.selected_option_id, (counts.get(portfolio.selected_option_id) ?? 0) + 1);
+  }
+  let best;
+  for (const entry of counts.entries()) {
+    if (!best || entry[1] > best[1]) best = entry;
+  }
+  return best;
 }
 
 function modelLiveExposure(modelId) {
@@ -721,6 +902,49 @@ for (const round of apiReadModel.rounds) {
   if (portfolios.length !== round.model_count) {
     failures.push(`${context} model_count ${round.model_count} does not match generated portfolio count ${portfolios.length}`);
   }
+  const optionCount = roundOptionCount(round.round_id);
+  const entryPriceRows = roundEntryPriceRows(round.round_id);
+  const proofFileCount = roundProofFileCount(round);
+  const decisionNoun = round.submission_format === "portfolio" ? "allocations" : "picks";
+  if (proofFileCount !== null) {
+    includes(html, `${proofFileCount} public proof hashes`, `${context} proof hash count`);
+    includes(html, `${proofFileCount} artifacts published`, `${context} audit artifact count`);
+  }
+  includes(html, `${portfolios.length} valid model ${decisionNoun}`, `${context} valid model portfolio count`);
+  if (entryPriceRows.length > 0) includes(html, `${entryPriceRows.length} starting-price rows published`, `${context} entry price count`);
+  if (optionCount !== null) {
+    includes(html, `${optionCount} saved choices`, `${context} saved choice count`);
+    includes(html, `${optionCount} model-facing choices`, `${context} model-facing choice count`);
+  }
+
+  const primaryPick = primaryPickCounts(portfolios);
+  if (primaryPick) {
+    const [optionId, count] = primaryPick;
+    includes(html, optionId, `${context} most common primary pick`);
+    includes(html, `${count} of ${portfolios.length} models selected`, `${context} most common pick count`);
+    const consensusPrice = entryPriceRows.find((row) => row.option_id === optionId);
+    if (consensusPrice?.price !== undefined) includes(html, `$${consensusPrice.price.toFixed(2)}`, `${context} consensus start price`);
+  }
+
+  const concentration = buildRoundConcentration(round);
+  if (concentration.assets.length > 0) {
+    includes(html, "Where Models Concentrated In This Test", `${context} consensus section`);
+    includes(html, allocationPctLabel(concentration.top_asset_share_pct), `${context} consensus top exposure pct`);
+    includes(html, allocationPctLabel(concentration.top_three_share_pct), `${context} consensus top-three pct`);
+    includes(html, effectiveSpreadLabel(concentration.effective_asset_count), `${context} consensus effective spread`);
+    includes(html, `Average allocation across ${concentration.model_count} model portfolios`, `${context} consensus model count`);
+    for (const asset of concentration.assets.slice(0, 8)) {
+      const assetContext = `${context} consensus asset ${asset.option_id}`;
+      includesAny(html, [optionDisplay(asset), htmlText(optionDisplay(asset))], `${assetContext} label`);
+      includes(html, allocationPctLabel(asset.average_pct), `${assetContext} average allocation`);
+      includes(html, `${asset.holders.length} model${asset.holders.length === 1 ? "" : "s"}`, `${assetContext} holder count`);
+      for (const holder of asset.holders.slice(0, 4)) {
+        includes(html, modelLabel(holder.model_id), `${assetContext} holder ${holder.model_id}`);
+        includes(html, allocationPctLabel(holder.allocation_pct), `${assetContext} holder ${holder.model_id} allocation`);
+      }
+    }
+  }
+
   for (const portfolio of portfolios) {
     includes(html, modelLabel(portfolio.model_id), `${context} portfolio ${portfolio.model_id}`);
     includes(html, portfolio.selected_option_id, `${context} portfolio ${portfolio.model_id}`);
@@ -743,6 +967,17 @@ for (const round of apiReadModel.rounds) {
     );
     if (benchmark) includes(html, percentPointLabel(benchmark.return_pct), `${context} S&P 500 result`);
     if (Number.isFinite(maxReturn)) includes(html, percentPointLabel(maxReturn), `${context} max possible result`);
+    includes(html, `${returns.length} entry and exit price rows support the final score`, `${context} scoring price row count`);
+    includes(html, "What Moved During The Test", `${context} realized asset returns section`);
+    for (const row of [...returns].sort((left, right) => left.rank - right.rank).slice(0, 12)) {
+      const returnContext = `${context} realized return ${row.option_id}`;
+      includes(html, row.option_id, returnContext);
+      includes(html, row.label, `${returnContext} label`);
+      if (row.ticker) includes(html, row.ticker, `${returnContext} ticker`);
+      includes(html, percentPointLabel(row.return_pct), `${returnContext} return`);
+      includes(html, String(row.entry_price), `${returnContext} entry price`);
+      includes(html, String(row.exit_price), `${returnContext} exit price`);
+    }
     for (const row of resultRows) {
       includes(html, modelLabel(row.model_id), `${context} result ${row.model_id}`);
       includes(html, percentPointLabel(row.portfolio_return_pct), `${context} result ${row.model_id}`);
@@ -750,8 +985,36 @@ for (const round of apiReadModel.rounds) {
       includes(html, percentPointLabel(row.alpha_pp), `${context} result ${row.model_id} alpha`);
       includes(html, percentPointLabel(row.regret_vs_best_option_pct), `${context} result ${row.model_id} regret`);
     }
+    for (const allocation of roundAllocations(round)) {
+      const returnRow = returns.find((row) => row.option_id === allocation.option_id);
+      if (!returnRow) continue;
+      const contribution = (allocation.allocation_pct / 100) * returnRow.return_pct;
+      const attributionContext = `${context} attribution ${allocation.model_id}/${allocation.option_id}`;
+      includes(html, modelLabel(allocation.model_id), attributionContext);
+      includes(html, allocation.option_id, attributionContext);
+      includes(html, allocationPctLabel(allocation.allocation_pct), `${attributionContext} allocation`);
+      includes(html, percentPointLabel(returnRow.return_pct), `${attributionContext} option return`);
+      includes(html, percentPointLabel(contribution), `${attributionContext} contribution`);
+    }
   } else if (resultRows.length > 0) {
     failures.push(`${context} is not resolved but has generated result rows`);
+  } else {
+    const performance = latestRoundPerformanceSnapshot(round);
+    includes(html, "Live Portfolio And S&amp;P 500 Returns", `${context} live performance section`);
+    if (performance.is_renderable) {
+      includes(html, `${dateLabel(performance.latest_date)} snapshot`, `${context} live latest snapshot`);
+      for (const row of performance.latest_rows) {
+        const performanceContext = `${context} live performance ${row.model_id}`;
+        includes(html, modelLabel(row.model_id), performanceContext);
+        includes(html, providerLabelForModel(row.model_id), `${performanceContext} provider`);
+        includes(html, signedPercentPointLabel(row.model_return_pct), `${performanceContext} portfolio return`);
+        includes(html, signedPercentPointLabel(row.sp500_return_pct), `${performanceContext} S&P 500 return`);
+        includes(html, signedPercentPointLabel(row.alpha_pp), `${performanceContext} alpha`);
+        includes(html, row.selected_option_id, `${performanceContext} primary pick`);
+      }
+    } else {
+      includes(html, "Live chart pending", `${context} live performance pending state`);
+    }
   }
 }
 
