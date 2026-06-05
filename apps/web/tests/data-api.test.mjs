@@ -39,11 +39,37 @@ async function authRepoForToken(token, overrides = {}) {
 }
 
 function latestRoundId(track, { status } = {}) {
-  const round = apiReadModel.rounds.find(
-    (item) => item.track === track && (!status || item.status === status) && item.official_run_id
-  );
+  const round = latestRound(track, { status });
   assert.ok(round, `expected a generated ${track} round with an official run`);
   return round.round_id;
+}
+
+function latestRound(track, { status } = {}) {
+  return apiReadModel.rounds
+    .filter((item) => item.track === track && (!status || item.status === status) && item.official_run_id)
+    .sort(
+      (left, right) =>
+        `${right.exit_date ?? ""}:${right.decision_deadline_utc ?? ""}:${right.round_id}`.localeCompare(
+          `${left.exit_date ?? ""}:${left.decision_deadline_utc ?? ""}:${left.round_id}`
+        )
+    )[0];
+}
+
+function modelLabel(modelId) {
+  return apiReadModel.models.find((model) => model.model_id === modelId)?.label ?? modelId;
+}
+
+function canonicalLeaderboardRows(roundId) {
+  return apiReadModel.results
+    .filter((row) => row.round_id === roundId)
+    .sort((left, right) => left.rank - right.rank)
+    .map((row) => ({ ...row, label: modelLabel(row.model_id) }));
+}
+
+function canonicalRoundReturns(roundId) {
+  return apiReadModel.returns
+    .filter((row) => row.round_id === roundId)
+    .sort((left, right) => Number(left.rank ?? 9999) - Number(right.rank ?? 9999));
 }
 
 function assertApproxEqual(actual, expected, tolerance = 1e-9) {
@@ -172,11 +198,13 @@ test("latest weekly leaderboard returns resolved scored rows", async () => {
   const latestWeeklyRound = apiReadModel.rounds.find((item) => item.round_id === latestWeeklyRoundId);
   assert.ok(latestWeeklyRound, "expected latest weekly round metadata");
   const result = await apiGet("/api/v1/leaderboards/latest?track=weekly");
+  const expectedRows = canonicalLeaderboardRows(latestWeeklyRoundId);
 
   assert.equal(result.status, 200);
   assert.equal(result.body.track, "weekly");
   assert.equal(result.body.round_id, latestWeeklyRoundId);
   assert.equal(result.body.data.length, latestWeeklyRound.model_count);
+  assert.deepEqual(result.body.data, expectedRows);
   assert.equal(result.body.data[0].rank, 1);
   assert.equal(typeof result.body.data[0].alpha_pp, "number");
   assert.equal(typeof result.body.data[0].max_possible_return_pct, "number");
@@ -185,17 +213,38 @@ test("latest weekly leaderboard returns resolved scored rows", async () => {
 
 test("cumulative weekly leaderboard ranks eligible all-resolved rows by CapitalBench Score", async () => {
   const result = await apiGet("/api/v1/leaderboards/cumulative?track=weekly");
+  const expected = buildCumulativeLeaderboardData(apiReadModel, "weekly");
+  const resolvedWeeklyRoundIds = apiReadModel.rounds
+    .filter((round) => round.track === "weekly" && round.status === "resolved")
+    .map((round) => round.round_id);
 
   assert.equal(result.status, 200);
+  assert.deepEqual(result.body, expected);
   assert.equal(result.body.track, "weekly");
   assert.equal(result.body.comparison.mode, "all_resolved_rounds");
   assert.ok(result.body.comparison.comparison_round_count > 0);
+  assert.ok(result.body.comparison.comparison_round_count > 1, "weekly scorecard should cover multiple resolved tests");
   assert.equal(result.body.comparison.comparison_round_count, result.body.comparison.completed_round_count);
+  assert.equal(result.body.comparison.comparison_round_count, resolvedWeeklyRoundIds.length);
   assert.ok(result.body.data.length > 0);
   assert.equal(result.body.data[0].rank, 1);
   assert.equal(result.body.data[0].is_rank_eligible, true);
   assert.equal(typeof result.body.data[0].capitalbench_score, "number");
   assert.equal(typeof result.body.data[0].max_possible_return_pct, "number");
+
+  const latestWeeklyRoundId = result.body.comparison.comparison_round_ids.at(-1);
+  let foundNonLatestOnlyAverage = false;
+  for (const row of result.body.data.filter((item) => item.is_rank_eligible)) {
+    const rawRows = apiReadModel.results.filter((item) => item.track === "weekly" && item.model_id === row.model_id);
+    const expectedAverage = rawRows.reduce((total, item) => total + item.capitalbench_score, 0) / rawRows.length;
+    assertApproxEqual(row.capitalbench_score, expectedAverage);
+    const latestOnlyScore = rawRows.find((item) => item.round_id === latestWeeklyRoundId)?.capitalbench_score;
+    if (typeof latestOnlyScore === "number" && Math.abs(latestOnlyScore - expectedAverage) > 1e-9) {
+      foundNonLatestOnlyAverage = true;
+    }
+  }
+  assert.equal(foundNonLatestOnlyAverage, true, "weekly cumulative score should be distinguishable from latest-only scores");
+
   for (let index = 1; index < result.body.data.length; index += 1) {
     const prior = result.body.data[index - 1];
     const current = result.body.data[index];
@@ -258,14 +307,45 @@ test("round portfolios and current universe endpoints return real data", async (
   const latestWeeklyRoundId = latestRoundId("weekly");
   const portfolios = await apiGet(`/api/v1/rounds/${latestWeeklyRoundId}/portfolios`);
   const universe = await apiGet("/api/v1/universe/current");
+  const currentUniverseRound = apiReadModel.rounds.find((round) => round.round_id === apiReadModel.current_universe_round_id);
+  const expectedPortfolios = apiReadModel.portfolios.filter((row) => row.round_id === latestWeeklyRoundId);
+  const expectedUniverse = apiReadModel.assets.filter((asset) => asset.in_current_universe);
 
   assert.equal(portfolios.status, 200);
   assert.equal(portfolios.body.round_id, latestWeeklyRoundId);
+  assert.deepEqual(portfolios.body.data, expectedPortfolios);
   assert.ok(portfolios.body.data.length >= 5);
   assert.ok(portfolios.body.data[0].allocations.length > 0);
   assert.equal(universe.status, 200);
   assert.equal(universe.body.round_id, apiReadModel.current_universe_round_id);
+  assert.equal(universe.body.universe_version, currentUniverseRound?.universe_version ?? null);
+  assert.deepEqual(universe.body.data, expectedUniverse);
   assert.ok(universe.body.data.length >= 60);
+});
+
+test("round results endpoint mirrors canonical scored rows and universe returns", async () => {
+  const latestWeeklyRoundId = latestRoundId("weekly", { status: "resolved" });
+  const round = apiReadModel.rounds.find((item) => item.round_id === latestWeeklyRoundId);
+  assert.ok(round, "expected latest resolved weekly round metadata");
+  const result = await apiGet(`/api/v1/rounds/${latestWeeklyRoundId}/results`);
+  const expectedRows = canonicalLeaderboardRows(latestWeeklyRoundId);
+  const expectedReturns = canonicalRoundReturns(latestWeeklyRoundId);
+  const expectedBenchmarkReturn = expectedReturns.find((row) => row.is_benchmark)?.return_pct ?? null;
+
+  assert.equal(result.status, 200);
+  assert.equal(result.body.round_id, latestWeeklyRoundId);
+  assert.equal(result.body.benchmark_option_id, round.benchmark_option_id);
+  assert.equal(result.body.benchmark_return_pct, expectedBenchmarkReturn);
+  assert.deepEqual(result.body.data, expectedRows);
+  assert.deepEqual(result.body.asset_returns, expectedReturns);
+  assert.ok(result.body.asset_returns.length > result.body.data.length);
+
+  for (const row of result.body.data) {
+    assertApproxEqual(row.alpha_pp, row.portfolio_return_pct - row.benchmark_return_pct);
+    assertApproxEqual(row.regret_vs_best_option_pct, row.max_possible_return_pct - row.portfolio_return_pct);
+    assertApproxEqual(row.capitalbench_score, (row.portfolio_return_pct / row.max_possible_return_pct) * 100);
+    assert.ok(row.capitalbench_score <= 100);
+  }
 });
 
 test("round concentration endpoint returns consensus and concentration data", async () => {
