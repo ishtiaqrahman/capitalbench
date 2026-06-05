@@ -82,6 +82,11 @@ function assetDisplay(row) {
   return row.ticker ? `${row.label} (${row.ticker})` : row.label;
 }
 
+function allocationPctLabel(value) {
+  const numeric = Number(value);
+  return Number.isInteger(numeric) ? `${numeric}%` : `${numeric.toFixed(1)}%`;
+}
+
 function average(values) {
   return values.length ? values.reduce((total, value) => total + value, 0) / values.length : 0;
 }
@@ -385,6 +390,81 @@ for (const asset of apiReadModel.assets.filter((row) => row.in_current_universe)
 
 const latestActiveWeeklyRound = latestRound("weekly", "active");
 if (latestActiveWeeklyRound) includes(apiHtml, `/v1/rounds/${latestActiveWeeklyRound.round_id}/concentration`, "API docs concentration example");
+
+const latestResolvedScoredRound = apiReadModel.rounds
+  .filter(
+    (round) =>
+      round.status === "resolved" &&
+      apiReadModel.results.some((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
+  )
+  .sort((left, right) => roundSortKey(right).localeCompare(roundSortKey(left)))[0];
+
+if (latestResolvedScoredRound) {
+  const context = "homepage latest scored chart";
+  const resultRows = apiReadModel.results
+    .filter((row) => row.round_id === latestResolvedScoredRound.round_id && row.run_id === latestResolvedScoredRound.official_run_id)
+    .sort((left, right) => left.rank - right.rank);
+  const returnRows = apiReadModel.returns.filter(
+    (row) => row.round_id === latestResolvedScoredRound.round_id && row.run_id === latestResolvedScoredRound.official_run_id
+  );
+  const benchmarkReturn = returnRows.find((row) => row.is_benchmark)?.return_pct;
+  const maxReturnRow = [...returnRows]
+    .filter((row) => typeof row.return_pct === "number")
+    .sort((left, right) => right.return_pct - left.return_pct)[0];
+  const allocationRows = apiReadModel.allocations.filter(
+    (row) => row.round_id === latestResolvedScoredRound.round_id && row.run_id === latestResolvedScoredRound.official_run_id
+  );
+
+  includes(indexHtml, "Most Recent Finished Test", context);
+  includes(indexHtml, "Portfolio Return And S&amp;P 500", context);
+  includes(indexHtml, latestResolvedScoredRound.round_id, context);
+  includes(indexHtml, latestResolvedScoredRound.entry_date, `${context} entry date`);
+  includes(indexHtml, latestResolvedScoredRound.exit_date, `${context} exit date`);
+  includes(indexHtml, `<span><strong>Models</strong>${resultRows.length}</span>`, `${context} model count`);
+  includes(indexHtml, `<span><strong>Asset choices</strong>${returnRows.length}</span>`, `${context} asset count`);
+  includes(indexHtml, `<span><strong>Test length</strong>${latestResolvedScoredRound.track === "weekly" ? "Weekly" : "Monthly"}</span>`, `${context} track label`);
+
+  if (typeof benchmarkReturn === "number") {
+    includes(indexHtml, percentPointLabel(benchmarkReturn), `${context} S&P 500 return`);
+    includes(indexHtml, "Benchmark return over the same scoring window", `${context} S&P 500 reference`);
+  } else {
+    failures.push(`${context} missing benchmark return in generated data`);
+  }
+
+  if (maxReturnRow) {
+    includes(indexHtml, "Maximum possible return", `${context} max possible legend`);
+    includes(indexHtml, "Max possible", `${context} max possible row`);
+    includes(indexHtml, percentPointLabel(maxReturnRow.return_pct), `${context} max possible return`);
+    includes(indexHtml, `100% ${htmlText(assetDisplay(maxReturnRow))} hindsight ceiling`, `${context} max possible label`);
+    if (typeof benchmarkReturn === "number") {
+      includes(indexHtml, signedPpLabel(maxReturnRow.return_pct - benchmarkReturn), `${context} max possible minus S&P`);
+    }
+  } else {
+    failures.push(`${context} missing max-return row in generated data`);
+  }
+
+  for (const row of resultRows) {
+    const modelContext = `${context} ${row.model_id}`;
+    includes(indexHtml, modelLabel(row.model_id), modelContext);
+    includes(indexHtml, percentPointLabel(row.portfolio_return_pct), `${modelContext} portfolio return`);
+    includes(indexHtml, signedPpLabel(row.alpha_pp), `${modelContext} alpha`);
+    includes(indexHtml, htmlText(`${modelLabel(row.model_id)}: ${percentPointLabel(row.portfolio_return_pct)}.`), `${modelContext} chart tooltip`);
+
+    const modelAllocations = allocationRows
+      .filter((allocation) => allocation.model_id === row.model_id)
+      .sort((left, right) => left.allocation_rank - right.allocation_rank || right.allocation_bps - left.allocation_bps);
+    if (modelAllocations.length === 0) {
+      failures.push(`${modelContext} has no allocation rows`);
+    }
+    for (const allocation of modelAllocations) {
+      const allocationContext = `${modelContext} allocation ${allocation.option_id}`;
+      const shortLabel = allocation.ticker || allocation.label || allocation.option_id;
+      includes(indexHtml, htmlText(assetDisplay(allocation)), `${allocationContext} full label`);
+      includes(indexHtml, htmlText(shortLabel), `${allocationContext} short label`);
+      includes(indexHtml, allocationPctLabel(allocation.allocation_pct), `${allocationContext} allocation pct`);
+    }
+  }
+}
 
 const activeExposure = buildActiveExposureSummary();
 const largestActiveExposure = activeExposure.rows[0];
