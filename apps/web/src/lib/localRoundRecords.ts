@@ -192,6 +192,10 @@ function booleanFromCell(value: string | undefined): boolean {
   return String(value ?? "").toLowerCase() === "true";
 }
 
+function isBenchmarkOption(optionId: string, value: unknown): boolean {
+  return Boolean(value) || optionId.toUpperCase() === "SP500";
+}
+
 function priceValue(row: Record<string, string>): number | undefined {
   for (const key of ["price", "adj_close", "adjClose", "close", "entry_price"]) {
     const value = numberFromCell(row[key]);
@@ -405,7 +409,7 @@ export function staticUniverseOptions(roundId: string): UniverseOption[] {
       option_group: String(option.option_group ?? option.category ?? "unknown"),
       risk_bucket: String(option.risk_bucket ?? "medium"),
       is_cash: Boolean(option.is_cash),
-      is_benchmark: Boolean(option.is_benchmark),
+      is_benchmark: isBenchmarkOption(String(option.id ?? option.option_id ?? ""), option.is_benchmark),
       sort_order: index + 1
     }))
     .filter((option) => option.option_id);

@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
 
 const failures = [];
@@ -57,6 +58,19 @@ function finiteNumber(value) {
   return Number.isFinite(numeric) ? numeric : null;
 }
 
+function isBenchmarkOption(optionId, value) {
+  return Boolean(value) || String(optionId ?? "").toUpperCase() === "SP500";
+}
+
+function readYaml(path, fallback = null) {
+  if (!existsSync(path)) return fallback;
+  try {
+    return parseYaml(readFileSync(path, "utf8"));
+  } catch {
+    return fallback;
+  }
+}
+
 function assertEqual(actual, expected, context) {
   if (actual !== expected) fail(`${context}: expected ${expected}, got ${actual}`);
 }
@@ -71,6 +85,14 @@ function assertNear(actual, expected, context, tolerance = 0.000001) {
 
 function uniquePortfolioKey(row) {
   return `${row.round_id}:${row.run_id}:${row.model_id}`;
+}
+
+function interimPerformanceKey(row) {
+  return `${row.round_id}:${row.run_id}:${row.model_id}:${normalizeDate(row.target_date)}`;
+}
+
+function optionKey(row) {
+  return `${row.round_id}:${row.option_id}`;
 }
 
 function latestRound(track, status) {
@@ -167,6 +189,61 @@ function normalizedPortfolio(row) {
     .sort((left, right) => left.option_id.localeCompare(right.option_id));
 }
 
+function roundOptions(roundId) {
+  const optionsPath = join(repoRoot, "rounds", roundId, "options.yaml");
+  const yaml = readYaml(optionsPath, {});
+  const options = Array.isArray(yaml?.options) ? yaml.options : [];
+  return options
+    .filter((option) => option.include_in_universe !== false)
+    .map((option, index) => {
+      const optionId = String(option.id ?? option.option_id ?? "");
+      return {
+        round_id: roundId,
+        option_id: optionId,
+        name: String(option.name ?? option.label ?? option.id ?? option.option_id ?? ""),
+        symbol: String(option.symbol ?? option.asset_symbol ?? ""),
+        asset_class: String(option.asset_class ?? "unknown"),
+        option_group: String(option.option_group ?? option.category ?? "unknown"),
+        risk_bucket: String(option.risk_bucket ?? "medium"),
+        is_cash: Boolean(option.is_cash),
+        is_benchmark: isBenchmarkOption(optionId, option.is_benchmark),
+        include_in_universe: option.include_in_universe !== false,
+        sort_order: index + 1
+      };
+    })
+    .filter((option) => option.option_id);
+}
+
+function compareOptions(rows) {
+  const expectedRows = apiReadModel.rounds.flatMap((round) => roundOptions(round.round_id));
+  const byKey = new Map(rows.map((row) => [optionKey(row), row]));
+  const expectedKeys = new Set(expectedRows.map(optionKey));
+  const actualKeys = new Set(rows.map(optionKey));
+  assertEqual(rows.length, expectedRows.length, "Supabase options row count");
+
+  for (const expected of expectedRows) {
+    const key = optionKey(expected);
+    const actual = byKey.get(key);
+    if (!actual) {
+      fail(`Supabase options missing ${key}`);
+      continue;
+    }
+    assertEqual(actual.name ?? "", expected.name, `Supabase options ${key} name`);
+    assertEqual(actual.symbol ?? "", expected.symbol, `Supabase options ${key} symbol`);
+    assertEqual(actual.asset_class ?? "", expected.asset_class, `Supabase options ${key} asset_class`);
+    assertEqual(actual.option_group ?? "", expected.option_group, `Supabase options ${key} option_group`);
+    assertEqual(actual.risk_bucket ?? "", expected.risk_bucket, `Supabase options ${key} risk_bucket`);
+    assertEqual(Boolean(actual.is_cash), expected.is_cash, `Supabase options ${key} is_cash`);
+    assertEqual(Boolean(actual.is_benchmark), expected.is_benchmark, `Supabase options ${key} is_benchmark`);
+    assertEqual(Boolean(actual.include_in_universe), expected.include_in_universe, `Supabase options ${key} include_in_universe`);
+    assertEqual(Number(actual.sort_order), expected.sort_order, `Supabase options ${key} sort_order`);
+  }
+
+  for (const actualKey of actualKeys) {
+    if (!expectedKeys.has(actualKey)) fail(`Supabase options has extra published row ${actualKey}`);
+  }
+}
+
 function compareSubmissions(rows) {
   const expectedRows = apiReadModel.portfolios;
   const byKey = new Map(rows.map((row) => [uniquePortfolioKey(row), row]));
@@ -200,12 +277,51 @@ function compareSubmissions(rows) {
   }
 }
 
+function compareRoundWeeklyPerformance(rows) {
+  const expectedRows = (apiReadModel.interim_performance ?? []).filter((row) => row.published === true);
+  const byKey = new Map(rows.map((row) => [interimPerformanceKey(row), row]));
+  const expectedKeys = new Set(expectedRows.map(interimPerformanceKey));
+  const actualKeys = new Set(rows.map(interimPerformanceKey));
+  assertEqual(rows.length, expectedRows.length, "Supabase round_weekly_performance row count");
+
+  for (const expected of expectedRows) {
+    const key = interimPerformanceKey(expected);
+    const actual = byKey.get(key);
+    if (!actual) {
+      fail(`Supabase round_weekly_performance missing ${key}`);
+      continue;
+    }
+    assertEqual(actual.provider, expected.provider, `Supabase round_weekly_performance ${key} provider`);
+    assertEqual(normalizeDate(actual.price_date), expected.price_date, `Supabase round_weekly_performance ${key} price_date`);
+    assertEqual(Number(actual.days_elapsed), Number(expected.days_elapsed), `Supabase round_weekly_performance ${key} days_elapsed`);
+    assertEqual(actual.run_type ?? "", expected.run_type ?? "", `Supabase round_weekly_performance ${key} run_type`);
+    assertEqual(actual.submission_format ?? "", expected.submission_format ?? "", `Supabase round_weekly_performance ${key} submission_format`);
+    assertEqual(actual.selected_option_id ?? "", expected.selected_option_id ?? "", `Supabase round_weekly_performance ${key} selected_option_id`);
+    assertEqual(Number(actual.holding_count ?? 1), Number(expected.holding_count ?? 1), `Supabase round_weekly_performance ${key} holding_count`);
+    assertNear(Number(actual.model_return) * 100, expected.model_return_pct, `Supabase round_weekly_performance ${key} model_return`);
+    assertNear(Number(actual.sp500_return) * 100, expected.sp500_return_pct, `Supabase round_weekly_performance ${key} sp500_return`);
+    assertNear(Number(actual.alpha_vs_sp500) * 100, expected.alpha_pp, `Supabase round_weekly_performance ${key} alpha_vs_sp500`);
+    assertEqual(actual.price_status ?? "", expected.price_status ?? "", `Supabase round_weekly_performance ${key} price_status`);
+  }
+
+  for (const actualKey of actualKeys) {
+    if (!expectedKeys.has(actualKey)) fail(`Supabase round_weekly_performance has extra published row ${actualKey}`);
+  }
+}
+
 const rounds = await select("rounds", {
   select: "round_id,status,entry_date,exit_date,decision_deadline_utc,methodology_version,submission_format,universe_version",
   published: "eq.true",
   order: "decision_deadline_utc.desc"
 });
 compareRounds(rounds);
+
+const options = await select("options", {
+  select: "round_id,option_id,name,symbol,asset_class,option_group,risk_bucket,is_cash,is_benchmark,include_in_universe,sort_order",
+  published: "eq.true",
+  order: "round_id.desc,sort_order.asc"
+});
+compareOptions(options);
 
 for (const track of ["weekly", "monthly"]) {
   const rows = await select("latest_leaderboard", {
@@ -224,9 +340,26 @@ const submissions = await select("submissions", {
 });
 compareSubmissions(submissions);
 
+const weeklyPerformance = await select("round_weekly_performance", {
+  select:
+    "round_id,run_id,model_id,provider,target_date,price_date,days_elapsed,run_type,submission_format,selected_option_id,holding_count,model_return,sp500_return,alpha_vs_sp500,price_status",
+  published: "eq.true",
+  order: "round_id.desc,target_date.asc,model_id.asc"
+});
+compareRoundWeeklyPerformance(weeklyPerformance);
+
 if (failures.length > 0) {
   console.error(failures.map((failure) => `- ${failure}`).join("\n"));
   process.exit(1);
 }
 
-console.log(JSON.stringify({ ok: true, supabase_public_data_checks: true, rounds: rounds.length, submissions: submissions.length }));
+console.log(
+  JSON.stringify({
+    ok: true,
+    supabase_public_data_checks: true,
+    rounds: rounds.length,
+    options: options.length,
+    submissions: submissions.length,
+    weekly_performance: weeklyPerformance.length
+  })
+);

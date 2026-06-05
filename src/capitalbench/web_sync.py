@@ -222,6 +222,9 @@ def sync_round(
     audit_rows.extend(_round_audit_artifact_rows(manifest.round_id, round_path))
     uploaded_paths.extend(research_uploads)
 
+    if run_id is None:
+        _clear_round_public_run_rows(sink, manifest.round_id)
+
     sink.upsert("rounds", [round_row], on_conflict="round_id")
     sink.upsert("options", option_rows, on_conflict="round_id,option_id")
     sink.upsert("models", list(model_rows.values()), on_conflict="model_id")
@@ -361,12 +364,34 @@ def sync_cumulative_leaderboards(
 
 
 def _public_run_ids(round_path: Path) -> list[str]:
-    public_runs: list[str] = []
+    official_runs: list[str] = []
+    selected_official_runs: list[str] = []
+    other_public_runs: list[str] = []
     for run_id in list_run_ids(round_path):
         manifest = read_run_manifest(get_run_paths(round_path, run_id))
         if _run_is_public_candidate(manifest):
-            public_runs.append(run_id)
-    return public_runs
+            if str(manifest.get("run_type") or "") == "official":
+                official_runs.append(run_id)
+                if bool(manifest.get("operator_selected_official")):
+                    selected_official_runs.append(run_id)
+            else:
+                other_public_runs.append(run_id)
+    return (selected_official_runs or official_runs) + other_public_runs
+
+
+def _clear_round_public_run_rows(sink: WebSyncSink, round_id: str) -> None:
+    for table in [
+        "submission_allocations",
+        "submissions",
+        "official_results",
+        "stability_results",
+        "option_returns",
+        "round_weekly_prices",
+        "round_weekly_performance",
+        "audit_artifacts",
+        "runs",
+    ]:
+        sink.delete_eq(table, {"round_id": round_id})
 
 
 def _run_is_public_candidate(run_manifest: dict[str, Any]) -> bool:

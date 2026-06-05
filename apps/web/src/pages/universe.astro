@@ -34,7 +34,7 @@ function loadUniverseConfig(filename: string): UniverseOption[] {
     option_group: option.option_group,
     risk_bucket: option.risk_bucket,
     is_cash: Boolean(option.is_cash),
-    is_benchmark: Boolean(option.is_benchmark),
+    is_benchmark: Boolean(option.is_benchmark) || option.id.toUpperCase() === "SP500",
     sort_order: index + 1
   }));
 }

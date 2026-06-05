@@ -136,6 +136,23 @@ def test_sync_round_publishes_pending_round_without_leaderboard(tmp_path: Path) 
     assert sink.inserts["sync_events"][0]["status"] == "success"
 
 
+def test_sync_round_uses_operator_selected_official_run_and_clears_stale_public_rows(tmp_path: Path) -> None:
+    round_path = tmp_path / "CB-2026-06-02-1W"
+    copytree(PROJECT_ROOT / "rounds" / "CB-2026-06-02-1W", round_path)
+    sink = FakeSink()
+
+    summary = sync_round(round_path, sink=sink)
+
+    assert summary.status == "success"
+    assert {row["run_id"] for row in sink.upserts["runs"]} == {"official-20260602-clean"}
+    assert {row["run_id"] for row in sink.upserts["submissions"]} == {"official-20260602-clean"}
+    assert len(sink.upserts["submissions"]) == 5
+    assert len(sink.upserts["round_weekly_performance"]) == 15
+    assert ("submissions", {"round_id": "CB-2026-06-02-1W"}) in sink.deletes
+    assert ("round_weekly_performance", {"round_id": "CB-2026-06-02-1W"}) in sink.deletes
+    assert ("runs", {"round_id": "CB-2026-06-02-1W"}) in sink.deletes
+
+
 def test_sync_round_refuses_mock_official_public_result(tmp_path: Path) -> None:
     round_path = tmp_path / "CB-2026-05-10-1M"
     copytree(ROUND_1, round_path)

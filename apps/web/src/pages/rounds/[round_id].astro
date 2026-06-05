@@ -244,15 +244,16 @@ function loadRoundWeeklyPerformance(): WeeklyPerformanceRecord[] {
 }
 
 function optionFromParsed(option: ParsedOption, index: number): UniverseOption {
+  const optionId = option.id ?? "UNKNOWN";
   return {
-    option_id: option.id ?? "UNKNOWN",
+    option_id: optionId,
     name: option.name ?? "Unknown",
     symbol: option.symbol ?? "",
     asset_class: option.asset_class ?? "unknown",
     option_group: option.option_group ?? "unknown",
     risk_bucket: option.risk_bucket ?? "unknown",
     is_cash: Boolean(option.is_cash),
-    is_benchmark: Boolean(option.is_benchmark),
+    is_benchmark: Boolean(option.is_benchmark) || optionId.toUpperCase() === "SP500",
     sort_order: index + 1
   };
 }

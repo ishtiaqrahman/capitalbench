@@ -121,6 +121,10 @@ function boolValue(value) {
   return String(value ?? "").toLowerCase() === "true";
 }
 
+function isBenchmarkOption(optionId, value) {
+  return Boolean(value) || String(optionId ?? "").toUpperCase() === "SP500";
+}
+
 function percentReturnValue(value) {
   const numeric = numberValue(value);
   return numeric === null ? null : numeric * 100;
@@ -210,7 +214,7 @@ function loadOptions(roundPath, currentOptionIds, roundId) {
         category: String(option.option_group ?? option.category ?? "unknown"),
         risk_bucket: String(option.risk_bucket ?? "medium"),
         is_cash: Boolean(option.is_cash),
-        is_benchmark: Boolean(option.is_benchmark),
+        is_benchmark: isBenchmarkOption(optionId, option.is_benchmark),
         sort_order: index + 1,
         first_seen_round_id: roundId,
         latest_round_id: roundId,
