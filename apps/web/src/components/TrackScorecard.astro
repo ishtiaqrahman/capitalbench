@@ -98,6 +98,9 @@ function scoreColumnClass(row: TrackScorecardNormalizedRow): string {
 
 const provisionalScoreRows = scorecard.normalizedRows.filter((row) => row.kind === "model" && !row.isRankEligible);
 const scoreRows = scorecard.normalizedRows.filter((row) => row.kind !== "model" || row.isRankEligible);
+const rankedModelCount = scoreRows.filter((row) => row.kind === "model").length;
+const rankedModelLabel = `${rankedModelCount} full-history model${rankedModelCount === 1 ? "" : "s"} ranked`;
+const shortHistoryLabel = `${provisionalScoreRows.length} short-history model${provisionalScoreRows.length === 1 ? "" : "s"} separated`;
 const scoreValues = scoreRows.map((row) => row.averageScore).filter(finiteNumber);
 const scoreDomainMin = Math.min(0, ...scoreValues);
 const scoreDomainMax = Math.max(100, ...scoreValues);
@@ -139,16 +142,16 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
   <div class="track-scorecard-head">
     <div>
       <span class="panel-kicker">{scorecard.label} track</span>
-      <h3 id={`${scorecard.track}-track-scorecard-title`}>All Resolved {scorecard.label} Scores</h3>
+      <h3 id={`${scorecard.track}-track-scorecard-title`}>Full-History {scorecard.label} Scores</h3>
       <p>
-        This is the full {scorecard.label.toLowerCase()} history. Every resolved test is averaged here; the newest
-        single-test result is shown separately below.
+        This chart averages every resolved {scorecard.label.toLowerCase()} test. The latest single-test result and
+        short-history models are kept separate.
       </p>
     </div>
     <div class="track-scorecard-badges" aria-label={`${scorecard.label} scorecard status`}>
       <span>{scorecard.comparisonRoundCount} resolved tests averaged</span>
-      <span>{scorecard.comparisonModelCount} models scored</span>
-      <span>Full history, not latest only</span>
+      <span>{rankedModelLabel}</span>
+      {provisionalScoreRows.length > 0 && <span>{shortHistoryLabel}</span>}
       <span>Newest resolved test: {scorecard.latestRoundId}</span>
     </div>
   </div>
@@ -158,10 +161,10 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
       <div class="track-scorecard-chart-head">
         <div>
           <span>All resolved tests</span>
-          <h4 id={`${scorecard.track}-normalized-score-title`}>All Resolved Model Scores</h4>
+          <h4 id={`${scorecard.track}-normalized-score-title`}>Full-History Model Scores</h4>
         </div>
         <p>
-          Each bar averages that model's per-test CapitalBench Score across the {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"} listed below.
+          Bars include only models with all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"}. A model added later is listed below until it has full history.
         </p>
       </div>
 
@@ -301,7 +304,7 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
       <div class="track-scorecard-provisional-head">
         <span>Not ranked yet</span>
         <strong>Short-history models</strong>
-        <p>These models have fewer completed tests, so they stay outside the full-history chart.</p>
+        <p>Shown for transparency; not included in the main ranking until they have all {scorecard.comparisonRoundCount} completed tests.</p>
       </div>
       <div class="track-scorecard-provisional-list">
         {provisionalScoreRows.map((row) => (
@@ -317,7 +320,7 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
             </div>
             <dl>
               <div>
-                <dt>Score</dt>
+                <dt>Score ({row.testsIncluded}/{row.testsRequired})</dt>
                 <dd>{scoreLabel(row.averageScore)}</dd>
               </div>
               <div>

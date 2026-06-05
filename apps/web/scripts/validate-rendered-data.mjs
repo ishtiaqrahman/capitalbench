@@ -1772,9 +1772,9 @@ for (const track of ["weekly", "monthly"]) {
 
   includes(cumulativeHtml, `${cumulative.comparison.comparison_round_count} resolved`, context);
   includes(cumulativeScorecardHtml, score, context);
-  includes(cumulativeScorecardHtml, "Every resolved", context);
+  includes(cumulativeScorecardHtml, "averages every resolved", context);
   includes(cumulativeScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved tests averaged`, context);
-  includes(cumulativeScorecardHtml, "Full history, not latest only", context);
+  includes(cumulativeScorecardHtml, "full-history models ranked", context);
   includes(cumulativeScorecardHtml, `Newest resolved test: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
   includes(cumulativeScorecardHtml, "Leader audit", `${context} score calculation audit`);
   includes(cumulativeScorecardHtml, cumulativeLeaderScoreAuditText(track, leader), `${context} score calculation audit`);
@@ -1828,9 +1828,9 @@ for (const track of ["weekly", "monthly"]) {
     includes(indexHtml, `${score} score · ${countLabel}`, "homepage weekly lane");
     includes(indexHtml, leader.label, "homepage weekly lane");
     includes(indexHtml, "Each bar is an average across all resolved tests in that track", "homepage scorecard average explanation");
-    includes(homepageWeeklyScorecardHtml, "All Resolved Model Scores", "homepage weekly cumulative chart title");
+    includes(homepageWeeklyScorecardHtml, "Full-History Model Scores", "homepage weekly cumulative chart title");
     includes(homepageWeeklyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved tests averaged`, "homepage weekly cumulative averaged count");
-    includes(homepageWeeklyScorecardHtml, "Full history, not latest only", "homepage weekly cumulative scope");
+    includes(homepageWeeklyScorecardHtml, "full-history models ranked", "homepage weekly cumulative ranked model count");
     includes(homepageWeeklyScorecardHtml, `Newest resolved test: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative newest included");
     includes(homepageWeeklyScorecardHtml, "Leader audit", "homepage weekly score calculation audit");
     includes(homepageWeeklyScorecardHtml, cumulativeLeaderScoreAuditText(track, leader), "homepage weekly score calculation audit");
@@ -1844,6 +1844,7 @@ for (const track of ["weekly", "monthly"]) {
     }
     if (provisionalRows.length > 0) {
       includes(homepageWeeklyScorecardHtml, "Not ranked yet", "homepage weekly scorecard provisional section");
+      includes(homepageWeeklyScorecardHtml, "not included in the main ranking", "homepage weekly scorecard provisional scope");
     }
     includes(homepageWeeklyScorecardHtml, "Average Return Details", "homepage weekly scorecard average return chart");
     for (const row of scorecard.averageRows) {
