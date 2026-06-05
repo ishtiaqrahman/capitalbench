@@ -170,22 +170,29 @@ function decodeAstroProps(value) {
   return decodeObject(JSON.parse(decodeHtmlAttribute(value)));
 }
 
-function astroIslandProps(html, componentName) {
+function allAstroIslandProps(html, componentName) {
   const pattern = new RegExp(
     `<astro-island(?=[^>]*component-url="[^"]*${componentName}[^"]*")[^>]*\\sprops="([^"]*)"`,
-    "s"
+    "gs"
   );
-  const match = html.match(pattern);
-  if (!match) {
-    failures.push(`homepage ${componentName} island props were not found`);
-    return {};
+  const matches = [...html.matchAll(pattern)];
+  if (matches.length === 0) {
+    failures.push(`${componentName} island props were not found`);
+    return [];
   }
-  try {
-    return decodeAstroProps(match[1]);
-  } catch (error) {
-    failures.push(`homepage ${componentName} island props could not be decoded: ${error.message}`);
-    return {};
+  const props = [];
+  for (const match of matches) {
+    try {
+      props.push(decodeAstroProps(match[1]));
+    } catch (error) {
+      failures.push(`${componentName} island props could not be decoded: ${error.message}`);
+    }
   }
+  return props;
+}
+
+function astroIslandProps(html, componentName) {
+  return allAstroIslandProps(html, componentName)[0] ?? {};
 }
 
 async function dataApiBody(path) {
@@ -263,6 +270,106 @@ function average(values) {
 
 function averageOrNull(values) {
   return values.length ? values.reduce((total, value) => total + value, 0) / values.length : null;
+}
+
+function normalizedScore(value, ceiling) {
+  if (typeof value !== "number" || typeof ceiling !== "number" || !Number.isFinite(value) || !Number.isFinite(ceiling)) return null;
+  if (Math.abs(ceiling) < 0.0000001) return Math.abs(value - ceiling) < 0.0000001 ? 100 : 0;
+  return (value / ceiling) * 100;
+}
+
+function expectedScorecardData(track) {
+  const cumulative = buildCumulativeLeaderboardData(apiReadModel, track);
+  const roundIds = cumulative.comparison.comparison_round_ids;
+  const byRound = new Map();
+  for (const roundId of roundIds) {
+    const rows = apiReadModel.results.filter((row) => row.track === track && row.round_id === roundId);
+    if (rows.length > 0) byRound.set(roundId, rows);
+  }
+
+  const benchmarkReturns = [];
+  const benchmarkScores = [];
+  const maxPossibleReturns = [];
+  for (const roundId of roundIds) {
+    const row = byRound.get(roundId)?.[0];
+    if (!row) continue;
+    if (typeof row.benchmark_return_pct === "number") benchmarkReturns.push(row.benchmark_return_pct);
+    if (typeof row.max_possible_return_pct === "number") maxPossibleReturns.push(row.max_possible_return_pct);
+    const benchmarkScore = normalizedScore(row.benchmark_return_pct, row.max_possible_return_pct);
+    if (typeof benchmarkScore === "number") benchmarkScores.push(benchmarkScore);
+  }
+
+  const eligibleModels = cumulative.data.filter((row) => row.is_rank_eligible);
+  const provisionalModels = cumulative.data.filter((row) => !row.is_rank_eligible);
+  const topReturnModel = [...eligibleModels].sort(
+    (left, right) =>
+      Number(right.portfolio_return_pct ?? -Infinity) - Number(left.portfolio_return_pct ?? -Infinity) ||
+      String(left.label).localeCompare(String(right.label))
+  )[0];
+
+  return {
+    cumulative,
+    averageRows: [
+      ...eligibleModels.map((row) => ({
+        key: row.model_id,
+        label: row.label,
+        value: row.portfolio_return_pct,
+        testsIncluded: row.tests_included,
+        testsRequired: row.tests_required,
+        isRankEligible: row.is_rank_eligible
+      })),
+      ...(benchmarkReturns.length
+        ? [
+            {
+              key: "sp500",
+              label: "S&P 500",
+              value: average(benchmarkReturns),
+              testsIncluded: benchmarkReturns.length,
+              testsRequired: roundIds.length,
+              isRankEligible: benchmarkReturns.length === roundIds.length
+            }
+          ]
+        : []),
+      ...(maxPossibleReturns.length
+        ? [
+            {
+              key: "max-possible",
+              label: "Max possible",
+              value: average(maxPossibleReturns),
+              testsIncluded: maxPossibleReturns.length,
+              testsRequired: roundIds.length,
+              isRankEligible: true
+            }
+          ]
+        : [])
+    ],
+    normalizedRows: [
+      ...cumulative.data.map((row) => ({
+        key: row.model_id,
+        label: row.label,
+        value: row.capitalbench_score,
+        averageReturn: row.portfolio_return_pct,
+        testsIncluded: row.tests_included,
+        testsRequired: row.tests_required,
+        isRankEligible: row.is_rank_eligible
+      })),
+      ...(benchmarkScores.length
+        ? [
+            {
+              key: "sp500",
+              label: "S&P 500",
+              value: average(benchmarkScores),
+              averageReturn: average(benchmarkReturns),
+              testsIncluded: benchmarkScores.length,
+              testsRequired: roundIds.length,
+              isRankEligible: benchmarkScores.length === roundIds.length
+            }
+          ]
+        : [])
+    ],
+    provisionalModels,
+    topReturnModel
+  };
 }
 
 function shortDate(value) {
@@ -1128,6 +1235,7 @@ if (latestChangelogMatch) {
 for (const track of ["weekly", "monthly"]) {
   const cumulative = buildCumulativeLeaderboardData(apiReadModel, track);
   if (cumulative.comparison.comparison_round_count === 0 || cumulative.data.length === 0) continue;
+  const scorecard = expectedScorecardData(track);
 
   const eligibleRows = cumulative.data.filter((row) => row.is_rank_eligible);
   const leader = eligibleRows[0];
@@ -1153,6 +1261,22 @@ for (const track of ["weekly", "monthly"]) {
     }
     includes(cumulativeHtml, `${row.tests_included}/${row.tests_required}`, `${context} ${row.model_id} scored tests`);
   }
+  includes(cumulativeHtml, "Average Return Details", `${context} average return chart`);
+  for (const row of scorecard.averageRows) {
+    if (typeof row.value === "number") {
+      includesAny(cumulativeHtml, htmlTextVariants(row.label), `${context} average return ${row.key} label`);
+      includes(cumulativeHtml, percentPointLabel(row.value), `${context} average return ${row.key} value`);
+    }
+  }
+  const benchmarkScore = scorecard.normalizedRows.find((row) => row.key === "sp500");
+  if (benchmarkScore && typeof benchmarkScore.value === "number") {
+    includes(cumulativeHtml, scoreLabel(benchmarkScore.value), `${context} S&P 500 CapitalBench Score`);
+  }
+  if (scorecard.topReturnModel && typeof scorecard.topReturnModel.portfolio_return_pct === "number") {
+    includes(cumulativeHtml, "Return leader", `${context} return leader label`);
+    includes(cumulativeHtml, scorecard.topReturnModel.label, `${context} return leader model`);
+    includes(cumulativeHtml, percentPointLabel(scorecard.topReturnModel.portfolio_return_pct), `${context} return leader value`);
+  }
 
   const provisionalRows = cumulative.data.filter((row) => !row.is_rank_eligible);
   if (provisionalRows.length > 0) {
@@ -1161,6 +1285,9 @@ for (const track of ["weekly", "monthly"]) {
   for (const row of provisionalRows) {
     includes(cumulativeHtml, `${row.tests_included}/${row.tests_required}`, `${context} provisional marker`);
     includes(cumulativeHtml, "short history", `${context} provisional marker`);
+    if (typeof row.portfolio_return_pct === "number") {
+      includes(cumulativeHtml, percentPointLabel(row.portfolio_return_pct), `${context} provisional average return ${row.model_id}`);
+    }
   }
 
   if (track === "weekly") {
@@ -1178,6 +1305,21 @@ for (const track of ["weekly", "monthly"]) {
     }
     if (provisionalRows.length > 0) {
       includes(indexHtml, "Not ranked yet", "homepage weekly scorecard provisional section");
+    }
+    includes(indexHtml, "Average Return Details", "homepage weekly scorecard average return chart");
+    for (const row of scorecard.averageRows) {
+      if (typeof row.value === "number") {
+        includesAny(indexHtml, htmlTextVariants(row.label), `homepage weekly average return ${row.key} label`);
+        includes(indexHtml, percentPointLabel(row.value), `homepage weekly average return ${row.key} value`);
+      }
+    }
+    if (benchmarkScore && typeof benchmarkScore.value === "number") {
+      includes(indexHtml, scoreLabel(benchmarkScore.value), "homepage weekly S&P 500 CapitalBench Score");
+    }
+    if (scorecard.topReturnModel && typeof scorecard.topReturnModel.portfolio_return_pct === "number") {
+      includes(indexHtml, "Return leader", "homepage weekly return leader label");
+      includes(indexHtml, scorecard.topReturnModel.label, "homepage weekly return leader model");
+      includes(indexHtml, percentPointLabel(scorecard.topReturnModel.portfolio_return_pct), "homepage weekly return leader value");
     }
   }
   includes(leaderboardsHtml, leader.label, `leaderboards index ${track} leader`);
