@@ -70,6 +70,16 @@ function includes(html, expected, context) {
   if (!html.includes(expected)) failures.push(`${context} missing rendered text: ${expected}`);
 }
 
+function collapseWhitespace(value) {
+  return String(value ?? "").replace(/\s+/g, " ").trim();
+}
+
+function includesCollapsed(html, expected, context) {
+  if (!collapseWhitespace(html).includes(collapseWhitespace(expected))) {
+    failures.push(`${context} missing rendered text: ${expected}`);
+  }
+}
+
 function includesAny(html, expectedValues, context) {
   if (!expectedValues.some((expected) => html.includes(expected))) {
     failures.push(`${context} missing rendered text; expected one of: ${expectedValues.join(" | ")}`);
@@ -388,6 +398,20 @@ function expectedScorecardData(track) {
     provisionalModels,
     topReturnModel
   };
+}
+
+function cumulativeLeaderScoreAuditText(track, leader) {
+  if (!leader) return "";
+  const cumulative = buildCumulativeLeaderboardData(apiReadModel, track);
+  const values = cumulative.comparison.comparison_round_ids
+    .map((roundId) =>
+      apiReadModel.results.find((row) => row.track === track && row.round_id === roundId && row.model_id === leader.model_id)?.capitalbench_score
+    )
+    .filter((value) => typeof value === "number" && Number.isFinite(value))
+    .map(scoreLabel);
+  if (values.length === 0) return "";
+  if (values.length === 1) return `${leader.label} ${scoreLabel(leader.capitalbench_score)} from one resolved test.`;
+  return `${leader.label} ${scoreLabel(leader.capitalbench_score)} = average of ${values.join(", ")}.`;
 }
 
 function shortDate(value) {
@@ -1727,6 +1751,8 @@ for (const track of ["weekly", "monthly"]) {
   includes(cumulativeScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved tests averaged`, context);
   includes(cumulativeScorecardHtml, "Full history, not latest only", context);
   includes(cumulativeScorecardHtml, `Newest resolved test: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
+  includes(cumulativeScorecardHtml, "Leader audit", `${context} score calculation audit`);
+  includes(cumulativeScorecardHtml, cumulativeLeaderScoreAuditText(track, leader), `${context} score calculation audit`);
   includes(cumulativeScorecardHtml, "Rounds averaged:", context);
   for (const roundId of cumulative.comparison.comparison_round_ids) {
     includes(cumulativeScorecardHtml, roundId, context);
@@ -1781,6 +1807,8 @@ for (const track of ["weekly", "monthly"]) {
     includes(homepageWeeklyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved tests averaged`, "homepage weekly cumulative averaged count");
     includes(homepageWeeklyScorecardHtml, "Full history, not latest only", "homepage weekly cumulative scope");
     includes(homepageWeeklyScorecardHtml, `Newest resolved test: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative newest included");
+    includes(homepageWeeklyScorecardHtml, "Leader audit", "homepage weekly score calculation audit");
+    includes(homepageWeeklyScorecardHtml, cumulativeLeaderScoreAuditText(track, leader), "homepage weekly score calculation audit");
     includes(homepageWeeklyScorecardHtml, "Rounds averaged:", "homepage weekly cumulative included rounds");
     for (const row of cumulative.data) {
       includes(homepageWeeklyScorecardHtml, row.label, `homepage weekly cumulative ${row.model_id}`);
@@ -1807,6 +1835,10 @@ for (const track of ["weekly", "monthly"]) {
       includes(homepageWeeklyScorecardHtml, scorecard.topReturnModel.label, "homepage weekly return leader model");
       includes(homepageWeeklyScorecardHtml, percentPointLabel(scorecard.topReturnModel.portfolio_return_pct), "homepage weekly return leader value");
     }
+    const allowedScoreAuditText = cumulativeLeaderScoreAuditText(track, leader);
+    const homepageScorecardWithoutLeaderAudit = allowedScoreAuditText
+      ? homepageWeeklyScorecardHtml.replace(allowedScoreAuditText, "")
+      : homepageWeeklyScorecardHtml;
     const cumulativeScoreLabels = new Set(
       scorecard.normalizedRows.filter((row) => typeof row.value === "number").map((row) => scoreLabel(row.value))
     );
@@ -1814,7 +1846,7 @@ for (const track of ["weekly", "monthly"]) {
       if (typeof row.capitalbench_score !== "number") continue;
       const latestOnlyScore = scoreLabel(row.capitalbench_score);
       if (!cumulativeScoreLabels.has(latestOnlyScore)) {
-        excludes(homepageWeeklyScorecardHtml, latestOnlyScore, `homepage weekly scorecard latest-only ${row.model_id} score`);
+        excludes(homepageScorecardWithoutLeaderAudit, latestOnlyScore, `homepage weekly scorecard latest-only ${row.model_id} score`);
       }
     }
   }
@@ -2419,10 +2451,8 @@ for (const round of apiReadModel.rounds) {
     if (resultRows.length === 0) failures.push(`${context} is resolved but has no generated result rows`);
     const returns = apiReadModel.returns.filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id);
     const benchmark = returns.find((row) => row.is_benchmark);
-    const maxReturn = returns.reduce(
-      (best, row) => (typeof row.return_pct === "number" && row.return_pct > best ? row.return_pct : best),
-      -Infinity
-    );
+    const maxReturnRow = [...returns].sort((left, right) => Number(right.return_pct ?? -Infinity) - Number(left.return_pct ?? -Infinity))[0];
+    const maxReturn = maxReturnRow?.return_pct ?? -Infinity;
     if (benchmark) includes(html, percentPointLabel(benchmark.return_pct), `${context} S&P 500 result`);
     if (Number.isFinite(maxReturn)) includes(html, percentPointLabel(maxReturn), `${context} max possible result`);
     includes(html, `${returns.length} entry and exit price rows support the final score`, `${context} scoring price row count`);
@@ -2443,9 +2473,9 @@ for (const round of apiReadModel.rounds) {
       includes(html, percentPointLabel(row.alpha_pp), `${context} result ${row.model_id} alpha`);
       includes(html, percentPointLabel(row.regret_vs_best_option_pct), `${context} result ${row.model_id} regret`);
       includes(html, "CapitalBench Score audit", `${context} CapitalBench Score audit`);
-      includes(
+      includesCollapsed(
         html,
-        `${scoreLabel(row.capitalbench_score)} score = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max`,
+        `${scoreLabel(row.capitalbench_score)} score = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max asset: ${assetDisplay(maxReturnRow)}`,
         `${context} result ${row.model_id} CapitalBench Score formula`
       );
     }

@@ -123,6 +123,16 @@ function scoreMobileBarStyle(value: number): string {
 function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | undefined {
   return provisionalAverageRows.find((averageRow) => averageRow.key === row.key)?.averageReturn;
 }
+
+function scoreAuditText(row: TrackScorecardNormalizedRow | undefined): string {
+  if (!row) return "";
+  const scores = row.scoreValues.filter(finiteNumber).map(scoreLabel);
+  if (scores.length === 0) return "";
+  if (scores.length === 1) return `${row.label} ${scoreLabel(row.averageScore)} from one resolved test.`;
+  return `${row.label} ${scoreLabel(row.averageScore)} = average of ${scores.join(", ")}.`;
+}
+
+const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
 ---
 
 <section class={`track-scorecard-panel track-scorecard-${scorecard.track}`} aria-labelledby={`${scorecard.track}-track-scorecard-title`}>
@@ -318,6 +328,13 @@ function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | un
           </article>
         ))}
       </div>
+    </div>
+  )}
+
+  {leaderScoreAuditText && (
+    <div class="track-scorecard-calculation" aria-label={`${scorecard.label} score calculation audit`}>
+      <strong>Leader audit</strong>
+      <span>{leaderScoreAuditText}</span>
     </div>
   )}
 

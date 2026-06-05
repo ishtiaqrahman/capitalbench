@@ -44,6 +44,7 @@ export type TrackScorecardNormalizedRow = {
   isRankEligible: boolean;
   sampleStatus: "eligible" | "provisional";
   roundsIncluded: string[];
+  scoreValues: number[];
 };
 
 export type TrackScorecardData = {
@@ -242,7 +243,8 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
       averageReturn: average(item.returns),
       testsIncluded: item.scores.length,
       ...rankEligibility(item.scores.length, comparisonRoundCount),
-      roundsIncluded: item.rounds
+      roundsIncluded: item.rounds,
+      scoreValues: item.scores
     }))
     .sort(
       (left, right) =>
@@ -279,7 +281,8 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
         testsRequired: comparisonRoundCount,
         isRankEligible: benchmarkScores.length === comparisonRoundCount,
         sampleStatus: benchmarkScores.length === comparisonRoundCount ? "eligible" : "provisional",
-        roundsIncluded: benchmarkRounds
+        roundsIncluded: benchmarkRounds,
+        scoreValues: benchmarkScores
       }
     : undefined;
 

@@ -393,9 +393,13 @@ const resultRows = staticRoundLeaderboard(round.round_id, officialRunId);
 const resultWinner = resultRows[0];
 const resultReturns = staticRoundReturns(round.round_id, officialRunId);
 const allocationResultRows = staticRoundAllocations(round.round_id, officialRunId);
-const maxPossibleReturn = resultReturns
+const maxPossibleReturnRow = resultReturns
   .filter((row) => Number.isFinite(row.return))
-  .sort((left, right) => right.return - left.return)[0]?.return;
+  .sort((left, right) => right.return - left.return)[0];
+const maxPossibleReturn = maxPossibleReturnRow?.return;
+const maxPossibleReturnLabel = maxPossibleReturnRow
+  ? `${maxPossibleReturnRow.label}${maxPossibleReturnRow.asset_symbol ? ` (${maxPossibleReturnRow.asset_symbol})` : ""}`
+  : "";
 const scoreAuditRows =
   typeof maxPossibleReturn === "number" && Number.isFinite(maxPossibleReturn)
     ? resultRows
@@ -412,7 +416,8 @@ const scoreAuditRows =
             modelId: row.model_id,
             portfolioReturn,
             maxPossibleReturn,
-            capitalBenchScore
+            capitalBenchScore,
+            maxPossibleReturnLabel
           };
         })
         .filter((row): row is NonNullable<typeof row> => row !== null)
@@ -621,6 +626,7 @@ const attributionColumns = [
                   <span>
                     <strong>{modelLabel(row.modelId)}</strong>
                     {row.capitalBenchScore.toFixed(1)} score = {pct(row.portfolioReturn)} / {pct(row.maxPossibleReturn)} max
+                    asset: {row.maxPossibleReturnLabel}
                   </span>
                 ))}
               </div>
