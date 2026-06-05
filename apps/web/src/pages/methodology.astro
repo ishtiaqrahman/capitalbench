@@ -1,6 +1,63 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { parse as parseYaml } from "yaml";
+
+function universeLabelFromFilename(filename: string): string {
+  const match = /^capitalbench_universe_(v\d+_\d+)\.yaml$/.exec(filename);
+  return match ? match[1].replace("_", ".") : filename;
+}
+
+function universeVersionParts(label: string): number[] {
+  return label
+    .replace(/^v/i, "")
+    .split(".")
+    .map((part) => Number(part))
+    .filter((part) => Number.isFinite(part));
+}
+
+function compareUniverseVersions(left: string, right: string): number {
+  const leftParts = universeVersionParts(left);
+  const rightParts = universeVersionParts(right);
+  const length = Math.max(leftParts.length, rightParts.length);
+  for (let index = 0; index < length; index += 1) {
+    const diff = (leftParts[index] ?? 0) - (rightParts[index] ?? 0);
+    if (diff !== 0) return diff;
+  }
+  return left.localeCompare(right);
+}
+
+function includedOptionCount(path: string): number {
+  const parsed = parseYaml(readFileSync(path, "utf8"));
+  return (parsed?.options ?? []).filter((option: { include_in_universe?: boolean }) => option?.include_in_universe !== false).length;
+}
+
+function joinWithAnd(values: string[]): string {
+  if (values.length <= 1) return values[0] ?? "";
+  if (values.length === 2) return `${values[0]} and ${values[1]}`;
+  return `${values.slice(0, -1).join(", ")}, and ${values.at(-1)}`;
+}
+
+const universeDirectory = join(process.cwd(), "..", "..", "configs", "universes");
+const universeVersions = readdirSync(universeDirectory)
+  .filter((filename) => /^capitalbench_universe_v\d+_\d+\.yaml$/.test(filename))
+  .map((filename) => {
+    const label = universeLabelFromFilename(filename);
+    return {
+      label,
+      count: includedOptionCount(join(universeDirectory, filename))
+    };
+  })
+  .sort((left, right) => compareUniverseVersions(left.label, right.label));
+
+const latestUniverse = universeVersions.at(-1);
+const earlierUniverseText = joinWithAnd(
+  universeVersions
+    .filter((version) => version.label !== latestUniverse?.label)
+    .map((version) => `${version.label} with ${version.count} choices`)
+);
 ---
 
 <BaseLayout
@@ -188,9 +245,9 @@ import PageHeader from "../components/PageHeader.astro";
         <h2>Asset List Policy</h2>
         <p>
           Public tests declare an asset-list version in the test manifest and save that exact option file before model
-          calls. New tests use the current configured universe shown on the Asset List page; as of Universe v2.1, that
-          list has 70 choices. Earlier tests stay tied to the exact list the models saw, including v1.5 with 40 choices
-          and v2.0 with 65 choices.
+          calls. New tests use the current configured universe shown on the Asset List page; as of Universe {latestUniverse?.label ?? "current"}, that
+          list has {latestUniverse?.count ?? "the saved"} choices. Earlier tests stay tied to the exact list the models
+          saw{earlierUniverseText ? `, including ${earlierUniverseText}` : ""}.
         </p>
         <p>
           The model sees readable option ids, names, public symbols, asset classes, categories, groups, risk buckets,

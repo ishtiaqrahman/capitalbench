@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
-import { buildCumulativeLeaderboardData } from "../src/lib/dataApi.js";
+import { buildCumulativeLeaderboardData, createMemoryApiAuthRepository, handleDataApiRequest } from "../src/lib/dataApi.js";
 
 const failures = [];
 const distRoot = join(process.cwd(), "dist");
@@ -106,6 +106,24 @@ function htmlText(value) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+}
+
+async function dataApiBody(path) {
+  const result = await handleDataApiRequest({
+    request: new Request(`https://www.capitalbench.org${path}`),
+    env: { API_AUTH_REQUIRED: "false" },
+    authRepo: createMemoryApiAuthRepository(),
+    now: new Date(apiReadModel.generated_at)
+  });
+  if (!result || result.status !== 200) {
+    failures.push(`API docs example path ${path} returned ${result?.status ?? "no result"}`);
+    return {};
+  }
+  return result.body ?? {};
+}
+
+function includesJsonField(html, key, value, context) {
+  includes(html, htmlText(`"${key}": ${JSON.stringify(value)}`), context);
 }
 
 function compactExposurePct(value) {
@@ -712,6 +730,8 @@ const modelsIndexHtml = readHtml("models/index.html");
 const roundsIndexHtml = readHtml("rounds/index.html");
 const universeHtml = readHtml("universe/index.html");
 const apiHtml = readHtml("api/index.html");
+const methodologyHtml = readHtml("methodology/index.html");
+const scoringHtml = readHtml("scoring/index.html");
 
 for (const track of ["weekly", "monthly"]) {
   const cumulative = buildCumulativeLeaderboardData(apiReadModel, track);
@@ -916,8 +936,81 @@ for (const asset of latestUniverse?.rows ?? []) {
   includes(universeHtml, asset.risk_bucket, `${context} risk bucket`);
 }
 
+if (latestUniverse) {
+  includes(methodologyHtml, `Universe ${latestUniverse.label}`, "methodology latest universe label");
+  includes(methodologyHtml, `list has ${latestUniverse.rows.length} choices`, "methodology latest universe count");
+}
+for (const version of universeVersions.slice(1)) {
+  includes(methodologyHtml, `${version.label} with ${version.rows.length} choices`, `methodology universe version ${version.label}`);
+}
+
+for (const [context, html] of [
+  ["methodology", methodologyHtml],
+  ["scoring", scoringHtml]
+]) {
+  includes(html, "100 * portfolio_return / max_possible_return", `${context} CapitalBench Score formula`);
+  includes(html, "max_possible_return - portfolio_return", `${context} regret formula`);
+  includes(html, "portfolio_return - sp500_return", `${context} S&P formula`);
+  includesAny(html, ["all resolved tests", "every resolved test", "resolved test in that track"], `${context} cumulative scope`);
+  includes(html, "short history", `${context} late-added model scope`);
+}
+
 const latestActiveWeeklyRound = latestRound("weekly", "active");
 if (latestActiveWeeklyRound) includes(apiHtml, `/v1/rounds/${latestActiveWeeklyRound.round_id}/concentration`, "API docs concentration example");
+
+const activePositioningApi = await dataApiBody("/api/v1/positioning/active?track=all&group_by=asset");
+const activePositioningTop = activePositioningApi.data?.[0];
+includes(apiHtml, htmlText("GET /v1/positioning/active?track=all&group_by=asset"), "API docs active positioning path");
+includesJsonField(apiHtml, "portfolio_count", activePositioningApi.portfolio_count, "API docs active positioning portfolio count");
+if (activePositioningTop) {
+  includesJsonField(apiHtml, "key", activePositioningTop.key, "API docs active positioning top key");
+  includesJsonField(apiHtml, "allocation_pct", activePositioningTop.allocation_pct, "API docs active positioning top allocation");
+}
+
+const assetHoldersApi = await dataApiBody("/api/v1/assets/SEMICONDUCTORS/model-holders?scope=active&track=weekly");
+const assetHoldersTop = assetHoldersApi.data?.[0];
+includes(apiHtml, htmlText("GET /v1/assets/SEMICONDUCTORS/model-holders?scope=active&track=weekly"), "API docs asset holders path");
+includesJsonField(apiHtml, "portfolio_count", assetHoldersApi.portfolio_count, "API docs asset holders portfolio count");
+if (assetHoldersTop) {
+  includesJsonField(apiHtml, "key", assetHoldersTop.key, "API docs asset holders top model");
+  includesJsonField(apiHtml, "allocation_pct", assetHoldersTop.allocation_pct, "API docs asset holders top allocation");
+}
+
+const livePerformanceApi = await dataApiBody("/api/v1/live/performance?track=all");
+const livePerformanceTop = livePerformanceApi.data?.[0];
+includes(apiHtml, htmlText("GET /v1/live/performance?track=all"), "API docs live performance path");
+includesJsonField(apiHtml, "latest_price_date", livePerformanceApi.latest_price_date, "API docs live performance latest price date");
+includesJsonField(apiHtml, "round_count", livePerformanceApi.round_count, "API docs live performance round count");
+if (livePerformanceTop) {
+  includesJsonField(apiHtml, "model_id", livePerformanceTop.model_id, "API docs live performance top model");
+  includesJsonField(apiHtml, "portfolio_return_pct", livePerformanceTop.portfolio_return_pct, "API docs live performance top portfolio return");
+  includesJsonField(apiHtml, "sp500_return_pct", livePerformanceTop.sp500_return_pct, "API docs live performance top S&P return");
+  includesJsonField(apiHtml, "alpha_pp", livePerformanceTop.alpha_pp, "API docs live performance top alpha");
+}
+
+const latestWeeklyApi = await dataApiBody("/api/v1/leaderboards/latest?track=weekly");
+const latestWeeklyApiTop = latestWeeklyApi.data?.[0];
+includes(apiHtml, htmlText("GET /v1/leaderboards/latest?track=weekly"), "API docs latest weekly leaderboard path");
+includesJsonField(apiHtml, "round_id", latestWeeklyApi.round_id, "API docs latest weekly round id");
+if (latestWeeklyApiTop) {
+  includesJsonField(apiHtml, "model_id", latestWeeklyApiTop.model_id, "API docs latest weekly top model");
+  includesJsonField(apiHtml, "portfolio_return_pct", latestWeeklyApiTop.portfolio_return_pct, "API docs latest weekly top portfolio return");
+  includesJsonField(apiHtml, "max_possible_return_pct", latestWeeklyApiTop.max_possible_return_pct, "API docs latest weekly max possible");
+  includesJsonField(apiHtml, "capitalbench_score", latestWeeklyApiTop.capitalbench_score, "API docs latest weekly top score");
+}
+
+if (latestActiveWeeklyRound) {
+  const concentrationPath = `/api/v1/rounds/${latestActiveWeeklyRound.round_id}/concentration`;
+  const concentrationApi = await dataApiBody(concentrationPath);
+  const concentrationTop = concentrationApi.assets?.[0];
+  includes(apiHtml, concentrationPath.replace(/^\/api/, ""), "API docs round concentration path");
+  includesJsonField(apiHtml, "round_id", concentrationApi.round_id, "API docs round concentration round id");
+  includesJsonField(apiHtml, "model_count", concentrationApi.model_count, "API docs round concentration model count");
+  if (concentrationTop) {
+    includesJsonField(apiHtml, "option_id", concentrationTop.option_id, "API docs round concentration top option");
+    includesJsonField(apiHtml, "allocation_pct", concentrationTop.allocation_pct, "API docs round concentration top allocation");
+  }
+}
 
 const latestResolvedScoredRound = apiReadModel.rounds
   .filter(
