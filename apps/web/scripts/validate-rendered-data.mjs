@@ -90,6 +90,31 @@ function excludes(html, unexpected, context) {
   if (html.includes(unexpected)) failures.push(`${context} contains stale rendered text: ${unexpected}`);
 }
 
+function latestDate(values) {
+  return values.filter(Boolean).sort().at(-1);
+}
+
+function jsonLdGraphItems(html, context) {
+  const match = html.match(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/);
+  if (!match) {
+    failures.push(`${context} missing JSON-LD script`);
+    return [];
+  }
+  try {
+    const parsed = JSON.parse(match[1]);
+    return Array.isArray(parsed["@graph"]) ? parsed["@graph"] : [];
+  } catch (error) {
+    failures.push(`${context} has invalid JSON-LD: ${error.message}`);
+    return [];
+  }
+}
+
+function datasetJsonLd(html, context) {
+  const dataset = jsonLdGraphItems(html, context).find((item) => item?.["@type"] === "Dataset");
+  if (!dataset) failures.push(`${context} missing Dataset JSON-LD`);
+  return dataset ?? {};
+}
+
 function htmlSection(html, startNeedle, context) {
   const start = html.indexOf(startNeedle);
   if (start === -1) {
@@ -2005,6 +2030,11 @@ if (latestMonthlyDisplayRound) {
   validateOfficialPicksIsland(latestMonthlyHtml, latestMonthlyDisplayRound, "latest monthly page");
 }
 
+const roundDecisionDates = apiReadModel.rounds.map((round) => round.decision_date).filter(Boolean).sort();
+const roundsIndexDataset = datasetJsonLd(roundsIndexHtml, "rounds index JSON-LD");
+expectEqual(roundsIndexDataset.datePublished, roundDecisionDates[0], "rounds index JSON-LD datePublished");
+expectEqual(roundsIndexDataset.dateModified, roundDecisionDates.at(-1), "rounds index JSON-LD dateModified");
+
 for (const round of apiReadModel.rounds) {
   const context = `rounds index ${round.round_id}`;
   includes(roundsIndexHtml, round.round_id, context);
@@ -2030,6 +2060,19 @@ if (latestUniverse) {
 if (apiReadModel.current_universe_round_id) {
   includes(universeHtml, apiReadModel.current_universe_round_id, "universe page current round");
 }
+const universeRoundDates = apiReadModel.rounds
+  .filter((round) => round.universe_version)
+  .map((round) => round.decision_date)
+  .filter(Boolean)
+  .sort();
+const currentUniverseRound = apiReadModel.rounds.find((round) => round.round_id === apiReadModel.current_universe_round_id);
+const universeDataset = datasetJsonLd(universeHtml, "universe page JSON-LD");
+expectEqual(universeDataset.datePublished, universeRoundDates[0], "universe page JSON-LD datePublished");
+expectEqual(
+  universeDataset.dateModified,
+  currentUniverseRound?.decision_date ?? universeRoundDates.at(-1),
+  "universe page JSON-LD dateModified"
+);
 for (const version of universeVersions) {
   const context = `universe page version ${version.label}`;
   includes(universeHtml, version.status, `${context} status`);
@@ -2381,6 +2424,19 @@ for (const round of apiReadModel.rounds) {
   includes(html, round.entry_date, context);
   includes(html, round.exit_date, context);
   includes(html, round.status === "resolved" ? "scored" : "pending", context);
+  const roundDataset = datasetJsonLd(html, `${context} JSON-LD`);
+  const roundPublishedDate = round.decision_date || round.entry_date;
+  const roundPerformanceDates = (apiReadModel.interim_performance ?? [])
+    .filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
+    .map((row) => row.price_date || row.target_date);
+  const roundModifiedDate = latestDate([
+    roundPublishedDate,
+    round.status === "resolved" ? round.exit_date : undefined,
+    ...roundPerformanceDates
+  ]);
+  expectEqual(roundDataset.datePublished, roundPublishedDate, `${context} JSON-LD datePublished`);
+  expectEqual(roundDataset.dateModified, roundModifiedDate, `${context} JSON-LD dateModified`);
+  expectEqual(roundDataset.temporalCoverage, `${round.entry_date}/${round.exit_date}`, `${context} JSON-LD temporalCoverage`);
   validateOfficialPicksIsland(html, round, context);
   validateLeaderboardTableIsland(html, round, context);
   validateRoundPerformanceIsland(html, round, context);

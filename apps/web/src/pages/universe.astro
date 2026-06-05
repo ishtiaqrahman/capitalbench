@@ -94,13 +94,19 @@ const universeVersions = readdirSync(universeConfigDir)
 
 const latestUniverse = universeVersions[0];
 const currentUniverseRoundId = apiReadModel.current_universe_round_id;
+const universeRoundDates = apiReadModel.rounds
+  .filter((round) => round.universe_version)
+  .map((round) => round.decision_date)
+  .filter(Boolean)
+  .sort();
+const currentUniverseRound = apiReadModel.rounds.find((round) => round.round_id === currentUniverseRoundId);
 const universeDataset = datasetSchema({
   name: "CapitalBench asset list",
   description:
     "The versioned public asset list used by CapitalBench market tests, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies.",
   path: "/universe",
-  datePublished: "2026-05-12",
-  dateModified: "2026-05-29",
+  datePublished: universeRoundDates[0],
+  dateModified: currentUniverseRound?.decision_date ?? universeRoundDates.at(-1),
   keywords: ["LLM benchmark", "market options", "ETF universe", "AI market benchmark", "CapitalBench"],
   variableMeasured: ["option id", "ticker symbol", "asset class", "option group", "risk bucket"]
 });

@@ -370,6 +370,10 @@ function effectiveSpreadLabel(value: number): string {
   return `${value.toFixed(1)} assets`;
 }
 
+function latestDate(values: Array<string | undefined>): string | undefined {
+  return values.filter((value): value is string => Boolean(value)).sort().at(-1);
+}
+
 const promptInstructions = readRoundText("prompt.md");
 const modelInputText = readRoundText("model_input.md");
 const briefingText = readRoundText("briefing.md");
@@ -483,11 +487,18 @@ const pageDescription =
   round.status === "resolved"
     ? `${round.title}: final model portfolio scores, S&P 500 return, Portfolio Minus S&P 500, entry and exit prices, prompt packet, and proof hashes for the ${round.horizon} market test.`
     : `${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`;
+const roundPublishedDate = round.decision_date || round.entry_date;
+const roundModifiedDate = latestDate([
+  roundPublishedDate,
+  round.status === "resolved" ? round.exit_date : undefined,
+  ...weeklyPerformanceRows.map((row) => row.price_date || row.target_date)
+]);
 const roundDataset = datasetSchema({
   name: `${round.round_id} CapitalBench proof dataset`,
   description: `${round.title}: saved model-facing inputs, prompt artifacts, model portfolios, starting prices, status, and published proof hashes.`,
   path: `/rounds/${round.round_id}`,
-  datePublished: "2026-05-12",
+  datePublished: roundPublishedDate,
+  dateModified: roundModifiedDate,
   temporalCoverage: `${round.entry_date}/${round.exit_date}`,
   keywords: ["LLM market benchmark", "AI market decision", "round audit", round.round_id, "CapitalBench"],
   variableMeasured: [

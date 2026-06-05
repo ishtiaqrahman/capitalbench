@@ -6,12 +6,14 @@ import { staticRoundRecords } from "../../lib/localRoundRecords";
 import { datasetSchema } from "../../lib/seo";
 
 const roundRows = staticRoundRecords();
+const roundDecisionDates = roundRows.map((round) => round.decision_date).filter(Boolean).sort();
 const roundsDataset = datasetSchema({
   name: "CapitalBench public test index",
   description:
     "A public index of CapitalBench market tests, deadlines, time periods, run IDs, scoring status, and proof pages.",
   path: "/rounds",
-  datePublished: "2026-05-12",
+  datePublished: roundDecisionDates[0],
+  dateModified: roundDecisionDates.at(-1),
   keywords: ["LLM benchmark rounds", "market benchmark", "AI evaluation", "CapitalBench"],
   variableMeasured: ["round status", "decision deadline", "entry date", "exit date", "official run id"]
 });
