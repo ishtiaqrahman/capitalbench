@@ -1,5 +1,6 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
 import { buildCumulativeLeaderboardData } from "../src/lib/dataApi.js";
 
@@ -79,6 +80,15 @@ function readJson(path) {
     return JSON.parse(readFileSync(path, "utf8"));
   } catch {
     return null;
+  }
+}
+
+function readYaml(path, fallback = null) {
+  if (!existsSync(path)) return fallback;
+  try {
+    return parseYaml(readFileSync(path, "utf8")) ?? fallback;
+  } catch {
+    return fallback;
   }
 }
 
@@ -185,6 +195,80 @@ function average(values) {
 
 function roundSortValue(round) {
   return `${round?.exit_date ?? ""}:${round?.decision_deadline_utc ?? ""}:${round?.round_id ?? ""}`;
+}
+
+function trackFromManifest(manifest) {
+  const id = String(manifest?.round_id ?? "").toUpperCase();
+  const horizon = String(manifest?.horizon ?? "").toLowerCase();
+  if (id.endsWith("-1W") || horizon.includes("week")) return "weekly";
+  if (id.endsWith("-1M") || horizon.includes("month")) return "monthly";
+  return Number(manifest?.horizon_days ?? 0) <= 10 ? "weekly" : "monthly";
+}
+
+function inferUniverseVersion(round, manifestVersion) {
+  if (manifestVersion) return manifestVersion;
+  const optionsText = readTextFile(join(roundPath(round), "options.yaml"));
+  if (!optionsText) return "";
+  const universeRoot = join(repoRoot, "configs", "universes");
+  if (!existsSync(universeRoot)) return "";
+  for (const filename of readdirSync(universeRoot).filter((item) => /^capitalbench_universe_.*\.yaml$/.test(item)).sort().reverse()) {
+    if (readTextFile(join(universeRoot, filename)) === optionsText) return filename.replace(/\.yaml$/, "");
+  }
+  return "";
+}
+
+function publicOfficialRuns(round) {
+  const runsPath = join(roundPath(round), "runs");
+  if (!existsSync(runsPath)) return [];
+  return readdirSync(runsPath, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => ({
+      run_id: entry.name,
+      manifest: readYaml(join(runsPath, entry.name, "run_manifest.yaml"), {}) ?? {}
+    }))
+    .filter(
+      (run) =>
+        run.manifest.run_type === "official" &&
+        run.manifest.official_score_eligible === true &&
+        Number(run.manifest.invalid_submissions ?? 0) === 0
+    )
+    .sort((left, right) => {
+      if (left.manifest.operator_selected_official && !right.manifest.operator_selected_official) return -1;
+      if (!left.manifest.operator_selected_official && right.manifest.operator_selected_official) return 1;
+      return left.run_id.localeCompare(right.run_id);
+    });
+}
+
+function expectedRoundMetadata(round) {
+  const manifest = readYaml(join(roundPath(round), "manifest.yaml"), {}) ?? {};
+  const selectedRun = publicOfficialRuns(round)[0];
+  const entryDate = String(manifest.entry_date ?? "");
+  const exitDate = String(manifest.exit_date ?? "");
+  const status = existsSync(resultPath(round, "leaderboard.csv")) ? "resolved" : "active";
+  return {
+    manifest,
+    selectedRun,
+    values: {
+      round_id: String(manifest.round_id ?? ""),
+      title: String(manifest.title ?? manifest.round_id ?? ""),
+      description: String(manifest.description ?? "CapitalBench benchmark round."),
+      track: trackFromManifest(manifest),
+      status,
+      decision_date: String(manifest.decision_date ?? ""),
+      decision_deadline_utc: String(manifest.decision_deadline ?? ""),
+      start_at: entryDate ? `${entryDate}T20:00:00Z` : null,
+      end_at: exitDate ? `${exitDate}T20:00:00Z` : null,
+      entry_date: entryDate,
+      exit_date: exitDate,
+      horizon: String(manifest.horizon ?? ""),
+      horizon_days: dayDiff(entryDate, exitDate),
+      methodology_version: selectedRun?.manifest?.methodology_version ?? manifest.methodology_version ?? "",
+      universe_version: inferUniverseVersion(round, manifest.universe_version),
+      submission_format: manifest.submission_format ?? "single_pick",
+      official_run_id: selectedRun?.run_id ?? "",
+      benchmark_option_id: "SP500"
+    }
+  };
 }
 
 function independentCumulativeLeaderboard(track) {
@@ -329,6 +413,16 @@ const modelById = new Map(apiReadModel.models.map((model) => [model.model_id, mo
 const portfoliosByKey = new Map(apiReadModel.portfolios.map((portfolio) => [portfolioKey(portfolio), portfolio]));
 
 for (const round of apiReadModel.rounds) {
+  const metadata = expectedRoundMetadata(round);
+  const roundContext = `${round.round_id} round metadata`;
+  if (!metadata.manifest.round_id) failures.push(`${roundContext} missing manifest.yaml round_id`);
+  if (!metadata.selectedRun) failures.push(`${roundContext} has no selected public official run`);
+  for (const [field, expectedValue] of Object.entries(metadata.values)) {
+    if (round[field] !== expectedValue) {
+      failures.push(`${roundContext} ${field} ${round[field]} does not match manifest/run source ${expectedValue}`);
+    }
+  }
+
   const roundPortfolios = apiReadModel.portfolios.filter((portfolio) => portfolio.round_id === round.round_id && portfolio.run_id === round.official_run_id);
   const modelCount = new Set(roundPortfolios.map((portfolio) => portfolio.model_id)).size;
   if (round.model_count !== modelCount) {
