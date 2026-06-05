@@ -264,6 +264,10 @@ function allocationPctLabel(value) {
   return Number.isInteger(numeric) ? `${numeric}%` : `${numeric.toFixed(1)}%`;
 }
 
+function publicRoundStatus(status) {
+  return status === "active" ? "pending" : status;
+}
+
 function average(values) {
   return values.length ? values.reduce((total, value) => total + value, 0) / values.length : 0;
 }
@@ -795,6 +799,166 @@ function validateRoundPerformanceIsland(html, round, context) {
   }
 }
 
+function assertRowsByJson(actualRows, expectedRows, context) {
+  expectEqual(actualRows.length, expectedRows.length, `${context} row count`);
+  for (let index = 0; index < expectedRows.length; index += 1) {
+    const actual = actualRows[index];
+    const expected = expectedRows[index];
+    if (!actual) continue;
+    for (const [field, expectedValue] of Object.entries(expected)) {
+      const actualValue = actual[field];
+      const rowContext = `${context} row ${index + 1} ${field}`;
+      if (typeof expectedValue === "number") {
+        expectClose(actualValue, expectedValue, rowContext);
+      } else {
+        expectEqual(actualValue ?? "", expectedValue ?? "", rowContext);
+      }
+    }
+  }
+}
+
+function tableIslandByLabel(html, label, context) {
+  const islands = allAstroIslandProps(html, "TableIsland", { required: false });
+  const island = islands.find((props) => props.tableLabel === label);
+  if (!island) failures.push(`${context} TableIsland '${label}' was not found`);
+  return island;
+}
+
+function expectedResultReturnTableRows(round) {
+  return apiReadModel.returns
+    .filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
+    .sort((left, right) => left.rank - right.rank)
+    .slice(0, 12)
+    .map((row) => ({
+      rank: row.rank,
+      option_id: row.option_id,
+      label: row.label,
+      symbol: row.ticker,
+      return: percentPointLabel(row.return_pct),
+      entry_price: row.entry_price,
+      exit_price: row.exit_price
+    }));
+}
+
+function expectedAttributionTableRows(round) {
+  const returnByOption = new Map(
+    apiReadModel.returns
+      .filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
+      .map((row) => [row.option_id, row.return_pct])
+  );
+  return apiReadModel.allocations
+    .filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
+    .sort((left, right) => left.model_id.localeCompare(right.model_id) || left.allocation_rank - right.allocation_rank)
+    .map((row) => {
+      const optionReturn = returnByOption.get(row.option_id) ?? 0;
+      return {
+        model: modelLabel(row.model_id),
+        option_id: row.option_id,
+        allocation: allocationPctLabel(row.allocation_pct),
+        option_return: percentPointLabel(optionReturn),
+        contribution: percentPointLabel((row.allocation_pct / 100) * optionReturn)
+      };
+    });
+}
+
+function expectedPriceTableRows(round) {
+  const returns = apiReadModel.returns
+    .filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
+    .sort((left, right) => left.rank - right.rank);
+  if (returns.length > 0) {
+    const entryById = new Map(roundPriceRows(round.round_id, "entry").map((row) => [row.option_id, row]));
+    const exitById = new Map(roundPriceRows(round.round_id, "exit").map((row) => [row.option_id, row]));
+    return returns.map((row) => ({
+      option_id: row.option_id,
+      symbol: row.ticker,
+      entry_date: entryById.get(row.option_id)?.date ?? "",
+      entry_price: row.entry_price,
+      exit_date: exitById.get(row.option_id)?.date ?? "",
+      exit_price: row.exit_price,
+      return: percentPointLabel(row.return_pct),
+      source: row.exit_price_source || row.entry_price_source
+    }));
+  }
+  return roundPriceRows(round.round_id, "entry").map((row) => ({
+    option_id: row.option_id,
+    symbol: row.symbol,
+    entry_date: row.date,
+    entry_price: row.price,
+    source: row.source
+  }));
+}
+
+function expectedHashRows(round) {
+  const proof = apiReadModel.proof.find((row) => row.round_id === round.round_id && row.run_id === round.official_run_id);
+  return Object.entries(proof?.hashes?.files ?? {}).map(([path, sha256]) => ({ path, sha256 }));
+}
+
+function validateRoundTableIslands(html, round, context) {
+  const priceLabel = round.status === "resolved" ? "Scoring prices" : "Starting prices";
+  const priceTable = tableIslandByLabel(html, priceLabel, context);
+  if (priceTable) assertRowsByJson(priceTable.rows ?? [], expectedPriceTableRows(round), `${context} ${priceLabel}`);
+
+  if (round.status === "resolved") {
+    const expectedReturns = expectedResultReturnTableRows(round);
+    const returnsTable = tableIslandByLabel(html, "Realized asset returns", context);
+    if (returnsTable) assertRowsByJson(returnsTable.rows ?? [], expectedReturns, `${context} realized asset returns`);
+
+    const expectedAttribution = expectedAttributionTableRows(round);
+    if (expectedAttribution.length > 0) {
+      const attributionTable = tableIslandByLabel(html, "Portfolio attribution", context);
+      if (attributionTable) assertRowsByJson(attributionTable.rows ?? [], expectedAttribution, `${context} portfolio attribution`);
+    }
+  }
+
+  const hashIsland = allAstroIslandProps(html, "HashTable", { required: false })[0];
+  if (!hashIsland) {
+    failures.push(`${context} HashTable island was not found`);
+  } else {
+    assertRowsByJson(hashIsland.rows ?? [], expectedHashRows(round), `${context} hash table`);
+  }
+}
+
+function validateRoundsIndexIsland(html) {
+  const island = allAstroIslandProps(html, "RoundsTable", { required: true })[0];
+  if (!island) return;
+  const expectedRows = apiReadModel.rounds.map((round) => ({
+    round_id: round.round_id,
+    title: round.title,
+    description: round.description,
+    decision_date: round.decision_date,
+    decision_deadline_utc: round.decision_deadline_utc,
+    horizon: round.horizon,
+    horizon_days: round.horizon_days,
+    entry_date: round.entry_date,
+    exit_date: round.exit_date,
+    status: publicRoundStatus(round.status),
+    methodology_version: round.methodology_version,
+    universe_version: round.universe_version,
+    submission_format: round.submission_format,
+    official_run_id: round.official_run_id
+  })).sort((left, right) => right.decision_deadline_utc.localeCompare(left.decision_deadline_utc));
+  assertRowsByJson(island.fallbackRows ?? [], expectedRows, "rounds index RoundsTable fallbackRows");
+}
+
+function validateUniverseTableIsland(html) {
+  const island = allAstroIslandProps(html, "UniverseTable", { required: true })[0];
+  if (!island) return;
+  const latest = loadUniverseVersions()[0];
+  const expectedRows = (latest?.rows ?? []).map((row) => ({
+    option_id: row.option_id,
+    name: row.label,
+    symbol: row.ticker,
+    asset_class: row.asset_class,
+    option_group: row.category,
+    risk_bucket: row.risk_bucket,
+    is_cash: row.is_cash,
+    is_benchmark: row.is_benchmark,
+    sort_order: row.sort_order
+  }));
+  assertRowsByJson(island.fallbackRows ?? [], expectedRows, "universe page UniverseTable fallbackRows");
+  expectEqual(island.disableRemote, true, "universe page UniverseTable remote override disabled");
+}
+
 function roundSortKey(round) {
   return `${round.exit_date ?? ""}:${round.decision_deadline_utc ?? ""}:${round.round_id ?? ""}`;
 }
@@ -981,6 +1145,20 @@ function loadUniverseVersions() {
 
 function roundEntryPriceRows(roundId) {
   const text = readRepoText("rounds", roundId, "prices", "entry_prices.csv");
+  if (!text) return [];
+  return parseCsvRows(text)
+    .map((row) => ({
+      option_id: row.option_id,
+      symbol: row.symbol ?? "",
+      date: row.date ?? "",
+      price: numberFromCell(row.price) ?? numberFromCell(row.adj_close) ?? numberFromCell(row.adjClose) ?? numberFromCell(row.close),
+      source: row.source || row.price_source || (row.adj_close || row.adjClose ? "adj_close" : "close")
+    }))
+    .filter((row) => row.option_id && typeof row.price === "number");
+}
+
+function roundPriceRows(roundId, side) {
+  const text = readRepoText("rounds", roundId, "prices", `${side}_prices.csv`);
   if (!text) return [];
   return parseCsvRows(text)
     .map((row) => ({
@@ -1385,8 +1563,8 @@ for (const track of ["weekly", "monthly"]) {
 
   includes(cumulativeHtml, `${cumulative.comparison.comparison_round_count} resolved`, context);
   includes(cumulativeHtml, score, context);
-  includes(cumulativeHtml, "Each score is an average", context);
-  includes(cumulativeHtml, `Newest included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
+  includes(cumulativeHtml, "This combines every resolved", context);
+  includes(cumulativeHtml, `Latest round included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
   for (const roundId of cumulative.comparison.comparison_round_ids) {
     includes(cumulativeHtml, roundId, context);
   }
@@ -1431,7 +1609,7 @@ for (const track of ["weekly", "monthly"]) {
     includes(indexHtml, `${score} score · ${countLabel}`, "homepage weekly lane");
     includes(indexHtml, leader.label, "homepage weekly lane");
     includes(indexHtml, "Each bar is an average across the finished tests in that track", "homepage scorecard average explanation");
-    includes(indexHtml, `Newest included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative newest included");
+    includes(indexHtml, `Latest round included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative latest included");
     for (const row of cumulative.data) {
       includes(indexHtml, row.label, `homepage weekly cumulative ${row.model_id}`);
       if (typeof row.capitalbench_score === "number") {
@@ -1605,6 +1783,8 @@ for (const round of apiReadModel.rounds) {
 
 const universeVersions = loadUniverseVersions();
 const latestUniverse = universeVersions[0];
+validateRoundsIndexIsland(roundsIndexHtml);
+validateUniverseTableIsland(universeHtml);
 if (latestUniverse) {
   includes(universeHtml, latestUniverse.label, "universe page latest label");
   includes(universeHtml, `${latestUniverse.rows.length} total choices for new public tests`, "universe page latest count");
@@ -1954,6 +2134,7 @@ for (const round of apiReadModel.rounds) {
   validateOfficialPicksIsland(html, round, context);
   validateLeaderboardTableIsland(html, round, context);
   validateRoundPerformanceIsland(html, round, context);
+  validateRoundTableIslands(html, round, context);
 
   const portfolios = apiReadModel.portfolios.filter(
     (portfolio) => portfolio.round_id === round.round_id && portfolio.run_id === round.official_run_id

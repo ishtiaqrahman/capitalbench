@@ -129,16 +129,16 @@ function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | un
   <div class="track-scorecard-head">
     <div>
       <span class="panel-kicker">{scorecard.label} track</span>
-      <h3 id={`${scorecard.track}-track-scorecard-title`}>Model Score Results</h3>
+      <h3 id={`${scorecard.track}-track-scorecard-title`}>All Finished {scorecard.label} Scores</h3>
       <p>
-        Each score is an average across every resolved {scorecard.label.toLowerCase()} test listed here. Models with fewer
-        completed tests are marked short history.
+        This combines every resolved {scorecard.label.toLowerCase()} test, not just the newest result. Models with fewer
+        finished tests are marked short history.
       </p>
     </div>
     <div class="track-scorecard-badges" aria-label={`${scorecard.label} scorecard status`}>
-      <span>{scorecard.comparisonRoundCount} resolved tests</span>
+      <span>All {scorecard.comparisonRoundCount} resolved tests included</span>
       <span>{scorecard.comparisonModelCount} models scored</span>
-      <span>Newest included: {scorecard.latestRoundId}</span>
+      <span>Latest round included: {scorecard.latestRoundId}</span>
     </div>
   </div>
 
@@ -150,7 +150,7 @@ function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | un
           <h4 id={`${scorecard.track}-normalized-score-title`}>Average CapitalBench Score</h4>
         </div>
         <p>
-          Each bar averages the model's per-test score across {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"}.
+          Each bar averages that model's per-test scores across all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"}.
         </p>
       </div>
 
