@@ -77,8 +77,9 @@ import PageHeader from "../components/PageHeader.astro";
       <h2>Overall Results</h2>
       <p>
         Overall results keep weekly and monthly tracks separate. For each completed test, CapitalBench computes the
-        model's CapitalBench Score using that test's maximum possible return. The headline overall score averages every
-        resolved test in that track. A model added later is shown with fewer included tests and marked short history.
+        model's CapitalBench Score using that test's maximum possible return. The headline overall score averages
+        per-test score ratios across all resolved tests in that track. It is not average return divided by average max.
+        A model added later is shown with fewer included tests and marked short history.
       </p>
       <p>
         The overall view also shows average raw return and S&amp;P 500 context, but those are supporting context. The

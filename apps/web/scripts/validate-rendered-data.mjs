@@ -1744,6 +1744,7 @@ for (const track of ["weekly", "monthly"]) {
     includes(indexHtml, `${score} score · ${countLabel}`, "homepage weekly lane");
     includes(indexHtml, leader.label, "homepage weekly lane");
     includes(indexHtml, "Each bar is an average across the finished tests in that track", "homepage scorecard average explanation");
+    includes(indexHtml, "It is not average return divided by average max", "homepage scorecard ratio explanation");
     includes(indexHtml, `Latest round included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative latest included");
     for (const row of cumulative.data) {
       includes(indexHtml, row.label, `homepage weekly cumulative ${row.model_id}`);
@@ -1960,9 +1961,13 @@ for (const [context, html] of [
   includes(html, "100 * portfolio_return / max_possible_return", `${context} CapitalBench Score formula`);
   includes(html, "max_possible_return - portfolio_return", `${context} regret formula`);
   includes(html, "portfolio_return - sp500_return", `${context} S&P formula`);
+  includes(html, "not average return divided by average max", `${context} cumulative score ratio explanation`);
   includesAny(html, ["all resolved tests", "every resolved test", "resolved test in that track"], `${context} cumulative scope`);
   includes(html, "short history", `${context} late-added model scope`);
 }
+
+includes(apiHtml, "cumulative rows average per-test score ratios", "API docs cumulative CapitalBench Score definition");
+includes(apiHtml, "cumulative rows report the average of per-test max values", "API docs cumulative max possible definition");
 
 const latestActiveWeeklyRound = latestRound("weekly", "active");
 if (latestActiveWeeklyRound) includes(apiHtml, `/v1/rounds/${latestActiveWeeklyRound.round_id}/concentration`, "API docs concentration example");

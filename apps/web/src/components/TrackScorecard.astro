@@ -150,7 +150,7 @@ function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | un
           <h4 id={`${scorecard.track}-normalized-score-title`}>Average CapitalBench Score</h4>
         </div>
         <p>
-          Each bar averages that model's per-test scores across all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"}.
+          Each bar averages that model's per-test score ratios across all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"}. It is not average return divided by average max.
         </p>
       </div>
 
