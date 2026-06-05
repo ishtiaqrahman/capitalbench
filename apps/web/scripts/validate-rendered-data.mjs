@@ -817,6 +817,26 @@ function assertRowsByJson(actualRows, expectedRows, context) {
   }
 }
 
+function stripUndefined(value) {
+  if (Array.isArray(value)) return value.map(stripUndefined);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([, item]) => item !== undefined)
+        .map(([key, item]) => [key, stripUndefined(item)])
+    );
+  }
+  return value;
+}
+
+function assertJsonEqual(actual, expected, context) {
+  const actualJson = JSON.stringify(stripUndefined(actual));
+  const expectedJson = JSON.stringify(stripUndefined(expected));
+  if (actualJson !== expectedJson) {
+    failures.push(`${context} serialized data mismatch`);
+  }
+}
+
 function tableIslandByLabel(html, label, context) {
   const islands = allAstroIslandProps(html, "TableIsland", { required: false });
   const island = islands.find((props) => props.tableLabel === label);
@@ -1330,6 +1350,121 @@ function groupLabel(value) {
     .filter(Boolean)
     .map((part) => part[0]?.toUpperCase() + part.slice(1))
     .join(" ") || "Other";
+}
+
+function allocationThemeClass(optionId) {
+  const normalized = String(optionId ?? "").toUpperCase();
+  if (["ENERGY", "OIL", "BROAD_COMMODITIES"].includes(normalized)) return "allocation-energy";
+  if (["SEMICONDUCTORS", "TECHNOLOGY", "SOFTWARE", "NASDAQ100", "LARGE_GROWTH"].includes(normalized)) {
+    return "allocation-tech";
+  }
+  if (["GOLD", "MINERS"].includes(normalized)) return "allocation-gold";
+  if (["SHORT_TREASURY", "INTERMEDIATE_TREASURY", "LONG_TREASURY", "TIPS", "CASH", "US_DOLLAR"].includes(normalized)) {
+    return "allocation-defensive";
+  }
+  if (["CONSUMER_STAPLES", "UTILITIES", "HEALTHCARE"].includes(normalized)) return "allocation-stable";
+  return "allocation-other";
+}
+
+function roundScoreEtaUtc(roundId, exitDate) {
+  const job = parseYamlText(readRepoText("rounds", roundId, "automation", "resolution_job.yaml"));
+  const automationEta = job?.due_at_utc ?? job?.next_attempt_at_utc;
+  if (automationEta && Number.isFinite(Date.parse(automationEta))) return automationEta;
+  const derivedEta = exitDate ? `${exitDate}T23:30:00Z` : undefined;
+  return derivedEta && Number.isFinite(Date.parse(derivedEta)) ? derivedEta : undefined;
+}
+
+function expectedModelLiveScope(modelId, scope) {
+  const allocations = apiReadModel.allocations.filter(
+    (row) => row.model_id === modelId && row.status === "active" && (scope === "all" || row.track === scope)
+  );
+  const portfolioKeys = new Set(allocations.map(uniquePortfolioKey));
+  const weeklyPortfolioKeys = new Set(allocations.filter((row) => row.track === "weekly").map(uniquePortfolioKey));
+  const monthlyPortfolioKeys = new Set(allocations.filter((row) => row.track === "monthly").map(uniquePortfolioKey));
+  const activeRounds = new Map();
+  const holdings = new Map();
+
+  for (const allocation of allocations) {
+    const scoreEtaUtc = roundScoreEtaUtc(allocation.round_id, allocation.exit_date);
+    activeRounds.set(allocation.round_id, {
+      roundId: allocation.round_id,
+      track: allocation.track,
+      exitDate: allocation.exit_date,
+      scoreEtaUtc
+    });
+
+    const existing =
+      holdings.get(allocation.option_id) ??
+      {
+        optionId: allocation.option_id,
+        label: assetDisplay(allocation),
+        shortLabel: optionShortDisplay(allocation),
+        symbol: allocation.ticker ?? "",
+        group: groupLabel(allocation.category),
+        themeClass: allocationThemeClass(allocation.option_id),
+        totalBps: 0,
+        portfolioKeys: new Set(),
+        rounds: []
+      };
+    existing.totalBps += allocation.allocation_bps;
+    existing.portfolioKeys.add(uniquePortfolioKey(allocation));
+    existing.rounds.push({
+      roundId: allocation.round_id,
+      track: allocation.track,
+      exitDate: allocation.exit_date,
+      scoreEtaUtc,
+      allocationPct: allocation.allocation_pct
+    });
+    holdings.set(allocation.option_id, existing);
+  }
+
+  const denominatorBps = portfolioKeys.size * 10_000;
+  const holdingRows = Array.from(holdings.values())
+    .map((holding) => ({
+      optionId: holding.optionId,
+      label: holding.label,
+      shortLabel: holding.shortLabel,
+      symbol: holding.symbol,
+      group: holding.group,
+      themeClass: holding.themeClass,
+      exposurePct: denominatorBps > 0 ? (holding.totalBps / denominatorBps) * 100 : 0,
+      portfolioCount: holding.portfolioKeys.size,
+      rounds: holding.rounds.sort((left, right) => right.roundId.localeCompare(left.roundId))
+    }))
+    .sort((left, right) => right.exposurePct - left.exposurePct || left.label.localeCompare(right.label));
+  const activeRoundRows = Array.from(activeRounds.values()).sort((left, right) => left.exitDate.localeCompare(right.exitDate));
+  const nextScoreDate = activeRoundRows
+    .map((round) => round.scoreEtaUtc ?? (round.exitDate ? `${round.exitDate}T23:30:00Z` : undefined))
+    .filter(Boolean)
+    .sort()[0];
+
+  return {
+    key: scope,
+    label: scope === "all" ? "All Live" : trackLabel(scope),
+    portfolioCount: portfolioKeys.size,
+    roundCount: activeRoundRows.length,
+    weeklyPortfolioCount: weeklyPortfolioKeys.size,
+    monthlyPortfolioCount: monthlyPortfolioKeys.size,
+    holdings: holdingRows,
+    topHolding: holdingRows[0],
+    topThreePct: holdingRows.slice(0, 3).reduce((total, holding) => total + holding.exposurePct, 0),
+    nextScoreDate,
+    activeRounds: activeRoundRows
+  };
+}
+
+function expectedModelLiveScopes(modelId) {
+  return {
+    all: expectedModelLiveScope(modelId, "all"),
+    weekly: expectedModelLiveScope(modelId, "weekly"),
+    monthly: expectedModelLiveScope(modelId, "monthly")
+  };
+}
+
+function validateModelLiveHoldingsIsland(html, modelId, context) {
+  const props = astroIslandProps(html, "ModelLiveHoldings");
+  if (!props.scopes) return;
+  assertJsonEqual(props.scopes, expectedModelLiveScopes(modelId), `${context} ModelLiveHoldings scopes`);
 }
 
 function modelFingerprint(modelId) {
@@ -2291,6 +2426,7 @@ for (const model of apiReadModel.models) {
 
   const context = `model page ${model.model_id}`;
   const html = readHtml(`models/${model.model_id}/index.html`);
+  validateModelLiveHoldingsIsland(html, model.model_id, context);
   includes(html, model.label, context);
   includes(html, model.model_id, context);
   includes(html, model.provider_label, context);
