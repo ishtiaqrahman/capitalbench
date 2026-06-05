@@ -82,6 +82,18 @@ function assetDisplay(row) {
   return row.ticker ? `${row.label} (${row.ticker})` : row.label;
 }
 
+function optionDisplay(row) {
+  if (!row) return "";
+  if (row.is_cash || row.option_id === "CASH") return row.label || row.option_id;
+  return assetDisplay(row);
+}
+
+function optionShortDisplay(row) {
+  if (!row) return "";
+  if (row.is_cash || row.option_id === "CASH") return row.label || row.option_id;
+  return row.ticker || row.label || row.option_id;
+}
+
 function allocationPctLabel(value) {
   const numeric = Number(value);
   return Number.isInteger(numeric) ? `${numeric}%` : `${numeric.toFixed(1)}%`;
@@ -235,6 +247,17 @@ function latestRound(track, status) {
     .sort((left, right) => roundSortKey(right).localeCompare(roundSortKey(left)))[0];
 }
 
+function latestRoundByTrack(track) {
+  return apiReadModel.rounds.find((round) => round.track === track);
+}
+
+function trackStatusLabel(round) {
+  if (!round) return "Not started";
+  if (round.status === "resolved") return "Scored";
+  if (round.status === "archived") return "Archived";
+  return "Waiting for result";
+}
+
 function pctValue(value) {
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return "n/a";
@@ -294,6 +317,50 @@ function modelTrackSummary(modelId, track) {
     averageRank: averageOrNull(rows.map((row) => row.rank).filter((value) => typeof value === "number")),
     bestRound: [...rows].sort((left, right) => Number(right.alpha_pp ?? -Infinity) - Number(left.alpha_pp ?? -Infinity))[0]
   };
+}
+
+function buildHomepageTrackState(track) {
+  const round = latestRoundByTrack(track);
+  if (!round) return null;
+  const portfolios = apiReadModel.portfolios.filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id);
+  const allocations = apiReadModel.allocations.filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id);
+  const modelCount = portfolios.length;
+  const byAsset = new Map();
+  for (const allocation of allocations) {
+    const existing =
+      byAsset.get(allocation.option_id) ??
+      {
+        option_id: allocation.option_id,
+        label: allocation.label,
+        ticker: allocation.ticker,
+        is_cash: allocation.option_id === "CASH",
+        total_bps: 0
+      };
+    existing.total_bps += allocation.allocation_bps;
+    byAsset.set(allocation.option_id, existing);
+  }
+  const assets = Array.from(byAsset.values())
+    .map((row) => ({
+      ...row,
+      average_pct: modelCount > 0 ? row.total_bps / modelCount / 100 : 0
+    }))
+    .sort((left, right) => right.average_pct - left.average_pct || left.option_id.localeCompare(right.option_id));
+  const concentrationScore = assets.reduce((total, asset) => total + (asset.average_pct / 100) ** 2, 0);
+  return {
+    round,
+    portfolios,
+    assets,
+    top_asset: assets[0],
+    top_three_share_pct: assets.slice(0, 3).reduce((total, asset) => total + asset.average_pct, 0),
+    effective_asset_count: concentrationScore > 0 ? 1 / concentrationScore : 0
+  };
+}
+
+function portfolioHoldingLine(portfolio) {
+  return [...(portfolio.allocations ?? [])]
+    .sort((left, right) => right.allocation_bps - left.allocation_bps)
+    .map((allocation) => `${optionShortDisplay(allocation)} ${allocationPctLabel(allocation.allocation_pct)}`)
+    .join(", ");
 }
 
 const indexHtml = readHtml("index.html");
@@ -463,6 +530,47 @@ if (latestResolvedScoredRound) {
       includes(indexHtml, htmlText(shortLabel), `${allocationContext} short label`);
       includes(indexHtml, allocationPctLabel(allocation.allocation_pct), `${allocationContext} allocation pct`);
     }
+  }
+}
+
+for (const track of ["weekly", "monthly"]) {
+  const state = buildHomepageTrackState(track);
+  if (!state) continue;
+  const label = track === "weekly" ? "Weekly" : "Monthly";
+  const context = `homepage latest ${track} picks`;
+  const { round, portfolios, assets, top_asset: topAsset } = state;
+
+  includes(indexHtml, `${label} picks`, context);
+  includes(indexHtml, round.round_id, `${context} round id`);
+  includes(indexHtml, `${round.entry_date} to ${round.exit_date}`, `${context} score window`);
+  includes(indexHtml, trackStatusLabel(round), `${context} status`);
+
+  if (portfolios.length > 0) {
+    for (const portfolio of portfolios) {
+      const portfolioContext = `${context} ${portfolio.model_id}`;
+      includes(indexHtml, modelLabel(portfolio.model_id), portfolioContext);
+      const holdingLine = portfolioHoldingLine(portfolio);
+      if (holdingLine) includes(indexHtml, htmlText(holdingLine), `${portfolioContext} holdings`);
+      for (const allocation of portfolio.allocations ?? []) {
+        includes(indexHtml, allocationPctLabel(allocation.allocation_pct), `${portfolioContext} allocation ${allocation.option_id}`);
+      }
+    }
+
+    if (topAsset) {
+      includes(indexHtml, optionDisplay(topAsset), `${context} shared top pick`);
+      includes(indexHtml, `Average across ${portfolios.length} model portfolios.`, `${context} model count`);
+    } else {
+      failures.push(`${context} has portfolios but no concentration top asset`);
+    }
+    includes(indexHtml, `Top 3 <strong>${allocationPctLabel(state.top_three_share_pct)}</strong>`, `${context} top-three concentration`);
+    includes(indexHtml, `Spread <strong>${state.effective_asset_count.toFixed(1)} assets</strong>`, `${context} effective asset count`);
+
+    for (const asset of assets.slice(0, 4)) {
+      includes(indexHtml, optionDisplay(asset), `${context} exposure ${asset.option_id}`);
+      includes(indexHtml, allocationPctLabel(asset.average_pct), `${context} exposure ${asset.option_id} average allocation`);
+    }
+  } else {
+    includes(indexHtml, `No model picks yet.`, context);
   }
 }
 
