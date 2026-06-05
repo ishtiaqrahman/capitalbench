@@ -149,6 +149,7 @@ function compareRounds(rows) {
   const byId = new Map(rows.map((row) => [row.round_id, row]));
   const expectedIds = new Set(apiReadModel.rounds.map((row) => row.round_id));
   const actualIds = new Set(rows.map((row) => row.round_id));
+  assertEqual(rows.length, apiReadModel.rounds.length, "Supabase rounds row count");
 
   for (const round of apiReadModel.rounds) {
     const actual = byId.get(round.round_id);
@@ -157,6 +158,8 @@ function compareRounds(rows) {
       continue;
     }
     assertEqual(actual.status, publicRoundStatus(round.status), `Supabase rounds ${round.round_id} status`);
+    assertEqual(actual.horizon ?? "", round.horizon ?? "", `Supabase rounds ${round.round_id} horizon`);
+    assertEqual(Number(actual.horizon_days ?? 0), Number(round.horizon_days ?? 0), `Supabase rounds ${round.round_id} horizon_days`);
     assertEqual(normalizeDate(actual.entry_date), round.entry_date, `Supabase rounds ${round.round_id} entry_date`);
     assertEqual(normalizeDate(actual.exit_date), round.exit_date, `Supabase rounds ${round.round_id} exit_date`);
     assertEqual(normalizeTimestamp(actual.decision_deadline_utc), normalizeTimestamp(round.decision_deadline_utc), `Supabase rounds ${round.round_id} deadline`);
@@ -273,6 +276,8 @@ function compareLatestLeaderboard(track, rows) {
     .filter((row) => row.round_id === latest.round_id && row.run_id === latest.official_run_id)
     .sort((left, right) => left.rank - right.rank);
   const byModel = new Map(rows.map((row) => [row.model_id, row]));
+  const expectedModelIds = new Set(expectedRows.map((row) => row.model_id));
+  const actualModelIds = new Set(rows.map((row) => row.model_id));
   assertEqual(rows.length, expectedRows.length, `Supabase latest_${track} row count`);
 
   for (const expected of expectedRows) {
@@ -281,14 +286,20 @@ function compareLatestLeaderboard(track, rows) {
       fail(`Supabase latest_${track} missing ${expected.model_id}`);
       continue;
     }
+    assertEqual(actual.slot, `latest_${track}`, `Supabase latest_${track} ${expected.model_id} slot`);
     assertEqual(actual.round_id, expected.round_id, `Supabase latest_${track} ${expected.model_id} round_id`);
     assertEqual(actual.run_id, expected.run_id, `Supabase latest_${track} ${expected.model_id} run_id`);
+    assertEqual(actual.provider, expected.provider, `Supabase latest_${track} ${expected.model_id} provider`);
     assertEqual(actual.selected_option_id, expected.selected_option_id, `Supabase latest_${track} ${expected.model_id} selected option`);
     assertEqual(Number(actual.holding_count ?? 1), Number(expected.holding_count ?? 1), `Supabase latest_${track} ${expected.model_id} holding count`);
     assertNear(Number(actual.portfolio_return ?? actual.selected_asset_return) * 100, expected.portfolio_return_pct, `Supabase latest_${track} ${expected.model_id} portfolio return`);
     assertNear(Number(actual.sp500_return) * 100, expected.benchmark_return_pct, `Supabase latest_${track} ${expected.model_id} S&P 500 return`);
     assertNear(Number(actual.alpha_vs_sp500) * 100, expected.alpha_pp, `Supabase latest_${track} ${expected.model_id} alpha`);
     assertNear(Number(actual.regret_vs_best_option) * 100, expected.regret_vs_best_option_pct, `Supabase latest_${track} ${expected.model_id} regret`);
+  }
+
+  for (const actualModelId of actualModelIds) {
+    if (!expectedModelIds.has(actualModelId)) fail(`Supabase latest_${track} has extra published model ${actualModelId}`);
   }
 }
 
@@ -427,7 +438,7 @@ function compareRoundWeeklyPerformance(rows) {
 }
 
 const rounds = await select("rounds", {
-  select: "round_id,status,entry_date,exit_date,decision_deadline_utc,methodology_version,submission_format,universe_version",
+  select: "round_id,status,horizon,horizon_days,entry_date,exit_date,decision_deadline_utc,methodology_version,submission_format,universe_version",
   published: "eq.true",
   order: "decision_deadline_utc.desc"
 });
@@ -442,7 +453,7 @@ compareOptions(options);
 
 for (const track of ["weekly", "monthly"]) {
   const rows = await select("latest_leaderboard", {
-    select: "slot,round_id,run_id,model_id,selected_option_id,holding_count,portfolio_return,selected_asset_return,sp500_return,alpha_vs_sp500,regret_vs_best_option",
+    select: "slot,round_id,run_id,model_id,provider,selected_option_id,holding_count,portfolio_return,selected_asset_return,sp500_return,alpha_vs_sp500,regret_vs_best_option",
     published: "eq.true",
     slot: `eq.latest_${track}`,
     order: "alpha_vs_sp500.desc"

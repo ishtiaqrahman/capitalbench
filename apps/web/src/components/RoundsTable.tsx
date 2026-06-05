@@ -20,12 +20,20 @@ function withAuditPaths(rows: RoundRecord[]): RoundTableRow[] {
   }));
 }
 
+function mergeRemoteRows(fallbackRows: RoundRecord[], remoteRows: RoundRecord[]): RoundRecord[] {
+  const fallbackById = new Map(fallbackRows.map((row) => [row.round_id, row]));
+  return remoteRows.map((remoteRow) => ({
+    ...(fallbackById.get(remoteRow.round_id) ?? {}),
+    ...remoteRow
+  }));
+}
+
 export default function RoundsTable({ fallbackRows }: Props) {
   const [rows, setRows] = useState<RoundTableRow[]>(withAuditPaths(fallbackRows));
 
   useEffect(() => {
     fetchPublicRows<RoundRecord>("rounds", fallbackRows, { column: "decision_deadline_utc", ascending: false }).then((nextRows) =>
-      setRows(withAuditPaths(nextRows))
+      setRows(withAuditPaths(mergeRemoteRows(fallbackRows, nextRows)))
     );
   }, [fallbackRows]);
 
