@@ -774,6 +774,9 @@ for (const track of ["weekly", "monthly"]) {
   }
 
   const provisionalRows = cumulative.data.filter((row) => !row.is_rank_eligible);
+  if (provisionalRows.length > 0) {
+    includes(cumulativeHtml, "Not ranked yet", `${context} provisional section`);
+  }
   for (const row of provisionalRows) {
     includes(cumulativeHtml, `${row.tests_included}/${row.tests_required}`, `${context} provisional marker`);
     includes(cumulativeHtml, "short history", `${context} provisional marker`);
@@ -783,6 +786,9 @@ for (const track of ["weekly", "monthly"]) {
     includes(indexHtml, "Full-history leader", "homepage weekly lane");
     includes(indexHtml, `${score} score · ${countLabel}`, "homepage weekly lane");
     includes(indexHtml, leader.label, "homepage weekly lane");
+    if (provisionalRows.length > 0) {
+      includes(indexHtml, "Not ranked yet", "homepage weekly scorecard provisional section");
+    }
   }
   includes(leaderboardsHtml, leader.label, `leaderboards index ${track} leader`);
   includes(leaderboardsHtml, score, `leaderboards index ${track} leader score`);

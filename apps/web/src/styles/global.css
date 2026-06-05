@@ -3357,6 +3357,117 @@ a.snapshot-model-chip:hover {
   color: #6f4600;
 }
 
+.track-scorecard-provisional {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.42fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+  border-top: 1px solid rgb(213 223 219 / 78%);
+  padding-top: 18px;
+}
+
+.track-scorecard-provisional-head {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  border: 1px solid rgb(213 223 219 / 74%);
+  border-radius: 8px;
+  padding: 14px;
+  background: rgb(255 255 255 / 58%);
+}
+
+.track-scorecard-provisional-head span {
+  color: var(--pending);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.track-scorecard-provisional-head strong {
+  color: var(--ink-strong);
+  font-size: 0.92rem;
+  font-weight: 850;
+  line-height: 1.12;
+}
+
+.track-scorecard-provisional-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.track-scorecard-provisional-list {
+  display: grid;
+  gap: 10px;
+}
+
+.track-scorecard-provisional-list article {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid rgb(213 223 219 / 72%);
+  border-radius: 8px;
+  padding: 10px;
+  background: rgb(255 255 255 / 62%);
+}
+
+.track-scorecard-provisional-list article > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.track-scorecard-provisional-list article strong {
+  color: var(--ink-strong);
+  font-size: 0.86rem;
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+}
+
+.track-scorecard-provisional-list article em {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.18;
+}
+
+.track-scorecard-provisional-list dl {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 8px;
+  margin: 0;
+}
+
+.track-scorecard-provisional-list dl div {
+  display: grid;
+  gap: 2px;
+  min-width: 70px;
+  border-left: 1px solid rgb(213 223 219 / 78%);
+  padding-left: 10px;
+}
+
+.track-scorecard-provisional-list dt {
+  color: var(--muted-2);
+  font-size: 0.62rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.track-scorecard-provisional-list dd {
+  margin: 0;
+  color: var(--ink-strong);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1;
+}
+
 .track-scorecard-notes {
   display: flex;
   flex-wrap: wrap;
@@ -9126,6 +9237,34 @@ tbody tr:hover {
 
   .track-scorecard-panel {
     padding: 16px;
+  }
+
+  .track-scorecard-provisional {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding-top: 14px;
+  }
+
+  .track-scorecard-provisional-head {
+    padding: 12px;
+  }
+
+  .track-scorecard-provisional-list article {
+    grid-template-columns: 34px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .track-scorecard-provisional-list dl {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .track-scorecard-provisional-list dl div {
+    border-top: 1px solid rgb(213 223 219 / 78%);
+    border-left: 0;
+    padding-top: 8px;
+    padding-left: 0;
   }
 
   .track-scorecard-axis {

@@ -29,7 +29,9 @@ function valueCoordinate(value: number, minimum: number, maximum: number): numbe
   return Math.min(100, Math.max(0, ((value - minimum) / range) * 100));
 }
 
-const averageValues = scorecard.averageRows.map((row) => row.averageReturn).filter(finiteNumber);
+const rankedAverageRows = scorecard.averageRows.filter((row) => row.kind !== "model" || row.isRankEligible);
+const provisionalAverageRows = scorecard.averageRows.filter((row) => row.kind === "model" && !row.isRankEligible);
+const averageValues = rankedAverageRows.map((row) => row.averageReturn).filter(finiteNumber);
 const averageMinimum = Math.min(0, ...averageValues);
 const averageMaximum = Math.max(0, ...averageValues);
 const averagePadding = Math.max((averageMaximum - averageMinimum) * 0.08, 0.005);
@@ -94,8 +96,8 @@ function scoreColumnClass(row: TrackScorecardNormalizedRow): string {
   ].filter(Boolean).join(" ");
 }
 
-const scoreRows = scorecard.normalizedRows;
-const provisionalScoreRows = scoreRows.filter((row) => row.kind === "model" && !row.isRankEligible);
+const provisionalScoreRows = scorecard.normalizedRows.filter((row) => row.kind === "model" && !row.isRankEligible);
+const scoreRows = scorecard.normalizedRows.filter((row) => row.kind !== "model" || row.isRankEligible);
 const scoreValues = scoreRows.map((row) => row.averageScore).filter(finiteNumber);
 const scoreDomainMin = Math.min(0, ...scoreValues);
 const scoreDomainMax = Math.max(100, ...scoreValues);
@@ -116,6 +118,10 @@ function scoreValueStyle(value: number): string {
 function scoreMobileBarStyle(value: number): string {
   const endpoint = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
   return `width: ${Math.max(2, Math.abs(endpoint - scoreZero)).toFixed(2)}%;`;
+}
+
+function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | undefined {
+  return provisionalAverageRows.find((averageRow) => averageRow.key === row.key)?.averageReturn;
 }
 ---
 
@@ -253,7 +259,7 @@ function scoreMobileBarStyle(value: number): string {
       </div>
 
       <div class="track-scorecard-list">
-        {scorecard.averageRows.map((row) => (
+        {rankedAverageRows.map((row) => (
           <div class={averageRowClass(row)}>
             <div class="track-scorecard-row-label">
               {row.logoSrc ? (
@@ -277,6 +283,41 @@ function scoreMobileBarStyle(value: number): string {
       </div>
     </article>
   </div>
+
+  {provisionalScoreRows.length > 0 && (
+    <div class="track-scorecard-provisional" aria-label={`${scorecard.label} short-history models`}>
+      <div class="track-scorecard-provisional-head">
+        <span>Not ranked yet</span>
+        <strong>Short-history models</strong>
+        <p>These models have fewer completed tests, so they stay outside the full-history chart.</p>
+      </div>
+      <div class="track-scorecard-provisional-list">
+        {provisionalScoreRows.map((row) => (
+          <article>
+            {row.logoSrc && (
+              <span class="track-scorecard-logo-shell">
+                <img src={row.logoSrc} alt={row.providerLabel ?? row.label} width="34" height="34" loading="eager" />
+              </span>
+            )}
+            <div>
+              <strong>{row.label}</strong>
+              <em>{rowMeta(row)}</em>
+            </div>
+            <dl>
+              <div>
+                <dt>Score</dt>
+                <dd>{scoreLabel(row.averageScore)}</dd>
+              </div>
+              <div>
+                <dt>Avg return</dt>
+                <dd>{pct(provisionalAverageReturn(row))}</dd>
+              </div>
+            </dl>
+          </article>
+        ))}
+      </div>
+    </div>
+  )}
 
   <div class="track-scorecard-notes" aria-label={`${scorecard.label} scorecard notes`}>
     <span><strong>Resolved tests:</strong> {scorecard.comparisonRoundIds.join(", ")}</span>
