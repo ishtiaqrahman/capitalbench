@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   buildCumulativeLeaderboardData,
@@ -295,4 +296,78 @@ test("model holdings and asset holder endpoints filter correctly", async () => {
   assert.equal(holders.status, 200);
   assert.equal(holders.body.group_by, "model");
   assert.ok(holders.body.data.length > 0);
+});
+
+test("OpenAPI documented endpoints are served by the data API", async () => {
+  const spec = JSON.parse(readFileSync(new URL("../public/api/openapi.json", import.meta.url), "utf8"));
+  const modelId = apiReadModel.models[0].model_id;
+  const optionId = apiReadModel.assets.find((row) => row.option_id === "SEMICONDUCTORS")?.option_id ?? apiReadModel.assets[0].option_id;
+  const activeRoundId = latestRoundId("weekly", { status: "active" });
+  const resolvedRoundId = latestRoundId("weekly", { status: "resolved" });
+  const sampleByOpenApiPath = new Map([
+    ["/v1/positioning/active", "/api/v1/positioning/active?track=all&group_by=asset"],
+    ["/v1/positioning/cumulative", `/api/v1/positioning/cumulative?track=weekly&model_id=${modelId}&group_by=asset`],
+    ["/v1/positioning/consensus", "/api/v1/positioning/consensus?track=all&scope=active"],
+    ["/v1/positioning/by-model/{model_id}", `/api/v1/positioning/by-model/${modelId}?track=all&scope=active`],
+    ["/v1/positioning/by-asset/{option_id}", `/api/v1/positioning/by-asset/${optionId}?track=all&scope=active`],
+    ["/v1/positioning/by-category", "/api/v1/positioning/by-category?track=all&scope=active"],
+    ["/v1/positioning/changes", "/api/v1/positioning/changes?track=weekly&window=latest"],
+    ["/v1/live/performance", "/api/v1/live/performance?track=all"],
+    ["/v1/rounds", "/api/v1/rounds?track=all&status=all&limit=5"],
+    ["/v1/rounds/{round_id}", `/api/v1/rounds/${activeRoundId}`],
+    ["/v1/rounds/{round_id}/portfolios", `/api/v1/rounds/${activeRoundId}/portfolios`],
+    ["/v1/rounds/{round_id}/concentration", `/api/v1/rounds/${activeRoundId}/concentration`],
+    ["/v1/rounds/{round_id}/live-performance", `/api/v1/rounds/${activeRoundId}/live-performance`],
+    ["/v1/rounds/{round_id}/results", `/api/v1/rounds/${resolvedRoundId}/results`],
+    ["/v1/leaderboards/latest", "/api/v1/leaderboards/latest?track=weekly"],
+    ["/v1/leaderboards/cumulative", "/api/v1/leaderboards/cumulative?track=weekly"],
+    ["/v1/models", "/api/v1/models"],
+    ["/v1/models/{model_id}", `/api/v1/models/${modelId}`],
+    ["/v1/models/{model_id}/holdings", `/api/v1/models/${modelId}/holdings?track=all&scope=active`],
+    ["/v1/models/{model_id}/live-performance", `/api/v1/models/${modelId}/live-performance?track=all`],
+    ["/v1/models/{model_id}/style", `/api/v1/models/${modelId}/style`],
+    ["/v1/universe/current", "/api/v1/universe/current"],
+    ["/v1/assets/{option_id}", `/api/v1/assets/${optionId}`],
+    ["/v1/assets/{option_id}/model-holders", `/api/v1/assets/${optionId}/model-holders?scope=active&track=all`]
+  ]);
+
+  assert.deepEqual(spec.servers.map((server) => server.url), ["https://www.capitalbench.org/api"]);
+  assert.deepEqual(Object.keys(spec.paths).sort(), Array.from(sampleByOpenApiPath.keys()).sort());
+
+  const root = await apiGet("/api/v1");
+  assert.equal(root.status, 200);
+  assert.deepEqual(root.body.endpoints.sort(), Object.keys(spec.paths).sort());
+
+  for (const [openApiPath, samplePath] of sampleByOpenApiPath) {
+    const result = await apiGet(samplePath);
+    assert.equal(result.status, 200, `${openApiPath} sample ${samplePath} returned ${result.status}`);
+    assert.ok(result.body && typeof result.body === "object", `${openApiPath} did not return a JSON object`);
+  }
+});
+
+test("API rejects documented path parameters and unsupported score mixing correctly", async () => {
+  const validModelId = apiReadModel.models[0].model_id;
+  const validOptionId = apiReadModel.assets.find((row) => row.option_id === "SEMICONDUCTORS")?.option_id ?? apiReadModel.assets[0].option_id;
+
+  const filtered = await apiGet(`/api/v1/positioning/cumulative?track=weekly&model_id=${validModelId}`);
+  assert.equal(filtered.status, 200);
+  assert.ok(filtered.body.data.every((row) => row.models.every((model) => model.model_id === validModelId)));
+
+  const missingModel = await apiGet("/api/v1/positioning/by-model/not-a-model?scope=active");
+  const missingModelQuery = await apiGet("/api/v1/positioning/cumulative?model_id=not-a-model");
+  const missingAsset = await apiGet("/api/v1/positioning/by-asset/not-an-asset?scope=active");
+  const missingAssetHolders = await apiGet("/api/v1/assets/not-an-asset/model-holders?scope=active");
+  const latestAll = await apiGet("/api/v1/leaderboards/latest?track=all");
+  const cumulativeAll = await apiGet("/api/v1/leaderboards/cumulative?track=all");
+  const unsupportedWindow = await apiGet("/api/v1/positioning/changes?track=weekly&window=4_rounds");
+  const validAssetHolders = await apiGet(`/api/v1/assets/${validOptionId}/model-holders?scope=active`);
+
+  assert.equal(missingModel.status, 404);
+  assert.equal(missingModelQuery.status, 404);
+  assert.equal(missingAsset.status, 404);
+  assert.equal(missingAssetHolders.status, 404);
+  assert.equal(latestAll.status, 400);
+  assert.equal(cumulativeAll.status, 400);
+  assert.equal(unsupportedWindow.status, 400);
+  assert.equal(validAssetHolders.status, 200);
 });

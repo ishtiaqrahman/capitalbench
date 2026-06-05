@@ -418,9 +418,13 @@ function positioningResponse(url, options = {}) {
   if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
   if (!scope) return errorResult(400, "invalid_scope", "scope must be active or cumulative.");
   if (!groupBy) return errorResult(400, "invalid_group_by", "group_by must be asset, category, or model.");
+  const modelId = options.modelId ?? url.searchParams.get("model_id");
+  const optionId = options.optionId ?? null;
+  if (modelId && !modelById.has(modelId)) return errorResult(404, "not_found", "Model not found.");
+  if (optionId && !assetById.has(optionId)) return errorResult(404, "not_found", "Asset not found.");
   let rows = filterByScope(filterByTrack(apiReadModel.allocations, track), scope);
-  if (options.modelId) rows = rows.filter((row) => row.model_id === options.modelId);
-  if (options.optionId) rows = rows.filter((row) => row.option_id === options.optionId);
+  if (modelId) rows = rows.filter((row) => row.model_id === modelId);
+  if (optionId) rows = rows.filter((row) => row.option_id === optionId);
   if (options.category) rows = rows.filter((row) => (assetById.get(row.option_id)?.category ?? row.category) === options.category);
   return jsonApiResult(200, aggregatePositioning(rows, groupBy, scope, track));
 }
@@ -428,6 +432,8 @@ function positioningResponse(url, options = {}) {
 function positioningChanges(url) {
   const track = normalizedTrack(url);
   if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  const window = String(url.searchParams.get("window") || "latest").toLowerCase();
+  if (window !== "latest") return errorResult(400, "invalid_window", "window must be latest.");
   const groupBy = normalizedGroupBy(url) ?? "asset";
   const rounds = filterByTrack(apiReadModel.rounds, track)
     .filter((round) => apiReadModel.allocations.some((allocation) => allocation.round_id === round.round_id))
@@ -436,7 +442,7 @@ function positioningChanges(url) {
   if (!currentRound || !priorRound) {
     return jsonApiResult(200, {
       as_of: apiReadModel.generated_at,
-      window: "latest",
+      window,
       data: []
     });
   }
@@ -455,7 +461,7 @@ function positioningChanges(url) {
   const priorByKey = new Map(prior.data.map((row) => [row.key, row]));
   return jsonApiResult(200, {
     as_of: apiReadModel.generated_at,
-    window: "latest",
+    window,
     current_round_id: currentRound.round_id,
     prior_round_id: priorRound.round_id,
     group_by: groupBy,
@@ -495,6 +501,7 @@ function leaderboardRowsForRound(round) {
 function latestLeaderboard(url) {
   const track = normalizedTrack(url);
   if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  if (track === "all") return errorResult(400, "invalid_track", "leaderboards require track weekly or monthly.");
   const round = latestResolvedRound(track);
   return jsonApiResult(200, {
     track,
@@ -783,6 +790,7 @@ function modelLivePerformance(modelId, url) {
 function cumulativeLeaderboard(url) {
   const track = normalizedTrack(url);
   if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  if (track === "all") return errorResult(400, "invalid_track", "leaderboards require track weekly or monthly.");
   return jsonApiResult(200, buildCumulativeLeaderboardData(apiReadModel, track));
 }
 
@@ -964,12 +972,28 @@ function indexResponse() {
     endpoints: [
       "/v1/positioning/active",
       "/v1/positioning/cumulative",
+      "/v1/positioning/consensus",
+      "/v1/positioning/by-model/{model_id}",
+      "/v1/positioning/by-asset/{option_id}",
+      "/v1/positioning/by-category",
+      "/v1/positioning/changes",
       "/v1/live/performance",
       "/v1/rounds",
+      "/v1/rounds/{round_id}",
+      "/v1/rounds/{round_id}/portfolios",
       "/v1/rounds/{round_id}/concentration",
+      "/v1/rounds/{round_id}/live-performance",
+      "/v1/rounds/{round_id}/results",
+      "/v1/leaderboards/latest",
+      "/v1/leaderboards/cumulative",
       "/v1/models",
+      "/v1/models/{model_id}",
+      "/v1/models/{model_id}/holdings",
+      "/v1/models/{model_id}/live-performance",
+      "/v1/models/{model_id}/style",
       "/v1/universe/current",
-      "/v1/leaderboards/latest"
+      "/v1/assets/{option_id}",
+      "/v1/assets/{option_id}/model-holders"
     ]
   });
 }

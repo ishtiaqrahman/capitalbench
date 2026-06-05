@@ -9,10 +9,6 @@
     {
       "url": "https://www.capitalbench.org/api",
       "description": "Production API on the public website"
-    },
-    {
-      "url": "https://api.capitalbench.org",
-      "description": "Dedicated API host"
     }
   ],
   "security": [
@@ -191,8 +187,8 @@
           {
             "name": "window",
             "in": "query",
-            "schema": { "type": "string", "enum": ["latest", "4_rounds", "all"] },
-            "description": "Comparison window."
+            "schema": { "type": "string", "enum": ["latest"], "default": "latest" },
+            "description": "Comparison window. The public v1 API currently serves the latest round-over-round change."
           }
         ],
         "responses": {
@@ -364,8 +360,8 @@
       "get": {
         "tags": ["Leaderboards"],
         "summary": "Latest leaderboard",
-        "description": "Most recent resolved round leaderboard for the requested track.",
-        "parameters": [{ "$ref": "#/components/parameters/Track" }],
+        "description": "Most recent resolved round leaderboard for the requested weekly or monthly track.",
+        "parameters": [{ "$ref": "#/components/parameters/LeaderboardTrack" }],
         "responses": {
           "200": {
             "description": "Latest leaderboard response",
@@ -383,8 +379,8 @@
       "get": {
         "tags": ["Leaderboards"],
         "summary": "Cumulative leaderboard",
-        "description": "All resolved model results by weekly track, monthly track, or combined view, ranked by CapitalBench Score where available.",
-        "parameters": [{ "$ref": "#/components/parameters/Track" }],
+        "description": "All resolved model results by weekly track or monthly track, ranked by CapitalBench Score where available. Weekly and monthly scoreboards are not combined.",
+        "parameters": [{ "$ref": "#/components/parameters/LeaderboardTrack" }],
         "responses": {
           "200": {
             "description": "Cumulative leaderboard response",
@@ -593,6 +589,12 @@
         "in": "query",
         "schema": { "type": "string", "enum": ["weekly", "monthly", "all"], "default": "all" },
         "description": "Benchmark track."
+      },
+      "LeaderboardTrack": {
+        "name": "track",
+        "in": "query",
+        "schema": { "type": "string", "enum": ["weekly", "monthly"], "default": "weekly" },
+        "description": "Leaderboard track. Weekly and monthly scoreboards remain separate."
       },
       "Scope": {
         "name": "scope",
