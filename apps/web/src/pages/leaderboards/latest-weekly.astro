@@ -51,9 +51,13 @@ const resultScoreChart = resultRound
     })
   : { rows: [], ticks: [] };
 const winnerReturn = winner ? winner.portfolio_return ?? winner.selected_asset_return : undefined;
-const maxPossibleReturn = resultReturns
+const maxPossibleReturnRow = resultReturns
   .filter((row) => typeof row.return === "number" && Number.isFinite(row.return))
-  .sort((left, right) => right.return - left.return)[0]?.return;
+  .sort((left, right) => right.return - left.return)[0];
+const maxPossibleReturn = maxPossibleReturnRow?.return;
+const maxPossibleLabel = maxPossibleReturnRow
+  ? optionDisplayName(maxPossibleReturnRow.option_id, resultOptionsById)
+  : "";
 const winnerScore =
   typeof winnerReturn === "number" && typeof maxPossibleReturn === "number" && Number.isFinite(maxPossibleReturn)
     ? Math.abs(maxPossibleReturn) < 0.0000001
@@ -78,6 +82,7 @@ const scoreAuditRows =
             modelId: row.model_id,
             portfolioReturn,
             maxPossibleReturn,
+            maxPossibleLabel,
             capitalBenchScore
           };
         })
@@ -231,7 +236,7 @@ const initialNowIso = new Date().toISOString();
                 {scoreAuditRows.map((row) => (
                   <span>
                     <strong>{modelLabel(row.modelId)}</strong>
-                    {row.capitalBenchScore.toFixed(1)} score = {pct(row.portfolioReturn)} / {pct(row.maxPossibleReturn)} max
+                    {row.capitalBenchScore.toFixed(1)} score = {pct(row.portfolioReturn)} / {pct(row.maxPossibleReturn)} max asset: {row.maxPossibleLabel}
                   </span>
                 ))}
               </div>

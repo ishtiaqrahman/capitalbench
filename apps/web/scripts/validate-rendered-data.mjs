@@ -2304,6 +2304,9 @@ if (latestResolvedWeeklyRound) {
     .filter((row) => row.round_id === latestResolvedWeeklyRound.round_id && row.run_id === latestResolvedWeeklyRound.official_run_id)
     .sort((left, right) => left.rank - right.rank);
   const latestWeeklyWinner = latestWeeklyRows[0];
+  const latestWeeklyMaxReturnRow = apiReadModel.returns
+    .filter((row) => row.round_id === latestResolvedWeeklyRound.round_id && row.run_id === latestResolvedWeeklyRound.official_run_id)
+    .sort((left, right) => Number(right.return_pct ?? -Infinity) - Number(left.return_pct ?? -Infinity))[0];
   includes(latestWeeklyHtml, latestResolvedWeeklyRound.entry_date, "latest weekly page entry date");
   includes(latestWeeklyHtml, latestResolvedWeeklyRound.exit_date, "latest weekly page exit date");
   includes(latestWeeklyHtml, latestResolvedWeeklyRound.round_id, "latest weekly page resolved round id");
@@ -2329,7 +2332,7 @@ if (latestResolvedWeeklyRound) {
     includes(latestWeeklyHtml, "CapitalBench Score audit", `latest weekly page score audit ${row.model_id}`);
     includes(
       latestWeeklyHtml,
-      `${scoreLabel(row.capitalbench_score)} score = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max`,
+      `${scoreLabel(row.capitalbench_score)} score = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max asset: ${assetDisplay(latestWeeklyMaxReturnRow)}`,
       `latest weekly page score formula ${row.model_id}`
     );
   }
