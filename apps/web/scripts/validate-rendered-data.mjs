@@ -891,7 +891,8 @@ for (const track of ["weekly", "monthly"]) {
 
   includes(cumulativeHtml, `${cumulative.comparison.comparison_round_count} resolved`, context);
   includes(cumulativeHtml, score, context);
-  includes(cumulativeHtml, "Scores combine every resolved", context);
+  includes(cumulativeHtml, "Each score is an average", context);
+  includes(cumulativeHtml, `Newest included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
   for (const roundId of cumulative.comparison.comparison_round_ids) {
     includes(cumulativeHtml, roundId, context);
   }
@@ -916,6 +917,15 @@ for (const track of ["weekly", "monthly"]) {
     includes(indexHtml, "Full-history leader", "homepage weekly lane");
     includes(indexHtml, `${score} score · ${countLabel}`, "homepage weekly lane");
     includes(indexHtml, leader.label, "homepage weekly lane");
+    includes(indexHtml, "Each bar is an average across the finished tests in that track", "homepage scorecard average explanation");
+    includes(indexHtml, `Newest included: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative newest included");
+    for (const row of cumulative.data) {
+      includes(indexHtml, row.label, `homepage weekly cumulative ${row.model_id}`);
+      if (typeof row.capitalbench_score === "number") {
+        includes(indexHtml, scoreLabel(row.capitalbench_score), `homepage weekly cumulative ${row.model_id} CapitalBench Score`);
+      }
+      includes(indexHtml, `${row.tests_included}/${row.tests_required}`, `homepage weekly cumulative ${row.model_id} scored tests`);
+    }
     if (provisionalRows.length > 0) {
       includes(indexHtml, "Not ranked yet", "homepage weekly scorecard provisional section");
     }
