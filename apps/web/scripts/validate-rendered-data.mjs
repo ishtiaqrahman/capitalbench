@@ -170,14 +170,14 @@ function decodeAstroProps(value) {
   return decodeObject(JSON.parse(decodeHtmlAttribute(value)));
 }
 
-function allAstroIslandProps(html, componentName) {
+function allAstroIslandProps(html, componentName, { required = true } = {}) {
   const pattern = new RegExp(
     `<astro-island(?=[^>]*component-url="[^"]*${componentName}[^"]*")[^>]*\\sprops="([^"]*)"`,
     "gs"
   );
   const matches = [...html.matchAll(pattern)];
   if (matches.length === 0) {
-    failures.push(`${componentName} island props were not found`);
+    if (required) failures.push(`${componentName} island props were not found`);
     return [];
   }
   const props = [];
@@ -656,6 +656,142 @@ function validateActiveExposureIsland(html) {
     if (!expectedRounds.some((round) => round.round_id === actualRound.round?.round_id)) {
       failures.push(`homepage active exposure island has unexpected round ${actualRound.round?.round_id}`);
     }
+  }
+}
+
+function effectiveSerializedAllocations(submission) {
+  const rawAllocations = Array.isArray(submission?.portfolio) ? submission.portfolio : [];
+  if (rawAllocations.length > 0) return rawAllocations;
+  if (!submission?.selected_option_id) return [];
+  return [
+    {
+      option_id: submission.selected_option_id,
+      allocation_pct: 100,
+      allocation_bps: 10000
+    }
+  ];
+}
+
+function assertLeaderboardRows(actualRows, expectedRows, context) {
+  expectEqual(actualRows.length, expectedRows.length, `${context} row count`);
+  const actualByModel = new Map(actualRows.map((row) => [row.model_id, row]));
+  for (const expected of expectedRows) {
+    const actual = actualByModel.get(expected.model_id);
+    const rowContext = `${context} ${expected.model_id}`;
+    if (!actual) {
+      failures.push(`${rowContext} missing`);
+      continue;
+    }
+    expectEqual(actual.round_id, expected.round_id, `${rowContext} round_id`);
+    expectEqual(actual.run_id, expected.run_id, `${rowContext} run_id`);
+    expectEqual(actual.provider, expected.provider, `${rowContext} provider`);
+    expectEqual(actual.selected_option_id, expected.selected_option_id, `${rowContext} selected option`);
+    expectEqual(Number(actual.holding_count ?? 1), Number(expected.holding_count ?? 1), `${rowContext} holding count`);
+    expectClose(actual.portfolio_return ?? actual.selected_asset_return, expected.portfolio_return_pct / 100, `${rowContext} portfolio return`);
+    expectClose(actual.selected_asset_return, expected.selected_asset_return_pct / 100, `${rowContext} selected asset return`);
+    expectClose(actual.sp500_return, expected.benchmark_return_pct / 100, `${rowContext} S&P 500 return`);
+    expectClose(actual.alpha_vs_sp500, expected.alpha_pp / 100, `${rowContext} alpha`);
+    expectClose(actual.regret_vs_best_option, expected.regret_vs_best_option_pct / 100, `${rowContext} regret`);
+  }
+}
+
+function validateLeaderboardTableIsland(html, round, context) {
+  const expectedRows = apiReadModel.results
+    .filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
+    .sort((left, right) => left.rank - right.rank);
+  const islands = allAstroIslandProps(html, "LeaderboardTable", { required: expectedRows.length > 0 });
+  const island = islands.find((props) => (props.fallbackRows ?? []).some((row) => row.round_id === round.round_id));
+  if (expectedRows.length === 0) {
+    if (island && (island.fallbackRows ?? []).length > 0) failures.push(`${context} has leaderboard rows for an unscored round`);
+    return;
+  }
+  if (!island) {
+    failures.push(`${context} LeaderboardTable island for ${round.round_id} was not found`);
+    return;
+  }
+  assertLeaderboardRows(island.fallbackRows ?? [], expectedRows, `${context} LeaderboardTable fallbackRows`);
+}
+
+function validateOfficialPicksIsland(html, round, context) {
+  const expectedPortfolios = apiReadModel.portfolios
+    .filter((portfolio) => portfolio.round_id === round.round_id && portfolio.run_id === round.official_run_id)
+    .sort((left, right) => left.model_id.localeCompare(right.model_id));
+  const islands = allAstroIslandProps(html, "OfficialPicksTable", { required: expectedPortfolios.length > 0 });
+  const island = islands.find((props) => props.roundId === round.round_id && props.runId === round.official_run_id);
+  if (!island) {
+    if (expectedPortfolios.length > 0) failures.push(`${context} OfficialPicksTable island for ${round.round_id} was not found`);
+    return;
+  }
+  const actualRows = [...(island.fallbackRows ?? [])].sort((left, right) => left.model_id.localeCompare(right.model_id));
+  expectEqual(actualRows.length, expectedPortfolios.length, `${context} OfficialPicksTable row count`);
+  const actualByModel = new Map(actualRows.map((row) => [row.model_id, row]));
+  for (const expected of expectedPortfolios) {
+    const actual = actualByModel.get(expected.model_id);
+    const rowContext = `${context} OfficialPicksTable ${expected.model_id}`;
+    if (!actual) {
+      failures.push(`${rowContext} missing`);
+      continue;
+    }
+    expectEqual(actual.round_id, expected.round_id, `${rowContext} round_id`);
+    expectEqual(actual.run_id, expected.run_id, `${rowContext} run_id`);
+    expectEqual(actual.provider, expected.provider, `${rowContext} provider`);
+    expectEqual(actual.selected_option_id, expected.selected_option_id, `${rowContext} selected option`);
+    expectEqual(Number(actual.holding_count ?? 1), Number(expected.holding_count ?? 1), `${rowContext} holding count`);
+
+    const actualAllocations = new Map(effectiveSerializedAllocations(actual).map((allocation) => [allocation.option_id, allocation]));
+    expectEqual(actualAllocations.size, expected.allocations.length, `${rowContext} allocation count`);
+    for (const expectedAllocation of expected.allocations) {
+      const actualAllocation = actualAllocations.get(expectedAllocation.option_id);
+      const allocationContext = `${rowContext} allocation ${expectedAllocation.option_id}`;
+      if (!actualAllocation) {
+        failures.push(`${allocationContext} missing`);
+        continue;
+      }
+      expectClose(actualAllocation.allocation_pct ?? Number(actualAllocation.allocation_bps ?? 0) / 100, expectedAllocation.allocation_pct, `${allocationContext} pct`);
+      expectClose(actualAllocation.allocation_bps ?? Number(actualAllocation.allocation_pct ?? 0) * 100, expectedAllocation.allocation_bps, `${allocationContext} bps`);
+    }
+  }
+
+  const expectedOptions = roundUniverseOptions(round.round_id);
+  const actualOptions = island.options ?? [];
+  if (actualOptions.length > 0) {
+    expectEqual(actualOptions.length, expectedOptions.length, `${context} OfficialPicksTable option count`);
+  }
+}
+
+function validateRoundPerformanceIsland(html, round, context) {
+  const expectedRows = (apiReadModel.interim_performance ?? [])
+    .filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
+    .sort((left, right) => left.target_date.localeCompare(right.target_date) || left.model_id.localeCompare(right.model_id));
+  const islands = allAstroIslandProps(html, "RoundPerformanceChart", { required: round.status !== "resolved" && expectedRows.length > 0 });
+  const island = islands.find((props) => props.roundId === round.round_id && props.runId === round.official_run_id);
+  if (round.status === "resolved") {
+    if (island) failures.push(`${context} has a live performance island after resolution`);
+    return;
+  }
+  if (!island) {
+    if (expectedRows.length > 0) failures.push(`${context} RoundPerformanceChart island for ${round.round_id} was not found`);
+    return;
+  }
+  const actualRows = island.fallbackRows ?? [];
+  expectEqual(actualRows.length, expectedRows.length, `${context} RoundPerformanceChart row count`);
+  const actualByKey = new Map(actualRows.map((row) => [`${row.model_id}:${row.target_date}`, row]));
+  for (const expected of expectedRows) {
+    const key = `${expected.model_id}:${expected.target_date}`;
+    const actual = actualByKey.get(key);
+    const rowContext = `${context} RoundPerformanceChart ${key}`;
+    if (!actual) {
+      failures.push(`${rowContext} missing`);
+      continue;
+    }
+    expectEqual(actual.provider, expected.provider, `${rowContext} provider`);
+    expectEqual(actual.price_date, expected.price_date, `${rowContext} price date`);
+    expectEqual(Number(actual.days_elapsed), Number(expected.days_elapsed), `${rowContext} days elapsed`);
+    expectEqual(actual.selected_option_id, expected.selected_option_id, `${rowContext} selected option`);
+    expectEqual(Number(actual.holding_count ?? 1), Number(expected.holding_count ?? 1), `${rowContext} holding count`);
+    expectClose(actual.model_return, expected.model_return_pct / 100, `${rowContext} model return`);
+    expectClose(actual.sp500_return, expected.sp500_return_pct / 100, `${rowContext} S&P 500 return`);
+    expectClose(actual.alpha_vs_sp500, expected.alpha_pp / 100, `${rowContext} alpha`);
   }
 }
 
@@ -1445,6 +1581,14 @@ if (monthlyState.pendingRound && !monthlyState.latestResultRound) {
     }
   }
 }
+const latestResolvedMonthlyRound = latestRound("monthly", "resolved");
+const latestMonthlyDisplayRound = latestResolvedMonthlyRound ?? latestActiveMonthly;
+if (latestResolvedMonthlyRound) {
+  validateLeaderboardTableIsland(latestMonthlyHtml, latestResolvedMonthlyRound, "latest monthly page");
+}
+if (latestMonthlyDisplayRound) {
+  validateOfficialPicksIsland(latestMonthlyHtml, latestMonthlyDisplayRound, "latest monthly page");
+}
 
 for (const round of apiReadModel.rounds) {
   const context = `rounds index ${round.round_id}`;
@@ -1764,6 +1908,9 @@ if (riskProfiles.length > 0) {
 const latestResolvedWeeklyRound = latestRound("weekly", "resolved");
 if (latestResolvedWeeklyRound) {
   const latestWeeklyHtml = readHtml("leaderboards/latest-weekly/index.html");
+  validateLeaderboardTableIsland(latestWeeklyHtml, latestResolvedWeeklyRound, "latest weekly page");
+  const latestWeeklyDisplayRound = latestResolvedWeeklyRound ?? latestActiveWeeklyRound;
+  if (latestWeeklyDisplayRound) validateOfficialPicksIsland(latestWeeklyHtml, latestWeeklyDisplayRound, "latest weekly page");
   const latestWeeklyRows = apiReadModel.results
     .filter((row) => row.round_id === latestResolvedWeeklyRound.round_id && row.run_id === latestResolvedWeeklyRound.official_run_id)
     .sort((left, right) => left.rank - right.rank);
@@ -1804,6 +1951,9 @@ for (const round of apiReadModel.rounds) {
   includes(html, round.entry_date, context);
   includes(html, round.exit_date, context);
   includes(html, round.status === "resolved" ? "scored" : "pending", context);
+  validateOfficialPicksIsland(html, round, context);
+  validateLeaderboardTableIsland(html, round, context);
+  validateRoundPerformanceIsland(html, round, context);
 
   const portfolios = apiReadModel.portfolios.filter(
     (portfolio) => portfolio.round_id === round.round_id && portfolio.run_id === round.official_run_id
