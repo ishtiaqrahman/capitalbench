@@ -1,11 +1,13 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
 
-const repoRoot = resolve(process.cwd(), "../..");
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const roundsRoot = join(repoRoot, "rounds");
 const args = process.argv.slice(2);
 const options = {
+  all: false,
   roundId: null,
   runId: null,
   strict: false,
@@ -16,7 +18,8 @@ const options = {
 
 for (let index = 0; index < args.length; index += 1) {
   const arg = args[index];
-  if (arg === "--round") options.roundId = args[++index];
+  if (arg === "--all") options.all = true;
+  else if (arg === "--round") options.roundId = args[++index];
   else if (arg === "--run-id") options.runId = args[++index];
   else if (arg === "--strict") options.strict = true;
   else if (arg === "--return-tolerance-pp") options.returnTolerancePp = Number(args[++index]);
@@ -176,26 +179,27 @@ function pct(value) {
   return `${Number(value).toFixed(4)}%`;
 }
 
-function selectedRound() {
+function selectedRounds() {
   if (options.roundId) {
     const roundPath = join(roundsRoot, options.roundId);
     if (!existsSync(roundPath)) throw new Error(`Round not found: ${options.roundId}`);
     const manifest = readYaml(join(roundPath, "manifest.yaml"));
     const runId = options.runId ?? officialRuns(roundPath)[0]?.runId;
-    return {
+    return [{
       roundId: String(manifest.round_id ?? options.roundId),
       entryDate: String(manifest.entry_date ?? ""),
       exitDate: String(manifest.exit_date ?? ""),
       runId,
       roundPath
-    };
+    }];
   }
+  if (options.all) return resolvedRounds();
   const latest = resolvedRounds().at(-1);
   if (!latest) throw new Error("No resolved rounds found");
-  return latest;
+  return [latest];
 }
 
-const round = selectedRound();
+async function auditRound(round) {
 if (!round.runId) throw new Error(`No official run found for ${round.roundId}`);
 
 const resultsPath = join(round.roundPath, "runs", round.runId, "results");
@@ -328,4 +332,14 @@ const failed =
         (materialDifference(row.return_diff_pp, options.returnTolerancePp) ||
           materialDifference(row.score_diff, options.scoreTolerance))
     ));
+return { failed };
+}
+
+let failed = false;
+const rounds = selectedRounds();
+for (let index = 0; index < rounds.length; index += 1) {
+  if (index > 0) console.log("");
+  const result = await auditRound(rounds[index]);
+  failed ||= result.failed;
+}
 if (failed) process.exit(1);
