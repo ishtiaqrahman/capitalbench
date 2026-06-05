@@ -66,6 +66,18 @@ function readYaml(path, fallback = null) {
   }
 }
 
+function inferUniverseVersion(roundPath, manifestVersion) {
+  if (manifestVersion) return manifestVersion;
+  const optionsText = readText(join(roundPath, "options.yaml"));
+  if (!optionsText) return "";
+  const universeRoot = join(repoRoot, "configs", "universes");
+  if (!existsSync(universeRoot)) return "";
+  for (const filename of readdirSync(universeRoot).filter((item) => /^capitalbench_universe_.*\.yaml$/.test(item)).sort().reverse()) {
+    if (readText(join(universeRoot, filename)) === optionsText) return filename.replace(/\.yaml$/, "");
+  }
+  return "";
+}
+
 function parseCsvLine(line) {
   const cells = [];
   let cell = "";
@@ -315,7 +327,7 @@ function loadRound(row) {
     horizon: String(manifest.horizon ?? ""),
     horizon_days: horizonDays(entryDate, exitDate),
     methodology_version: selectedRun.manifest.methodology_version ?? manifest.methodology_version ?? "",
-    universe_version: manifest.universe_version ?? "",
+    universe_version: inferUniverseVersion(roundPath, manifest.universe_version),
     submission_format: manifest.submission_format ?? "single_pick",
     official_run_id: selectedRun.run_id,
     benchmark_option_id: "SP500",
@@ -347,6 +359,8 @@ function loadSubmissions({ roundPath, round, selectedRun, assetsById }) {
       provider,
       track: round.track,
       status: round.status,
+      entry_date: round.entry_date,
+      exit_date: round.exit_date,
       submission_format: portfolioAllocations.length > 1 ? "portfolio" : "single_pick",
       selected_option_id: primaryOptionId(payload),
       holding_count: portfolioAllocations.length || 1,

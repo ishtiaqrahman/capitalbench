@@ -5,14 +5,13 @@
 ![Data License: CC BY 4.0](https://img.shields.io/badge/data-CC%20BY%204.0-lightgrey)
 ![Offline First](https://img.shields.io/badge/default-offline--first-black)
 
-CapitalBench is an offline, auditable benchmark for one-shot LLM market
-decisions.
+CapitalBench is an offline, auditable benchmark for LLM market decisions.
 
 In each round, every model receives the same frozen briefing, prompt, option
 universe, and mechanical market-data table. The round manifest declares whether
 the model must choose one investable option or allocate a constrained portfolio.
-After the one-month horizon resolves, CapitalBench scores the decision against
-local entry and exit prices.
+After the declared scoring window resolves, CapitalBench scores the decision
+against local entry and exit prices.
 
 CapitalBench is designed for evaluation research, not investment advice. It is
 not a trading system, recommendation engine, or investment adviser.
@@ -20,7 +19,7 @@ not a trading system, recommendation engine, or investment adviser.
 ```text
 Status: research benchmark framework
 Default behavior: offline and dry-run safe
-Official score: one-shot alpha versus S&P 500
+Official score: CapitalBench Score plus return versus S&P 500
 Secondary analysis: repeated-call stability
 Code license: Apache License 2.0
 Public artifact license: CC BY 4.0
@@ -31,12 +30,12 @@ Public artifact license: CC BY 4.0
 | Area | CapitalBench behavior |
 |---|---|
 | Core task | Make one frozen market decision: a single pick or a constrained portfolio, depending on the round protocol |
-| Evaluation horizon | One month |
+| Evaluation horizon | One week or one month, depending on the track |
 | Model input | Frozen briefing, prompt, options, and optional mechanical market-data table |
 | Model output | Strict JSON submission |
 | Official result | One call per model, one official score |
 | Stability result | Multiple calls per model, usually five, reported separately |
-| Benchmark scoring | Alpha versus S&P 500, cash comparison, regret where full prices exist |
+| Benchmark scoring | CapitalBench Score, S&P 500 comparison, cash comparison, regret where full prices exist |
 | API calls | Never made unless `--allow-real-api-calls` is passed |
 | Market data fetching | Explicit only, through operator-run commands |
 | Public result views | Latest round, cumulative official, cumulative stability |
@@ -83,7 +82,7 @@ Each CapitalBench round is one standalone benchmark event.
 4. Freeze the option universe.
 5. Optionally generate a mechanical trailing-return table.
 6. Hash all round inputs.
-7. Run the official one-shot model calls.
+7. Run the official model calls.
 8. Optionally run a separate multi-shot stability analysis.
 9. Wait for the horizon to resolve.
 10. Fetch or provide entry and exit prices.
@@ -128,8 +127,8 @@ CapitalBench has exactly three public result views.
 
 | View | Source | Purpose |
 |---|---|---|
-| Latest Round Leaderboard | Newest resolved round's official one-shot run | Headline result for the most recent round |
-| Cumulative Official Leaderboard | Official one-shot runs across resolved rounds | Long-term one-shot decision quality |
+| Latest Round Leaderboard | Newest resolved round's official run | Headline result for the most recent round |
+| Cumulative Official Leaderboard | Official runs across resolved rounds | Long-term decision quality by track |
 | Cumulative Stability Leaderboard | Stability runs across resolved rounds | Repeated-call robustness and consistency |
 
 CapitalBench does not create:
@@ -150,10 +149,10 @@ Official and stability tracks answer different questions and stay separate.
 
 | Track | Calls per model | Output | Public role |
 |---|---:|---|---|
-| Official one-shot | 1 | `leaderboard.csv` | Headline score for the round |
+| Official public run | 1 | `leaderboard.csv` | Headline score for the round |
 | Multi-shot stability | Usually 5 | `stability.csv` | Secondary robustness analysis |
 
-Official one-shot runs measure the first and only decision. Stability runs
+Official public runs measure the first saved decision. Stability runs
 measure whether the model keeps making the same decision when called repeatedly
 with the same prompt, same briefing, and same options.
 
@@ -376,7 +375,7 @@ capitalbench hash-round --round rounds/CB-2026-06-01-1M
 capitalbench audit-round --round rounds/CB-2026-06-01-1M
 ```
 
-6. Run the official one-shot evaluation:
+6. Run the official evaluation:
 
 ```bash
 capitalbench run-round \
@@ -677,7 +676,7 @@ capitalbench publish-round-summary \
   --stability-run-id stability-20260601
 ```
 
-Publish the newest resolved round's official one-shot leaderboard:
+Publish the newest resolved round's official leaderboard:
 
 ```bash
 capitalbench publish-latest \

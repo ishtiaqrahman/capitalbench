@@ -480,7 +480,7 @@ def publish_cumulative_report(
         [
             "# CapitalBench Cumulative Results",
             "## What This Is\n\n"
-            "Each round is a separate one-month market decision. "
+            "Each round is a separate market decision with its own declared scoring window. "
             "Official results use one call per model. Stability results use repeated calls per model. "
             "Models may have different numbers of resolved rounds because new models enter CapitalBench only in future rounds. "
             "We do not backfill models into past official rounds. "
@@ -534,14 +534,14 @@ def publish_cumulative_report(
                 ["Round", "Official Run", "Stability Run", "Official Included", "Stability Included", "Warnings"],
             ),
             "## Methodology\n\n"
-            "Official cumulative score: For each model, the public website averages CapitalBench Score across completed rounds where each model participated. CapitalBench Score compares the model return with the maximum possible return from the scored universe in that window.\n\n"
+            "Official cumulative score: the public website averages CapitalBench Score across all completed rounds in the selected track. Models that did not participate in every resolved round are shown as short history until they build a full track history. CapitalBench Score compares the model return with the maximum possible return from the scored universe in that window.\n\n"
             "Stability cumulative score: For each model, we average its repeated-run alpha and consistency across the rounds where each model participated.\n\n"
             "The CSV cumulative official leaderboard keeps average alpha versus the S&P 500 as supporting context for compatibility; the website scorecard is the primary benchmark view.\n\n"
             "The cumulative stability leaderboard is sorted by average repeated-run alpha versus the S&P 500 across the rounds where each model participated.\n\n"
-            "The official leaderboard measures one-shot decision quality. The stability leaderboard measures consistency under repeated calls. They are not combined.",
+            "The official leaderboard measures the saved public model decision. The stability leaderboard measures consistency under repeated calls. They are not combined.",
             "## Limitations\n\n"
             "- A small number of rounds may be noisy.\n"
-            "- One-month market returns are noisy.\n"
+            "- Short-window market returns are noisy.\n"
             "- Models can win by luck.\n"
             "- This is not financial advice.\n"
             "- Provider costs and hidden reasoning tokens may not be directly comparable.\n"

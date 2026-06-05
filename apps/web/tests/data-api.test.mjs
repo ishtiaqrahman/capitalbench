@@ -45,6 +45,10 @@ function latestRoundId(track, { status } = {}) {
   return round.round_id;
 }
 
+function assertApproxEqual(actual, expected, tolerance = 1e-9) {
+  assert.ok(Math.abs(actual - expected) <= tolerance, `expected ${actual} to be within ${tolerance} of ${expected}`);
+}
+
 test("API rejects missing bearer key when auth is required", async () => {
   const result = await apiGet("/api/v1/models", {
     env: { API_AUTH_REQUIRED: "true" },
@@ -104,13 +108,32 @@ test("API applies per-minute key rate limit", async () => {
 
 test("active positioning returns live model allocation data", async () => {
   const result = await apiGet("/api/v1/positioning/active?track=all&group_by=asset");
+  const activePortfolioCount = new Set(
+    apiReadModel.portfolios
+      .filter((row) => row.status === "active")
+      .map((row) => `${row.round_id}:${row.run_id}:${row.model_id}`)
+  ).size;
+  const activeRoundIds = new Set(apiReadModel.rounds.filter((row) => row.status === "active").map((row) => row.round_id));
+  const resolvedRoundIds = new Set(apiReadModel.rounds.filter((row) => row.status === "resolved").map((row) => row.round_id));
 
   assert.equal(result.status, 200);
   assert.equal(result.body.scope, "active");
   assert.equal(result.body.track, "all");
+  assert.equal(result.body.portfolio_count, activePortfolioCount);
   assert.ok(result.body.portfolio_count > 0);
   assert.ok(result.body.data.length > 0);
   assert.ok(result.body.data[0].allocation_pct > 0);
+  assertApproxEqual(
+    result.body.data.reduce((total, row) => total + row.allocation_pct, 0),
+    100
+  );
+  for (const row of result.body.data) {
+    assert.ok(row.round_count <= activeRoundIds.size);
+    for (const track of row.tracks) assert.ok(["monthly", "weekly"].includes(track));
+    for (const roundId of row.rounds ?? []) {
+      assert.ok(!resolvedRoundIds.has(roundId), `active positioning included resolved round ${roundId}`);
+    }
+  }
 });
 
 test("live performance returns interim mark-to-market data for open tests", async () => {
@@ -159,13 +182,14 @@ test("latest weekly leaderboard returns resolved scored rows", async () => {
   assert.equal(typeof result.body.data[0].capitalbench_score, "number");
 });
 
-test("cumulative weekly leaderboard ranks eligible same-roster rows by CapitalBench Score", async () => {
+test("cumulative weekly leaderboard ranks eligible all-resolved rows by CapitalBench Score", async () => {
   const result = await apiGet("/api/v1/leaderboards/cumulative?track=weekly");
 
   assert.equal(result.status, 200);
   assert.equal(result.body.track, "weekly");
-  assert.equal(result.body.comparison.mode, "latest_model_cohort");
+  assert.equal(result.body.comparison.mode, "all_resolved_rounds");
   assert.ok(result.body.comparison.comparison_round_count > 0);
+  assert.equal(result.body.comparison.comparison_round_count, result.body.comparison.completed_round_count);
   assert.ok(result.body.data.length > 0);
   assert.equal(result.body.data[0].rank, 1);
   assert.equal(result.body.data[0].is_rank_eligible, true);
@@ -180,7 +204,7 @@ test("cumulative weekly leaderboard ranks eligible same-roster rows by CapitalBe
   }
 });
 
-test("cumulative leaderboard starts a new comparable cohort when model roster changes", () => {
+test("cumulative leaderboard includes all resolved tests and marks late model history", () => {
   const fixture = {
     models: [
       { model_id: "old-a", label: "Old A" },
@@ -206,12 +230,27 @@ test("cumulative leaderboard starts a new comparable cohort when model roster ch
   const result = buildCumulativeLeaderboardData(fixture, "weekly");
 
   assert.deepEqual(result.comparison.completed_round_ids, ["r1", "r2", "r3"]);
-  assert.deepEqual(result.comparison.comparison_round_ids, ["r3"]);
-  assert.deepEqual(result.comparison.excluded_round_ids, ["r1", "r2"]);
+  assert.deepEqual(result.comparison.comparison_round_ids, ["r1", "r2", "r3"]);
+  assert.deepEqual(result.comparison.excluded_round_ids, []);
   assert.equal(result.data[0].model_id, "old-b");
-  assert.equal(result.data[0].capitalbench_score, 80);
-  assert.equal(result.data[1].model_id, "new-c");
-  assert.ok(result.data.every((row) => row.tests_required === 1 && row.tests_included === 1 && row.is_rank_eligible));
+  assert.equal(result.data[0].capitalbench_score, (10 + 20 + 80) / 3);
+  assert.equal(result.data[0].tests_required, 3);
+  assert.equal(result.data[0].tests_included, 3);
+  assert.equal(result.data[0].is_rank_eligible, true);
+  assert.equal(result.data[0].wins, 1);
+  assertApproxEqual(result.data[0].win_rate_pct, 100 / 3);
+  assertApproxEqual(result.data[0].positive_alpha_rate_pct, 200 / 3);
+  assert.equal(result.data[1].model_id, "old-a");
+  assert.equal(result.data[1].capitalbench_score, (20 + 30 + 50) / 3);
+  assert.equal(result.data[1].wins, 2);
+  assertApproxEqual(result.data[1].win_rate_pct, 200 / 3);
+  assert.equal(result.data[1].positive_alpha_rate_pct, 100);
+  assert.equal(result.data[2].model_id, "new-c");
+  assert.equal(result.data[2].capitalbench_score, 70);
+  assert.equal(result.data[2].tests_required, 3);
+  assert.equal(result.data[2].tests_included, 1);
+  assert.equal(result.data[2].is_rank_eligible, false);
+  assert.equal(result.data[2].sample_status, "provisional");
 });
 
 test("round portfolios and current universe endpoints return real data", async () => {

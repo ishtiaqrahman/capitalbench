@@ -141,8 +141,8 @@ into one weighted score.
 
 CapitalBench publishes three result views:
 
-- Latest Round Leaderboard: the newest resolved round's official one-shot result.
-- Cumulative Official Leaderboard: average CapitalBench Score across resolved rounds where each model participated.
+- Latest Round Leaderboard: the newest resolved round's official result.
+- Cumulative Official Leaderboard: average CapitalBench Score across all resolved rounds in the track, with shorter model histories labeled separately.
 - Cumulative Stability Leaderboard: average repeated-run alpha and average consistency across resolved rounds where each model participated.
 
 There is no qualified leaderboard and no weighted mega-score. Official and
@@ -235,7 +235,7 @@ Official runs require `replicate_index: 1`, `replicate_count: 1`, and
 `replicate_count`, allow repeated `model_id` values only when replicate indexes
 are unique, and require `is_official_score: false`.
 
-## Official One-Shot Result
+## Official Public Result
 
 The official leaderboard uses one valid submission per model from one selected
 official run. The model gets one attempt. In a `single_pick` round, the
@@ -318,8 +318,8 @@ result. It is secondary analysis and does not alter the official leaderboard.
 Each resolved round is one game. Across resolved rounds, CapitalBench can publish
 two cumulative leaderboards:
 
-- Cumulative official leaderboard: average CapitalBench Score across resolved
-  rounds where each model participated.
+- Cumulative official leaderboard: average CapitalBench Score across all
+  resolved rounds in the track, with shorter model histories labeled separately.
 - Cumulative stability leaderboard: average repeated-run alpha and average
   consistency across resolved rounds.
 

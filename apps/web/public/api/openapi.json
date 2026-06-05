@@ -383,7 +383,7 @@
       "get": {
         "tags": ["Leaderboards"],
         "summary": "Cumulative leaderboard",
-        "description": "Same-roster model score cohort by weekly track, monthly track, or combined view, ranked by CapitalBench Score where available.",
+        "description": "All resolved model results by weekly track, monthly track, or combined view, ranked by CapitalBench Score where available.",
         "parameters": [{ "$ref": "#/components/parameters/Track" }],
         "responses": {
           "200": {
@@ -674,7 +674,7 @@
       "Round": {
         "type": "object",
         "properties": {
-          "round_id": { "type": "string", "examples": ["CB-2026-05-28-W1"] },
+          "round_id": { "type": "string", "examples": ["CB-2026-05-28-1W"] },
           "track": { "type": "string", "enum": ["weekly", "monthly"] },
           "status": { "type": "string", "enum": ["active", "resolved"] },
           "start_at": { "type": "string", "format": "date-time" },
@@ -935,9 +935,9 @@
       },
       "CumulativeComparison": {
         "type": "object",
-        "description": "Metadata for cumulative leaderboards that use the latest same-roster comparison cohort.",
+        "description": "Metadata for cumulative leaderboards that combine all resolved tests in the selected track.",
         "properties": {
-          "mode": { "type": "string", "enum": ["latest_model_cohort"] },
+          "mode": { "type": "string", "enum": ["all_resolved_rounds"] },
           "completed_round_count": { "type": "integer" },
           "completed_round_ids": { "type": "array", "items": { "type": "string" } },
           "comparison_round_count": { "type": "integer" },
@@ -969,11 +969,12 @@
           "max_possible_return_pct": { "type": ["number", "null"], "description": "Highest realized return among scored options in the saved universe, in percentage points." },
           "capitalbench_score": { "type": ["number", "null"], "description": "Score where 100 means matching the maximum possible return in that window." },
           "round_count": { "type": "integer" },
-          "tests_required": { "type": "integer", "description": "Number of same-roster tests required for this cumulative comparison." },
-          "tests_included": { "type": "integer", "description": "Number of same-roster tests included for this row." },
+          "tests_required": { "type": "integer", "description": "Number of resolved tests in this cumulative comparison." },
+          "tests_included": { "type": "integer", "description": "Number of resolved tests included for this row." },
           "is_rank_eligible": { "type": "boolean", "description": "Whether this row can lead the cumulative scorecard." },
           "sample_status": { "type": "string", "enum": ["eligible", "provisional"] },
-          "win_rate_pct": { "type": ["number", "null"] }
+          "win_rate_pct": { "type": ["number", "null"], "description": "Share of included tests where the model ranked first." },
+          "positive_alpha_rate_pct": { "type": ["number", "null"], "description": "Share of included tests where the model beat the S&P 500 benchmark." }
         },
         "required": ["rank", "model_id", "label", "portfolio_return_pct", "benchmark_return_pct", "alpha_pp"]
       },

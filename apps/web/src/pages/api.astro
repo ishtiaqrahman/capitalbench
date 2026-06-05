@@ -1,106 +1,112 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import apiReadModel from "../generated/apiReadModel.js";
+import { createMemoryApiAuthRepository, handleDataApiRequest } from "../lib/dataApi.js";
 
-const activePositioningExample = `GET /v1/positioning/active?track=all&group_by=asset
+async function apiBody(path: string) {
+  const result = await handleDataApiRequest({
+    request: new Request(`https://www.capitalbench.org${path}`),
+    env: { API_AUTH_REQUIRED: "false" },
+    authRepo: createMemoryApiAuthRepository(),
+    now: new Date(apiReadModel.generated_at)
+  });
+  if (!result) throw new Error(`No API example response for ${path}`);
+  return result.body;
+}
 
-{
-  "as_of": "2026-06-01T20:30:00Z",
-  "scope": "active",
-  "track": "all",
-  "group_by": "asset",
-  "data": [
-    {
-      "key": "SEMICONDUCTORS",
-      "label": "Semiconductors",
-      "allocation_pct": 24.2,
-      "model_count": 3,
-      "round_count": 2,
-      "tracks": ["weekly", "monthly"],
-      "models": [
-        { "model_id": "openai-gpt-5", "label": "OpenAI GPT-5", "allocation_pct": 30.0 },
-        { "model_id": "anthropic-claude-opus-4-7", "label": "Claude Opus 4.7", "allocation_pct": 22.5 }
+function exampleBlock(path: string, body: unknown): string {
+  return `GET ${path.replace(/^\/api/, "")}\n\n${JSON.stringify(body, null, 2)}`;
+}
+
+const activePositioningBody = await apiBody("/api/v1/positioning/active?track=all&group_by=asset");
+const activePositioningTop = activePositioningBody.data?.[0];
+const activePositioningExample = exampleBlock("/api/v1/positioning/active?track=all&group_by=asset", {
+  as_of: activePositioningBody.as_of,
+  scope: activePositioningBody.scope,
+  track: activePositioningBody.track,
+  group_by: activePositioningBody.group_by,
+  portfolio_count: activePositioningBody.portfolio_count,
+  data: activePositioningTop
+    ? [
+        {
+          ...activePositioningTop,
+          models: activePositioningTop.models?.slice(0, 2)
+        }
       ]
-    }
-  ]
-}`;
+    : []
+});
 
-const assetHoldersExample = `GET /v1/positioning/by-asset/SEMICONDUCTORS?scope=active&track=weekly
+const assetHoldersBody = await apiBody("/api/v1/assets/SEMICONDUCTORS/model-holders?scope=active&track=weekly");
+const assetHoldersTop = assetHoldersBody.data?.[0];
+const assetHoldersExample = exampleBlock("/api/v1/assets/SEMICONDUCTORS/model-holders?scope=active&track=weekly", {
+  as_of: assetHoldersBody.as_of,
+  scope: assetHoldersBody.scope,
+  track: assetHoldersBody.track,
+  group_by: assetHoldersBody.group_by,
+  portfolio_count: assetHoldersBody.portfolio_count,
+  data: assetHoldersTop ? [assetHoldersTop] : []
+});
 
-{
-  "scope": "active",
-  "track": "weekly",
-  "group_by": "model",
-  "data": [
-    {
-      "key": "openai-gpt-5",
-      "label": "OpenAI GPT-5",
-      "allocation_pct": 30.0,
-      "model_count": 1,
-      "round_count": 1
-    }
-  ]
-}`;
+const livePerformanceBody = await apiBody("/api/v1/live/performance?track=all");
+const livePerformanceTop = livePerformanceBody.data?.[0];
+const livePerformanceExample = exampleBlock("/api/v1/live/performance?track=all", {
+  status: livePerformanceBody.status,
+  latest_price_date: livePerformanceBody.latest_price_date,
+  round_count: livePerformanceBody.round_count,
+  model_count: livePerformanceBody.model_count,
+  benchmark: livePerformanceBody.benchmark,
+  data: livePerformanceTop
+    ? [
+        {
+          rank: livePerformanceTop.rank,
+          model_id: livePerformanceTop.model_id,
+          label: livePerformanceTop.label,
+          portfolio_return_pct: livePerformanceTop.portfolio_return_pct,
+          sp500_return_pct: livePerformanceTop.sp500_return_pct,
+          alpha_pp: livePerformanceTop.alpha_pp,
+          live_round_count: livePerformanceTop.live_round_count,
+          latest_price_date: livePerformanceTop.latest_price_date
+        }
+      ]
+    : []
+});
 
-const livePerformanceExample = `GET /v1/live/performance?track=all
+const leaderboardBody = await apiBody("/api/v1/leaderboards/latest?track=weekly");
+const leaderboardTop = leaderboardBody.data?.[0];
+const leaderboardExample = exampleBlock("/api/v1/leaderboards/latest?track=weekly", {
+  track: leaderboardBody.track,
+  round_id: leaderboardBody.round_id,
+  data: leaderboardTop
+    ? [
+        {
+          rank: leaderboardTop.rank,
+          model_id: leaderboardTop.model_id,
+          label: leaderboardTop.label,
+          portfolio_return_pct: leaderboardTop.portfolio_return_pct,
+          benchmark_return_pct: leaderboardTop.benchmark_return_pct,
+          alpha_pp: leaderboardTop.alpha_pp,
+          max_possible_return_pct: leaderboardTop.max_possible_return_pct,
+          capitalbench_score: leaderboardTop.capitalbench_score
+        }
+      ]
+    : []
+});
 
-{
-  "status": "live_not_final",
-  "latest_price_date": "2026-06-02",
-  "round_count": 6,
-  "benchmark": { "label": "S&P 500", "return_pct": 1.24 },
-  "data": [
-    {
-      "rank": 1,
-      "model_id": "openai-gpt-5-5",
-      "label": "GPT-5.5",
-      "portfolio_return_pct": 4.83,
-      "sp500_return_pct": 1.24,
-      "alpha_pp": 3.59,
-      "live_round_count": 4
-    }
-  ]
-}`;
-
-const leaderboardExample = `GET /v1/leaderboards/latest?track=weekly
-
-{
-  "track": "weekly",
-  "data": [
-    {
-      "rank": 1,
-      "model_id": "google-gemini-3-1-pro",
-      "label": "Gemini 3.1 Pro",
-      "portfolio_return_pct": 2.84,
-      "benchmark_return_pct": 1.13,
-      "alpha_pp": 1.71,
-      "max_possible_return_pct": 5.90,
-      "capitalbench_score": 48.1
-    }
-  ]
-}`;
-
-const roundConcentrationExample = `GET /v1/rounds/CB-2026-06-02-1W/concentration
-
-{
-  "round_id": "CB-2026-06-02-1W",
-  "track": "weekly",
-  "model_count": 5,
-  "portfolio_count": 5,
-  "summary": {
-    "top_asset_share_pct": 20.0,
-    "top_three_share_pct": 55.0,
-    "effective_asset_count": 7.25
-  },
-  "assets": [
-    {
-      "option_id": "SEMICONDUCTORS",
-      "label": "Semiconductors",
-      "ticker": "SMH",
-      "allocation_pct": 20.0,
-      "model_count": 4
-    }
-  ]
-}`;
+const latestActiveWeeklyRound = apiReadModel.rounds.find((round) => round.track === "weekly" && round.status === "active");
+if (!latestActiveWeeklyRound) {
+  throw new Error("API docs concentration example requires an active weekly round in the generated read model.");
+}
+const concentrationPath = `/api/v1/rounds/${latestActiveWeeklyRound.round_id}/concentration`;
+const concentrationBody = await apiBody(concentrationPath);
+const concentrationTop = concentrationBody.assets?.[0];
+const roundConcentrationExample = exampleBlock(concentrationPath, {
+  round_id: concentrationBody.round_id,
+  track: concentrationBody.track,
+  model_count: concentrationBody.model_count,
+  portfolio_count: concentrationBody.portfolio_count,
+  summary: concentrationBody.summary,
+  assets: concentrationTop ? [{ ...concentrationTop, models: concentrationTop.models?.slice(0, 2) }] : []
+});
 
 const endpointGroups = [
   {
@@ -128,7 +134,7 @@ const endpointGroups = [
       ["GET", "/v1/rounds/{round_id}/live-performance", "Interim mark-to-market rows for an unresolved round."],
       ["GET", "/v1/rounds/{round_id}/results", "Resolved portfolio returns, S&P 500 returns, Portfolio Minus S&P 500, regret, and max-possible context."],
       ["GET", "/v1/leaderboards/latest", "Most recent scored weekly or monthly leaderboard."],
-      ["GET", "/v1/leaderboards/cumulative", "Same-roster cohort model record by track, ranked by CapitalBench Score where available."]
+      ["GET", "/v1/leaderboards/cumulative", "All resolved model results by track, ranked by CapitalBench Score where available."]
     ]
   },
   {
@@ -155,14 +161,14 @@ const concepts = [
   ["Proof", "Round files, hashes, timestamps, prompt inputs, prices, and portfolio records."],
   ["Portfolio Minus S&P 500", "Model portfolio return minus the S&P 500 return, in percentage points."],
   ["CapitalBench Score", "Model return scaled to the maximum possible return in each completed window."],
-  ["Comparison cohort", "The latest same-roster set of completed tests used for headline cumulative scores."]
+  ["Resolved score set", "All completed tests used for headline cumulative scores in the selected track."]
 ];
 
 const fields = [
   ["allocation_pct", "Portfolio or aggregate weight, in percentage points."],
   ["alpha_pp", "Portfolio Minus S&P 500, in percentage points."],
   ["capitalbench_score", "Score where 100 means matching the maximum possible return in that window."],
-  ["comparison", "Cumulative leaderboard metadata showing included rounds, excluded older-roster rounds, and cohort mode."],
+  ["comparison", "Cumulative leaderboard metadata showing included resolved rounds, test counts, and aggregation mode."],
   ["effective_asset_count", "Concentration metric equal to one divided by summed squared asset shares."],
   ["max_possible_return_pct", "Highest realized return among scored options in the saved universe."],
   ["model_id", "Stable CapitalBench model identifier."],

@@ -5,6 +5,7 @@ import { parse as parseYaml } from "yaml";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
 import UniverseTable from "../components/UniverseTable";
+import apiReadModel from "../generated/apiReadModel.js";
 import { type UniverseOption } from "../data/fallback";
 import { repoRootPath } from "../lib/localRoundRecords";
 import { datasetSchema } from "../lib/seo";
@@ -92,6 +93,7 @@ const universeVersions = readdirSync(universeConfigDir)
   .sort((left, right) => compareVersionsDesc(left.label, right.label));
 
 const latestUniverse = universeVersions[0];
+const currentUniverseRoundId = apiReadModel.current_universe_round_id;
 const universeDataset = datasetSchema({
   name: "CapitalBench asset list",
   description:
@@ -121,6 +123,7 @@ const universeDataset = datasetSchema({
         <span class="metric-label">Latest asset list</span>
         <h3>{latestUniverse.label}</h3>
         <p>{latestUniverse.rows.length} total choices for new public tests.</p>
+        {currentUniverseRoundId && <p class="mono">Current source: {currentUniverseRoundId}</p>}
       </article>
       <article class="feature">
         <span class="metric-label">Test save rule</span>

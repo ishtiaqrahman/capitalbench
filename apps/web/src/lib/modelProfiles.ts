@@ -186,7 +186,16 @@ const GROUP_LABELS: Record<string, string> = {
   us_style_factor: "US Style Factor"
 };
 
-const TECH_OPTION_IDS = new Set(["NASDAQ100", "LARGE_GROWTH", "TECHNOLOGY", "SEMICONDUCTORS", "SOFTWARE"]);
+const TECH_OPTION_IDS = new Set([
+  "NASDAQ100",
+  "LARGE_GROWTH",
+  "TECHNOLOGY",
+  "SEMICONDUCTORS",
+  "SOFTWARE",
+  "BROAD_AI_TECH",
+  "AUTONOMOUS_ROBOTICS",
+  "CYBERSECURITY"
+]);
 const DEFENSIVE_OPTION_IDS = new Set([
   "CASH",
   "SHORT_TREASURY",

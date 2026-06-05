@@ -14,7 +14,7 @@ Used for `CB-2026-05-10-1M`.
 
 Key properties:
 
-- One official one-shot run.
+- One official public run.
 - One selected option per model.
 - CapitalBench Universe v1.5.
 - Model-facing final briefing imported from `research/final_briefing.md`.

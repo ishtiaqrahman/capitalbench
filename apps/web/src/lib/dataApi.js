@@ -504,17 +504,11 @@ function latestLeaderboard(url) {
   });
 }
 
-function sameModelSet(left, right) {
-  if (left.length !== right.length) return false;
-  const rightIds = new Set(right);
-  return left.every((item) => rightIds.has(item));
-}
-
 function resultRoundSortValue(round) {
   return `${round?.exit_date ?? ""}:${round?.decision_deadline_utc ?? ""}:${round?.round_id ?? ""}`;
 }
 
-function currentComparableResultCohort(readModel, track) {
+function resolvedResultSet(readModel, track) {
   const rows = track === "all" ? readModel.results : readModel.results.filter((row) => row.track === track);
   const roundById = new Map(readModel.rounds.map((round) => [round.round_id, round]));
   const byRound = new Map();
@@ -526,37 +520,18 @@ function currentComparableResultCohort(readModel, track) {
   const scoredRoundIds = Array.from(byRound.keys()).sort((left, right) =>
     resultRoundSortValue(roundById.get(left)).localeCompare(resultRoundSortValue(roundById.get(right)))
   );
-  const latestRoundId = scoredRoundIds[scoredRoundIds.length - 1];
-  if (!latestRoundId) {
-    return {
-      rows: [],
-      completedRoundIds: [],
-      comparisonRoundIds: [],
-      excludedRoundIds: [],
-      comparisonModelCount: 0
-    };
-  }
-
-  const latestRoster = Array.from(new Set(byRound.get(latestRoundId).map((row) => row.model_id))).sort();
-  const comparisonRoundIds = [];
-  for (let index = scoredRoundIds.length - 1; index >= 0; index -= 1) {
-    const roundId = scoredRoundIds[index];
-    const roster = Array.from(new Set(byRound.get(roundId).map((row) => row.model_id))).sort();
-    if (!sameModelSet(roster, latestRoster)) break;
-    comparisonRoundIds.unshift(roundId);
-  }
-  const comparisonRoundSet = new Set(comparisonRoundIds);
+  const modelIds = new Set(rows.map((row) => row.model_id).filter(Boolean));
   return {
-    rows: rows.filter((row) => comparisonRoundSet.has(row.round_id)),
+    rows,
     completedRoundIds: scoredRoundIds,
-    comparisonRoundIds,
-    excludedRoundIds: scoredRoundIds.filter((roundId) => !comparisonRoundSet.has(roundId)),
-    comparisonModelCount: latestRoster.length
+    comparisonRoundIds: scoredRoundIds,
+    excludedRoundIds: [],
+    comparisonModelCount: modelIds.size
   };
 }
 
 export function buildCumulativeLeaderboardData(readModel, track) {
-  const cohort = currentComparableResultCohort(readModel, track);
+  const cohort = resolvedResultSet(readModel, track);
   const byModel = new Map();
   const localModelById = new Map(readModel.models.map((model) => [model.model_id, model]));
   for (const row of cohort.rows) {
@@ -605,7 +580,8 @@ export function buildCumulativeLeaderboardData(readModel, track) {
         is_rank_eligible: isRankEligible,
         sample_status: isRankEligible ? "eligible" : "provisional",
         wins: row.wins,
-        win_rate_pct: row.round_count ? (row.positive_alpha / row.round_count) * 100 : null
+        win_rate_pct: row.round_count ? (row.wins / row.round_count) * 100 : null,
+        positive_alpha_rate_pct: row.round_count ? (row.positive_alpha / row.round_count) * 100 : null
       };
     })
     .sort((a, b) =>
@@ -618,7 +594,7 @@ export function buildCumulativeLeaderboardData(readModel, track) {
   return {
     track,
     comparison: {
-      mode: "latest_model_cohort",
+      mode: "all_resolved_rounds",
       completed_round_count: cohort.completedRoundIds.length,
       completed_round_ids: cohort.completedRoundIds,
       comparison_round_count: testsRequired,

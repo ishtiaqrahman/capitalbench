@@ -20,8 +20,8 @@ function scoreLabel(value: number): string {
   return `${value.toFixed(1)}`;
 }
 
-function comparableTestsLabel(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow): string {
-  return `${row.testsIncluded}/${row.testsRequired} comparable test${row.testsRequired === 1 ? "" : "s"}`;
+function scoredTestsLabel(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow): string {
+  return `${row.testsIncluded}/${row.testsRequired} scored test${row.testsRequired === 1 ? "" : "s"}`;
 }
 
 function valueCoordinate(value: number, minimum: number, maximum: number): number {
@@ -63,8 +63,8 @@ function chipLabel(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow):
 
 function rowMeta(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow): string {
   if (row.kind === "reference") return "Best asset after the result was known, not a model";
-  if (row.kind === "benchmark") return `S&P 500 · ${comparableTestsLabel(row)}`;
-  const sampleLabel = row.isRankEligible ? comparableTestsLabel(row) : `provisional · ${comparableTestsLabel(row)}`;
+  if (row.kind === "benchmark") return `S&P 500 · ${scoredTestsLabel(row)}`;
+  const sampleLabel = row.isRankEligible ? scoredTestsLabel(row) : `short history · ${scoredTestsLabel(row)}`;
   return `${row.providerLabel ?? "Model"} · ${sampleLabel}`;
 }
 
@@ -125,11 +125,11 @@ function scoreMobileBarStyle(value: number): string {
       <span class="panel-kicker">{scorecard.label} track</span>
       <h3 id={`${scorecard.track}-track-scorecard-title`}>Model Score Results</h3>
       <p>
-        Scores use the latest comparable model cohort. Older tests with a different model roster are not mixed into this chart.
+        Scores combine every resolved {scorecard.label.toLowerCase()} test. Models with fewer completed tests are marked short history.
       </p>
     </div>
     <div class="track-scorecard-badges" aria-label={`${scorecard.label} scorecard status`}>
-      <span>{scorecard.comparisonRoundCount} comparable</span>
+      <span>{scorecard.comparisonRoundCount} resolved</span>
       <span>{scorecard.completedRoundCount} scored total</span>
       <span>Latest: {scorecard.latestRoundId}</span>
     </div>
@@ -143,7 +143,7 @@ function scoreMobileBarStyle(value: number): string {
           <h4 id={`${scorecard.track}-normalized-score-title`}>CapitalBench Score</h4>
         </div>
         <p>
-          Scores are out of 100. A score of 100 means matching the best-performing asset in each comparable test.
+          Scores are out of 100. A score of 100 means matching the best-performing asset in each completed test.
         </p>
       </div>
 
@@ -185,6 +185,9 @@ function scoreMobileBarStyle(value: number): string {
                     <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
                   )}
                   <strong>{row.label}</strong>
+                  {row.kind === "model" && !row.isRankEligible && (
+                    <em>short history · {row.testsIncluded}/{row.testsRequired}</em>
+                  )}
                 </div>
               ))}
             </div>
@@ -276,15 +279,15 @@ function scoreMobileBarStyle(value: number): string {
   </div>
 
   <div class="track-scorecard-notes" aria-label={`${scorecard.label} scorecard notes`}>
-    <span><strong>Comparable tests:</strong> {scorecard.comparisonRoundIds.join(", ")}</span>
+    <span><strong>Resolved tests:</strong> {scorecard.comparisonRoundIds.join(", ")}</span>
     {scorecard.excludedRoundIds.length > 0 && (
-      <span><strong>Roster changed:</strong> older scored tests excluded here: {scorecard.excludedRoundIds.join(", ")}</span>
+      <span><strong>Excluded tests:</strong> {scorecard.excludedRoundIds.join(", ")}</span>
     )}
     {scorecard.isEarlyCohort && (
-      <span><strong>Early cohort:</strong> this comparison has one completed same-roster test.</span>
+      <span><strong>Early track:</strong> this track has one completed test.</span>
     )}
     {provisionalScoreRows.length > 0 && (
-      <span><strong>Provisional:</strong> models missing comparable tests cannot lead the main score.</span>
+      <span><strong>Short history:</strong> models missing resolved tests are shown but cannot lead the full-history score.</span>
     )}
   </div>
 </section>

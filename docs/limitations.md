@@ -19,7 +19,7 @@ CapitalBench is intentionally narrow in this version.
 - A one-month result can be dominated by noise.
 - Newer models may have fewer resolved rounds in cumulative leaderboards.
 - Old rounds are not rerun for new models because outcomes may already be knowable.
-- The official one-shot result can differ from a model's repeated-call behavior.
+- The official public result can differ from a model's repeated-call behavior.
 - A round where many models choose the same asset may be fair but low-discrimination as a ranking event.
 - Multi-run stability analysis measures consistency, not a separate investment skill score.
 - Stability results must not be combined with the official leaderboard into one headline number.

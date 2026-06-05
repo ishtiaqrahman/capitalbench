@@ -641,7 +641,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     latest_parser = subparsers.add_parser(
         "publish-latest",
-        help="publish the newest resolved round's official one-shot leaderboard",
+        help="publish the newest resolved round's official leaderboard",
     )
     latest_parser.add_argument("--rounds-dir", type=Path, required=True)
     latest_parser.add_argument("--output", type=Path, required=True)

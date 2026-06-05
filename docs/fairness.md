@@ -22,7 +22,7 @@ Use these rules for a fair round:
 - Record token usage, including reasoning or thinking tokens when exposed, but do not treat hidden reasoning counts as directly comparable across providers.
 - Use the same local entry and exit price source for every option.
 - State the entry and exit rules in `manifest.yaml`.
-- Identify exactly one official one-shot run for public reporting.
+- Identify exactly one official model-call run for public reporting.
 - Mark incomplete or invalid official attempts as not official-score eligible.
 - Retry official model calls only for infrastructure or format failures such as malformed JSON, truncation, provider transport failure, or schema output failure.
 - Do not retry because of the selected asset, confidence value, or rationale quality.

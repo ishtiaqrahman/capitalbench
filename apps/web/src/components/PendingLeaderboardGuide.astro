@@ -9,6 +9,7 @@ interface Props {
   scoreEtaSource?: "automation" | "derived";
   status?: "pending" | "resolved" | "archived";
   initialNowIso?: string;
+  ctaHref?: string;
 }
 
 const {
@@ -18,7 +19,8 @@ const {
   scoreEtaUtc,
   scoreEtaSource,
   status = "pending",
-  initialNowIso
+  initialNowIso,
+  ctaHref
 } = Astro.props;
 
 const copy = {
@@ -35,7 +37,7 @@ const copy = {
     kicker: "Overall results",
     title: "What Appears After Completed Tests",
     body:
-      "This view averages CapitalBench Score inside the latest same-roster cohort. New models enter future tests only; old outcomes are not backfilled.",
+      "This view averages CapitalBench Score across all resolved tests. New models show fewer included tests until they build history.",
     columns: ["Model", "Provider", "Completed tests", "CapitalBench Score", "Average return", "S&P context"],
     sort: "CapitalBench Score descending, with average return and S&P comparison shown as context.",
     cta: "View current test"
@@ -52,11 +54,12 @@ const copy = {
 }[kind];
 
 const href =
-  kind === "latest"
+  ctaHref ??
+  (kind === "latest"
     ? "#official-picks"
     : kind === "stability"
       ? "/methodology#execution"
-      : "/rounds/CB-2026-05-10-1M";
+      : "/rounds");
 ---
 
 <section class={`leaderboard-guide guide-${kind}`} aria-label="Pending leaderboard explanation">

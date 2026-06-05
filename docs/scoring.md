@@ -127,10 +127,10 @@ for each completed test where full-universe scoring returns exist.
 The benchmark option must be identifiable as S&P 500, usually with
 `is_benchmark: true` and `asset_symbol: SPY`.
 
-## Official One-Shot Leaderboard
+## Public Test Leaderboard
 
 The official leaderboard uses exactly one valid submission per model from a run
-with `run_type: official`. It is the public one-shot result for a completed
+with `run_type: official`. It is the public model result for a completed
 test. Stability runs do not feed into this leaderboard.
 
 Official scoring writes:
@@ -189,7 +189,7 @@ official score.
 ## Latest Round Leaderboard
 
 The latest round leaderboard uses only the newest resolved round's official
-one-shot run. It is a standalone round result. Cumulative results and stability
+run. It is a standalone round result. Cumulative results and stability
 results are separate views.
 
 Publishing writes:
@@ -212,8 +212,9 @@ capitalbench_score = 100 * selected_asset_return / max_possible_return
 `max_possible_return` is the highest realized return among scored options in the
 frozen universe for that round. A score of 100 means the model matched the
 maximum possible return in that completed window. The cumulative score averages
-the per-round CapitalBench Scores across resolved rounds where that model has
-an official result.
+per-round CapitalBench Scores across all resolved rounds in that track. Models
+that did not participate in every resolved round are shown as short history
+until they have a full track history.
 
 Example:
 
@@ -238,9 +239,9 @@ fields are supporting context, not the primary benchmark score.
 
 Models may have different `resolved_rounds` counts because new models enter
 only in future rounds. CapitalBench does not backfill new models into old
-official rounds. The primary cumulative scorecard is sorted by average
-CapitalBench Score. Supporting alpha tables may sort by average alpha versus
-the S&P 500.
+official rounds. The primary cumulative scorecard ranks full-history models
+first by average CapitalBench Score and labels shorter histories separately.
+Supporting alpha tables may sort by average alpha versus the S&P 500.
 
 ## Cumulative Stability Leaderboard
 

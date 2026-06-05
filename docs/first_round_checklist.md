@@ -32,8 +32,8 @@ Use this checklist before running a public CapitalBench round.
 - Require `mode: closed_capability`.
 - Require exactly one `selected_option_id`.
 - Choose a unique `run_id` for each collection attempt.
-- Decide which run will be the official one-shot run.
-- Use `--run-type official` for the one-shot leaderboard.
+- Decide which run will be the official public run.
+- Use `--run-type official` for the public leaderboard.
 - Use `--run-type stability --replicates 5` only for secondary stability analysis.
 - Do not combine the official leaderboard and stability table into one score.
 - If adding a newly released model, set `first_eligible_round` or `first_eligible_date_utc` so it starts with a future round.
@@ -127,7 +127,7 @@ does not replace the official leaderboard.
   for each included round.
 - Remember that the latest leaderboard is only the newest resolved round.
 - Remember that the cumulative official scorecard averages CapitalBench Score
-  across resolved rounds where each model participated.
+  across all resolved rounds in the track and labels shorter model histories.
 - Remember that the cumulative stability leaderboard averages repeated-run alpha
   and consistency across resolved rounds where each model participated.
 - Models can have different `resolved_rounds` counts. This is expected for new

@@ -253,6 +253,9 @@ function discoverRoundRecord(roundPath: string): RoundRecord | null {
   const manifest = readYamlFile<RoundManifestYaml>(join(roundPath, "manifest.yaml"));
   if (!manifest?.round_id) return null;
   const fallback = rounds.find((item) => item.round_id === manifest.round_id);
+  const entryDate = manifest.entry_date ?? fallback?.entry_date ?? "";
+  const exitDate = manifest.exit_date ?? fallback?.exit_date ?? "";
+  const manifestHorizonDays = horizonDays(entryDate, exitDate);
   const selectedRun = publicOfficialRuns(roundPath)[0];
   const hasScoredResults =
     selectedRun !== undefined &&
@@ -265,9 +268,9 @@ function discoverRoundRecord(roundPath: string): RoundRecord | null {
     decision_date: manifest.decision_date ?? fallback?.decision_date ?? "",
     decision_deadline_utc: manifest.decision_deadline ?? fallback?.decision_deadline_utc ?? "",
     horizon: manifest.horizon ?? fallback?.horizon ?? "one month",
-    horizon_days: fallback?.horizon_days ?? horizonDays(manifest.entry_date, manifest.exit_date),
-    entry_date: manifest.entry_date ?? fallback?.entry_date ?? "",
-    exit_date: manifest.exit_date ?? fallback?.exit_date ?? "",
+    horizon_days: manifestHorizonDays || fallback?.horizon_days || 0,
+    entry_date: entryDate,
+    exit_date: exitDate,
     status: hasScoredResults ? "resolved" : fallback?.status ?? "pending",
     methodology_version:
       selectedRun?.manifest.methodology_version ??

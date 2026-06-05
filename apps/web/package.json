@@ -7,11 +7,12 @@
     "dev": "astro dev --host 0.0.0.0",
     "api:generate": "node scripts/generate-api-read-model.mjs",
     "api:key": "node scripts/api-key.mjs",
-    "api:test": "node scripts/generate-api-read-model.mjs && node scripts/validate-public-data.mjs && node --test tests/data-api.test.mjs",
-    "build": "node scripts/generate-api-read-model.mjs && node scripts/validate-public-data.mjs && astro check && astro build",
+    "api:test": "node scripts/generate-api-read-model.mjs && node scripts/validate-public-data.mjs && node --test tests/*.test.mjs",
+    "build": "node scripts/generate-api-read-model.mjs && node scripts/validate-public-data.mjs && astro check && astro build && node scripts/validate-rendered-data.mjs",
     "email:campaign": "node scripts/email-campaign.mjs",
     "email:test": "node --test tests/email-system.test.mjs",
     "seo:check": "node scripts/validate-seo.mjs",
+    "supabase:audit": "node scripts/generate-api-read-model.mjs && node scripts/validate-supabase-public-data.mjs",
     "preview": "astro preview --host 0.0.0.0"
   },
   "dependencies": {

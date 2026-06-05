@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Each round is a separate one-month market decision. Official results use one call per model. Stability results use repeated calls per model. Models may have different numbers of resolved rounds because new models enter CapitalBench only in future rounds. We do not backfill models into past official rounds. The official and stability leaderboards are separate, and there is no combined weighted score.
+Each round is a separate market decision with its own declared scoring window. Official results use one call per model. Stability results use repeated calls per model. Models may have different numbers of resolved rounds because new models enter CapitalBench only in future rounds. We do not backfill models into past official rounds. The official and stability leaderboards are separate, and there is no combined weighted score.
 
 ## Cumulative Official Leaderboard
 
@@ -28,7 +28,7 @@ _No rows._
 
 ## Methodology
 
-Official cumulative score: For each model, the public website averages CapitalBench Score across completed rounds where each model participated. CapitalBench Score compares the model return with the maximum possible return from the scored universe in that window.
+Official cumulative score: the public website averages CapitalBench Score across all completed rounds in the selected track. Models that did not participate in every resolved round are shown as short history until they build a full track history. CapitalBench Score compares the model return with the maximum possible return from the scored universe in that window.
 
 Stability cumulative score: For each model, we average its repeated-run alpha and consistency across the rounds where each model participated.
 
@@ -36,12 +36,12 @@ The CSV cumulative official leaderboard keeps average alpha versus the S&P 500 a
 
 The cumulative stability leaderboard is sorted by average repeated-run alpha versus the S&P 500 across the rounds where each model participated.
 
-The official leaderboard measures one-shot decision quality. The stability leaderboard measures consistency under repeated calls. They are not combined.
+The official leaderboard measures the saved public model decision. The stability leaderboard measures consistency under repeated calls. They are not combined.
 
 ## Limitations
 
 - A small number of rounds may be noisy.
-- One-month market returns are noisy.
+- Short-window market returns are noisy.
 - Models can win by luck.
 - This is not financial advice.
 - Provider costs and hidden reasoning tokens may not be directly comparable.

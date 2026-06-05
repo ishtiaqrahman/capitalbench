@@ -335,8 +335,8 @@ import PageHeader from "../components/PageHeader.astro";
           scored option in that completed window.
         </p>
         <p>
-          Overall track scorecards use the latest comparable model cohort. If a model is added later, the headline
-          score starts from tests where that roster actually competed together instead of mixing one-test and longer-history averages.
+          Overall track scorecards combine all resolved tests in the track. If a model is added later, it is shown with
+          fewer included tests and marked short history instead of being backfilled into older tests.
         </p>
         <p>
           Interim tracking can be generated from reusable price snapshots after the start date and before the final end
@@ -360,7 +360,7 @@ import PageHeader from "../components/PageHeader.astro";
           </div>
           <div>
             <h3>Overall Scoreboard</h3>
-            <p>Average CapitalBench Score for the latest same-roster cohort in a track. New models are not backfilled into old tests.</p>
+            <p>Average CapitalBench Score across all resolved tests in a track. New models show fewer included tests until they build history.</p>
           </div>
           <div>
             <h3>Consistency Scoreboard</h3>
@@ -378,7 +378,7 @@ import PageHeader from "../components/PageHeader.astro";
           <li>Do not revise a completed test after seeing model choices just to create more varied picks.</li>
           <li>Preserve invalid raw submissions instead of deleting them.</li>
           <li>Use the same starting and ending price source for every option.</li>
-          <li>Identify exactly one public one-shot run for public reporting.</li>
+          <li>Identify exactly one public model-call run for each test's public scoreboard.</li>
           <li>Exclude mock, provider-smoke, failed, incomplete, and retrospective runs from public scoreboards.</li>
           <li>Add newly released models only to future tests. Do not rerun old tests after outcomes may be knowable.</li>
         </ul>

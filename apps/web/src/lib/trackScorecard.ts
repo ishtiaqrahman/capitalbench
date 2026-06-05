@@ -55,7 +55,7 @@ export type TrackScorecardData = {
   comparisonRoundIds: string[];
   excludedRoundIds: string[];
   comparisonModelCount: number;
-  comparisonMode: "latest_model_cohort";
+  comparisonMode: "all_resolved_rounds";
   isEarlyCohort: boolean;
   latestRoundId: string;
   averageRows: TrackScorecardAverageRow[];
@@ -117,24 +117,6 @@ function trackLabel(track: BenchmarkTrack): string {
   return track === "weekly" ? "Weekly" : "Monthly";
 }
 
-function sameRoster(left: string[], right: string[]): boolean {
-  if (left.length !== right.length) return false;
-  const rightIds = new Set(right);
-  return left.every((item) => rightIds.has(item));
-}
-
-function latestComparableCohort(rounds: RoundScoreInput[]): RoundScoreInput[] {
-  const latest = rounds[rounds.length - 1];
-  if (!latest) return [];
-  const cohort: RoundScoreInput[] = [];
-  for (let index = rounds.length - 1; index >= 0; index -= 1) {
-    const candidate = rounds[index];
-    if (!sameRoster(candidate.rosterModelIds, latest.rosterModelIds)) break;
-    cohort.unshift(candidate);
-  }
-  return cohort;
-}
-
 type RankEligibility = {
   testsRequired: number;
   isRankEligible: boolean;
@@ -185,7 +167,7 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
 
   if (scoredRounds.length === 0) return null;
 
-  const comparisonRounds = latestComparableCohort(scoredRounds);
+  const comparisonRounds = scoredRounds;
   const comparisonRoundCount = comparisonRounds.length;
   if (comparisonRoundCount === 0) return null;
 
@@ -331,11 +313,9 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
     completedRoundIds: scoredRounds.map((roundScore) => roundScore.round.round_id),
     comparisonRoundCount,
     comparisonRoundIds: comparisonRounds.map((roundScore) => roundScore.round.round_id),
-    excludedRoundIds: scoredRounds
-      .map((roundScore) => roundScore.round.round_id)
-      .filter((roundId) => !comparisonRounds.some((roundScore) => roundScore.round.round_id === roundId)),
-    comparisonModelCount: comparisonRounds[comparisonRounds.length - 1]?.rosterModelIds.length ?? 0,
-    comparisonMode: "latest_model_cohort",
+    excludedRoundIds: [],
+    comparisonModelCount: new Set(comparisonRounds.flatMap((roundScore) => roundScore.rosterModelIds)).size,
+    comparisonMode: "all_resolved_rounds",
     isEarlyCohort: comparisonRoundCount === 1,
     latestRoundId: completedRounds[completedRounds.length - 1]?.round_id ?? "",
     averageRows,

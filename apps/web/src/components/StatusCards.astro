@@ -11,7 +11,7 @@ interface Props {
   officialRunId: string;
 }
 
-const { roundId, status, decisionDeadline, entryDate = "2026-05-08", exitDate, officialRunId } = Astro.props;
+const { roundId, status, decisionDeadline, entryDate, exitDate, officialRunId } = Astro.props;
 const tone = status === "resolved" ? "green" : status === "pending" ? "amber" : "neutral";
 const publicStatus = status === "resolved" ? "scored" : status;
 ---
@@ -28,7 +28,7 @@ const publicStatus = status === "resolved" ? "scored" : status;
   </div>
   <div class="status-item">
     <span>Start Date</span>
-    <strong>{entryDate}</strong>
+    <strong>{entryDate ?? "Not set"}</strong>
   </div>
   <div class="status-item">
     <span>End Date</span>

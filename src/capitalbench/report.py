@@ -171,7 +171,7 @@ def _publish_official_report(
             "## Realized Returns\n\n" + _markdown_table(returns, return_columns),
             "## Portfolio Allocations\n\n"
             + (_markdown_table(allocations, allocation_columns) if allocations else "_No allocation rows found._"),
-            "## Leaderboard\n\nOfficial One-Shot Leaderboard\n\n"
+            "## Leaderboard\n\nOfficial Public Leaderboard\n\n"
             + _markdown_table(leaderboard, leaderboard_columns),
             "## Cost-Adjusted Leaderboard\n\n"
             + (_markdown_table(cost_adjusted, cost_columns) if cost_adjusted else "_No cost data available._"),
@@ -202,7 +202,7 @@ def _official_heading(run_manifest: dict[str, object]) -> str:
             "Retrospective / not official. This run is excluded from official and cumulative leaderboards."
         )
     return (
-        "## Official One-Shot Leaderboard\n\n"
+        "## Official Public Leaderboard\n\n"
         "This is the official CapitalBench score for this run.\n\n"
         + ("_This run used mock execution and is not a public benchmark result._" if run_manifest.get("mock") else "")
     )
@@ -271,7 +271,7 @@ def _publish_stability_report(
             "## Reproducibility\n\n" + _reproducibility_section(round_path),
             "## Research Artifacts\n\n" + _research_artifacts_section(round_path),
             "## Limitations\n\n"
-            "- Stability analysis is secondary and does not replace the official one-shot leaderboard.\n"
+            "- Stability analysis is secondary and does not replace the official public leaderboard.\n"
             "- Repeated calls use the same prompt, briefing, and options, but provider systems may still vary internally.\n"
             "- Prices are loaded from local CSV files and are not fetched live.\n"
             "- Scores follow the round's declared submission format; portfolio rounds use weighted allocations.",
@@ -331,9 +331,9 @@ def publish_round_summary(
             f"- Stability run ID: {stability_run_id}",
             "## Result Types\n\n"
             "The official leaderboard and stability analysis are separate. "
-            "The official leaderboard is the one-shot score. Stability measures repeated-call consistency. "
+            "The official leaderboard is the saved public score. Stability measures repeated-call consistency. "
             "CapitalBench does not create a combined weighted score.",
-            "## Official One-Shot Leaderboard\n\n"
+            "## Official Public Leaderboard\n\n"
             + _markdown_table(official_leaderboard, leaderboard_columns),
             "## Multi-Run Stability Analysis\n\n"
             + _markdown_table(stability, stability_columns),

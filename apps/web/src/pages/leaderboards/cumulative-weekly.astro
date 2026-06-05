@@ -16,7 +16,7 @@ const scorecard = buildTrackScorecard(staticRoundRecords(), "weekly");
   <PageHeader
     eyebrow="One-week tests"
     title="Overall Weekly Results"
-    summary="CapitalBench Score uses the latest comparable one-week model cohort. Monthly tests are scored separately."
+    summary="CapitalBench Score combines all resolved one-week tests. Monthly tests are scored separately."
   />
   {scorecard ? (
     <section class="section">
@@ -33,7 +33,7 @@ const scorecard = buildTrackScorecard(staticRoundRecords(), "weekly");
         <div>
           <span class="panel-kicker">Scope</span>
           <h2>What This Scorecard Includes</h2>
-          <p>Average raw return, S&amp;P 500 context, and max-possible return context are shown for the same comparable cohort. Consistency checks stay separate.</p>
+          <p>Average raw return, S&amp;P 500 context, and max-possible return context are shown across all resolved weekly tests. Consistency checks stay separate.</p>
         </div>
         <a class="action-link" href="/leaderboards/cumulative-stability">Consistency results</a>
       </div>
