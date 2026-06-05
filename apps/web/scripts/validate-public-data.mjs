@@ -537,6 +537,16 @@ for (const round of apiReadModel.rounds) {
     const maxReturnPct = Math.max(...returnRows.map((row) => row.return_pct).filter((value) => typeof value === "number"));
     const benchmarkReturn = returnRows.find((row) => row.is_benchmark)?.return_pct;
     const returnByOption = new Map(returnRows.map((row) => [row.option_id, row.return_pct]));
+    const cashReturn = returnRows.find((row) => row.is_cash || row.option_id === "CASH")?.return_pct;
+
+    if (typeof cashReturn !== "number") {
+      failures.push(`${round.round_id} resolved return universe is missing a cash return row`);
+    } else if (!approxEqual(cashReturn, 0)) {
+      failures.push(`${round.round_id} cash return ${cashReturn} should be 0`);
+    }
+    if (maxReturnPct < -EPSILON) {
+      failures.push(`${round.round_id} max_possible_return_pct ${maxReturnPct} is negative even though cash should be available`);
+    }
 
     for (const row of resultRows) {
       const canonicalLeaderboardRow = canonicalLeaderboardByModel.get(row.model_id);
@@ -582,6 +592,12 @@ for (const round of apiReadModel.rounds) {
       const expectedScore = expectedCapitalBenchScore(row.portfolio_return_pct, maxReturnPct);
       if (!approxEqual(row.capitalbench_score, expectedScore)) {
         failures.push(`${rowKey(row)} capitalbench_score ${row.capitalbench_score} does not match expected score ${expectedScore}`);
+      }
+      if (row.portfolio_return_pct > maxReturnPct + EPSILON) {
+        failures.push(`${rowKey(row)} portfolio_return_pct ${row.portfolio_return_pct} exceeds max_possible_return_pct ${maxReturnPct}`);
+      }
+      if (row.capitalbench_score > 100 + EPSILON) {
+        failures.push(`${rowKey(row)} capitalbench_score ${row.capitalbench_score} exceeds 100`);
       }
 
       const allocations = apiReadModel.allocations.filter(

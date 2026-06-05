@@ -105,6 +105,30 @@ function latestRound(track, status) {
     )[0];
 }
 
+function average(values) {
+  if (values.length === 0) return null;
+  return values.reduce((total, value) => total + value, 0) / values.length;
+}
+
+function median(values) {
+  if (values.length === 0) return null;
+  const sorted = [...values].sort((left, right) => left - right);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+function compoundReturn(values) {
+  return values.reduce((total, value) => total * (1 + value), 1) - 1;
+}
+
+function cumulativeLogAlpha(modelReturns, benchmarkReturns) {
+  return modelReturns.reduce((total, modelReturn, index) => {
+    const benchmarkReturn = benchmarkReturns[index];
+    if (modelReturn <= -1 || benchmarkReturn <= -1) return total;
+    return total + Math.log(1 + modelReturn) - Math.log(1 + benchmarkReturn);
+  }, 0);
+}
+
 async function select(table, params = {}) {
   const url = new URL(`/rest/v1/${table}`, supabaseUrl);
   for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
@@ -143,6 +167,99 @@ function compareRounds(rows) {
 
   for (const actualId of actualIds) {
     if (!expectedIds.has(actualId)) fail(`Supabase rounds has extra published round ${actualId}`);
+  }
+}
+
+function expectedCumulativeOfficialRows() {
+  const bySlotModel = new Map();
+  for (const row of apiReadModel.results) {
+    const slot = `cumulative_${row.track}`;
+    const key = `${slot}:${row.model_id}`;
+    const existing =
+      bySlotModel.get(key) ??
+      {
+        slot,
+        model_id: row.model_id,
+        provider: row.provider,
+        returns: [],
+        benchmarkReturns: [],
+        alphas: [],
+        regrets: [],
+        roundIds: []
+      };
+    existing.returns.push((row.selected_asset_return_pct ?? row.portfolio_return_pct) / 100);
+    existing.benchmarkReturns.push(row.benchmark_return_pct / 100);
+    existing.alphas.push(row.alpha_pp / 100);
+    existing.regrets.push(row.regret_vs_best_option_pct / 100);
+    existing.roundIds.push(row.round_id);
+    bySlotModel.set(key, existing);
+  }
+
+  return Array.from(bySlotModel.values()).map((row) => ({
+    slot: row.slot,
+    model_id: row.model_id,
+    provider: row.provider,
+    resolved_rounds: row.returns.length,
+    average_official_return: average(row.returns),
+    average_sp500_return: average(row.benchmarkReturns),
+    average_alpha_vs_sp500: average(row.alphas),
+    median_alpha_vs_sp500: median(row.alphas),
+    cumulative_model_return: compoundReturn(row.returns),
+    cumulative_sp500_return: compoundReturn(row.benchmarkReturns),
+    cumulative_log_alpha: cumulativeLogAlpha(row.returns, row.benchmarkReturns),
+    hit_rate_vs_sp500: row.alphas.filter((value) => value > 0).length / row.alphas.length,
+    hit_rate_vs_cash: row.returns.filter((value) => value > 0).length / row.returns.length,
+    average_regret_vs_best_option: average(row.regrets),
+    best_round_alpha: Math.max(...row.alphas),
+    worst_round_alpha: Math.min(...row.alphas),
+    total_cost_usd: null,
+    average_cost_usd: null,
+    rounds_included: [...row.roundIds].sort().join(",")
+  }));
+}
+
+function compareCumulativeOfficial(rows) {
+  const expectedRows = expectedCumulativeOfficialRows();
+  const byKey = new Map(rows.map((row) => [`${row.slot}:${row.model_id}`, row]));
+  const expectedKeys = new Set(expectedRows.map((row) => `${row.slot}:${row.model_id}`));
+  const actualKeys = new Set(rows.map((row) => `${row.slot}:${row.model_id}`));
+  assertEqual(rows.length, expectedRows.length, "Supabase cumulative_official_leaderboard row count");
+
+  for (const expected of expectedRows) {
+    const key = `${expected.slot}:${expected.model_id}`;
+    const actual = byKey.get(key);
+    if (!actual) {
+      fail(`Supabase cumulative_official_leaderboard missing ${key}`);
+      continue;
+    }
+    assertEqual(actual.provider, expected.provider, `Supabase cumulative official ${key} provider`);
+    assertEqual(Number(actual.resolved_rounds), expected.resolved_rounds, `Supabase cumulative official ${key} resolved_rounds`);
+    assertNear(actual.average_official_return, expected.average_official_return, `Supabase cumulative official ${key} average_official_return`);
+    assertNear(actual.average_sp500_return, expected.average_sp500_return, `Supabase cumulative official ${key} average_sp500_return`);
+    assertNear(actual.average_alpha_vs_sp500, expected.average_alpha_vs_sp500, `Supabase cumulative official ${key} average_alpha_vs_sp500`);
+    assertNear(actual.median_alpha_vs_sp500, expected.median_alpha_vs_sp500, `Supabase cumulative official ${key} median_alpha_vs_sp500`);
+    assertNear(actual.cumulative_model_return, expected.cumulative_model_return, `Supabase cumulative official ${key} cumulative_model_return`);
+    assertNear(actual.cumulative_sp500_return, expected.cumulative_sp500_return, `Supabase cumulative official ${key} cumulative_sp500_return`);
+    assertNear(actual.cumulative_log_alpha, expected.cumulative_log_alpha, `Supabase cumulative official ${key} cumulative_log_alpha`);
+    assertNear(actual.hit_rate_vs_sp500, expected.hit_rate_vs_sp500, `Supabase cumulative official ${key} hit_rate_vs_sp500`);
+    assertNear(actual.hit_rate_vs_cash, expected.hit_rate_vs_cash, `Supabase cumulative official ${key} hit_rate_vs_cash`);
+    assertNear(actual.average_regret_vs_best_option, expected.average_regret_vs_best_option, `Supabase cumulative official ${key} average_regret_vs_best_option`);
+    assertNear(actual.best_round_alpha, expected.best_round_alpha, `Supabase cumulative official ${key} best_round_alpha`);
+    assertNear(actual.worst_round_alpha, expected.worst_round_alpha, `Supabase cumulative official ${key} worst_round_alpha`);
+    assertEqual(actual.total_cost_usd ?? null, expected.total_cost_usd, `Supabase cumulative official ${key} total_cost_usd`);
+    assertEqual(actual.average_cost_usd ?? null, expected.average_cost_usd, `Supabase cumulative official ${key} average_cost_usd`);
+    assertEqual(actual.rounds_included, expected.rounds_included, `Supabase cumulative official ${key} rounds_included`);
+    assertEqual(Boolean(actual.published), true, `Supabase cumulative official ${key} published`);
+  }
+
+  for (const actualKey of actualKeys) {
+    if (!expectedKeys.has(actualKey)) fail(`Supabase cumulative_official_leaderboard has extra published row ${actualKey}`);
+  }
+}
+
+function compareCumulativeStability(rows) {
+  if (rows.length > 0) {
+    fail(`Supabase cumulative_stability_leaderboard has ${rows.length} published rows but no stability rows are in the generated public read model`);
   }
 }
 
@@ -333,6 +450,21 @@ for (const track of ["weekly", "monthly"]) {
   compareLatestLeaderboard(track, rows);
 }
 
+const cumulativeOfficial = await select("cumulative_official_leaderboard", {
+  select:
+    "slot,model_id,provider,resolved_rounds,average_official_return,average_sp500_return,average_alpha_vs_sp500,median_alpha_vs_sp500,cumulative_model_return,cumulative_sp500_return,cumulative_log_alpha,hit_rate_vs_sp500,hit_rate_vs_cash,average_regret_vs_best_option,best_round_alpha,worst_round_alpha,total_cost_usd,average_cost_usd,rounds_included,published",
+  published: "eq.true",
+  order: "slot.asc,model_id.asc"
+});
+compareCumulativeOfficial(cumulativeOfficial);
+
+const cumulativeStability = await select("cumulative_stability_leaderboard", {
+  select: "slot,model_id,published",
+  published: "eq.true",
+  order: "slot.asc,model_id.asc"
+});
+compareCumulativeStability(cumulativeStability);
+
 const submissions = await select("submissions", {
   select: "round_id,run_id,model_id,provider,selected_option_id,submission_format,holding_count,portfolio",
   published: "eq.true",
@@ -360,6 +492,8 @@ console.log(
     rounds: rounds.length,
     options: options.length,
     submissions: submissions.length,
-    weekly_performance: weeklyPerformance.length
+    weekly_performance: weeklyPerformance.length,
+    cumulative_official: cumulativeOfficial.length,
+    cumulative_stability: cumulativeStability.length
   })
 );
