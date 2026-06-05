@@ -1,0 +1,51 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "A cool CPI/PPI surprise sparks a risk-on rally that lifts growth/tech and leaves defensive tilt underperforming SPY.",
+    "Oil reverses sharply on supply news, hurting the energy allocation.",
+    "Yields fall, pressuring financials and removing inflation tailwind to energy."
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong recent relative strength (+2.37% 7d while market fell); low beta into hot CPI/PPI prints during the week."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "ENERGY",
+      "rationale": "Energy leading on firm oil ($90 WTI) and EIA inventory draw forecasts; positive momentum and inflation tailwind ahead of CPI/PPI."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Defensive positioning with positive 7d return; cushions against equity drawdown risk into inflation data."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "FINANCIALS",
+      "rationale": "Outperformed broad market recently (+1.40% 7d), supported by strong FDIC bank profits and rising yields/steeper curve."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like ballast yielding positive carry; protects against hot CPI/PPI selloff and elevated VIX while keeping flexibility."
+    }
+  ],
+  "portfolio_rationale": "Hot CPI (June 10) and PPI (June 11) prints during the scoring window with reaccelerating YoY inflation and a recent equity selloff argue for defensive sectors plus inflation-beneficiary energy, with short Treasuries as ballast.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt defensive and toward inflation winners ahead of in-window CPI/PPI, favoring sectors showing positive recent relative strength versus a falling S&P 500.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-05-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 44254,
+    "latency_seconds": 11.581774620106444,
+    "output_tokens": 742,
+    "total_tokens": 44996
+  }
+}

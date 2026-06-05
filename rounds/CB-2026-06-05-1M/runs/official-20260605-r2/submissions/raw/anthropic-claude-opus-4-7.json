@@ -1,0 +1,53 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Hawkish FOMC June 17 reaction hits all equity sectors, especially if dot plot shifts",
+    "Oil reversal on demand fears or OPEC supply surprise undermines ENERGY overweight",
+    "Soft June CPI sparks growth/tech rally leaving defensive tilt behind benchmark",
+    "Healthcare policy headlines (CMS drug pricing) pressure XLV",
+    "Defense budget reconciliation delays hit ITA sentiment"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with positive momentum (+5.23% 30d), low valuation, benefits from risk-off given sticky inflation and weak sentiment."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "DIVIDEND",
+      "rationale": "Quality dividend tilt outperforming in choppy tape; defensive with value characteristics amid stagflationary signals."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "ENERGY",
+      "rationale": "WTI at $90, EIA forecasts inventory draws of 2.6mb/d; energy showing relative strength with strong trailing returns."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "FY2027 $1.5T defense budget request supports orders; positive 30d momentum during broad market weakness."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Hot CPI/PPI (3.8%/6.0% YoY), high VIX (21.5), bearish AAII spread; cash-like buffer earning ~3.6% with FOMC June 17 risk."
+    }
+  ],
+  "portfolio_rationale": "Defensive-cyclical barbell given stagflationary mix: hot inflation (PPI +1.4% MoM, CPI 3.8% YoY), weakening sentiment (UMich 44.8), but resilient labor/ISM. Tilt to defensives (healthcare, dividend), inflation-beneficiary energy, defense policy tailwind, and short Treasuries to dampen FOMC/CPI-week volatility.",
+  "provider": "anthropic",
+  "rationale_summary": "Stagflation-tilt barbell: defensive equity (HEALTHCARE, DIVIDEND), real-asset/policy beneficiaries (ENERGY, AEROSPACE_DEFENSE), and short Treasury buffer ahead of June CPI and FOMC.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-05-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 43801,
+    "latency_seconds": 16.359716544975527,
+    "output_tokens": 899,
+    "total_tokens": 44700
+  }
+}

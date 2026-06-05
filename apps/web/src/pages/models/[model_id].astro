@@ -453,7 +453,7 @@ function alphaBarStyle(row: ModelResultRow): string {
             <span>{row.track}</span>
             <span>{row.entryDate} to {row.exitDate}</span>
             <span class="model-history-holdings">
-              {row.portfolioSummary.slice(0, 4).map((holding) => (
+              {row.portfolioSummary.map((holding) => (
                 <em><i class={holding.themeClass}></i>{holding.optionId} {pctValue(holding.allocationPct)}</em>
               ))}
             </span>

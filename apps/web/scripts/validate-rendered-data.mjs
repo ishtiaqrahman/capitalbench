@@ -2272,7 +2272,7 @@ for (const track of ["weekly", "monthly"]) {
     }
 
     if (topAsset) {
-      includes(indexHtml, optionDisplay(topAsset), `${context} shared top pick`);
+      includesAny(indexHtml, [optionDisplay(topAsset), htmlText(optionDisplay(topAsset))], `${context} shared top pick`);
       includes(indexHtml, `Average across ${portfolios.length} model portfolios.`, `${context} model count`);
     } else {
       failures.push(`${context} has portfolios but no concentration top asset`);
@@ -2281,7 +2281,7 @@ for (const track of ["weekly", "monthly"]) {
     includes(indexHtml, `Spread <strong>${state.effective_asset_count.toFixed(1)} assets</strong>`, `${context} effective asset count`);
 
     for (const asset of assets.slice(0, 4)) {
-      includes(indexHtml, optionDisplay(asset), `${context} exposure ${asset.option_id}`);
+      includesAny(indexHtml, [optionDisplay(asset), htmlText(optionDisplay(asset))], `${context} exposure ${asset.option_id}`);
       includes(indexHtml, allocationPctLabel(asset.average_pct), `${context} exposure ${asset.option_id} average allocation`);
     }
   } else {
