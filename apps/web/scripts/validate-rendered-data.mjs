@@ -309,6 +309,25 @@ function latestRoundByTrack(track) {
   return apiReadModel.rounds.find((round) => round.track === track);
 }
 
+function roundsForTrack(track) {
+  return apiReadModel.rounds.filter((round) => round.track === track);
+}
+
+function trackLabel(track) {
+  return track === "weekly" ? "Weekly" : "Monthly";
+}
+
+function trackWindowLabel(round) {
+  if (!round) return "No window yet";
+  return `${round.entry_date} to ${round.exit_date}`;
+}
+
+function scoreEtaLine(round) {
+  if (!round) return "No active test.";
+  if (round.status === "resolved") return "Scores are published.";
+  return `Scores after the ${round.exit_date} close.`;
+}
+
 function trackStatusLabel(round) {
   if (!round) return "Not started";
   if (round.status === "resolved") return "Scored";
@@ -567,8 +586,44 @@ function homepageRiskProfiles() {
     );
 }
 
+function latestResultForTrack(track) {
+  const round = latestRound(track, "resolved");
+  const leaderboard = round
+    ? apiReadModel.results
+        .filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
+        .sort((left, right) => left.rank - right.rank)
+    : [];
+  return {
+    round,
+    leaderboard,
+    winner: leaderboard[0]
+  };
+}
+
+function resultTrackState(track) {
+  const cumulative = buildCumulativeLeaderboardData(apiReadModel, track);
+  const latestResult = latestResultForTrack(track);
+  const pendingRound = latestRound(track, "active");
+  const trackRounds = roundsForTrack(track);
+  const completedCount =
+    cumulative?.comparison?.completed_round_count ?? trackRounds.filter((round) => round.status === "resolved").length;
+  return {
+    track,
+    label: trackLabel(track),
+    latestResultRound: latestResult.round,
+    pendingRound,
+    cumulative,
+    leaderboard: latestResult.leaderboard,
+    winner: latestResult.winner,
+    completedCount,
+    totalCount: trackRounds.length,
+    leader: cumulative?.data?.find((row) => row.is_rank_eligible) ?? latestResult.winner
+  };
+}
+
 const indexHtml = readHtml("index.html");
 const leaderboardsHtml = readHtml("leaderboards/index.html");
+const latestMonthlyHtml = readHtml("leaderboards/latest-monthly/index.html");
 const modelsIndexHtml = readHtml("models/index.html");
 const roundsIndexHtml = readHtml("rounds/index.html");
 const universeHtml = readHtml("universe/index.html");
@@ -646,6 +701,96 @@ includes(leaderboardsHtml, `<strong>${currentUniverseOptionCount} options</stron
 if (latestResolvedRound) includes(leaderboardsHtml, latestResolvedRound.round_id, "leaderboards index latest scored round");
 if (latestActiveWeekly) includes(leaderboardsHtml, latestActiveWeekly.round_id, "leaderboards index latest active weekly round");
 if (latestActiveMonthly) includes(leaderboardsHtml, latestActiveMonthly.round_id, "leaderboards index latest active monthly round");
+
+const resultStates = ["weekly", "monthly"].map(resultTrackState);
+const latestPublishedResult = resultStates
+  .filter((state) => state.latestResultRound && state.winner)
+  .sort((left, right) => (right.latestResultRound?.exit_date ?? "").localeCompare(left.latestResultRound?.exit_date ?? ""))[0];
+const liveRoundLabel = resultStates
+  .map((state) => state.pendingRound?.round_id)
+  .filter(Boolean)
+  .join(" / ") || "None";
+
+includes(leaderboardsHtml, "Benchmark status", "leaderboards index status panel");
+includes(leaderboardsHtml, liveRoundLabel, "leaderboards index latest live label");
+for (const state of resultStates) {
+  const context = `leaderboards index ${state.track} track card`;
+  includes(leaderboardsHtml, `${state.label} track`, context);
+  includes(leaderboardsHtml, `${state.label} result`, `${context} latest route`);
+  includes(leaderboardsHtml, `${state.label} aggregate`, `${context} aggregate route`);
+  includes(leaderboardsHtml, state.latestResultRound?.round_id ?? "Pending", `${context} latest result label`);
+  includes(leaderboardsHtml, state.pendingRound?.round_id ?? "None", `${context} pending round label`);
+  includes(leaderboardsHtml, state.track === "weekly" ? "One market week" : "One market month", `${context} horizon`);
+
+  if (state.cumulative.data.length > 0 && state.leader) {
+    includes(leaderboardsHtml, `${modelLabel(state.leader.model_id)} Leads`, `${context} leader title`);
+    includes(leaderboardsHtml, scoreLabel(state.leader.capitalbench_score), `${context} CapitalBench Score`);
+    includes(leaderboardsHtml, providerLabelForModel(state.leader.model_id), `${context} provider`);
+    includes(leaderboardsHtml, `${state.completedCount} tests`, `${context} route completed count`);
+  } else {
+    includes(leaderboardsHtml, `${state.label} Track`, `${context} pending title`);
+    includes(leaderboardsHtml, "Waiting for the first completed score", `${context} pending copy`);
+    includes(leaderboardsHtml, "Waiting for first score", `${context} pending status`);
+    includes(leaderboardsHtml, "Not ready", `${context} aggregate route state`);
+  }
+
+  if (state.latestResultRound) {
+    includes(leaderboardsHtml, `${state.latestResultRound.round_id}, ${trackWindowLabel(state.latestResultRound)}`, `${context} latest route description`);
+  }
+  if (state.pendingRound) {
+    if (!state.latestResultRound) {
+      includes(leaderboardsHtml, `${state.pendingRound.round_id} is live. ${scoreEtaLine(state.pendingRound)}`, `${context} pending route description`);
+    }
+    includes(leaderboardsHtml, scoreEtaLine(state.pendingRound), `${context} live score eta`);
+    includes(leaderboardsHtml, trackWindowLabel(state.pendingRound), `${context} live window`);
+    includes(leaderboardsHtml, state.pendingRound.official_run_id, `${context} live run id`);
+  }
+  if (state.cumulative.comparison.comparison_round_count > 0) {
+    includes(
+      leaderboardsHtml,
+      `${state.cumulative.comparison.comparison_round_count} resolved ${state.label.toLowerCase()} test`,
+      `${context} aggregate route description`
+    );
+  }
+}
+
+if (latestPublishedResult?.latestResultRound && latestPublishedResult.winner) {
+  const context = "leaderboards index latest published result";
+  const latestRound = latestPublishedResult.latestResultRound;
+  const returnRows = apiReadModel.returns.filter(
+    (row) => row.round_id === latestRound.round_id && row.run_id === latestRound.official_run_id
+  );
+  includes(leaderboardsHtml, "Most Recent Published Result", context);
+  includes(leaderboardsHtml, `${latestPublishedResult.label} Portfolio Returns`, context);
+  includes(leaderboardsHtml, latestRound.round_id, `${context} round id`);
+  includes(leaderboardsHtml, trackWindowLabel(latestRound), `${context} window`);
+  includes(leaderboardsHtml, modelLabel(latestPublishedResult.winner.model_id), `${context} winner`);
+  includes(leaderboardsHtml, percentPointLabel(latestPublishedResult.winner.portfolio_return_pct), `${context} winner return`);
+  includes(leaderboardsHtml, `<span><strong>Models</strong>${latestPublishedResult.leaderboard.length}</span>`, `${context} model count`);
+  includes(leaderboardsHtml, `<span><strong>Eligible assets</strong>${returnRows.length}</span>`, `${context} eligible asset count`);
+}
+
+const monthlyState = resultTrackState("monthly");
+if (monthlyState.pendingRound && !monthlyState.latestResultRound) {
+  const context = "latest monthly page pending state";
+  includes(latestMonthlyHtml, "No monthly result has been published yet", context);
+  includes(latestMonthlyHtml, monthlyState.pendingRound.round_id, `${context} round id`);
+  includes(latestMonthlyHtml, monthlyState.pendingRound.official_run_id, `${context} run id`);
+  includes(latestMonthlyHtml, monthlyState.pendingRound.entry_date, `${context} entry date`);
+  includes(latestMonthlyHtml, monthlyState.pendingRound.exit_date, `${context} exit date`);
+  includes(latestMonthlyHtml, "No Monthly Score Yet", context);
+  includes(latestMonthlyHtml, "Current monthly portfolios", context);
+  const portfolios = roundPortfolios(monthlyState.pendingRound);
+  for (const portfolio of portfolios) {
+    const portfolioContext = `${context} portfolio ${portfolio.model_id}`;
+    includes(latestMonthlyHtml, modelLabel(portfolio.model_id), portfolioContext);
+    includes(latestMonthlyHtml, portfolio.selected_option_id, portfolioContext);
+    for (const allocation of portfolio.allocations ?? []) {
+      includes(latestMonthlyHtml, allocation.option_id, `${portfolioContext} allocation ${allocation.option_id}`);
+      includes(latestMonthlyHtml, allocationPctLabel(allocation.allocation_pct), `${portfolioContext} allocation ${allocation.option_id} pct`);
+    }
+  }
+}
 
 for (const round of apiReadModel.rounds) {
   includes(roundsIndexHtml, round.round_id, "rounds index");
