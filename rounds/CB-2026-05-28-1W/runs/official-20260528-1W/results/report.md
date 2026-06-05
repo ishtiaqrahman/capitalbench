@@ -1,6 +1,6 @@
 # CapitalBench Report: CB-2026-05-28-1W / official-20260528-1W
 
-## Official One-Shot Leaderboard
+## Official Public Leaderboard
 
 This is the official CapitalBench score for this run.
 
@@ -131,15 +131,15 @@ This is the official CapitalBench score for this run.
 
 ## Leaderboard
 
-Official One-Shot Leaderboard
+Official Public Leaderboard
 
 | model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| google-gemini-3-1-pro | SEMICONDUCTORS | 3 | 0.65 | 0.039283486070311874 | 0.039283486070311874 | 0.03598369214687716 | 0.006896235052259531 |  | True | True |
-| anthropic-claude-opus-4-8 | SEMICONDUCTORS | 5 | 0.55 | 0.035736080185939996 | 0.035736080185939996 | 0.03243628626250528 | 0.010443640936631408 |  | True | True |
-| anthropic-claude-opus-4-7 | SEMICONDUCTORS | 5 | 0.58 | 0.029089982386065347 | 0.029089982386065347 | 0.025790188462630634 | 0.017089738736506058 |  | True | True |
-| xai-grok-4-3 | SEMICONDUCTORS | 3 | 0.55 | 0.026026514364195442 | 0.026026514364195442 | 0.02272672044076073 | 0.020153206758375963 |  | True | True |
-| openai-gpt-5-5 | SEMICONDUCTORS | 5 | 0.61 | 0.024762854908183734 | 0.024762854908183734 | 0.02146306098474902 | 0.02141686621438767 |  | True | True |
+| google-gemini-3-1-pro | SEMICONDUCTORS | 3 | 0.65 | 0.046179721122571404 | 0.039283486070311874 | 0.03598369214687716 | 0.006896235052259531 |  | True | True |
+| anthropic-claude-opus-4-8 | SEMICONDUCTORS | 5 | 0.55 | 0.046179721122571404 | 0.035736080185939996 | 0.03243628626250528 | 0.010443640936631408 |  | True | True |
+| anthropic-claude-opus-4-7 | SEMICONDUCTORS | 5 | 0.58 | 0.046179721122571404 | 0.029089982386065347 | 0.025790188462630634 | 0.017089738736506058 |  | True | True |
+| xai-grok-4-3 | SEMICONDUCTORS | 3 | 0.55 | 0.046179721122571404 | 0.026026514364195442 | 0.02272672044076073 | 0.020153206758375963 |  | True | True |
+| openai-gpt-5-5 | SEMICONDUCTORS | 5 | 0.61 | 0.046179721122571404 | 0.024762854908183734 | 0.02146306098474902 | 0.02141686621438767 |  | True | True |
 
 ## Cost-Adjusted Leaderboard
 

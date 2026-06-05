@@ -26,6 +26,25 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-05-selected-asset-return-correction",
+    date: "2026-06-05",
+    title: "Selected-asset return field corrected for portfolio tests",
+    category: "Data",
+    status: "updated",
+    summary:
+      "Portfolio-format weekly result files now separate the primary selected asset's return from the weighted portfolio return.",
+    details: [
+      "The affected CapitalBench scores, portfolio returns, S&P 500 comparisons, alpha values, regret values, and rankings did not change.",
+      "The selected_asset_return field now reports the realized return of selected_option_id, while portfolio_return reports the allocation-weighted portfolio result.",
+      "A raw CSV score audit command now recomputes every resolved score from leaderboard, return, and allocation files and rejects this field mixup."
+    ],
+    links: [
+      { label: "Latest weekly", href: "/leaderboards/latest-weekly" },
+      { label: "Scoring", href: "/scoring" },
+      { label: "Rounds", href: "/rounds" }
+    ]
+  },
+  {
     id: "2026-06-05-latest-result-selection-audit",
     date: "2026-06-05",
     title: "Latest-result selection hardened",

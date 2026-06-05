@@ -1,6 +1,6 @@
 # CapitalBench Report: CB-2026-05-24-1W / official-20260524-1W
 
-## Official One-Shot Leaderboard
+## Official Public Leaderboard
 
 This is the official CapitalBench score for this run.
 
@@ -126,14 +126,14 @@ This is the official CapitalBench score for this run.
 
 ## Leaderboard
 
-Official One-Shot Leaderboard
+Official Public Leaderboard
 
 | model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| openai-gpt-5-5 | TAIWAN | 4 | 0.58 | 0.05086150248385374 | 0.05086150248385374 | 0.036323655801808796 | 0.079886176470165 |  | True | True |
-| xai-grok-4-3 | TAIWAN | 5 | 0.65 | 0.036932120078591396 | 0.036932120078591396 | 0.022394273396546455 | 0.09381555887542734 |  | True | True |
-| anthropic-claude-opus-4-7 | SEMICONDUCTORS | 5 | 0.55 | 0.03110019010821483 | 0.03110019010821483 | 0.016562343426169888 | 0.0996474888458039 |  | True | True |
-| google-gemini-3-1-pro | SEMICONDUCTORS | 3 | 0.7 | 0.02794200778245291 | 0.02794200778245291 | 0.013404161100407968 | 0.10280567117156582 |  | True | True |
+| openai-gpt-5-5 | TAIWAN | 4 | 0.58 | 0.0613382899628252 | 0.05086150248385374 | 0.036323655801808796 | 0.079886176470165 |  | True | True |
+| xai-grok-4-3 | TAIWAN | 5 | 0.65 | 0.0613382899628252 | 0.036932120078591396 | 0.022394273396546455 | 0.09381555887542734 |  | True | True |
+| anthropic-claude-opus-4-7 | SEMICONDUCTORS | 5 | 0.55 | 0.03923167684619644 | 0.03110019010821483 | 0.016562343426169888 | 0.0996474888458039 |  | True | True |
+| google-gemini-3-1-pro | SEMICONDUCTORS | 3 | 0.7 | 0.03923167684619644 | 0.02794200778245291 | 0.013404161100407968 | 0.10280567117156582 |  | True | True |
 
 ## Cost-Adjusted Leaderboard
 
@@ -154,7 +154,7 @@ _No cost data available._
 | options.yaml | 8e07e0a1d09976c253d8b385fffa546b2e406bbad7499c7fc9f3fe35f15afcb1 |
 | prompt.md | 587de2c8abad41c62cc7bfa6f7affc98a9550099c9647b232e09f6982e3c8dbd |
 | manifest.yaml | e61ab7aac689d4e8d76b5e06c224ae4558821e27410ac4c24f60cb99cca5c26b |
-| market_data/universe_trailing_returns.csv | f89e482d694043080356abea0a82ca6ba11d46a1da8ce33f18e419c6eafa711b |
+| market_data/universe_trailing_returns.csv | d245d622914ee6a513e8c78e6349288b6038cf91b84bb0547953a8d6f4a45634 |
 | market_data/universe_trailing_returns.md | 26c17ed88d4c7c23ee5a9e6340f1dc8a8a2484e6580adb3f992328308cf5613d |
 | market_data/universe_trailing_returns.json | 001eb44a6c57f131b78681f8bd0ff0a26d7b48900b110fffa6d86bf53123d7d5 |
 

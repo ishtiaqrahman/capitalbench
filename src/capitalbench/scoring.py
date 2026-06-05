@@ -349,8 +349,11 @@ def _score_submission(
     full_universe_priced: bool,
 ) -> ScoreRecord:
     selected_id = primary_option_id(submission)
-    selected_return = score_portfolio_return(submission, option_returns)
-    alpha_vs_sp500 = selected_return - sp500_return
+    if selected_id not in option_returns:
+        raise ValueError(f"missing price data for selected option_id: {selected_id}")
+    selected_return = option_returns[selected_id]
+    portfolio_return = score_portfolio_return(submission, option_returns)
+    alpha_vs_sp500 = portfolio_return - sp500_return
     alpha_per_dollar = None
     if submission.cost_usd is not None and submission.cost_usd > 0:
         alpha_per_dollar = alpha_vs_sp500 / submission.cost_usd
@@ -367,18 +370,18 @@ def _score_submission(
         portfolio_rationale=submission.portfolio_rationale,
         key_risks=submission.key_risks,
         selected_asset_return=selected_return,
-        portfolio_return=selected_return if submission.portfolio is not None else None,
+        portfolio_return=portfolio_return if submission.portfolio is not None else None,
         sp500_return=sp500_return,
         alpha_vs_sp500=alpha_vs_sp500,
-        regret_vs_best_option=(best_return - selected_return) if best_return is not None else None,
+        regret_vs_best_option=(best_return - portfolio_return) if best_return is not None else None,
         rank_among_options=ranks.get(selected_id) if submission.portfolio is None and full_universe_priced else None,
         holding_count=metrics.holding_count,
         max_allocation_bps=metrics.max_allocation_bps,
         cash_allocation_bps=metrics.cash_allocation_bps,
         benchmark_allocation_bps=metrics.benchmark_allocation_bps,
         concentration_hhi=metrics.concentration_hhi,
-        beats_sp500=selected_return > sp500_return,
-        beats_cash=selected_return > cash_return,
+        beats_sp500=portfolio_return > sp500_return,
+        beats_cash=portfolio_return > cash_return,
         cost_usd=submission.cost_usd,
         alpha_per_dollar=alpha_per_dollar,
     )

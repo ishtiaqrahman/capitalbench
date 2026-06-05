@@ -277,7 +277,10 @@ def build_cumulative_official(rows: list[dict[str, str]]) -> list[dict[str, obje
 
     cumulative_rows: list[dict[str, object]] = []
     for model_id, model_rows in grouped.items():
-        selected_returns = [_float(row["selected_asset_return"]) for row in model_rows]
+        official_returns = []
+        for row in model_rows:
+            portfolio_return = _optional_float(row.get("portfolio_return"))
+            official_returns.append(portfolio_return if portfolio_return is not None else _float(row["selected_asset_return"]))
         sp500_returns = [_float(row["sp500_return"]) for row in model_rows]
         alphas = [_float(row["alpha_vs_sp500"]) for row in model_rows]
         regret_values = [_optional_float(row.get("regret_vs_best_option")) for row in model_rows]
@@ -290,13 +293,13 @@ def build_cumulative_official(rows: list[dict[str, str]]) -> list[dict[str, obje
                 "model_id": model_id,
                 "provider": model_rows[0].get("provider", ""),
                 "resolved_rounds": resolved_rounds,
-                "average_official_return": _average(selected_returns),
+                "average_official_return": _average(official_returns),
                 "average_sp500_return": _average(sp500_returns),
                 "average_alpha_vs_sp500": _average(alphas),
                 "median_alpha_vs_sp500": statistics.median(alphas),
-                "cumulative_model_return": _compound(selected_returns),
+                "cumulative_model_return": _compound(official_returns),
                 "cumulative_sp500_return": _compound(sp500_returns),
-                "cumulative_log_alpha": _cumulative_log_alpha(selected_returns, sp500_returns),
+                "cumulative_log_alpha": _cumulative_log_alpha(official_returns, sp500_returns),
                 "hit_rate_vs_sp500": sum(1 for row in model_rows if _bool(row.get("beats_sp500"))) / resolved_rounds,
                 "hit_rate_vs_cash": sum(1 for row in model_rows if _bool(row.get("beats_cash"))) / resolved_rounds,
                 "average_regret_vs_best_option": _average(regrets) if regrets else None,

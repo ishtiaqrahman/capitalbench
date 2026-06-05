@@ -1,6 +1,6 @@
 # CapitalBench Report: CB-2026-05-27-1W / official-20260527-1W
 
-## Official One-Shot Leaderboard
+## Official Public Leaderboard
 
 This is the official CapitalBench score for this run.
 
@@ -125,14 +125,14 @@ This is the official CapitalBench score for this run.
 
 ## Leaderboard
 
-Official One-Shot Leaderboard
+Official Public Leaderboard
 
 | model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| openai-gpt-5-5 | SEMICONDUCTORS | 5 | 0.34 | 0.054941995185100845 | 0.054941995185100845 | 0.042978073470183176 | 0.0586146236346759 |  | True | True |
-| google-gemini-3-1-pro | SEMICONDUCTORS | 3 | 0.75 | 0.0525980261425609 | 0.0525980261425609 | 0.04063410442764323 | 0.060958592677215845 |  | True | True |
-| xai-grok-4-3 | SEMICONDUCTORS | 3 | 0.55 | 0.05053235886867488 | 0.05053235886867488 | 0.03856843715375721 | 0.06302425995110186 |  | True | True |
-| anthropic-claude-opus-4-7 | SEMICONDUCTORS | 5 | 0.6 | 0.04907232024125592 | 0.04907232024125592 | 0.03710839852633825 | 0.06448429857852082 |  | True | True |
+| openai-gpt-5-5 | SEMICONDUCTORS | 5 | 0.34 | 0.049938552496097355 | 0.054941995185100845 | 0.042978073470183176 | 0.0586146236346759 |  | True | True |
+| google-gemini-3-1-pro | SEMICONDUCTORS | 3 | 0.75 | 0.049938552496097355 | 0.0525980261425609 | 0.04063410442764323 | 0.060958592677215845 |  | True | True |
+| xai-grok-4-3 | SEMICONDUCTORS | 3 | 0.55 | 0.049938552496097355 | 0.05053235886867488 | 0.03856843715375721 | 0.06302425995110186 |  | True | True |
+| anthropic-claude-opus-4-7 | SEMICONDUCTORS | 5 | 0.6 | 0.049938552496097355 | 0.04907232024125592 | 0.03710839852633825 | 0.06448429857852082 |  | True | True |
 
 ## Cost-Adjusted Leaderboard
 

@@ -187,7 +187,7 @@ def test_portfolio_scoring_uses_weighted_returns_and_writes_allocations(tmp_path
     assert score.max_allocation_bps == 6000
     assert score.cash_allocation_bps == 1500
     assert score.benchmark_allocation_bps == 2500
-    assert math.isclose(score.selected_asset_return, expected_return)
+    assert math.isclose(score.selected_asset_return, 0.10)
     assert math.isclose(score.portfolio_return or 0, expected_return)
     assert math.isclose(score.alpha_vs_sp500, expected_return - 0.05)
 

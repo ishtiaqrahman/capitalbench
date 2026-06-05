@@ -565,6 +565,12 @@ for (const round of apiReadModel.rounds) {
       if (!approxEqual(row.selected_asset_return_pct, canonicalSelectedReturnPct)) {
         failures.push(`${rowKey(row)} selected_asset_return_pct ${row.selected_asset_return_pct} does not match canonical leaderboard ${canonicalSelectedReturnPct}`);
       }
+      const selectedOptionReturnPct = returnByOption.get(row.selected_option_id);
+      if (typeof selectedOptionReturnPct === "number" && !approxEqual(row.selected_asset_return_pct, selectedOptionReturnPct)) {
+        failures.push(
+          `${rowKey(row)} selected_asset_return_pct ${row.selected_asset_return_pct} does not match selected option ${row.selected_option_id} return ${selectedOptionReturnPct}`
+        );
+      }
       if (!approxEqual(row.benchmark_return_pct, canonicalBenchmarkReturnPct)) {
         failures.push(`${rowKey(row)} benchmark_return_pct ${row.benchmark_return_pct} does not match canonical leaderboard ${canonicalBenchmarkReturnPct}`);
       }

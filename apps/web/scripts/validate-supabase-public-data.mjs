@@ -297,7 +297,7 @@ function expectedCumulativeOfficialRows() {
         regrets: [],
         roundIds: []
       };
-    existing.returns.push((row.selected_asset_return_pct ?? row.portfolio_return_pct) / 100);
+    existing.returns.push((row.portfolio_return_pct ?? row.selected_asset_return_pct) / 100);
     existing.benchmarkReturns.push(row.benchmark_return_pct / 100);
     existing.alphas.push(row.alpha_pp / 100);
     existing.regrets.push(row.regret_vs_best_option_pct / 100);
