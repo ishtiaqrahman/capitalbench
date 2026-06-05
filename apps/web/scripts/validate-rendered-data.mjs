@@ -108,6 +108,16 @@ function htmlText(value) {
     .replaceAll('"', "&quot;");
 }
 
+function htmlTextVariants(value) {
+  const escaped = htmlText(value);
+  return [
+    String(value),
+    escaped,
+    escaped.replaceAll("'", "&#39;"),
+    escaped.replaceAll("'", "&#x27;")
+  ];
+}
+
 async function dataApiBody(path) {
   const result = await handleDataApiRequest({
     request: new Request(`https://www.capitalbench.org${path}`),
@@ -376,6 +386,11 @@ function pctValue(value) {
   return `${numeric.toFixed(2)}%`;
 }
 
+function numberLabel(value, digits = 1) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric.toFixed(digits) : "n/a";
+}
+
 function riskScoreValue(value) {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? `${numeric.toFixed(2)} / 5` : "n/a";
@@ -612,6 +627,121 @@ function modelLiveExposure(modelId) {
     holdings,
     top_holding: holdings[0]
   };
+}
+
+const GROUP_LABELS = {
+  ai_and_technology: "AI and Technology",
+  bonds_and_rates: "Bonds and Rates",
+  cash: "Cash",
+  cash_and_short_duration: "Cash and Short Duration",
+  clean_energy: "Clean Energy",
+  commodities: "Commodities",
+  country_equity: "Country Equity",
+  credit: "Credit",
+  crypto: "Crypto",
+  currencies: "Currencies",
+  international_equity: "International Equity",
+  us_broad_market: "US Broad Market",
+  us_factor_equity: "US Factor Equity",
+  us_growth_and_technology: "US Growth and Technology",
+  us_industry: "US Industry",
+  us_sector: "US Sector",
+  us_size_factor: "US Size Factor",
+  us_style_factor: "US Style Factor"
+};
+
+function groupLabel(value) {
+  const normalized = String(value ?? "").toLowerCase();
+  if (GROUP_LABELS[normalized]) return GROUP_LABELS[normalized];
+  return String(value ?? "Other")
+    .replaceAll("_", " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0]?.toUpperCase() + part.slice(1))
+    .join(" ") || "Other";
+}
+
+function modelFingerprint(modelId) {
+  const allocations = apiReadModel.allocations.filter((row) => row.model_id === modelId);
+  const byPortfolio = new Map();
+  for (const allocation of allocations) {
+    const key = uniquePortfolioKey(allocation);
+    const rows = byPortfolio.get(key) ?? [];
+    rows.push(allocation);
+    byPortfolio.set(key, rows);
+  }
+  const portfolioRows = Array.from(byPortfolio.values()).map((rows) =>
+    [...rows].sort((left, right) => left.allocation_rank - right.allocation_rank || right.allocation_bps - left.allocation_bps)
+  );
+  const portfolioCount = portfolioRows.length;
+  const denominator = portfolioCount * 10_000;
+  const assets = new Map();
+  const categories = new Map();
+
+  for (const rows of portfolioRows) {
+    for (const allocation of rows) {
+      const existing =
+        assets.get(allocation.option_id) ??
+        {
+          option_id: allocation.option_id,
+          label: allocation.label,
+          ticker: allocation.ticker,
+          category: allocation.category,
+          total_bps: 0,
+          portfolio_keys: new Set(),
+          top_pick_count: 0
+        };
+      existing.total_bps += allocation.allocation_bps;
+      existing.portfolio_keys.add(uniquePortfolioKey(allocation));
+      if (allocation.allocation_rank === 1) existing.top_pick_count += 1;
+      assets.set(allocation.option_id, existing);
+      const group = groupLabel(allocation.category);
+      categories.set(group, (categories.get(group) ?? 0) + allocation.allocation_bps);
+    }
+  }
+
+  const assetRows = Array.from(assets.values())
+    .map((asset) => ({
+      ...asset,
+      frequency_pct: portfolioCount > 0 ? (asset.portfolio_keys.size / portfolioCount) * 100 : 0,
+      average_allocation_pct: denominator > 0 ? (asset.total_bps / denominator) * 100 : 0
+    }))
+    .sort(
+      (left, right) =>
+        right.frequency_pct - left.frequency_pct ||
+        right.average_allocation_pct - left.average_allocation_pct ||
+        assetDisplay(left).localeCompare(assetDisplay(right))
+    );
+
+  return {
+    portfolio_count: portfolioCount,
+    average_holding_count: averageOrNull(portfolioRows.map((rows) => rows.length)),
+    average_top_holding_pct: averageOrNull(portfolioRows.map((rows) => (rows[0]?.allocation_bps ?? 0) / 100)),
+    most_common_top_holding: [...assetRows].sort(
+      (left, right) => right.top_pick_count - left.top_pick_count || right.average_allocation_pct - left.average_allocation_pct
+    )[0],
+    assets: assetRows,
+    categories: Array.from(categories.entries())
+      .map(([group, bps]) => ({
+        group,
+        average_allocation_pct: denominator > 0 ? (bps / denominator) * 100 : 0
+      }))
+      .sort((left, right) => right.average_allocation_pct - left.average_allocation_pct)
+  };
+}
+
+function modelHistoryRows(modelId) {
+  const resultByRound = new Map(apiReadModel.results.filter((row) => row.model_id === modelId).map((row) => [row.round_id, row]));
+  return apiReadModel.portfolios
+    .filter((row) => row.model_id === modelId)
+    .map((portfolio) => ({
+      ...portfolio,
+      allocations: [...(portfolio.allocations ?? [])].sort(
+        (left, right) => left.allocation_rank - right.allocation_rank || right.allocation_bps - left.allocation_bps
+      ),
+      result: resultByRound.get(portfolio.round_id)
+    }))
+    .sort((left, right) => right.entry_date.localeCompare(left.entry_date) || right.round_id.localeCompare(left.round_id));
 }
 
 function modelAverageAlpha(modelId, track) {
@@ -1491,8 +1621,71 @@ for (const model of apiReadModel.models) {
     }
   }
 
-  for (const portfolio of portfolios.slice(0, 3)) {
-    includes(html, portfolio.round_id, `${context} recent portfolio ${portfolio.round_id}`);
+  const fingerprint = modelFingerprint(model.model_id);
+  includes(html, "Most frequently held assets", `${context} fingerprint asset section`);
+  includes(html, "Average allocation by category", `${context} fingerprint category section`);
+  includes(html, `<strong>${fingerprint.portfolio_count}</strong>`, `${context} fingerprint saved portfolio count`);
+  if (fingerprint.average_holding_count !== null) {
+    includes(html, `<strong>${numberLabel(fingerprint.average_holding_count)}</strong>`, `${context} fingerprint average holding count`);
+  }
+  if (fingerprint.average_top_holding_pct !== null) {
+    includes(html, `<strong>${pctValue(fingerprint.average_top_holding_pct)}</strong>`, `${context} fingerprint average top holding`);
+  }
+  if (fingerprint.most_common_top_holding) {
+    includesAny(
+      html,
+      [assetDisplay(fingerprint.most_common_top_holding), htmlText(assetDisplay(fingerprint.most_common_top_holding))],
+      `${context} fingerprint most common top holding`
+    );
+  }
+  for (const asset of fingerprint.assets.slice(0, 7)) {
+    const assetContext = `${context} fingerprint asset ${asset.option_id}`;
+    includesAny(html, [assetDisplay(asset), htmlText(assetDisplay(asset))], `${assetContext} label`);
+    includes(html, groupLabel(asset.category), `${assetContext} group`);
+    includes(html, `${pctValue(asset.frequency_pct)} held`, `${assetContext} frequency`);
+    includes(html, `${pctValue(asset.average_allocation_pct)} avg`, `${assetContext} average allocation`);
+  }
+  for (const category of fingerprint.categories.slice(0, 7)) {
+    const categoryContext = `${context} fingerprint category ${category.group}`;
+    includes(html, category.group, `${categoryContext} label`);
+    includes(html, pctValue(category.average_allocation_pct), `${categoryContext} average allocation`);
+  }
+
+  for (const portfolio of modelHistoryRows(model.model_id)) {
+    const historyContext = `${context} history ${portfolio.round_id}`;
+    includes(html, portfolio.round_id, historyContext);
+    includes(html, portfolio.run_id, `${historyContext} run id`);
+    includes(html, portfolio.track, `${historyContext} track`);
+    includes(html, `${portfolio.entry_date} to ${portfolio.exit_date}`, `${historyContext} window`);
+    for (const allocation of portfolio.allocations.slice(0, 4)) {
+      includes(html, `${allocation.option_id} ${pctValue(allocation.allocation_pct)}`, `${historyContext} summary holding ${allocation.option_id}`);
+    }
+    for (const allocation of portfolio.allocations) {
+      includesAny(
+        html,
+        [
+          `${assetDisplay(allocation)} ${pctValue(allocation.allocation_pct)}`,
+          htmlText(`${assetDisplay(allocation)} ${pctValue(allocation.allocation_pct)}`)
+        ],
+        `${historyContext} full holding ${allocation.option_id}`
+      );
+    }
+    if (portfolio.result) {
+      includes(html, signedPpLabel(portfolio.result.alpha_pp), `${historyContext} result alpha`);
+    } else {
+      includes(html, portfolio.status === "active" ? "Pending" : "Not scored", `${historyContext} pending result`);
+    }
+    if (portfolio.rationale_summary) {
+      includesAny(html, htmlTextVariants(portfolio.rationale_summary), `${historyContext} rationale`);
+    }
+    if (portfolio.parsed_file_path) {
+      includes(html, portfolio.parsed_file_path, `${historyContext} parsed proof path`);
+    }
+    includes(
+      html,
+      `rounds/${portfolio.round_id}/runs/${portfolio.run_id}/submissions/raw/${portfolio.model_id}.json`,
+      `${historyContext} raw proof path`
+    );
   }
 }
 
