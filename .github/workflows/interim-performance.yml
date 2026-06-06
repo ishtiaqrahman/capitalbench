@@ -62,12 +62,12 @@ jobs:
           echo "snapshot_date=$SNAPSHOT_DATE" >> "$GITHUB_OUTPUT"
           echo "Using snapshot date: $SNAPSHOT_DATE"
 
-      - name: Refresh active monthly interim performance
+      - name: Refresh active weekly and monthly interim performance
         run: |
           capitalbench update-interim-performance \
             --rounds-dir rounds \
             --snapshot-date "${{ steps.snapshot.outputs.snapshot_date }}" \
-            --track monthly \
+            --track all \
             --soft-fail
 
       - name: Audit public repository contents

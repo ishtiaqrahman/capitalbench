@@ -9,6 +9,9 @@ import yaml
 from capitalbench.interim import update_interim_performance
 
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
 def _write_prices(path: Path, rows: list[dict[str, object]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -237,6 +240,23 @@ def test_update_interim_performance_track_all_includes_weekly_rounds(tmp_path: P
     assert {item.round_id for item in output.updated_rounds} == {"weekly-round", "monthly-round"}
     assert (weekly / "runs" / "official" / "results" / "weekly_performance.csv").exists()
     assert (monthly / "runs" / "official" / "results" / "weekly_performance.csv").exists()
+
+
+def test_scheduled_interim_workflow_refreshes_all_tracks() -> None:
+    workflow_path = PROJECT_ROOT / ".github" / "workflows" / "interim-performance.yml"
+    workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+    steps = workflow["jobs"]["refresh-interim-performance"]["steps"]
+    refresh_steps = [
+        step
+        for step in steps
+        if "capitalbench update-interim-performance" in str(step.get("run", ""))
+    ]
+
+    assert len(refresh_steps) == 1
+    refresh_step = refresh_steps[0]
+    assert refresh_step["name"] == "Refresh active weekly and monthly interim performance"
+    assert "--track all" in refresh_step["run"]
+    assert "--track monthly" not in refresh_step["run"]
 
 
 def test_update_interim_performance_weekly_track_skips_monthly_rounds(tmp_path: Path) -> None:

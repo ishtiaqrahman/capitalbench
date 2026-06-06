@@ -26,6 +26,25 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-06-weekly-interim-refresh-fix",
+    date: "2026-06-06",
+    title: "Weekly interim price refresh corrected",
+    category: "Operations",
+    status: "updated",
+    summary:
+      "The scheduled interim-performance job now refreshes both weekly and monthly open tests from each eligible daily close.",
+    details: [
+      "The production workflow now invokes update-interim-performance with the all-track setting instead of limiting scheduled updates to monthly tests.",
+      "Weekly live-return rows and the homepage priced-test count will update automatically after an eligible post-entry close is fetched and deployed.",
+      "A regression test now verifies that the checked-in production workflow continues to refresh all tracks."
+    ],
+    links: [
+      { label: "Homepage", href: "/" },
+      { label: "Rounds", href: "/rounds" },
+      { label: "Models", href: "/models" }
+    ]
+  },
+  {
     id: "2026-06-05-adjusted-close-price-refresh",
     date: "2026-06-05",
     title: "Final scoring prices now refresh both adjusted-close endpoints",

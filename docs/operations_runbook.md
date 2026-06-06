@@ -123,8 +123,8 @@ capitalbench update-interim-performance \
 
 The command reuses full-universe `entry_prices.csv` and `exit_prices.csv`
 packages from other rounds as eligible snapshots. That keeps free-tier Tiingo
-usage low: one new daily full-universe pull can update all active monthly
-charts.
+usage low: one new daily full-universe pull can update all active weekly and
+monthly charts.
 
 ## Manual Recovery
 
