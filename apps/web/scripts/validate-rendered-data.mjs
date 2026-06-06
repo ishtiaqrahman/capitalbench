@@ -572,8 +572,18 @@ function buildLivePerformanceSummary() {
 function validateLivePerformanceIsland(html) {
   const props = astroIslandProps(html, "LivePerformanceChart");
   const pageRows = Array.isArray(props.rows) ? props.rows : [];
+  const pageOpenRoundCounts = props.openRoundCounts ?? {};
   const expectedRows = (apiReadModel.interim_performance ?? []).filter((row) => row.status === "active");
+  const activeRounds = apiReadModel.rounds.filter((round) => round.status === "active");
+  const expectedOpenRoundCounts = {
+    all: activeRounds.length,
+    weekly: activeRounds.filter((round) => round.track === "weekly").length,
+    monthly: activeRounds.filter((round) => round.track === "monthly").length
+  };
   expectEqual(pageRows.length, expectedRows.length, "homepage live performance island row count");
+  expectEqual(pageOpenRoundCounts.all, expectedOpenRoundCounts.all, "homepage live performance all open round count");
+  expectEqual(pageOpenRoundCounts.weekly, expectedOpenRoundCounts.weekly, "homepage live performance weekly open round count");
+  expectEqual(pageOpenRoundCounts.monthly, expectedOpenRoundCounts.monthly, "homepage live performance monthly open round count");
 
   const pageByKey = new Map(
     pageRows.map((row) => [`${row.round_id}:${row.run_id}:${row.model_id}:${row.target_date}:${row.price_date}`, row])

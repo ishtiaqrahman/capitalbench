@@ -178,6 +178,11 @@ const activeExposureRounds = roundRows
   })
   .filter((item) => (item.track === "weekly" || item.track === "monthly") && item.submissions.length > 0);
 const livePerformanceRows = staticAllWeeklyPerformance(roundRows).filter((row) => row.status === "pending");
+const openRoundCounts = {
+  all: activeExposureRounds.length,
+  weekly: activeExposureRounds.filter((item) => item.track === "weekly").length,
+  monthly: activeExposureRounds.filter((item) => item.track === "monthly").length
+};
 const riskAppetiteProfiles = [...modelProfiles]
   .filter((profile) => profile.fingerprint.riskAppetite.score !== null)
   .sort(
@@ -654,7 +659,7 @@ const trackLaneCards = trackStates.map((track) => {
     <a class="section-profile-link" href="/models">View model profiles</a>
   </section>
 
-  <LivePerformanceChart client:visible rows={livePerformanceRows} />
+  <LivePerformanceChart client:visible rows={livePerformanceRows} openRoundCounts={openRoundCounts} />
 
   <ActiveExposureMap client:visible rounds={activeExposureRounds} />
 

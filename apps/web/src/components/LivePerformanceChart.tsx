@@ -37,6 +37,7 @@ type ChartRow = {
 
 interface Props {
   rows: LivePerformanceRecord[];
+  openRoundCounts: Record<TrackFilter, number>;
 }
 
 const TRACKS: Array<{ key: TrackFilter; label: string }> = [
@@ -178,7 +179,7 @@ function barStyle(value: number, domainMin: number, domainMax: number): CSSPrope
   } as CSSProperties;
 }
 
-export default function LivePerformanceChart({ rows }: Props) {
+export default function LivePerformanceChart({ rows, openRoundCounts }: Props) {
   const [track, setTrack] = useState<TrackFilter>("all");
   const latestRows = useMemo(() => usableRows(rows, track), [rows, track]);
   const chartRows = useMemo(() => buildChartRows(latestRows), [latestRows]);
@@ -190,6 +191,7 @@ export default function LivePerformanceChart({ rows }: Props) {
   const domainMax = rawMax > 0 ? rawMax + padding : padding;
   const latestPriceDate = latestRows.reduce((latest, row) => (row.price_date > latest ? row.price_date : latest), "");
   const openRoundCount = new Set(latestRows.map((row) => row.round_id)).size;
+  const totalOpenRoundCount = openRoundCounts[track];
   const nextFinalDate = latestRows
     .map((row) => row.exit_date)
     .filter(Boolean)
@@ -220,8 +222,8 @@ export default function LivePerformanceChart({ rows }: Props) {
 
       <div className="live-performance-stats" aria-label="Live performance context">
         <div>
-          <span>Open tests with prices</span>
-          <strong>{openRoundCount}</strong>
+          <span>Priced open tests</span>
+          <strong>{openRoundCount} of {totalOpenRoundCount}</strong>
         </div>
         <div>
           <span>Latest close</span>
