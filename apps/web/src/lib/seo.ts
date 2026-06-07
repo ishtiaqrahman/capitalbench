@@ -175,6 +175,15 @@ export const routeMeta: RouteMeta[] = [
     lastmod: defaultLastmod
   },
   {
+    path: "/risk-appetite",
+    title: "Model Risk Appetite",
+    description:
+      "CapitalBench Model Risk Pulse methodology, current weekly and monthly readings, model agreement, open-book risk, and versioned asset ratings.",
+    priority: 0.82,
+    changefreq: "weekly",
+    lastmod: defaultLastmod
+  },
+  {
     path: "/universe",
     title: "CapitalBench Asset List",
     description:
@@ -281,6 +290,7 @@ const labelOverrides: Record<string, string> = {
   models: "Models",
   api: "API",
   methodology: "How It Works",
+  "risk-appetite": "Model Risk Appetite",
   universe: "Asset List",
   scoring: "Scoring",
   fairness: "Fairness",

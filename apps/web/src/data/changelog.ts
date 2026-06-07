@@ -26,6 +26,27 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-07-model-risk-pulse",
+    date: "2026-06-07",
+    title: "Live and historical Model Risk Pulse published",
+    category: "Methodology",
+    status: "published",
+    summary:
+      "CapitalBench now publishes current and historical allocation-based risk signals from weekly and monthly model portfolios.",
+    details: [
+      "Weekly tactical and monthly strategic readings are calculated separately and then equal-weighted into a 0-100 combined pulse.",
+      "The landing page shows the current pulse, model agreement, allocation drivers, regime mix, and the risk level of all unresolved portfolios.",
+      "A dedicated methodology page adds historical views for the decision pulse, model agreement, regime mix, and risk level of the live portfolio book.",
+      "The methodology page publishes the formula and the complete versioned asset-risk table.",
+      "The existing historical model risk profiles retain their 1-5 display and now use the same shared asset definitions as the live signal."
+    ],
+    links: [
+      { label: "Model Risk Appetite", href: "/risk-appetite" },
+      { label: "Homepage", href: "/" },
+      { label: "API docs", href: "/api" }
+    ]
+  },
+  {
     id: "2026-06-06-weekly-interim-refresh-fix",
     date: "2026-06-06",
     title: "Weekly interim price refresh corrected",

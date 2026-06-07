@@ -71,6 +71,26 @@ const livePerformanceExample = exampleBlock("/api/v1/live/performance?track=all"
     : []
 });
 
+const riskAppetiteBody = await apiBody("/api/v1/risk-appetite");
+const riskAppetiteExample = exampleBlock("/api/v1/risk-appetite", {
+  methodology_version: riskAppetiteBody.methodology_version,
+  current_decision_pulse: {
+    score: riskAppetiteBody.current_decision_pulse.score,
+    label: riskAppetiteBody.current_decision_pulse.label,
+    regime: riskAppetiteBody.current_decision_pulse.regime,
+    weekly: riskAppetiteBody.current_decision_pulse.weekly,
+    monthly: riskAppetiteBody.current_decision_pulse.monthly,
+    change_from_previous: riskAppetiteBody.current_decision_pulse.change_from_previous,
+    agreement: riskAppetiteBody.current_decision_pulse.agreement,
+    top_assets: riskAppetiteBody.current_decision_pulse.top_assets.slice(0, 3)
+  },
+  outstanding_live_book: riskAppetiteBody.outstanding_live_book,
+  history: {
+    decision_pulse: riskAppetiteBody.history.decision_pulse.slice(-2),
+    outstanding_live_book: riskAppetiteBody.history.outstanding_live_book.slice(-2)
+  }
+});
+
 const leaderboardBody = await apiBody("/api/v1/leaderboards/latest?track=weekly");
 const leaderboardTop = leaderboardBody.data?.[0];
 const leaderboardExample = exampleBlock("/api/v1/leaderboards/latest?track=weekly", {
@@ -114,6 +134,7 @@ const endpointGroups = [
     description: "Where model capital is allocated now and how that has accumulated over time.",
     endpoints: [
       ["GET", "/v1/positioning/active", "Live exposure across unresolved weekly and monthly rounds."],
+      ["GET", "/v1/risk-appetite", "Current and historical model risk pulse, agreement, regime mix, and outstanding live-book risk."],
       ["GET", "/v1/live/performance", "Open tests marked to the latest available close; not official final scores."],
       ["GET", "/v1/positioning/cumulative", "Historical allocation behavior across all available rounds."],
       ["GET", "/v1/positioning/consensus", "Assets and categories where model allocations cluster."],
@@ -161,6 +182,7 @@ const concepts = [
   ["Proof", "Round files, hashes, timestamps, prompt inputs, prices, and portfolio records."],
   ["Portfolio Minus S&P 500", "Model portfolio return minus the S&P 500 return, in percentage points."],
   ["CapitalBench Score", "Model return scaled to the maximum possible return in each completed window; cumulative rows average per-test score ratios."],
+  ["Model Risk Pulse", "A 0–100 allocation signal calculated from the newest live weekly and monthly portfolios. It does not use prices or returns."],
   ["Resolved score set", "All completed tests used for headline cumulative scores in the selected track."]
 ];
 
@@ -175,6 +197,8 @@ const fields = [
   ["next_cursor", "Pagination cursor returned when more records are available."],
   ["option_id", "Stable asset identifier from the saved universe."],
   ["portfolio_count", "Number of model portfolios included in an aggregate calculation."],
+  ["risk_on_loading", "Versioned asset loading from -1 defensive to +1 risk seeking, used by the live Model Risk Pulse."],
+  ["risk_score_1_5", "Standalone asset-risk rating used by the existing historical model profile."],
   ["round_id", "Stable test identifier for one weekly or monthly round."],
   ["scope", "active or cumulative."],
   ["top_asset_share_pct", "Average share of the round allocated to the largest asset."],
@@ -367,6 +391,10 @@ const curlExample = `curl "https://www.capitalbench.org/api/v1/positioning/activ
           <article class="api-example">
             <h3>Live Mark-To-Market</h3>
             <pre><code>{livePerformanceExample}</code></pre>
+          </article>
+          <article class="api-example">
+            <h3>Current Model Risk Pulse</h3>
+            <pre><code>{riskAppetiteExample}</code></pre>
           </article>
           <article class="api-example">
             <h3>Latest Scored Test</h3>

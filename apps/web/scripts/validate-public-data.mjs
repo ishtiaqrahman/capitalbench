@@ -8,20 +8,6 @@ const repoRoot = resolve(process.cwd(), "../..");
 const failures = [];
 const EPSILON = 1e-7;
 const BASIS_POINT_EPSILON = 1e-5;
-const TECH_OPTION_IDS = new Set(["NASDAQ100", "LARGE_GROWTH", "TECHNOLOGY", "SEMICONDUCTORS", "SOFTWARE", "BROAD_AI_TECH", "CYBERSECURITY"]);
-const DEFENSIVE_OPTION_IDS = new Set([
-  "CASH",
-  "SHORT_TREASURY",
-  "INTERMEDIATE_TREASURY",
-  "TIPS",
-  "INVESTMENT_GRADE_CREDIT",
-  "AGGREGATE_BONDS",
-  "GOLD",
-  "DIVIDEND",
-  "LOW_VOL",
-  "CONSUMER_STAPLES",
-  "UTILITIES"
-]);
 
 function resultPath(round, filename) {
   return join(repoRoot, "rounds", round.round_id, "runs", round.official_run_id, "results", filename);
@@ -90,6 +76,18 @@ function readYaml(path, fallback = null) {
   } catch {
     return fallback;
   }
+}
+
+const assetRiskModel = readYaml(join(repoRoot, "configs", "asset_risk_model.yaml"), {});
+const assetRiskDefinitions = assetRiskModel.assets ?? {};
+
+function assetRiskDefinition(optionId) {
+  const definition = assetRiskDefinitions[optionId];
+  if (!definition) {
+    failures.push(`missing asset-risk definition for ${optionId}`);
+    return null;
+  }
+  return definition;
 }
 
 function numberValue(value) {
@@ -364,26 +362,8 @@ function portfolioKey(row) {
   return `${row.round_id}/${row.run_id}/${row.model_id}`;
 }
 
-function riskScore(asset) {
-  if (!asset) return 3;
-  if (asset.is_cash) return 1;
-  if (String(asset.asset_class).toLowerCase() === "crypto") return 5;
-  switch (String(asset.risk_bucket).toLowerCase()) {
-    case "cash":
-      return 1;
-    case "low":
-      return 2;
-    case "medium":
-      return 3;
-    case "high":
-      return 4;
-    case "very_high":
-    case "very-high":
-    case "speculative":
-      return 5;
-    default:
-      return 3;
-  }
+function riskScore(optionId) {
+  return Number(assetRiskDefinition(optionId)?.risk_score_1_5 ?? 3);
 }
 
 function riskLabel(score) {
@@ -394,23 +374,301 @@ function riskLabel(score) {
   return "Aggressive";
 }
 
-function isDefensive(optionId, asset) {
-  if (DEFENSIVE_OPTION_IDS.has(optionId)) return true;
-  const category = String(asset?.category ?? "").toLowerCase();
-  return category.includes("cash") || category.includes("bond") || category.includes("credit");
+function isDefensive(optionId) {
+  return Boolean(assetRiskDefinition(optionId)?.defensive);
 }
 
-function isTechnology(optionId, asset) {
-  if (TECH_OPTION_IDS.has(optionId)) return true;
-  const category = String(asset?.category ?? "").toLowerCase();
-  const label = String(asset?.label ?? "").toLowerCase();
-  return category.includes("technology") || category.includes("ai") || label.includes("technology") || label.includes("software");
+function isTechnology(optionId) {
+  return Boolean(assetRiskDefinition(optionId)?.technology);
 }
 
 const roundById = new Map(apiReadModel.rounds.map((round) => [round.round_id, round]));
 const assetById = new Map(apiReadModel.assets.map((asset) => [asset.option_id, asset]));
 const modelById = new Map(apiReadModel.models.map((model) => [model.model_id, model]));
 const portfoliosByKey = new Map(apiReadModel.portfolios.map((portfolio) => [portfolioKey(portfolio), portfolio]));
+
+const universeRoot = join(repoRoot, "configs", "universes");
+const publishedUniverseIds = new Set();
+for (const filename of readdirSync(universeRoot).filter((item) => /^capitalbench_universe_.*\.yaml$/.test(item))) {
+  const universe = readYaml(join(universeRoot, filename), {});
+  for (const option of universe.options ?? []) {
+    if (option?.id) publishedUniverseIds.add(String(option.id));
+  }
+}
+
+if (!assetRiskModel.version) failures.push("asset-risk model is missing a version");
+if (!assetRiskModel.published_at) failures.push("asset-risk model is missing published_at");
+for (const optionId of publishedUniverseIds) {
+  if (!assetRiskDefinitions[optionId]) failures.push(`asset-risk model does not cover published universe asset ${optionId}`);
+}
+for (const optionId of Object.keys(assetRiskDefinitions)) {
+  if (!publishedUniverseIds.has(optionId)) failures.push(`asset-risk model includes unknown asset ${optionId}`);
+}
+for (const [optionId, definition] of Object.entries(assetRiskDefinitions)) {
+  if (!Number.isInteger(definition.risk_score_1_5) || definition.risk_score_1_5 < 1 || definition.risk_score_1_5 > 5) {
+    failures.push(`${optionId} asset-risk risk_score_1_5 ${definition.risk_score_1_5} is outside integer range 1-5`);
+  }
+  if (!isFiniteNumber(definition.risk_on_loading) || definition.risk_on_loading < -1 || definition.risk_on_loading > 1) {
+    failures.push(`${optionId} asset-risk risk_on_loading ${definition.risk_on_loading} is outside -1 to 1`);
+  }
+  if (!assetRiskModel.regime_groups?.[definition.regime_group]) {
+    failures.push(`${optionId} asset-risk regime_group ${definition.regime_group} is not declared`);
+  }
+  if (typeof definition.defensive !== "boolean") failures.push(`${optionId} asset-risk defensive flag is not boolean`);
+  if (typeof definition.technology !== "boolean") failures.push(`${optionId} asset-risk technology flag is not boolean`);
+}
+
+for (const asset of apiReadModel.assets) {
+  const definition = assetRiskDefinition(asset.option_id);
+  if (!definition) continue;
+  if (asset.risk_score_1_5 !== definition.risk_score_1_5) {
+    failures.push(`${asset.option_id} generated risk_score_1_5 does not match asset-risk model`);
+  }
+  if (!approxEqual(asset.risk_on_loading, definition.risk_on_loading)) {
+    failures.push(`${asset.option_id} generated risk_on_loading does not match asset-risk model`);
+  }
+  if (asset.risk_regime_group !== definition.regime_group) {
+    failures.push(`${asset.option_id} generated risk_regime_group does not match asset-risk model`);
+  }
+  if (asset.defensive !== definition.defensive) {
+    failures.push(`${asset.option_id} generated defensive flag does not match asset-risk model`);
+  }
+  if (asset.technology !== definition.technology) {
+    failures.push(`${asset.option_id} generated technology flag does not match asset-risk model`);
+  }
+}
+
+function independentPortfolioPulse(portfolio) {
+  const allocations = portfolio.allocations ?? [];
+  const totalBps = allocations.reduce(
+    (total, allocation) => total + (numberValue(allocation.allocation_bps) ?? (numberValue(allocation.allocation_pct) ?? 0) * 100),
+    0
+  );
+  if (totalBps <= 0) return null;
+  const loading = allocations.reduce((total, allocation) => {
+    const bps = numberValue(allocation.allocation_bps) ?? (numberValue(allocation.allocation_pct) ?? 0) * 100;
+    return total + (bps / totalBps) * Number(assetRiskDefinition(allocation.option_id)?.risk_on_loading ?? 0);
+  }, 0);
+  return 50 + 50 * loading;
+}
+
+function independentTrackPulse(round) {
+  if (!round) return null;
+  const byModel = new Map();
+  for (const portfolio of apiReadModel.portfolios.filter((row) => row.round_id === round.round_id)) {
+    const score = independentPortfolioPulse(portfolio);
+    if (!isFiniteNumber(score)) continue;
+    const scores = byModel.get(portfolio.model_id) ?? [];
+    scores.push(score);
+    byModel.set(portfolio.model_id, scores);
+  }
+  const models = Array.from(byModel.entries()).map(([modelId, scores]) => ({
+    model_id: modelId,
+    score: average(scores)
+  }));
+  return { score: average(models.map((row) => row.score)), models };
+}
+
+const riskSnapshot = apiReadModel.risk_appetite;
+if (!riskSnapshot) {
+  failures.push("generated read model is missing risk_appetite");
+} else {
+  const pulse = riskSnapshot.current_decision_pulse;
+  const activeRoundsByTrack = Object.fromEntries(
+    ["weekly", "monthly"].map((track) => [
+      track,
+      apiReadModel.rounds
+        .filter(
+          (round) =>
+            round.status === "active" &&
+            round.track === track &&
+            apiReadModel.portfolios.some((portfolio) => portfolio.round_id === round.round_id)
+        )
+        .sort((left, right) =>
+          `${right.decision_deadline_utc}:${right.round_id}`.localeCompare(`${left.decision_deadline_utc}:${left.round_id}`)
+        )
+    ])
+  );
+  const currentTrackScores = {};
+  const priorTrackScores = {};
+  for (const track of ["weekly", "monthly"]) {
+    const currentRound = activeRoundsByTrack[track][0];
+    const priorRound = activeRoundsByTrack[track][1];
+    const currentExpected = independentTrackPulse(currentRound);
+    const priorExpected = independentTrackPulse(priorRound);
+    const actual = pulse[track];
+    if (actual?.round_id !== currentRound?.round_id) {
+      failures.push(`risk appetite ${track} round ${actual?.round_id} does not match latest active round ${currentRound?.round_id}`);
+    }
+    if (!sameNullableNumber(actual?.score, currentExpected?.score ?? null)) {
+      failures.push(`risk appetite ${track} score ${actual?.score} does not match expected ${currentExpected?.score}`);
+    }
+    if (actual?.model_count !== currentExpected?.models.length) {
+      failures.push(`risk appetite ${track} model_count ${actual?.model_count} does not match expected ${currentExpected?.models.length}`);
+    }
+    currentTrackScores[track] = currentExpected?.score ?? null;
+    priorTrackScores[track] = priorExpected?.score ?? null;
+  }
+
+  const expectedCurrentScore = average(Object.values(currentTrackScores).filter(isFiniteNumber));
+  const expectedPriorScore = average(Object.values(priorTrackScores).filter(isFiniteNumber));
+  if (!sameNullableNumber(pulse.score, expectedCurrentScore)) {
+    failures.push(`risk appetite combined score ${pulse.score} does not match equal-track average ${expectedCurrentScore}`);
+  }
+  if (!sameNullableNumber(pulse.previous_score, expectedPriorScore)) {
+    failures.push(`risk appetite previous score ${pulse.previous_score} does not match prior equal-track average ${expectedPriorScore}`);
+  }
+  const expectedChange =
+    isFiniteNumber(expectedCurrentScore) && isFiniteNumber(expectedPriorScore) ? expectedCurrentScore - expectedPriorScore : null;
+  if (!sameNullableNumber(pulse.change_from_previous, expectedChange)) {
+    failures.push(`risk appetite change ${pulse.change_from_previous} does not match expected ${expectedChange}`);
+  }
+  percentInRange(pulse.score, "score", "risk appetite");
+  percentInRange(riskSnapshot.outstanding_live_book.score, "score", "risk appetite outstanding live book");
+  const assetShareTotal = (pulse.top_assets ?? []).reduce((total, row) => total + Number(row.allocation_pct), 0);
+  const regimeShareTotal = (pulse.regime_exposure ?? []).reduce((total, row) => total + Number(row.allocation_pct), 0);
+  if (!approxEqual(assetShareTotal, 100, BASIS_POINT_EPSILON)) {
+    failures.push(`risk appetite top-asset shares total ${assetShareTotal} instead of 100`);
+  }
+  if (!approxEqual(regimeShareTotal, 100, BASIS_POINT_EPSILON)) {
+    failures.push(`risk appetite regime shares total ${regimeShareTotal} instead of 100`);
+  }
+
+  const activePortfolios = apiReadModel.portfolios.filter((portfolio) => portfolio.status === "active");
+  const expectedActivePortfolioCount = new Set(activePortfolios.map(portfolioKey)).size;
+  if (riskSnapshot.outstanding_live_book.portfolio_count !== expectedActivePortfolioCount) {
+    failures.push(
+      `risk appetite outstanding portfolio_count ${riskSnapshot.outstanding_live_book.portfolio_count} does not match active count ${expectedActivePortfolioCount}`
+    );
+  }
+  const outstandingTrackScores = ["weekly", "monthly"]
+    .map((track) => {
+      const byModel = new Map();
+      for (const portfolio of activePortfolios.filter((row) => row.track === track)) {
+        const values = byModel.get(portfolio.model_id) ?? [];
+        const score = independentPortfolioPulse(portfolio);
+        if (isFiniteNumber(score)) values.push(score);
+        byModel.set(portfolio.model_id, values);
+      }
+      return average(Array.from(byModel.values()).map((values) => average(values)).filter(isFiniteNumber));
+    })
+    .filter(isFiniteNumber);
+  const expectedOutstandingScore = average(outstandingTrackScores);
+  if (!sameNullableNumber(riskSnapshot.outstanding_live_book.score, expectedOutstandingScore)) {
+    failures.push(
+      `risk appetite outstanding score ${riskSnapshot.outstanding_live_book.score} does not match expected ${expectedOutstandingScore}`
+    );
+  }
+
+  const history = riskSnapshot.history;
+  const historyRounds = apiReadModel.rounds.filter(
+    (round) =>
+      (round.track === "weekly" || round.track === "monthly") &&
+      apiReadModel.portfolios.some((portfolio) => portfolio.round_id === round.round_id)
+  );
+  const expectedHistoryDates = Array.from(
+    new Set(historyRounds.map((round) => String(round.decision_date ?? round.decision_deadline_utc).slice(0, 10)))
+  ).sort();
+  const decisionHistoryDates = (history?.decision_pulse ?? []).map((point) => point.date);
+  const outstandingHistoryDates = (history?.outstanding_live_book ?? []).map((point) => point.date);
+  if (JSON.stringify(decisionHistoryDates) !== JSON.stringify(expectedHistoryDates)) {
+    failures.push(
+      `risk appetite decision history dates ${JSON.stringify(decisionHistoryDates)} do not match ${JSON.stringify(expectedHistoryDates)}`
+    );
+  }
+  if (JSON.stringify(outstandingHistoryDates) !== JSON.stringify(expectedHistoryDates)) {
+    failures.push(
+      `risk appetite outstanding history dates ${JSON.stringify(outstandingHistoryDates)} do not match ${JSON.stringify(expectedHistoryDates)}`
+    );
+  }
+
+  for (const point of history?.decision_pulse ?? []) {
+    const expectedScores = {};
+    for (const track of ["weekly", "monthly"]) {
+      const round = historyRounds
+        .filter(
+          (item) =>
+            item.track === track &&
+            String(item.decision_date ?? item.decision_deadline_utc).slice(0, 10) <= point.date
+        )
+        .sort((left, right) => roundSortValue(right).localeCompare(roundSortValue(left)))[0];
+      const expected = independentTrackPulse(round);
+      expectedScores[track] = expected?.score ?? null;
+      if (point[`${track}_round_id`] !== (round?.round_id ?? null)) {
+        failures.push(
+          `risk appetite history ${point.date} ${track} round ${point[`${track}_round_id`]} does not match ${round?.round_id ?? null}`
+        );
+      }
+      if (!sameNullableNumber(point[`${track}_score`], expected?.score ?? null)) {
+        failures.push(
+          `risk appetite history ${point.date} ${track} score ${point[`${track}_score`]} does not match ${expected?.score ?? null}`
+        );
+      }
+    }
+    const expectedCombined = average(Object.values(expectedScores).filter(isFiniteNumber));
+    if (!sameNullableNumber(point.combined_score, expectedCombined)) {
+      failures.push(
+        `risk appetite history ${point.date} combined score ${point.combined_score} does not match ${expectedCombined}`
+      );
+    }
+    const historyRegimeTotal = (point.regime_exposure ?? []).reduce(
+      (total, row) => total + Number(row.allocation_pct),
+      0
+    );
+    if (!approxEqual(historyRegimeTotal, 100, BASIS_POINT_EPSILON)) {
+      failures.push(`risk appetite history ${point.date} regime shares total ${historyRegimeTotal} instead of 100`);
+    }
+  }
+
+  for (const point of history?.outstanding_live_book ?? []) {
+    const openRoundIds = new Set(
+      historyRounds
+        .filter((round) => {
+          const decisionDate = String(round.decision_date ?? round.decision_deadline_utc).slice(0, 10);
+          const exitDate = String(round.exit_date ?? "").slice(0, 10);
+          return decisionDate <= point.date && (!exitDate || exitDate >= point.date);
+        })
+        .map((round) => round.round_id)
+    );
+    const openPortfolios = apiReadModel.portfolios.filter((portfolio) => openRoundIds.has(portfolio.round_id));
+    const expectedPortfolioCount = new Set(openPortfolios.map(portfolioKey)).size;
+    if (point.portfolio_count !== expectedPortfolioCount) {
+      failures.push(
+        `risk appetite outstanding history ${point.date} portfolio_count ${point.portfolio_count} does not match ${expectedPortfolioCount}`
+      );
+    }
+    if (point.round_count !== openRoundIds.size) {
+      failures.push(
+        `risk appetite outstanding history ${point.date} round_count ${point.round_count} does not match ${openRoundIds.size}`
+      );
+    }
+
+    const trackScores = {};
+    for (const track of ["weekly", "monthly"]) {
+      const byModel = new Map();
+      for (const portfolio of openPortfolios.filter((row) => row.track === track)) {
+        const values = byModel.get(portfolio.model_id) ?? [];
+        const portfolioScore = independentPortfolioPulse(portfolio);
+        if (isFiniteNumber(portfolioScore)) values.push(portfolioScore);
+        byModel.set(portfolio.model_id, values);
+      }
+      trackScores[track] = average(
+        Array.from(byModel.values()).map((values) => average(values)).filter(isFiniteNumber)
+      );
+      if (!sameNullableNumber(point[`${track}_score`], trackScores[track])) {
+        failures.push(
+          `risk appetite outstanding history ${point.date} ${track} score ${point[`${track}_score`]} does not match ${trackScores[track]}`
+        );
+      }
+    }
+    const expectedScore = average(Object.values(trackScores).filter(isFiniteNumber));
+    if (!sameNullableNumber(point.score, expectedScore)) {
+      failures.push(
+        `risk appetite outstanding history ${point.date} score ${point.score} does not match ${expectedScore}`
+      );
+    }
+  }
+}
 
 for (const round of apiReadModel.rounds) {
   const metadata = expectedRoundMetadata(round);
@@ -854,12 +1112,12 @@ for (const style of apiReadModel.model_styles ?? []) {
   const categoryPct = new Map();
   for (const row of rows) {
     const asset = assetById.get(row.option_id);
-    const score = riskScore(asset);
+    const score = riskScore(row.option_id);
     weightedRisk += row.allocation_pct * score;
     totalPct += row.allocation_pct;
     if (score >= 4) highRiskPct += row.allocation_pct;
-    if (isDefensive(row.option_id, asset)) defensivePct += row.allocation_pct;
-    if (isTechnology(row.option_id, asset)) techPct += row.allocation_pct;
+    if (isDefensive(row.option_id)) defensivePct += row.allocation_pct;
+    if (isTechnology(row.option_id)) techPct += row.allocation_pct;
     if (asset?.is_cash) cashPct += row.allocation_pct;
     if (String(asset?.asset_class ?? "").toLowerCase() === "equity") equityPct += row.allocation_pct;
     const category = asset?.category ?? row.category ?? "unknown";

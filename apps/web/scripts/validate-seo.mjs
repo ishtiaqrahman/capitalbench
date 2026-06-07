@@ -55,6 +55,7 @@ const coreDataPaths = [
   "/models/",
   "/api/",
   "/methodology/",
+  "/risk-appetite/",
   "/universe/",
   "/scoring/",
   "/changelog/"

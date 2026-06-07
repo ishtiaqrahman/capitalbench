@@ -6,6 +6,8 @@ import {
   staticRoundRecords,
   staticUniverseOptions
 } from "./localRoundRecords";
+import { assetRiskDefinition } from "./assetRisk";
+import { historicalRiskLabel } from "./riskAppetiteCore.js";
 import { roundTrack, trackLabel, type BenchmarkTrack } from "./tracks";
 
 export type ModelScopeKey = "all" | BenchmarkTrack;
@@ -186,30 +188,6 @@ const GROUP_LABELS: Record<string, string> = {
   us_style_factor: "US Style Factor"
 };
 
-const TECH_OPTION_IDS = new Set([
-  "NASDAQ100",
-  "LARGE_GROWTH",
-  "TECHNOLOGY",
-  "SEMICONDUCTORS",
-  "SOFTWARE",
-  "BROAD_AI_TECH",
-  "AUTONOMOUS_ROBOTICS",
-  "CYBERSECURITY"
-]);
-const DEFENSIVE_OPTION_IDS = new Set([
-  "CASH",
-  "SHORT_TREASURY",
-  "INTERMEDIATE_TREASURY",
-  "TIPS",
-  "INVESTMENT_GRADE_CREDIT",
-  "AGGREGATE_BONDS",
-  "GOLD",
-  "DIVIDEND",
-  "LOW_VOL",
-  "CONSUMER_STAPLES",
-  "UTILITIES"
-]);
-
 function percentFromBps(bps: number, denominatorBps: number): number {
   if (denominatorBps <= 0) return 0;
   return (bps / denominatorBps) * 100;
@@ -224,51 +202,6 @@ function average(values: Array<number | null | undefined>): number | null {
 function clampPercent(value: number): number {
   if (!Number.isFinite(value)) return 0;
   return Math.min(100, Math.max(0, value));
-}
-
-function riskBucketScore(option: UniverseOption | undefined): number {
-  if (!option) return 3;
-  if (option.is_cash) return 1;
-  const group = option.option_group.toLowerCase();
-  if (group === "crypto" || option.asset_class.toLowerCase() === "crypto") return 5;
-  switch (option.risk_bucket.toLowerCase()) {
-    case "cash":
-      return 1;
-    case "low":
-      return 2;
-    case "medium":
-      return 3;
-    case "high":
-      return 4;
-    case "very_high":
-    case "very-high":
-    case "speculative":
-      return 5;
-    default:
-      return 3;
-  }
-}
-
-function isDefensiveOption(optionId: string, option: UniverseOption | undefined): boolean {
-  if (DEFENSIVE_OPTION_IDS.has(optionId)) return true;
-  if (option?.is_cash) return true;
-  const group = option?.option_group.toLowerCase() ?? "";
-  return group.includes("cash") || group.includes("bond") || group.includes("credit");
-}
-
-function isTechnologyOption(optionId: string, option: UniverseOption | undefined): boolean {
-  if (TECH_OPTION_IDS.has(optionId)) return true;
-  const group = option?.option_group.toLowerCase() ?? "";
-  const name = option?.name.toLowerCase() ?? "";
-  return group.includes("technology") || group.includes("ai") || name.includes("technology") || name.includes("software");
-}
-
-function riskAppetiteLabel(score: number | null): string {
-  if (score === null) return "Not enough history";
-  if (score < 2.15) return "Defensive";
-  if (score < 3.15) return "Balanced";
-  if (score < 4.15) return "Growth";
-  return "Aggressive";
 }
 
 function riskAppetiteDescription(label: string): string {
@@ -286,7 +219,7 @@ function buildRiskAppetite(
   defensiveBps: number,
   techBps: number
 ): ModelRiskAppetite {
-  const label = riskAppetiteLabel(score);
+  const label = historicalRiskLabel(score);
   return {
     score,
     percentile: score === null ? null : clampPercent(((score - 1) / 4) * 100),
@@ -516,12 +449,12 @@ function buildFingerprint(modelId: string, contexts: RoundContext[]): ModelFinge
       totalPortfolioBps += portfolioBps;
       let portfolioRiskScore = 0;
       allocations.forEach((allocation, index) => {
-        const option = context.optionsById[allocation.optionId];
-        const score = riskBucketScore(option);
+        const definition = assetRiskDefinition(allocation.optionId);
+        const score = definition.risk_score_1_5;
         portfolioRiskScore += portfolioBps > 0 ? (allocation.allocationBps / portfolioBps) * score : 0;
         if (score >= 4) highRiskBps += allocation.allocationBps;
-        if (isDefensiveOption(allocation.optionId, option)) defensiveBps += allocation.allocationBps;
-        if (isTechnologyOption(allocation.optionId, option)) techBps += allocation.allocationBps;
+        if (definition.defensive) defensiveBps += allocation.allocationBps;
+        if (definition.technology) techBps += allocation.allocationBps;
         const existing =
           assetRows.get(allocation.optionId) ??
           ({

@@ -204,6 +204,24 @@
         }
       }
     },
+    "/v1/risk-appetite": {
+      "get": {
+        "tags": ["Positioning"],
+        "summary": "Current and historical model risk appetite",
+        "description": "Allocation-based 0-100 risk pulse from live weekly and monthly portfolios, including historical track readings, model agreement, regime mix, allocation drivers, and all unresolved portfolio exposure.",
+        "responses": {
+          "200": {
+            "description": "Current and historical model risk appetite response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RiskAppetiteResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
     "/v1/live/performance": {
       "get": {
         "tags": ["Positioning"],
@@ -709,6 +727,11 @@
           "asset_class": { "type": "string" },
           "category": { "type": "string" },
           "region": { "type": ["string", "null"] },
+          "risk_score_1_5": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "risk_on_loading": { "type": "number", "minimum": -1, "maximum": 1 },
+          "risk_regime_group": { "type": "string" },
+          "defensive": { "type": "boolean" },
+          "technology": { "type": "boolean" },
           "in_current_universe": { "type": "boolean" }
         },
         "required": ["option_id", "label", "asset_class", "category", "in_current_universe"]
@@ -772,6 +795,223 @@
           }
         },
         "required": ["as_of", "window", "data"]
+      },
+      "RiskAppetiteTrack": {
+        "type": "object",
+        "properties": {
+          "round_id": { "type": "string" },
+          "decision_date": { "type": "string", "format": "date" },
+          "decision_deadline_utc": { "type": "string", "format": "date-time" },
+          "track": { "type": "string", "enum": ["weekly", "monthly"] },
+          "score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+          "label": { "type": "string" },
+          "model_count": { "type": "integer" },
+          "portfolio_count": { "type": "integer" }
+        },
+        "required": ["round_id", "track", "score", "label", "model_count", "portfolio_count"]
+      },
+      "RiskAppetiteHistoryPoint": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "combined_score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+          "label": { "type": "string" },
+          "weekly_score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+          "monthly_score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+          "weekly_round_id": { "type": ["string", "null"] },
+          "monthly_round_id": { "type": ["string", "null"] },
+          "model_count": { "type": "integer" },
+          "agreement_label": { "type": "string", "enum": ["Tight", "Mixed", "Divided", "Not available"] },
+          "agreement_standard_deviation": { "type": ["number", "null"] },
+          "agreement_range": {
+            "type": "object",
+            "properties": {
+              "minimum": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+              "maximum": { "type": ["number", "null"], "minimum": 0, "maximum": 100 }
+            },
+            "required": ["minimum", "maximum"]
+          },
+          "top_regime": {
+            "type": ["object", "null"],
+            "properties": {
+              "key": { "type": "string" },
+              "label": { "type": "string" },
+              "allocation_pct": { "type": "number" }
+            }
+          },
+          "top_assets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "option_id": { "type": "string" },
+                "label": { "type": "string" },
+                "ticker": { "type": "string" },
+                "allocation_pct": { "type": "number" },
+                "risk_on_loading": { "type": "number", "minimum": -1, "maximum": 1 },
+                "regime_group": { "type": "string" }
+              },
+              "required": ["option_id", "label", "allocation_pct", "risk_on_loading", "regime_group"]
+            }
+          },
+          "regime_exposure": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": { "type": "string" },
+                "label": { "type": "string" },
+                "allocation_pct": { "type": "number" }
+              },
+              "required": ["key", "label", "allocation_pct"]
+            }
+          }
+        },
+        "required": [
+          "date",
+          "combined_score",
+          "label",
+          "weekly_score",
+          "monthly_score",
+          "weekly_round_id",
+          "monthly_round_id",
+          "model_count",
+          "agreement_label",
+          "agreement_standard_deviation",
+          "agreement_range",
+          "top_regime",
+          "top_assets",
+          "regime_exposure"
+        ]
+      },
+      "RiskAppetiteOutstandingHistoryPoint": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+          "label": { "type": "string" },
+          "weekly_score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+          "monthly_score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+          "portfolio_count": { "type": "integer" },
+          "round_count": { "type": "integer" },
+          "weekly_portfolio_count": { "type": "integer" },
+          "monthly_portfolio_count": { "type": "integer" },
+          "weekly_round_count": { "type": "integer" },
+          "monthly_round_count": { "type": "integer" }
+        },
+        "required": [
+          "date",
+          "score",
+          "label",
+          "weekly_score",
+          "monthly_score",
+          "portfolio_count",
+          "round_count",
+          "weekly_portfolio_count",
+          "monthly_portfolio_count",
+          "weekly_round_count",
+          "monthly_round_count"
+        ]
+      },
+      "RiskAppetiteResponse": {
+        "type": "object",
+        "properties": {
+          "methodology_version": { "type": "string" },
+          "status": { "type": "string", "enum": ["live_allocations_not_investment_advice"] },
+          "current_decision_pulse": {
+            "type": "object",
+            "properties": {
+              "score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+              "label": { "type": "string" },
+              "regime": { "type": "string" },
+              "weekly": { "$ref": "#/components/schemas/RiskAppetiteTrack" },
+              "monthly": { "$ref": "#/components/schemas/RiskAppetiteTrack" },
+              "change_from_previous": { "type": ["number", "null"] },
+              "previous_score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+              "agreement": {
+                "type": "object",
+                "properties": {
+                  "label": { "type": "string", "enum": ["Tight", "Mixed", "Divided", "Not available"] },
+                  "standard_deviation": { "type": ["number", "null"] }
+                },
+                "required": ["label", "standard_deviation"]
+              },
+              "top_assets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "option_id": { "type": "string" },
+                    "label": { "type": "string" },
+                    "ticker": { "type": "string" },
+                    "allocation_pct": { "type": "number" },
+                    "risk_on_loading": { "type": "number", "minimum": -1, "maximum": 1 },
+                    "regime_group": { "type": "string" }
+                  },
+                  "required": ["option_id", "label", "allocation_pct", "risk_on_loading", "regime_group"]
+                }
+              },
+              "regime_exposure": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": { "type": "string" },
+                    "label": { "type": "string" },
+                    "allocation_pct": { "type": "number" }
+                  },
+                  "required": ["key", "label", "allocation_pct"]
+                }
+              }
+            },
+            "required": ["score", "label", "regime", "weekly", "monthly", "agreement", "top_assets", "regime_exposure"]
+          },
+          "outstanding_live_book": {
+            "type": "object",
+            "properties": {
+              "score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+              "label": { "type": "string" },
+              "portfolio_count": { "type": "integer" },
+              "round_count": { "type": "integer" }
+            },
+            "required": ["score", "label", "portfolio_count", "round_count"]
+          },
+          "history": {
+            "type": "object",
+            "properties": {
+              "decision_pulse": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/RiskAppetiteHistoryPoint" }
+              },
+              "outstanding_live_book": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/RiskAppetiteOutstandingHistoryPoint" }
+              }
+            },
+            "required": ["decision_pulse", "outstanding_live_book"]
+          },
+          "scale": {
+            "type": "object",
+            "properties": {
+              "minimum": { "type": "number" },
+              "maximum": { "type": "number" },
+              "bands": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "minimum": { "type": "number" },
+                    "maximum": { "type": "number" },
+                    "label": { "type": "string" }
+                  },
+                  "required": ["minimum", "maximum", "label"]
+                }
+              }
+            },
+            "required": ["minimum", "maximum", "bands"]
+          }
+        },
+        "required": ["methodology_version", "status", "current_decision_pulse", "outstanding_live_book", "history", "scale"]
       },
       "LivePerformanceResponse": {
         "type": "object",
@@ -993,14 +1233,15 @@
         "type": "object",
         "properties": {
           "model_id": { "type": "string" },
-          "risk_appetite_score": { "type": "number", "minimum": 0, "maximum": 100 },
+          "risk_appetite_score": { "type": ["number", "null"], "minimum": 1, "maximum": 5 },
+          "risk_appetite_label": { "type": "string" },
           "cash_allocation_pct": { "type": "number" },
           "equity_allocation_pct": { "type": "number" },
           "thematic_allocation_pct": { "type": "number" },
           "top_category": { "type": ["string", "null"] },
           "sample_round_count": { "type": "integer" }
         },
-        "required": ["model_id", "risk_appetite_score", "sample_round_count"]
+        "required": ["model_id", "risk_appetite_score", "risk_appetite_label", "sample_round_count"]
       },
       "Proof": {
         "type": "object",

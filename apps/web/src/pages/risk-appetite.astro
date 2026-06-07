@@ -1,0 +1,350 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import RiskAppetiteHistoryChart from "../components/RiskAppetiteHistoryChart";
+import { modelLabel } from "../data/fallback";
+import apiReadModel from "../generated/apiReadModel.js";
+import { assetRiskModel } from "../lib/assetRisk";
+import { RISK_REGIME_LABELS } from "../lib/riskAppetiteCore.js";
+
+const riskModel = assetRiskModel();
+const snapshot = apiReadModel.risk_appetite;
+const pulse = snapshot.current_decision_pulse;
+const outstanding = snapshot.outstanding_live_book;
+const assetsById = new Map(apiReadModel.assets.map((asset) => [asset.option_id, asset]));
+const assetDefinitions = Object.entries(riskModel.assets)
+  .map(([optionId, definition]) => ({
+    optionId,
+    label: assetsById.get(optionId)?.label ?? optionId,
+    ticker: assetsById.get(optionId)?.ticker ?? "",
+    ...definition
+  }))
+  .sort(
+    (left, right) =>
+      left.regime_group.localeCompare(right.regime_group) ||
+      right.risk_score_1_5 - left.risk_score_1_5 ||
+      left.label.localeCompare(right.label)
+  );
+
+function score(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return value.toFixed(1);
+}
+
+function signedScore(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)}`;
+}
+
+function pct(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return `${value.toFixed(value >= 10 ? 1 : 2)}%`;
+}
+
+function loading(value: number): string {
+  return `${value > 0 ? "+" : ""}${value.toFixed(2)}`;
+}
+
+function width(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "0%";
+  return `${Math.min(100, Math.max(0, value)).toFixed(2)}%`;
+}
+---
+
+<BaseLayout
+  title="Model Risk Appetite"
+  description="CapitalBench Model Risk Pulse methodology, current weekly and monthly readings, model agreement, open-book risk, and versioned asset ratings."
+>
+  <PageHeader
+    eyebrow={`Live allocation signal / methodology v${riskModel.version}`}
+    title="Model Risk Appetite"
+    summary="A transparent reading of how defensive or risk-seeking the models' saved live portfolios are. It measures allocation choices, not subsequent returns."
+  />
+
+  <section class="risk-method-summary" aria-label="Current model risk appetite">
+    <div>
+      <span>Current decision pulse</span>
+      <strong>{score(pulse.score)}</strong>
+      <em>{pulse.label}</em>
+    </div>
+    <div>
+      <span>Weekly tactical</span>
+      <strong>{score(pulse.weekly?.score)}</strong>
+      <em>{pulse.weekly?.label}</em>
+    </div>
+    <div>
+      <span>Monthly strategic</span>
+      <strong>{score(pulse.monthly?.score)}</strong>
+      <em>{pulse.monthly?.label}</em>
+    </div>
+    <div>
+      <span>Outstanding live book</span>
+      <strong>{score(outstanding.score)}</strong>
+      <em>{outstanding.label}</em>
+    </div>
+  </section>
+
+  <section class="section risk-method-signal" aria-labelledby="risk-current-title">
+    <div class="risk-method-signal-copy">
+      <span class="panel-kicker">Latest saved decisions</span>
+      <h2 id="risk-current-title">{pulse.regime}</h2>
+      <p>
+        The current pulse combines <a href={`/rounds/${pulse.weekly?.round_id}/`}>{pulse.weekly?.round_id}</a> and
+        <a href={`/rounds/${pulse.monthly?.round_id}/`}>{pulse.monthly?.round_id}</a>. Weekly and monthly are calculated
+        separately, then receive equal weight.
+      </p>
+      <div class="risk-method-change">
+        <span>Change from previous decision set</span>
+        <strong class:list={{ "is-negative": Number(pulse.change_from_previous) < 0 }}>
+          {signedScore(pulse.change_from_previous)}
+        </strong>
+        <small>
+          Previous: {pulse.previous_round_ids.weekly} and {pulse.previous_round_ids.monthly}
+        </small>
+      </div>
+    </div>
+    <div class="risk-method-meter">
+      <div>
+        <strong>{score(pulse.score)}</strong>
+        <span>{pulse.label}</span>
+      </div>
+      <div class="live-risk-pulse-meter" aria-label={`Current Model Risk Pulse ${score(pulse.score)} out of 100`}>
+        <span class="risk-pulse-band is-defensive"></span>
+        <span class="risk-pulse-band is-cautious"></span>
+        <span class="risk-pulse-band is-balanced"></span>
+        <span class="risk-pulse-band is-seeking"></span>
+        <span class="risk-pulse-band is-aggressive"></span>
+        <i style={`--pulse-position: ${width(pulse.score)}`}></i>
+      </div>
+      <div class="live-risk-pulse-ticks" aria-hidden="true">
+        <span>0 Defensive</span>
+        <span>50 Balanced</span>
+        <span>100 Aggressive</span>
+      </div>
+      <div class="risk-method-agreement">
+        <span>Model agreement</span>
+        <strong>{pulse.agreement.label}</strong>
+        <small>{score(pulse.agreement.standard_deviation)} point standard deviation</small>
+      </div>
+    </div>
+  </section>
+
+  <RiskAppetiteHistoryChart
+    client:visible
+    decisionHistory={snapshot.history.decision_pulse}
+    outstandingHistory={snapshot.history.outstanding_live_book}
+    scale={snapshot.scale}
+  />
+
+  <section class="section risk-method-grid" aria-label="Current calculation inputs">
+    <article>
+      <span class="panel-kicker">Model inputs</span>
+      <h2>Current Model Scores</h2>
+      <div class="risk-method-model-list">
+        {pulse.models.map((model) => (
+          <div>
+            <span>{modelLabel(model.model_id)}</span>
+            <i><b style={`width: ${width(model.score)}`}></b></i>
+            <strong>{score(model.score)}</strong>
+          </div>
+        ))}
+      </div>
+    </article>
+    <article>
+      <span class="panel-kicker">Combined latest allocation</span>
+      <h2>Largest Drivers</h2>
+      <div class="risk-method-driver-list">
+        {pulse.top_assets.slice(0, 10).map((asset) => (
+          <div>
+            <span>
+              <strong>{asset.label}</strong>
+              <small>{asset.ticker || asset.option_id}</small>
+            </span>
+            <em>{pct(asset.allocation_pct)}</em>
+          </div>
+        ))}
+      </div>
+    </article>
+    <article>
+      <span class="panel-kicker">Allocation regime</span>
+      <h2>What Kind Of Risk</h2>
+      <div class="risk-method-regime-list">
+        {pulse.regime_exposure.map((regime) => (
+          <div>
+            <span>{regime.label}</span>
+            <i><b style={`width: ${width(regime.allocation_pct)}`}></b></i>
+            <strong>{pct(regime.allocation_pct)}</strong>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+
+  <section class="section risk-method-document" aria-labelledby="risk-calculation-title">
+    <div class="risk-method-document-head">
+      <span class="panel-kicker">Calculation process</span>
+      <h2 id="risk-calculation-title">How The Signal Is Calculated</h2>
+      <p>
+        Version {riskModel.version} uses only public, locked portfolio allocations. Prices, realized returns, model
+        rankings, and later information do not affect the signal.
+      </p>
+    </div>
+
+    <div class="risk-method-steps">
+      <article>
+        <span>1</span>
+        <div>
+          <h3>Rate every asset in two dimensions</h3>
+          <p>
+            The 1–5 risk score measures standalone allocation risk and powers the existing historical model profile.
+            The -1 to +1 risk-on loading measures whether holding the asset is defensive or expresses risk seeking.
+          </p>
+        </div>
+      </article>
+      <article>
+        <span>2</span>
+        <div>
+          <h3>Score each saved portfolio</h3>
+          <pre><code>Portfolio Pulse = 50 + 50 × Σ(allocation weight × asset risk-on loading)</code></pre>
+          <p>A fully defensive portfolio approaches 0, a neutral mix approaches 50, and a fully risk-on portfolio approaches 100.</p>
+        </div>
+      </article>
+      <article>
+        <span>3</span>
+        <div>
+          <h3>Calculate Weekly and Monthly separately</h3>
+          <p>
+            Each model has equal weight within the latest weekly test and within the latest monthly test. Portfolio
+            size, provider, and historical performance do not change a model's vote.
+          </p>
+        </div>
+      </article>
+      <article>
+        <span>4</span>
+        <div>
+          <h3>Combine the two horizons equally</h3>
+          <pre><code>Combined Pulse = 50% × Weekly Pulse + 50% × Monthly Pulse</code></pre>
+          <p>
+            This prevents the larger number of open monthly portfolios from overwhelming the faster tactical signal.
+          </p>
+        </div>
+      </article>
+      <article>
+        <span>5</span>
+        <div>
+          <h3>Report agreement and change</h3>
+          <p>
+            Agreement is the population standard deviation of each model's combined latest score. Change compares the
+            current weekly/monthly pair with the immediately preceding pair.
+          </p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section risk-method-comparison" aria-labelledby="risk-signal-difference">
+    <div>
+      <span class="panel-kicker">Two different questions</span>
+      <h2 id="risk-signal-difference">Current Opinion Versus Existing Exposure</h2>
+    </div>
+    <article>
+      <span>Current Decision Pulse</span>
+      <strong>{score(pulse.score)}</strong>
+      <p>
+        Uses only the newest weekly and monthly decisions. This is the primary reading for current model sentiment.
+      </p>
+    </article>
+    <article>
+      <span>Outstanding Live Book</span>
+      <strong>{score(outstanding.score)}</strong>
+      <p>
+        Uses all {outstanding.portfolio_count} unresolved portfolios across {outstanding.round_count} tests. It
+        describes capital still exposed, including older decisions.
+      </p>
+    </article>
+  </section>
+
+  <section class="section risk-method-document" aria-labelledby="risk-profile-consistency">
+    <div class="risk-method-document-head">
+      <span class="panel-kicker">Shared asset framework</span>
+      <h2 id="risk-profile-consistency">Consistency With Model Risk Profiles</h2>
+      <p>
+        The historical model cards retain their existing 1–5 format. Both those cards and this live signal now read
+        from the same versioned asset definitions.
+      </p>
+    </div>
+    <div class="risk-method-dimension-grid">
+      <article>
+        <strong>Risk score: 1–5</strong>
+        <p>
+          Measures standalone allocation risk. Long-duration bonds can score as risky because they can be volatile,
+          even though their risk-on loading is defensive.
+        </p>
+      </article>
+      <article>
+        <strong>Risk-on loading: -1 to +1</strong>
+        <p>
+          Measures the direction of the allocation signal. Oil can be volatile but only moderately risk-on when models
+          use it as an inflation hedge.
+        </p>
+      </article>
+      <article>
+        <strong>Regime group</strong>
+        <p>
+          Separates growth, defensive equity, real assets, rates and credit, international equity, broad cyclicals,
+          liquidity, and crypto.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section risk-method-assets" aria-labelledby="asset-risk-table-title">
+    <div class="risk-method-document-head">
+      <span class="panel-kicker">Versioned source table</span>
+      <h2 id="asset-risk-table-title">Asset Risk Definitions</h2>
+      <p>
+        All {assetDefinitions.length} assets are explicitly rated. A new universe asset must receive a complete
+        definition before the public build passes.
+      </p>
+    </div>
+    <div class="table-scroll">
+      <table class="doc-table risk-definition-table">
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th>Regime</th>
+            <th>Risk 1–5</th>
+            <th>Risk-on loading</th>
+            <th>Flags</th>
+          </tr>
+        </thead>
+        <tbody>
+          {assetDefinitions.map((asset) => (
+            <tr>
+              <td data-label="Asset">
+                <strong>{asset.label}</strong>
+                <small>{asset.ticker || asset.optionId}</small>
+              </td>
+              <td data-label="Regime">{RISK_REGIME_LABELS[asset.regime_group] ?? asset.regime_group}</td>
+              <td data-label="Risk 1–5">{asset.risk_score_1_5}</td>
+              <td data-label="Risk-on loading">{loading(asset.risk_on_loading)}</td>
+              <td data-label="Flags">
+                {[asset.defensive ? "Defensive" : "", asset.technology ? "Technology" : ""].filter(Boolean).join(" / ") || "None"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section risk-method-limitations" aria-labelledby="risk-limitations-title">
+    <span class="panel-kicker">Interpretation limits</span>
+    <h2 id="risk-limitations-title">What This Signal Does Not Claim</h2>
+    <p>
+      It is a descriptive aggregate of a small model panel operating under CapitalBench prompts. It is not a forecast
+      of market direction, a volatility estimate, a measure of investor positioning, or investment advice. Asset
+      loadings are methodology assumptions and are versioned when changed.
+    </p>
+  </section>
+</BaseLayout>

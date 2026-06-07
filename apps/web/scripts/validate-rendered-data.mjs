@@ -1134,6 +1134,23 @@ function riskScoreShort(value) {
   return Number.isFinite(numeric) ? numeric.toFixed(2) : "n/a";
 }
 
+function pulseScore(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric.toFixed(1) : "n/a";
+}
+
+function signedPulseScore(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return "n/a";
+  return `${numeric > 0 ? "+" : ""}${numeric.toFixed(1)}`;
+}
+
+function riskPagePct(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return "n/a";
+  return `${numeric.toFixed(numeric >= 10 ? 1 : 2)}%`;
+}
+
 function effectiveSpreadLabel(value) {
   const numeric = Number(value);
   if (!Number.isFinite(numeric) || numeric <= 0) return "0 assets";
@@ -1745,6 +1762,7 @@ const modelsIndexHtml = readHtml("models/index.html");
 const roundsIndexHtml = readHtml("rounds/index.html");
 const universeHtml = readHtml("universe/index.html");
 const apiHtml = readHtml("api/index.html");
+const riskAppetiteHtml = readHtml("risk-appetite/index.html");
 const methodologyHtml = readHtml("methodology/index.html");
 const scoringHtml = readHtml("scoring/index.html");
 const changelogHtml = readHtml("changelog/index.html");
@@ -2125,6 +2143,7 @@ includes(scoringHtml, "3.93 divided by 4.62", "scoring score scale example");
 
 includes(apiHtml, "cumulative rows average per-test score ratios", "API docs cumulative CapitalBench Score definition");
 includes(apiHtml, "cumulative rows report the average of per-test max values", "API docs cumulative max possible definition");
+includes(apiHtml, "/v1/risk-appetite", "API docs risk appetite endpoint");
 
 const latestActiveWeeklyRound = latestRound("weekly", "active");
 if (latestActiveWeeklyRound) includes(apiHtml, `/v1/rounds/${latestActiveWeeklyRound.round_id}/concentration`, "API docs concentration example");
@@ -2157,6 +2176,46 @@ if (livePerformanceTop) {
   includesJsonField(apiHtml, "portfolio_return_pct", livePerformanceTop.portfolio_return_pct, "API docs live performance top portfolio return");
   includesJsonField(apiHtml, "sp500_return_pct", livePerformanceTop.sp500_return_pct, "API docs live performance top S&P return");
   includesJsonField(apiHtml, "alpha_pp", livePerformanceTop.alpha_pp, "API docs live performance top alpha");
+}
+
+const riskAppetiteApi = await dataApiBody("/api/v1/risk-appetite");
+includes(apiHtml, htmlText("GET /v1/risk-appetite"), "API docs risk appetite example path");
+includesJsonField(
+  apiHtml,
+  "methodology_version",
+  riskAppetiteApi.methodology_version,
+  "API docs risk appetite methodology version"
+);
+includesJsonField(
+  apiHtml,
+  "score",
+  riskAppetiteApi.current_decision_pulse?.score,
+  "API docs risk appetite current score"
+);
+includesJsonField(
+  apiHtml,
+  "portfolio_count",
+  riskAppetiteApi.outstanding_live_book?.portfolio_count,
+  "API docs risk appetite outstanding portfolio count"
+);
+const riskDecisionHistoryExample = riskAppetiteApi.history?.decision_pulse?.at(-1);
+const riskOutstandingHistoryExample = riskAppetiteApi.history?.outstanding_live_book?.at(-1);
+if (riskDecisionHistoryExample) {
+  includesJsonField(apiHtml, "date", riskDecisionHistoryExample.date, "API docs risk appetite history date");
+  includesJsonField(
+    apiHtml,
+    "combined_score",
+    riskDecisionHistoryExample.combined_score,
+    "API docs risk appetite history combined score"
+  );
+}
+if (riskOutstandingHistoryExample) {
+  includesJsonField(
+    apiHtml,
+    "portfolio_count",
+    riskOutstandingHistoryExample.portfolio_count,
+    "API docs risk appetite history portfolio count"
+  );
 }
 
 const latestWeeklyApi = await dataApiBody("/api/v1/leaderboards/latest?track=weekly");
@@ -2302,6 +2361,112 @@ for (const track of ["weekly", "monthly"]) {
 const activeExposure = buildActiveExposureSummary();
 validateLivePerformanceIsland(indexHtml);
 validateActiveExposureIsland(indexHtml);
+const liveRisk = apiReadModel.risk_appetite;
+const livePulse = liveRisk.current_decision_pulse;
+includes(indexHtml, "Model Risk Pulse", "homepage model risk pulse");
+includes(indexHtml, "/risk-appetite", "homepage model risk methodology link");
+includes(indexHtml, "Historical trend and methodology", "homepage model risk history link");
+includes(indexHtml, pulseScore(livePulse.score), "homepage model risk combined score");
+includes(indexHtml, pulseScore(livePulse.weekly?.score), "homepage model risk weekly score");
+includes(indexHtml, pulseScore(livePulse.monthly?.score), "homepage model risk monthly score");
+includes(indexHtml, signedPulseScore(livePulse.change_from_previous), "homepage model risk change");
+includes(indexHtml, livePulse.agreement.label, "homepage model risk agreement");
+includes(indexHtml, livePulse.regime, "homepage model risk regime");
+includes(indexHtml, pulseScore(liveRisk.outstanding_live_book.score), "homepage outstanding live-book risk score");
+for (const asset of livePulse.top_assets.slice(0, 6)) {
+  includes(indexHtml, asset.ticker || asset.option_id, `homepage model risk driver ${asset.option_id}`);
+  includes(indexHtml, pctValue(asset.allocation_pct), `homepage model risk driver allocation ${asset.option_id}`);
+}
+for (const regime of livePulse.regime_exposure.slice(0, 5)) {
+  includes(indexHtml, regime.label, `homepage model risk regime ${regime.key}`);
+  includes(indexHtml, pctValue(regime.allocation_pct), `homepage model risk regime allocation ${regime.key}`);
+}
+
+const riskConfig = parseYamlText(readRepoText("configs", "asset_risk_model.yaml")) ?? {};
+includes(riskAppetiteHtml, "Model Risk Appetite", "risk appetite page title");
+includes(riskAppetiteHtml, `methodology v${riskConfig.version}`, "risk appetite methodology version");
+includes(riskAppetiteHtml, pulseScore(livePulse.score), "risk appetite current score");
+includes(riskAppetiteHtml, pulseScore(livePulse.weekly?.score), "risk appetite weekly score");
+includes(riskAppetiteHtml, pulseScore(livePulse.monthly?.score), "risk appetite monthly score");
+includes(riskAppetiteHtml, pulseScore(liveRisk.outstanding_live_book.score), "risk appetite outstanding score");
+includes(riskAppetiteHtml, signedPulseScore(livePulse.change_from_previous), "risk appetite change");
+includes(riskAppetiteHtml, livePulse.regime, "risk appetite regime");
+includes(riskAppetiteHtml, livePulse.agreement.label, "risk appetite agreement");
+includes(riskAppetiteHtml, "Historical Risk Appetite", "risk appetite historical chart");
+includes(riskAppetiteHtml, "Pulse", "risk appetite pulse tab");
+includes(riskAppetiteHtml, "Agreement", "risk appetite agreement tab");
+includes(riskAppetiteHtml, "Regime Mix", "risk appetite regime tab");
+includes(riskAppetiteHtml, "Live Book", "risk appetite live-book tab");
+includes(
+  riskAppetiteHtml,
+  "Historical points are reconstructed only from portfolios and dates in the public record.",
+  "risk appetite historical scope note"
+);
+includes(riskAppetiteHtml, "Portfolio Pulse = 50 + 50 × Σ(allocation weight × asset risk-on loading)", "risk appetite portfolio formula");
+includes(riskAppetiteHtml, "Combined Pulse = 50% × Weekly Pulse + 50% × Monthly Pulse", "risk appetite combined formula");
+includes(riskAppetiteHtml, `${liveRisk.outstanding_live_book.portfolio_count} unresolved portfolios`, "risk appetite outstanding portfolio count");
+const riskHistoryProps = astroIslandProps(riskAppetiteHtml, "RiskAppetiteHistoryChart");
+const renderedDecisionHistory = Array.isArray(riskHistoryProps.decisionHistory) ? riskHistoryProps.decisionHistory : [];
+const renderedOutstandingHistory = Array.isArray(riskHistoryProps.outstandingHistory)
+  ? riskHistoryProps.outstandingHistory
+  : [];
+expectEqual(
+  renderedDecisionHistory.length,
+  liveRisk.history.decision_pulse.length,
+  "risk appetite chart decision-history point count"
+);
+expectEqual(
+  renderedOutstandingHistory.length,
+  liveRisk.history.outstanding_live_book.length,
+  "risk appetite chart outstanding-history point count"
+);
+const latestDecisionHistory = liveRisk.history.decision_pulse.at(-1);
+const latestRenderedDecisionHistory = renderedDecisionHistory.at(-1);
+const latestOutstandingHistory = liveRisk.history.outstanding_live_book.at(-1);
+const latestRenderedOutstandingHistory = renderedOutstandingHistory.at(-1);
+if (latestDecisionHistory && latestRenderedDecisionHistory) {
+  expectEqual(latestRenderedDecisionHistory.date, latestDecisionHistory.date, "risk appetite chart latest decision date");
+  expectClose(
+    latestRenderedDecisionHistory.combined_score,
+    latestDecisionHistory.combined_score,
+    "risk appetite chart latest decision score"
+  );
+}
+if (latestOutstandingHistory && latestRenderedOutstandingHistory) {
+  expectEqual(
+    latestRenderedOutstandingHistory.date,
+    latestOutstandingHistory.date,
+    "risk appetite chart latest outstanding date"
+  );
+  expectEqual(
+    latestRenderedOutstandingHistory.portfolio_count,
+    latestOutstandingHistory.portfolio_count,
+    "risk appetite chart latest outstanding portfolio count"
+  );
+}
+expectEqual(riskHistoryProps.scale?.minimum, liveRisk.scale.minimum, "risk appetite chart scale minimum");
+expectEqual(riskHistoryProps.scale?.maximum, liveRisk.scale.maximum, "risk appetite chart scale maximum");
+for (const model of livePulse.models) {
+  includes(riskAppetiteHtml, modelLabel(model.model_id), `risk appetite current model ${model.model_id}`);
+  includes(riskAppetiteHtml, pulseScore(model.score), `risk appetite current model score ${model.model_id}`);
+}
+for (const asset of livePulse.top_assets.slice(0, 10)) {
+  includesAny(riskAppetiteHtml, [asset.label, htmlText(asset.label)], `risk appetite driver ${asset.option_id}`);
+  includes(riskAppetiteHtml, riskPagePct(asset.allocation_pct), `risk appetite driver allocation ${asset.option_id}`);
+}
+for (const [optionId, definition] of Object.entries(riskConfig.assets ?? {})) {
+  const asset = apiReadModel.assets.find((row) => row.option_id === optionId);
+  includesAny(
+    riskAppetiteHtml,
+    [asset?.label ?? optionId, htmlText(asset?.label ?? optionId)],
+    `risk appetite asset definition ${optionId}`
+  );
+  includes(
+    riskAppetiteHtml,
+    `${Number(definition.risk_on_loading) > 0 ? "+" : ""}${Number(definition.risk_on_loading).toFixed(2)}`,
+    `risk appetite asset loading ${optionId}`
+  );
+}
 const largestActiveExposure = activeExposure.rows[0];
 if (largestActiveExposure) {
   includes(indexHtml, "Open picks map", "homepage active exposure");
@@ -2360,7 +2525,7 @@ if (riskProfiles.length > 0) {
   const lowestRisk = riskProfiles[0];
   const highestRisk = riskProfiles[riskProfiles.length - 1];
 
-  includes(indexHtml, "Risk Appetite By Model", context);
+  includes(indexHtml, "Historical Risk Style By Model", context);
   includes(indexHtml, `${riskPortfolioCount} saved portfolios`, `${context} saved portfolio count`);
   includes(indexHtml, riskClusterLabel, `${context} cluster label`);
   includes(indexHtml, `<b>${riskScoreShort(riskMinScore)}-${riskScoreShort(riskMaxScore)}</b>`, `${context} score range`);

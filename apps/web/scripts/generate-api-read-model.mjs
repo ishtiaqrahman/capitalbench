@@ -1,6 +1,10 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
+import {
+  buildRiskAppetiteSnapshot,
+  historicalRiskLabel
+} from "../src/lib/riskAppetiteCore.js";
 
 const repoRoot = resolve(process.cwd(), "../..");
 const roundsRoot = join(repoRoot, "rounds");
@@ -28,21 +32,6 @@ const PROVIDER_LOGOS = {
   xai: "/labs/icons/xai-icon.svg"
 };
 
-const TECH_OPTION_IDS = new Set(["NASDAQ100", "LARGE_GROWTH", "TECHNOLOGY", "SEMICONDUCTORS", "SOFTWARE", "BROAD_AI_TECH", "CYBERSECURITY"]);
-const DEFENSIVE_OPTION_IDS = new Set([
-  "CASH",
-  "SHORT_TREASURY",
-  "INTERMEDIATE_TREASURY",
-  "TIPS",
-  "INVESTMENT_GRADE_CREDIT",
-  "AGGREGATE_BONDS",
-  "GOLD",
-  "DIVIDEND",
-  "LOW_VOL",
-  "CONSUMER_STAPLES",
-  "UTILITIES"
-]);
-
 function readText(path) {
   if (!existsSync(path)) return "";
   return readFileSync(path, "utf8").trim();
@@ -64,6 +53,15 @@ function readYaml(path, fallback = null) {
   } catch {
     return fallback;
   }
+}
+
+const assetRiskModel = readYaml(join(repoRoot, "configs", "asset_risk_model.yaml"), {});
+const assetRiskDefinitions = assetRiskModel.assets ?? {};
+
+function assetRiskDefinition(optionId) {
+  const definition = assetRiskDefinitions[optionId];
+  if (!definition) throw new Error(`Missing asset-risk definition for ${optionId}`);
+  return definition;
 }
 
 function inferUniverseVersion(roundPath, manifestVersion) {
@@ -263,47 +261,20 @@ function decisionAllocations(payload) {
   ];
 }
 
-function riskScore(asset) {
-  if (!asset) return 3;
-  if (asset.is_cash) return 1;
-  if (String(asset.asset_class).toLowerCase() === "crypto") return 5;
-  switch (String(asset.risk_bucket).toLowerCase()) {
-    case "cash":
-      return 1;
-    case "low":
-      return 2;
-    case "medium":
-      return 3;
-    case "high":
-      return 4;
-    case "very_high":
-    case "very-high":
-    case "speculative":
-      return 5;
-    default:
-      return 3;
-  }
+function riskScore(optionId) {
+  return Number(assetRiskDefinition(optionId).risk_score_1_5);
 }
 
 function riskLabel(score) {
-  if (score === null) return "Not enough history";
-  if (score < 2.15) return "Defensive";
-  if (score < 3.15) return "Balanced";
-  if (score < 4.15) return "Growth";
-  return "Aggressive";
+  return historicalRiskLabel(score);
 }
 
-function isDefensive(optionId, asset) {
-  if (DEFENSIVE_OPTION_IDS.has(optionId)) return true;
-  const category = String(asset?.category ?? "").toLowerCase();
-  return category.includes("cash") || category.includes("bond") || category.includes("credit");
+function isDefensive(optionId) {
+  return Boolean(assetRiskDefinition(optionId).defensive);
 }
 
-function isTechnology(optionId, asset) {
-  if (TECH_OPTION_IDS.has(optionId)) return true;
-  const category = String(asset?.category ?? "").toLowerCase();
-  const label = String(asset?.label ?? "").toLowerCase();
-  return category.includes("technology") || category.includes("ai") || label.includes("technology") || label.includes("software");
+function isTechnology(optionId) {
+  return Boolean(assetRiskDefinition(optionId).technology);
 }
 
 function loadRound(row) {
@@ -522,11 +493,11 @@ function buildModelStyles(models, allocations, assetsById) {
     const categoryPct = new Map();
     for (const row of rows) {
       const asset = assetsById.get(row.option_id);
-      weightedRisk += row.allocation_pct * riskScore(asset);
+      weightedRisk += row.allocation_pct * riskScore(row.option_id);
       totalPct += row.allocation_pct;
-      if (riskScore(asset) >= 4) highRiskPct += row.allocation_pct;
-      if (isDefensive(row.option_id, asset)) defensivePct += row.allocation_pct;
-      if (isTechnology(row.option_id, asset)) techPct += row.allocation_pct;
+      if (riskScore(row.option_id) >= 4) highRiskPct += row.allocation_pct;
+      if (isDefensive(row.option_id)) defensivePct += row.allocation_pct;
+      if (isTechnology(row.option_id)) techPct += row.allocation_pct;
       if (asset?.is_cash) cashPct += row.allocation_pct;
       if (String(asset?.asset_class ?? "").toLowerCase() === "equity") equityPct += row.allocation_pct;
       const category = asset?.category ?? row.category ?? "unknown";
@@ -624,8 +595,27 @@ function buildReadModel() {
     });
   }
   const models = Array.from(modelMap.values()).sort((a, b) => a.provider_label.localeCompare(b.provider_label) || a.label.localeCompare(b.label));
-  const assets = Array.from(assetsById.values()).sort((a, b) => Number(a.sort_order ?? 9999) - Number(b.sort_order ?? 9999) || a.label.localeCompare(b.label));
+  const assets = Array.from(assetsById.values())
+    .map((asset) => {
+      const definition = assetRiskDefinition(asset.option_id);
+      return {
+        ...asset,
+        risk_score_1_5: Number(definition.risk_score_1_5),
+        risk_on_loading: Number(definition.risk_on_loading),
+        risk_regime_group: definition.regime_group,
+        defensive: Boolean(definition.defensive),
+        technology: Boolean(definition.technology)
+      };
+    })
+    .sort((a, b) => Number(a.sort_order ?? 9999) - Number(b.sort_order ?? 9999) || a.label.localeCompare(b.label));
   const modelStyles = buildModelStyles(models, allocations, assetsById);
+  const riskAppetite = buildRiskAppetiteSnapshot({
+    rounds,
+    portfolios,
+    assets,
+    definitions: assetRiskDefinitions,
+    version: String(assetRiskModel.version ?? "")
+  });
 
   return {
     generated_at: new Date().toISOString(),
@@ -641,6 +631,7 @@ function buildReadModel() {
     returns,
     interim_performance: interimPerformance,
     model_styles: modelStyles,
+    risk_appetite: riskAppetite,
     proof
   };
 }

@@ -25,6 +25,7 @@ import {
   type SubmissionRecord,
   type UniverseOption
 } from "../data/fallback";
+import apiReadModel from "../generated/apiReadModel.js";
 import {
   allocationThemeClass,
   decisionAllocations,
@@ -183,6 +184,11 @@ const openRoundCounts = {
   weekly: activeExposureRounds.filter((item) => item.track === "weekly").length,
   monthly: activeExposureRounds.filter((item) => item.track === "monthly").length
 };
+const liveRiskSnapshot = apiReadModel.risk_appetite;
+const currentRiskPulse = liveRiskSnapshot.current_decision_pulse;
+const outstandingBookRisk = liveRiskSnapshot.outstanding_live_book;
+const riskPulseTopAssets = currentRiskPulse.top_assets.slice(0, 6);
+const riskPulseRegimes = currentRiskPulse.regime_exposure.slice(0, 5);
 const riskAppetiteProfiles = [...modelProfiles]
   .filter((profile) => profile.fingerprint.riskAppetite.score !== null)
   .sort(
@@ -380,6 +386,16 @@ function riskScoreValue(value: number | null | undefined): string {
 function riskScoreShort(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
   return value.toFixed(2);
+}
+
+function pulseScore(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return value.toFixed(1);
+}
+
+function signedPulseChange(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)}`;
 }
 
 function riskWidth(value: number | null | undefined): string {
@@ -661,17 +677,121 @@ const trackLaneCards = trackStates.map((track) => {
 
   <LivePerformanceChart client:visible rows={livePerformanceRows} openRoundCounts={openRoundCounts} />
 
+  <section class="live-risk-pulse" aria-labelledby="live-risk-pulse-title">
+    <div class="live-risk-pulse-head">
+      <div>
+        <span class="panel-kicker">Current allocation signal</span>
+        <h3 id="live-risk-pulse-title">Model Risk Pulse</h3>
+        <p>
+          Latest weekly and monthly portfolios, equal-weighted by track. This measures current model positioning, not
+          market returns or a trading recommendation.
+        </p>
+      </div>
+      <a class="section-profile-link" href="/risk-appetite">Historical trend and methodology</a>
+    </div>
+
+    <div class="live-risk-pulse-grid">
+      <article class="live-risk-pulse-primary">
+        <div class="live-risk-pulse-score">
+          <span>Combined pulse</span>
+          <strong>{pulseScore(currentRiskPulse.score)}</strong>
+          <em>{currentRiskPulse.label}</em>
+        </div>
+        <div class="live-risk-pulse-regime">
+          <span>Current regime</span>
+          <strong>{currentRiskPulse.regime}</strong>
+          <small>
+            {currentRiskPulse.weekly?.round_id} and {currentRiskPulse.monthly?.round_id}
+          </small>
+        </div>
+        <div class="live-risk-pulse-meter" aria-label={`Current model risk pulse ${pulseScore(currentRiskPulse.score)} out of 100`}>
+          <span class="risk-pulse-band is-defensive"></span>
+          <span class="risk-pulse-band is-cautious"></span>
+          <span class="risk-pulse-band is-balanced"></span>
+          <span class="risk-pulse-band is-seeking"></span>
+          <span class="risk-pulse-band is-aggressive"></span>
+          <i style={`--pulse-position: ${riskWidth(currentRiskPulse.score)}`}></i>
+        </div>
+        <div class="live-risk-pulse-ticks" aria-hidden="true">
+          <span>0 Defensive</span>
+          <span>50 Balanced</span>
+          <span>100 Aggressive</span>
+        </div>
+      </article>
+
+      <div class="live-risk-pulse-stats">
+        <article>
+          <span>Weekly tactical</span>
+          <strong>{pulseScore(currentRiskPulse.weekly?.score)}</strong>
+          <small>{currentRiskPulse.weekly?.label}</small>
+        </article>
+        <article>
+          <span>Monthly strategic</span>
+          <strong>{pulseScore(currentRiskPulse.monthly?.score)}</strong>
+          <small>{currentRiskPulse.monthly?.label}</small>
+        </article>
+        <article>
+          <span>Change</span>
+          <strong class:list={{ "is-negative": Number(currentRiskPulse.change_from_previous) < 0 }}>
+            {signedPulseChange(currentRiskPulse.change_from_previous)}
+          </strong>
+          <small>vs previous decision set</small>
+        </article>
+        <article>
+          <span>Model agreement</span>
+          <strong>{currentRiskPulse.agreement.label}</strong>
+          <small>{pulseScore(currentRiskPulse.agreement.standard_deviation)} point dispersion</small>
+        </article>
+      </div>
+    </div>
+
+    <div class="live-risk-pulse-detail">
+      <div>
+        <span class="metric-label">Largest current allocations</span>
+        <div class="live-risk-driver-list">
+          {riskPulseTopAssets.map((asset) => (
+            <span>
+              <strong>{asset.ticker || asset.option_id}</strong>
+              <em>{pctValue(asset.allocation_pct)}</em>
+            </span>
+          ))}
+        </div>
+      </div>
+      <div>
+        <span class="metric-label">Regime mix</span>
+        <div class="live-risk-regime-list">
+          {riskPulseRegimes.map((regime) => (
+            <span>
+              <strong>{regime.label}</strong>
+              <i><b style={`width: ${riskWidth(regime.allocation_pct)}`}></b></i>
+              <em>{pctValue(regime.allocation_pct)}</em>
+            </span>
+          ))}
+        </div>
+      </div>
+      <aside>
+        <span>Outstanding live book</span>
+        <strong>{pulseScore(outstandingBookRisk.score)}</strong>
+        <em>{outstandingBookRisk.label}</em>
+        <p>
+          All {outstandingBookRisk.portfolio_count} unresolved portfolios across {outstandingBookRisk.round_count}
+          tests. This slower exposure measure can differ from the newest weekly and monthly decisions.
+        </p>
+      </aside>
+    </div>
+  </section>
+
   <ActiveExposureMap client:visible rounds={activeExposureRounds} />
 
   {riskAppetiteProfiles.length > 0 && (
     <section class="risk-appetite-panel" aria-labelledby="risk-appetite-title">
       <div class="risk-appetite-head">
         <div>
-          <span class="panel-kicker">Cumulative model style</span>
-          <h3 id="risk-appetite-title">Risk Appetite By Model</h3>
+          <span class="panel-kicker">Historical model style</span>
+          <h3 id="risk-appetite-title">Historical Risk Style By Model</h3>
           <p>
             Allocation-weighted from every official saved portfolio, including open and completed tests. It does not use
-            future returns.
+            future returns and is separate from the current Model Risk Pulse.
           </p>
         </div>
         <span class="risk-appetite-count">{riskPortfolioCount} saved portfolios</span>

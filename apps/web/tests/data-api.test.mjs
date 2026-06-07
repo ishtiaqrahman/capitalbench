@@ -193,6 +193,47 @@ test("live performance returns interim mark-to-market data for open tests", asyn
   assert.ok(modelResult.body.data.length <= 1);
 });
 
+test("risk appetite returns the current live decision pulse", async () => {
+  const result = await apiGet("/api/v1/risk-appetite");
+  const pulse = result.body.current_decision_pulse;
+  const outstanding = result.body.outstanding_live_book;
+
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.body, apiReadModel.risk_appetite);
+  assert.equal(typeof pulse.score, "number");
+  assertApproxEqual(pulse.score, (pulse.weekly.score + pulse.monthly.score) / 2);
+  assertApproxEqual(pulse.change_from_previous, pulse.score - pulse.previous_score);
+  assert.equal(pulse.weekly.track, "weekly");
+  assert.equal(pulse.monthly.track, "monthly");
+  assert.ok(pulse.weekly.model_count > 0);
+  assert.ok(pulse.monthly.model_count > 0);
+  assertApproxEqual(
+    pulse.top_assets.reduce((total, row) => total + row.allocation_pct, 0),
+    100
+  );
+  assertApproxEqual(
+    pulse.regime_exposure.reduce((total, row) => total + row.allocation_pct, 0),
+    100
+  );
+  assert.ok(result.body.history.decision_pulse.length > 1);
+  assert.equal(
+    result.body.history.decision_pulse.at(-1).combined_score,
+    pulse.score
+  );
+  assert.equal(
+    result.body.history.outstanding_live_book.at(-1).portfolio_count,
+    outstanding.portfolio_count
+  );
+  assert.equal(
+    outstanding.portfolio_count,
+    new Set(
+      apiReadModel.portfolios
+        .filter((portfolio) => portfolio.status === "active")
+        .map((portfolio) => `${portfolio.round_id}:${portfolio.run_id}:${portfolio.model_id}`)
+    ).size
+  );
+});
+
 test("latest weekly leaderboard returns resolved scored rows", async () => {
   const latestWeeklyRoundId = latestRoundId("weekly", { status: "resolved" });
   const latestWeeklyRound = apiReadModel.rounds.find((item) => item.round_id === latestWeeklyRoundId);
@@ -392,6 +433,7 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
     ["/v1/positioning/by-asset/{option_id}", `/api/v1/positioning/by-asset/${optionId}?track=all&scope=active`],
     ["/v1/positioning/by-category", "/api/v1/positioning/by-category?track=all&scope=active"],
     ["/v1/positioning/changes", "/api/v1/positioning/changes?track=weekly&window=latest"],
+    ["/v1/risk-appetite", "/api/v1/risk-appetite"],
     ["/v1/live/performance", "/api/v1/live/performance?track=all"],
     ["/v1/rounds", "/api/v1/rounds?track=all&status=all&limit=5"],
     ["/v1/rounds/{round_id}", `/api/v1/rounds/${activeRoundId}`],

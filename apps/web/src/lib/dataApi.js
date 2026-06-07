@@ -958,6 +958,10 @@ function currentUniverse() {
   });
 }
 
+function riskAppetite() {
+  return jsonApiResult(200, apiReadModel.risk_appetite);
+}
+
 function assetDetails(optionId) {
   const asset = enrichedAsset(assetById.get(optionId));
   if (!asset) return errorResult(404, "not_found", "Asset not found.");
@@ -977,6 +981,7 @@ function indexResponse() {
       "/v1/positioning/by-asset/{option_id}",
       "/v1/positioning/by-category",
       "/v1/positioning/changes",
+      "/v1/risk-appetite",
       "/v1/live/performance",
       "/v1/rounds",
       "/v1/rounds/{round_id}",
@@ -1014,6 +1019,7 @@ function routeGet(request) {
   }
 
   if (parts[0] === "live" && parts[1] === "performance") return livePerformance(url);
+  if (parts[0] === "risk-appetite" && parts.length === 1) return riskAppetite();
 
   if (parts[0] === "rounds") {
     if (parts.length === 1) return listRounds(url);

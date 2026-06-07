@@ -1,0 +1,95 @@
+version: "1.0"
+published_at: "2026-06-07"
+description: Shared CapitalBench asset-risk definitions for historical model profiles and live model risk appetite.
+
+scales:
+  risk_score_1_5:
+    description: Standalone allocation risk used by the existing historical model risk-profile display.
+    minimum: 1
+    maximum: 5
+  risk_on_loading:
+    description: Directional loading from defensive positioning (-1) to risk-on positioning (+1).
+    minimum: -1
+    maximum: 1
+
+regime_groups:
+  liquidity_defensive: Cash, short-duration assets, and defensive currencies.
+  duration_credit: Government bonds, aggregate bonds, and corporate or emerging-market credit.
+  defensive_equity: Lower-beta, income-oriented, and defensive-sector equities.
+  broad_cyclical_equity: Broad-market, value, size, cyclical-sector, and industry equity exposure.
+  growth_technology: Growth, momentum, technology, AI, and other high-beta thematic equity exposure.
+  international_equity: Developed, emerging, regional, and country equity exposure.
+  real_assets_inflation: Energy, commodities, metals, materials, and inflation-sensitive real assets.
+  crypto: Cryptocurrency proxy exposure.
+
+assets:
+  CASH: { risk_score_1_5: 1, risk_on_loading: -1.00, regime_group: liquidity_defensive, defensive: true, technology: false }
+  SHORT_TREASURY: { risk_score_1_5: 2, risk_on_loading: -0.90, regime_group: liquidity_defensive, defensive: true, technology: false }
+  SP500: { risk_score_1_5: 3, risk_on_loading: 0.35, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  TOTAL_US_MARKET: { risk_score_1_5: 3, risk_on_loading: 0.35, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  NASDAQ100: { risk_score_1_5: 4, risk_on_loading: 0.75, regime_group: growth_technology, defensive: false, technology: true }
+  LARGE_GROWTH: { risk_score_1_5: 4, risk_on_loading: 0.70, regime_group: growth_technology, defensive: false, technology: true }
+  LARGE_VALUE: { risk_score_1_5: 3, risk_on_loading: 0.30, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  MID_CAP: { risk_score_1_5: 4, risk_on_loading: 0.60, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  SMALL_CAP: { risk_score_1_5: 4, risk_on_loading: 0.70, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  SMALL_VALUE: { risk_score_1_5: 4, risk_on_loading: 0.65, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  DIVIDEND: { risk_score_1_5: 3, risk_on_loading: 0.10, regime_group: defensive_equity, defensive: true, technology: false }
+  LOW_VOL: { risk_score_1_5: 3, risk_on_loading: -0.05, regime_group: defensive_equity, defensive: true, technology: false }
+  MOMENTUM: { risk_score_1_5: 4, risk_on_loading: 0.65, regime_group: growth_technology, defensive: false, technology: false }
+  TECHNOLOGY: { risk_score_1_5: 4, risk_on_loading: 0.75, regime_group: growth_technology, defensive: false, technology: true }
+  COMMUNICATIONS: { risk_score_1_5: 4, risk_on_loading: 0.60, regime_group: growth_technology, defensive: false, technology: false }
+  CONSUMER_DISCRETIONARY: { risk_score_1_5: 4, risk_on_loading: 0.55, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  CONSUMER_STAPLES: { risk_score_1_5: 3, risk_on_loading: -0.05, regime_group: defensive_equity, defensive: true, technology: false }
+  HEALTHCARE: { risk_score_1_5: 3, risk_on_loading: 0.00, regime_group: defensive_equity, defensive: false, technology: false }
+  FINANCIALS: { risk_score_1_5: 4, risk_on_loading: 0.45, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  INDUSTRIALS: { risk_score_1_5: 3, risk_on_loading: 0.40, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  ENERGY: { risk_score_1_5: 4, risk_on_loading: 0.35, regime_group: real_assets_inflation, defensive: false, technology: false }
+  MATERIALS: { risk_score_1_5: 3, risk_on_loading: 0.45, regime_group: real_assets_inflation, defensive: false, technology: false }
+  UTILITIES: { risk_score_1_5: 3, risk_on_loading: -0.05, regime_group: defensive_equity, defensive: true, technology: false }
+  REAL_ESTATE: { risk_score_1_5: 4, risk_on_loading: 0.45, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  INTERMEDIATE_TREASURY: { risk_score_1_5: 3, risk_on_loading: -0.55, regime_group: duration_credit, defensive: true, technology: false }
+  LONG_TREASURY: { risk_score_1_5: 4, risk_on_loading: -0.50, regime_group: duration_credit, defensive: true, technology: false }
+  TIPS: { risk_score_1_5: 3, risk_on_loading: -0.35, regime_group: duration_credit, defensive: true, technology: false }
+  INVESTMENT_GRADE_CREDIT: { risk_score_1_5: 3, risk_on_loading: -0.20, regime_group: duration_credit, defensive: true, technology: false }
+  HIGH_YIELD_CREDIT: { risk_score_1_5: 4, risk_on_loading: 0.55, regime_group: duration_credit, defensive: true, technology: false }
+  AGGREGATE_BONDS: { risk_score_1_5: 3, risk_on_loading: -0.55, regime_group: duration_credit, defensive: true, technology: false }
+  DEVELOPED_EX_US: { risk_score_1_5: 4, risk_on_loading: 0.45, regime_group: international_equity, defensive: false, technology: false }
+  EMERGING_MARKETS: { risk_score_1_5: 5, risk_on_loading: 0.70, regime_group: international_equity, defensive: false, technology: false }
+  EUROPE: { risk_score_1_5: 4, risk_on_loading: 0.45, regime_group: international_equity, defensive: false, technology: false }
+  JAPAN: { risk_score_1_5: 4, risk_on_loading: 0.45, regime_group: international_equity, defensive: false, technology: false }
+  CHINA: { risk_score_1_5: 5, risk_on_loading: 0.75, regime_group: international_equity, defensive: false, technology: false }
+  INDIA: { risk_score_1_5: 5, risk_on_loading: 0.75, regime_group: international_equity, defensive: false, technology: false }
+  GOLD: { risk_score_1_5: 3, risk_on_loading: -0.25, regime_group: real_assets_inflation, defensive: true, technology: false }
+  BROAD_COMMODITIES: { risk_score_1_5: 4, risk_on_loading: 0.20, regime_group: real_assets_inflation, defensive: false, technology: false }
+  SEMICONDUCTORS: { risk_score_1_5: 5, risk_on_loading: 0.95, regime_group: growth_technology, defensive: false, technology: true }
+  SOFTWARE: { risk_score_1_5: 4, risk_on_loading: 0.75, regime_group: growth_technology, defensive: false, technology: true }
+  BROAD_AI_TECH: { risk_score_1_5: 5, risk_on_loading: 0.90, regime_group: growth_technology, defensive: false, technology: true }
+  AUTONOMOUS_ROBOTICS: { risk_score_1_5: 5, risk_on_loading: 0.90, regime_group: growth_technology, defensive: false, technology: true }
+  CYBERSECURITY: { risk_score_1_5: 4, risk_on_loading: 0.75, regime_group: growth_technology, defensive: false, technology: true }
+  SOLAR: { risk_score_1_5: 5, risk_on_loading: 0.85, regime_group: growth_technology, defensive: false, technology: false }
+  METALS_MINING: { risk_score_1_5: 5, risk_on_loading: 0.55, regime_group: real_assets_inflation, defensive: false, technology: false }
+  EQUAL_WEIGHT_SP500: { risk_score_1_5: 3, risk_on_loading: 0.40, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  BIOTECH: { risk_score_1_5: 5, risk_on_loading: 0.85, regime_group: growth_technology, defensive: false, technology: true }
+  REGIONAL_BANKS: { risk_score_1_5: 5, risk_on_loading: 0.80, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  AEROSPACE_DEFENSE: { risk_score_1_5: 4, risk_on_loading: 0.45, regime_group: broad_cyclical_equity, defensive: false, technology: false }
+  CANADA: { risk_score_1_5: 4, risk_on_loading: 0.45, regime_group: international_equity, defensive: false, technology: false }
+  UNITED_KINGDOM: { risk_score_1_5: 4, risk_on_loading: 0.40, regime_group: international_equity, defensive: false, technology: false }
+  AUSTRALIA: { risk_score_1_5: 4, risk_on_loading: 0.45, regime_group: international_equity, defensive: false, technology: false }
+  SOUTH_KOREA: { risk_score_1_5: 5, risk_on_loading: 0.80, regime_group: international_equity, defensive: false, technology: false }
+  TAIWAN: { risk_score_1_5: 5, risk_on_loading: 0.85, regime_group: international_equity, defensive: false, technology: false }
+  BRAZIL: { risk_score_1_5: 5, risk_on_loading: 0.80, regime_group: international_equity, defensive: false, technology: false }
+  MEXICO: { risk_score_1_5: 4, risk_on_loading: 0.55, regime_group: international_equity, defensive: false, technology: false }
+  SOUTH_AFRICA: { risk_score_1_5: 5, risk_on_loading: 0.75, regime_group: international_equity, defensive: false, technology: false }
+  MORTGAGE_BACKED_BONDS: { risk_score_1_5: 3, risk_on_loading: -0.35, regime_group: duration_credit, defensive: true, technology: false }
+  MUNICIPAL_BONDS: { risk_score_1_5: 2, risk_on_loading: -0.65, regime_group: duration_credit, defensive: true, technology: false }
+  EMERGING_MARKET_BONDS: { risk_score_1_5: 4, risk_on_loading: 0.50, regime_group: duration_credit, defensive: true, technology: false }
+  INTERNATIONAL_BONDS: { risk_score_1_5: 3, risk_on_loading: -0.25, regime_group: duration_credit, defensive: true, technology: false }
+  SILVER: { risk_score_1_5: 4, risk_on_loading: 0.05, regime_group: real_assets_inflation, defensive: false, technology: false }
+  COPPER: { risk_score_1_5: 4, risk_on_loading: 0.50, regime_group: real_assets_inflation, defensive: false, technology: false }
+  AGRICULTURE: { risk_score_1_5: 4, risk_on_loading: 0.10, regime_group: real_assets_inflation, defensive: false, technology: false }
+  OIL: { risk_score_1_5: 5, risk_on_loading: 0.30, regime_group: real_assets_inflation, defensive: false, technology: false }
+  US_DOLLAR: { risk_score_1_5: 3, risk_on_loading: -0.40, regime_group: liquidity_defensive, defensive: false, technology: false }
+  EURO: { risk_score_1_5: 3, risk_on_loading: -0.10, regime_group: liquidity_defensive, defensive: false, technology: false }
+  YEN: { risk_score_1_5: 4, risk_on_loading: -0.45, regime_group: liquidity_defensive, defensive: false, technology: false }
+  BITCOIN_ETF: { risk_score_1_5: 5, risk_on_loading: 1.00, regime_group: crypto, defensive: false, technology: false }
+  ETHEREUM_ETF: { risk_score_1_5: 5, risk_on_loading: 1.00, regime_group: crypto, defensive: false, technology: false }
