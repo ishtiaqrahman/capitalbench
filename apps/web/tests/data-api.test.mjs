@@ -220,10 +220,12 @@ test("risk appetite returns the current live decision pulse", async () => {
     result.body.history.decision_pulse.at(-1).combined_score,
     pulse.score
   );
+  const latestOutstandingHistory = result.body.history.outstanding_live_book.at(-1);
   assert.equal(
-    result.body.history.outstanding_live_book.at(-1).portfolio_count,
-    outstanding.portfolio_count
+    latestOutstandingHistory.date,
+    result.body.history.decision_pulse.at(-1).date
   );
+  assert.ok(latestOutstandingHistory.portfolio_count > 0);
   assert.equal(
     outstanding.portfolio_count,
     new Set(

@@ -158,7 +158,12 @@ def test_sync_round_uses_operator_selected_official_run_and_clears_stale_public_
     assert {row["run_id"] for row in sink.upserts["runs"]} == {"official-20260602-clean"}
     assert {row["run_id"] for row in sink.upserts["submissions"]} == {"official-20260602-clean"}
     assert len(sink.upserts["submissions"]) == 5
-    assert len(sink.upserts["round_weekly_performance"]) == 15
+    weekly_performance_path = (
+        round_path / "runs" / "official-20260602-clean" / "results" / "weekly_performance.csv"
+    )
+    with weekly_performance_path.open(encoding="utf-8", newline="") as handle:
+        expected_weekly_rows = list(csv.DictReader(handle))
+    assert len(sink.upserts["round_weekly_performance"]) == len(expected_weekly_rows)
     assert ("submissions", {"round_id": "CB-2026-06-02-1W"}) in sink.deletes
     assert ("round_weekly_performance", {"round_id": "CB-2026-06-02-1W"}) in sink.deletes
     assert ("runs", {"round_id": "CB-2026-06-02-1W"}) in sink.deletes

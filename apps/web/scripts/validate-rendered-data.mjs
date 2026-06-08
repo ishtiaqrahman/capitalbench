@@ -174,6 +174,8 @@ function htmlTextVariants(value) {
   return [
     String(value),
     escaped,
+    escaped.replaceAll("&amp;", "&#38;"),
+    escaped.replaceAll("&amp;", "&#x26;"),
     escaped.replaceAll("'", "&#39;"),
     escaped.replaceAll("'", "&#x27;")
   ];
@@ -2310,8 +2312,8 @@ if (latestResolvedScoredRound) {
     for (const allocation of modelAllocations) {
       const allocationContext = `${modelContext} allocation ${allocation.option_id}`;
       const shortLabel = allocation.ticker || allocation.label || allocation.option_id;
-      includes(indexHtml, htmlText(assetDisplay(allocation)), `${allocationContext} full label`);
-      includes(indexHtml, htmlText(shortLabel), `${allocationContext} short label`);
+      includesAny(indexHtml, htmlTextVariants(assetDisplay(allocation)), `${allocationContext} full label`);
+      includesAny(indexHtml, htmlTextVariants(shortLabel), `${allocationContext} short label`);
       includes(indexHtml, allocationPctLabel(allocation.allocation_pct), `${allocationContext} allocation pct`);
     }
   }
