@@ -681,7 +681,7 @@ const trackLaneCards = trackStates.map((track) => {
     <div class="live-risk-pulse-head">
       <div>
         <span class="panel-kicker">Current allocation signal</span>
-        <h3 id="live-risk-pulse-title">Model Risk Pulse</h3>
+        <h3 id="live-risk-pulse-title">AI Risk Appetite</h3>
         <p>
           Latest weekly and monthly portfolios, equal-weighted by track. This measures current model positioning, not
           market returns or a trading recommendation.
@@ -704,7 +704,7 @@ const trackLaneCards = trackStates.map((track) => {
             {currentRiskPulse.weekly?.round_id} and {currentRiskPulse.monthly?.round_id}
           </small>
         </div>
-        <div class="live-risk-pulse-meter" aria-label={`Current model risk pulse ${pulseScore(currentRiskPulse.score)} out of 100`}>
+        <div class="live-risk-pulse-meter" aria-label={`Current AI Risk Appetite ${pulseScore(currentRiskPulse.score)} out of 100`}>
           <span class="risk-pulse-band is-defensive"></span>
           <span class="risk-pulse-band is-cautious"></span>
           <span class="risk-pulse-band is-balanced"></span>
@@ -791,7 +791,7 @@ const trackLaneCards = trackStates.map((track) => {
           <h3 id="risk-appetite-title">Historical Risk Style By Model</h3>
           <p>
             Allocation-weighted from every official saved portfolio, including open and completed tests. It does not use
-            future returns and is separate from the current Model Risk Pulse.
+            future returns and is separate from the current AI Risk Appetite signal.
           </p>
         </div>
         <span class="risk-appetite-count">{riskPortfolioCount} saved portfolios</span>

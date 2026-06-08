@@ -2363,7 +2363,7 @@ validateLivePerformanceIsland(indexHtml);
 validateActiveExposureIsland(indexHtml);
 const liveRisk = apiReadModel.risk_appetite;
 const livePulse = liveRisk.current_decision_pulse;
-includes(indexHtml, "Model Risk Pulse", "homepage model risk pulse");
+includes(indexHtml, "AI Risk Appetite", "homepage AI risk appetite");
 includes(indexHtml, "/risk-appetite", "homepage model risk methodology link");
 includes(indexHtml, "Historical trend and methodology", "homepage model risk history link");
 includes(indexHtml, pulseScore(livePulse.score), "homepage model risk combined score");
@@ -2383,7 +2383,7 @@ for (const regime of livePulse.regime_exposure.slice(0, 5)) {
 }
 
 const riskConfig = parseYamlText(readRepoText("configs", "asset_risk_model.yaml")) ?? {};
-includes(riskAppetiteHtml, "Model Risk Appetite", "risk appetite page title");
+includes(riskAppetiteHtml, "AI Risk Appetite", "risk appetite page title");
 includes(riskAppetiteHtml, `methodology v${riskConfig.version}`, "risk appetite methodology version");
 includes(riskAppetiteHtml, pulseScore(livePulse.score), "risk appetite current score");
 includes(riskAppetiteHtml, pulseScore(livePulse.weekly?.score), "risk appetite weekly score");
@@ -2392,7 +2392,7 @@ includes(riskAppetiteHtml, pulseScore(liveRisk.outstanding_live_book.score), "ri
 includes(riskAppetiteHtml, signedPulseScore(livePulse.change_from_previous), "risk appetite change");
 includes(riskAppetiteHtml, livePulse.regime, "risk appetite regime");
 includes(riskAppetiteHtml, livePulse.agreement.label, "risk appetite agreement");
-includes(riskAppetiteHtml, "Historical Risk Appetite", "risk appetite historical chart");
+includes(riskAppetiteHtml, "Historical AI Risk Appetite", "risk appetite historical chart");
 includes(riskAppetiteHtml, "Pulse", "risk appetite pulse tab");
 includes(riskAppetiteHtml, "Agreement", "risk appetite agreement tab");
 includes(riskAppetiteHtml, "Regime Mix", "risk appetite regime tab");

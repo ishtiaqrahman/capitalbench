@@ -52,16 +52,16 @@ function width(value: number | null | undefined): string {
 ---
 
 <BaseLayout
-  title="Model Risk Appetite"
-  description="CapitalBench Model Risk Pulse methodology, current weekly and monthly readings, model agreement, open-book risk, and versioned asset ratings."
+  title="AI Risk Appetite"
+  description="CapitalBench AI Risk Appetite methodology, current weekly and monthly readings, AI model agreement, open-book risk, and versioned asset ratings."
 >
   <PageHeader
     eyebrow={`Live allocation signal / methodology v${riskModel.version}`}
-    title="Model Risk Appetite"
-    summary="A transparent reading of how defensive or risk-seeking the models' saved live portfolios are. It measures allocation choices, not subsequent returns."
+    title="AI Risk Appetite"
+    summary="A transparent reading of how defensive or risk-seeking the benchmark's AI models are through their saved portfolios. It measures allocation choices, not subsequent returns."
   />
 
-  <section class="risk-method-summary" aria-label="Current model risk appetite">
+  <section class="risk-method-summary" aria-label="Current AI Risk Appetite">
     <div>
       <span>Current decision pulse</span>
       <strong>{score(pulse.score)}</strong>
@@ -108,7 +108,7 @@ function width(value: number | null | undefined): string {
         <strong>{score(pulse.score)}</strong>
         <span>{pulse.label}</span>
       </div>
-      <div class="live-risk-pulse-meter" aria-label={`Current Model Risk Pulse ${score(pulse.score)} out of 100`}>
+      <div class="live-risk-pulse-meter" aria-label={`Current AI Risk Appetite ${score(pulse.score)} out of 100`}>
         <span class="risk-pulse-band is-defensive"></span>
         <span class="risk-pulse-band is-cautious"></span>
         <span class="risk-pulse-band is-balanced"></span>

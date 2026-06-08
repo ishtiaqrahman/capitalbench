@@ -28,7 +28,7 @@ export const changelogEntries: ChangelogEntry[] = [
   {
     id: "2026-06-07-model-risk-pulse",
     date: "2026-06-07",
-    title: "Live and historical Model Risk Pulse published",
+    title: "Live and historical AI Risk Appetite published",
     category: "Methodology",
     status: "published",
     summary:
@@ -41,7 +41,7 @@ export const changelogEntries: ChangelogEntry[] = [
       "The existing historical model risk profiles retain their 1-5 display and now use the same shared asset definitions as the live signal."
     ],
     links: [
-      { label: "Model Risk Appetite", href: "/risk-appetite" },
+      { label: "AI Risk Appetite", href: "/risk-appetite" },
       { label: "Homepage", href: "/" },
       { label: "API docs", href: "/api" }
     ]

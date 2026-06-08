@@ -207,11 +207,11 @@
     "/v1/risk-appetite": {
       "get": {
         "tags": ["Positioning"],
-        "summary": "Current and historical model risk appetite",
+        "summary": "Current and historical AI Risk Appetite",
         "description": "Allocation-based 0-100 risk pulse from live weekly and monthly portfolios, including historical track readings, model agreement, regime mix, allocation drivers, and all unresolved portfolio exposure.",
         "responses": {
           "200": {
-            "description": "Current and historical model risk appetite response",
+            "description": "Current and historical AI Risk Appetite response",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/RiskAppetiteResponse" }

@@ -219,7 +219,7 @@ function PulseChart({
           <span key={line.key} style={{ "--legend-color": line.color } as CSSProperties}>{line.label}</span>
         ))}
       </div>
-      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Historical combined, weekly, and monthly Model Risk Pulse">
+      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Historical combined, weekly, and monthly AI Risk Appetite">
         {scale.bands.map((band, index) => (
           <rect
             key={band.label}
@@ -537,10 +537,10 @@ export default function RiskAppetiteHistoryChart({ decisionHistory, outstandingH
       <div className="risk-history-head">
         <div>
           <span className="panel-kicker">Saved allocation history</span>
-          <h2 id="risk-history-title">Historical Risk Appetite</h2>
+          <h2 id="risk-history-title">Historical AI Risk Appetite</h2>
           <p>{chartDescription}</p>
         </div>
-        <div className="risk-history-tabs" role="tablist" aria-label="Historical risk appetite view">
+        <div className="risk-history-tabs" role="tablist" aria-label="Historical AI Risk Appetite view">
           {MODES.map((item) => {
             const Icon = item.icon;
             return (
