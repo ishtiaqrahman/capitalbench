@@ -292,6 +292,7 @@ export function providerLabel(provider: string): string {
 
 export function modelLabel(modelId: string): string {
   const known: Record<string, string> = {
+    "anthropic-claude-fable-5": "Claude Fable 5",
     "anthropic-claude-opus-4-7": "Claude Opus 4.7",
     "anthropic-claude-opus-4-8": "Claude Opus 4.8",
     "google-gemini-3-1-pro": "Gemini 3.1 Pro",

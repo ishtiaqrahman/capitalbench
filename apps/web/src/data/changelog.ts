@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-09-claude-fable-5-added",
+    date: "2026-06-09",
+    title: "Claude Fable 5 joins CapitalBench",
+    category: "Benchmark",
+    status: "published",
+    summary:
+      "Claude Fable 5 entered its first official weekly and monthly CapitalBench tests in the June 9, 2026 cohort.",
+    details: [
+      "The model is configured as anthropic-claude-fable-5 using the Anthropic API model ID claude-fable-5.",
+      "Adaptive-thinking effort is pinned to low, Anthropic's lowest supported setting for Claude Fable 5.",
+      "Both official June 9 runs produced valid submissions with the same frozen briefing, Universe v2.1 options, and June 9 adjusted-close entry snapshot used by the other five models.",
+      "Older tests are not backfilled, so Fable's scorecards will show a shorter history until these rounds resolve."
+    ],
+    links: [
+      { label: "Claude Fable 5", href: "/models/anthropic-claude-fable-5" },
+      { label: "Rounds", href: "/rounds" },
+      { label: "AI Risk Appetite", href: "/risk-appetite" }
+    ]
+  },
+  {
     id: "2026-06-09-oracle-relative-capitalbench-score",
     date: "2026-06-09",
     title: "CapitalBench Score aligned directly with the oracle",

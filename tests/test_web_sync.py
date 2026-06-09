@@ -9,7 +9,13 @@ import yaml
 from capitalbench.cli import main
 from capitalbench.hashing import write_round_hashes
 from capitalbench.scoring import score_round
-from capitalbench.web_sync import SUPABASE_SKIP_MESSAGE, sync_cumulative_leaderboards, sync_latest_leaderboard, sync_round
+from capitalbench.web_sync import (
+    SUPABASE_SKIP_MESSAGE,
+    _display_model_name,
+    sync_cumulative_leaderboards,
+    sync_latest_leaderboard,
+    sync_round,
+)
 from capitalbench.weekly import update_weekly_performance
 
 
@@ -35,6 +41,10 @@ class FakeSink:
 
     def upload_public_artifact(self, local_path: Path, storage_path: str) -> None:
         self.uploads.append((local_path, storage_path))
+
+
+def test_claude_fable_uses_public_display_name() -> None:
+    assert _display_model_name("anthropic-claude-fable-5") == "Claude Fable 5"
 
 
 def _write_resolved_round(

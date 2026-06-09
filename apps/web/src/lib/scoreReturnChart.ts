@@ -95,11 +95,12 @@ function scoreChartModelColorClass(modelId: string, index: number): string {
   const modelColors: Record<string, string> = {
     "openai-gpt-5-5": "score-bar-openai",
     "xai-grok-4-3": "score-bar-xai",
+    "anthropic-claude-fable-5": "score-bar-anthropic-fable",
     "anthropic-claude-opus-4-7": "score-bar-anthropic",
     "anthropic-claude-opus-4-8": "score-bar-anthropic-alt",
     "google-gemini-3-1-pro": "score-bar-google"
   };
-  return modelColors[modelId] ?? `score-bar-model-${(index % 5) + 1}`;
+  return modelColors[modelId] ?? `score-bar-model-${(index % 6) + 1}`;
 }
 
 export function buildScoreReturnChartData({

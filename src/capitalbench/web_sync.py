@@ -28,6 +28,7 @@ from .validation import iter_submission_files
 SUPABASE_SKIP_MESSAGE = "Supabase sync skipped: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured."
 PUBLIC_ARTIFACT_BUCKET = "capitalbench-public-artifacts"
 MODEL_DISPLAY_NAMES = {
+    "anthropic-claude-fable-5": "Claude Fable 5",
     "anthropic-claude-opus-4-7": "Claude Opus 4.7",
     "anthropic-claude-opus-4-8": "Claude Opus 4.8",
     "google-gemini-3-1-pro": "Gemini 3.1 Pro",

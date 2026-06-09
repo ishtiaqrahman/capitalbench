@@ -1,0 +1,55 @@
+{
+  "confidence": 0.55,
+  "cost_usd": 0.48706,
+  "is_official_score": true,
+  "key_risks": [
+    "A soft May CPI print could spark a violent rotation back into tech/growth, leaving defensives lagging SPY",
+    "Oil price pullback after recent run would hurt the energy allocation",
+    "Healthcare's recent rally may mean-revert after a +5.6% week",
+    "Strong 10y/30y auctions easing yields could lift rate-sensitive growth more than defensives"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "HEALTHCARE",
+      "rationale": "Strongest recent defensive momentum (+5.6% 7d) amid risk-off rotation; insulated from hot CPI/PPI prints."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "LOW_VOL",
+      "rationale": "Low-vol factor leading as growth/tech sells off; benefits if Wednesday CPI surprises hot."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Defensive sector outperforming; resilient through inflation-driven volatility."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "ENERGY",
+      "rationale": "Oil near $90 with strong 6m trend; energy hedges upside inflation surprise."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like ballast given CPI, PPI, and 10y/30y auctions in window with hot inflation backdrop."
+    }
+  ],
+  "portfolio_rationale": "With CPI re-accelerating, a hawkish Fed hold pending, and growth/tech sharply correcting last week, the setup favors defensives, energy as an inflation hedge, and some cash-like ballast to beat SPY in a likely choppy or down week.",
+  "provider": "anthropic",
+  "rationale_summary": "Defensive tilt (healthcare, low-vol, staples) plus energy inflation hedge and T-bills positions for alpha versus SPY through a hot-inflation event week.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-09-1W",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.48706,
+    "input_tokens": 44521,
+    "latency_seconds": 13.280923065030947,
+    "output_tokens": 837,
+    "total_tokens": 45358
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "confidence": 0.5,
+  "is_official_score": true,
+  "key_risks": [
+    "Soft CPI print on June 10 triggers tech/growth rip higher, leaving defensives behind SPY",
+    "Dovish FOMC surprise on June 17 boosts rate-sensitive growth more than defensives",
+    "Healthcare-specific policy/drug pricing headline reverses recent sector leadership",
+    "Continued momentum reversal back into mega-cap tech leadership"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong defensive momentum (+5.58% 7d, +7.72% 30d) amid tech-led selloff; low beta into CPI print."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive factor outperforming (+2.79% 7d) as growth/tech corrects; protects vs SPY downside into FOMC."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Defensive tilt with positive recent performance; hedge against sticky inflation print on June 10."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Hot CPI/PPI prints risk hawkish FOMC June 16-17; T-bills preserve capital with positive carry."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "REAL_ESTATE",
+      "rationale": "Strong recent breadth (+3.40% 7d) and rate-sensitive bounce candidate; diversifies defensive sleeve."
+    }
+  ],
+  "portfolio_rationale": "Tech/growth/crypto saw sharp drawdowns last week while defensives (Healthcare, Staples, Low-Vol, REITs) led. With hot April CPI/PPI, May CPI release June 10, and FOMC June 16-17 inside the window, I tilt defensive to outperform SPY which carries heavy mega-cap tech weight.",
+  "provider": "anthropic",
+  "rationale_summary": "Defensive rotation portfolio designed to outperform a tech-heavy SPY during a week loaded with inflation data and an FOMC decision at the exit close.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-09-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 44530,
+    "latency_seconds": 14.830618261126801,
+    "output_tokens": 776,
+    "total_tokens": 45306
+  }
+}

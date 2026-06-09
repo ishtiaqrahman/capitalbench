@@ -89,11 +89,12 @@ function modelColorClass(modelId: string, index: number): string {
   const colors: Record<string, string> = {
     "openai-gpt-5-5": "live-bar-openai",
     "xai-grok-4-3": "live-bar-xai",
+    "anthropic-claude-fable-5": "live-bar-anthropic-fable",
     "anthropic-claude-opus-4-7": "live-bar-anthropic",
     "anthropic-claude-opus-4-8": "live-bar-anthropic-alt",
     "google-gemini-3-1-pro": "live-bar-google"
   };
-  return colors[modelId] ?? `live-bar-model-${(index % 5) + 1}`;
+  return colors[modelId] ?? `live-bar-model-${(index % 6) + 1}`;
 }
 
 function buildChartRows(rows: LivePerformanceRecord[]): ChartRow[] {

@@ -1,0 +1,53 @@
+{
+  "confidence": 0.75,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden dovish pivot by the Federal Reserve could spark a broad rally in growth and cyclical equities, causing this defensive portfolio to underperform the S&P 500.",
+    "A sharp decline in crude oil prices would negatively impact the energy allocation.",
+    "If economic data shows a re-acceleration of growth, cyclical sectors could outperform the selected defensive sectors."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Provides a high risk-free yield and capital preservation in a late-cycle environment with elevated rates."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "HEALTHCARE",
+      "rationale": "A defensive equity sector that tends to outperform during periods of slowing economic growth and rising unemployment."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "GOLD",
+      "rationale": "Acts as a hedge against persistent inflation and potential market volatility."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "ENERGY",
+      "rationale": "Benefits from elevated crude oil prices and provides a hedge against supply-side inflation shocks."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Offers defensive equity exposure with stable demand despite a weakening consumer environment."
+    }
+  ],
+  "portfolio_rationale": "With inflation remaining sticky at 3.8% YoY, unemployment rising to 4.3%, and GDP growth slowing to 1.6%, the macroeconomic environment suggests a stagflationary tilt. This portfolio is positioned defensively, prioritizing short-term yield, inflation hedges, and non-cyclical equity sectors to outperform the broader market over the next month.",
+  "provider": "google",
+  "rationale_summary": "A defensive allocation favoring short-term Treasuries, gold, and defensive equities to navigate a slowing economy with sticky inflation.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-09-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28279,
+    "latency_seconds": 11.269979543983936,
+    "output_tokens": 550,
+    "reasoning_tokens": 554,
+    "total_tokens": 29383
+  }
+}
