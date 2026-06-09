@@ -537,7 +537,7 @@ def publish_cumulative_report(
                 ["Round", "Official Run", "Stability Run", "Official Included", "Stability Included", "Warnings"],
             ),
             "## Methodology\n\n"
-            "Official cumulative score: the public website averages CapitalBench Score across all completed rounds in the selected track. Models that did not participate in every resolved round are shown as short history until they build a full track history. CapitalBench Score compares the model return with the maximum possible return from the scored universe in that window.\n\n"
+            "Official cumulative score: the public website divides summed model returns by summed oracle returns across all completed rounds in the selected track. Models that did not participate in every resolved round are shown as short history until they build a full track history. A score of 100 matches the hindsight oracle, 0 means no net return, and negative values preserve losses.\n\n"
             "Stability cumulative score: For each model, we average its repeated-run alpha and consistency across the rounds where each model participated.\n\n"
             "The CSV cumulative official leaderboard keeps average alpha versus the S&P 500 as supporting context for compatibility; the website scorecard is the primary benchmark view.\n\n"
             "The cumulative stability leaderboard is sorted by average repeated-run alpha versus the S&P 500 across the rounds where each model participated.\n\n"

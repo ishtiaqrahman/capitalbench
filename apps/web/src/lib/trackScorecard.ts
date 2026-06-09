@@ -9,7 +9,7 @@ import {
   staticRoundReturns,
   type ResultReturnRecord
 } from "./localRoundRecords";
-import { capitalBenchScore } from "./capitalBenchScore.js";
+import { capitalBenchScore, cumulativeCapitalBenchScore } from "./capitalBenchScore.js";
 import { providerLogoSrc } from "./scoreReturnChart";
 import { roundTrack, type BenchmarkTrack } from "./tracks";
 
@@ -40,6 +40,8 @@ export type TrackScorecardNormalizedRow = {
   logoSrc?: string;
   averageScore: number;
   averageReturn: number;
+  totalReturn: number;
+  totalMaxPossibleReturn: number;
   testsIncluded: number;
   testsRequired: number;
   isRankEligible: boolean;
@@ -73,6 +75,7 @@ type ModelAccumulator = {
   returns: number[];
   alphas: number[];
   scores: number[];
+  maxReturns: number[];
   rounds: string[];
 };
 
@@ -174,6 +177,7 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
   const modelAccumulators = new Map<string, ModelAccumulator>();
   const benchmarkReturns: number[] = [];
   const benchmarkScores: number[] = [];
+  const benchmarkMaxReturns: number[] = [];
   const benchmarkRounds: string[] = [];
   const maxPossibleReturns: number[] = [];
   const maxPossibleRounds: string[] = [];
@@ -181,7 +185,9 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
   for (const roundScore of comparisonRounds) {
     if (finiteNumber(roundScore.benchmarkReturn)) {
       benchmarkReturns.push(roundScore.benchmarkReturn);
-      benchmarkScores.push(capitalBenchScore(roundScore.benchmarkReturn, roundScore.maxReturn) ?? 0);
+      const benchmarkScore = capitalBenchScore(roundScore.benchmarkReturn, roundScore.maxReturn);
+      if (finiteNumber(benchmarkScore)) benchmarkScores.push(benchmarkScore);
+      benchmarkMaxReturns.push(roundScore.maxReturn);
       benchmarkRounds.push(roundScore.round.round_id);
     }
 
@@ -192,11 +198,14 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
         returns: [],
         alphas: [],
         scores: [],
+        maxReturns: [],
         rounds: []
       };
       existing.returns.push(participant.returnValue);
       if (finiteNumber(participant.alphaValue)) existing.alphas.push(participant.alphaValue);
-      existing.scores.push(capitalBenchScore(participant.returnValue, roundScore.maxReturn) ?? 0);
+      const score = capitalBenchScore(participant.returnValue, roundScore.maxReturn);
+      if (finiteNumber(score)) existing.scores.push(score);
+      existing.maxReturns.push(roundScore.maxReturn);
       existing.rounds.push(roundScore.round.round_id);
       modelAccumulators.set(participant.modelId, existing);
     }
@@ -234,10 +243,12 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
       provider: item.provider,
       providerLabel: providerLabel(item.provider),
       logoSrc: providerLogoSrc(item.provider),
-      averageScore: average(item.scores),
+      averageScore: cumulativeCapitalBenchScore(item.returns, item.maxReturns) ?? 0,
       averageReturn: average(item.returns),
-      testsIncluded: item.scores.length,
-      ...rankEligibility(item.scores.length, comparisonRoundCount),
+      totalReturn: item.returns.reduce((total, value) => total + value, 0),
+      totalMaxPossibleReturn: item.maxReturns.reduce((total, value) => total + value, 0),
+      testsIncluded: item.returns.length,
+      ...rankEligibility(item.returns.length, comparisonRoundCount),
       roundsIncluded: item.rounds,
       scoreValues: item.scores
     }))
@@ -270,12 +281,14 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
         kind: "benchmark",
         label: "S&P 500",
         providerLabel: "Benchmark",
-        averageScore: average(benchmarkScores),
+        averageScore: cumulativeCapitalBenchScore(benchmarkReturns, benchmarkMaxReturns) ?? 0,
         averageReturn: average(benchmarkReturns),
-        testsIncluded: benchmarkScores.length,
+        totalReturn: benchmarkReturns.reduce((total, value) => total + value, 0),
+        totalMaxPossibleReturn: benchmarkMaxReturns.reduce((total, value) => total + value, 0),
+        testsIncluded: benchmarkReturns.length,
         testsRequired: comparisonRoundCount,
-        isRankEligible: benchmarkScores.length === comparisonRoundCount,
-        sampleStatus: benchmarkScores.length === comparisonRoundCount ? "eligible" : "provisional",
+        isRankEligible: benchmarkReturns.length === comparisonRoundCount,
+        sampleStatus: benchmarkReturns.length === comparisonRoundCount ? "eligible" : "provisional",
         roundsIncluded: benchmarkRounds,
         scoreValues: benchmarkScores
       }

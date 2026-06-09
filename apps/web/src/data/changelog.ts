@@ -26,18 +26,18 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
-    id: "2026-06-08-bounded-capitalbench-score",
-    date: "2026-06-08",
-    title: "CapitalBench Score bounded to a true 0-100 scale",
+    id: "2026-06-09-oracle-relative-capitalbench-score",
+    date: "2026-06-09",
+    title: "CapitalBench Score aligned directly with the oracle",
     category: "Methodology",
     status: "updated",
     summary:
-      "Per-test opportunity-capture scores now floor losing returns at zero before full-history scores are averaged.",
+      "CapitalBench Score now compares model return directly with the hindsight maximum, including the magnitude of losses.",
     details: [
-      "A model that matches the best asset scores 100, a positive return captures a proportional score, and a losing return scores 0.",
-      "Full-history weekly and monthly scores are simple averages of the bounded per-test scores, preventing one loss from creating an unlimited negative value.",
-      "Average return, compounded return, S&P 500 comparison, hit rate, and worst-test statistics continue to show the magnitude of downside separately.",
-      "The scoring page now documents the formula, cash-best edge case, and cumulative calculation with examples."
+      "A model that matches the best asset scores 100, no net return scores 0, and negative values represent losses relative to the oracle.",
+      "Full-history scores divide summed model returns by summed oracle returns, so a small loss ranks above a large loss.",
+      "Oracle-return weighting prevents a low-opportunity test with a small denominator from dominating the full history.",
+      "Tests are not compounded because overlapping rounds are separate benchmark experiments rather than one sequential portfolio."
     ],
     links: [
       { label: "Scoring", href: "/scoring#capitalbench-score" },
@@ -169,7 +169,7 @@ export const changelogEntries: ChangelogEntry[] = [
     category: "Methodology",
     status: "updated",
     summary:
-      "Headline weekly and monthly scorecards average CapitalBench Score across every resolved test in each track.",
+      "Headline weekly and monthly scorecards combine every resolved test in each track.",
     details: [
       "CapitalBench Score leaderboards now use all resolved weekly or monthly tests instead of only the latest model cohort.",
       "Models added later are shown with fewer included tests and marked short history until they have the full resolved sample.",

@@ -181,7 +181,7 @@ const concepts = [
   ["Positioning", "Portfolio weights aggregated by asset, category, model, or track."],
   ["Proof", "Round files, hashes, timestamps, prompt inputs, prices, and portfolio records."],
   ["Portfolio Minus S&P 500", "Model portfolio return minus the S&P 500 return, in percentage points."],
-  ["CapitalBench Score", "Bounded 0-100 opportunity-capture score; cumulative rows average bounded per-test scores."],
+  ["CapitalBench Score", "Model return relative to the hindsight oracle; cumulative rows divide total model return by total oracle return."],
   ["AI Risk Appetite", "A 0–100 allocation signal calculated from the newest live weekly and monthly AI model portfolios. It does not use prices or returns."],
   ["Resolved score set", "All completed tests used for headline cumulative scores in the selected track."]
 ];
@@ -189,10 +189,10 @@ const concepts = [
 const fields = [
   ["allocation_pct", "Portfolio or aggregate weight, in percentage points."],
   ["alpha_pp", "Portfolio Minus S&P 500, in percentage points."],
-  ["capitalbench_score", "Bounded score where 100 matches the maximum possible return and a losing return scores 0; cumulative rows average per-test scores."],
+  ["capitalbench_score", "Oracle-relative score where 100 matches the maximum possible return, 0 means no return, and negative values represent losses."],
   ["comparison", "Cumulative leaderboard metadata showing included resolved rounds, test counts, and aggregation mode."],
   ["effective_asset_count", "Concentration metric equal to one divided by summed squared asset shares."],
-  ["max_possible_return_pct", "Highest realized return among scored options in the saved universe; cumulative rows report the average of per-test max values."],
+  ["max_possible_return_pct", "Highest realized return among scored options in the saved universe; cumulative rows report the average per-test oracle return as supporting context."],
   ["model_id", "Stable CapitalBench model identifier."],
   ["next_cursor", "Pagination cursor returned when more records are available."],
   ["option_id", "Stable asset identifier from the saved universe."],

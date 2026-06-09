@@ -397,7 +397,7 @@ const proofLinks = [
           <h2 id="combined-results-title">CapitalBench Scores</h2>
           <p>
             The primary benchmark score combines every resolved test in each track. 100 means matching the highest-returning scored
-            option in each completed window. Overall scores average bounded per-test scores, not average return divided by average max.
+            option. Overall scores divide total model return by total oracle return, preserving the difference between smaller and larger losses.
           </p>
         </div>
         <a class="section-profile-link" href="/leaderboards/cumulative-weekly">Open weekly scorecard</a>

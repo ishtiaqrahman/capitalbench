@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
-import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
+import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { buildCumulativeLeaderboardData } from "../src/lib/dataApi.js";
 
 const repoRoot = resolve(process.cwd(), "../..");
@@ -282,7 +282,6 @@ function independentCumulativeLeaderboard(track) {
         benchmark_return_values: [],
         alpha_values: [],
         max_possible_return_values: [],
-        capitalbench_score_values: [],
         wins: 0,
         positive_alpha: 0,
         round_count: 0
@@ -294,7 +293,6 @@ function independentCumulativeLeaderboard(track) {
       if (row.alpha_pp > 0) existing.positive_alpha += 1;
     }
     if (isFiniteNumber(row.max_possible_return_pct)) existing.max_possible_return_values.push(row.max_possible_return_pct);
-    if (isFiniteNumber(row.capitalbench_score)) existing.capitalbench_score_values.push(row.capitalbench_score);
     if (row.rank === 1) existing.wins += 1;
     existing.round_count += 1;
     byModel.set(row.model_id, existing);
@@ -309,7 +307,10 @@ function independentCumulativeLeaderboard(track) {
         benchmark_return_pct: average(row.benchmark_return_values),
         alpha_pp: average(row.alpha_values),
         max_possible_return_pct: average(row.max_possible_return_values),
-        capitalbench_score: average(row.capitalbench_score_values),
+        capitalbench_score: cumulativeCapitalBenchScore(
+          row.portfolio_return_values,
+          row.max_possible_return_values
+        ),
         round_count: row.round_count,
         tests_required: testsRequired,
         tests_included: row.round_count,
@@ -951,9 +952,6 @@ for (const round of apiReadModel.rounds) {
       }
       if (row.capitalbench_score > 100 + EPSILON) {
         failures.push(`${rowKey(row)} capitalbench_score ${row.capitalbench_score} exceeds 100`);
-      }
-      if (row.capitalbench_score < -EPSILON) {
-        failures.push(`${rowKey(row)} capitalbench_score ${row.capitalbench_score} is below 0`);
       }
 
       const allocations = apiReadModel.allocations.filter(

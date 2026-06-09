@@ -31,7 +31,7 @@ _No rows._
 
 ## Methodology
 
-Official cumulative score: the public website averages CapitalBench Score across all completed rounds in the selected track. Models that did not participate in every resolved round are shown as short history until they build a full track history. CapitalBench Score compares the model return with the maximum possible return from the scored universe in that window.
+Official cumulative score: the public website divides summed model returns by summed oracle returns across all completed rounds in the selected track. Models that did not participate in every resolved round are shown as short history until they build a full track history. A score of 100 matches the hindsight oracle, 0 means no net return, and negative values preserve losses.
 
 Stability cumulative score: For each model, we average its repeated-run alpha and consistency across the rounds where each model participated.
 

@@ -10,9 +10,26 @@ export function capitalBenchScore(portfolioReturn, maxPossibleReturn) {
     return null;
   }
 
-  if (maxPossibleReturn <= SCORE_EPSILON) {
-    return Math.abs(portfolioReturn - maxPossibleReturn) <= SCORE_EPSILON ? 100 : 0;
+  if (Math.abs(maxPossibleReturn) <= SCORE_EPSILON) {
+    return Math.abs(portfolioReturn - maxPossibleReturn) <= SCORE_EPSILON ? 100 : null;
   }
 
-  return Math.min(100, Math.max(0, (portfolioReturn / maxPossibleReturn) * 100));
+  return Math.min(100, (portfolioReturn / maxPossibleReturn) * 100);
+}
+
+export function cumulativeCapitalBenchScore(portfolioReturns, maxPossibleReturns) {
+  if (
+    !Array.isArray(portfolioReturns) ||
+    !Array.isArray(maxPossibleReturns) ||
+    portfolioReturns.length === 0 ||
+    portfolioReturns.length !== maxPossibleReturns.length ||
+    portfolioReturns.some((value) => typeof value !== "number" || !Number.isFinite(value)) ||
+    maxPossibleReturns.some((value) => typeof value !== "number" || !Number.isFinite(value))
+  ) {
+    return null;
+  }
+
+  const totalPortfolioReturn = portfolioReturns.reduce((total, value) => total + value, 0);
+  const totalMaxPossibleReturn = maxPossibleReturns.reduce((total, value) => total + value, 0);
+  return capitalBenchScore(totalPortfolioReturn, totalMaxPossibleReturn);
 }

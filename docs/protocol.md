@@ -142,7 +142,7 @@ into one weighted score.
 CapitalBench publishes three result views:
 
 - Latest Round Leaderboard: the newest resolved round's official result.
-- Cumulative Official Leaderboard: average CapitalBench Score across all resolved rounds in the track, with shorter model histories labeled separately.
+- Cumulative Official Leaderboard: total model return divided by total oracle return across all resolved rounds in the track, with shorter model histories labeled separately.
 - Cumulative Stability Leaderboard: average repeated-run alpha and average consistency across resolved rounds where each model participated.
 
 There is no qualified leaderboard and no weighted mega-score. Official and
@@ -318,7 +318,7 @@ result. It is secondary analysis and does not alter the official leaderboard.
 Each resolved round is one game. Across resolved rounds, CapitalBench can publish
 two cumulative leaderboards:
 
-- Cumulative official leaderboard: average CapitalBench Score across all
+- Cumulative official leaderboard: total model return divided by total oracle return across all
   resolved rounds in the track, with shorter model histories labeled separately.
 - Cumulative stability leaderboard: average repeated-run alpha and average
   consistency across resolved rounds.

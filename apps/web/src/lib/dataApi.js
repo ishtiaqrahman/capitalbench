@@ -1,4 +1,5 @@
 import apiReadModel from "../generated/apiReadModel.js";
+import { cumulativeCapitalBenchScore } from "./capitalBenchScore.js";
 
 const API_VERSION = "v1";
 const DEFAULT_MINUTE_LIMIT = 120;
@@ -551,7 +552,6 @@ export function buildCumulativeLeaderboardData(readModel, track) {
         benchmark_return_values: [],
         alpha_values: [],
         max_possible_return_values: [],
-        capitalbench_score_values: [],
         wins: 0,
         positive_alpha: 0,
         round_count: 0
@@ -559,7 +559,6 @@ export function buildCumulativeLeaderboardData(readModel, track) {
     if (typeof row.portfolio_return_pct === "number") existing.portfolio_return_values.push(row.portfolio_return_pct);
     if (typeof row.benchmark_return_pct === "number") existing.benchmark_return_values.push(row.benchmark_return_pct);
     if (typeof row.max_possible_return_pct === "number") existing.max_possible_return_values.push(row.max_possible_return_pct);
-    if (typeof row.capitalbench_score === "number") existing.capitalbench_score_values.push(row.capitalbench_score);
     if (typeof row.alpha_pp === "number") {
       existing.alpha_values.push(row.alpha_pp);
       if (row.alpha_pp > 0) existing.positive_alpha += 1;
@@ -580,7 +579,10 @@ export function buildCumulativeLeaderboardData(readModel, track) {
         benchmark_return_pct: average(row.benchmark_return_values),
         alpha_pp: average(row.alpha_values),
         max_possible_return_pct: average(row.max_possible_return_values),
-        capitalbench_score: average(row.capitalbench_score_values),
+        capitalbench_score: cumulativeCapitalBenchScore(
+          row.portfolio_return_values,
+          row.max_possible_return_values
+        ),
         round_count: row.round_count,
         tests_required: testsRequired,
         tests_included: row.round_count,

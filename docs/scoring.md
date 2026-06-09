@@ -124,8 +124,8 @@ For each official model submission:
 Latest-test tables sort by `alpha_vs_sp500` descending. Ties are resolved by
 lower regret, higher confidence, and then model id. Overall scorecards use
 CapitalBench Score, defined as
-`clamp(100 * portfolio_return / max_possible_return, 0, 100)` for each
-completed test where full-universe scoring returns exist.
+`100 * portfolio_return / max_possible_return` for each completed test where
+full-universe scoring returns exist.
 
 The benchmark option must be identifiable as S&P 500, usually with
 `is_benchmark: true` and `asset_symbol: SPY`.
@@ -209,21 +209,29 @@ Across multiple resolved rounds, each round counts as one game. For each model,
 CapitalBench computes a per-round CapitalBench Score:
 
 ```text
-capitalbench_score = clamp(
-    100 * portfolio_return / max_possible_return,
-    0,
-    100,
-)
+capitalbench_score = 100 * portfolio_return / max_possible_return
 ```
 
 `max_possible_return` is the highest realized return among scored options in the
 frozen universe for that round. A score of 100 means the model matched the
-maximum possible return in that completed window. A negative portfolio return
-scores 0 rather than creating an unbounded negative score. Because CASH is part
-of the universe, the maximum possible return cannot be below zero; when CASH is
-best at 0%, a 0% portfolio scores 100 and a losing portfolio scores 0. The
-cumulative score averages per-round bounded CapitalBench Scores across all
-resolved rounds in that track.
+maximum possible return in that completed window. A score of 0 means no net
+return. Negative scores preserve the size of losses relative to the positive
+oracle opportunity, so a smaller loss ranks above a larger loss. If the oracle
+return is exactly 0%, matching it scores 100; a losing result has no finite
+per-round ratio and its per-round score is unavailable.
+
+The full-history score is not a simple average of per-round ratios. It compares
+aggregate model return with aggregate oracle return:
+
+```text
+cumulative_capitalbench_score =
+    100 * sum(portfolio_returns) / sum(max_possible_returns)
+```
+
+This is equivalent to weighting each round by its oracle return. It prevents a
+round with a very small maximum return from dominating the history solely
+because its denominator is small. Rounds are not compounded because benchmark
+windows may overlap and are separate experiments, not a sequential portfolio.
 
 Example:
 
@@ -234,12 +242,12 @@ Max possible return = +8%
 Model A CapitalBench Score = 50
 
 Round 2:
-Model A return = +3%
-Max possible return = +6%
-Model A CapitalBench Score = 50
+Model A return = -1%
+Max possible return = +2%
+Model A CapitalBench Score = -50
 
 Cumulative CapitalBench Score:
-(50 + 50) / 2 = 50
+100 * (4 - 1) / (8 + 2) = 30
 ```
 
 The cumulative official view also includes average model return, S&P 500
@@ -249,7 +257,7 @@ fields are supporting context, not the primary benchmark score.
 Models may have different `resolved_rounds` counts because new models enter
 only in future rounds. CapitalBench does not backfill new models into old
 official rounds. The primary cumulative scorecard ranks full-history models
-first by average CapitalBench Score and labels shorter histories separately.
+first by cumulative CapitalBench Score and labels shorter histories separately.
 Supporting alpha tables may sort by average alpha versus the S&P 500.
 
 ## Cumulative Stability Leaderboard

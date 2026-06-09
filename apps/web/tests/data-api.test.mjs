@@ -8,7 +8,7 @@ import {
   handleDataApiRequest,
   hashApiKey
 } from "../src/lib/dataApi.js";
-import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
+import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import apiReadModel from "../src/generated/apiReadModel.js";
 
 function getRequest(path, token) {
@@ -280,10 +280,13 @@ test("cumulative weekly leaderboard ranks eligible all-resolved rows by CapitalB
   let foundNonLatestOnlyAverage = false;
   for (const row of result.body.data.filter((item) => item.is_rank_eligible)) {
     const rawRows = apiReadModel.results.filter((item) => item.track === "weekly" && item.model_id === row.model_id);
-    const expectedAverage = rawRows.reduce((total, item) => total + item.capitalbench_score, 0) / rawRows.length;
-    assertApproxEqual(row.capitalbench_score, expectedAverage);
+    const expectedScore = cumulativeCapitalBenchScore(
+      rawRows.map((item) => item.portfolio_return_pct),
+      rawRows.map((item) => item.max_possible_return_pct)
+    );
+    assertApproxEqual(row.capitalbench_score, expectedScore);
     const latestOnlyScore = rawRows.find((item) => item.round_id === latestWeeklyRoundId)?.capitalbench_score;
-    if (typeof latestOnlyScore === "number" && Math.abs(latestOnlyScore - expectedAverage) > 1e-9) {
+    if (typeof latestOnlyScore === "number" && Math.abs(latestOnlyScore - expectedScore) > 1e-9) {
       foundNonLatestOnlyAverage = true;
     }
   }
@@ -327,7 +330,7 @@ test("cumulative leaderboard includes all resolved tests and marks late model hi
   assert.deepEqual(result.comparison.comparison_round_ids, ["r1", "r2", "r3"]);
   assert.deepEqual(result.comparison.excluded_round_ids, []);
   assert.equal(result.data[0].model_id, "old-b");
-  assert.equal(result.data[0].capitalbench_score, (10 + 20 + 80) / 3);
+  assert.equal(result.data[0].capitalbench_score, ((1 + 2 + 8) / (10 + 10 + 10)) * 100);
   assert.equal(result.data[0].tests_required, 3);
   assert.equal(result.data[0].tests_included, 3);
   assert.equal(result.data[0].is_rank_eligible, true);
@@ -335,12 +338,12 @@ test("cumulative leaderboard includes all resolved tests and marks late model hi
   assertApproxEqual(result.data[0].win_rate_pct, 100 / 3);
   assertApproxEqual(result.data[0].positive_alpha_rate_pct, 200 / 3);
   assert.equal(result.data[1].model_id, "old-a");
-  assert.equal(result.data[1].capitalbench_score, (20 + 30 + 50) / 3);
+  assert.equal(result.data[1].capitalbench_score, ((2 + 3 + 5) / (10 + 10 + 10)) * 100);
   assert.equal(result.data[1].wins, 2);
   assertApproxEqual(result.data[1].win_rate_pct, 200 / 3);
   assert.equal(result.data[1].positive_alpha_rate_pct, 100);
   assert.equal(result.data[2].model_id, "new-c");
-  assert.equal(result.data[2].capitalbench_score, 70);
+  assert.equal(result.data[2].capitalbench_score, (7 / 10) * 100);
   assert.equal(result.data[2].tests_required, 3);
   assert.equal(result.data[2].tests_included, 1);
   assert.equal(result.data[2].is_rank_eligible, false);
@@ -388,7 +391,6 @@ test("round results endpoint mirrors canonical scored rows and universe returns"
     assertApproxEqual(row.alpha_pp, row.portfolio_return_pct - row.benchmark_return_pct);
     assertApproxEqual(row.regret_vs_best_option_pct, row.max_possible_return_pct - row.portfolio_return_pct);
     assertApproxEqual(row.capitalbench_score, capitalBenchScore(row.portfolio_return_pct, row.max_possible_return_pct));
-    assert.ok(row.capitalbench_score >= 0);
     assert.ok(row.capitalbench_score <= 100);
   }
 });

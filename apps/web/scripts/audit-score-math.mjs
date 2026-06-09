@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
-import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
+import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
 
 const repoRoot = resolve(process.cwd(), "../..");
 const roundsRoot = join(repoRoot, "rounds");
@@ -232,8 +232,8 @@ function auditRound(round) {
     if (regret !== null && expectedRegret !== null && !closeEnough(regret, expectedRegret)) {
       fail(rowContext, `regret_vs_best_option ${regret} does not match max minus portfolio ${expectedRegret}`);
     }
-    if (score !== null && (score < -EPSILON || score > 100 + EPSILON)) {
-      fail(rowContext, `CapitalBench Score ${score} is outside 0-100`);
+    if (score !== null && score > 100 + EPSILON) {
+      fail(rowContext, `CapitalBench Score ${score} exceeds the oracle ceiling of 100`);
     }
 
     rowAudits.push({
@@ -267,7 +267,7 @@ for (const round of roundAudits) {
   const track = cumulativeByTrack.get(round.track) ?? new Map();
   for (const row of round.rows) {
     const existing = track.get(row.model_id) ?? [];
-    existing.push(row.score);
+    existing.push(row);
     track.set(row.model_id, existing);
   }
   cumulativeByTrack.set(round.track, track);
@@ -295,16 +295,21 @@ for (const [track, modelRows] of cumulativeByTrack.entries()) {
   const requiredCount = roundAudits.filter((round) => round.track === track).length;
   console.log(`${track} cumulative score audit (${requiredCount} resolved tests):`);
   const rows = Array.from(modelRows.entries())
-    .map(([modelId, scores]) => ({
+    .map(([modelId, modelResults]) => ({
       modelId,
-      scores,
-      eligible: scores.length === requiredCount,
-      average: scores.reduce((total, score) => total + score, 0) / scores.length
+      modelResults,
+      eligible: modelResults.length === requiredCount,
+      score: cumulativeCapitalBenchScore(
+        modelResults.map((row) => row.portfolioReturn),
+        modelResults.map((row) => row.maxReturn)
+      )
     }))
-    .sort((left, right) => Number(right.eligible) - Number(left.eligible) || right.average - left.average);
+    .sort((left, right) => Number(right.eligible) - Number(left.eligible) || right.score - left.score);
   for (const row of rows) {
+    const totalReturn = row.modelResults.reduce((total, result) => total + result.portfolioReturn, 0);
+    const totalMaxReturn = row.modelResults.reduce((total, result) => total + result.maxReturn, 0);
     console.log(
-      `  ${row.modelId}: ${scoreLabel(row.average)} (${row.scores.map(scoreLabel).join(", ")}) ${row.eligible ? "eligible" : `short history ${row.scores.length}/${requiredCount}`}`
+      `  ${row.modelId}: ${scoreLabel(row.score)} = ${pctLabel(totalReturn)} total / ${pctLabel(totalMaxReturn)} oracle ${row.eligible ? "eligible" : `short history ${row.modelResults.length}/${requiredCount}`}`
     );
   }
 }

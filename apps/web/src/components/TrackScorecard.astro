@@ -129,10 +129,7 @@ function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | un
 
 function scoreAuditText(row: TrackScorecardNormalizedRow | undefined): string {
   if (!row) return "";
-  const scores = row.scoreValues.filter(finiteNumber).map(scoreLabel);
-  if (scores.length === 0) return "";
-  if (scores.length === 1) return `${row.label} ${scoreLabel(row.averageScore)} from one resolved test.`;
-  return `${row.label} ${scoreLabel(row.averageScore)} = average of ${scores.join(", ")}.`;
+  return `${row.label} ${scoreLabel(row.averageScore)} = ${pct(row.totalReturn)} total return / ${pct(row.totalMaxPossibleReturn)} oracle return × 100.`;
 }
 
 const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
@@ -144,12 +141,12 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
       <span class="panel-kicker">{scorecard.label} track</span>
       <h3 id={`${scorecard.track}-track-scorecard-title`}>Full-History {scorecard.label} Scores</h3>
       <p>
-        This chart averages every resolved {scorecard.label.toLowerCase()} test. The latest single-test result and
+        This chart compares total model return with total oracle return across every resolved {scorecard.label.toLowerCase()} test. The latest single-test result and
         short-history models are kept separate.
       </p>
     </div>
     <div class="track-scorecard-badges" aria-label={`${scorecard.label} scorecard status`}>
-      <span>{scorecard.comparisonRoundCount} resolved tests averaged</span>
+      <span>{scorecard.comparisonRoundCount} resolved tests compared</span>
       <span>{rankedModelLabel}</span>
       {provisionalScoreRows.length > 0 && <span>{shortHistoryLabel}</span>}
       <span>Newest resolved test: {scorecard.latestRoundId}</span>
@@ -164,8 +161,9 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
           <h4 id={`${scorecard.track}-normalized-score-title`}>Full-History Model Scores</h4>
         </div>
         <p>
-          This is a 0-100 score, not return percent. Bars include only models with all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"}.
-          Losing tests score 0; <a href="/scoring/#capitalbench-score">see the calculation</a>.
+          100 matches the oracle, 0 means no net return, and negative values mean a net loss. Bars include only models
+          with all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"}.{" "}
+          <a href="/scoring/#capitalbench-score">See the calculation</a>.
         </p>
       </div>
 
@@ -197,7 +195,7 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
               {scoreRows.map((row) => (
                 <div
                   class={`score-vertical-label ${row.kind === "benchmark" ? "score-vertical-label-benchmark" : ""}`}
-                  title={`${row.label}: ${scoreLabel(row.averageScore)} out of 100. ${rowMeta(row)}`}
+                  title={`${row.label}: ${scoreLabel(row.averageScore)} versus the oracle. ${rowMeta(row)}`}
                 >
                   {row.kind === "model" && row.logoSrc ? (
                     <span class="score-chart-logo-shell">
@@ -338,12 +336,12 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
   {leaderScoreAuditText && (
     <div class="track-scorecard-calculation" aria-label={`${scorecard.label} score calculation audit`}>
       <strong>Leader audit</strong>
-      <span>{leaderScoreAuditText} Each test is bounded to 0-100 before averaging.</span>
+      <span>{leaderScoreAuditText}</span>
     </div>
   )}
 
   <div class="track-scorecard-notes" aria-label={`${scorecard.label} scorecard notes`}>
-    <span><strong>Rounds averaged:</strong> {scorecard.comparisonRoundIds.join(", ")}</span>
+    <span><strong>Rounds included:</strong> {scorecard.comparisonRoundIds.join(", ")}</span>
     {scorecard.excludedRoundIds.length > 0 && (
       <span><strong>Excluded tests:</strong> {scorecard.excludedRoundIds.join(", ")}</span>
     )}
