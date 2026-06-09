@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
+import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
 
 const repoRoot = resolve(process.cwd(), "../..");
 const roundsRoot = join(repoRoot, "rounds");
@@ -111,11 +112,6 @@ function officialRuns(roundPath) {
     });
 }
 
-function expectedScore(portfolioReturn, maxReturn) {
-  if (Math.abs(maxReturn) < EPSILON) return Math.abs(portfolioReturn - maxReturn) < EPSILON ? 100 : 0;
-  return (portfolioReturn / maxReturn) * 100;
-}
-
 function optionDisplay(row) {
   const symbol = row.asset_symbol || row.symbol || "";
   const label = row.label || row.option_id;
@@ -215,7 +211,9 @@ function auditRound(round) {
     const maxReturn = maxReturnRow?.returnValue;
     const expectedAlpha = portfolioReturn !== null && benchmarkRow ? portfolioReturn - benchmarkRow.returnValue : null;
     const expectedRegret = portfolioReturn !== null && maxReturn !== undefined ? maxReturn - portfolioReturn : null;
-    const score = portfolioReturn !== null && maxReturn !== undefined ? expectedScore(portfolioReturn, maxReturn) : null;
+    const score = portfolioReturn !== null && maxReturn !== undefined
+      ? capitalBenchScore(portfolioReturn, maxReturn)
+      : null;
 
     if (portfolioReturn === null) {
       fail(rowContext, "missing portfolio_return");
@@ -281,7 +279,7 @@ for (const round of roundAudits) {
   console.log(`  S&P 500: ${optionDisplay(round.benchmarkRow)} ${pctLabel(round.benchmarkRow.returnValue)}`);
   for (const row of round.rows) {
     console.log(
-      `  ${row.model_id}: score ${scoreLabel(row.score)} = ${pctLabel(row.portfolioReturn)} / ${pctLabel(row.maxReturn)} max; S&P ${pctLabel(row.benchmarkReturn)}`
+      `  ${row.model_id}: score ${scoreLabel(row.score)}; portfolio ${pctLabel(row.portfolioReturn)}; best asset ${pctLabel(row.maxReturn)}; S&P ${pctLabel(row.benchmarkReturn)}`
     );
     if (verbose) {
       for (const allocation of row.allocations) {

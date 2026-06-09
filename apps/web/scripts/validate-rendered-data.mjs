@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
+import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { buildCumulativeLeaderboardData, createMemoryApiAuthRepository, handleDataApiRequest } from "../src/lib/dataApi.js";
 
 const failures = [];
@@ -327,12 +328,6 @@ function averageOrNull(values) {
   return values.length ? values.reduce((total, value) => total + value, 0) / values.length : null;
 }
 
-function normalizedScore(value, ceiling) {
-  if (typeof value !== "number" || typeof ceiling !== "number" || !Number.isFinite(value) || !Number.isFinite(ceiling)) return null;
-  if (Math.abs(ceiling) < 0.0000001) return Math.abs(value - ceiling) < 0.0000001 ? 100 : 0;
-  return (value / ceiling) * 100;
-}
-
 function expectedScorecardData(track) {
   const cumulative = buildCumulativeLeaderboardData(apiReadModel, track);
   const roundIds = cumulative.comparison.comparison_round_ids;
@@ -350,7 +345,7 @@ function expectedScorecardData(track) {
     if (!row) continue;
     if (typeof row.benchmark_return_pct === "number") benchmarkReturns.push(row.benchmark_return_pct);
     if (typeof row.max_possible_return_pct === "number") maxPossibleReturns.push(row.max_possible_return_pct);
-    const benchmarkScore = normalizedScore(row.benchmark_return_pct, row.max_possible_return_pct);
+    const benchmarkScore = capitalBenchScore(row.benchmark_return_pct, row.max_possible_return_pct);
     if (typeof benchmarkScore === "number") benchmarkScores.push(benchmarkScore);
   }
 
@@ -438,7 +433,7 @@ function cumulativeLeaderScoreAuditText(track, leader) {
     .map(scoreLabel);
   if (values.length === 0) return "";
   if (values.length === 1) return `${leader.label} ${scoreLabel(leader.capitalbench_score)} from one resolved test.`;
-  return `${leader.label} ${scoreLabel(leader.capitalbench_score)} = average of ${values.join(", ")}. Scores are out of 100, not portfolio returns.`;
+  return `${leader.label} ${scoreLabel(leader.capitalbench_score)} = average of ${values.join(", ")}.`;
 }
 
 function shortDate(value) {
@@ -1901,7 +1896,7 @@ for (const track of ["weekly", "monthly"]) {
     for (const row of latestResultForTrack(track).leaderboard) {
       if (typeof row.capitalbench_score !== "number") continue;
       const latestOnlyScore = scoreLabel(row.capitalbench_score);
-      if (!cumulativeScoreLabels.has(latestOnlyScore)) {
+      if (latestOnlyScore !== "0.0" && !cumulativeScoreLabels.has(latestOnlyScore)) {
         excludes(homepageScorecardWithoutLeaderAudit, latestOnlyScore, `homepage weekly scorecard latest-only ${row.model_id} score`);
       }
     }
@@ -2133,17 +2128,18 @@ for (const [context, html] of [
   ["methodology", methodologyHtml],
   ["scoring", scoringHtml]
 ]) {
-  includes(html, "100 * portfolio_return / max_possible_return", `${context} CapitalBench Score formula`);
+  includes(html, "clamp(100 * portfolio_return / max_possible_return, 0, 100)", `${context} CapitalBench Score formula`);
   includes(html, "max_possible_return - portfolio_return", `${context} regret formula`);
   includes(html, "portfolio_return - sp500_return", `${context} S&P formula`);
   includes(html, "not average return divided by average max", `${context} cumulative score ratio explanation`);
   includesAny(html, ["all resolved tests", "every resolved test", "resolved test in that track"], `${context} cumulative scope`);
   includes(html, "short history", `${context} late-added model scope`);
 }
-includes(scoringHtml, "The score is not a return percentage", "scoring score scale explanation");
-includes(scoringHtml, "3.93 divided by 4.62", "scoring score scale example");
+includes(scoringHtml, "always bounded from 0 to 100", "scoring score scale explanation");
+includes(scoringHtml, "portfolio returns 3.93%", "scoring portfolio return example");
+includes(scoringHtml, "score is 85.1", "scoring bounded score example");
 
-includes(apiHtml, "cumulative rows average per-test score ratios", "API docs cumulative CapitalBench Score definition");
+includes(apiHtml, "cumulative rows average bounded per-test scores", "API docs cumulative CapitalBench Score definition");
 includes(apiHtml, "cumulative rows report the average of per-test max values", "API docs cumulative max possible definition");
 includes(apiHtml, "/v1/risk-appetite", "API docs risk appetite endpoint");
 
@@ -2570,12 +2566,16 @@ if (latestResolvedWeeklyRound) {
     includes(latestWeeklyHtml, percentPointLabel(latestWeeklyWinner.portfolio_return_pct), "latest weekly page winner return");
     includes(latestWeeklyHtml, percentPointLabel(latestWeeklyWinner.benchmark_return_pct), "latest weekly page benchmark return");
     includes(latestWeeklyHtml, "CapitalBench Score", "latest weekly page score audit label");
-    includes(latestWeeklyHtml, "0-100 score, not return %", "latest weekly page score scale label");
-    includes(latestWeeklyHtml, "Scores are out of 100, not portfolio returns.", "latest weekly page score scale explanation");
+    includes(latestWeeklyHtml, "bounded 0-100", "latest weekly page score scale label");
+    includes(
+      latestWeeklyHtml,
+      "Each portfolio return is converted to a bounded 0-100 score before averaging.",
+      "latest weekly page score scale explanation"
+    );
     includes(latestWeeklyHtml, scoreLabel(latestWeeklyWinner.capitalbench_score), "latest weekly page winner score audit");
     includes(
       latestWeeklyHtml,
-      `${percentPointLabel(latestWeeklyWinner.portfolio_return_pct)} / ${percentPointLabel(latestWeeklyWinner.max_possible_return_pct)} max`,
+      `portfolio ${percentPointLabel(latestWeeklyWinner.portfolio_return_pct)} · best asset ${percentPointLabel(latestWeeklyWinner.max_possible_return_pct)}`,
       "latest weekly page score audit formula values"
     );
   }
@@ -2587,9 +2587,9 @@ if (latestResolvedWeeklyRound) {
     includes(latestWeeklyHtml, percentPointLabel(row.alpha_pp), `latest weekly page alpha ${row.model_id}`);
     includes(latestWeeklyHtml, percentPointLabel(row.regret_vs_best_option_pct), `latest weekly page regret ${row.model_id}`);
     includes(latestWeeklyHtml, "CapitalBench Score audit", `latest weekly page score audit ${row.model_id}`);
-    includes(
+    includesCollapsed(
       latestWeeklyHtml,
-      `${scoreLabel(row.capitalbench_score)} / 100 = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max asset: ${assetDisplay(latestWeeklyMaxReturnRow)}`,
+      `${scoreLabel(row.capitalbench_score)} / 100 · portfolio ${percentPointLabel(row.portfolio_return_pct)} · best asset ${percentPointLabel(row.max_possible_return_pct)}: ${assetDisplay(latestWeeklyMaxReturnRow)}`,
       `latest weekly page score formula ${row.model_id}`
     );
   }
@@ -2711,10 +2711,14 @@ for (const round of apiReadModel.rounds) {
       includes(html, percentPointLabel(row.alpha_pp), `${context} result ${row.model_id} alpha`);
       includes(html, percentPointLabel(row.regret_vs_best_option_pct), `${context} result ${row.model_id} regret`);
       includes(html, "CapitalBench Score audit", `${context} CapitalBench Score audit`);
-      includes(html, "Scores are out of 100, not portfolio returns.", `${context} CapitalBench Score scale explanation`);
+      includes(
+        html,
+        "Each portfolio return is converted to a bounded 0-100 score before averaging.",
+        `${context} CapitalBench Score scale explanation`
+      );
       includesCollapsed(
         html,
-        `${scoreLabel(row.capitalbench_score)} / 100 = ${percentPointLabel(row.portfolio_return_pct)} / ${percentPointLabel(row.max_possible_return_pct)} max asset: ${assetDisplay(maxReturnRow)}`,
+        `${scoreLabel(row.capitalbench_score)} / 100 · portfolio ${percentPointLabel(row.portfolio_return_pct)} · best asset ${percentPointLabel(row.max_possible_return_pct)}: ${assetDisplay(maxReturnRow)}`,
         `${context} result ${row.model_id} CapitalBench Score formula`
       );
     }

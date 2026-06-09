@@ -5,6 +5,7 @@ import {
   buildRiskAppetiteSnapshot,
   historicalRiskLabel
 } from "../src/lib/riskAppetiteCore.js";
+import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
 
 const repoRoot = resolve(process.cwd(), "../..");
 const roundsRoot = join(repoRoot, "rounds");
@@ -126,14 +127,6 @@ function isBenchmarkOption(optionId, value) {
 function percentReturnValue(value) {
   const numeric = numberValue(value);
   return numeric === null ? null : numeric * 100;
-}
-
-function normalizedCapitalBenchScore(returnPct, maxPossibleReturnPct) {
-  if (typeof returnPct !== "number" || typeof maxPossibleReturnPct !== "number") return null;
-  if (Math.abs(maxPossibleReturnPct) < 0.0000001) {
-    return Math.abs(returnPct - maxPossibleReturnPct) < 0.0000001 ? 100 : 0;
-  }
-  return (returnPct / maxPossibleReturnPct) * 100;
 }
 
 function maxPossibleReturnPct(roundPath, selectedRun) {
@@ -408,7 +401,7 @@ function loadResults({ roundPath, round, selectedRun }) {
         benchmark_return_pct: percentReturnValue(row.sp500_return),
         alpha_pp: percentReturnValue(row.alpha_vs_sp500),
         max_possible_return_pct: maxReturnPct,
-        capitalbench_score: normalizedCapitalBenchScore(portfolioReturnPct, maxReturnPct),
+        capitalbench_score: capitalBenchScore(portfolioReturnPct, maxReturnPct),
         regret_vs_best_option_pct: percentReturnValue(row.regret_vs_best_option),
         rank_among_options: numberValue(row.rank_among_options),
         confidence: numberValue(row.confidence)

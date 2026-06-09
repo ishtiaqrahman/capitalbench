@@ -17,6 +17,7 @@ import {
 } from "../../lib/localRoundRecords";
 import { latestPendingRoundForTrack, latestResolvedRoundForTrack, latestSlotForTrack } from "../../lib/tracks";
 import { modelLabel, providerLabel } from "../../data/fallback";
+import { capitalBenchScore } from "../../lib/capitalBenchScore.js";
 import { buildScoreReturnChartData, providerLogoSrc } from "../../lib/scoreReturnChart";
 import {
   allocationThemeClass,
@@ -60,11 +61,7 @@ const maxPossibleLabel = maxPossibleReturnRow
   : "";
 const winnerScore =
   typeof winnerReturn === "number" && typeof maxPossibleReturn === "number" && Number.isFinite(maxPossibleReturn)
-    ? Math.abs(maxPossibleReturn) < 0.0000001
-      ? Math.abs(winnerReturn - maxPossibleReturn) < 0.0000001
-        ? 100
-        : 0
-      : (winnerReturn / maxPossibleReturn) * 100
+    ? capitalBenchScore(winnerReturn, maxPossibleReturn)
     : undefined;
 const scoreAuditRows =
   typeof maxPossibleReturn === "number" && Number.isFinite(maxPossibleReturn)
@@ -72,18 +69,14 @@ const scoreAuditRows =
         .map((row) => {
           const portfolioReturn = row.portfolio_return ?? row.selected_asset_return;
           if (typeof portfolioReturn !== "number" || !Number.isFinite(portfolioReturn)) return null;
-          const capitalBenchScore =
-            Math.abs(maxPossibleReturn) < 0.0000001
-              ? Math.abs(portfolioReturn - maxPossibleReturn) < 0.0000001
-                ? 100
-                : 0
-              : (portfolioReturn / maxPossibleReturn) * 100;
+          const score = capitalBenchScore(portfolioReturn, maxPossibleReturn);
+          if (score === null) return null;
           return {
             modelId: row.model_id,
             portfolioReturn,
             maxPossibleReturn,
             maxPossibleLabel,
-            capitalBenchScore
+            capitalBenchScore: score
           };
         })
         .filter((row): row is NonNullable<typeof row> => row !== null)
@@ -162,7 +155,7 @@ const initialNowIso = new Date().toISOString();
                   <article class="latest-weekly-score-audit">
                     <span>CapitalBench Score</span>
                     <strong>{winnerScore.toFixed(1)}</strong>
-                    <small>0-100 score, not return % · {pct(winnerReturn)} / {pct(maxPossibleReturn)} max</small>
+                    <small>bounded 0-100 · portfolio {pct(winnerReturn)} · best asset {pct(maxPossibleReturn)}</small>
                   </article>
                 )}
               </div>
@@ -230,14 +223,15 @@ const initialNowIso = new Date().toISOString();
                 <div>
                   <span class="panel-kicker">CapitalBench Score audit</span>
                   <h3>Score Formula</h3>
-                  <p>Scores are out of 100, not portfolio returns.</p>
+                  <p>Each portfolio return is converted to a bounded 0-100 score before averaging.</p>
                 </div>
               </div>
               <div class="published-score-context">
                 {scoreAuditRows.map((row) => (
                   <span>
                     <strong>{modelLabel(row.modelId)}</strong>
-                    {row.capitalBenchScore.toFixed(1)} / 100 = {pct(row.portfolioReturn)} / {pct(row.maxPossibleReturn)} max asset: {row.maxPossibleLabel}
+                    {row.capitalBenchScore.toFixed(1)} / 100 · portfolio {pct(row.portfolioReturn)} · best asset{" "}
+                    {pct(row.maxPossibleReturn)}: {row.maxPossibleLabel}
                   </span>
                 ))}
               </div>

@@ -9,6 +9,7 @@ import {
   staticRoundReturns,
   type ResultReturnRecord
 } from "./localRoundRecords";
+import { capitalBenchScore } from "./capitalBenchScore.js";
 import { providerLogoSrc } from "./scoreReturnChart";
 import { roundTrack, type BenchmarkTrack } from "./tracks";
 
@@ -108,12 +109,6 @@ function average(values: number[]): number {
   return values.reduce((total, value) => total + value, 0) / values.length;
 }
 
-function normalizedScore(value: number, ceiling: number): number {
-  if (!Number.isFinite(ceiling)) return 0;
-  if (Math.abs(ceiling) < 0.0000001) return value === ceiling ? 100 : 0;
-  return (value / ceiling) * 100;
-}
-
 function trackLabel(track: BenchmarkTrack): string {
   return track === "weekly" ? "Weekly" : "Monthly";
 }
@@ -186,7 +181,7 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
   for (const roundScore of comparisonRounds) {
     if (finiteNumber(roundScore.benchmarkReturn)) {
       benchmarkReturns.push(roundScore.benchmarkReturn);
-      benchmarkScores.push(normalizedScore(roundScore.benchmarkReturn, roundScore.maxReturn));
+      benchmarkScores.push(capitalBenchScore(roundScore.benchmarkReturn, roundScore.maxReturn) ?? 0);
       benchmarkRounds.push(roundScore.round.round_id);
     }
 
@@ -201,7 +196,7 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
       };
       existing.returns.push(participant.returnValue);
       if (finiteNumber(participant.alphaValue)) existing.alphas.push(participant.alphaValue);
-      existing.scores.push(normalizedScore(participant.returnValue, roundScore.maxReturn));
+      existing.scores.push(capitalBenchScore(participant.returnValue, roundScore.maxReturn) ?? 0);
       existing.rounds.push(roundScore.round.round_id);
       modelAccumulators.set(participant.modelId, existing);
     }

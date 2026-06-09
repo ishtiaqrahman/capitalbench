@@ -8,6 +8,7 @@ import {
   handleDataApiRequest,
   hashApiKey
 } from "../src/lib/dataApi.js";
+import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import apiReadModel from "../src/generated/apiReadModel.js";
 
 function getRequest(path, token) {
@@ -386,7 +387,8 @@ test("round results endpoint mirrors canonical scored rows and universe returns"
   for (const row of result.body.data) {
     assertApproxEqual(row.alpha_pp, row.portfolio_return_pct - row.benchmark_return_pct);
     assertApproxEqual(row.regret_vs_best_option_pct, row.max_possible_return_pct - row.portfolio_return_pct);
-    assertApproxEqual(row.capitalbench_score, (row.portfolio_return_pct / row.max_possible_return_pct) * 100);
+    assertApproxEqual(row.capitalbench_score, capitalBenchScore(row.portfolio_return_pct, row.max_possible_return_pct));
+    assert.ok(row.capitalbench_score >= 0);
     assert.ok(row.capitalbench_score <= 100);
   }
 });

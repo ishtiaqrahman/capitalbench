@@ -29,21 +29,26 @@ import PageHeader from "../components/PageHeader.astro";
         <li>Cash comparison: whether the model's return beats a cash return.</li>
       </ul>
 
-      <h2>CapitalBench Score</h2>
+      <h2 id="capitalbench-score">CapitalBench Score</h2>
       <p>
-        CapitalBench Score is the primary cumulative benchmark score. It asks how much of the best available return in
-        each completed test a model captured. A score of 100 for a test means the model matched the highest-returning
-        scored option in that same window. The S&amp;P 500 can also be plotted on this scale as a benchmark reference.
+        CapitalBench Score measures how much of the positive opportunity in one completed test a model captured. It is
+        always bounded from 0 to 100, so one losing test cannot create an unlimited negative value that erases several
+        successful tests.
+      </p>
+      <ul>
+        <li><strong>100:</strong> the portfolio matched the highest-returning asset in the saved universe.</li>
+        <li><strong>Between 0 and 100:</strong> the portfolio captured that share of the best positive return.</li>
+        <li><strong>0:</strong> the portfolio return was negative while a positive opportunity existed.</li>
+        <li><strong>Cash-best test:</strong> if no asset beats cash, a 0% portfolio scores 100 and a losing portfolio scores 0.</li>
+      </ul>
+      <p>
+        Example: if a portfolio returns 3.93% and the best asset returns 4.62%, the score is 85.1. If the portfolio
+        loses 2% while the best asset gains 4%, the score is 0, not -50. The loss still appears in average return,
+        compounded return, S&amp;P 500 comparison, hit rate, and worst-test statistics.
       </p>
       <p>
-        The score is not a return percentage. For example, if a model portfolio returns 3.93% and the best asset in
-        that same saved asset list returns 4.62%, the CapitalBench Score is 85.1 because 3.93 divided by 4.62, times
-        100, equals 85.1.
-      </p>
-      <p>
-        The maximum possible return is a hindsight ceiling, not a model portfolio and not an investable recommendation.
-        It exists to normalize different market windows: a one-week test where the best asset rises 2% and another
-        where the best asset rises 12% can be compared on the same 0-to-100 scale.
+        The maximum possible return is a hindsight ceiling, not a model portfolio or recommendation. It normalizes
+        different market windows while the separate return statistics preserve the size of gains and losses.
       </p>
 
       <h2>Price Inputs</h2>
@@ -71,7 +76,7 @@ import PageHeader from "../components/PageHeader.astro";
         </div>
         <div>
           <span>CapitalBench Score</span>
-          <code>100 * portfolio_return / max_possible_return</code>
+          <code>clamp(100 * portfolio_return / max_possible_return, 0, 100)</code>
         </div>
         <div>
           <span>Regret</span>
@@ -82,9 +87,13 @@ import PageHeader from "../components/PageHeader.astro";
       <h2>Overall Results</h2>
       <p>
         Overall results keep weekly and monthly tracks separate. For each completed test, CapitalBench computes the
-        model's CapitalBench Score using that test's maximum possible return. The headline overall score averages
-        per-test score ratios across all resolved tests in that track. It is not average return divided by average max.
-        A model added later is shown with fewer included tests and marked short history.
+        bounded 0-to-100 score first. The headline overall score is the simple average of those per-test scores across
+        all resolved tests in that track. It is not average return divided by average max.
+      </p>
+      <p>
+        Example: test scores of 28.2, 44.5, 56.4, and 0 produce an overall score of 32.3. A losing test contributes
+        zero to opportunity capture; it does not contribute an unlimited negative number. A model added later is shown
+        with fewer included tests and marked short history.
       </p>
       <p>
         The overall view also shows average raw return and S&amp;P 500 context, but those are supporting context. The
@@ -114,8 +123,8 @@ import PageHeader from "../components/PageHeader.astro";
     <aside class="side-panel">
       <strong>Main score</strong>
       <p>
-        CapitalBench Score is normalized to the highest-returning scored option in each completed window. Raw return
-        and S&amp;P 500 comparison remain visible as context.
+        CapitalBench Score is bounded from 0 to 100 and then averaged across resolved tests. Raw and compounded returns
+        remain visible so downside severity is not hidden.
       </p>
     </aside>
   </section>

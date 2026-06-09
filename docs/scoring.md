@@ -123,8 +123,9 @@ For each official model submission:
 
 Latest-test tables sort by `alpha_vs_sp500` descending. Ties are resolved by
 lower regret, higher confidence, and then model id. Overall scorecards use
-CapitalBench Score, defined as `100 * selected_asset_return / max_possible_return`
-for each completed test where full-universe scoring returns exist.
+CapitalBench Score, defined as
+`clamp(100 * portfolio_return / max_possible_return, 0, 100)` for each
+completed test where full-universe scoring returns exist.
 
 The benchmark option must be identifiable as S&P 500, usually with
 `is_benchmark: true` and `asset_symbol: SPY`.
@@ -208,15 +209,21 @@ Across multiple resolved rounds, each round counts as one game. For each model,
 CapitalBench computes a per-round CapitalBench Score:
 
 ```text
-capitalbench_score = 100 * selected_asset_return / max_possible_return
+capitalbench_score = clamp(
+    100 * portfolio_return / max_possible_return,
+    0,
+    100,
+)
 ```
 
 `max_possible_return` is the highest realized return among scored options in the
 frozen universe for that round. A score of 100 means the model matched the
-maximum possible return in that completed window. The cumulative score averages
-per-round CapitalBench Scores across all resolved rounds in that track. Models
-that did not participate in every resolved round are shown as short history
-until they have a full track history.
+maximum possible return in that completed window. A negative portfolio return
+scores 0 rather than creating an unbounded negative score. Because CASH is part
+of the universe, the maximum possible return cannot be below zero; when CASH is
+best at 0%, a 0% portfolio scores 100 and a losing portfolio scores 0. The
+cumulative score averages per-round bounded CapitalBench Scores across all
+resolved rounds in that track.
 
 Example:
 

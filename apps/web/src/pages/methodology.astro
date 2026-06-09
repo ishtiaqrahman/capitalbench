@@ -376,7 +376,7 @@ const earlierUniverseText = joinWithAnd(
           </div>
           <div>
             <span>CapitalBench Score</span>
-            <code>100 * portfolio_return / max_possible_return</code>
+            <code>clamp(100 * portfolio_return / max_possible_return, 0, 100)</code>
           </div>
           <div>
             <span>Regret versus max possible</span>
@@ -391,7 +391,7 @@ const earlierUniverseText = joinWithAnd(
           Cash is treated as a zero return unless cash prices are explicitly supplied. Portfolio tests use the weighted
           realized return of the submitted portfolio. Latest-test tables show raw portfolio return, S&amp;P 500 return,
           Portfolio Minus S&amp;P 500, and regret. Combined track scorecards use CapitalBench Score, where 100 means matching the highest-returning
-          scored option in that completed window. Overall scores average per-test score ratios, not average return divided by average max.
+          scored option and a losing portfolio scores 0. Overall scores average bounded per-test scores, not average return divided by average max.
         </p>
         <p>
           Overall track scorecards combine all resolved tests in the track. If a model is added later, it is shown with

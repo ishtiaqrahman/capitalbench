@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-08-bounded-capitalbench-score",
+    date: "2026-06-08",
+    title: "CapitalBench Score bounded to a true 0-100 scale",
+    category: "Methodology",
+    status: "updated",
+    summary:
+      "Per-test opportunity-capture scores now floor losing returns at zero before full-history scores are averaged.",
+    details: [
+      "A model that matches the best asset scores 100, a positive return captures a proportional score, and a losing return scores 0.",
+      "Full-history weekly and monthly scores are simple averages of the bounded per-test scores, preventing one loss from creating an unlimited negative value.",
+      "Average return, compounded return, S&P 500 comparison, hit rate, and worst-test statistics continue to show the magnitude of downside separately.",
+      "The scoring page now documents the formula, cash-best edge case, and cumulative calculation with examples."
+    ],
+    links: [
+      { label: "Scoring", href: "/scoring#capitalbench-score" },
+      { label: "Overall weekly", href: "/leaderboards/cumulative-weekly" },
+      { label: "API docs", href: "/api" }
+    ]
+  },
+  {
     id: "2026-06-07-model-risk-pulse",
     date: "2026-06-07",
     title: "Live and historical AI Risk Appetite published",

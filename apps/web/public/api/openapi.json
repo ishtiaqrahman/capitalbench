@@ -1209,7 +1209,7 @@
           "benchmark_return_pct": { "type": "number" },
           "alpha_pp": { "type": "number", "description": "Portfolio Minus S&P 500, in percentage points." },
           "max_possible_return_pct": { "type": ["number", "null"], "description": "Highest realized return among scored options in the saved universe, in percentage points." },
-          "capitalbench_score": { "type": ["number", "null"], "description": "Score where 100 means matching the maximum possible return in that window." },
+          "capitalbench_score": { "type": ["number", "null"], "description": "Bounded 0-100 score where 100 matches the maximum possible return and a losing portfolio scores 0." },
           "round_count": { "type": "integer" },
           "tests_required": { "type": "integer", "description": "Number of resolved tests in this cumulative comparison." },
           "tests_included": { "type": "integer", "description": "Number of resolved tests included for this row." },

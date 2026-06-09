@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
+import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { buildCumulativeLeaderboardData } from "../src/lib/dataApi.js";
 
 const repoRoot = resolve(process.cwd(), "../..");
@@ -179,12 +180,6 @@ function dayDiff(startDate, endDate) {
   const end = Date.parse(`${endDate}T00:00:00Z`);
   if (!Number.isFinite(start) || !Number.isFinite(end)) return null;
   return Math.round((end - start) / 86_400_000);
-}
-
-function expectedCapitalBenchScore(portfolioReturnPct, maxReturnPct) {
-  if (typeof portfolioReturnPct !== "number" || typeof maxReturnPct !== "number") return null;
-  if (Math.abs(maxReturnPct) < EPSILON) return Math.abs(portfolioReturnPct - maxReturnPct) < EPSILON ? 100 : 0;
-  return (portfolioReturnPct / maxReturnPct) * 100;
 }
 
 function average(values) {
@@ -947,7 +942,7 @@ for (const round of apiReadModel.rounds) {
       if (!approxEqual(row.regret_vs_best_option_pct, expectedRegret)) {
         failures.push(`${rowKey(row)} regret_vs_best_option_pct ${row.regret_vs_best_option_pct} does not match max minus portfolio ${expectedRegret}`);
       }
-      const expectedScore = expectedCapitalBenchScore(row.portfolio_return_pct, maxReturnPct);
+      const expectedScore = capitalBenchScore(row.portfolio_return_pct, maxReturnPct);
       if (!approxEqual(row.capitalbench_score, expectedScore)) {
         failures.push(`${rowKey(row)} capitalbench_score ${row.capitalbench_score} does not match expected score ${expectedScore}`);
       }
@@ -956,6 +951,9 @@ for (const round of apiReadModel.rounds) {
       }
       if (row.capitalbench_score > 100 + EPSILON) {
         failures.push(`${rowKey(row)} capitalbench_score ${row.capitalbench_score} exceeds 100`);
+      }
+      if (row.capitalbench_score < -EPSILON) {
+        failures.push(`${rowKey(row)} capitalbench_score ${row.capitalbench_score} is below 0`);
       }
 
       const allocations = apiReadModel.allocations.filter(

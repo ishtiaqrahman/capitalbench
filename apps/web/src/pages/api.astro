@@ -181,7 +181,7 @@ const concepts = [
   ["Positioning", "Portfolio weights aggregated by asset, category, model, or track."],
   ["Proof", "Round files, hashes, timestamps, prompt inputs, prices, and portfolio records."],
   ["Portfolio Minus S&P 500", "Model portfolio return minus the S&P 500 return, in percentage points."],
-  ["CapitalBench Score", "Model return scaled to the maximum possible return in each completed window; cumulative rows average per-test score ratios."],
+  ["CapitalBench Score", "Bounded 0-100 opportunity-capture score; cumulative rows average bounded per-test scores."],
   ["AI Risk Appetite", "A 0–100 allocation signal calculated from the newest live weekly and monthly AI model portfolios. It does not use prices or returns."],
   ["Resolved score set", "All completed tests used for headline cumulative scores in the selected track."]
 ];
@@ -189,7 +189,7 @@ const concepts = [
 const fields = [
   ["allocation_pct", "Portfolio or aggregate weight, in percentage points."],
   ["alpha_pp", "Portfolio Minus S&P 500, in percentage points."],
-  ["capitalbench_score", "Score where 100 means matching the maximum possible return in that window; cumulative rows average per-test score ratios."],
+  ["capitalbench_score", "Bounded score where 100 matches the maximum possible return and a losing return scores 0; cumulative rows average per-test scores."],
   ["comparison", "Cumulative leaderboard metadata showing included resolved rounds, test counts, and aggregation mode."],
   ["effective_asset_count", "Concentration metric equal to one divided by summed squared asset shares."],
   ["max_possible_return_pct", "Highest realized return among scored options in the saved universe; cumulative rows report the average of per-test max values."],
