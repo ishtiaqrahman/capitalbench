@@ -192,7 +192,7 @@ function priceValue(row: Record<string, string>): number | null {
 
 function loadRoundEntryPrices(): EntryPrice[] {
   const text = readRoundText("prices", "entry_prices.csv");
-  if (!text) return entryPrices;
+  if (!text) return existsSync(roundRoot) ? [] : entryPrices;
   return parseCsv(text)
     .map((row) => ({
       option_id: row.option_id,
