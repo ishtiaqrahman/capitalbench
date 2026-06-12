@@ -1,0 +1,54 @@
+{
+  "confidence": 0.45,
+  "cost_usd": 0.47973,
+  "is_official_score": true,
+  "key_risks": [
+    "Hawkish FOMC dots or Powell press conference on June 17 despite a hold, hitting growth and small caps",
+    "Hot May retail sales (June 17) reigniting inflation/rate fears",
+    "Oil price reversal dragging the energy hedge while not helping growth holdings",
+    "Weak 20-year auction pushing long yields higher, pressuring high-duration equities"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "option_id": "NASDAQ100",
+      "rationale": "Soft core CPI plus near-certain Fed hold supports rate-sensitive mega-cap growth rebounding after a weak week."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Strongest momentum theme; dip after pullback offers high beta to a post-FOMC relief rally."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SMALL_VALUE",
+      "rationale": "Small caps rallied 3% on cool core CPI; benefits from dovish hold and steady economy."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "MOMENTUM",
+      "rationale": "Persistent factor strength (5.2% 30d) in a trending market."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "ENERGY",
+      "rationale": "WTI ~$95 with rising headline inflation; energy hedges hawkish-FOMC or oil-spike tail risk."
+    }
+  ],
+  "portfolio_rationale": "Cool core CPI (0.2% MoM) and 97% odds of an FOMC hold favor risk-on growth and small caps into the June 17 decision, balanced with an energy hedge against headline-inflation/oil tail risk.",
+  "provider": "anthropic",
+  "rationale_summary": "Pro-risk tilt toward growth, semis, momentum and small value into an expected benign FOMC hold, with energy as an inflation hedge.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-12-1W",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.47973,
+    "input_tokens": 44433,
+    "latency_seconds": 14.886057541007176,
+    "output_tokens": 708,
+    "total_tokens": 45141
+  }
+}

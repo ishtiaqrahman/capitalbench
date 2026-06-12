@@ -1,0 +1,55 @@
+{
+  "confidence": 0.45,
+  "cost_usd": 0.4764,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp factor rotation or AI/semiconductor de-rating reverses momentum exposures simultaneously",
+    "Hawkish FOMC surprise on June 17 hits high-beta growth and EM Asia",
+    "Oil price reversal from $95 drags energy allocation",
+    "Dollar strength (broad index at 120) pressures Korea/Taiwan returns",
+    "Concentrated correlation between SMH, EWY, EWT, and MTUM amplifies drawdowns"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Strongest momentum theme (64.8% 6m) backed by AI capex cycle and strong manufacturing PMI; recent 7d pullback offers entry."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SOUTH_KOREA",
+      "rationale": "Powerful momentum (11.4% 30d, 114% 6m) tied to semiconductor cycle and domestic reform rally."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "TAIWAN",
+      "rationale": "Semiconductor supply-chain leverage with strong 30d momentum."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "MOMENTUM",
+      "rationale": "Broad momentum factor leading US factors (5.2% 30d, 25% 6m) in a trending market."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "ENERGY",
+      "rationale": "WTI at $95 with strong oil momentum and sticky headline inflation; energy equities lag spot oil's 6m run, offering catch-up and inflation hedge."
+    }
+  ],
+  "portfolio_rationale": "With the Fed on hold, robust ISM data, soft core CPI, and a strong AI/semiconductor cycle, tilt toward high-momentum tech/semi exposure (SMH, EWY, EWT, MTUM) while energy hedges the high-headline-inflation, $95-oil regime.",
+  "provider": "anthropic",
+  "rationale_summary": "Momentum-led barbell: AI/semiconductor and Korea/Taiwan momentum plus energy as an inflation/oil hedge to beat SPY over one month.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-12-1M",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.4764,
+    "input_tokens": 43605,
+    "latency_seconds": 13.517976843053475,
+    "output_tokens": 807,
+    "total_tokens": 44412
+  }
+}

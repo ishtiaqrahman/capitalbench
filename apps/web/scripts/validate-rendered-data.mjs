@@ -1563,16 +1563,29 @@ function modelFingerprint(modelId) {
     rows.push(allocation);
     byPortfolio.set(key, rows);
   }
-  const portfolioRows = Array.from(byPortfolio.values()).map((rows) =>
-    [...rows].sort((left, right) => left.allocation_rank - right.allocation_rank || right.allocation_bps - left.allocation_bps)
-  );
+  const portfolioRows = Array.from(byPortfolio.values()).map((rows) => {
+    const perAsset = new Map();
+    for (const allocation of [...rows].sort((left, right) => left.allocation_rank - right.allocation_rank)) {
+      if (!allocation.option_id || allocation.allocation_bps <= 0) continue;
+      const existing =
+        perAsset.get(allocation.option_id) ??
+        ({
+          ...allocation,
+          allocation_bps: 0
+        });
+      existing.allocation_bps += allocation.allocation_bps;
+      perAsset.set(allocation.option_id, existing);
+    }
+    return Array.from(perAsset.values()).sort((left, right) => right.allocation_bps - left.allocation_bps);
+  });
   const portfolioCount = portfolioRows.length;
   const denominator = portfolioCount * 10_000;
   const assets = new Map();
   const categories = new Map();
 
   for (const rows of portfolioRows) {
-    for (const allocation of rows) {
+    rows.forEach((allocation, index) => {
+      const isTopHolding = index === 0;
       const existing =
         assets.get(allocation.option_id) ??
         {
@@ -1586,11 +1599,11 @@ function modelFingerprint(modelId) {
         };
       existing.total_bps += allocation.allocation_bps;
       existing.portfolio_keys.add(uniquePortfolioKey(allocation));
-      if (allocation.allocation_rank === 1) existing.top_pick_count += 1;
+      if (isTopHolding) existing.top_pick_count += 1;
       assets.set(allocation.option_id, existing);
       const group = groupLabel(allocation.category);
       categories.set(group, (categories.get(group) ?? 0) + allocation.allocation_bps);
-    }
+    });
   }
 
   const assetRows = Array.from(assets.values())

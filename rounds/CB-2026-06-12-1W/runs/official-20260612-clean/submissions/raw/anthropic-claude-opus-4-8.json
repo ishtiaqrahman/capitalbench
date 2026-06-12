@@ -1,0 +1,52 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Dovish surprise or soft-landing tone at FOMC could spark a tech/growth rally that leaves defensives underperforming the benchmark",
+    "Hot retail sales (June 17) or hawkish Fed could pressure rate-sensitive defensives like staples and healthcare",
+    "Crowded defensive trade may mean-revert if VIX continues falling and risk appetite returns",
+    "Concentration in low-beta names caps upside if S&P 500 rebounds sharply from the prior week's -2.55% drop"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Defensive sector with strong recent relative strength (+3.94% 7d) amid market selloff; hot CPI/PPI and FOMC week favor defensives."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive factor outperforming (+1.96% 7d) into FOMC; sticky inflation and high valuations argue for lower-beta positioning."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with positive momentum (+1.32% 7d, +5.65% 30d), low policy event risk in window."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "Industry showing resilience (+1.93% 7d) with steady demand backdrop, decorrelated from tech-led selloff."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like ballast against FOMC and hot inflation print volatility while earning short-rate yield."
+    }
+  ],
+  "portfolio_rationale": "With hot May CPI/PPI (headline CPI 4.2% YoY, PPI 6.5% YoY), rising inflation expectations, and a high-stakes FOMC decision June 17, the setup favors defensive equity factors/sectors that outperformed during last week's broad selloff, hedged with short Treasuries.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt defensive into FOMC and sticky-inflation week: staples, low-vol, healthcare, and aerospace/defense led on relative strength while tech sold off; short Treasuries provide ballast.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-12-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 44437,
+    "latency_seconds": 12.144873393001035,
+    "output_tokens": 833,
+    "total_tokens": 45270
+  }
+}
