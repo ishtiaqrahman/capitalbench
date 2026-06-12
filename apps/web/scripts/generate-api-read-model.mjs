@@ -10,6 +10,7 @@ import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
 const repoRoot = resolve(process.cwd(), "../..");
 const roundsRoot = join(repoRoot, "rounds");
 const outputPath = join(process.cwd(), "src", "generated", "apiReadModel.js");
+const buildDate = new Date().toISOString().slice(0, 10);
 
 const PROVIDER_LABELS = {
   anthropic: "Anthropic",
@@ -191,6 +192,11 @@ function horizonDays(entryDate, exitDate) {
   return Math.round((end - start) / 86_400_000);
 }
 
+function roundStatus({ hasResults, exitDate }) {
+  if (hasResults) return "resolved";
+  return exitDate && exitDate < buildDate ? "overdue" : "active";
+}
+
 function loadOptions(roundPath, currentOptionIds, roundId) {
   const yaml = readYaml(join(roundPath, "options.yaml"), {});
   const options = Array.isArray(yaml.options) ? yaml.options : [];
@@ -278,9 +284,9 @@ function loadRound(row) {
   const selectedRun = publicOfficialRuns(roundPath)[0];
   if (!selectedRun) return null;
   const resultsPath = join(roundPath, "runs", selectedRun.run_id, "results", "leaderboard.csv");
-  const status = existsSync(resultsPath) ? "resolved" : "active";
   const entryDate = String(manifest.entry_date ?? "");
   const exitDate = String(manifest.exit_date ?? "");
+  const status = roundStatus({ hasResults: existsSync(resultsPath), exitDate });
   const round = {
     round_id: String(manifest.round_id),
     title: String(manifest.title ?? manifest.round_id),
@@ -426,7 +432,7 @@ function loadReturns({ roundPath, round, selectedRun }) {
       exit_price_source: row.exit_price_source || "",
       return_pct: percentReturnValue(row.return),
       rank: numberValue(row.rank),
-      is_benchmark: boolValue(row.is_benchmark),
+      is_benchmark: isBenchmarkOption(row.option_id, boolValue(row.is_benchmark)),
       is_cash: boolValue(row.is_cash)
     }))
     .filter((row) => row.option_id);

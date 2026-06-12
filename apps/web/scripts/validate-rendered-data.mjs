@@ -320,6 +320,13 @@ function publicRoundStatus(status) {
   return status === "active" ? "pending" : status;
 }
 
+function publicRoundStatusLabel(status) {
+  if (status === "resolved") return "scored";
+  if (status === "active") return "pending";
+  if (status === "overdue") return "resolution due";
+  return status;
+}
+
 function average(values) {
   return values.length ? values.reduce((total, value) => total + value, 0) / values.length : 0;
 }
@@ -549,14 +556,19 @@ function buildLivePerformanceSummary() {
     );
 
   const benchmarkRows = Array.from(benchmarkByRound.values());
+  const latestPriceDate = rows.reduce((latest, row) => (row.price_date > latest ? row.price_date : latest), "");
 
   return {
     modelRows,
     benchmark_return_pct: average(benchmarkRows.map((row) => row.sp500_return_pct)),
     benchmark_round_count: benchmarkRows.length,
-    latest_price_date: rows.reduce((latest, row) => (row.price_date > latest ? row.price_date : latest), ""),
+    latest_price_date: latestPriceDate,
     open_round_count: new Set(rows.map((row) => row.round_id)).size,
-    next_final_date: rows.map((row) => row.exit_date).filter(Boolean).sort()[0] ?? ""
+    next_final_date:
+      rows
+        .map((row) => row.exit_date)
+        .filter((date) => date && (!latestPriceDate || date > latestPriceDate))
+        .sort()[0] ?? ""
   };
 }
 
@@ -1087,18 +1099,21 @@ function trackWindowLabel(round) {
 function scoreEtaLine(round) {
   if (!round) return "No active test.";
   if (round.status === "resolved") return "Scores are published.";
+  if (round.status === "overdue") return `Resolution is due; the ${round.exit_date} close has passed.`;
   return `Scores after the ${round.exit_date} close.`;
 }
 
 function homepageScoreLine(round) {
   if (!round) return "No score window declared yet.";
   if (round.status === "resolved") return "Scores are published.";
+  if (round.status === "overdue") return `Resolution is due; the ${dateOnly(round.exit_date)} ending close has passed.`;
   return `Results publish after the ${dateOnly(round.exit_date)} ending close.`;
 }
 
 function trackStatusLabel(round) {
   if (!round) return "Not started";
   if (round.status === "resolved") return "Scored";
+  if (round.status === "overdue") return "Resolution due";
   if (round.status === "archived") return "Archived";
   return "Waiting for result";
 }
@@ -2073,7 +2088,7 @@ for (const round of apiReadModel.rounds) {
   includes(roundsIndexHtml, round.round_id, context);
   includes(roundsIndexHtml, `/rounds/${round.round_id}/`, `${context} proof link`);
   includes(roundsIndexHtml, roundTrackLabel(round), `${context} track`);
-  includes(roundsIndexHtml, round.status === "resolved" ? "scored" : round.status, `${context} status`);
+  includes(roundsIndexHtml, publicRoundStatusLabel(round.status), `${context} status`);
   includes(roundsIndexHtml, dateOnly(round.decision_deadline_utc), `${context} decision deadline`);
   includes(roundsIndexHtml, round.horizon, `${context} horizon`);
   includes(roundsIndexHtml, dateOnly(round.exit_date), `${context} exit date`);
@@ -2497,6 +2512,11 @@ if (livePerformance.modelRows.length > 0) {
   includes(indexHtml, String(livePerformance.open_round_count), "homepage live performance open round count");
   includes(indexHtml, shortDate(livePerformance.latest_price_date), "homepage live performance latest close");
   includes(indexHtml, shortDate(livePerformance.next_final_date), "homepage live performance next final date");
+  if (livePerformance.next_final_date && livePerformance.latest_price_date && livePerformance.next_final_date <= livePerformance.latest_price_date) {
+    failures.push(
+      `homepage live performance next final date ${livePerformance.next_final_date} is not after latest close ${livePerformance.latest_price_date}`
+    );
+  }
   includes(indexHtml, liveLeader.label, "homepage live performance leader");
   includes(indexHtml, signedPercentPointLabel(liveLeader.return_pct), "homepage live performance leader return");
   includes(indexHtml, signedPercentPointLabel(liveLeader.benchmark_return_pct), "homepage live performance leader benchmark return");
@@ -2612,7 +2632,7 @@ for (const round of apiReadModel.rounds) {
   includes(html, round.official_run_id, context);
   includes(html, round.entry_date, context);
   includes(html, round.exit_date, context);
-  includes(html, round.status === "resolved" ? "scored" : "pending", context);
+  includes(html, publicRoundStatusLabel(round.status), context);
   const roundDataset = datasetJsonLd(html, `${context} JSON-LD`);
   const roundPublishedDate = round.decision_date || round.entry_date;
   const roundPerformanceDates = (apiReadModel.interim_performance ?? [])

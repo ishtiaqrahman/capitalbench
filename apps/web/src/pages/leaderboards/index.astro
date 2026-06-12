@@ -152,6 +152,7 @@ function trackWindowLabel(round?: RoundRecord): string {
 function scoreEtaLine(round?: RoundRecord): string {
   if (!round) return "No active test.";
   if (round.status === "resolved") return "Scores are published.";
+  if (round.status === "overdue") return `Resolution is due; the ${dateOnly(round.exit_date)} close has passed.`;
   return `Scores after the ${dateOnly(round.exit_date)} close.`;
 }
 

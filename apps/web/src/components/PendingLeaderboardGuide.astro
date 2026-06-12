@@ -7,7 +7,7 @@ interface Props {
   exitDate?: string;
   scoreEtaUtc?: string;
   scoreEtaSource?: "automation" | "derived";
-  status?: "pending" | "resolved" | "archived";
+  status?: "pending" | "resolved" | "overdue" | "archived";
   initialNowIso?: string;
   ctaHref?: string;
 }
@@ -23,12 +23,15 @@ const {
   ctaHref
 } = Astro.props;
 
+const overdueCopy = status === "overdue";
 const copy = {
   latest: {
-    kicker: "Pending result",
-    title: "Scores Are Not Ready Yet",
+    kicker: overdueCopy ? "Resolution due" : "Pending result",
+    title: overdueCopy ? "Scores Need Publication" : "Scores Are Not Ready Yet",
     body:
-      `${roundId} has saved model portfolios and starting prices. Scores appear after ending prices are collected.`,
+      overdueCopy
+        ? `${roundId} has passed its exit date but does not have a published score yet.`
+        : `${roundId} has saved model portfolios and starting prices. Scores appear after ending prices are collected.`,
     columns: ["Model", "Provider", "Pick", "Holdings", "Portfolio return", "S&P 500", "Portfolio Minus S&P 500"],
     sort: "Portfolio Minus S&P 500 descending, then lower regret, higher confidence, and model id.",
     cta: "Review model portfolios"

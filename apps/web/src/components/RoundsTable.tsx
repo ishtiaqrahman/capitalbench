@@ -22,10 +22,23 @@ function withAuditPaths(rows: RoundRecord[]): RoundTableRow[] {
 
 function mergeRemoteRows(fallbackRows: RoundRecord[], remoteRows: RoundRecord[]): RoundRecord[] {
   const fallbackById = new Map(fallbackRows.map((row) => [row.round_id, row]));
-  return remoteRows.map((remoteRow) => ({
-    ...(fallbackById.get(remoteRow.round_id) ?? {}),
-    ...remoteRow
-  }));
+  return remoteRows.map((remoteRow) => {
+    const fallbackRow = fallbackById.get(remoteRow.round_id);
+    const merged = {
+      ...(fallbackRow ?? {}),
+      ...remoteRow
+    };
+    if (fallbackRow && fallbackRow.status !== "pending" && remoteRow.status === "pending") {
+      merged.status = fallbackRow.status;
+    }
+    return merged;
+  });
+}
+
+function publicStatusLabel(status: RoundRecord["status"]): string {
+  if (status === "resolved") return "scored";
+  if (status === "overdue") return "resolution due";
+  return status;
 }
 
 export default function RoundsTable({ fallbackRows }: Props) {
@@ -55,7 +68,7 @@ export default function RoundsTable({ fallbackRows }: Props) {
       value: (row) => trackLabel(roundTrack(row)),
       mobile: "primary"
     },
-    { key: "status", label: "Status", value: (row) => (row.status === "resolved" ? "scored" : row.status), mobile: "secondary" },
+    { key: "status", label: "Status", value: (row) => publicStatusLabel(row.status), mobile: "secondary" },
     { key: "decision_deadline_utc", label: "Picks Saved", value: (row) => dateOnly(row.decision_deadline_utc), mobile: "secondary" },
     { key: "horizon", label: "Length", mobile: "primary" },
     { key: "exit_date", label: "End", value: (row) => dateOnly(row.exit_date), mobile: "primary" },

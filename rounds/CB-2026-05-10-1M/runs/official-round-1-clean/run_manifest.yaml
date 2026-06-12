@@ -13,12 +13,19 @@ official_score_eligible: true
 operator_selected_official: true
 declared_official_at_utc: '2026-05-11T01:26:23Z'
 methodology_version: round1-v1.0
-methodology_notes: Round 1 used the frozen prompt and inputs hashed before model calls. The prompt text instructed models to use only information in the prompt; later CapitalBench methodology versions allow internal learned knowledge while still forbidding tools, browsing, live data, and post-cutoff retrieval.
+methodology_notes: Round 1 used the frozen prompt and inputs hashed before model calls.
+  The prompt text instructed models to use only information in the prompt; later CapitalBench
+  methodology versions allow internal learned knowledge while still forbidding tools,
+  browsing, live data, and post-cutoff retrieval.
 raw_response_text_preservation: sha_only_for_this_run
-raw_response_text_note: Exact raw provider response text was not persisted for this run because the run predates raw_responses sidecar preservation. run_log.jsonl contains the SHA256 hashes of the original provider text seen at runtime. Future runs preserve exact provider text under raw_responses/.
+raw_response_text_note: Exact raw provider response text was not persisted for this
+  run because the run predates raw_responses sidecar preservation. run_log.jsonl contains
+  the SHA256 hashes of the original provider text seen at runtime. Future runs preserve
+  exact provider text under raw_responses/.
 model_count: 4
 valid_submissions: 4
 invalid_submissions: 0
 loaded_models: 4
 skipped_models: 0
 completed_at_utc: '2026-05-11T00:15:37.748808+00:00'
+resolved_at_utc: '2026-06-12T17:12:42.859986+00:00'

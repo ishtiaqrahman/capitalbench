@@ -475,19 +475,23 @@ const allocationDisplayNote =
   round.submission_format === "single_pick"
     ? "This test used the original single-pick format. Each valid pick is displayed as a one-holding 100% portfolio while the validated JSON remains unchanged."
     : "This test used the portfolio format. The weights below are the submitted model portfolios.";
-const statusLabel = round.status === "resolved" ? "Scored" : round.status === "archived" ? "Archived" : "Pending";
+const isResolvedRound = round.status === "resolved";
+const isOverdueRound = round.status === "overdue";
+const statusLabel = isResolvedRound ? "Scored" : isOverdueRound ? "Resolution due" : round.status === "archived" ? "Archived" : "Pending";
 const track = roundTrack(round);
 const benchmarkTrackLabel = trackLabel(track);
-const roundStateTitle = round.status === "resolved" ? "Final Score Published" : "Score Pending";
-const pageTitle = round.status === "resolved" ? `${round.round_id} Result And Proof` : `${round.round_id} Proof Files`;
+const roundStateTitle = isResolvedRound ? "Final Score Published" : isOverdueRound ? "Resolution Due" : "Score Pending";
+const pageTitle = isResolvedRound ? `${round.round_id} Result And Proof` : `${round.round_id} Proof Files`;
 const pageDescription =
-  round.status === "resolved"
+  isResolvedRound
     ? `${round.title}: final model portfolio scores, S&P 500 return, Portfolio Minus S&P 500, entry and exit prices, prompt packet, and proof hashes for the ${round.horizon} market test.`
+    : isOverdueRound
+      ? `${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, overdue resolution status, and published proof hashes for the ${round.horizon} market test.`
     : `${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`;
 const roundPublishedDate = round.decision_date || round.entry_date;
 const roundModifiedDate = latestDate([
   roundPublishedDate,
-  round.status === "resolved" ? round.exit_date : undefined,
+  isResolvedRound ? round.exit_date : undefined,
   ...weeklyPerformanceRows.map((row) => row.price_date || row.target_date)
 ]);
 const roundDataset = datasetSchema({
@@ -514,7 +518,7 @@ const priceColumns = [
   { key: "symbol", label: "Symbol" },
   { key: "entry_date", label: "Entry Date" },
   { key: "entry_price", label: "Entry Price", align: "right" as const },
-  ...(round.status === "resolved"
+  ...(isResolvedRound
     ? [
         { key: "exit_date", label: "Exit Date" },
         { key: "exit_price", label: "Exit Price", align: "right" as const },
@@ -568,7 +572,7 @@ const attributionColumns = [
 >
   <section class="dashboard-header">
     <div class="dashboard-title">
-      <p class="eyebrow">{round.status === "resolved" ? "Final benchmark result" : "Test proof files"}</p>
+      <p class="eyebrow">{isResolvedRound ? "Final benchmark result" : isOverdueRound ? "Resolution due" : "Test proof files"}</p>
       <h1>{round.round_id}</h1>
       <div class="round-meta-row compact" aria-label="Round track">
         <span>{benchmarkTrackLabel} test</span>
@@ -577,13 +581,15 @@ const attributionColumns = [
       <p>{round.description}</p>
     </div>
     <aside class="header-note">
-      {round.status === "resolved"
+      {isResolvedRound
         ? "Scores are published from the saved files for this test."
+        : isOverdueRound
+          ? "This test is past its exit date and still needs a published score."
         : "Model portfolios are saved before scoring. Final returns wait for ending prices."}
     </aside>
   </section>
 
-  {round.status === "resolved" && resultWinner && (
+  {isResolvedRound && resultWinner && (
     <section class="section result-section" id="results">
       <div class="result-hero result-hero-round">
         <div>
@@ -683,12 +689,14 @@ const attributionColumns = [
         <strong>Start priced</strong>
         <p>{roundEntryPrices.length} starting-price rows published.</p>
       </li>
-      <li class={round.status === "resolved" ? "phase-complete" : "phase-current"}>
+      <li class={isResolvedRound ? "phase-complete" : isOverdueRound ? "phase-overdue" : "phase-current"}>
         <span>4</span>
-        <strong>{round.status === "resolved" ? "Scores published" : "Ending prices pending"}</strong>
+        <strong>{isResolvedRound ? "Scores published" : isOverdueRound ? "Resolution due" : "Ending prices pending"}</strong>
         <p>
-          {round.status === "resolved"
+          {isResolvedRound
             ? "The scoreboard is available for this completed test."
+            : isOverdueRound
+              ? `The ${round.exit_date} exit close has passed and this test needs resolution.`
             : `Scores publish after ${round.exit_date} prices are available.`}
         </p>
       </li>
@@ -698,9 +706,9 @@ const attributionColumns = [
   <nav class="round-tabs" aria-label="Test sections">
     <a href="#overview">Overview</a>
     <a href="#consensus">Consensus</a>
-    {round.status === "resolved" && <a href="#results">Results</a>}
+    {isResolvedRound && <a href="#results">Results</a>}
     <a href="#performance">Performance</a>
-    {round.status === "resolved" && attributionRows.length > 0 && <a href="#attribution">Attribution</a>}
+    {isResolvedRound && attributionRows.length > 0 && <a href="#attribution">Attribution</a>}
     <a href="#inputs">Inputs</a>
     <a href="#outputs">Outputs</a>
     <a href="#picks">Picks</a>
@@ -715,8 +723,10 @@ const attributionColumns = [
           <span class="panel-kicker">Test state</span>
           <h2>{roundStateTitle}</h2>
           <p>
-            {round.status === "resolved"
+            {isResolvedRound
               ? "This test has model portfolios, starting prices, ending prices, and final scores."
+              : isOverdueRound
+                ? "This test has saved inputs and model portfolios, but its exit date has passed without published final scores."
               : "This test has saved inputs and model portfolios. The scoreboard remains unavailable until ending prices are collected."}
           </p>
         </div>
@@ -736,7 +746,7 @@ const attributionColumns = [
           </article>
           <article class="feature">
             <span class="metric-label">Scoring</span>
-            <h3>{round.status === "resolved" ? "Published" : "Ending prices pending"}</h3>
+            <h3>{isResolvedRound ? "Published" : isOverdueRound ? "Resolution due" : "Ending prices pending"}</h3>
             <p>Portfolio return, S&P 500 return, maximum possible return, CapitalBench context, and regret publish after scoring.</p>
           </article>
         </div>
@@ -756,12 +766,14 @@ const attributionColumns = [
             <strong>Model-facing prompt available</strong>
             <p>{sharedPromptPacket.length.toLocaleString()} shared prompt characters.</p>
           </div>
-          <div class={`check-item ${round.status === "resolved" ? "complete" : "pending"}`}>
+          <div class={`check-item ${isResolvedRound ? "complete" : isOverdueRound ? "overdue" : "pending"}`}>
             <span aria-hidden="true"></span>
-            <strong>{round.status === "resolved" ? "Ending prices saved" : "Ending prices pending"}</strong>
+            <strong>{isResolvedRound ? "Ending prices saved" : isOverdueRound ? "Resolution due" : "Ending prices pending"}</strong>
             <p>
-              {round.status === "resolved"
+              {isResolvedRound
                 ? `${scoringPriceRows.length} entry and exit price rows support the final score.`
+                : isOverdueRound
+                  ? "The scoring window has ended, but canonical final result files are not published yet."
                 : "Scoreboard rows remain withheld until the exit close is priced."}
             </p>
           </div>
@@ -826,7 +838,7 @@ const attributionColumns = [
           </p>
         </div>
         <span class={`status-badge status-${round.status}`}>
-          {round.status === "resolved" ? "Pre-score consensus" : "Score pending"}
+          {isResolvedRound ? "Pre-score consensus" : isOverdueRound ? "Resolution due" : "Score pending"}
         </span>
       </div>
 
@@ -914,16 +926,18 @@ const attributionColumns = [
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">{round.status === "resolved" ? "Realized asset returns" : "Interim tracking"}</span>
-          <h2>{round.status === "resolved" ? "What Moved During The Test" : "Live Portfolio And S&P 500 Returns"}</h2>
+          <span class="panel-kicker">{isResolvedRound ? "Realized asset returns" : isOverdueRound ? "Pending score tracking" : "Interim tracking"}</span>
+          <h2>{isResolvedRound ? "What Moved During The Test" : "Live Portfolio And S&P 500 Returns"}</h2>
           <p>
-            {round.status === "resolved"
+            {isResolvedRound
               ? "The table shows the top realized asset returns over the official scoring window. These returns explain the opportunity set behind the model scores."
+              : isOverdueRound
+                ? "This chart shows the latest saved tracking rows for the expired test while final scoring files remain unpublished."
               : "Once at least one post-entry price snapshot exists, this chart tracks each saved model portfolio against S&P 500 from the test start date. It is interim research context, not the final score."}
           </p>
         </div>
       </div>
-      {round.status === "resolved" ? (
+      {isResolvedRound ? (
         <TableIsland
           client:visible
           rows={resultReturnRows}
@@ -944,7 +958,7 @@ const attributionColumns = [
     </div>
   </section>
 
-  {round.status === "resolved" && attributionRows.length > 0 && (
+  {isResolvedRound && attributionRows.length > 0 && (
     <section class="section" id="attribution">
       <div class="panel">
         <div class="panel-header">
@@ -1143,10 +1157,12 @@ const attributionColumns = [
       <div class="panel-header">
         <div>
           <span class="panel-kicker">Pricing</span>
-          <h2>{round.status === "resolved" ? "Scoring Prices" : "Starting Prices"}</h2>
+          <h2>{isResolvedRound ? "Scoring Prices" : "Starting Prices"}</h2>
           <p>
-            {round.status === "resolved"
+            {isResolvedRound
               ? "Entry and exit prices are shown for the completed close-to-close scoring window."
+              : isOverdueRound
+                ? "Ending prices and final result files are not published yet, even though the exit date has passed."
               : "Ending prices are intentionally absent until the test is complete."}
           </p>
         </div>
@@ -1156,8 +1172,8 @@ const attributionColumns = [
         rows={priceTableRows}
         columns={priceColumns}
         emptyText="No pricing rows are published yet."
-        tableLabel={round.status === "resolved" ? "Scoring prices" : "Starting prices"}
-        csvFilename={round.status === "resolved" ? "capitalbench-scoring-prices.csv" : "capitalbench-starting-prices.csv"}
+        tableLabel={isResolvedRound ? "Scoring prices" : "Starting prices"}
+        csvFilename={isResolvedRound ? "capitalbench-scoring-prices.csv" : "capitalbench-starting-prices.csv"}
       />
     </div>
   </section>

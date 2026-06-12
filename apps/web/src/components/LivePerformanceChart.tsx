@@ -195,6 +195,7 @@ export default function LivePerformanceChart({ rows, openRoundCounts }: Props) {
   const totalOpenRoundCount = openRoundCounts[track];
   const nextFinalDate = latestRows
     .map((row) => row.exit_date)
+    .filter((date) => !latestPriceDate || date > latestPriceDate)
     .filter(Boolean)
     .sort()[0];
 

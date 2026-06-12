@@ -596,7 +596,8 @@ export function buildCumulativeLeaderboardData(readModel, track) {
     .sort((a, b) =>
       Number(b.is_rank_eligible) - Number(a.is_rank_eligible) ||
       Number(b.capitalbench_score ?? -Infinity) - Number(a.capitalbench_score ?? -Infinity) ||
-      Number(b.alpha_pp ?? -Infinity) - Number(a.alpha_pp ?? -Infinity)
+      Number(b.alpha_pp ?? -Infinity) - Number(a.alpha_pp ?? -Infinity) ||
+      String(a.label).localeCompare(String(b.label))
     )
     .map((row, index) => ({ rank: index + 1, ...row }));
 
@@ -800,8 +801,8 @@ function listRounds(url) {
   const track = normalizedTrack(url);
   if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
   const status = String(url.searchParams.get("status") || "all").toLowerCase();
-  if (!["active", "resolved", "all"].includes(status)) {
-    return errorResult(400, "invalid_status", "status must be active, resolved, or all.");
+  if (!["active", "resolved", "overdue", "all"].includes(status)) {
+    return errorResult(400, "invalid_status", "status must be active, resolved, overdue, or all.");
   }
   const rows = filterByRoundStatus(filterByTrack(apiReadModel.rounds, track), status);
   return jsonApiResult(200, pageRows(rows, url));

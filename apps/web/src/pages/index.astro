@@ -329,6 +329,7 @@ const safeguards = [
 function statusLabel(round?: RoundRecord): string {
   if (!round) return "Not started";
   if (round.status === "resolved") return "Scored";
+  if (round.status === "overdue") return "Resolution due";
   if (round.status === "archived") return "Archived";
   return "Waiting for result";
 }
@@ -345,6 +346,7 @@ function windowLabel(round?: RoundRecord): string {
 function scoreLine(round?: RoundRecord): string {
   if (!round) return "No score window declared yet.";
   if (round.status === "resolved") return "Scores are published.";
+  if (round.status === "overdue") return `Resolution is due; the ${dateOnly(round.exit_date)} ending close has passed.`;
   return `Results publish after the ${dateOnly(round.exit_date)} ending close.`;
 }
 
@@ -360,6 +362,7 @@ function shortMonthDay(value?: string): string {
 function scoreShortLine(round?: RoundRecord): string {
   if (!round) return "No score date";
   if (round.status === "resolved") return "Scored";
+  if (round.status === "overdue") return `Resolution due since ${shortMonthDay(round.exit_date)}`;
   return `Results after ${shortMonthDay(round.exit_date)} close`;
 }
 
@@ -1235,10 +1238,10 @@ const trackLaneCards = trackStates.map((track) => {
                 <p>{track.round ? windowLabel(track.round) : "No window declared"}</p>
               </div>
             </li>
-            <li class={track.round?.status === "resolved" ? "phase-complete" : "phase-current"}>
+            <li class={track.round?.status === "resolved" ? "phase-complete" : track.round?.status === "overdue" ? "phase-overdue" : "phase-current"}>
               <span>3</span>
               <div>
-                <strong>{track.round?.status === "resolved" ? "Scores published" : "Score after ending prices"}</strong>
+                <strong>{track.round?.status === "resolved" ? "Scores published" : track.round?.status === "overdue" ? "Resolution due" : "Score after ending prices"}</strong>
                 <p>{track.round ? scoreLine(track.round) : "Resolution pending."}</p>
               </div>
             </li>

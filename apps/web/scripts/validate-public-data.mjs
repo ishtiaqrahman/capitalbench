@@ -9,6 +9,7 @@ const repoRoot = resolve(process.cwd(), "../..");
 const failures = [];
 const EPSILON = 1e-7;
 const BASIS_POINT_EPSILON = 1e-5;
+const buildDate = new Date().toISOString().slice(0, 10);
 
 function resultPath(round, filename) {
   return join(repoRoot, "rounds", round.round_id, "runs", round.official_run_id, "results", filename);
@@ -16,6 +17,10 @@ function resultPath(round, filename) {
 
 function roundPath(round) {
   return join(repoRoot, "rounds", round.round_id);
+}
+
+function resolutionJobPath(round) {
+  return join(roundPath(round), "automation", "resolution_job.yaml");
 }
 
 function readTextFile(path) {
@@ -237,7 +242,7 @@ function expectedRoundMetadata(round) {
   const selectedRun = publicOfficialRuns(round)[0];
   const entryDate = String(manifest.entry_date ?? "");
   const exitDate = String(manifest.exit_date ?? "");
-  const status = existsSync(resultPath(round, "leaderboard.csv")) ? "resolved" : "active";
+  const status = existsSync(resultPath(round, "leaderboard.csv")) ? "resolved" : exitDate && exitDate < buildDate ? "overdue" : "active";
   return {
     manifest,
     selectedRun,
@@ -324,7 +329,8 @@ function independentCumulativeLeaderboard(track) {
     .sort((left, right) =>
       Number(right.is_rank_eligible) - Number(left.is_rank_eligible) ||
       Number(right.capitalbench_score ?? -Infinity) - Number(left.capitalbench_score ?? -Infinity) ||
-      Number(right.alpha_pp ?? -Infinity) - Number(left.alpha_pp ?? -Infinity)
+      Number(right.alpha_pp ?? -Infinity) - Number(left.alpha_pp ?? -Infinity) ||
+      String(modelById.get(left.model_id)?.label ?? left.model_id).localeCompare(String(modelById.get(right.model_id)?.label ?? right.model_id))
     )
     .map((row, index) => ({ rank: index + 1, ...row }));
 
@@ -796,8 +802,14 @@ for (const round of apiReadModel.rounds) {
   if (round.status === "resolved" && returnRows.length === 0) {
     failures.push(`${round.round_id} is resolved but has no generated asset-return rows`);
   }
-  if (round.status === "active" && resultRows.length > 0) {
-    failures.push(`${round.round_id} is active but has generated final result rows`);
+  if ((round.status === "active" || round.status === "overdue") && resultRows.length > 0) {
+    failures.push(`${round.round_id} is ${round.status} but has generated final result rows`);
+  }
+  if (round.status === "active" && round.exit_date && round.exit_date < buildDate) {
+    failures.push(`${round.round_id} is active after its exit date ${round.exit_date}`);
+  }
+  if (round.status === "active" && !existsSync(resolutionJobPath(round))) {
+    failures.push(`${round.round_id} is active but missing automation/resolution_job.yaml`);
   }
   if (resultRows.length > 0 && (!leaderboardExists || !returnsExists)) {
     failures.push(`${round.round_id} has generated result rows without complete canonical result files`);

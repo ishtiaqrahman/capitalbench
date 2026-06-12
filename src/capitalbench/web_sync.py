@@ -712,6 +712,9 @@ def _official_result_rows(round_id: str, run_id: str, run_paths: Any) -> list[di
     submissions_by_model = _parsed_submission_payloads_by_model(run_paths)
     for row in _read_csv(run_paths.results_dir / "leaderboard.csv"):
         submission_payload = submissions_by_model.get(row["model_id"], {})
+        portfolio_return = _decimal(row.get("portfolio_return"))
+        if portfolio_return is None:
+            portfolio_return = _decimal(row.get("selected_asset_return"))
         rows.append(
             {
                 "round_id": round_id,
@@ -723,7 +726,7 @@ def _official_result_rows(round_id: str, run_id: str, run_paths: Any) -> list[di
                 "selected_option_id": row["selected_option_id"],
                 "confidence": _decimal(row.get("confidence")),
                 "selected_asset_return": _decimal(row.get("selected_asset_return")),
-                "portfolio_return": _decimal(row.get("portfolio_return")),
+                "portfolio_return": portfolio_return,
                 "sp500_return": _decimal(row.get("sp500_return")),
                 "alpha_vs_sp500": _decimal(row.get("alpha_vs_sp500")),
                 "regret_vs_best_option": _decimal(row.get("regret_vs_best_option")),
@@ -806,7 +809,7 @@ def _option_return_rows(round_id: str, run_id: str, run_paths: Any) -> list[dict
                 "exit_price_source": row.get("exit_price_source") or None,
                 "realized_return": _decimal(row.get("return")),
                 "rank": _int_or_none(row.get("rank")),
-                "is_benchmark": _bool(row.get("is_benchmark")),
+                "is_benchmark": _bool(row.get("is_benchmark")) or row["option_id"].upper() == "SP500",
                 "is_cash": _bool(row.get("is_cash")),
                 "published": True,
             }

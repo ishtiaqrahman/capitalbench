@@ -1,7 +1,7 @@
 import csv
 import json
 from pathlib import Path
-from shutil import copytree
+from shutil import copytree, rmtree
 from typing import Any
 
 import yaml
@@ -136,6 +136,7 @@ def test_sync_web_skips_when_supabase_env_is_missing(monkeypatch, capsys) -> Non
 def test_sync_round_publishes_pending_round_without_leaderboard(tmp_path: Path) -> None:
     round_path = tmp_path / "CB-2026-05-10-1M"
     copytree(ROUND_1, round_path)
+    rmtree(round_path / "runs" / "official-round-1-clean" / "results")
     sink = FakeSink()
 
     summary = sync_round(round_path, run_id="official-round-1-clean", sink=sink)
@@ -155,6 +156,21 @@ def test_sync_round_publishes_pending_round_without_leaderboard(tmp_path: Path) 
     assert any(row["option_id"] == "SEMICONDUCTORS" and row["entry_price"] for row in sink.upserts["options"])
     assert any(row["path"] == "hashes.json" for row in sink.upserts["audit_artifacts"])
     assert sink.inserts["sync_events"][0]["status"] == "success"
+
+
+def test_sync_round_publishes_resolved_single_pick_result_fields(tmp_path: Path) -> None:
+    round_path = tmp_path / "CB-2026-05-10-1M"
+    copytree(ROUND_1, round_path)
+    sink = FakeSink()
+
+    summary = sync_round(round_path, run_id="official-round-1-clean", sink=sink)
+
+    assert summary.status == "success"
+    assert sink.upserts["rounds"][0]["status"] == "resolved"
+    assert len(sink.upserts["official_results"]) == 4
+    assert all(row["portfolio_return"] == row["selected_asset_return"] for row in sink.upserts["official_results"])
+    sp500_return = next(row for row in sink.upserts["option_returns"] if row["option_id"] == "SP500")
+    assert sp500_return["is_benchmark"] is True
 
 
 def test_sync_round_uses_operator_selected_official_run_and_clears_stale_public_rows(tmp_path: Path) -> None:

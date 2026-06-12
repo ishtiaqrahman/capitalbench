@@ -4,7 +4,7 @@ import { dateOnly } from "../lib/format";
 
 interface Props {
   roundId: string;
-  status: "pending" | "resolved" | "archived";
+  status: "pending" | "resolved" | "overdue" | "archived";
   decisionDeadline: string;
   entryDate?: string;
   exitDate: string;
@@ -12,8 +12,8 @@ interface Props {
 }
 
 const { roundId, status, decisionDeadline, entryDate, exitDate, officialRunId } = Astro.props;
-const tone = status === "resolved" ? "green" : status === "pending" ? "amber" : "neutral";
-const publicStatus = status === "resolved" ? "scored" : status;
+const tone = status === "resolved" ? "green" : status === "pending" ? "amber" : status === "overdue" ? "red" : "neutral";
+const publicStatus = status === "resolved" ? "scored" : status === "overdue" ? "resolution due" : status;
 ---
 
 <section class="status-strip" aria-label="Current benchmark status">

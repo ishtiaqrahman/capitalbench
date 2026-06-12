@@ -5105,6 +5105,10 @@ a.snapshot-model-chip:hover {
   background: #a76600;
 }
 
+.score-countdown.overdue .score-countdown-dot {
+  background: var(--danger);
+}
+
 .score-countdown-target {
   display: block;
   color: var(--ink-strong);
@@ -5561,6 +5565,15 @@ a.snapshot-model-chip:hover {
   color: #3f2900 !important;
 }
 
+.phase-overdue {
+  background: var(--danger-bg);
+}
+
+.phase-overdue > span {
+  background: var(--danger) !important;
+  color: #ffffff !important;
+}
+
 .home-section-heading {
   max-width: 760px;
   margin: 28px 0 14px;
@@ -5680,7 +5693,8 @@ a.snapshot-model-chip:hover {
   color: var(--pending);
 }
 
-.badge-red {
+.badge-red,
+.status-overdue {
   background: var(--danger-bg);
   color: var(--danger);
 }
@@ -8194,6 +8208,10 @@ tbody tr:hover {
 
 .check-item.pending > span {
   background: var(--pending);
+}
+
+.check-item.overdue > span {
+  background: var(--danger);
 }
 
 .check-item strong {
@@ -12724,6 +12742,11 @@ tbody tr:hover {
   background: var(--gold);
 }
 
+.score-countdown.overdue .score-countdown-dot,
+.check-item.overdue > span {
+  background: var(--danger);
+}
+
 .score-countdown-panel,
 .pending-state,
 .guide-latest .guide-primary,
@@ -12776,6 +12799,13 @@ tbody tr:hover {
   color: var(--gold-strong) !important;
 }
 
+.phase-overdue,
+.phase-overdue > span {
+  border-color: rgb(151 48 46 / 24%);
+  background: var(--danger-bg) !important;
+  color: var(--danger) !important;
+}
+
 .status-strip {
   background: var(--surface-raised);
 }
@@ -12806,6 +12836,7 @@ tbody tr:hover {
 }
 
 .badge-red,
+.status-overdue,
 .status-deprecated {
   background: var(--danger-bg);
   color: var(--danger);

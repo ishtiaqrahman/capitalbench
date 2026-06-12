@@ -240,6 +240,17 @@ function validIsoDateTime(value?: string): string | undefined {
   return Number.isFinite(Date.parse(value)) ? value : undefined;
 }
 
+function buildDate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function localRoundStatus(hasScoredResults: boolean, exitDate: string, fallbackStatus?: RoundRecord["status"]): RoundRecord["status"] {
+  if (hasScoredResults) return "resolved";
+  if (fallbackStatus === "archived") return "archived";
+  if (exitDate && exitDate < buildDate()) return "overdue";
+  return fallbackStatus === "resolved" ? "resolved" : "pending";
+}
+
 function scoreEta(roundPath: string, manifest: RoundManifestYaml): { score_eta_utc?: string; score_eta_source?: ScoreEtaSource } {
   const job = readYamlFile<ResolutionJobYaml>(join(roundPath, "automation", "resolution_job.yaml"));
   const automationEta = validIsoDateTime(job?.due_at_utc ?? job?.next_attempt_at_utc);
@@ -264,6 +275,7 @@ function discoverRoundRecord(roundPath: string): RoundRecord | null {
   const hasScoredResults =
     selectedRun !== undefined &&
     existsSync(join(roundPath, "runs", selectedRun.runId, "results", "leaderboard.csv"));
+  const status = localRoundStatus(hasScoredResults, exitDate, fallback?.status);
   const scoreEtaFields = scoreEta(roundPath, manifest);
   return {
     round_id: manifest.round_id,
@@ -275,7 +287,7 @@ function discoverRoundRecord(roundPath: string): RoundRecord | null {
     horizon_days: manifestHorizonDays || fallback?.horizon_days || 0,
     entry_date: entryDate,
     exit_date: exitDate,
-    status: hasScoredResults ? "resolved" : fallback?.status ?? "pending",
+    status,
     methodology_version:
       selectedRun?.manifest.methodology_version ??
       manifest.methodology_version ??
@@ -285,8 +297,8 @@ function discoverRoundRecord(roundPath: string): RoundRecord | null {
     submission_format: manifest.submission_format ?? fallback?.submission_format ?? "single_pick",
     official_run_id: selectedRun?.runId ?? fallback?.official_run_id ?? "",
     stability_run_id: fallback?.stability_run_id,
-    score_eta_utc: hasScoredResults ? undefined : scoreEtaFields.score_eta_utc ?? fallback?.score_eta_utc,
-    score_eta_source: hasScoredResults ? undefined : scoreEtaFields.score_eta_source ?? fallback?.score_eta_source,
+    score_eta_utc: status === "pending" ? scoreEtaFields.score_eta_utc ?? fallback?.score_eta_utc : undefined,
+    score_eta_source: status === "pending" ? scoreEtaFields.score_eta_source ?? fallback?.score_eta_source : undefined,
     notes: manifest.notes ?? fallback?.notes ?? ""
   };
 }
@@ -506,7 +518,7 @@ export function staticRoundReturns(roundId: string, runId?: string): ResultRetur
         exit_price_source: row.exit_price_source || "",
         return: resultReturn,
         rank,
-        is_benchmark: booleanFromCell(row.is_benchmark),
+        is_benchmark: isBenchmarkOption(row.option_id, booleanFromCell(row.is_benchmark)),
         is_cash: booleanFromCell(row.is_cash)
       };
     })
