@@ -8,11 +8,11 @@ Each round is a separate market decision with its own declared scoring window. O
 
 | Rank | Model | Provider | Resolved Rounds | Avg Return | Avg S&P Return | Avg Alpha | Hit Rate vs S&P | Avg Regret | Cumulative Return | Cumulative S&P Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | xai-grok-4-3 | xai | 6 | -0.57% | -0.76% | 0.19% | 50.00% | 6.97% | -3.95% | -4.58% |
-| 2 | anthropic-claude-opus-4-7 | anthropic | 6 | -0.74% | -0.76% | 0.02% | 50.00% | 7.14% | -4.91% | -4.58% |
-| 3 | anthropic-claude-opus-4-8 | anthropic | 4 | -2.16% | -1.81% | -0.35% | 25.00% | 5.65% | -8.57% | -7.06% |
-| 4 | openai-gpt-5-5 | openai | 6 | -1.74% | -0.76% | -0.98% | 50.00% | 8.14% | -11.08% | -4.58% |
-| 5 | google-gemini-3-1-pro | google | 6 | -2.14% | -0.76% | -1.38% | 50.00% | 8.54% | -13.34% | -4.58% |
+| 1 | xai-grok-4-3 | xai | 7 | -1.66% | -1.08% | -0.58% | 42.86% | 7.94% | -11.80% | -7.41% |
+| 2 | anthropic-claude-opus-4-7 | anthropic | 7 | -1.72% | -1.08% | -0.64% | 42.86% | 8.00% | -12.14% | -7.41% |
+| 3 | anthropic-claude-opus-4-8 | anthropic | 5 | -3.16% | -2.04% | -1.13% | 20.00% | 7.07% | -15.14% | -9.81% |
+| 4 | openai-gpt-5-5 | openai | 7 | -2.97% | -1.08% | -1.89% | 42.86% | 9.25% | -20.25% | -7.41% |
+| 5 | google-gemini-3-1-pro | google | 7 | -3.29% | -1.08% | -2.21% | 42.86% | 9.57% | -22.16% | -7.41% |
 
 ## Cumulative Stability Leaderboard
 
@@ -28,6 +28,7 @@ _No rows._
 | CB-2026-05-29-1W | official-20260529-1W |  | yes | no |  |
 | CB-2026-06-01-1W | official-20260601 |  | yes | no |  |
 | CB-2026-06-02-1W | official-20260602-clean |  | yes | no |  |
+| CB-2026-06-03-1W | official-20260603 |  | yes | no |  |
 
 ## Methodology
 
@@ -52,6 +53,6 @@ The official leaderboard measures the saved public model decision. The stability
 
 ## Warnings
 
-- Round CB-2026-06-03-1W has no scored official or stability runs.
 - Round CB-2026-06-05-1W has no scored official or stability runs.
 - Round CB-2026-06-08-1W has no scored official or stability runs.
+- Round CB-2026-06-09-1W has no scored official or stability runs.
