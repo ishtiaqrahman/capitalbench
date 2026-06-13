@@ -269,6 +269,11 @@ function riskLabel(score) {
   return historicalRiskLabel(score);
 }
 
+function average(values) {
+  const finite = values.filter((value) => typeof value === "number" && Number.isFinite(value));
+  return finite.length > 0 ? finite.reduce((total, value) => total + value, 0) / finite.length : null;
+}
+
 function isDefensive(optionId) {
   return Boolean(assetRiskDefinition(optionId).defensive);
 }
@@ -483,8 +488,7 @@ function buildModelStyles(models, allocations, assetsById) {
   for (const model of models) {
     const rows = allocations.filter((row) => row.model_id === model.model_id);
     const portfolioKeys = new Set(rows.map((row) => `${row.round_id}:${row.run_id}:${row.model_id}`));
-    let weightedRisk = 0;
-    let totalPct = 0;
+    const rowsByPortfolio = new Map();
     let highRiskPct = 0;
     let defensivePct = 0;
     let techPct = 0;
@@ -493,8 +497,8 @@ function buildModelStyles(models, allocations, assetsById) {
     const categoryPct = new Map();
     for (const row of rows) {
       const asset = assetsById.get(row.option_id);
-      weightedRisk += row.allocation_pct * riskScore(row.option_id);
-      totalPct += row.allocation_pct;
+      const portfolioKey = `${row.round_id}:${row.run_id}:${row.model_id}`;
+      rowsByPortfolio.set(portfolioKey, [...(rowsByPortfolio.get(portfolioKey) ?? []), row]);
       if (riskScore(row.option_id) >= 4) highRiskPct += row.allocation_pct;
       if (isDefensive(row.option_id)) defensivePct += row.allocation_pct;
       if (isTechnology(row.option_id)) techPct += row.allocation_pct;
@@ -503,7 +507,12 @@ function buildModelStyles(models, allocations, assetsById) {
       const category = asset?.category ?? row.category ?? "unknown";
       categoryPct.set(category, (categoryPct.get(category) ?? 0) + row.allocation_pct);
     }
-    const score = totalPct > 0 ? weightedRisk / totalPct : null;
+    const portfolioRiskScores = Array.from(rowsByPortfolio.values()).map((portfolioRows) => {
+      const portfolioPct = portfolioRows.reduce((total, row) => total + row.allocation_pct, 0);
+      if (portfolioPct <= 0) return null;
+      return portfolioRows.reduce((total, row) => total + (row.allocation_pct / portfolioPct) * riskScore(row.option_id), 0);
+    });
+    const score = average(portfolioRiskScores);
     const sampleRoundCount = new Set(rows.map((row) => row.round_id)).size;
     const divisor = portfolioKeys.size || 1;
     styles.push({

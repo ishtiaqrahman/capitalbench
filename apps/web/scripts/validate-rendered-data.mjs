@@ -2861,9 +2861,10 @@ for (const model of apiReadModel.models) {
   includes(modelsIndexHtml, `<strong>${directoryLive.portfolio_count}</strong>`, `${directoryContext} live portfolio count`);
   includes(modelsIndexHtml, `<strong>${directoryCompletedCount}</strong>`, `${directoryContext} completed count`);
   if (directoryLive.top_holding) {
-    includes(
+    const topHoldingLabel = `${assetDisplay(directoryLive.top_holding)} ${pctValue(directoryLive.top_holding.exposure_pct)}`;
+    includesAny(
       modelsIndexHtml,
-      `${assetDisplay(directoryLive.top_holding)} ${pctValue(directoryLive.top_holding.exposure_pct)}`,
+      [topHoldingLabel, htmlText(topHoldingLabel)],
       `${directoryContext} top live holding`
     );
   }

@@ -1,0 +1,42 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Unexpected FOMC hawkish signals on June 17 raising rate expectations",
+    "Hotter-than-expected PCE or retail sales data pressuring valuations",
+    "Sector rotation out of momentum and semiconductors into defensives"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "option_id": "SMALL_VALUE",
+      "rationale": "Recent 30d outperformance and sensitivity to stable rates plus domestic growth in the scoring window."
+    },
+    {
+      "allocation_pct": 30,
+      "option_id": "MOMENTUM",
+      "rationale": "Strong trailing momentum factor performance likely to persist over one-month horizon amid moderate growth."
+    },
+    {
+      "allocation_pct": 35,
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Elevated recent returns and exposure to ongoing tech/AI demand catalysts before exit date."
+    }
+  ],
+  "portfolio_rationale": "Concentrated in three high-momentum equity factors with recent leadership and plausible near-term catalysts from stable policy and growth data.",
+  "provider": "xai",
+  "rationale_summary": "Allocates to SMALL_VALUE, MOMENTUM and SEMICONDUCTORS to capture short-term factor leadership and sector strength within the one-month window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-13-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 26029,
+    "latency_seconds": 10.335993625922129,
+    "output_tokens": 328,
+    "reasoning_tokens": 562,
+    "total_tokens": 26919
+  }
+}

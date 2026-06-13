@@ -1,0 +1,41 @@
+{
+  "confidence": 0.7,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden market downturn could negatively impact the equity portion.",
+    "Interest rate changes could affect the short-term treasury allocation.",
+    "Technology sector underperformance could drag down the Nasdaq 100 allocation."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "option_id": "SP500",
+      "rationale": "Broad US equity exposure to capture general market upside."
+    },
+    {
+      "allocation_pct": 30,
+      "option_id": "NASDAQ100",
+      "rationale": "Growth and technology tilt for potential outperformance."
+    },
+    {
+      "allocation_pct": 30,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like proxy to reduce overall portfolio volatility."
+    }
+  ],
+  "portfolio_rationale": "A balanced approach combining broad market exposure with a growth tilt and a cash-like buffer.",
+  "provider": "google",
+  "rationale_summary": "This portfolio balances potential equity upside with a defensive cash-like allocation.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-13-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 29463,
+    "latency_seconds": 4.34466478205286,
+    "output_tokens": 333,
+    "total_tokens": 29796
+  }
+}

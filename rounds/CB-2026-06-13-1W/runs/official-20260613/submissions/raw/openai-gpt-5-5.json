@@ -1,0 +1,54 @@
+{
+  "confidence": 0.58,
+  "is_official_score": true,
+  "key_risks": [
+    "A hawkish FOMC statement or press conference could reverse the recent decline in yields and pressure high-multiple technology and crypto assets.",
+    "Semiconductors and Korea/Taiwan exposures are crowded after very strong trailing gains, creating risk of sharp profit-taking during the scoring week.",
+    "Weak retail sales, industrial production, or jobless claims data could trigger a broad risk-off move that hurts high-beta equities more than SPY.",
+    "Geopolitical or trade-related headlines affecting Taiwan, Korea, or chip supply chains could disproportionately hurt the portfolio.",
+    "Crypto momentum could reverse independently of equities due to ETF outflows, regulatory headlines, or liquidity-driven selling."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Strongest broad thematic price momentum in the table, supported by falling Treasury yields and continued AI-related earnings-growth sentiment over a one-week horizon."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "SOUTH_KOREA",
+      "rationale": "Very strong recent and longer trailing performance with high semiconductor/export beta, giving leveraged exposure to the same risk-on chip leadership."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "TAIWAN",
+      "rationale": "Semiconductor supply-chain exposure with strong recent momentum and sensitivity to global AI hardware demand."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "MOMENTUM",
+      "rationale": "Diversified exposure to stocks with persistent recent strength, which can outperform if the risk-on trend continues through the FOMC week."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "BITCOIN_ETF",
+      "rationale": "High-beta liquidity-sensitive asset with positive short-term momentum that could benefit if the Fed hold and lower yields support risk appetite."
+    }
+  ],
+  "portfolio_rationale": "The portfolio concentrates in the strongest short-term leadership areas: semiconductors, Korea/Taiwan chip-linked equities, momentum, and a small crypto sleeve. With a Fed hold heavily priced and yields recently declining, high-beta growth and AI-linked assets have the best chance to outperform SPY over the one-week window.",
+  "provider": "openai",
+  "rationale_summary": "Favor risk-on, momentum, and semiconductor-linked exposures over broad market beta. The allocation is intentionally aggressive because scoring rewards one-week realized return relative to the S&P 500 rather than risk-adjusted stability.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-13-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 26497,
+    "latency_seconds": 16.346644984092563,
+    "output_tokens": 657,
+    "reasoning_tokens": 146,
+    "total_tokens": 27154
+  }
+}

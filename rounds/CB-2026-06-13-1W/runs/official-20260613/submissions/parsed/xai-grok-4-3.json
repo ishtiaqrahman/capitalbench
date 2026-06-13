@@ -1,0 +1,43 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC decision on June 17 could trigger volatility if hawkish on 4.2% CPI YoY",
+    "Hotter-than-expected retail sales on June 17 may pressure rate-sensitive small caps",
+    "BOJ meeting June 14-15 risks yen-driven global equity rotation away from US momentum"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "option_id": "MOMENTUM",
+      "rationale": "Strong 7d trailing return of 5.85% and factor persistence into window with low VIX supporting trend continuation."
+    },
+    {
+      "allocation_pct": 35,
+      "option_id": "SMALL_CAP",
+      "rationale": "4.01% 7d return and domestic growth sensitivity ahead of retail sales and industrial production releases."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "8.82% 7d return and tech earnings momentum likely to hold through FOMC and BOJ events."
+    }
+  ],
+  "portfolio_rationale": "Overweight momentum and small-cap factors with semiconductor tilt to capture recent breadth and growth signals before FOMC decision.",
+  "provider": "xai",
+  "rationale_summary": "Recent inflation data and scheduled FOMC meeting favor selective equity exposure over broad benchmark; momentum and small caps show strongest near-term price action.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-13-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 26337,
+    "latency_seconds": 7.206505025969818,
+    "output_tokens": 361,
+    "reasoning_tokens": 543,
+    "total_tokens": 27241
+  }
+}
