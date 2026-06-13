@@ -180,6 +180,15 @@ function barStyle(value: number, domainMin: number, domainMax: number): CSSPrope
   } as CSSProperties;
 }
 
+function axisStyle(domainMin: number, domainMax: number): CSSProperties {
+  const range = Math.max(0.0001, domainMax - domainMin);
+  const zero = ((0 - domainMin) / range) * 100;
+  const clampedZero = Math.min(100, Math.max(0, zero));
+  return {
+    "--live-axis-zero-left": `${clampedZero.toFixed(2)}%`
+  } as CSSProperties;
+}
+
 export default function LivePerformanceChart({ rows, openRoundCounts }: Props) {
   const [track, setTrack] = useState<TrackFilter>("all");
   const latestRows = useMemo(() => usableRows(rows, track), [rows, track]);
@@ -240,9 +249,11 @@ export default function LivePerformanceChart({ rows, openRoundCounts }: Props) {
       {chartRows.length > 0 ? (
         <div className="live-performance-chart">
           <div className="live-performance-axis" aria-hidden="true">
-            <span>{signedPct(domainMin)}</span>
-            <span>0%</span>
-            <span>{signedPct(domainMax)}</span>
+            <div className="live-performance-axis-scale" style={axisStyle(domainMin, domainMax)}>
+              <span>{signedPct(domainMin)}</span>
+              <span>0%</span>
+              <span>{signedPct(domainMax)}</span>
+            </div>
           </div>
           <div className="live-performance-bars">
             {chartRows.map((row) => (

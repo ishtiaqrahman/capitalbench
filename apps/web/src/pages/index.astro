@@ -446,15 +446,6 @@ function riskFocusWidth(value: number | null | undefined): string {
   return riskWidth(((value - riskFocusMin) / denominator) * 100);
 }
 
-function topHoldings(submission: SubmissionRecord, optionsById: TrackHomeState["optionsById"]): string {
-  const allocations = decisionAllocations(submission)
-    .sort((a, b) => b.allocation_bps - a.allocation_bps);
-  if (allocations.length === 0) return "No pick";
-  return allocations
-    .map((allocation) => `${optionShortDisplayName(allocation.option_id, optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`)
-    .join(", ");
-}
-
 const trackLaneCards = trackStates.map((track) => {
   const trackRounds = track.key === "weekly" ? weeklyRounds : monthlyRounds;
   const scorecard = track.key === "weekly" ? weeklyScorecard : monthlyScorecard;
@@ -515,7 +506,7 @@ const trackLaneCards = trackStates.map((track) => {
       </div>
     </div>
 
-    <div class="home-hero-console hero-positioning-card" aria-label="Current AI positioning snapshot">
+    <div class="home-hero-console hero-positioning-card hero-positioning-card-desktop" aria-label="Current AI positioning snapshot">
       <div class="console-header">
         <div class="console-title">
           <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="eager" />
@@ -565,6 +556,8 @@ const trackLaneCards = trackStates.map((track) => {
     </div>
   </section>
 
+  <TrackScorecardTabs scorecards={aggregateScorecards} />
+
   <section class="benchmark-process-card benchmark-process-section" id="how-it-works" aria-label="CapitalBench methodology summary">
     <div class="console-header">
       <div class="console-title">
@@ -601,7 +594,54 @@ const trackLaneCards = trackStates.map((track) => {
     </div>
   </section>
 
-  <TrackScorecardTabs scorecards={aggregateScorecards} />
+  <div class="home-hero-console hero-positioning-card hero-positioning-card-mobile" aria-label="Current AI positioning snapshot">
+    <div class="console-header">
+      <div class="console-title">
+        <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="lazy" />
+        <div>
+          <span>What AI models are doing now</span>
+          <strong>{currentRiskPulse.regime}</strong>
+        </div>
+      </div>
+      <span class="hero-positioning-regime">{currentRiskPulse.label}</span>
+    </div>
+
+    <p class="hero-positioning-explainer">{heroRiskExplanation}</p>
+
+    <div class="hero-positioning-score">
+      <div class="hero-positioning-risk-score">
+        <span>Risk-Taking Score</span>
+        <strong>{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
+        <em>0 defensive · 50 balanced · 100 aggressive</em>
+      </div>
+      <div>
+        <span>Change in stance</span>
+        <strong class:list={[riskChangeClass]}>{signedPulseChange(currentRiskPulse.change_from_previous)}</strong>
+        <em>{riskChangeDirection} vs {previousRiskSetLabel}</em>
+      </div>
+    </div>
+
+    <div class="hero-positioning-source" aria-label="Risk-taking score source">
+      <span>Source</span>
+      <strong>Latest weekly + monthly live portfolios</strong>
+      <em>{outstandingBookRisk.portfolio_count} model portfolios across {outstandingBookRisk.round_count} live rounds</em>
+    </div>
+
+    <div class="hero-positioning-assets" aria-label="Top current allocations">
+      {riskPulseTopAssets.slice(0, 4).map((asset) => (
+        <span>
+          <strong>{asset.label}</strong>
+          <small>{asset.ticker || asset.option_id}</small>
+          <em>{pctValue(asset.allocation_pct)}</em>
+        </span>
+      ))}
+    </div>
+
+    <div class="benchmark-process-note hero-positioning-note">
+      <strong>Allocation signal only.</strong>
+      <span>This does not use returns and is not a trading recommendation. <a href="/risk-appetite">How it is calculated</a>.</span>
+    </div>
+  </div>
 
   <section class="home-section-heading home-section-heading-with-action" id="ai-positioning" aria-labelledby="ai-positioning-title">
     <div>
@@ -1080,7 +1120,22 @@ const trackLaneCards = trackStates.map((track) => {
                       <a class="decision-model-link" href={modelProfileHref(submission.model_id)}>
                         {modelLabel(submission.model_id)}
                       </a>
-                      <p>{topHoldings(submission, track.optionsById)}</p>
+                      <div class="decision-allocation-pills" aria-label={`${modelLabel(submission.model_id)} frozen allocations`}>
+                        {allocations.length > 0 ? (
+                          allocations.map((allocation) => (
+                            <span
+                              class="decision-allocation-pill"
+                              title={`${optionDisplayName(allocation.option_id, track.optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
+                            >
+                              <i class={allocationThemeClass(allocation.option_id)} aria-hidden="true"></i>
+                              <strong>{optionShortDisplayName(allocation.option_id, track.optionsById)}</strong>
+                              <em>{formatAllocationPct(allocation.allocation_pct)}</em>
+                            </span>
+                          ))
+                        ) : (
+                          <span class="decision-allocation-pill decision-allocation-pill-empty">No allocation</span>
+                        )}
+                      </div>
                     </div>
                     <div class="allocation-stack mini" aria-hidden="true">
                       {allocations.map((allocation) => (

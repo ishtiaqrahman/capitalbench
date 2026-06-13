@@ -33,7 +33,7 @@ export type TrackScorecardAverageRow = {
 
 export type TrackScorecardNormalizedRow = {
   key: string;
-  kind: Exclude<TrackScorecardRowKind, "reference">;
+  kind: TrackScorecardRowKind;
   label: string;
   provider?: string;
   providerLabel?: string;
@@ -45,7 +45,7 @@ export type TrackScorecardNormalizedRow = {
   testsIncluded: number;
   testsRequired: number;
   isRankEligible: boolean;
-  sampleStatus: "eligible" | "provisional";
+  sampleStatus: "eligible" | "provisional" | "reference";
   roundsIncluded: string[];
   scoreValues: number[];
 };
@@ -308,6 +308,25 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
         roundsIncluded: maxPossibleRounds
       }
     : undefined;
+  const maxPossibleTotalReturn = maxPossibleReturns.reduce((total, value) => total + value, 0);
+  const maxPossibleNormalizedRow: TrackScorecardNormalizedRow | undefined = maxPossibleReturns.length
+    ? {
+        key: "max-possible",
+        kind: "reference",
+        label: "Max possible",
+        providerLabel: "Hindsight best asset",
+        averageScore: 100,
+        averageReturn: average(maxPossibleReturns),
+        totalReturn: maxPossibleTotalReturn,
+        totalMaxPossibleReturn: maxPossibleTotalReturn,
+        testsIncluded: maxPossibleReturns.length,
+        testsRequired: comparisonRoundCount,
+        isRankEligible: true,
+        sampleStatus: "reference",
+        roundsIncluded: maxPossibleRounds,
+        scoreValues: maxPossibleReturns.map(() => 100)
+      }
+    : undefined;
 
   const averageRows = [
     ...modelAverageRows,
@@ -316,7 +335,8 @@ export function buildTrackScorecard(roundRows: RoundRecord[], track: BenchmarkTr
   ];
   const normalizedRows = [
     ...modelNormalizedRows,
-    ...(benchmarkNormalizedRow ? [benchmarkNormalizedRow] : [])
+    ...(benchmarkNormalizedRow ? [benchmarkNormalizedRow] : []),
+    ...(maxPossibleNormalizedRow ? [maxPossibleNormalizedRow] : [])
   ];
 
   if (averageRows.length === 0 || normalizedRows.length === 0) return null;

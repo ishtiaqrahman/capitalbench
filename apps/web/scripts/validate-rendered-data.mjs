@@ -423,6 +423,19 @@ function expectedScorecardData(track) {
               isRankEligible: benchmarkScores.length === roundIds.length
             }
           ]
+        : []),
+      ...(maxPossibleReturns.length
+        ? [
+            {
+              key: "max-possible",
+              label: "Max possible",
+              value: 100,
+              averageReturn: average(maxPossibleReturns),
+              testsIncluded: maxPossibleReturns.length,
+              testsRequired: roundIds.length,
+              isRankEligible: true
+            }
+          ]
         : [])
     ],
     provisionalModels,
@@ -1724,13 +1737,6 @@ function buildHomepageTrackState(track) {
   };
 }
 
-function portfolioHoldingLine(portfolio) {
-  return [...(portfolio.allocations ?? [])]
-    .sort((left, right) => right.allocation_bps - left.allocation_bps)
-    .map((allocation) => `${optionShortDisplay(allocation)} ${allocationPctLabel(allocation.allocation_pct)}`)
-    .join(", ");
-}
-
 function homepageRiskProfiles() {
   return [...apiReadModel.model_styles]
     .filter((row) => typeof row.risk_appetite_score === "number")
@@ -1821,6 +1827,7 @@ for (const track of ["weekly", "monthly"]) {
   includes(cumulativeHtml, `${cumulative.comparison.comparison_round_count} resolved`, context);
   includes(cumulativeScorecardHtml, score, context);
   includes(cumulativeScorecardHtml, "compares total model return with total oracle return", context);
+  includes(cumulativeScorecardHtml, "Max possible is the hindsight best-performing eligible asset", `${context} max possible explanation`);
   includes(cumulativeScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, context);
   includes(cumulativeScorecardHtml, "full-history models ranked", context);
   includes(cumulativeScorecardHtml, `Newest resolved round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
@@ -1847,6 +1854,13 @@ for (const track of ["weekly", "monthly"]) {
   const benchmarkScore = scorecard.normalizedRows.find((row) => row.key === "sp500");
   if (benchmarkScore && typeof benchmarkScore.value === "number") {
     includes(cumulativeScorecardHtml, scoreLabel(benchmarkScore.value), `${context} S&P 500 CapitalBench Score`);
+  }
+  const maxPossibleScore = scorecard.normalizedRows.find((row) => row.key === "max-possible");
+  if (maxPossibleScore && typeof maxPossibleScore.value === "number") {
+    includes(cumulativeScorecardHtml, "Max possible", `${context} max possible score label`);
+    includes(cumulativeScorecardHtml, "MAX", `${context} max possible score chip`);
+    includes(cumulativeScorecardHtml, scoreLabel(maxPossibleScore.value), `${context} max possible CapitalBench Score`);
+    includes(cumulativeScorecardHtml, "hindsight best asset", `${context} max possible short explanation`);
   }
   if (scorecard.topReturnModel && typeof scorecard.topReturnModel.portfolio_return_pct === "number") {
     includes(cumulativeScorecardHtml, "Return leader", `${context} return leader label`);
@@ -1877,6 +1891,7 @@ for (const track of ["weekly", "monthly"]) {
     includes(indexHtml, leader.label, "homepage weekly lane");
     includes(indexHtml, "Each bar compares total model return with total oracle return", "homepage scorecard oracle explanation");
     includes(homepageWeeklyScorecardHtml, "Full-History Model Scores", "homepage weekly cumulative chart title");
+    includes(homepageWeeklyScorecardHtml, "Max possible is the hindsight best-performing eligible asset", "homepage weekly max possible explanation");
     includes(homepageWeeklyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, "homepage weekly cumulative comparison count");
     includes(homepageWeeklyScorecardHtml, "full-history models ranked", "homepage weekly cumulative ranked model count");
     includes(homepageWeeklyScorecardHtml, `Newest resolved round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative newest included");
@@ -1903,6 +1918,12 @@ for (const track of ["weekly", "monthly"]) {
     }
     if (benchmarkScore && typeof benchmarkScore.value === "number") {
       includes(homepageWeeklyScorecardHtml, scoreLabel(benchmarkScore.value), "homepage weekly S&P 500 CapitalBench Score");
+    }
+    if (maxPossibleScore && typeof maxPossibleScore.value === "number") {
+      includes(homepageWeeklyScorecardHtml, "Max possible", "homepage weekly max possible score label");
+      includes(homepageWeeklyScorecardHtml, "MAX", "homepage weekly max possible score chip");
+      includes(homepageWeeklyScorecardHtml, scoreLabel(maxPossibleScore.value), "homepage weekly max possible CapitalBench Score");
+      includes(homepageWeeklyScorecardHtml, "hindsight best asset", "homepage weekly max possible short explanation");
     }
     if (scorecard.topReturnModel && typeof scorecard.topReturnModel.portfolio_return_pct === "number") {
       includes(homepageWeeklyScorecardHtml, "Return leader", "homepage weekly return leader label");
@@ -1931,9 +1952,15 @@ for (const track of ["weekly", "monthly"]) {
       "homepage monthly cumulative scorecard"
     );
     includes(homepageMonthlyScorecardHtml, "Full-History Monthly Scores", "homepage monthly cumulative chart title");
+    includes(homepageMonthlyScorecardHtml, "Max possible is the hindsight best-performing eligible asset", "homepage monthly max possible explanation");
     includes(homepageMonthlyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, "homepage monthly cumulative comparison count");
     includes(homepageMonthlyScorecardHtml, leader.label, "homepage monthly cumulative leader");
     includes(homepageMonthlyScorecardHtml, score, "homepage monthly cumulative leader score");
+    if (maxPossibleScore && typeof maxPossibleScore.value === "number") {
+      includes(homepageMonthlyScorecardHtml, "Max possible", "homepage monthly max possible score label");
+      includes(homepageMonthlyScorecardHtml, "MAX", "homepage monthly max possible score chip");
+      includes(homepageMonthlyScorecardHtml, scoreLabel(maxPossibleScore.value), "homepage monthly max possible CapitalBench Score");
+    }
     includes(homepageMonthlyScorecardHtml, `Newest resolved round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage monthly cumulative newest included");
   }
   includes(leaderboardsHtml, leader.label, `leaderboards index ${track} leader`);
@@ -2320,14 +2347,17 @@ const weeklyScorecardIndex = indexHtml.indexOf("Full-History Weekly Scores");
 if (aiPositioningIndex === -1) failures.push("homepage AI positioning anchor missing");
 if (methodologyIndex === -1) failures.push("homepage methodology anchor missing");
 if (modelPerformanceIndex === -1) failures.push("homepage model performance section missing");
-if (methodologyIndex !== -1 && modelPerformanceIndex !== -1 && methodologyIndex > modelPerformanceIndex) {
-  failures.push("homepage model performance section appears before methodology");
+if (methodologyIndex !== -1 && modelPerformanceIndex !== -1 && methodologyIndex < modelPerformanceIndex) {
+  failures.push("homepage methodology section appears before benchmark results");
 }
-if (methodologyIndex !== -1 && weeklyScorecardIndex !== -1 && methodologyIndex > weeklyScorecardIndex) {
-  failures.push("homepage full-history weekly scores appear before methodology");
+if (methodologyIndex !== -1 && weeklyScorecardIndex !== -1 && methodologyIndex < weeklyScorecardIndex) {
+  failures.push("homepage methodology section appears before full-history weekly scores");
 }
 if (aiPositioningIndex !== -1 && modelPerformanceIndex !== -1 && modelPerformanceIndex > aiPositioningIndex) {
   failures.push("homepage model performance section appears after AI positioning");
+}
+if (aiPositioningIndex !== -1 && methodologyIndex !== -1 && methodologyIndex > aiPositioningIndex) {
+  failures.push("homepage methodology section appears after AI positioning");
 }
 
 const latestResolvedScoredRound = apiReadModel.rounds
@@ -2421,9 +2451,8 @@ for (const track of ["weekly", "monthly"]) {
     for (const portfolio of portfolios) {
       const portfolioContext = `${context} ${portfolio.model_id}`;
       includes(indexHtml, modelLabel(portfolio.model_id), portfolioContext);
-      const holdingLine = portfolioHoldingLine(portfolio);
-      if (holdingLine) includes(indexHtml, htmlText(holdingLine), `${portfolioContext} holdings`);
       for (const allocation of portfolio.allocations ?? []) {
+        includesAny(indexHtml, htmlTextVariants(optionShortDisplay(allocation)), `${portfolioContext} allocation ${allocation.option_id} label`);
         includes(indexHtml, allocationPctLabel(allocation.allocation_pct), `${portfolioContext} allocation ${allocation.option_id}`);
       }
     }

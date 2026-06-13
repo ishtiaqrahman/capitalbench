@@ -64,7 +64,7 @@ function chipLabel(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow):
 }
 
 function rowMeta(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow): string {
-  if (row.kind === "reference") return "Best asset after the result was known, not a model";
+  if (row.kind === "reference") return "Hindsight best-performing eligible asset in each round, not a model portfolio";
   if (row.kind === "benchmark") return `S&P 500 · ${scoredTestsLabel(row)}`;
   const sampleLabel = row.isRankEligible ? scoredTestsLabel(row) : `short history · ${scoredTestsLabel(row)}`;
   return `${row.providerLabel ?? "Model"} · ${sampleLabel}`;
@@ -77,6 +77,7 @@ function averageRowLabel(row: TrackScorecardAverageRow): string {
 }
 
 function scoreBarClass(row: TrackScorecardNormalizedRow, index: number): string {
+  if (row.kind === "reference") return "score-bar-best-asset";
   if (row.kind === "benchmark") return "score-bar-benchmark";
   const providerClasses: Record<string, string> = {
     anthropic: row.key.includes("4-8") ? "score-bar-anthropic-alt" : "score-bar-anthropic",
@@ -91,6 +92,7 @@ function scoreColumnClass(row: TrackScorecardNormalizedRow): string {
   return [
     "score-vertical-column",
     row.kind === "benchmark" ? "score-vertical-column-benchmark" : "",
+    row.kind === "reference" ? "score-vertical-column-reference score-vertical-column-best-asset" : "",
     row.kind === "model" && scorecard.topNormalizedRow?.key === row.key ? "score-vertical-column-winner" : "",
     row.kind === "model" && !row.isRankEligible ? "score-vertical-column-provisional" : ""
   ].filter(Boolean).join(" ");
@@ -102,6 +104,7 @@ const rankedModelCount = scoreRows.filter((row) => row.kind === "model").length;
 const rankedModelLabel = `${rankedModelCount} full-history model${rankedModelCount === 1 ? "" : "s"} ranked`;
 const shortHistoryLabel = `${provisionalScoreRows.length} short-history model${provisionalScoreRows.length === 1 ? "" : "s"} separated`;
 const scoreValues = scoreRows.map((row) => row.averageScore).filter(finiteNumber);
+const scoreMobileMagnitudeMax = Math.max(100, ...scoreValues.map((value) => Math.abs(value)));
 const scoreDomainMin = Math.min(0, ...scoreValues);
 const scoreDomainMax = Math.max(100, ...scoreValues);
 const scoreZero = valueCoordinate(0, scoreDomainMin, scoreDomainMax);
@@ -115,12 +118,21 @@ function scoreVerticalBarStyle(value: number): string {
 }
 
 function scoreValueStyle(value: number): string {
-  return `bottom: calc(${valueCoordinate(value, scoreDomainMin, scoreDomainMax).toFixed(2)}% + 8px);`;
+  const coordinate = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
+  if (coordinate >= 92) return "top: 8px;";
+  return `bottom: calc(${coordinate.toFixed(2)}% + 8px);`;
 }
 
 function scoreMobileBarStyle(value: number): string {
-  const endpoint = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
-  return `width: ${Math.max(2, Math.abs(endpoint - scoreZero)).toFixed(2)}%;`;
+  const width = Math.min(100, Math.max(2, (Math.abs(value) / scoreMobileMagnitudeMax) * 100));
+  return `width: ${width.toFixed(2)}%;`;
+}
+
+function scoreLabelTitle(row: TrackScorecardNormalizedRow): string {
+  if (row.kind === "reference") {
+    return "Max possible: 100.0. Hindsight reference using the best-performing eligible asset in each resolved round; not a model portfolio.";
+  }
+  return `${row.label}: ${scoreLabel(row.averageScore)} versus Max possible. ${rowMeta(row)}`;
 }
 
 function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | undefined {
@@ -161,8 +173,8 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
           <h4 id={`${scorecard.track}-normalized-score-title`}>Full-History Model Scores</h4>
         </div>
         <p>
-          100 matches the oracle, 0 means no net return, and negative values mean a net loss. Bars include only models
-          with all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " round" : " rounds"}.{" "}
+          Max possible is the hindsight best-performing eligible asset in each resolved round. It scores 100; models and
+          S&amp;P 500 are shown as a percentage of that reference.{" "}
           <a href="/scoring/#capitalbench-score">See the calculation</a>.
         </p>
       </div>
@@ -194,17 +206,22 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
             <div class="score-vertical-labels" style={`--score-column-count: ${scoreRows.length};`}>
               {scoreRows.map((row) => (
                 <div
-                  class={`score-vertical-label ${row.kind === "benchmark" ? "score-vertical-label-benchmark" : ""}`}
-                  title={`${row.label}: ${scoreLabel(row.averageScore)} versus the oracle. ${rowMeta(row)}`}
+                  class={`score-vertical-label ${
+                    row.kind === "benchmark" ? "score-vertical-label-benchmark" : ""
+                  } ${row.kind === "reference" ? "score-vertical-label-reference" : ""}`}
+                  title={scoreLabelTitle(row)}
                 >
                   {row.kind === "model" && row.logoSrc ? (
                     <span class="score-chart-logo-shell">
                       <img class="score-chart-logo" src={row.logoSrc} alt={row.providerLabel ?? row.label} width="40" height="40" loading="eager" />
                     </span>
+                  ) : row.kind === "reference" ? (
+                    <span class="score-chart-reference-chip" aria-hidden="true">MAX</span>
                   ) : (
                     <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
                   )}
                   <strong>{row.label}</strong>
+                  {row.kind === "reference" && <em>hindsight best asset</em>}
                   {row.kind === "model" && !row.isRankEligible && (
                     <em>short history · {row.testsIncluded}/{row.testsRequired}</em>
                   )}
@@ -228,6 +245,8 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
                       <span class="score-chart-logo-shell">
                         <img class="score-chart-logo" src={row.logoSrc} alt={row.providerLabel ?? row.label} width="40" height="40" loading="eager" />
                       </span>
+                    ) : row.kind === "reference" ? (
+                      <span class="score-chart-reference-chip" aria-hidden="true">MAX</span>
                     ) : (
                       <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
                     )}
