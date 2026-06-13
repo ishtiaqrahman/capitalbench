@@ -135,7 +135,7 @@ const endpointGroups = [
     endpoints: [
       ["GET", "/v1/positioning/active", "Live exposure across unresolved weekly and monthly rounds."],
       ["GET", "/v1/risk-appetite", "Current and historical AI Risk Appetite, model agreement, regime mix, and outstanding live-book risk."],
-      ["GET", "/v1/live/performance", "Open tests marked to the latest available close; not official final scores."],
+      ["GET", "/v1/live/performance", "Live rounds marked to the latest available close; not official final scores."],
       ["GET", "/v1/positioning/cumulative", "Historical allocation behavior across all available rounds."],
       ["GET", "/v1/positioning/consensus", "Assets and categories where model allocations cluster."],
       ["GET", "/v1/positioning/by-model/{model_id}", "One model's active or cumulative allocation pattern."],
@@ -146,9 +146,9 @@ const endpointGroups = [
   },
   {
     title: "Rounds And Results",
-    description: "The published test record: timing, inputs, model portfolios, prices, max-possible context, and scores.",
+    description: "The published round record: timing, inputs, model portfolios, prices, max-possible context, and scores.",
     endpoints: [
-      ["GET", "/v1/rounds", "Round index with track, status, dates, universe version, and proof links."],
+      ["GET", "/v1/rounds", "Round index with track, status, dates, universe version, and audit links."],
       ["GET", "/v1/rounds/{round_id}", "One round's metadata and input hashes."],
       ["GET", "/v1/rounds/{round_id}/portfolios", "Saved model allocations for a round."],
       ["GET", "/v1/rounds/{round_id}/concentration", "Run-level allocation consensus and concentration summary."],
@@ -163,9 +163,9 @@ const endpointGroups = [
     description: "The entities behind the benchmark: models, holdings, style metrics, and asset metadata.",
     endpoints: [
       ["GET", "/v1/models", "Model list with provider metadata and active status."],
-      ["GET", "/v1/models/{model_id}", "Model profile and proof links."],
+      ["GET", "/v1/models/{model_id}", "Model profile and audit links."],
       ["GET", "/v1/models/{model_id}/holdings", "Active and historical holdings for one model."],
-      ["GET", "/v1/models/{model_id}/live-performance", "One model's live return across open tests."],
+      ["GET", "/v1/models/{model_id}/live-performance", "One model's live return across live rounds."],
       ["GET", "/v1/models/{model_id}/style", "Risk appetite and allocation fingerprint metrics."],
       ["GET", "/v1/universe/current", "Current list of valid model choices."],
       ["GET", "/v1/assets/{option_id}", "Asset metadata and ticker mapping."],
@@ -177,13 +177,13 @@ const endpointGroups = [
 const concepts = [
   ["Active", "Only unresolved rounds. Use this for live model positioning."],
   ["Cumulative", "All saved allocations. Use this for model behavior and style analysis."],
-  ["Track", "Weekly and monthly tests stay separate because they measure different horizons."],
+  ["Track", "Weekly and monthly rounds stay separate because they measure different horizons."],
   ["Positioning", "Portfolio weights aggregated by asset, category, model, or track."],
-  ["Proof", "Round files, hashes, timestamps, prompt inputs, prices, and portfolio records."],
+  ["Audit", "Round files, hashes, timestamps, prompt inputs, prices, and portfolio records."],
   ["Portfolio Minus S&P 500", "Model portfolio return minus the S&P 500 return, in percentage points."],
   ["CapitalBench Score", "Model return relative to the hindsight oracle; cumulative rows divide total model return by total oracle return."],
   ["AI Risk Appetite", "A 0–100 allocation signal calculated from the newest live weekly and monthly AI model portfolios. It does not use prices or returns."],
-  ["Resolved score set", "All completed tests used for headline cumulative scores in the selected track."]
+  ["Resolved score set", "All completed rounds used for headline cumulative scores in the selected track."]
 ];
 
 const fields = [
@@ -263,7 +263,7 @@ const curlExample = `curl "https://www.capitalbench.org/api/v1/positioning/activ
     </article>
     <article>
       <span>04</span>
-      <strong>Proof Data</strong>
+      <strong>Audit Data</strong>
       <p>Round files, prompt hashes, universe versions, prices, and audit metadata.</p>
     </article>
   </section>
@@ -469,7 +469,7 @@ const curlExample = `curl "https://www.capitalbench.org/api/v1/positioning/activ
         <ul>
           <li>Weekly and monthly tests remain separate in scoring and cumulative views.</li>
           <li>Completed rounds stop contributing to active exposure and remain in cumulative history.</li>
-          <li>Proof links expose the saved files, hashes, universe version, model outputs, and price records.</li>
+          <li>Audit links expose the saved files, hashes, universe version, model outputs, and price records.</li>
         </ul>
       </section>
 

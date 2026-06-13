@@ -22,14 +22,14 @@ export type JsonLdRecord = Record<string, unknown>;
 
 export const siteConfig = {
   name: "CapitalBench",
-  defaultTitle: "CapitalBench - AI Market Picks Scoreboard",
+  defaultTitle: "CapitalBench - AI Capital Allocation Benchmark",
   description:
-    "CapitalBench gives AI models the same market information, records their portfolios, and scores them using real market returns.",
+    "CapitalBench tracks live AI model portfolios, current AI positioning, risk appetite, and benchmark results scored against real market returns.",
   url: "https://www.capitalbench.org",
   githubUrl: "https://github.com/ishtiaqrahman/capitalbench",
   ogImage: "/og-image.png",
   ogImageAlt:
-    "CapitalBench public AI market-picks scoreboard showing saved model portfolios, proof files, and pending results.",
+    "CapitalBench live AI capital allocation benchmark showing model portfolios, audit packets, and benchmark results.",
   ogImageWidth: 1200,
   ogImageHeight: 630,
   themeColor: "#f4f6f5"
@@ -123,7 +123,7 @@ export const routeMeta: RouteMeta[] = [
     path: "/rounds",
     title: "CapitalBench Test Rounds",
     description:
-      "Index of CapitalBench market tests with dates, model portfolios, scoring status, and proof links.",
+      "Index of CapitalBench market rounds with dates, model portfolios, scoring status, and audit packet links.",
     priority: 0.84,
     changefreq: "weekly",
     lastmod: defaultLastmod
@@ -132,7 +132,7 @@ export const routeMeta: RouteMeta[] = [
     path: "/models",
     title: "CapitalBench Model Profiles",
     description:
-      "CapitalBench model profiles showing each AI model's live holdings, weekly and monthly records, portfolio patterns, and proof links.",
+      "CapitalBench model profiles showing each AI model's live holdings, weekly and monthly records, portfolio patterns, and audit packet links.",
     priority: 0.86,
     changefreq: "weekly",
     lastmod: defaultLastmod
@@ -141,7 +141,7 @@ export const routeMeta: RouteMeta[] = [
     path: "/api",
     title: "CapitalBench Data API",
     description:
-      "CapitalBench Data API documentation for AI model portfolios, active positioning, cumulative allocation behavior, benchmark scores, asset universes, and proof metadata.",
+      "CapitalBench Data API documentation for AI model portfolios, active positioning, cumulative allocation behavior, benchmark scores, asset universes, and audit metadata.",
     priority: 0.84,
     changefreq: "weekly",
     lastmod: defaultLastmod
@@ -149,18 +149,18 @@ export const routeMeta: RouteMeta[] = [
   ...publicModels.map((profile) => ({
     path: `/models/${profile.modelId}`,
     title: `${profile.label} CapitalBench Model Profile`,
-    description: `${profile.label} live holdings, weekly and monthly CapitalBench results, historical portfolio pattern, and public proof files.`,
+    description: `${profile.label} live holdings, weekly and monthly CapitalBench results, historical portfolio pattern, and public audit packets.`,
     priority: 0.78,
     changefreq: "weekly" as const,
     lastmod: defaultLastmod
   })),
   ...publicRounds.map((round) => ({
     path: `/rounds/${round.round_id}`,
-    title: round.status === "resolved" ? `${round.round_id} Result And Proof` : `${round.round_id} Proof Files`,
+    title: round.status === "resolved" ? `${round.round_id} Result And Audit Packet` : `${round.round_id} Audit Packet`,
     description:
       round.status === "resolved"
-        ? `${round.title}: final model portfolio scores, S&P 500 return, Portfolio Minus S&P 500, maximum possible return context, scoring prices, and proof hashes for the ${round.horizon} market test.`
-        : `${round.title}: model portfolios, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`,
+        ? `${round.title}: final model portfolio scores, S&P 500 return, Portfolio Minus S&P 500, maximum possible return context, scoring prices, and audit hashes for the ${round.horizon} market round.`
+        : `${round.title}: model portfolios, starting prices, pending status, and published audit hashes for the ${round.horizon} market round.`,
     priority: 0.8,
     changefreq: "weekly" as const,
     lastmod: defaultLastmod
@@ -169,7 +169,7 @@ export const routeMeta: RouteMeta[] = [
     path: "/methodology",
     title: "How CapitalBench Works",
     description:
-      "How CapitalBench gives AI models the same market information, saves their portfolios, and scores them with real market prices.",
+      "How CapitalBench gives AI models the same market information, freezes their portfolios, and scores them with real market prices.",
     priority: 0.88,
     changefreq: "monthly",
     lastmod: defaultLastmod
@@ -221,9 +221,9 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: "/docs",
-    title: "CapitalBench Proof And Data",
+    title: "CapitalBench Audit And Data",
     description:
-      "CapitalBench proof and data pages for scoring, fairness, limits, asset lists, and test-round source files.",
+      "CapitalBench audit and data pages for scoring, fairness, limits, asset lists, and round source files.",
     priority: 0.74,
     changefreq: "monthly",
     lastmod: defaultLastmod
@@ -289,13 +289,13 @@ const labelOverrides: Record<string, string> = {
   rounds: "Rounds",
   models: "Models",
   api: "API",
-  methodology: "How It Works",
+  methodology: "Methodology",
   "risk-appetite": "AI Risk Appetite",
   universe: "Asset List",
   scoring: "Scoring",
   fairness: "Fairness",
   limitations: "Limitations",
-  docs: "Proof",
+  docs: "Audit",
   changelog: "Changelog",
   contribute: "Contribute",
   thanks: "Thanks",

@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
+import { buildBenchmarkStatus } from "../src/lib/benchmarkStatus.js";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { buildCumulativeLeaderboardData, createMemoryApiAuthRepository, handleDataApiRequest } from "../src/lib/dataApi.js";
 
@@ -279,7 +280,7 @@ function allocationLabels(value) {
 }
 
 function resolvedLabel(count) {
-  return `${count} resolved test${count === 1 ? "" : "s"}`;
+  return `${count} resolved round${count === 1 ? "" : "s"}`;
 }
 
 function modelLabel(modelId) {
@@ -1097,7 +1098,7 @@ function trackWindowLabel(round) {
 }
 
 function scoreEtaLine(round) {
-  if (!round) return "No active test.";
+  if (!round) return "No active round.";
   if (round.status === "resolved") return "Scores are published.";
   if (round.status === "overdue") return `Resolution is due; the ${round.exit_date} close has passed.`;
   return `Scores after the ${round.exit_date} close.`;
@@ -1820,9 +1821,9 @@ for (const track of ["weekly", "monthly"]) {
   includes(cumulativeHtml, `${cumulative.comparison.comparison_round_count} resolved`, context);
   includes(cumulativeScorecardHtml, score, context);
   includes(cumulativeScorecardHtml, "compares total model return with total oracle return", context);
-  includes(cumulativeScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved tests compared`, context);
+  includes(cumulativeScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, context);
   includes(cumulativeScorecardHtml, "full-history models ranked", context);
-  includes(cumulativeScorecardHtml, `Newest resolved test: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
+  includes(cumulativeScorecardHtml, `Newest resolved round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
   includes(cumulativeScorecardHtml, "Leader audit", `${context} score calculation audit`);
   includes(cumulativeScorecardHtml, cumulativeLeaderScoreAuditText(track, leader), `${context} score calculation audit`);
   includes(cumulativeScorecardHtml, "Rounds included:", context);
@@ -1876,9 +1877,9 @@ for (const track of ["weekly", "monthly"]) {
     includes(indexHtml, leader.label, "homepage weekly lane");
     includes(indexHtml, "Each bar compares total model return with total oracle return", "homepage scorecard oracle explanation");
     includes(homepageWeeklyScorecardHtml, "Full-History Model Scores", "homepage weekly cumulative chart title");
-    includes(homepageWeeklyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved tests compared`, "homepage weekly cumulative comparison count");
+    includes(homepageWeeklyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, "homepage weekly cumulative comparison count");
     includes(homepageWeeklyScorecardHtml, "full-history models ranked", "homepage weekly cumulative ranked model count");
-    includes(homepageWeeklyScorecardHtml, `Newest resolved test: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative newest included");
+    includes(homepageWeeklyScorecardHtml, `Newest resolved round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative newest included");
     includes(homepageWeeklyScorecardHtml, "Leader audit", "homepage weekly score calculation audit");
     includes(homepageWeeklyScorecardHtml, cumulativeLeaderScoreAuditText(track, leader), "homepage weekly score calculation audit");
     includes(homepageWeeklyScorecardHtml, "Rounds included:", "homepage weekly cumulative included rounds");
@@ -1923,6 +1924,18 @@ for (const track of ["weekly", "monthly"]) {
       }
     }
   }
+  if (track === "monthly") {
+    const homepageMonthlyScorecardHtml = htmlSection(
+      indexHtml,
+      '<section class="track-scorecard-panel track-scorecard-monthly"',
+      "homepage monthly cumulative scorecard"
+    );
+    includes(homepageMonthlyScorecardHtml, "Full-History Monthly Scores", "homepage monthly cumulative chart title");
+    includes(homepageMonthlyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, "homepage monthly cumulative comparison count");
+    includes(homepageMonthlyScorecardHtml, leader.label, "homepage monthly cumulative leader");
+    includes(homepageMonthlyScorecardHtml, score, "homepage monthly cumulative leader score");
+    includes(homepageMonthlyScorecardHtml, `Newest resolved round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage monthly cumulative newest included");
+  }
   includes(leaderboardsHtml, leader.label, `leaderboards index ${track} leader`);
   includes(leaderboardsHtml, score, `leaderboards index ${track} leader score`);
   includes(leaderboardsHtml, `${cumulative.comparison.comparison_round_count} resolved`, `leaderboards index ${track} resolved count`);
@@ -1960,15 +1973,15 @@ if (latestResolvedRound) includes(leaderboardsHtml, latestResolvedRound.round_id
 if (latestActiveWeekly) includes(leaderboardsHtml, latestActiveWeekly.round_id, "leaderboards index latest active weekly round");
 if (latestActiveMonthly) includes(leaderboardsHtml, latestActiveMonthly.round_id, "leaderboards index latest active monthly round");
 
-includes(indexHtml, `${apiReadModel.rounds.length} tests`, "homepage all-tests link count");
+includes(indexHtml, `${apiReadModel.rounds.length} rounds`, "homepage all-rounds link count");
 includes(indexHtml, `same ${currentUniverseOptionCount} assets`, "homepage process asset count");
 includes(indexHtml, `${currentUniverseOptionCount} current assets`, "homepage safeguard current asset count");
-includes(indexHtml, `${activeRoundCount} tests waiting for results`, "homepage safeguard open test count");
-includes(indexHtml, `${apiReadModel.rounds.length}-test record`, "homepage timeline total test count");
+includes(indexHtml, `${activeRoundCount} live rounds waiting for results`, "homepage safeguard live round count");
+includes(indexHtml, `${apiReadModel.rounds.length}-round record`, "homepage timeline total round count");
 includes(indexHtml, `<strong>${apiReadModel.models.length}</strong>`, "homepage current setup model count");
 includes(indexHtml, `<strong>${currentUniverseOptionCount}</strong>`, "homepage current setup asset count");
 includes(indexHtml, `<strong>${activeRoundCount}</strong>`, "homepage current setup open test count");
-includes(indexHtml, `${activeRoundCount} open total`, "homepage current setup open total");
+includes(indexHtml, `${activeRoundCount} live total`, "homepage current setup live total");
 includes(indexHtml, "<strong>Weekly</strong>", "homepage current setup weekly label");
 includes(indexHtml, "7 days", "homepage current setup weekly duration");
 includes(indexHtml, "<strong>Monthly</strong>", "homepage current setup monthly label");
@@ -2004,7 +2017,7 @@ for (const state of resultStates) {
     includes(leaderboardsHtml, `${modelLabel(state.leader.model_id)} Leads`, `${context} leader title`);
     includes(leaderboardsHtml, scoreLabel(state.leader.capitalbench_score), `${context} CapitalBench Score`);
     includes(leaderboardsHtml, providerLabelForModel(state.leader.model_id), `${context} provider`);
-    includes(leaderboardsHtml, `${state.completedCount} tests`, `${context} route completed count`);
+    includes(leaderboardsHtml, `${state.completedCount} rounds`, `${context} route completed count`);
   } else {
     includes(leaderboardsHtml, `${state.label} Track`, `${context} pending title`);
     includes(leaderboardsHtml, "Waiting for the first completed score", `${context} pending copy`);
@@ -2026,7 +2039,7 @@ for (const state of resultStates) {
   if (state.cumulative.comparison.comparison_round_count > 0) {
     includes(
       leaderboardsHtml,
-      `${state.cumulative.comparison.comparison_round_count} resolved ${state.label.toLowerCase()} test`,
+      `${state.cumulative.comparison.comparison_round_count} resolved ${state.label.toLowerCase()} round`,
       `${context} aggregate route description`
     );
   }
@@ -2102,7 +2115,7 @@ validateRoundsIndexIsland(roundsIndexHtml);
 validateUniverseTableIsland(universeHtml);
 if (latestUniverse) {
   includes(universeHtml, latestUniverse.label, "universe page latest label");
-  includes(universeHtml, `${latestUniverse.rows.length} total choices for new public tests`, "universe page latest count");
+  includes(universeHtml, `${latestUniverse.rows.length} total choices for new public rounds`, "universe page latest count");
   includes(universeHtml, `${latestUniverse.label} Option Table`, "universe page latest table title");
 }
 if (apiReadModel.current_universe_round_id) {
@@ -2154,7 +2167,7 @@ for (const [context, html] of [
   includes(html, "max_possible_return - portfolio_return", `${context} regret formula`);
   includes(html, "portfolio_return - sp500_return", `${context} S&P formula`);
   includes(html, "summed model returns", `${context} cumulative score aggregation explanation`);
-  includesAny(html, ["all resolved tests", "every resolved test", "resolved test in that track"], `${context} cumulative scope`);
+  includesAny(html, ["all resolved rounds", "every resolved round", "resolved round in that track"], `${context} cumulative scope`);
   includes(html, "short history", `${context} late-added model scope`);
 }
 includes(scoringHtml, "Below 0:", "scoring score scale explanation");
@@ -2262,6 +2275,61 @@ if (latestActiveWeeklyRound) {
   }
 }
 
+const benchmarkStatus = buildBenchmarkStatus(apiReadModel);
+for (const [html, context] of [
+  [indexHtml, "homepage freshness bar"],
+  [apiHtml, "API page freshness bar"]
+]) {
+  includes(html, "Latest official score", context);
+  includes(html, benchmarkStatus.latestOfficialRoundId, `${context} latest official score`);
+  includes(html, "Live rounds", context);
+  includes(html, `<strong>${benchmarkStatus.liveRoundCount}</strong>`, `${context} live round count`);
+  includes(html, "Latest price close", context);
+  includes(html, benchmarkStatus.latestPriceLabel, `${context} latest price close`);
+  includes(html, "Next scheduled score", context);
+  includes(html, benchmarkStatus.nextScoreLabel, `${context} next scheduled score`);
+  includes(html, "Last data refresh", context);
+  includes(html, benchmarkStatus.refreshedAtLabel, `${context} refresh timestamp`);
+}
+if (
+  benchmarkStatus.nextScoreDate &&
+  benchmarkStatus.latestPriceDate &&
+  benchmarkStatus.nextScoreDate <= benchmarkStatus.latestPriceDate
+) {
+  failures.push(
+    `freshness bar next scheduled score ${benchmarkStatus.nextScoreDate} is not after latest price close ${benchmarkStatus.latestPriceDate}`
+  );
+}
+
+includes(indexHtml, "The live benchmark for AI capital allocation", "homepage hero title");
+includes(indexHtml, "See what AI is buying, what it avoids, and which models actually perform.", "homepage hero positioning copy");
+includes(indexHtml, "View latest AI positioning", "homepage hero positioning CTA");
+includes(indexHtml, "Get score alerts", "homepage hero score alert CTA");
+includes(indexHtml, "Request API access", "homepage hero API CTA");
+includes(indexHtml, "What AI Models Are Allocating To Now", "homepage AI positioning heading");
+includes(indexHtml, "Model Performance", "homepage model performance heading");
+includes(indexHtml, "Choose full-history score horizon", "homepage scorecard tablist");
+includes(indexHtml, 'data-track-scorecard-tab="weekly"', "homepage weekly scorecard tab");
+includes(indexHtml, 'data-track-scorecard-tab="monthly"', "homepage monthly scorecard tab");
+includes(indexHtml, 'data-track-scorecard-panel="weekly"', "homepage weekly scorecard panel");
+includes(indexHtml, 'data-track-scorecard-panel="monthly"', "homepage monthly scorecard panel");
+const aiPositioningIndex = indexHtml.indexOf('id="ai-positioning"');
+const methodologyIndex = indexHtml.indexOf('id="how-it-works"');
+const modelPerformanceIndex = indexHtml.indexOf('id="track-scorecards"');
+const weeklyScorecardIndex = indexHtml.indexOf("Full-History Weekly Scores");
+if (aiPositioningIndex === -1) failures.push("homepage AI positioning anchor missing");
+if (methodologyIndex === -1) failures.push("homepage methodology anchor missing");
+if (modelPerformanceIndex === -1) failures.push("homepage model performance section missing");
+if (methodologyIndex !== -1 && modelPerformanceIndex !== -1 && methodologyIndex > modelPerformanceIndex) {
+  failures.push("homepage model performance section appears before methodology");
+}
+if (methodologyIndex !== -1 && weeklyScorecardIndex !== -1 && methodologyIndex > weeklyScorecardIndex) {
+  failures.push("homepage full-history weekly scores appear before methodology");
+}
+if (aiPositioningIndex !== -1 && modelPerformanceIndex !== -1 && modelPerformanceIndex > aiPositioningIndex) {
+  failures.push("homepage model performance section appears after AI positioning");
+}
+
 const latestResolvedScoredRound = apiReadModel.rounds
   .filter(
     (round) =>
@@ -2286,14 +2354,14 @@ if (latestResolvedScoredRound) {
     (row) => row.round_id === latestResolvedScoredRound.round_id && row.run_id === latestResolvedScoredRound.official_run_id
   );
 
-  includes(indexHtml, "Most Recent Finished Test", context);
+  includes(indexHtml, "Most Recent Finished Round", context);
   includes(indexHtml, "Portfolio Return And S&amp;P 500", context);
   includes(indexHtml, latestResolvedScoredRound.round_id, context);
   includes(indexHtml, latestResolvedScoredRound.entry_date, `${context} entry date`);
   includes(indexHtml, latestResolvedScoredRound.exit_date, `${context} exit date`);
   includes(indexHtml, `<span><strong>Models</strong>${resultRows.length}</span>`, `${context} model count`);
   includes(indexHtml, `<span><strong>Asset choices</strong>${returnRows.length}</span>`, `${context} asset count`);
-  includes(indexHtml, `<span><strong>Test length</strong>${latestResolvedScoredRound.track === "weekly" ? "Weekly" : "Monthly"}</span>`, `${context} track label`);
+  includes(indexHtml, `<span><strong>Horizon</strong>${latestResolvedScoredRound.track === "weekly" ? "Weekly" : "Monthly"}</span>`, `${context} track label`);
 
   if (typeof benchmarkReturn === "number") {
     includes(indexHtml, percentPointLabel(benchmarkReturn), `${context} S&P 500 return`);
@@ -2341,10 +2409,10 @@ for (const track of ["weekly", "monthly"]) {
   const state = buildHomepageTrackState(track);
   if (!state) continue;
   const label = track === "weekly" ? "Weekly" : "Monthly";
-  const context = `homepage latest ${track} picks`;
+  const context = `homepage latest ${track} model portfolios`;
   const { round, portfolios, assets, top_asset: topAsset } = state;
 
-  includes(indexHtml, `${label} picks`, context);
+  includes(indexHtml, `${label} model portfolios`, context);
   includes(indexHtml, round.round_id, `${context} round id`);
   includes(indexHtml, `${round.entry_date} to ${round.exit_date}`, `${context} score window`);
   includes(indexHtml, trackStatusLabel(round), `${context} status`);
@@ -2361,8 +2429,8 @@ for (const track of ["weekly", "monthly"]) {
     }
 
     if (topAsset) {
-      includesAny(indexHtml, [optionDisplay(topAsset), htmlText(optionDisplay(topAsset))], `${context} shared top pick`);
-      includes(indexHtml, `Average across ${portfolios.length} model portfolios.`, `${context} model count`);
+      includesAny(indexHtml, [optionDisplay(topAsset), htmlText(optionDisplay(topAsset))], `${context} shared top allocation`);
+      includes(indexHtml, `Average across ${portfolios.length} frozen model portfolios.`, `${context} model count`);
     } else {
       failures.push(`${context} has portfolios but no concentration top asset`);
     }
@@ -2374,7 +2442,7 @@ for (const track of ["weekly", "monthly"]) {
       includes(indexHtml, allocationPctLabel(asset.average_pct), `${context} exposure ${asset.option_id} average allocation`);
     }
   } else {
-    includes(indexHtml, `No model picks yet.`, context);
+    includes(indexHtml, `No model portfolios yet.`, context);
   }
 }
 
@@ -2489,8 +2557,8 @@ for (const [optionId, definition] of Object.entries(riskConfig.assets ?? {})) {
 }
 const largestActiveExposure = activeExposure.rows[0];
 if (largestActiveExposure) {
-  includes(indexHtml, "Open picks map", "homepage active exposure");
-  includes(indexHtml, `${assetDisplay(largestActiveExposure)} is the largest open pick.`, "homepage active exposure top asset");
+  includes(indexHtml, "Live AI positioning", "homepage active exposure");
+  includes(indexHtml, `${assetDisplay(largestActiveExposure)} is the largest live allocation.`, "homepage active exposure top asset");
   includes(indexHtml, compactExposurePct(largestActiveExposure.exposure_pct), "homepage active exposure top percentage");
   includesAny(
     indexHtml,
@@ -2502,7 +2570,7 @@ if (largestActiveExposure) {
   );
   includes(indexHtml, compactExposurePct(largestActiveExposure.weekly_share_pct), "homepage active exposure weekly share");
   includes(indexHtml, compactExposurePct(largestActiveExposure.monthly_share_pct), "homepage active exposure monthly share");
-  includes(indexHtml, "Finished tests are excluded", "homepage active exposure scope");
+  includes(indexHtml, "Top allocations", "homepage active exposure scope");
 }
 
 const livePerformance = buildLivePerformanceSummary();
@@ -2522,7 +2590,7 @@ if (livePerformance.modelRows.length > 0) {
   includes(indexHtml, signedPercentPointLabel(liveLeader.benchmark_return_pct), "homepage live performance leader benchmark return");
   includes(indexHtml, signedPercentPointLabel(liveLeader.alpha_pp), "homepage live performance leader alpha");
   includes(indexHtml, signedPercentPointLabel(livePerformance.benchmark_return_pct), "homepage live performance S&P 500 return");
-  includes(indexHtml, "Interim returns use open tests only", "homepage live performance scope");
+  includes(indexHtml, "Interim returns use live rounds only", "homepage live performance scope");
 }
 
 const riskProfiles = homepageRiskProfiles();
@@ -2660,9 +2728,9 @@ for (const round of apiReadModel.rounds) {
   const optionCount = roundOptionCount(round.round_id);
   const entryPriceRows = roundEntryPriceRows(round.round_id);
   const proofFileCount = roundProofFileCount(round);
-  const decisionNoun = round.submission_format === "portfolio" ? "allocations" : "picks";
+  const decisionNoun = "portfolios";
   if (proofFileCount !== null) {
-    includes(html, `${proofFileCount} public proof hashes`, `${context} proof hash count`);
+    includes(html, `${proofFileCount} public audit hashes`, `${context} audit hash count`);
     includes(html, `${proofFileCount} artifacts published`, `${context} audit artifact count`);
   }
   includes(html, `${portfolios.length} valid model ${decisionNoun}`, `${context} valid model portfolio count`);
@@ -2676,14 +2744,14 @@ for (const round of apiReadModel.rounds) {
   if (primaryPick) {
     const [optionId, count] = primaryPick;
     includes(html, optionId, `${context} most common primary pick`);
-    includes(html, `${count} of ${portfolios.length} models selected`, `${context} most common pick count`);
+    includes(html, `${count} of ${portfolios.length} models selected`, `${context} most common allocation count`);
     const consensusPrice = entryPriceRows.find((row) => row.option_id === optionId);
     if (consensusPrice?.price !== undefined) includes(html, `$${consensusPrice.price.toFixed(2)}`, `${context} consensus start price`);
   }
 
   const concentration = buildRoundConcentration(round);
   if (concentration.assets.length > 0) {
-    includes(html, "Where Models Concentrated In This Test", `${context} consensus section`);
+    includes(html, "Where Models Concentrated In This Round", `${context} consensus section`);
     includes(html, allocationPctLabel(concentration.top_asset_share_pct), `${context} consensus top exposure pct`);
     includes(html, allocationPctLabel(concentration.top_three_share_pct), `${context} consensus top-three pct`);
     includes(html, effectiveSpreadLabel(concentration.effective_asset_count), `${context} consensus effective spread`);
@@ -2721,7 +2789,7 @@ for (const round of apiReadModel.rounds) {
     if (benchmark) includes(html, percentPointLabel(benchmark.return_pct), `${context} S&P 500 result`);
     if (Number.isFinite(maxReturn)) includes(html, percentPointLabel(maxReturn), `${context} max possible result`);
     includes(html, `${returns.length} entry and exit price rows support the final score`, `${context} scoring price row count`);
-    includes(html, "What Moved During The Test", `${context} realized asset returns section`);
+    includes(html, "What Moved During The Round", `${context} realized asset returns section`);
     for (const row of [...returns].sort((left, right) => left.rank - right.rank).slice(0, 12)) {
       const returnContext = `${context} realized return ${row.option_id}`;
       includes(html, row.option_id, returnContext);

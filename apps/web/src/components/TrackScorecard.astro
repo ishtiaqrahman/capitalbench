@@ -21,7 +21,7 @@ function scoreLabel(value: number): string {
 }
 
 function scoredTestsLabel(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow): string {
-  return `${row.testsIncluded}/${row.testsRequired} scored test${row.testsRequired === 1 ? "" : "s"}`;
+  return `${row.testsIncluded}/${row.testsRequired} scored round${row.testsRequired === 1 ? "" : "s"}`;
 }
 
 function valueCoordinate(value: number, minimum: number, maximum: number): number {
@@ -141,15 +141,15 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
       <span class="panel-kicker">{scorecard.label} track</span>
       <h3 id={`${scorecard.track}-track-scorecard-title`}>Full-History {scorecard.label} Scores</h3>
       <p>
-        This chart compares total model return with total oracle return across every resolved {scorecard.label.toLowerCase()} test. The latest single-test result and
+        This chart compares total model return with total oracle return across every resolved {scorecard.label.toLowerCase()} round. The latest single-round result and
         short-history models are kept separate.
       </p>
     </div>
     <div class="track-scorecard-badges" aria-label={`${scorecard.label} scorecard status`}>
-      <span>{scorecard.comparisonRoundCount} resolved tests compared</span>
+      <span>{scorecard.comparisonRoundCount} resolved rounds compared</span>
       <span>{rankedModelLabel}</span>
       {provisionalScoreRows.length > 0 && <span>{shortHistoryLabel}</span>}
-      <span>Newest resolved test: {scorecard.latestRoundId}</span>
+      <span>Newest resolved round: {scorecard.latestRoundId}</span>
     </div>
   </div>
 
@@ -157,12 +157,12 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
     <article class="track-scorecard-chart track-scorecard-score-chart" aria-labelledby={`${scorecard.track}-normalized-score-title`}>
       <div class="track-scorecard-chart-head">
         <div>
-          <span>All resolved tests</span>
+          <span>All resolved rounds</span>
           <h4 id={`${scorecard.track}-normalized-score-title`}>Full-History Model Scores</h4>
         </div>
         <p>
           100 matches the oracle, 0 means no net return, and negative values mean a net loss. Bars include only models
-          with all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " test" : " tests"}.{" "}
+          with all {scorecard.comparisonRoundCount} resolved {scorecard.label.toLowerCase()}{scorecard.comparisonRoundCount === 1 ? " round" : " rounds"}.{" "}
           <a href="/scoring/#capitalbench-score">See the calculation</a>.
         </p>
       </div>
@@ -253,7 +253,7 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
         <div>
           <span>Return context</span>
           <h4 id={`${scorecard.track}-average-return-title`}>Average Return Details</h4>
-          <p>Average portfolio return across the same finished tests.</p>
+          <p>Average portfolio return across the same finished rounds.</p>
         </div>
         {scorecard.topAverageRow && (
           <div class="track-scorecard-return-leader" aria-label={`${scorecard.label} return leader`}>
@@ -303,7 +303,7 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
       <div class="track-scorecard-provisional-head">
         <span>Not ranked yet</span>
         <strong>Short-history models</strong>
-        <p>Shown for transparency; not included in the main ranking until they have all {scorecard.comparisonRoundCount} completed tests.</p>
+        <p>Shown for transparency; not included in the main ranking until they have all {scorecard.comparisonRoundCount} completed rounds.</p>
       </div>
       <div class="track-scorecard-provisional-list">
         {provisionalScoreRows.map((row) => (
@@ -343,13 +343,13 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
   <div class="track-scorecard-notes" aria-label={`${scorecard.label} scorecard notes`}>
     <span><strong>Rounds included:</strong> {scorecard.comparisonRoundIds.join(", ")}</span>
     {scorecard.excludedRoundIds.length > 0 && (
-      <span><strong>Excluded tests:</strong> {scorecard.excludedRoundIds.join(", ")}</span>
+      <span><strong>Excluded rounds:</strong> {scorecard.excludedRoundIds.join(", ")}</span>
     )}
     {scorecard.isEarlyCohort && (
-      <span><strong>Early track:</strong> this track has one completed test.</span>
+      <span><strong>Early track:</strong> this track has one completed round.</span>
     )}
     {provisionalScoreRows.length > 0 && (
-      <span><strong>Short history:</strong> models missing resolved tests are shown but cannot lead the full-history score.</span>
+      <span><strong>Short history:</strong> models missing resolved rounds are shown but cannot lead the full-history score.</span>
     )}
   </div>
 </section>

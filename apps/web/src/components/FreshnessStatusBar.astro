@@ -1,0 +1,31 @@
+---
+import apiReadModel from "../generated/apiReadModel.js";
+import { buildBenchmarkStatus } from "../lib/benchmarkStatus.js";
+
+const status = buildBenchmarkStatus(apiReadModel);
+---
+
+<div class="freshness-status-bar" aria-label="CapitalBench data freshness">
+  <div class="freshness-status-inner">
+    <a href={status.latestOfficialRoundHref}>
+      <span>Latest official score</span>
+      <strong>{status.latestOfficialRoundId}</strong>
+    </a>
+    <span>
+      <span>Live rounds</span>
+      <strong>{status.liveRoundCount}</strong>
+    </span>
+    <span>
+      <span>Latest price close</span>
+      <strong>{status.latestPriceLabel}</strong>
+    </span>
+    <span>
+      <span>Next scheduled score</span>
+      <strong>{status.nextScoreLabel}</strong>
+    </span>
+    <span>
+      <span>Last data refresh</span>
+      <strong>{status.refreshedAtLabel}</strong>
+    </span>
+  </div>
+</div>

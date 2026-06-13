@@ -150,7 +150,7 @@ function trackWindowLabel(round?: RoundRecord): string {
 }
 
 function scoreEtaLine(round?: RoundRecord): string {
-  if (!round) return "No active test.";
+  if (!round) return "No active round.";
   if (round.status === "resolved") return "Scores are published.";
   if (round.status === "overdue") return `Resolution is due; the ${dateOnly(round.exit_date)} close has passed.`;
   return `Scores after the ${dateOnly(round.exit_date)} close.`;
@@ -183,12 +183,12 @@ function routeDescription(track: ResultsTrackState, kind: "latest" | "overall"):
   if (kind === "latest") {
     if (track.latestResultRound) return `${track.latestResultRound.round_id}, ${trackWindowLabel(track.latestResultRound)}`;
     if (track.pendingRound) return `${track.pendingRound.round_id} is live. ${scoreEtaLine(track.pendingRound)}`;
-    return "No published test yet.";
+    return "No published round yet.";
   }
   if (track.scorecard) {
-    return `${track.scorecard.comparisonRoundCount} resolved ${track.label.toLowerCase()} test${track.scorecard.comparisonRoundCount === 1 ? "" : "s"} in the full track history.`;
+    return `${track.scorecard.comparisonRoundCount} resolved ${track.label.toLowerCase()} round${track.scorecard.comparisonRoundCount === 1 ? "" : "s"} in the full track history.`;
   }
-  return track.pendingRound ? "Overall chart appears after the first scored test." : "No completed tests yet.";
+  return track.pendingRound ? "Overall chart appears after the first scored round." : "No completed rounds yet.";
 }
 
 const routeCards = trackStates.flatMap((track) => [
@@ -205,7 +205,7 @@ const routeCards = trackStates.flatMap((track) => [
     href: track.cumulativeHref,
     kicker: `${track.label} aggregate`,
     title: `Overall ${track.label}`,
-    state: track.scorecard ? `${track.completedCount} tests` : "Not ready",
+    state: track.scorecard ? `${track.completedCount} rounds` : "Not ready",
     description: routeDescription(track, "overall"),
     icon: LineChart,
     className: `results-route-${track.key}`
@@ -216,7 +216,7 @@ const proofLinks = [
   {
     href: "/rounds",
     label: "Round index",
-    description: `${roundRows.length} public tests with dates, prices, and proof files.`,
+    description: `${roundRows.length} public rounds with dates, prices, and audit packets.`,
     icon: Layers3
   },
   {
@@ -236,14 +236,14 @@ const proofLinks = [
 
 <BaseLayout
   title="CapitalBench Results"
-  description="CapitalBench results show weekly and monthly AI model portfolio scores, latest winners, active tests, and public proof files."
+  description="CapitalBench benchmark results show weekly and monthly AI model portfolio scores, latest winners, live rounds, and public audit packets."
 >
   <section class="results-hub-hero" aria-labelledby="results-hub-title">
     <div class="results-hub-copy">
       <p class="eyebrow">Results</p>
       <h1 id="results-hub-title">Benchmark Results</h1>
       <p>
-        AI model portfolios are scored in separate weekly and monthly tracks using the same rules, saved picks, and real
+        AI model portfolios are scored in separate weekly and monthly tracks using the same rules, frozen portfolios, and real
         public-market prices.
       </p>
       <div class="results-hub-actions" aria-label="Primary result pages">
@@ -253,14 +253,14 @@ const proofLinks = [
         </a>
         <a class="action-link" href="/leaderboards/cumulative-weekly">Weekly scorecard</a>
         <a class="action-link" href="#combined-results">Combined results</a>
-        <a class="action-link" href="#proof-data">Proof and data</a>
+        <a class="action-link" href="#proof-data">Audit and data</a>
       </div>
     </div>
 
     <div class="results-hub-metrics" aria-label="Benchmark result status">
       <div class="results-status-main">
         <span class="panel-kicker">Benchmark status</span>
-        <div class="results-status-counts" aria-label="Completed and live tests">
+        <div class="results-status-counts" aria-label="Completed and live rounds">
           <span>
             <strong>{completedRoundCount}</strong>
             <em>completed</em>
@@ -342,7 +342,7 @@ const proofLinks = [
             <div>
               <span class="panel-kicker">{track.label} track</span>
               <h2>{track.scorecard ? `${trackLeaderName(track)} Leads` : `${track.label} Track`}</h2>
-              <p>{track.scorecard ? "CapitalBench Score leader across all resolved tests in this track." : "Waiting for the first completed score."}</p>
+              <p>{track.scorecard ? "CapitalBench Score leader across all resolved rounds in this track." : "Waiting for the first completed score."}</p>
             </div>
             <span class={`status-badge ${track.scorecard ? "status-resolved" : "status-pending"}`}>{trackStateLabel(track)}</span>
           </div>
@@ -383,7 +383,7 @@ const proofLinks = [
           <div class="track-card-actions">
             <a class="small-button" href={track.latestHref}>Latest result</a>
             <a class="small-button" href={track.cumulativeHref}>Overall scorecard</a>
-            {track.latestResultRound && <a class="small-button" href={`/rounds/${track.latestResultRound.round_id}/`}>Proof files</a>}
+            {track.latestResultRound && <a class="small-button" href={`/rounds/${track.latestResultRound.round_id}/`}>Audit packet</a>}
           </div>
         </article>
       );
@@ -397,7 +397,7 @@ const proofLinks = [
           <span class="panel-kicker">Completed results</span>
           <h2 id="combined-results-title">CapitalBench Scores</h2>
           <p>
-            The primary benchmark score combines every resolved test in each track. 100 means matching the highest-returning scored
+            The primary benchmark score combines every resolved round in each track. 100 means matching the highest-returning scored
             option. Overall scores divide total model return by total oracle return, preserving the difference between smaller and larger losses.
           </p>
         </div>
@@ -413,15 +413,15 @@ const proofLinks = [
   {latestPublishedResult && latestResultRound && latestScoreChart.rows.length > 0 && (
     <>
       <section class="home-section-heading" aria-labelledby="latest-scored-result-title">
-        <span class="panel-kicker">Latest scored test</span>
+        <span class="panel-kicker">Latest scored round</span>
         <h2 id="latest-scored-result-title">Most Recent Published Result</h2>
         <p>
-          This chart shows the newest completed test only. Live tests stay out of this chart until ending prices are
+          This chart shows the newest completed round only. Live rounds stay out of this chart until ending prices are
           collected.
         </p>
       </section>
 
-      <section class="published-score-panel results-latest-score-panel" aria-label="Most recent scored test chart">
+      <section class="published-score-panel results-latest-score-panel" aria-label="Most recent scored round chart">
         <ScoreReturnChart
           chart={latestScoreChart}
           label={`${latestPublishedResult.label} result`}
@@ -440,7 +440,7 @@ const proofLinks = [
             </div>
             <div class="track-card-actions">
               <a class="small-button" href={`/rounds/${latestResultRound.round_id}/`}>Full result</a>
-              <a class="small-button" href={latestPublishedResult.latestHref}>Leaderboard</a>
+              <a class="small-button" href={latestPublishedResult.latestHref}>Benchmark results</a>
             </div>
           </div>
 
@@ -457,11 +457,11 @@ const proofLinks = [
 
   <section class="home-section-heading home-section-heading-with-action" aria-labelledby="results-routes-title">
     <div>
-      <span class="panel-kicker">Scoreboard paths</span>
+      <span class="panel-kicker">Benchmark result paths</span>
       <h2 id="results-routes-title">Choose The Result View</h2>
-      <p>Latest pages show one completed test. Overall pages combine completed tests within the same track.</p>
+      <p>Latest pages show one completed round. Overall pages combine completed rounds within the same track.</p>
     </div>
-    <a class="section-profile-link" href="/rounds">All tests</a>
+    <a class="section-profile-link" href="/rounds">All rounds</a>
   </section>
 
   <section class="results-route-grid" aria-label="Leaderboard pages">
@@ -482,16 +482,16 @@ const proofLinks = [
   {liveTracks.length > 0 && (
     <>
       <section class="home-section-heading" aria-labelledby="live-tests-title">
-        <span class="panel-kicker">Live tests</span>
+        <span class="panel-kicker">Live rounds</span>
         <h2 id="live-tests-title">Waiting For Final Prices</h2>
-        <p>These tests are open or pending score. They are not counted in completed result charts yet.</p>
+        <p>These rounds are live or pending score. They are not counted in completed result charts yet.</p>
       </section>
 
-      <section class="results-live-grid" aria-label="Live tests waiting for scoring">
+      <section class="results-live-grid" aria-label="Live rounds waiting for scoring">
         {liveTracks.map((track) => (
           <article class={`results-live-card results-live-card-${track.key}`}>
             <div>
-              <span class="panel-kicker">{track.label} live test</span>
+              <span class="panel-kicker">{track.label} live round</span>
               <h3>{track.pendingRound?.round_id}</h3>
               <p>{scoreEtaLine(track.pendingRound)}</p>
             </div>
@@ -513,8 +513,8 @@ const proofLinks = [
 
   <section class="results-proof-panel" id="proof-data" aria-labelledby="results-proof-title">
     <div>
-      <span class="panel-kicker">Proof and data</span>
-      <h2 id="results-proof-title">Every Result Has Public Files</h2>
+      <span class="panel-kicker">Audit and data</span>
+      <h2 id="results-proof-title">Every Result Has An Audit Packet</h2>
       <p>
         Results link back to prompts, model outputs, portfolio decisions, prices, audit hashes, and scoring records.
       </p>

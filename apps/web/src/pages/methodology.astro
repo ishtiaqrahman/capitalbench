@@ -61,20 +61,20 @@ const earlierUniverseText = joinWithAnd(
 ---
 
 <BaseLayout
-  title="How CapitalBench Works"
-  description="How CapitalBench gives AI models the same market information, saves their portfolios, and scores them with real market prices."
+  title="CapitalBench Methodology"
+  description="How CapitalBench gives AI models the same market information, freezes their portfolios, and scores them with real market prices."
 >
   <PageHeader
-    eyebrow="How it works"
-    title="Same Information. Saved Picks. Real Scores."
-    summary="Every model gets the same market brief and asset list. Each model picks one portfolio. Market prices decide the score after one week or one month."
+    eyebrow="Methodology"
+    title="Same Information. Frozen Portfolios. Real Scores."
+    summary="Every model gets the same market brief and asset list. Each model submits one portfolio. Market prices decide the score after one week or one month."
   />
 
   <section class="methodology-lede" aria-label="Methodology summary">
     <div>
       <span class="metric-label">Model task</span>
-      <strong>Pick one portfolio</strong>
-      <p>Each model submits one valid portfolio or single pick, depending on the test rules.</p>
+      <strong>Submit one portfolio</strong>
+      <p>Each model submits one valid portfolio or single-allocation response, depending on the round rules.</p>
     </div>
     <div>
       <span class="metric-label">Information rule</span>
@@ -94,7 +94,7 @@ const earlierUniverseText = joinWithAnd(
     <a href="#execution">Execution</a>
     <a href="#pricing">Scoring</a>
     <a href="#fairness">Fairness</a>
-    <a href="#audit">Proof</a>
+    <a href="#audit">Audit</a>
   </nav>
 
   <section class="rule-matrix" aria-label="Protocol rule summary">
@@ -111,7 +111,7 @@ const earlierUniverseText = joinWithAnd(
     <article>
       <span class="panel-kicker">Scored</span>
       <h3>One public portfolio</h3>
-      <p>The scoreboard uses one valid saved portfolio per model from the selected public run.</p>
+      <p>The benchmark result uses one valid frozen portfolio per model from the selected public run.</p>
     </article>
     <article>
       <span class="panel-kicker">Not scored</span>
@@ -126,7 +126,7 @@ const earlierUniverseText = joinWithAnd(
         <h2>What CapitalBench Measures</h2>
         <p>
           CapitalBench evaluates one narrow question: given the same market information and asset list, which portfolio
-          does each model pick for a one-week or one-month test? It is a benchmark for comparing model picks, not a
+          does each model allocate for a one-week or one-month round? It is a benchmark for comparing model portfolios, not a
           trading system or investment recommendation engine.
         </p>
         <p>
@@ -174,7 +174,7 @@ const earlierUniverseText = joinWithAnd(
               <tr>
                 <td data-label="Artifact"><code>manifest.yaml</code></td>
                 <td data-label="Audience">Public</td>
-                <td data-label="Purpose">Test metadata, pick deadline, start rule, end rule, time period, methodology version, submission format, and portfolio constraints.</td>
+                <td data-label="Purpose">Round metadata, allocation deadline, start rule, end rule, time period, methodology version, submission format, and portfolio constraints.</td>
               </tr>
               <tr>
                 <td data-label="Artifact"><code>prompt.md</code></td>
@@ -203,17 +203,17 @@ const earlierUniverseText = joinWithAnd(
               </tr>
               <tr>
                 <td data-label="Artifact"><code>hashes.json</code></td>
-                <td data-label="Audience">Public proof</td>
-                <td data-label="Purpose">SHA-256 hashes proving the saved input files used for the test.</td>
+                <td data-label="Audience">Public audit</td>
+                <td data-label="Purpose">SHA-256 hashes proving the saved input files used for the round.</td>
               </tr>
               <tr>
                 <td data-label="Artifact"><code>research/*</code></td>
-                <td data-label="Audience">Proof, except final briefing</td>
+                <td data-label="Audience">Audit, except final briefing</td>
                 <td data-label="Purpose">Research manifest, hashes, source fact report, audit report, and final model-facing briefing.</td>
               </tr>
               <tr>
                 <td data-label="Artifact"><code>runs/&lt;run_id&gt;/*</code></td>
-                <td data-label="Audience">Proof and scoring</td>
+                <td data-label="Audience">Audit and scoring</td>
                 <td data-label="Purpose">Raw responses, normalized raw payloads, parsed submissions, run logs, validation summaries, and results.</td>
               </tr>
             </tbody>
@@ -268,8 +268,8 @@ const earlierUniverseText = joinWithAnd(
       <section id="submissions">
         <h2>Submission Format</h2>
         <p>
-          Each model must return one JSON or YAML object matching the test's declared submission format. Invalid raw
-          responses remain preserved, but they are not scored and cannot enter a public scoreboard.
+          Each model must return one JSON or YAML object matching the round's declared submission format. Invalid raw
+          responses remain preserved, but they are not scored and cannot enter a public benchmark result.
         </p>
         <div class="schema-grid">
           <span><code>round_id</code></span>
@@ -286,7 +286,7 @@ const earlierUniverseText = joinWithAnd(
         </div>
         <div class="leaderboard-defs schema-mode-defs">
           <div>
-            <h3>Single Pick</h3>
+            <h3>Single Allocation</h3>
             <p>Requires one <code>selected_option_id</code> from <code>options.yaml</code>. Legacy multi-select fields are invalid.</p>
           </div>
           <div>
@@ -294,7 +294,7 @@ const earlierUniverseText = joinWithAnd(
             <p>Requires a <code>portfolio</code> array plus <code>portfolio_rationale</code>. The default protocol allows 1 to 5 holdings, 5% increments, and exactly 100% total allocation.</p>
           </div>
           <div>
-            <h3>Test Constraints</h3>
+            <h3>Round Constraints</h3>
             <p><code>manifest.yaml</code> freezes the exact submission format, holding limits, allocation increment, and cash or benchmark allowance before model calls begin.</p>
           </div>
         </div>
@@ -311,12 +311,12 @@ const earlierUniverseText = joinWithAnd(
           <div class="method-card">
             <span class="panel-kicker">Public run</span>
             <h3>One call per model</h3>
-            <p>The public result is one valid provider call in the selected public run, scored under the test's declared submission format.</p>
+            <p>The public result is one valid provider call in the selected public run, scored under the round's declared submission format.</p>
           </div>
           <div class="method-card">
             <span class="panel-kicker">Consistency</span>
             <h3>Repeated calls</h3>
-            <p>Consistency runs ask the same model the same question multiple times to measure pick consistency.</p>
+            <p>Consistency runs ask the same model the same question multiple times to measure allocation consistency.</p>
           </div>
         </div>
         <ul>
@@ -339,7 +339,7 @@ const earlierUniverseText = joinWithAnd(
       <section id="retries">
         <h2>Retry Policy</h2>
         <p>
-          A public retry is allowed only when no valid pick can be parsed because of infrastructure or format
+          A public retry is allowed only when no valid allocation can be parsed because of infrastructure or format
           failure: malformed JSON, truncated response, provider transport or API failure, or schema output failure.
         </p>
         <p>
@@ -354,12 +354,12 @@ const earlierUniverseText = joinWithAnd(
           CapitalBench scores valid submissions against local price files. Adjusted close is preferred. If only close is
           supplied, scoring may continue but records a warning in the result artifacts. Tiingo fetching is strict about
           dates and requires rows matching the manifest start and end dates. Final automated scoring refreshes both
-          start and end adjusted closes together after the test window ends, so ETF distribution adjustments are on one
+          start and end adjusted closes together after the round window ends, so ETF distribution adjustments are on one
           post-window price basis.
         </p>
         <div class="formula-grid">
           <div>
-            <span>Single-pick return</span>
+            <span>Single-allocation return</span>
             <code>ending_price / starting_price - 1</code>
           </div>
           <div>
@@ -394,13 +394,13 @@ const earlierUniverseText = joinWithAnd(
           scored option, 0 means no net return, and negative values preserve losses. Overall scores divide summed model returns by summed oracle returns.
         </p>
         <p>
-          Overall track scorecards combine all resolved tests in the track. If a model is added later, it is shown with
-          fewer included tests and marked short history instead of being backfilled into older tests.
+          Overall track scorecards combine all resolved rounds in the track. If a model is added later, it is shown with
+          fewer included rounds and marked short history instead of being backfilled into older rounds.
         </p>
         <p>
           Interim tracking can be generated from reusable price snapshots after the start date and before the final end
-          date. These rows are shown on test pages as provisional progress versus S&amp;P 500 only; they do not finish a
-          test, populate the final scoreboard, or create rank/regret metrics.
+          date. These rows are shown on round pages as provisional progress versus S&amp;P 500 only; they do not finish a
+          round, populate the final benchmark result, or create rank/regret metrics.
         </p>
         <pre class="command-block"><code>capitalbench fetch-prices \
   --round rounds/&lt;id&gt; \
@@ -411,18 +411,18 @@ const earlierUniverseText = joinWithAnd(
       </section>
 
       <section id="leaderboards">
-        <h2>Scoreboard Definitions</h2>
+        <h2>Benchmark Result Definitions</h2>
         <div class="leaderboard-defs">
           <div>
-            <h3>Latest Test Scoreboard</h3>
-            <p>Newest completed public run only. If the latest test is pending, model portfolios may be shown but final performance is withheld.</p>
+            <h3>Latest Round Result</h3>
+            <p>Newest completed public run only. If the latest round is pending, model portfolios may be shown but final performance is withheld.</p>
           </div>
           <div>
-            <h3>Overall Scoreboard</h3>
-            <p>Average CapitalBench Score across all resolved tests in a track. New models show fewer included tests until they build history.</p>
+            <h3>Overall Benchmark Result</h3>
+            <p>Average CapitalBench Score across all resolved rounds in a track. New models show fewer included rounds until they build history.</p>
           </div>
           <div>
-            <h3>Consistency Scoreboard</h3>
+            <h3>Consistency Result</h3>
             <p>Average repeated-run score and average consistency across completed consistency runs. This view stays separate from public scoring.</p>
           </div>
         </div>
@@ -434,17 +434,17 @@ const earlierUniverseText = joinWithAnd(
           <li>Freeze <code>manifest.yaml</code>, <code>briefing.md</code>, <code>options.yaml</code>, <code>prompt.md</code>, and any prompt-facing <code>market_data/</code> artifact before collection.</li>
           <li>Publish <code>hashes.json</code> so readers can verify that inputs did not change after model calls.</li>
           <li>Do not give one model extra context or a different asset list.</li>
-          <li>Do not revise a completed test after seeing model choices just to create more varied picks.</li>
+          <li>Do not revise a completed round after seeing model choices just to create more varied allocations.</li>
           <li>Preserve invalid raw submissions instead of deleting them.</li>
           <li>Use the same starting and ending price source for every option.</li>
-          <li>Identify exactly one public model-call run for each test's public scoreboard.</li>
-          <li>Exclude mock, provider-smoke, failed, incomplete, and retrospective runs from public scoreboards.</li>
-          <li>Add newly released models only to future tests. Do not rerun old tests after outcomes may be knowable.</li>
+          <li>Identify exactly one public model-call run for each round's public benchmark result.</li>
+          <li>Exclude mock, provider-smoke, failed, incomplete, and retrospective runs from public benchmark results.</li>
+          <li>Add newly released models only to future rounds. Do not rerun old rounds after outcomes may be knowable.</li>
         </ul>
       </section>
 
       <section id="audit">
-        <h2>Proof Files And Website Sync</h2>
+        <h2>Audit Packets And Website Sync</h2>
         <p>
           The CLI stores exact provider text in local <code>raw_responses/</code> sidecars, normalized payloads in
           <code>submissions/raw/</code>, validated submissions in <code>submissions/parsed/</code>, and SHA-256 paths in
@@ -476,18 +476,18 @@ capitalbench sync-web --rounds-dir rounds --include-cumulative</code></pre>
     </article>
 
     <aside class="side-panel methodology-aside" aria-label="Methodology navigation">
-      <strong>How It Works</strong>
+      <strong>Methodology</strong>
       <a href="#scope">Scope</a>
       <a href="#lifecycle">Steps</a>
-      <a href="#artifacts">Test files</a>
+      <a href="#artifacts">Round files</a>
       <a href="#research">Research rules</a>
       <a href="#universe">Asset list</a>
       <a href="#submissions">Submissions</a>
       <a href="#execution">Execution</a>
       <a href="#pricing">Scoring</a>
-      <a href="#leaderboards">Scoreboards</a>
+      <a href="#leaderboards">Results</a>
       <a href="#fairness">Fairness</a>
-      <a href="#audit">Proof</a>
+      <a href="#audit">Audit</a>
       <a href="#limitations">Limitations</a>
     </aside>
   </section>

@@ -114,13 +114,13 @@ const universeDataset = datasetSchema({
 
 <BaseLayout
   title="CapitalBench Asset List"
-  description="Versioned CapitalBench asset lists for public market tests, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies."
+  description="Versioned CapitalBench asset lists for public market rounds, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies."
   structuredData={universeDataset}
 >
   <PageHeader
     eyebrow="Asset list"
     title="Allowed Assets"
-    summary="Every test saves its own asset list before model calls. Completed tests keep the exact list the models saw."
+    summary="Every round saves its own asset list before model calls. Completed rounds keep the exact list the models saw."
   />
 
   <section class="section compact">
@@ -128,13 +128,13 @@ const universeDataset = datasetSchema({
       <article class="feature">
         <span class="metric-label">Latest asset list</span>
         <h3>{latestUniverse.label}</h3>
-        <p>{latestUniverse.rows.length} total choices for new public tests.</p>
+        <p>{latestUniverse.rows.length} total choices for new public rounds.</p>
         {currentUniverseRoundId && <p class="mono">Current source: {currentUniverseRoundId}</p>}
       </article>
       <article class="feature">
-        <span class="metric-label">Test save rule</span>
+        <span class="metric-label">Round save rule</span>
         <h3>No retroactive edits</h3>
-        <p>Asset-list changes apply only to new tests. Prior model picks are always evaluated against the list they actually saw.</p>
+        <p>Asset-list changes apply only to new rounds. Prior model portfolios are always evaluated against the list they actually saw.</p>
       </article>
       <article class="feature">
         <span class="metric-label">Data Gate</span>

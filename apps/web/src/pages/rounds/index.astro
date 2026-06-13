@@ -8,9 +8,9 @@ import { datasetSchema } from "../../lib/seo";
 const roundRows = staticRoundRecords();
 const roundDecisionDates = roundRows.map((round) => round.decision_date).filter(Boolean).sort();
 const roundsDataset = datasetSchema({
-  name: "CapitalBench public test index",
+  name: "CapitalBench public round index",
   description:
-    "A public index of CapitalBench market tests, deadlines, time periods, run IDs, scoring status, and proof pages.",
+    "A public index of CapitalBench market rounds, deadlines, time periods, run IDs, scoring status, and audit packet pages.",
   path: "/rounds",
   datePublished: roundDecisionDates[0],
   dateModified: roundDecisionDates.at(-1),
@@ -20,14 +20,14 @@ const roundsDataset = datasetSchema({
 ---
 
 <BaseLayout
-  title="CapitalBench Test Rounds"
-  description="Index of CapitalBench market tests with dates, model portfolios, scoring status, and proof links."
+  title="CapitalBench Benchmark Rounds"
+  description="Index of CapitalBench market rounds with dates, model portfolios, scoring status, and audit packet links."
   structuredData={roundsDataset}
 >
   <PageHeader
-    eyebrow="Test index"
-    title="Test Rounds"
-    summary="Each test saves the market brief, asset list, prompt, model portfolios, and proof hashes before scoring."
+    eyebrow="Round index"
+    title="Benchmark Rounds"
+    summary="Each round saves the market brief, asset list, prompt, model portfolios, and audit hashes before scoring."
   />
   <section class="section">
     <RoundsTable client:visible fallbackRows={roundRows} />

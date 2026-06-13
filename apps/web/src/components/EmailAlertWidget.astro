@@ -186,8 +186,10 @@ const copy = {
         return scrollProgress() >= MIN_SCROLL_PROGRESS;
       }
 
-      function show(reason) {
-        if (visible || shouldSuppress() || !hasScrolledEnough() || footerSignupIsVisible()) return;
+      function show(reason, options = {}) {
+        const isManual = options.manual === true;
+        if (visible) return true;
+        if (shouldSuppress() || (!isManual && !hasScrolledEnough()) || (!isManual && footerSignupIsVisible())) return false;
         widget.hidden = false;
         if (!expanded) widget.dataset.state = "collapsed";
         visible = true;
@@ -195,21 +197,22 @@ const copy = {
           seenMetricSent = true;
           emitMetric("score_alert_seen", { context, reason });
         }
+        return true;
       }
 
       function expand(reason) {
         const isManual = reason === "chip_click";
-        if (expanded || shouldSuppress() || !hasScrolledEnough() || userIsTyping()) return;
+        if (expanded || shouldSuppress() || (!isManual && !hasScrolledEnough()) || userIsTyping()) return;
         if (isMobileViewport() && !isManual) {
           show(reason);
           return;
         }
         if (footerSignupIsVisible() && !isManual) return;
-        if (safeStorage.get(window.sessionStorage, EXPANDED_SESSION_KEY) === "true") {
+        if (!isManual && safeStorage.get(window.sessionStorage, EXPANDED_SESSION_KEY) === "true") {
           show(reason);
           return;
         }
-        show(reason);
+        if (!show(reason, { manual: isManual })) return;
         panel.hidden = false;
         chip.setAttribute("aria-expanded", "true");
         widget.dataset.state = "expanded";
@@ -254,6 +257,13 @@ const copy = {
         else expand("chip_click");
       });
 
+      document.addEventListener("click", (event) => {
+        const trigger = event.target instanceof Element ? event.target.closest("[data-score-alert-trigger]") : null;
+        if (!trigger) return;
+        event.preventDefault();
+        expand("chip_click");
+      });
+
       close?.addEventListener("click", () => dismiss("close_button"));
 
       form?.addEventListener("submit", () => {
@@ -276,8 +286,10 @@ const copy = {
           href.includes("/leaderboards") ||
           href.includes("/rounds") ||
           href.includes("proof") ||
+          href.includes("audit") ||
           href.includes("current-picks") ||
-          href.includes("active-exposure")
+          href.includes("active-exposure") ||
+          href.includes("ai-positioning")
         ) {
           safeStorage.set(window.sessionStorage, "capitalbench_email_intent_click", "true");
         }
@@ -298,6 +310,7 @@ const copy = {
 
       const intentSelectors = [
         ".published-score-panel",
+        "#ai-positioning",
         "#current-picks",
         ".track-summary-heading",
         ".timeline-lanes",

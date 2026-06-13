@@ -11,12 +11,12 @@ const scorecard = buildTrackScorecard(staticRoundRecords(), "monthly");
 
 <BaseLayout
   title="Overall Monthly CapitalBench Results"
-  description="Overall CapitalBench results for completed one-month market tests only."
+  description="Overall CapitalBench results for completed one-month market rounds only."
 >
   <PageHeader
-    eyebrow="One-month tests"
+    eyebrow="One-month rounds"
     title="Overall Monthly Results"
-    summary="Total model return compared with total oracle return across every resolved one-month test. Weekly tests are scored separately."
+    summary="Total model return compared with total oracle return across every resolved one-month round. Weekly rounds are scored separately."
   />
   {scorecard ? (
     <section class="section">
@@ -33,7 +33,7 @@ const scorecard = buildTrackScorecard(staticRoundRecords(), "monthly");
         <div>
           <span class="panel-kicker">Scope</span>
           <h2>What This Scorecard Includes</h2>
-          <p>Average raw return, S&amp;P 500 context, and max-possible return context appear across the same resolved monthly tests after monthly tests resolve. Consistency checks stay separate.</p>
+          <p>Average raw return, S&amp;P 500 context, and max-possible return context appear across the same resolved monthly rounds after monthly rounds resolve. Consistency checks stay separate.</p>
         </div>
         <a class="action-link" href="/leaderboards/cumulative-stability">Consistency results</a>
       </div>

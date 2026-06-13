@@ -170,7 +170,7 @@ export default function ModelLiveHoldings({ scopes }: Props) {
           </div>
 
           <div className="model-live-footnote">
-            <span>Completed tests are excluded from this live view.</span>
+            <span>Completed rounds are excluded from this live view.</span>
             <span>Next scoring target: {formatDate(scope.nextScoreDate)}</span>
           </div>
         </>

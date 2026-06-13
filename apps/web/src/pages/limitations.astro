@@ -5,12 +5,12 @@ import PageHeader from "../components/PageHeader.astro";
 
 <BaseLayout
   title="CapitalBench Limitations"
-  description="Limitations of weekly and monthly AI market-pick tests, including noisy outcomes, small samples, provider changes, and the non-advice boundary."
+  description="Limitations of weekly and monthly AI capital allocation rounds, including noisy outcomes, small samples, provider changes, and the non-advice boundary."
 >
   <PageHeader
     eyebrow="Limitations"
     title="What The Benchmark Cannot Prove"
-    summary="Weekly and monthly market outcomes are noisy. CapitalBench makes model picks checkable, but it does not turn them into investment recommendations."
+    summary="Weekly and monthly market outcomes are noisy. CapitalBench makes model portfolios checkable, but it does not turn them into investment recommendations."
   />
   <section class="section doc-layout">
     <article class="doc-body">
@@ -23,7 +23,7 @@ import PageHeader from "../components/PageHeader.astro";
 
       <h2>Small Samples</h2>
       <p>
-        Overall results become more informative as more completed tests are added. Early scoreboards should be read as
+        Overall results become more informative as more completed rounds are added. Early benchmark results should be read as
         benchmark observations, not as statistically settled rankings. Participation counts matter because models may
         enter the benchmark at different times.
       </p>
@@ -45,7 +45,7 @@ import PageHeader from "../components/PageHeader.astro";
       <h2>Prompt Sensitivity</h2>
       <p>
         LLM outputs can be sensitive to prompt wording, schema requirements, system instructions, model routing, and
-        provider-side changes. CapitalBench reduces those degrees of freedom by saving inputs and publishing proof
+        provider-side changes. CapitalBench reduces those degrees of freedom by saving inputs and publishing audit
         hashes, but no one benchmark captures all useful model behavior.
       </p>
 
@@ -58,7 +58,7 @@ import PageHeader from "../components/PageHeader.astro";
     <aside class="side-panel">
       <strong>Interpret carefully</strong>
       <p>
-        The leaderboard measures benchmark outcomes under a strict protocol, not investor suitability, risk tolerance,
+        The benchmark results measure outcomes under a strict protocol, not investor suitability, risk tolerance,
         liquidity needs, tax position, or portfolio construction quality.
       </p>
     </aside>

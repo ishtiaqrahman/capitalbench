@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import EmailAlertWidget from "../components/EmailAlertWidget.astro";
 import EmailSignup from "../components/EmailSignup.astro";
+import FreshnessStatusBar from "../components/FreshnessStatusBar.astro";
 import GitHubLogo from "../components/GitHubLogo.astro";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 import {
@@ -57,18 +58,18 @@ const navItems = [
   { href: "/leaderboards/latest", label: "Results", active: currentPath.startsWith("/leaderboards") },
   { href: "/models", label: "Models", active: currentPath.startsWith("/models") },
   { href: "/api", label: "API", active: currentPath.startsWith("/api") },
-  { href: "/#current-picks", label: "Picks", active: false },
+  { href: "/#ai-positioning", label: "Positioning", active: false },
   { href: "/rounds", label: "Rounds", active: currentPath.startsWith("/rounds") },
   {
     href: "/methodology",
-    label: "How It Works",
-    shortLabel: "How",
+    label: "Methodology",
+    shortLabel: "Method",
     active: currentPath.startsWith("/methodology"),
     analyticsEvent: "methodology_click"
   },
   {
     href: "/docs",
-    label: "Proof",
+    label: "Audit",
     active:
       currentPath.startsWith("/docs") ||
       currentPath.startsWith("/scoring") ||
@@ -199,6 +200,7 @@ const emailWidgetContext =
             </details>
           </div>
         </nav>
+        <FreshnessStatusBar />
       </header>
       <main id="content" tabindex="-1">
         <Breadcrumbs currentPath={currentPath} />

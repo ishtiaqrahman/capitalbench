@@ -73,14 +73,14 @@ export default function LeaderboardTable({ fallbackRows, kind, slot, disableFetc
   const columns = kind === "latest" ? latestColumns : kind === "official" ? officialColumns : stabilityColumns;
   const emptyText =
     kind === "latest"
-      ? "No completed test is published yet. Model portfolios remain pending until ending prices are available."
-      : "No completed tests are published for this scoreboard yet.";
+      ? "No completed round is published yet. Model portfolios remain pending until ending prices are available."
+      : "No completed rounds are published for these benchmark results yet.";
 
   if (rows.length === 0) {
     return (
       <div className="pending-state">
         <CalendarClock size={22} aria-hidden="true" />
-        <strong>{kind === "latest" ? "No completed scoreboard yet." : "No overall rows yet."}</strong>
+        <strong>{kind === "latest" ? "No completed benchmark result yet." : "No overall rows yet."}</strong>
         <span>{emptyText}</span>
       </div>
     );

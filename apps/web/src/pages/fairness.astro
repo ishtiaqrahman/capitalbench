@@ -5,12 +5,12 @@ import PageHeader from "../components/PageHeader.astro";
 
 <BaseLayout
   title="CapitalBench Fairness Controls"
-  description="Fairness controls for CapitalBench market tests: same information, saved inputs, separate runs, and no retroactive score changes."
+  description="Fairness controls for CapitalBench market rounds: same information, saved inputs, separate runs, and no retroactive score changes."
 >
   <PageHeader
     eyebrow="Fairness"
     title="Same Information For Every Model"
-    summary="The test is designed so model differences come from the model call, not from changing inputs, hidden tools, or later market data."
+    summary="The benchmark is designed so model differences come from the model call, not from changing inputs, hidden tools, or later market data."
   />
   <section class="section doc-layout">
     <article class="doc-body">
@@ -18,44 +18,44 @@ import PageHeader from "../components/PageHeader.astro";
       <p>
         Models receive the same prompt, briefing, asset list, and allowed response format for a public run. CapitalBench
         is not trying to equalize the internal knowledge of each model; it controls the external information supplied at
-        pick time.
+        allocation time.
       </p>
       <p>
-        Test inputs are hashed before public model calls. The public site mirrors the published hashes so readers can
+        Round inputs are hashed before public model calls. The public site mirrors the published hashes so readers can
         verify that the prompt, briefing, asset list, and market-data context were fixed before portfolios were collected.
       </p>
 
       <h2>No Public Backfills</h2>
       <p>
-        New models become eligible for future tests only. Older scoreboards remain unchanged, which prevents
+        New models become eligible for future rounds only. Older benchmark results remain unchanged, which prevents
         later model releases from being scored against historical market states they did not face in public at the time.
       </p>
 
       <h2>Run Isolation</h2>
       <p>
         Public, consistency, mock, retrospective, and provider smoke runs live under separate run IDs. Public
-        scoreboards only use the selected public run for a test. Repeated consistency runs are shown separately because
+        benchmark results only use the selected public run for a round. Repeated consistency runs are shown separately because
         they answer a different evaluation question.
       </p>
 
       <h2>Tool And Retrieval Boundary</h2>
       <p>
         Public model calls do not use browsing, live retrieval, trading tools, or hidden post-cutoff data. If a
-        provider run fails, the failed raw attempt can remain in the proof trail, but it does not become a public result.
+        provider run fails, the failed raw attempt can remain in the audit trail, but it does not become a public result.
       </p>
 
       <h2>Invalid Submission Handling</h2>
       <p>
-        A public result requires a schema-valid submission for the test's declared format. Missing option identifiers,
+        A public result requires a schema-valid submission for the round's declared format. Missing option identifiers,
         invalid allocation totals, unparsable responses, and failed attempts are excluded from scoring. This keeps the
-        scoreboard tied to valid saved picks from the same test.
+        benchmark result tied to valid frozen portfolios from the same round.
       </p>
     </article>
     <aside class="side-panel">
       <strong>Operator controls</strong>
       <p>
         Manual price fetching, report publishing, and web sync leave checkable files in the repository. Supabase stores
-        normalized public copies for the website, not a replacement for the local proof record.
+        normalized public copies for the website, not a replacement for the local audit record.
       </p>
     </aside>
   </section>

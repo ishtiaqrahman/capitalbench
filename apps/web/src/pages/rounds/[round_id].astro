@@ -469,25 +469,25 @@ const consensusCount = pickCounts[consensusPick] ?? 0;
 const consensusOption = roundUniverseOptions.find((option) => option.option_id === consensusPick);
 const consensusPrice = roundEntryPrices.find((price) => price.option_id === consensusPick);
 const universeOptionCount = roundUniverseOptions.filter((option) => option.option_id).length;
-const decisionNoun = round.submission_format === "portfolio" ? "allocations" : "picks";
-const decisionNounSingular = round.submission_format === "portfolio" ? "portfolio" : "pick";
+const decisionNoun = "portfolios";
+const decisionNounSingular = "allocation";
 const allocationDisplayNote =
   round.submission_format === "single_pick"
-    ? "This test used the original single-pick format. Each valid pick is displayed as a one-holding 100% portfolio while the validated JSON remains unchanged."
-    : "This test used the portfolio format. The weights below are the submitted model portfolios.";
+    ? "This round used the original single-selection format. Each valid allocation is displayed as a one-holding 100% portfolio while the validated JSON remains unchanged."
+    : "This round used the portfolio format. The weights below are the submitted model portfolios.";
 const isResolvedRound = round.status === "resolved";
 const isOverdueRound = round.status === "overdue";
 const statusLabel = isResolvedRound ? "Scored" : isOverdueRound ? "Resolution due" : round.status === "archived" ? "Archived" : "Pending";
 const track = roundTrack(round);
 const benchmarkTrackLabel = trackLabel(track);
 const roundStateTitle = isResolvedRound ? "Final Score Published" : isOverdueRound ? "Resolution Due" : "Score Pending";
-const pageTitle = isResolvedRound ? `${round.round_id} Result And Proof` : `${round.round_id} Proof Files`;
+const pageTitle = isResolvedRound ? `${round.round_id} Result And Audit Packet` : `${round.round_id} Audit Packet`;
 const pageDescription =
   isResolvedRound
-    ? `${round.title}: final model portfolio scores, S&P 500 return, Portfolio Minus S&P 500, entry and exit prices, prompt packet, and proof hashes for the ${round.horizon} market test.`
+    ? `${round.title}: final model portfolio scores, S&P 500 return, Portfolio Minus S&P 500, entry and exit prices, prompt packet, and audit hashes for the ${round.horizon} market round.`
     : isOverdueRound
-      ? `${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, overdue resolution status, and published proof hashes for the ${round.horizon} market test.`
-    : `${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, pending status, and published proof hashes for the ${round.horizon} market test.`;
+      ? `${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, overdue resolution status, and published audit hashes for the ${round.horizon} market round.`
+    : `${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, pending status, and published audit hashes for the ${round.horizon} market round.`;
 const roundPublishedDate = round.decision_date || round.entry_date;
 const roundModifiedDate = latestDate([
   roundPublishedDate,
@@ -495,15 +495,15 @@ const roundModifiedDate = latestDate([
   ...weeklyPerformanceRows.map((row) => row.price_date || row.target_date)
 ]);
 const roundDataset = datasetSchema({
-  name: `${round.round_id} CapitalBench proof dataset`,
-  description: `${round.title}: saved model-facing inputs, prompt artifacts, model portfolios, starting prices, status, and published proof hashes.`,
+  name: `${round.round_id} CapitalBench audit dataset`,
+  description: `${round.title}: saved model-facing inputs, prompt artifacts, model portfolios, starting prices, status, and published audit hashes.`,
   path: `/rounds/${round.round_id}`,
   datePublished: roundPublishedDate,
   dateModified: roundModifiedDate,
   temporalCoverage: `${round.entry_date}/${round.exit_date}`,
   keywords: ["LLM market benchmark", "AI market decision", "round audit", round.round_id, "CapitalBench"],
   variableMeasured: [
-    "model pick",
+    "model portfolio",
     "confidence",
     "model-facing prompt",
     "input artifact",
@@ -572,19 +572,19 @@ const attributionColumns = [
 >
   <section class="dashboard-header">
     <div class="dashboard-title">
-      <p class="eyebrow">{isResolvedRound ? "Final benchmark result" : isOverdueRound ? "Resolution due" : "Test proof files"}</p>
+      <p class="eyebrow">{isResolvedRound ? "Final benchmark result" : isOverdueRound ? "Resolution due" : "Round audit packet"}</p>
       <h1>{round.round_id}</h1>
       <div class="round-meta-row compact" aria-label="Round track">
-        <span>{benchmarkTrackLabel} test</span>
+        <span>{benchmarkTrackLabel} round</span>
         <span>{round.horizon}</span>
       </div>
       <p>{round.description}</p>
     </div>
     <aside class="header-note">
       {isResolvedRound
-        ? "Scores are published from the saved files for this test."
+        ? "Scores are published from the audit packet for this round."
         : isOverdueRound
-          ? "This test is past its exit date and still needs a published score."
+          ? "This round is past its exit date and still needs a published score."
         : "Model portfolios are saved before scoring. Final returns wait for ending prices."}
     </aside>
   </section>
@@ -594,7 +594,7 @@ const attributionColumns = [
       <div class="result-hero result-hero-round">
         <div>
           <span class="panel-kicker">Official result</span>
-          <h2>{modelLabel(resultWinner.model_id)} Won This {benchmarkTrackLabel} Test</h2>
+          <h2>{modelLabel(resultWinner.model_id)} Won This {benchmarkTrackLabel} Round</h2>
           <p>
             Scored from {dateOnly(round.entry_date)} close to {dateOnly(round.exit_date)} close. This page shows raw
             portfolio return, S&amp;P 500 comparison, and the maximum possible return for the saved asset universe.
@@ -672,12 +672,12 @@ const attributionColumns = [
     officialRunId={round.official_run_id}
   />
 
-  <section class="phase-band compact" aria-label="Test lifecycle">
+  <section class="phase-band compact" aria-label="Round lifecycle">
     <ol class="phase-list">
       <li class="phase-complete">
         <span>1</span>
         <strong>Inputs saved</strong>
-        <p>{roundAuditHashes.length} public proof hashes are available.</p>
+        <p>{roundAuditHashes.length} public audit hashes are available.</p>
       </li>
       <li class="phase-complete">
         <span>2</span>
@@ -694,16 +694,16 @@ const attributionColumns = [
         <strong>{isResolvedRound ? "Scores published" : isOverdueRound ? "Resolution due" : "Ending prices pending"}</strong>
         <p>
           {isResolvedRound
-            ? "The scoreboard is available for this completed test."
+            ? "The benchmark result is available for this completed round."
             : isOverdueRound
-              ? `The ${round.exit_date} exit close has passed and this test needs resolution.`
+              ? `The ${round.exit_date} exit close has passed and this round needs resolution.`
             : `Scores publish after ${round.exit_date} prices are available.`}
         </p>
       </li>
     </ol>
   </section>
 
-  <nav class="round-tabs" aria-label="Test sections">
+  <nav class="round-tabs" aria-label="Round sections">
     <a href="#overview">Overview</a>
     <a href="#consensus">Consensus</a>
     {isResolvedRound && <a href="#results">Results</a>}
@@ -711,23 +711,23 @@ const attributionColumns = [
     {isResolvedRound && attributionRows.length > 0 && <a href="#attribution">Attribution</a>}
     <a href="#inputs">Inputs</a>
     <a href="#outputs">Outputs</a>
-    <a href="#picks">Picks</a>
+    <a href="#picks">Model portfolios</a>
     <a href="#prices">Prices</a>
-    <a href="#audit">Proof</a>
+    <a href="#audit">Audit</a>
   </nav>
 
   <section class="dashboard-grid" id="overview">
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">Test state</span>
+          <span class="panel-kicker">Round state</span>
           <h2>{roundStateTitle}</h2>
           <p>
             {isResolvedRound
-              ? "This test has model portfolios, starting prices, ending prices, and final scores."
+              ? "This round has model portfolios, starting prices, ending prices, and final scores."
               : isOverdueRound
-                ? "This test has saved inputs and model portfolios, but its exit date has passed without published final scores."
-              : "This test has saved inputs and model portfolios. The scoreboard remains unavailable until ending prices are collected."}
+                ? "This round has saved inputs and model portfolios, but its exit date has passed without published final scores."
+              : "This round has saved inputs and model portfolios. Benchmark results remain unavailable until ending prices are collected."}
           </p>
         </div>
         <span class={`status-badge status-${round.status}`}>{statusLabel}</span>
@@ -753,7 +753,7 @@ const attributionColumns = [
         <div class="audit-checklist" aria-label="Round audit checklist">
           <div class="check-item complete">
             <span aria-hidden="true"></span>
-            <strong>Input proof hashes</strong>
+            <strong>Input audit hashes</strong>
             <p>{roundAuditHashes.length} artifacts published.</p>
           </div>
           <div class="check-item complete">
@@ -774,7 +774,7 @@ const attributionColumns = [
                 ? `${scoringPriceRows.length} entry and exit price rows support the final score.`
                 : isOverdueRound
                   ? "The scoring window has ended, but canonical final result files are not published yet."
-                : "Scoreboard rows remain withheld until the exit close is priced."}
+                : "Benchmark result rows remain withheld until the exit close is priced."}
             </p>
           </div>
         </div>
@@ -783,7 +783,7 @@ const attributionColumns = [
 
     <aside class="rail">
       <div class="rail-panel highlight-panel">
-        <span class="metric-label">Most common pick</span>
+        <span class="metric-label">Most common allocation</span>
         <h3>{consensusPick}</h3>
         <p>{consensusCount} of {roundSubmissions.length} models selected this primary {decisionNounSingular}.</p>
         <dl class="mini-facts">
@@ -808,7 +808,7 @@ const attributionColumns = [
       <div class="rail-panel">
         <span class="metric-label">Methodology</span>
         <h3>{round.methodology_version}</h3>
-        <p>{round.submission_format === "portfolio" ? "Portfolio format." : "Single-pick format."} Consistency checks remain separate.</p>
+        <p>{round.submission_format === "portfolio" ? "Portfolio format." : "Single-allocation format."} Consistency checks remain separate.</p>
       </div>
       <div class="rail-panel">
         <span class="metric-label">Display rule</span>
@@ -831,10 +831,10 @@ const attributionColumns = [
       <div class="panel-header">
         <div>
           <span class="panel-kicker">Model consensus</span>
-          <h2>Where Models Concentrated In This Test</h2>
+          <h2>Where Models Concentrated In This Round</h2>
           <p>
             Each model has equal weight. This shows the combined portfolio created by averaging all valid model
-            portfolios in this {benchmarkTrackLabel.toLowerCase()} test.
+            portfolios in this {benchmarkTrackLabel.toLowerCase()} round.
           </p>
         </div>
         <span class={`status-badge status-${round.status}`}>
@@ -927,13 +927,13 @@ const attributionColumns = [
       <div class="panel-header">
         <div>
           <span class="panel-kicker">{isResolvedRound ? "Realized asset returns" : isOverdueRound ? "Pending score tracking" : "Interim tracking"}</span>
-          <h2>{isResolvedRound ? "What Moved During The Test" : "Live Portfolio And S&P 500 Returns"}</h2>
+          <h2>{isResolvedRound ? "What Moved During The Round" : "Live Portfolio And S&P 500 Returns"}</h2>
           <p>
             {isResolvedRound
               ? "The table shows the top realized asset returns over the official scoring window. These returns explain the opportunity set behind the model scores."
               : isOverdueRound
-                ? "This chart shows the latest saved tracking rows for the expired test while final scoring files remain unpublished."
-              : "Once at least one post-entry price snapshot exists, this chart tracks each saved model portfolio against S&P 500 from the test start date. It is interim research context, not the final score."}
+                ? "This chart shows the latest saved tracking rows for the expired round while final scoring files remain unpublished."
+              : "Once at least one post-entry price snapshot exists, this chart tracks each saved model portfolio against S&P 500 from the round start date. It is interim research context, not the final score."}
           </p>
         </div>
       </div>
@@ -1163,7 +1163,7 @@ const attributionColumns = [
               ? "Entry and exit prices are shown for the completed close-to-close scoring window."
               : isOverdueRound
                 ? "Ending prices and final result files are not published yet, even though the exit date has passed."
-              : "Ending prices are intentionally absent until the test is complete."}
+              : "Ending prices are intentionally absent until the round is complete."}
           </p>
         </div>
       </div>
@@ -1182,9 +1182,9 @@ const attributionColumns = [
     <div class="panel">
       <div class="panel-header">
         <div>
-          <span class="panel-kicker">Proof</span>
+          <span class="panel-kicker">Audit</span>
           <h2>Published Hashes</h2>
-          <p>Test inputs are hashed before model calls and mirrored into the public read model.</p>
+          <p>Round inputs are hashed before model calls and mirrored into the public read model.</p>
         </div>
       </div>
       <HashTable client:visible rows={roundAuditHashes} />

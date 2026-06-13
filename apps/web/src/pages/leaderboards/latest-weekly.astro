@@ -105,18 +105,18 @@ const initialNowIso = new Date().toISOString();
 
 <BaseLayout
   title="Latest Weekly CapitalBench Results"
-  description="Latest one-week CapitalBench results with model portfolios and market returns kept separate from monthly tests."
+  description="Latest one-week CapitalBench results with model portfolios and market returns kept separate from monthly rounds."
 >
   <PageHeader
-    eyebrow="One-week test"
+    eyebrow="One-week round"
     title="Latest Weekly Result"
     summary={resultRound && winner
-      ? `${modelLabel(winner.model_id)} led the latest completed one-week test, scored from ${dateOnly(resultRound.entry_date)} close to ${dateOnly(resultRound.exit_date)} close.`
+      ? `${modelLabel(winner.model_id)} led the latest completed one-week round, scored from ${dateOnly(resultRound.entry_date)} close to ${dateOnly(resultRound.exit_date)} close.`
       : resultRound
-        ? `${resultRound.round_id} is the latest completed one-week test. Scores appear after the leaderboard rows are available.`
+        ? `${resultRound.round_id} is the latest completed one-week round. Scores appear after the benchmark result rows are available.`
       : pendingRound
-        ? "No weekly result has been published yet. The current weekly test is waiting for ending prices."
-        : "No weekly CapitalBench test is published yet."}
+        ? "No weekly result has been published yet. The current weekly round is waiting for ending prices."
+        : "No weekly CapitalBench round is published yet."}
   />
 
   {displayRound ? (
@@ -127,7 +127,7 @@ const initialNowIso = new Date().toISOString();
             <div class="latest-weekly-hero">
               <div>
                 <span class="panel-kicker">Latest published result</span>
-                <h2>{modelLabel(winner.model_id)} Led The Latest Weekly Test</h2>
+                <h2>{modelLabel(winner.model_id)} Led The Latest Weekly Round</h2>
                 <p>
                   {modelLabel(winner.model_id)} returned {pct(winnerReturn)}, compared with {pct(winner.sp500_return)}
                   for the S&amp;P 500 over the same close-to-close window.
@@ -172,9 +172,9 @@ const initialNowIso = new Date().toISOString();
               </div>
             )}
 
-            <div class="latest-weekly-proof-row" aria-label="Proof and data links">
+            <div class="latest-weekly-proof-row" aria-label="Audit and data links">
               <a class="small-button" href={`/rounds/${resultRound.round_id}/`}>Full round</a>
-              <a class="small-button" href={`/rounds/${resultRound.round_id}/#audit`}>Proof files</a>
+              <a class="small-button" href={`/rounds/${resultRound.round_id}/#audit`}>Audit packet</a>
               <a class="small-button" href="#detailed-scores">Detailed scores</a>
               <a class="small-button" href="#portfolio-result">Portfolios</a>
             </div>
@@ -213,7 +213,7 @@ const initialNowIso = new Date().toISOString();
               <p>
                 {resultRound
                   ? "Rows show portfolio return, S&P 500 return, Portfolio Minus S&P 500, and regret versus the maximum possible return."
-                  : "The leaderboard appears after the first weekly test is scored."}
+                  : "The benchmark result appears after the first weekly round is scored."}
               </p>
             </div>
           </div>
@@ -250,7 +250,7 @@ const initialNowIso = new Date().toISOString();
               <p>
                 {displayRound.status === "resolved"
                   ? "Compact allocation cards first, with the full searchable table below."
-                  : "These are the open weekly portfolios waiting for final prices."}
+                  : "These are the live weekly portfolios waiting for final prices."}
               </p>
             </div>
           </div>
@@ -303,7 +303,7 @@ const initialNowIso = new Date().toISOString();
         <section class="section latest-weekly-open-test" aria-labelledby="current-weekly-title">
           <div class="pending-result-note">
             <div>
-              <span class="panel-kicker">Current open weekly test</span>
+              <span class="panel-kicker">Current live weekly round</span>
               <strong id="current-weekly-title">{pendingRound.round_id}</strong>
               <span>Scores after the {dateOnly(pendingRound.exit_date)} close.</span>
             </div>
@@ -315,8 +315,8 @@ const initialNowIso = new Date().toISOString();
   ) : (
     <section class="section">
       <div class="pending-state">
-        <strong>No weekly test yet.</strong>
-        <span>The weekly results page will appear after the first weekly test is locked.</span>
+        <strong>No weekly round yet.</strong>
+        <span>The weekly results page will appear after the first weekly round is locked.</span>
       </div>
     </section>
   )}

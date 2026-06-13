@@ -58,7 +58,7 @@ export default function RoundsTable({ fallbackRows }: Props) {
       render: (row) => (
         <a className="round-link" href={row.audit_path}>
           <strong>{row.round_id}</strong>
-          <span>Open proof files</span>
+          <span>Open audit packet</span>
         </a>
       )
     },
@@ -69,14 +69,14 @@ export default function RoundsTable({ fallbackRows }: Props) {
       mobile: "primary"
     },
     { key: "status", label: "Status", value: (row) => publicStatusLabel(row.status), mobile: "secondary" },
-    { key: "decision_deadline_utc", label: "Picks Saved", value: (row) => dateOnly(row.decision_deadline_utc), mobile: "secondary" },
+    { key: "decision_deadline_utc", label: "Portfolios Frozen", value: (row) => dateOnly(row.decision_deadline_utc), mobile: "secondary" },
     { key: "horizon", label: "Length", mobile: "primary" },
     { key: "exit_date", label: "End", value: (row) => dateOnly(row.exit_date), mobile: "primary" },
     { key: "methodology_version", label: "Methodology", mobile: "hidden" },
     { key: "official_run_id", label: "Run ID", mobile: "hidden" },
     {
       key: "audit_path",
-      label: "Proof",
+      label: "Audit",
       mobile: "hidden",
       value: (row) => row.audit_path,
       render: (row) => (

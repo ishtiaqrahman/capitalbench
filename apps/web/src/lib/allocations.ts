@@ -66,7 +66,7 @@ export function allocationDisplayLabel(row: SubmissionRecord, optionsById: Optio
 }
 
 export function protocolLabel(row: Pick<SubmissionRecord, "submission_format">): string {
-  return row.submission_format === "portfolio" ? "Portfolio round" : "Single-pick round";
+  return row.submission_format === "portfolio" ? "Portfolio round" : "Single-allocation round";
 }
 
 export function allocationThemeClass(optionId: string): string {

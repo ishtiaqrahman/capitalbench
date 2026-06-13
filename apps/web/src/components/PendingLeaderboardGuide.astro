@@ -38,19 +38,19 @@ const copy = {
   },
   official: {
     kicker: "Overall results",
-    title: "What Appears After Completed Tests",
+    title: "What Appears After Completed Rounds",
     body:
-      "This view divides total model return by total oracle return across all resolved tests. New models show fewer included tests until they build history.",
-    columns: ["Model", "Provider", "Completed tests", "CapitalBench Score", "Average return", "S&P context"],
+      "This view divides total model return by total oracle return across all resolved rounds. New models show fewer included rounds until they build history.",
+    columns: ["Model", "Provider", "Completed rounds", "CapitalBench Score", "Average return", "S&P context"],
     sort: "CapitalBench Score descending, with average return and S&P comparison shown as context.",
-    cta: "View current test"
+    cta: "View current round"
   },
   stability: {
     kicker: "Consistency checks",
     title: "What Consistency Shows",
     body:
       "Consistency rows summarize repeated calls with the same saved input. They measure whether a model tends to make the same pick.",
-    columns: ["Model", "Provider", "Completed tests", "Average repeated score", "Consistency", "Most common pick score"],
+    columns: ["Model", "Provider", "Completed rounds", "Average repeated score", "Consistency", "Most common allocation score"],
     sort: "Average repeated score descending, then consistency and most-common-pick score.",
     cta: "Read how it works"
   }

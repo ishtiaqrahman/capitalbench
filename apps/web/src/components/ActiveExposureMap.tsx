@@ -457,27 +457,27 @@ export default function ActiveExposureMap({ rounds }: Props) {
             </div>
             <span>{trackLabel(track)} portfolios only</span>
           </div>
-          <span className="panel-kicker">Open picks map</span>
+          <span className="panel-kicker">Live AI positioning</span>
           <h3>
             {view === "model"
               ? "Where each model's open portfolios are invested."
               : largestExposure && leadingGroup
-              ? `${optionDisplayName(largestExposure.optionId, summary.optionsById)} is the largest open pick.`
-              : "No open model picks yet."}
+              ? `${optionDisplayName(largestExposure.optionId, summary.optionsById)} is the largest live allocation.`
+              : "No live model portfolios yet."}
           </h3>
           <p>
             {view === "model"
-              ? `Each row averages that model's ${modelPortfolioScope} open portfolios. Finished tests are excluded.`
+              ? `Each row averages that model's ${modelPortfolioScope} live portfolios. Finished rounds are excluded.`
               : largestExposure && leadingGroup
               ? `${formatPct(largestExposure.exposurePct)} points to ${optionDisplayName(
                   largestExposure.optionId,
                   summary.optionsById
                 )}, while ${leadingGroup.group} accounts for ${formatPct(leadingGroup.exposurePct)} of open portfolios.`
-              : "When open tests are waiting for final prices, their saved picks appear here."}
+              : "When live rounds are waiting for final prices, their frozen portfolios appear here."}
           </p>
         </div>
 
-        <div className="active-exposure-stat-grid" aria-label="Open picks summary">
+        <div className="active-exposure-stat-grid" aria-label="Live model portfolio summary">
           {view === "asset" ? (
             <>
               <div>
@@ -491,7 +491,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
                 <small>{leadingGroup ? formatPct(leadingGroup.exposurePct) : "0%"}</small>
               </div>
               <div>
-                <span>Open tests</span>
+                <span>Live rounds</span>
                 <strong>{summary.visibleRounds.length}</strong>
                 <small>{trackLabel(track)}</small>
               </div>
@@ -524,13 +524,13 @@ export default function ActiveExposureMap({ rounds }: Props) {
                         modelSummary.mostConcentrated.topAsset.optionId,
                         modelSummary.optionsById
                       )} ${formatPct(modelSummary.mostConcentrated.topAsset.exposurePct)}`
-                    : "No open picks"}
+                    : "No live portfolios"}
                 </small>
               </div>
               <div>
                 <span>Most diversified</span>
                 <strong>{modelSummary.mostDiversified ? modelLabel(modelSummary.mostDiversified.modelId) : "None"}</strong>
-                <small>{modelSummary.mostDiversified ? `${modelSummary.mostDiversified.assets.length} assets held` : "No open picks"}</small>
+                <small>{modelSummary.mostDiversified ? `${modelSummary.mostDiversified.assets.length} assets held` : "No live portfolios"}</small>
               </div>
             </>
           )}
@@ -553,7 +553,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
                 </button>
               )}
             </div>
-            <div className="active-exposure-ribbon" aria-label="Open model picks by asset category">
+            <div className="active-exposure-ribbon" aria-label="Live model portfolios by asset category">
               {summary.groups.map((group) => (
                 <button
                   key={group.group}
@@ -575,8 +575,8 @@ export default function ActiveExposureMap({ rounds }: Props) {
             <section className="active-exposure-ranking" aria-label="Ranked active asset exposures">
               <div className="active-exposure-ranking-head">
                 <div>
-                  <span className="metric-label">{selectedGroup === "all" ? "Top picks" : selectedGroup}</span>
-                  <strong>{selectedGroup === "all" ? "Assets with the most open model picks" : "Assets in selected category"}</strong>
+                  <span className="metric-label">{selectedGroup === "all" ? "Top allocations" : selectedGroup}</span>
+                  <strong>{selectedGroup === "all" ? "Assets with the largest live model allocation" : "Assets in selected category"}</strong>
                 </div>
                 <span>{focusedAssets.length} assets</span>
               </div>
@@ -602,7 +602,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
                 ))}
                 {remainingAssets.length > 0 && (
                   <div className="active-exposure-other-row">
-                    <span>{remainingAssets.length} smaller open picks</span>
+                    <span>{remainingAssets.length} smaller live allocations</span>
                     <strong>{formatPct(remainingExposure)}</strong>
                   </div>
                 )}
@@ -621,7 +621,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
                   </div>
                   <div className="active-exposure-detail-number">
                     <strong>{formatPct(selectedAsset.exposurePct)}</strong>
-                    <span>of open model picks</span>
+                    <span>of live model portfolios</span>
                   </div>
                   <div className="active-exposure-split">
                     <div>
@@ -681,8 +681,8 @@ export default function ActiveExposureMap({ rounds }: Props) {
                 </>
               ) : (
                 <div className="pending-state compact">
-                  <strong>No open pick selected.</strong>
-                  <span>Choose a track with open model picks.</span>
+                  <strong>No live allocation selected.</strong>
+                  <span>Choose a track with live model portfolios.</span>
                 </div>
               )}
             </aside>
@@ -692,9 +692,9 @@ export default function ActiveExposureMap({ rounds }: Props) {
             <section className="active-model-panel" aria-labelledby="active-model-title">
               <div className="active-exposure-panel-head active-model-panel-head">
                 <div>
-                  <span className="metric-label">Open picks by model</span>
-                  <strong id="active-model-title">Where each model is invested in open tests</strong>
-                  <p>Each model's {modelPortfolioScope} open portfolios are averaged into one view. Finished tests are not counted.</p>
+                  <span className="metric-label">Model portfolios by model</span>
+                  <strong id="active-model-title">Where each model is invested in live rounds</strong>
+                  <p>Each model's {modelPortfolioScope} live portfolios are averaged into one view. Finished rounds are not counted.</p>
                 </div>
                 <span>{modelSummary.models.length} models</span>
               </div>
@@ -716,13 +716,13 @@ export default function ActiveExposureMap({ rounds }: Props) {
                           modelSummary.mostConcentrated.topAsset.optionId,
                           modelSummary.optionsById
                         )}`
-                      : "No open picks"}
+                      : "No live portfolios"}
                   </small>
                 </div>
                 <div>
                   <span>Broadest pick mix</span>
                   <strong>{modelSummary.mostDiversified ? modelLabel(modelSummary.mostDiversified.modelId) : "None"}</strong>
-                  <small>{modelSummary.mostDiversified ? `${modelSummary.mostDiversified.assets.length} assets held` : "No open picks"}</small>
+                  <small>{modelSummary.mostDiversified ? `${modelSummary.mostDiversified.assets.length} assets held` : "No live portfolios"}</small>
                 </div>
               </div>
 
@@ -765,7 +765,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
                         </div>
                       </div>
 
-                      <div className="active-model-stack" aria-label={`${modelLabel(model.modelId)} open picks`}>
+                      <div className="active-model-stack" aria-label={`${modelLabel(model.modelId)} live model portfolios`}>
                         {segments.map((segment) => (
                           <span
                             key={segment.optionId}
@@ -780,7 +780,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
                         ))}
                       </div>
 
-                      <div className="active-model-top-list" aria-label={`${modelLabel(model.modelId)} largest open picks`}>
+                      <div className="active-model-top-list" aria-label={`${modelLabel(model.modelId)} largest live allocations`}>
                         {segments.slice(0, 4).map((segment) => (
                           <div key={segment.optionId}>
                             <span className={`active-exposure-dot exposure-${groupClass(segment.group)}`} aria-hidden="true" />

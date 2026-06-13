@@ -100,7 +100,7 @@ function latestLiveMarkRows(modelId: string) {
 }
 
 function scorecardLabel(scorecard: ModelTrackScore): string {
-  if (scorecard.completedTests === 0) return "No completed tests";
+  if (scorecard.completedTests === 0) return "No completed rounds";
   return `${scorecard.wins} wins / ${scorecard.completedTests} completed`;
 }
 
@@ -114,7 +114,7 @@ function alphaBarStyle(row: ModelResultRow): string {
 
 <BaseLayout
   title={`${profile.label} CapitalBench Model Profile`}
-  description={`${profile.label} live holdings, weekly and monthly CapitalBench results, historical portfolio pattern, and public proof files.`}
+  description={`${profile.label} live holdings, weekly and monthly CapitalBench results, historical portfolio pattern, and public audit packets.`}
 >
   <section class={`model-profile-hero model-profile-${profile.provider}`} aria-labelledby="model-title">
     <div class="model-profile-identity">
@@ -140,10 +140,10 @@ function alphaBarStyle(row: ModelResultRow): string {
       <div>
         <span>Live portfolios</span>
         <strong>{profile.live.all.portfolioCount}</strong>
-        <small>{plural(profile.live.all.roundCount, "open test")}</small>
+        <small>{plural(profile.live.all.roundCount, "open round")}</small>
       </div>
       <div>
-        <span>Completed tests</span>
+        <span>Completed rounds</span>
         <strong>{profile.allResults.length}</strong>
         <small>scored rounds</small>
       </div>
@@ -174,7 +174,7 @@ function alphaBarStyle(row: ModelResultRow): string {
         <span class="panel-kicker">Current live holdings</span>
         <h2 id="live-holdings-title">Open Portfolios Waiting For Scores</h2>
       </div>
-      <p>Completed tests are excluded here, so this view shows only the model's still-open weekly and monthly portfolios.</p>
+      <p>Completed rounds are excluded here, so this view shows only the model's still-open weekly and monthly portfolios.</p>
     </div>
     <ModelLiveHoldings client:visible scopes={profile.live} />
   </section>
@@ -185,7 +185,7 @@ function alphaBarStyle(row: ModelResultRow): string {
         <span class="panel-kicker">Live mark-to-market</span>
         <h2 id="live-performance-title">Current Return Before Final Scores</h2>
       </div>
-      <p>Latest available close for open tests only. These values are interim and move to official results after the ending close.</p>
+      <p>Latest available close for live rounds only. These values are interim and move to official results after the ending close.</p>
     </div>
 
     {liveMarkRows.length > 0 ? (
@@ -327,7 +327,7 @@ function alphaBarStyle(row: ModelResultRow): string {
         <span class="panel-kicker">Portfolio pattern</span>
         <h2 id="model-fingerprint-title">What This Model Has Tended To Hold</h2>
       </div>
-      <p>Calculated from all saved official portfolios for this model, including open and completed tests.</p>
+      <p>Calculated from all saved official portfolios for this model, including open and completed rounds.</p>
     </div>
 
     <div class="model-fingerprint-grid">
@@ -482,7 +482,7 @@ function alphaBarStyle(row: ModelResultRow): string {
               <p>{row.rationale || "No rationale text available."}</p>
             </div>
             <div>
-              <span class="metric-label">Proof files</span>
+              <span class="metric-label">Audit packets</span>
               <div class="model-proof-links">
                 <a href={`${repoBlob}/${row.parsedPath}`} target="_blank" rel="noreferrer">Parsed submission</a>
                 <a href={`${repoBlob}/${row.rawPath}`} target="_blank" rel="noreferrer">Raw submission</a>
@@ -499,8 +499,8 @@ function alphaBarStyle(row: ModelResultRow): string {
     <details>
       <summary>
         <span>
-          <span class="panel-kicker">Proof and data</span>
-          <strong id="model-proof-title">Public Files For This Model</strong>
+          <span class="panel-kicker">Audit and data</span>
+          <strong id="model-proof-title">Public Audit Packets For This Model</strong>
         </span>
       </summary>
       <div class="model-proof-grid">

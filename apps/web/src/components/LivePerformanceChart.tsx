@@ -200,12 +200,12 @@ export default function LivePerformanceChart({ rows, openRoundCounts }: Props) {
     .sort()[0];
 
   return (
-    <section className="live-performance-panel" aria-label="Live mark-to-market returns for open tests">
+    <section className="live-performance-panel" aria-label="Live mark-to-market returns for live rounds">
       <div className="live-performance-head">
         <div>
           <span className="panel-kicker">Live tests</span>
           <h3>Live Portfolio Returns</h3>
-          <p>Open tests marked to the latest available close. These are not final scores.</p>
+          <p>Live rounds marked to the latest available close. These are not final scores.</p>
         </div>
         <div className="live-performance-tabs" role="tablist" aria-label="Live performance track filter">
           {TRACKS.map((item) => (
@@ -224,7 +224,7 @@ export default function LivePerformanceChart({ rows, openRoundCounts }: Props) {
 
       <div className="live-performance-stats" aria-label="Live performance context">
         <div>
-          <span>Priced open tests</span>
+          <span>Priced live rounds</span>
           <strong>{openRoundCount} of {totalOpenRoundCount}</strong>
         </div>
         <div>
@@ -295,7 +295,7 @@ export default function LivePerformanceChart({ rows, openRoundCounts }: Props) {
             ))}
           </div>
           <p className="live-performance-note">
-            Interim returns use open tests only. Completed tests move to official scored results.
+            Interim returns use live rounds only. Completed rounds move to official scored results.
           </p>
         </div>
       ) : (

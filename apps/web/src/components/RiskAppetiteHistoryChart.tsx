@@ -656,7 +656,7 @@ export default function RiskAppetiteHistoryChart({ decisionHistory, outstandingH
                 <div><dt>Weekly</dt><dd>{score(outstandingPoint.weekly_score)}</dd></div>
                 <div><dt>Monthly</dt><dd>{score(outstandingPoint.monthly_score)}</dd></div>
                 <div><dt>Portfolios</dt><dd>{outstandingPoint.portfolio_count}</dd></div>
-                <div><dt>Open tests</dt><dd>{outstandingPoint.round_count}</dd></div>
+                <div><dt>Live rounds</dt><dd>{outstandingPoint.round_count}</dd></div>
               </dl>
               <div className="risk-history-detail-list">
                 <span>Portfolio mix</span>

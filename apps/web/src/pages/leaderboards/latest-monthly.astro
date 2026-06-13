@@ -31,16 +31,16 @@ const initialNowIso = new Date().toISOString();
 
 <BaseLayout
   title="Latest Monthly CapitalBench Results"
-  description="Latest one-month CapitalBench results with model portfolios and market returns kept separate from weekly tests."
+  description="Latest one-month CapitalBench results with model portfolios and market returns kept separate from weekly rounds."
 >
   <PageHeader
-    eyebrow="One-month test"
+    eyebrow="One-month round"
     title="Monthly Results"
     summary={resultRound
-      ? `${resultRound.round_id} is the latest completed one-month test. Current open monthly tests are shown separately.`
+      ? `${resultRound.round_id} is the latest completed one-month round. Current live monthly rounds are shown separately.`
       : pendingRound
-        ? "No monthly result has been published yet. The current monthly test is waiting for ending prices."
-        : "No monthly CapitalBench test is published yet."}
+        ? "No monthly result has been published yet. The current monthly round is waiting for ending prices."
+        : "No monthly CapitalBench round is published yet."}
   />
 
   {displayRound ? (
@@ -54,7 +54,7 @@ const initialNowIso = new Date().toISOString();
                 <h2>{modelLabel(winner.model_id)} Won {resultRound.round_id}</h2>
                 <p>
                   The completed result shows portfolio return, S&amp;P 500 comparison, and regret versus the maximum
-                  possible return. Current monthly tests remain separate until their ending prices are collected.
+                  possible return. Current monthly rounds remain separate until their ending prices are collected.
                 </p>
               </div>
               <div class="result-metrics" aria-label="Latest monthly result summary">
@@ -82,7 +82,7 @@ const initialNowIso = new Date().toISOString();
             </div>
             {pendingRound && pendingRound.round_id !== resultRound.round_id && (
               <div class="pending-result-note">
-                <strong>Newer monthly test is open:</strong>
+                <strong>Newer monthly round is live:</strong>
                 <span>{pendingRound.round_id} scores after the {pendingRound.exit_date} close.</span>
                 <a href={`/rounds/${pendingRound.round_id}/`}>View current portfolios</a>
               </div>
@@ -130,7 +130,7 @@ const initialNowIso = new Date().toISOString();
               <p>
                 {resultRound
                   ? "Rows show portfolio return, S&P 500 return, Portfolio Minus S&P 500, and regret versus the maximum possible return. The table is monthly only."
-                  : "The leaderboard appears after the first monthly test is scored."}
+                  : "The benchmark result appears after the first monthly round is scored."}
               </p>
             </div>
           </div>
@@ -147,7 +147,7 @@ const initialNowIso = new Date().toISOString();
               <p>
                 {displayRound.status === "resolved"
                   ? "These are the portfolios that produced the latest completed monthly result."
-                  : "These are the open monthly portfolios waiting for final prices."}
+                  : "These are the live monthly portfolios waiting for final prices."}
               </p>
             </div>
           </div>
@@ -164,8 +164,8 @@ const initialNowIso = new Date().toISOString();
   ) : (
     <section class="section">
       <div class="pending-state">
-        <strong>No monthly test yet.</strong>
-        <span>The monthly results page will appear after the first monthly test is locked.</span>
+        <strong>No monthly round yet.</strong>
+        <span>The monthly results page will appear after the first monthly round is locked.</span>
       </div>
     </section>
   )}

@@ -10,18 +10,18 @@ import PageHeader from "../components/PageHeader.astro";
   <PageHeader
     eyebrow="Scoring"
     title="How Scores Work"
-    summary="Each test records portfolio return, S&P 500 return, Portfolio Minus S&P 500, and a CapitalBench Score that scales the result against the highest-returning scored option in that window."
+    summary="Each round records portfolio return, S&P 500 return, Portfolio Minus S&P 500, and a CapitalBench Score that scales the result against the highest-returning scored option in that window."
   />
   <section class="section doc-layout">
     <article class="doc-body">
-      <h2>Single-Test Result</h2>
+      <h2>Single-Round Result</h2>
       <p>
-        Each model gets one saved portfolio for a test, and that portfolio is what appears on the public scoreboard.
-        For a completed test, CapitalBench reports the raw portfolio return, the S&amp;P 500 return over the same
+        Each model gets one frozen portfolio for a round, and that portfolio is what appears in the public benchmark result.
+        For a completed round, CapitalBench reports the raw portfolio return, the S&amp;P 500 return over the same
         close-to-close window, Portfolio Minus S&amp;P 500, and regret versus the highest-returning scored option.
       </p>
       <ul>
-        <li>Single-pick return: selected option ending price divided by starting price, minus one.</li>
+        <li>Single-allocation return: selected option ending price divided by starting price, minus one.</li>
         <li>Portfolio return: weighted sum of holding returns, using the submitted allocation percentages.</li>
         <li>Portfolio Minus S&P 500: portfolio return minus S&P 500 return.</li>
         <li>Maximum possible return: the highest realized return among scored options in the saved universe.</li>
@@ -32,7 +32,7 @@ import PageHeader from "../components/PageHeader.astro";
       <h2 id="capitalbench-score">CapitalBench Score</h2>
       <p>
         CapitalBench Score compares a model portfolio directly with the best possible asset choice known after the
-        test. That hindsight result is the oracle return.
+        round. That hindsight result is the oracle return.
       </p>
       <ul>
         <li><strong>100:</strong> the portfolio matched the highest-returning asset in the saved universe.</li>
@@ -43,7 +43,7 @@ import PageHeader from "../components/PageHeader.astro";
       </ul>
       <p>
         Example: if a portfolio returns 3.93% and the best asset returns 4.62%, the score is 85.1. If the portfolio
-        loses 2% while the best asset gains 4%, the score is -50. A 1% loss in that same test scores -25, correctly
+        loses 2% while the best asset gains 4%, the score is -50. A 1% loss in that same round scores -25, correctly
         ranking the smaller loss above the larger loss.
       </p>
       <p>
@@ -53,13 +53,13 @@ import PageHeader from "../components/PageHeader.astro";
 
       <h2>Price Inputs</h2>
       <p>
-        Starting and ending prices come from the test rules. Starting prices may be published while a test is pending.
-        Ending prices and final returns are withheld until the test period is over and the scoring job has produced the
+        Starting and ending prices come from the round rules. Starting prices may be published while a round is pending.
+        Ending prices and final returns are withheld until the round period is over and the scoring job has produced the
         result files.
       </p>
       <div class="formula-grid">
         <div>
-          <span>Single-pick return</span>
+          <span>Single-allocation return</span>
           <code>(ending_price / starting_price) - 1</code>
         </div>
         <div>
@@ -86,7 +86,7 @@ import PageHeader from "../components/PageHeader.astro";
 
       <h2>Overall Results</h2>
       <p>
-        Overall results keep weekly and monthly tracks separate. Across all resolved tests in a track, CapitalBench
+        Overall results keep weekly and monthly tracks separate. Across all resolved rounds in a track, CapitalBench
         divides summed model returns by summed oracle returns:
       </p>
       <div class="formula-grid">
@@ -96,32 +96,32 @@ import PageHeader from "../components/PageHeader.astro";
         </div>
       </div>
       <p>
-        This is equivalent to weighting each test by the size of its oracle opportunity. It preserves the difference
+        This is equivalent to weighting each round by the size of its oracle opportunity. It preserves the difference
         between small and large losses without allowing a week with a very small oracle return to dominate the entire
         history. Example: model returns of +4% and -1% against oracle returns of +8% and +2% produce a full-history
         score of 30: <code>100 * (4 - 1) / (8 + 2)</code>.
       </p>
       <p>
-        Tests are not compounded because CapitalBench rounds may overlap and represent separate benchmark experiments,
-        not one sequential investable portfolio. A model added later is shown with fewer included tests and marked
+        Rounds are not compounded because CapitalBench rounds may overlap and represent separate benchmark experiments,
+        not one sequential investable portfolio. A model added later is shown with fewer included rounds and marked
         short history.
       </p>
 
-      <h2>Consistency Tests</h2>
+      <h2>Consistency Checks</h2>
       <p>
-        Consistency tests summarize repeated calls with the same saved test input. They measure whether a model tends to
-        make the same pick under identical conditions.
+        Consistency checks summarize repeated calls with the same saved round input. They measure whether a model tends to
+        make the same allocation under identical conditions.
       </p>
       <p>
-        These repeated-call checks are not mixed into the main scoreboard because the public contest uses one saved
+        These repeated-call checks are not mixed into the main benchmark results because the public contest uses one frozen
         portfolio per model.
       </p>
 
-      <h2>Pending Tests</h2>
+      <h2>Pending Rounds</h2>
       <p>
-        Pending tests can show model portfolios, confidence values, rationale summaries, starting prices, and proof hashes.
-        After at least one interim price snapshot exists, a test page may also show interim return tracking versus
-        S&amp;P 500. That chart is explicitly provisional and separate from the final scoreboard. CapitalBench Score,
+        Pending rounds can show model portfolios, confidence values, rationale summaries, starting prices, and audit hashes.
+        After at least one interim price snapshot exists, a round page may also show interim return tracking versus
+        S&amp;P 500. That chart is explicitly provisional and separate from the final benchmark result. CapitalBench Score,
         rank, regret, maximum possible return, and final return versus S&amp;P 500 remain withheld until ending prices are
         present and the scorer publishes the result files.
       </p>

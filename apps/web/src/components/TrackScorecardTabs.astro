@@ -1,0 +1,124 @@
+---
+import TrackScorecard from "./TrackScorecard.astro";
+import type { TrackScorecardData } from "../lib/trackScorecard";
+
+interface Props {
+  scorecards: TrackScorecardData[];
+}
+
+const { scorecards } = Astro.props;
+const visibleScorecards = scorecards.filter(Boolean);
+const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "weekly")?.track ?? visibleScorecards[0]?.track;
+---
+
+{visibleScorecards.length > 0 && (
+  <>
+    <section class="home-section-heading home-section-heading-with-action" id="track-scorecards" aria-labelledby="track-scorecards-title">
+      <div>
+        <span class="panel-kicker">Benchmark results</span>
+        <h2 id="track-scorecards-title">Model Performance</h2>
+        <p>
+          Each bar compares total model return with total oracle return across all resolved rounds in that track.
+          Switch between weekly and monthly full-history scores inside the same panel.
+        </p>
+      </div>
+      <a class="section-profile-link" href="/leaderboards">All benchmark results</a>
+    </section>
+
+    <div
+      class="track-scorecard-tab-shell"
+      data-track-scorecard-tabs
+      data-active-track={defaultTrack}
+      aria-label="Full-history weekly and monthly model scores"
+    >
+      <div class="track-scorecard-tabs" role="tablist" aria-label="Choose full-history score horizon">
+        {visibleScorecards.map((scorecard) => {
+          const active = scorecard.track === defaultTrack;
+          const tabId = `track-scorecard-tab-${scorecard.track}`;
+          const panelId = `track-scorecard-panel-${scorecard.track}`;
+          return (
+            <button
+              id={tabId}
+              class:list={["track-scorecard-tab", active && "is-active"]}
+              type="button"
+              role="tab"
+              aria-selected={active ? "true" : "false"}
+              aria-controls={panelId}
+              tabindex={active ? "0" : "-1"}
+              data-track-scorecard-tab={scorecard.track}
+            >
+              <strong>{scorecard.label}</strong>
+              <span>{scorecard.comparisonRoundCount} resolved {scorecard.comparisonRoundCount === 1 ? "round" : "rounds"}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div class="track-scorecard-tab-panels">
+        {visibleScorecards.map((scorecard) => {
+          const active = scorecard.track === defaultTrack;
+          const tabId = `track-scorecard-tab-${scorecard.track}`;
+          const panelId = `track-scorecard-panel-${scorecard.track}`;
+          return (
+            <div
+              id={panelId}
+              class="track-scorecard-tab-panel"
+              role="tabpanel"
+              aria-labelledby={tabId}
+              data-track-scorecard-panel={scorecard.track}
+              hidden={!active}
+            >
+              <TrackScorecard scorecard={scorecard} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
+    <script is:inline>
+      if (!window.__capitalbenchTrackScorecardTabs) {
+        window.__capitalbenchTrackScorecardTabs = true;
+
+        function setupTrackScorecardTabs(root) {
+          const tabs = Array.from(root.querySelectorAll("[data-track-scorecard-tab]"));
+          const panels = Array.from(root.querySelectorAll("[data-track-scorecard-panel]"));
+
+          function selectTrack(track) {
+            if (!track) return;
+            root.dataset.activeTrack = track;
+            tabs.forEach((tab) => {
+              const active = tab.dataset.trackScorecardTab === track;
+              tab.classList.toggle("is-active", active);
+              tab.setAttribute("aria-selected", active ? "true" : "false");
+              tab.setAttribute("tabindex", active ? "0" : "-1");
+            });
+
+            panels.forEach((panel) => {
+              panel.hidden = panel.dataset.trackScorecardPanel !== track;
+            });
+          }
+
+          tabs.forEach((tab, index) => {
+            tab.addEventListener("click", () => selectTrack(tab.dataset.trackScorecardTab));
+            tab.addEventListener("keydown", (event) => {
+              if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+              event.preventDefault();
+              const nextIndex =
+                event.key === "Home"
+                  ? 0
+                  : event.key === "End"
+                    ? tabs.length - 1
+                    : event.key === "ArrowRight"
+                      ? (index + 1) % tabs.length
+                      : (index - 1 + tabs.length) % tabs.length;
+              tabs[nextIndex]?.focus();
+              selectTrack(tabs[nextIndex]?.dataset.trackScorecardTab);
+            });
+          });
+        }
+
+        document.querySelectorAll("[data-track-scorecard-tabs]").forEach(setupTrackScorecardTabs);
+      }
+    </script>
+  </>
+)}
