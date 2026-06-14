@@ -19,9 +19,25 @@ function refreshTimestamp(value) {
   }).format(date);
 }
 
-function latestResolvedRound(rounds) {
+function roundTrack(round) {
+  if (!round) return "other";
+  const roundId = String(round.round_id ?? "");
+  const horizon = String(round.horizon ?? "");
+  const horizonDays = Number(round.horizon_days);
+  if (roundId.endsWith("-1W") || horizonDays <= 10 || /week/i.test(horizon)) return "weekly";
+  if (roundId.endsWith("-1M") || horizonDays >= 28 || /month/i.test(horizon)) return "monthly";
+  return "other";
+}
+
+function trackLabel(track) {
+  if (track === "weekly") return "Weekly";
+  if (track === "monthly") return "Monthly";
+  return "";
+}
+
+function latestResolvedRound(rounds, track) {
   return rounds
-    .filter((round) => round.status === "resolved")
+    .filter((round) => round.status === "resolved" && (!track || roundTrack(round) === track))
     .sort(
       (left, right) =>
         String(right.exit_date ?? "").localeCompare(String(left.exit_date ?? "")) ||
@@ -44,16 +60,20 @@ function nextScheduledScore(activeRounds, latestPriceDate) {
     .sort()[0] ?? "";
 }
 
-export function buildBenchmarkStatus(readModel) {
+export function buildBenchmarkStatus(readModel, options = {}) {
+  const track = options.track === "weekly" || options.track === "monthly" ? options.track : undefined;
+  const resolvedTrackLabel = trackLabel(track);
   const rounds = readModel.rounds ?? [];
-  const activeRounds = rounds.filter((round) => round.status === "active");
-  const latestOfficial = latestResolvedRound(rounds);
+  const activeRounds = rounds.filter((round) => round.status === "active" && (!track || roundTrack(round) === track));
+  const latestOfficial = latestResolvedRound(rounds, track);
   const latestPriceDate = latestPriceClose(readModel);
   const nextScoreDate = nextScheduledScore(activeRounds, latestPriceDate);
 
   return {
+    latestOfficialLabel: resolvedTrackLabel ? `Latest ${resolvedTrackLabel.toLowerCase()} score` : "Latest official score",
     latestOfficialRoundId: latestOfficial?.round_id ?? "No official score",
     latestOfficialRoundHref: latestOfficial?.round_id ? `/rounds/${latestOfficial.round_id}/` : "/leaderboards/latest",
+    liveRoundLabel: resolvedTrackLabel ? `${resolvedTrackLabel} live` : "Live rounds",
     liveRoundCount: activeRounds.length,
     latestPriceDate,
     latestPriceLabel: shortDate(latestPriceDate),

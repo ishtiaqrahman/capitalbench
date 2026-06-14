@@ -8,6 +8,7 @@ export interface Column<T> {
   align?: "left" | "right";
   mobile?: "primary" | "secondary" | "hidden";
   value?: (row: T) => string | number | null | undefined;
+  sortValue?: (row: T) => string | number | null | undefined;
   render?: (row: T) => ReactNode;
 }
 
@@ -23,6 +24,12 @@ interface Props<T> {
 
 function rawValue<T>(row: T, column: Column<T>): string | number {
   const value = column.value ? column.value(row) : (row as Record<string, unknown>)[String(column.key)];
+  if (value === null || value === undefined) return "";
+  return typeof value === "number" ? value : String(value);
+}
+
+function sortableValue<T>(row: T, column: Column<T>): string | number {
+  const value = column.sortValue ? column.sortValue(row) : rawValue(row, column);
   if (value === null || value === undefined) return "";
   return typeof value === "number" ? value : String(value);
 }
@@ -57,8 +64,8 @@ export default function TableIsland<T extends object>({
       : rows;
     const column = columns.find((item) => String(item.key) === sortKey) ?? ({ key: sortKey, label: sortKey } as Column<T>);
     return [...filtered].sort((a, b) => {
-      const aValue = rawValue(a, column);
-      const bValue = rawValue(b, column);
+      const aValue = sortableValue(a, column);
+      const bValue = sortableValue(b, column);
       const result =
         typeof aValue === "number" && typeof bValue === "number"
           ? aValue - bValue

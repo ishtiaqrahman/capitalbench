@@ -5,6 +5,20 @@ export function pct(value: number | string | null | undefined): string {
   return `${(numeric * 100).toFixed(2)}%`;
 }
 
+export function pp(value: number | string | null | undefined): string {
+  if (value === null || value === undefined || value === "") return "";
+  const numeric = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numeric)) return "";
+  return `${(numeric * 100).toFixed(2)} pp`;
+}
+
+export function signedPp(value: number | string | null | undefined): string {
+  const formatted = pp(value);
+  if (!formatted) return "";
+  const numeric = typeof value === "number" ? value : Number(value);
+  return numeric > 0 ? `+${formatted}` : formatted;
+}
+
 export function number(value: number | string | null | undefined, digits = 2): string {
   if (value === null || value === undefined || value === "") return "";
   const numeric = typeof value === "number" ? value : Number(value);

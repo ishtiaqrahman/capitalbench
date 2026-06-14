@@ -2690,10 +2690,10 @@ if (latestResolvedWeeklyRound) {
     includes(latestWeeklyHtml, percentPointLabel(latestWeeklyWinner.portfolio_return_pct), "latest weekly page winner return");
     includes(latestWeeklyHtml, percentPointLabel(latestWeeklyWinner.benchmark_return_pct), "latest weekly page benchmark return");
     includes(latestWeeklyHtml, "CapitalBench Score", "latest weekly page score audit label");
-    includes(latestWeeklyHtml, "vs oracle", "latest weekly page score scale label");
+    includes(latestWeeklyHtml, "vs max possible", "latest weekly page score scale label");
     includes(
       latestWeeklyHtml,
-      "100 matches the oracle return; negative scores preserve the size of a loss.",
+      "100 matches the maximum possible return; negative scores preserve the size of a loss.",
       "latest weekly page score scale explanation"
     );
     includes(latestWeeklyHtml, scoreLabel(latestWeeklyWinner.capitalbench_score), "latest weekly page winner score audit");
@@ -2708,14 +2708,46 @@ if (latestResolvedWeeklyRound) {
     includes(latestWeeklyHtml, row.selected_option_id, `latest weekly page primary pick ${row.model_id}`);
     includes(latestWeeklyHtml, percentPointLabel(row.portfolio_return_pct), `latest weekly page portfolio return ${row.model_id}`);
     includes(latestWeeklyHtml, percentPointLabel(row.benchmark_return_pct), `latest weekly page benchmark return ${row.model_id}`);
-    includes(latestWeeklyHtml, percentPointLabel(row.alpha_pp), `latest weekly page alpha ${row.model_id}`);
+    includes(latestWeeklyHtml, signedPpLabel(row.alpha_pp), `latest weekly page alpha ${row.model_id}`);
     includes(latestWeeklyHtml, percentPointLabel(row.regret_vs_best_option_pct), `latest weekly page regret ${row.model_id}`);
     includes(latestWeeklyHtml, "CapitalBench Score audit", `latest weekly page score audit ${row.model_id}`);
     includesCollapsed(
       latestWeeklyHtml,
-      `score ${scoreLabel(row.capitalbench_score)} · portfolio ${percentPointLabel(row.portfolio_return_pct)} · oracle ${percentPointLabel(row.max_possible_return_pct)}: ${assetDisplay(latestWeeklyMaxReturnRow)}`,
+      `score ${scoreLabel(row.capitalbench_score)} · portfolio ${percentPointLabel(row.portfolio_return_pct)} · max possible ${percentPointLabel(row.max_possible_return_pct)}: ${assetDisplay(latestWeeklyMaxReturnRow)}`,
       `latest weekly page score formula ${row.model_id}`
     );
+  }
+  const weeklyScorecard = expectedScorecardData("weekly");
+  const weeklyCumulative = weeklyScorecard.cumulative;
+  const weeklyLeader = weeklyCumulative.data.find((row) => row.is_rank_eligible);
+  const weeklyBenchmarkScore = weeklyScorecard.normalizedRows.find((row) => row.key === "sp500");
+  includes(latestWeeklyHtml, "Main Benchmark Scale", "latest weekly page oracle score panel");
+  includes(latestWeeklyHtml, "Latest Round CapitalBench Score", "latest weekly page latest oracle tab");
+  includes(latestWeeklyHtml, "Full-History Weekly CapitalBench Score", "latest weekly page full-history oracle tab");
+  includes(latestWeeklyHtml, "Max possible is always 100", "latest weekly page oracle scale explanation");
+  includes(latestWeeklyHtml, "Cumulative Weekly Results", "latest weekly page cumulative context");
+  includes(latestWeeklyHtml, "CapitalBench Score By Completed Weekly Round", "latest weekly page weekly trend");
+  includes(
+    latestWeeklyHtml,
+    "CapitalBench Score = total portfolio return / total max-possible return × 100.",
+    "latest weekly page cumulative table formula"
+  );
+  includes(latestWeeklyHtml, `${weeklyCumulative.comparison.comparison_round_count} completed rounds`, "latest weekly page cumulative round count");
+  if (weeklyLeader) {
+    includes(latestWeeklyHtml, weeklyLeader.label, "latest weekly page cumulative leader");
+    includes(latestWeeklyHtml, scoreLabel(weeklyLeader.capitalbench_score), "latest weekly page cumulative leader score");
+  }
+  if (weeklyBenchmarkScore && typeof weeklyBenchmarkScore.value === "number") {
+    includes(latestWeeklyHtml, scoreLabel(weeklyBenchmarkScore.value), "latest weekly page cumulative S&P 500 score");
+  }
+  includes(latestWeeklyHtml, "100.0", "latest weekly page max possible score");
+  for (const roundId of weeklyCumulative.comparison.comparison_round_ids) {
+    includes(latestWeeklyHtml, roundId, `latest weekly page cumulative round ${roundId}`);
+  }
+  for (const row of weeklyCumulative.data) {
+    includes(latestWeeklyHtml, row.label, `latest weekly page cumulative row ${row.model_id}`);
+    includes(latestWeeklyHtml, scoreLabel(row.capitalbench_score), `latest weekly page cumulative score ${row.model_id}`);
+    includes(latestWeeklyHtml, `${row.tests_included}/${row.tests_required} weekly rounds`, `latest weekly page cumulative scope ${row.model_id}`);
   }
   if (latestActiveWeeklyRound && latestActiveWeeklyRound.round_id !== latestResolvedWeeklyRound.round_id) {
     includes(latestWeeklyHtml, latestActiveWeeklyRound.round_id, "latest weekly page current active round");
@@ -2832,7 +2864,7 @@ for (const round of apiReadModel.rounds) {
       includes(html, modelLabel(row.model_id), `${context} result ${row.model_id}`);
       includes(html, percentPointLabel(row.portfolio_return_pct), `${context} result ${row.model_id}`);
       includes(html, percentPointLabel(row.benchmark_return_pct), `${context} result ${row.model_id} benchmark`);
-      includes(html, percentPointLabel(row.alpha_pp), `${context} result ${row.model_id} alpha`);
+      includes(html, signedPpLabel(row.alpha_pp), `${context} result ${row.model_id} alpha`);
       includes(html, percentPointLabel(row.regret_vs_best_option_pct), `${context} result ${row.model_id} regret`);
       includes(html, "CapitalBench Score audit", `${context} CapitalBench Score audit`);
       includes(

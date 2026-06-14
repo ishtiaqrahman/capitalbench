@@ -1,7 +1,7 @@
 import { CalendarClock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { modelLabel, providerLabel, type LeaderboardRecord } from "../data/fallback";
-import { pct } from "../lib/format";
+import { pct, signedPp } from "../lib/format";
 import { fetchPublicRows } from "../lib/supabase";
 import TableIsland, { type Column } from "./TableIsland";
 
@@ -43,18 +43,38 @@ export default function LeaderboardTable({ fallbackRows, kind, slot, disableFetc
       key: "portfolio_return",
       label: "Portfolio",
       align: "right",
-      value: (row) => pct(row.portfolio_return ?? row.selected_asset_return)
+      value: (row) => pct(row.portfolio_return ?? row.selected_asset_return),
+      sortValue: (row) => row.portfolio_return ?? row.selected_asset_return ?? ""
     },
-    { key: "sp500_return", label: "S&P 500", align: "right", value: (row) => pct(row.sp500_return) },
-    { key: "alpha_vs_sp500", label: "Portfolio Minus S&P 500", align: "right", value: (row) => pct(row.alpha_vs_sp500) },
-    { key: "regret_vs_best_option", label: "Regret", align: "right", value: (row) => pct(row.regret_vs_best_option), mobile: "secondary" }
+    { key: "sp500_return", label: "S&P 500", align: "right", value: (row) => pct(row.sp500_return), sortValue: (row) => row.sp500_return ?? "" },
+    {
+      key: "alpha_vs_sp500",
+      label: "Portfolio Minus S&P 500",
+      align: "right",
+      value: (row) => signedPp(row.alpha_vs_sp500),
+      sortValue: (row) => row.alpha_vs_sp500 ?? ""
+    },
+    {
+      key: "regret_vs_best_option",
+      label: "Regret",
+      align: "right",
+      value: (row) => pct(row.regret_vs_best_option),
+      sortValue: (row) => row.regret_vs_best_option ?? "",
+      mobile: "secondary"
+    }
   ];
 
   const officialColumns: Column<LeaderboardRecord>[] = [
     { key: "model_id", label: "Model", value: (row) => modelLabel(row.model_id) },
     { key: "provider", label: "Provider", value: (row) => providerLabel(row.provider) },
     { key: "resolved_rounds", label: "Tests", align: "right" },
-    { key: "average_alpha_vs_sp500", label: "Avg Portfolio Minus S&P 500", align: "right", value: (row) => pct(row.average_alpha_vs_sp500) }
+    {
+      key: "average_alpha_vs_sp500",
+      label: "Avg Portfolio Minus S&P 500",
+      align: "right",
+      value: (row) => signedPp(row.average_alpha_vs_sp500),
+      sortValue: (row) => row.average_alpha_vs_sp500 ?? ""
+    }
   ];
 
   const stabilityColumns: Column<LeaderboardRecord>[] = [
@@ -65,9 +85,16 @@ export default function LeaderboardTable({ fallbackRows, kind, slot, disableFetc
       key: "average_repeated_alpha_vs_sp500",
       label: "Avg Repeated Score",
       align: "right",
-      value: (row) => pct(row.average_repeated_alpha_vs_sp500)
+      value: (row) => signedPp(row.average_repeated_alpha_vs_sp500),
+      sortValue: (row) => row.average_repeated_alpha_vs_sp500 ?? ""
     },
-    { key: "average_consistency_rate", label: "Consistency", align: "right", value: (row) => pct(row.average_consistency_rate) }
+    {
+      key: "average_consistency_rate",
+      label: "Consistency",
+      align: "right",
+      value: (row) => pct(row.average_consistency_rate),
+      sortValue: (row) => row.average_consistency_rate ?? ""
+    }
   ];
 
   const columns = kind === "latest" ? latestColumns : kind === "official" ? officialColumns : stabilityColumns;

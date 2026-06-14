@@ -27,6 +27,7 @@ interface Props {
   imageAlt?: string;
   noindex?: boolean;
   hideFooterSignup?: boolean;
+  freshnessTrack?: "weekly" | "monthly";
   structuredData?: JsonLdRecord | JsonLdRecord[];
 }
 
@@ -39,8 +40,15 @@ const {
   imageAlt = siteConfig.ogImageAlt,
   noindex = routeMeta?.noindex ?? false,
   hideFooterSignup = false,
+  freshnessTrack,
   structuredData = []
 } = Astro.props;
+const inferredFreshnessTrack = currentPath.includes("-weekly")
+  ? "weekly"
+  : currentPath.includes("-monthly")
+    ? "monthly"
+    : undefined;
+const resolvedFreshnessTrack = freshnessTrack ?? inferredFreshnessTrack;
 const resolvedTitle = pageTitle(title);
 const resolvedCanonicalUrl = canonicalUrl(currentPath);
 const resolvedImageUrl = image.startsWith("http") ? image : assetUrl(image);
@@ -200,7 +208,7 @@ const emailWidgetContext =
             </details>
           </div>
         </nav>
-        <FreshnessStatusBar />
+        <FreshnessStatusBar track={resolvedFreshnessTrack} />
       </header>
       <main id="content" tabindex="-1">
         <Breadcrumbs currentPath={currentPath} />

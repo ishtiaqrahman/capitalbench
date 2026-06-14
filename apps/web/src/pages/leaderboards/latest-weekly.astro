@@ -6,7 +6,7 @@ import OfficialPicksTable from "../../components/OfficialPicksTable";
 import LeaderboardTable from "../../components/LeaderboardTable";
 import PendingLeaderboardGuide from "../../components/PendingLeaderboardGuide.astro";
 import ScoreReturnChart from "../../components/ScoreReturnChart.astro";
-import { dateOnly, pct } from "../../lib/format";
+import { dateOnly, pct, signedPp } from "../../lib/format";
 import {
   staticOfficialSubmissions,
   staticRoundAllocations,
@@ -26,9 +26,20 @@ import {
   optionDisplayName,
   optionShortDisplayName
 } from "../../lib/allocations";
+import {
+  buildWeeklyResultsPageModel,
+  type WeeklyOracleScoreChart,
+  type WeeklyOracleScoreRow
+} from "../../lib/weeklyResultsPage";
 
 const track = "weekly" as const;
 const roundRows = staticRoundRecords();
+const weeklyResultsModel = buildWeeklyResultsPageModel(roundRows);
+const weeklyContext = weeklyResultsModel.context;
+const latestOracleChart = weeklyResultsModel.latestOracleChart;
+const cumulativeOracleChart = weeklyResultsModel.cumulativeOracleChart;
+const weeklyHistoryPoints = weeklyResultsModel.historyPoints;
+const cumulativeWeeklyRows = weeklyResultsModel.cumulativeRows;
 const resultRound = latestResolvedRoundForTrack(roundRows, track);
 const pendingRound = latestPendingRoundForTrack(roundRows, track);
 const displayRound = resultRound ?? pendingRound;
@@ -101,22 +112,229 @@ const portfolioCards = officialSubmissions
 const officialSubmissionsForDisplay =
   resultRound && portfolioCards.length > 0 ? portfolioCards.map((card) => card.submission) : officialSubmissions;
 const initialNowIso = new Date().toISOString();
+
+function finiteNumber(value: number | null | undefined): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function average(values: number[]): number | undefined {
+  if (values.length === 0) return undefined;
+  return values.reduce((total, value) => total + value, 0) / values.length;
+}
+
+const winnerAlpha = winner?.alpha_vs_sp500;
+const allModelsUnderperformed =
+  resultRows.length > 0 && resultRows.every((row) => finiteNumber(row.alpha_vs_sp500) && row.alpha_vs_sp500 < 0);
+const modelPortfolioReturns = resultRows
+  .map((row) => row.portfolio_return ?? row.selected_asset_return)
+  .filter(finiteNumber);
+const averageModelReturn = average(modelPortfolioReturns);
+const averageModelAlpha = average(resultRows.map((row) => row.alpha_vs_sp500).filter(finiteNumber));
+const topModelLabel = winner ? modelLabel(winner.model_id) : "";
+const resultHeadline =
+  resultRound && winner && allModelsUnderperformed
+    ? "AI Portfolios Trailed S&P 500 In The Latest Weekly Round"
+    : resultRound && winner
+      ? `${topModelLabel} Was The Top Weekly Model`
+      : "Latest Weekly Result";
+const resultSummary =
+  resultRound && winner && allModelsUnderperformed
+    ? `${topModelLabel} was the top model at ${pct(winnerReturn)}, but still finished ${signedPp(winnerAlpha)} versus the S&P 500.`
+    : resultRound && winner
+      ? `${topModelLabel} was the top model in the latest completed one-week round, scored from ${dateOnly(resultRound.entry_date)} close to ${dateOnly(resultRound.exit_date)} close.`
+      : resultRound
+        ? `${resultRound.round_id} is the latest completed one-week round. Scores appear after the benchmark result rows are available.`
+        : pendingRound
+          ? "No weekly result has been published yet. The current weekly round is waiting for ending prices."
+          : "No weekly CapitalBench round is published yet.";
+const exposureByOption = new Map<
+  string,
+  {
+    optionId: string;
+    totalPct: number;
+    returnValue?: number;
+  }
+>();
+for (const allocation of resultAllocations) {
+  const allocationPct = finiteNumber(allocation.allocation_pct)
+    ? allocation.allocation_pct
+    : finiteNumber(allocation.allocation_bps)
+      ? allocation.allocation_bps / 100
+      : 0;
+  const existing = exposureByOption.get(allocation.option_id) ?? {
+    optionId: allocation.option_id,
+    totalPct: 0,
+    returnValue: allocation.option_return
+  };
+  existing.totalPct += allocationPct;
+  if (!finiteNumber(existing.returnValue) && finiteNumber(allocation.option_return)) {
+    existing.returnValue = allocation.option_return;
+  }
+  exposureByOption.set(allocation.option_id, existing);
+}
+const modelCount = Math.max(resultRows.length, 1);
+const crowdedExposureRows = Array.from(exposureByOption.values())
+  .map((row) => ({
+    ...row,
+    averagePct: row.totalPct / modelCount,
+    label: optionDisplayName(row.optionId, resultOptionsById),
+    shortLabel: optionShortDisplayName(row.optionId, resultOptionsById)
+  }))
+  .sort((left, right) => right.averagePct - left.averagePct || left.shortLabel.localeCompare(right.shortLabel));
+const topCrowdedExposureRows = crowdedExposureRows.slice(0, 4);
+const crowdedLossRows = crowdedExposureRows
+  .filter((row) => finiteNumber(row.returnValue) && row.returnValue < 0)
+  .sort(
+    (left, right) =>
+      (Number(left.returnValue) * left.averagePct) - (Number(right.returnValue) * right.averagePct) ||
+      Number(left.returnValue) - Number(right.returnValue)
+  )
+  .slice(0, 3);
+const bestReturnRows = resultReturns
+  .filter((row) => finiteNumber(row.return) && !row.is_benchmark && !row.is_cash)
+  .sort((left, right) => right.return - left.return)
+  .slice(0, 3)
+  .map((row) => ({
+    optionId: row.option_id,
+    label: optionDisplayName(row.option_id, resultOptionsById),
+    shortLabel: optionShortDisplayName(row.option_id, resultOptionsById),
+    returnValue: row.return
+  }));
+
+function scoreLabel(value: number | null | undefined): string {
+  return finiteNumber(value) ? value.toFixed(1) : "n/a";
+}
+
+function scoreCoordinate(value: number, minimum: number, maximum: number): number {
+  const range = Math.max(maximum - minimum, 0.0001);
+  return Math.min(100, Math.max(0, ((value - minimum) / range) * 100));
+}
+
+function oracleBarStyle(row: WeeklyOracleScoreRow, chart: WeeklyOracleScoreChart): string {
+  const zero = scoreCoordinate(0, chart.domainMin, chart.domainMax);
+  const endpoint = scoreCoordinate(row.score, chart.domainMin, chart.domainMax);
+  const left = Math.min(zero, endpoint);
+  const width = Math.max(1.5, Math.abs(endpoint - zero));
+  return `--bar-left: ${left.toFixed(2)}%; --bar-width: ${width.toFixed(2)}%;`;
+}
+
+function oracleTickStyle(value: number, chart: WeeklyOracleScoreChart): string {
+  return `left: ${scoreCoordinate(value, chart.domainMin, chart.domainMax).toFixed(2)}%;`;
+}
+
+function oracleRowClass(row: WeeklyOracleScoreRow): string {
+  return [
+    "weekly-oracle-score-row",
+    `weekly-oracle-score-row-${row.kind}`,
+    row.key === "max-possible" ? "weekly-oracle-score-row-max" : "",
+    row.key === "sp500" ? "weekly-oracle-score-row-sp500" : ""
+  ].filter(Boolean).join(" ");
+}
+
+function oracleBarClass(row: WeeklyOracleScoreRow): string {
+  if (row.kind === "reference") return "score-bar-best-asset";
+  if (row.kind === "benchmark") return "score-bar-benchmark";
+  if (row.key.includes("openai")) return "score-bar-openai";
+  if (row.key.includes("grok") || row.key.includes("xai")) return "score-bar-xai";
+  if (row.key.includes("gemini") || row.key.includes("google")) return "score-bar-google";
+  if (row.key.includes("4-8")) return "score-bar-anthropic-alt";
+  return "score-bar-anthropic";
+}
+
+function oracleMeta(row: WeeklyOracleScoreRow): string {
+  if (row.kind === "reference") return `${row.providerLabel ?? "Oracle"} · score 100`;
+  if (row.kind === "benchmark") return "Benchmark reference";
+  const testCount =
+    row.testsIncluded && row.testsRequired
+      ? ` · ${row.testsIncluded}/${row.testsRequired} rounds`
+      : "";
+  return `${row.providerLabel ?? "Model"}${testCount}`;
+}
+
+function dateShort(value: string): string {
+  const date = new Date(`${dateOnly(value)}T00:00:00Z`);
+  if (Number.isNaN(date.getTime())) return dateOnly(value);
+  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", timeZone: "UTC" }).format(date);
+}
+
+function trendChartModel(points: typeof weeklyHistoryPoints) {
+  if (points.length === 0) return null;
+  const width = 920;
+  const height = 320;
+  const inset = { top: 24, right: 22, bottom: 58, left: 58 };
+  const plotWidth = width - inset.left - inset.right;
+  const plotHeight = height - inset.top - inset.bottom;
+  const values = points.flatMap((point) =>
+    [point.topModelScore, point.averageModelScore, point.sp500Score, point.maxPossibleScore].filter(finiteNumber)
+  );
+  const minimum = Math.min(0, ...values);
+  const maximum = Math.max(100, ...values);
+  const padding = Math.max((maximum - minimum) * 0.08, 8);
+  const domainMin = minimum < 0 ? Math.floor((minimum - padding) / 25) * 25 : 0;
+  const domainMax = maximum > 100 ? Math.ceil((maximum + padding) / 25) * 25 : 100;
+  const xFor = (index: number) => inset.left + (points.length === 1 ? plotWidth / 2 : (index / (points.length - 1)) * plotWidth);
+  const yFor = (value: number) =>
+    inset.top + (1 - scoreCoordinate(value, domainMin, domainMax) / 100) * plotHeight;
+  const pathFor = (value: (point: typeof points[number]) => number | null) =>
+    points
+      .map((point, index) => {
+        const pointValue = value(point);
+        if (!finiteNumber(pointValue)) return "";
+        return `${index === 0 ? "M" : "L"} ${xFor(index).toFixed(2)} ${yFor(pointValue).toFixed(2)}`;
+      })
+      .filter(Boolean)
+      .join(" ");
+  const ticks = domainMin < 0 ? [domainMin, 0, 50, 100] : [0, 25, 50, 75, 100];
+  return {
+    width,
+    height,
+    inset,
+    plotWidth,
+    plotHeight,
+    domainMin,
+    domainMax,
+    ticks,
+    xFor,
+    yFor,
+    topPath: pathFor((point) => point.topModelScore),
+    averagePath: pathFor((point) => point.averageModelScore),
+    sp500Path: pathFor((point) => point.sp500Score),
+    maxPath: pathFor((point) => point.maxPossibleScore)
+  };
+}
+
+const weeklyTrendChart = trendChartModel(weeklyHistoryPoints);
+const oracleChartTabs = [
+  latestOracleChart
+    ? {
+        key: "latest",
+        label: "Latest round",
+        detail: resultRound?.round_id ?? "Latest completed weekly round",
+        chart: latestOracleChart
+      }
+    : null,
+  cumulativeOracleChart
+    ? {
+        key: "history",
+        label: "Full weekly history",
+        detail: weeklyContext ? `${weeklyContext.completedRoundCount} completed rounds` : "All completed weekly rounds",
+        chart: cumulativeOracleChart
+      }
+    : null
+].filter((item): item is NonNullable<typeof item> => item !== null);
+const defaultOracleChartTab = oracleChartTabs[0]?.key ?? "latest";
 ---
 
 <BaseLayout
-  title="Latest Weekly CapitalBench Results"
-  description="Latest one-week CapitalBench results with model portfolios and market returns kept separate from monthly rounds."
+  title="Weekly CapitalBench Results"
+  description="Weekly CapitalBench results showing the latest one-week round, full-history CapitalBench Scores, cumulative weekly context, and model portfolios."
 >
   <PageHeader
-    eyebrow="One-week round"
-    title="Latest Weekly Result"
-    summary={resultRound && winner
-      ? `${modelLabel(winner.model_id)} led the latest completed one-week round, scored from ${dateOnly(resultRound.entry_date)} close to ${dateOnly(resultRound.exit_date)} close.`
-      : resultRound
-        ? `${resultRound.round_id} is the latest completed one-week round. Scores appear after the benchmark result rows are available.`
-      : pendingRound
-        ? "No weekly result has been published yet. The current weekly round is waiting for ending prices."
-        : "No weekly CapitalBench round is published yet."}
+    eyebrow="One-week benchmark"
+    title="Weekly Benchmark Results"
+    summary={weeklyContext
+      ? `Latest one-week result plus full weekly history across ${weeklyContext.completedRoundCount} completed rounds. ${weeklyContext.summary}`
+      : resultSummary}
   />
 
   {displayRound ? (
@@ -126,11 +344,13 @@ const initialNowIso = new Date().toISOString();
           <section class="section latest-weekly-result-section" id="latest-result">
             <div class="latest-weekly-hero">
               <div>
-                <span class="panel-kicker">Latest published result</span>
-                <h2>{modelLabel(winner.model_id)} Led The Latest Weekly Round</h2>
+                <span class="panel-kicker">Weekly benchmark</span>
+                <h2>{weeklyContext ? "Latest Result And Full Weekly History" : resultHeadline}</h2>
                 <p>
-                  {modelLabel(winner.model_id)} returned {pct(winnerReturn)}, compared with {pct(winner.sp500_return)}
-                  for the S&amp;P 500 over the same close-to-close window.
+                  {topModelLabel} led the latest weekly round at {pct(winnerReturn)}, compared with {pct(winner.sp500_return)}
+                  for the S&amp;P 500. {weeklyContext
+                    ? `${weeklyContext.cumulativeLeaderLabel} leads the full weekly history with a CapitalBench Score of ${scoreLabel(weeklyContext.cumulativeLeaderScore)}.`
+                    : "The full weekly history appears after enough rounds are scored."}
                 </p>
                 <div class="latest-weekly-window" aria-label="Scoring window">
                   <span>{dateOnly(resultRound.entry_date)} close</span>
@@ -140,22 +360,330 @@ const initialNowIso = new Date().toISOString();
               </div>
               <div class="latest-weekly-stats" aria-label="Latest weekly result summary">
                 <article>
-                  <span>Winner</span>
+                  <span>Top model</span>
                   <strong>{modelLabel(winner.model_id)}</strong>
                 </article>
+                {weeklyContext && (
+                  <article>
+                    <span>Cumulative leader</span>
+                    <strong>{weeklyContext.cumulativeLeaderLabel}</strong>
+                  </article>
+                )}
+                {weeklyContext && (
+                  <article>
+                    <span>Completed weekly rounds</span>
+                    <strong>{weeklyContext.completedRoundCount}</strong>
+                  </article>
+                )}
                 <article>
-                  <span>Winner return</span>
+                  <span>Top model return</span>
                   <strong>{pct(winnerReturn)}</strong>
                 </article>
                 <article>
                   <span>S&amp;P 500</span>
                   <strong>{pct(winner.sp500_return)}</strong>
                 </article>
+                {typeof winnerAlpha === "number" && (
+                  <article>
+                    <span>Portfolio Minus S&amp;P 500</span>
+                    <strong>{signedPp(winnerAlpha)}</strong>
+                  </article>
+                )}
                 {typeof winnerScore === "number" && typeof maxPossibleReturn === "number" && (
                   <article class="latest-weekly-score-audit">
                     <span>CapitalBench Score</span>
                     <strong>{winnerScore.toFixed(1)}</strong>
-                    <small>vs oracle · portfolio {pct(winnerReturn)} · best asset {pct(maxPossibleReturn)}</small>
+                    <small>vs max possible · portfolio {pct(winnerReturn)} · best asset {pct(maxPossibleReturn)}</small>
+                  </article>
+                )}
+              </div>
+            </div>
+
+            {oracleChartTabs.length > 0 && (
+              <div
+                class="weekly-oracle-panel"
+                data-weekly-tabs
+                data-active-tab={defaultOracleChartTab}
+                aria-label="Weekly CapitalBench Score panels"
+              >
+                <div class="weekly-oracle-panel-head">
+                  <div>
+                    <span class="panel-kicker">CapitalBench Score</span>
+                    <h3>Main Benchmark Scale</h3>
+                    <p>
+                      CapitalBench Score compares each model portfolio with the best eligible asset in hindsight for the
+                      same weekly window. Max possible is always 100.
+                    </p>
+                  </div>
+                  <a class="section-profile-link" href="/scoring/#capitalbench-score">Score calculation</a>
+                </div>
+                <div class="weekly-tab-list" role="tablist" aria-label="Choose weekly score scope">
+                  {oracleChartTabs.map((item) => {
+                    const active = item.key === defaultOracleChartTab;
+                    return (
+                      <button
+                        id={`weekly-score-tab-${item.key}`}
+                        class:list={["weekly-tab-button", active && "is-active"]}
+                        type="button"
+                        role="tab"
+                        aria-selected={active ? "true" : "false"}
+                        aria-controls={`weekly-score-panel-${item.key}`}
+                        tabindex={active ? "0" : "-1"}
+                        data-weekly-tab={item.key}
+                      >
+                        <strong>{item.label}</strong>
+                        <span>{item.detail}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <div class="weekly-tab-panels">
+                  {oracleChartTabs.map((item) => {
+                    const active = item.key === defaultOracleChartTab;
+                    const chart = item.chart;
+                    return (
+                      <section
+                        id={`weekly-score-panel-${item.key}`}
+                        class="weekly-tab-panel weekly-oracle-chart"
+                        role="tabpanel"
+                        aria-labelledby={`weekly-score-tab-${item.key}`}
+                        data-weekly-tab-panel={item.key}
+                        hidden={!active}
+                      >
+                        <div class="weekly-oracle-chart-head">
+                          <div>
+                            <span>{item.label}</span>
+                            <h4>{chart.title}</h4>
+                            <p>{chart.description}</p>
+                          </div>
+                          <div class="weekly-oracle-legend" aria-label={`${item.label} score legend`}>
+                            <span class="legend-best-asset">Max possible</span>
+                            <span class="legend-benchmark">S&amp;P 500</span>
+                            <span class="legend-model">Model portfolios</span>
+                          </div>
+                        </div>
+                        <div class="weekly-oracle-axis" aria-hidden="true">
+                          {chart.ticks.map((tick) => (
+                            <span style={oracleTickStyle(tick, chart)}>{scoreLabel(tick)}</span>
+                          ))}
+                        </div>
+                        <div class="weekly-oracle-score-list">
+                          {chart.rows.map((row) => (
+                            <article class={oracleRowClass(row)} title={`${row.label}: ${scoreLabel(row.score)}. ${row.detail}`}>
+                              <div class="weekly-oracle-score-label">
+                                {row.logoSrc ? (
+                                  <span class="score-chart-logo-shell">
+                                    <img class="score-chart-logo" src={row.logoSrc} alt={row.providerLabel ?? row.label} width="40" height="40" loading="eager" />
+                                  </span>
+                                ) : row.kind === "reference" ? (
+                                  <span class="score-chart-reference-chip" aria-hidden="true">MAX</span>
+                                ) : (
+                                  <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
+                                )}
+                                <span>
+                                  <strong>{row.label}</strong>
+                                  <em>{oracleMeta(row)}</em>
+                                </span>
+                              </div>
+                              <div class="weekly-oracle-score-track" style={oracleBarStyle(row, chart)} aria-hidden="true">
+                                <span class="weekly-oracle-zero-line" style={oracleTickStyle(0, chart)}></span>
+                                <span class={`weekly-oracle-score-bar ${oracleBarClass(row)}`}></span>
+                              </div>
+                              <div class="weekly-oracle-score-values">
+                                <strong>{scoreLabel(row.score)}</strong>
+                                {finiteNumber(row.returnValue) && <span>{pct(row.returnValue)}</span>}
+                              </div>
+                            </article>
+                          ))}
+                        </div>
+                      </section>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {weeklyContext && (
+              <div class="weekly-track-context-panel" aria-label="Cumulative weekly benchmark context">
+                <div class="weekly-track-context-copy">
+                  <span class="panel-kicker">Weekly track context</span>
+                  <h3>Cumulative Weekly Results</h3>
+                  <p>{weeklyContext.summary}</p>
+                  <a class="section-profile-link" href="/leaderboards/cumulative-weekly">Open full weekly history</a>
+                </div>
+                <div class="weekly-track-context-metrics">
+                  <article>
+                    <span>Completed rounds</span>
+                    <strong>{weeklyContext.completedRoundCount}</strong>
+                  </article>
+                  <article>
+                    <span>Full-history leader</span>
+                    <strong>{weeklyContext.cumulativeLeaderLabel}</strong>
+                    <em>{scoreLabel(weeklyContext.cumulativeLeaderScore)} score</em>
+                  </article>
+                  <article>
+                    <span>S&amp;P 500 score</span>
+                    <strong>{scoreLabel(weeklyContext.sp500Score)}</strong>
+                  </article>
+                  <article>
+                    <span>Avg model return</span>
+                    <strong>{pct(weeklyContext.averageModelReturn)}</strong>
+                  </article>
+                  <article>
+                    <span>Avg vs S&amp;P</span>
+                    <strong>{signedPp(weeklyContext.averageAlphaVsSp500)}</strong>
+                  </article>
+                  <article>
+                    <span>Model beat observations</span>
+                    <strong>{weeklyContext.modelBeatObservationCount}/{weeklyContext.modelObservationCount}</strong>
+                  </article>
+                </div>
+              </div>
+            )}
+
+            {weeklyTrendChart && (
+              <div class="weekly-history-trend-panel" aria-label="Weekly CapitalBench Score history">
+                <div class="weekly-history-trend-head">
+                  <div>
+                    <span class="panel-kicker">Weekly history trend</span>
+                    <h3>CapitalBench Score By Completed Weekly Round</h3>
+                    <p>
+                      Max possible is fixed at 100. The chart compares S&amp;P 500, the top model, and the average model
+                      score in each completed weekly round.
+                    </p>
+                  </div>
+                  <div class="weekly-history-legend" aria-label="Trend chart legend">
+                    <span class="weekly-history-legend-max">Max possible</span>
+                    <span class="weekly-history-legend-top">Top model</span>
+                    <span class="weekly-history-legend-average">Average model</span>
+                    <span class="weekly-history-legend-sp500">S&amp;P 500</span>
+                  </div>
+                </div>
+                <div class="weekly-history-chart-frame">
+                  <svg
+                    viewBox={`0 0 ${weeklyTrendChart.width} ${weeklyTrendChart.height}`}
+                    role="img"
+                    aria-label="Weekly CapitalBench Score trend by completed round"
+                  >
+                    {weeklyTrendChart.ticks.map((tick) => (
+                      <g>
+                        <line
+                          x1={weeklyTrendChart.inset.left}
+                          x2={weeklyTrendChart.width - weeklyTrendChart.inset.right}
+                          y1={weeklyTrendChart.yFor(tick)}
+                          y2={weeklyTrendChart.yFor(tick)}
+                          class="weekly-history-gridline"
+                        />
+                        <text x={weeklyTrendChart.inset.left - 10} y={weeklyTrendChart.yFor(tick) + 4} text-anchor="end">
+                          {scoreLabel(tick)}
+                        </text>
+                      </g>
+                    ))}
+                    <path d={weeklyTrendChart.maxPath} class="weekly-history-line weekly-history-line-max" />
+                    <path d={weeklyTrendChart.topPath} class="weekly-history-line weekly-history-line-top" />
+                    <path d={weeklyTrendChart.averagePath} class="weekly-history-line weekly-history-line-average" />
+                    <path d={weeklyTrendChart.sp500Path} class="weekly-history-line weekly-history-line-sp500" />
+                    {weeklyHistoryPoints.map((point, index) => (
+                      <g>
+                        <line
+                          x1={weeklyTrendChart.xFor(index)}
+                          x2={weeklyTrendChart.xFor(index)}
+                          y1={weeklyTrendChart.inset.top}
+                          y2={weeklyTrendChart.height - weeklyTrendChart.inset.bottom}
+                          class="weekly-history-round-line"
+                        />
+                        {finiteNumber(point.topModelScore) && (
+                          <circle cx={weeklyTrendChart.xFor(index)} cy={weeklyTrendChart.yFor(point.topModelScore)} r="4.5" class="weekly-history-point-top">
+                            <title>{point.roundId}: top model {point.topModelLabel} scored {scoreLabel(point.topModelScore)}</title>
+                          </circle>
+                        )}
+                        {finiteNumber(point.averageModelScore) && (
+                          <circle cx={weeklyTrendChart.xFor(index)} cy={weeklyTrendChart.yFor(point.averageModelScore)} r="4" class="weekly-history-point-average">
+                            <title>{point.roundId}: average model score {scoreLabel(point.averageModelScore)}</title>
+                          </circle>
+                        )}
+                        {finiteNumber(point.sp500Score) && (
+                          <circle cx={weeklyTrendChart.xFor(index)} cy={weeklyTrendChart.yFor(point.sp500Score)} r="4" class="weekly-history-point-sp500">
+                            <title>{point.roundId}: S&amp;P 500 score {scoreLabel(point.sp500Score)}</title>
+                          </circle>
+                        )}
+                        <text x={weeklyTrendChart.xFor(index)} y={weeklyTrendChart.height - 26} text-anchor="middle">
+                          {dateShort(point.exitDate)}
+                        </text>
+                        <text class="weekly-history-round-id" x={weeklyTrendChart.xFor(index)} y={weeklyTrendChart.height - 10} text-anchor="middle">
+                          {point.roundId.replace("CB-2026-", "")}
+                        </text>
+                      </g>
+                    ))}
+                  </svg>
+                </div>
+              </div>
+            )}
+
+            <div class="weekly-result-readout" aria-label="Latest weekly investor readout">
+              <div class="weekly-result-readout-copy">
+                <span class="panel-kicker">Investor readout</span>
+                <h3>{allModelsUnderperformed ? "Top AI Portfolio Still Lagged The Benchmark" : "What This Weekly Round Shows"}</h3>
+                <p>
+                  {allModelsUnderperformed
+                    ? "Every model finished below the S&P 500. The common pattern was crowded exposure to AI, technology, software, and semiconductor momentum during a short-window rotation away from those trades."
+                    : "This section summarizes the benchmark-relative result, model crowding, and the hindsight asset that set the maximum possible return for the round."}
+                </p>
+              </div>
+              <div class="weekly-result-readout-grid">
+                <article>
+                  <span>Benchmark result</span>
+                  <strong>
+                    {topModelLabel} {finiteNumber(winnerAlpha) ? signedPp(winnerAlpha) : "n/a"}
+                  </strong>
+                  <p>
+                    Top model return {pct(winnerReturn)} vs S&amp;P 500 {pct(winner.sp500_return)}.
+                  </p>
+                </article>
+                {finiteNumber(averageModelReturn) && finiteNumber(averageModelAlpha) && (
+                  <article>
+                    <span>Model average</span>
+                    <strong>{pct(averageModelReturn)}</strong>
+                    <p>Average model portfolio finished {signedPp(averageModelAlpha)} versus S&amp;P 500.</p>
+                  </article>
+                )}
+                {topCrowdedExposureRows.length > 0 && (
+                  <article>
+                    <span>Most crowded model exposures</span>
+                    <div class="weekly-readout-pills">
+                      {topCrowdedExposureRows.map((row) => (
+                        <span title={row.label}>
+                          <strong>{row.shortLabel}</strong>
+                          <em>{formatAllocationPct(row.averagePct)} avg</em>
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                )}
+                {bestReturnRows.length > 0 && (
+                  <article>
+                    <span>What worked in hindsight</span>
+                    <div class="weekly-readout-pills weekly-readout-pills-positive">
+                      {bestReturnRows.map((row) => (
+                        <span title={row.label}>
+                          <strong>{row.shortLabel}</strong>
+                          <em>{pct(row.returnValue)}</em>
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                )}
+                {crowdedLossRows.length > 0 && (
+                  <article class="weekly-readout-wide">
+                    <span>What hurt the model portfolios</span>
+                    <div class="weekly-readout-pills weekly-readout-pills-negative">
+                      {crowdedLossRows.map((row) => (
+                        <span title={row.label}>
+                          <strong>{row.shortLabel}</strong>
+                          <em>{pct(row.returnValue)}</em>
+                        </span>
+                      ))}
+                    </div>
                   </article>
                 )}
               </div>
@@ -209,35 +737,122 @@ const initialNowIso = new Date().toISOString();
           <div class="panel-header">
             <div>
               <span class="panel-kicker">Detailed scores</span>
-              <h2>{resultRound ? "Official Weekly Scores" : "No Weekly Score Yet"}</h2>
+              <h2>{resultRound ? "Weekly Score Tables" : "No Weekly Score Yet"}</h2>
               <p>
                 {resultRound
-                  ? "Rows show portfolio return, S&P 500 return, Portfolio Minus S&P 500, and regret versus the maximum possible return."
+                  ? "Switch between the latest completed weekly round and cumulative weekly history. All cumulative rows are derived from resolved weekly run files."
                   : "The benchmark result appears after the first weekly round is scored."}
               </p>
             </div>
           </div>
-          {scoreAuditRows.length > 0 && (
-            <div class="published-score-summary published-score-run-details" aria-label="Latest weekly CapitalBench score audit">
-              <div class="published-score-summary-head">
-                <div>
-                  <span class="panel-kicker">CapitalBench Score audit</span>
-                  <h3>Score Formula</h3>
-                  <p>100 matches the oracle return; negative scores preserve the size of a loss.</p>
-                </div>
-              </div>
-              <div class="published-score-context">
-                {scoreAuditRows.map((row) => (
-                  <span>
-                    <strong>{modelLabel(row.modelId)}</strong>
-                    score {row.capitalBenchScore.toFixed(1)} · portfolio {pct(row.portfolioReturn)} · oracle{" "}
-                    {pct(row.maxPossibleReturn)}: {row.maxPossibleLabel}
-                  </span>
-                ))}
-              </div>
+          <div class="weekly-score-table-tabs" data-weekly-tabs data-active-tab="latest-table">
+            <div class="weekly-tab-list" role="tablist" aria-label="Choose weekly score table">
+              <button
+                id="weekly-table-tab-latest"
+                class="weekly-tab-button is-active"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                aria-controls="weekly-table-panel-latest"
+                data-weekly-tab="latest-table"
+              >
+                <strong>Latest round</strong>
+                <span>{resultRound?.round_id ?? "No completed score"}</span>
+              </button>
+              <button
+                id="weekly-table-tab-cumulative"
+                class="weekly-tab-button"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                aria-controls="weekly-table-panel-cumulative"
+                tabindex="-1"
+                data-weekly-tab="cumulative-table"
+              >
+                <strong>Cumulative weekly</strong>
+                <span>{weeklyContext ? `${weeklyContext.completedRoundCount} completed rounds` : "Full history"}</span>
+              </button>
             </div>
-          )}
-          <LeaderboardTable client:visible fallbackRows={resultRows} kind="latest" slot={latestSlotForTrack(track)} />
+            <div class="weekly-tab-panels weekly-score-table-panels">
+              <section
+                id="weekly-table-panel-latest"
+                class="weekly-tab-panel"
+                role="tabpanel"
+                aria-labelledby="weekly-table-tab-latest"
+                data-weekly-tab-panel="latest-table"
+              >
+                {scoreAuditRows.length > 0 && (
+                  <div class="published-score-summary published-score-run-details" aria-label="Latest weekly CapitalBench score audit">
+                    <div class="published-score-summary-head">
+                      <div>
+                        <span class="panel-kicker">CapitalBench Score audit</span>
+                        <h3>Score Formula</h3>
+                        <p>100 matches the maximum possible return; negative scores preserve the size of a loss.</p>
+                      </div>
+                    </div>
+                    <div class="published-score-context">
+                      {scoreAuditRows.map((row) => (
+                        <span>
+                          <strong>{modelLabel(row.modelId)}</strong>
+                          score {row.capitalBenchScore.toFixed(1)} · portfolio {pct(row.portfolioReturn)} · max possible{" "}
+                          {pct(row.maxPossibleReturn)}: {row.maxPossibleLabel}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <LeaderboardTable client:visible fallbackRows={resultRows} kind="latest" slot={latestSlotForTrack(track)} />
+              </section>
+              <section
+                id="weekly-table-panel-cumulative"
+                class="weekly-tab-panel"
+                role="tabpanel"
+                aria-labelledby="weekly-table-tab-cumulative"
+                data-weekly-tab-panel="cumulative-table"
+                hidden
+              >
+                <div class="weekly-cumulative-table-shell table-shell" aria-label="Cumulative weekly CapitalBench Score table">
+                  <div class="weekly-cumulative-table-note">
+                    <strong>Full weekly history</strong>
+                    <span>CapitalBench Score = total portfolio return / total max-possible return × 100.</span>
+                  </div>
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Model</th>
+                          <th>Scope</th>
+                          <th class="numeric">CapitalBench Score</th>
+                          <th class="numeric">Avg Return</th>
+                          <th class="numeric">Avg vs S&amp;P</th>
+                          <th class="numeric">Beat S&amp;P Weeks</th>
+                          <th class="numeric">Total / Max Possible</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {cumulativeWeeklyRows.map((row) => (
+                          <tr class:list={[row.kind !== "model" && "weekly-cumulative-reference-row"]}>
+                            <td>
+                              <strong>{row.label}</strong>
+                              {row.providerLabel && <span>{row.providerLabel}</span>}
+                            </td>
+                            <td>{row.testsIncluded}/{row.testsRequired} weekly rounds</td>
+                            <td class="numeric">{scoreLabel(row.score)}</td>
+                            <td class="numeric">{pct(row.averageReturn)}</td>
+                            <td class="numeric">{row.kind === "model" ? signedPp(row.averageAlphaVsSp500) : "0.00 pp"}</td>
+                            <td class="numeric">
+                              {row.kind === "model" ? `${row.beatSp500Count ?? 0}/${row.testsIncluded}` : "Benchmark"}
+                            </td>
+                            <td class="numeric">{pct(row.totalReturn)} / {pct(row.totalMaxPossibleReturn)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -320,4 +935,49 @@ const initialNowIso = new Date().toISOString();
       </div>
     </section>
   )}
+
+  <script is:inline>
+    if (!window.__capitalbenchWeeklyTabs) {
+      window.__capitalbenchWeeklyTabs = true;
+
+      function setupWeeklyTabs(root) {
+        const tabs = Array.from(root.querySelectorAll("[data-weekly-tab]"));
+        const panels = Array.from(root.querySelectorAll("[data-weekly-tab-panel]"));
+
+        function selectTab(tabKey) {
+          if (!tabKey) return;
+          root.dataset.activeTab = tabKey;
+          tabs.forEach((tab) => {
+            const active = tab.dataset.weeklyTab === tabKey;
+            tab.classList.toggle("is-active", active);
+            tab.setAttribute("aria-selected", active ? "true" : "false");
+            tab.setAttribute("tabindex", active ? "0" : "-1");
+          });
+          panels.forEach((panel) => {
+            panel.hidden = panel.dataset.weeklyTabPanel !== tabKey;
+          });
+        }
+
+        tabs.forEach((tab, index) => {
+          tab.addEventListener("click", () => selectTab(tab.dataset.weeklyTab));
+          tab.addEventListener("keydown", (event) => {
+            if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+            event.preventDefault();
+            const nextIndex =
+              event.key === "Home"
+                ? 0
+                : event.key === "End"
+                  ? tabs.length - 1
+                  : event.key === "ArrowRight"
+                    ? (index + 1) % tabs.length
+                    : (index - 1 + tabs.length) % tabs.length;
+            tabs[nextIndex]?.focus();
+            selectTab(tabs[nextIndex]?.dataset.weeklyTab);
+          });
+        });
+      }
+
+      document.querySelectorAll("[data-weekly-tabs]").forEach(setupWeeklyTabs);
+    }
+  </script>
 </BaseLayout>

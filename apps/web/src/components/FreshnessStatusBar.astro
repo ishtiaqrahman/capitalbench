@@ -2,17 +2,22 @@
 import apiReadModel from "../generated/apiReadModel.js";
 import { buildBenchmarkStatus } from "../lib/benchmarkStatus.js";
 
-const status = buildBenchmarkStatus(apiReadModel);
+interface Props {
+  track?: "weekly" | "monthly";
+}
+
+const { track } = Astro.props;
+const status = buildBenchmarkStatus(apiReadModel, { track });
 ---
 
 <div class="freshness-status-bar" aria-label="CapitalBench data freshness">
   <div class="freshness-status-inner">
     <a href={status.latestOfficialRoundHref}>
-      <span>Latest official score</span>
+      <span>{status.latestOfficialLabel}</span>
       <strong>{status.latestOfficialRoundId}</strong>
     </a>
     <span>
-      <span>Live rounds</span>
+      <span>{status.liveRoundLabel}</span>
       <strong>{status.liveRoundCount}</strong>
     </span>
     <span>
