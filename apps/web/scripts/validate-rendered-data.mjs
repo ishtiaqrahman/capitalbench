@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
-import { buildBenchmarkStatus } from "../src/lib/benchmarkStatus.js";
+import { buildBenchmarkStatus, buildBenchmarkTickerTape } from "../src/lib/benchmarkStatus.js";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { buildCumulativeLeaderboardData, createMemoryApiAuthRepository, handleDataApiRequest } from "../src/lib/dataApi.js";
 
@@ -2303,20 +2303,29 @@ if (latestActiveWeeklyRound) {
 }
 
 const benchmarkStatus = buildBenchmarkStatus(apiReadModel);
+const benchmarkTicker = buildBenchmarkTickerTape(apiReadModel);
 for (const [html, context] of [
-  [indexHtml, "homepage freshness bar"],
-  [apiHtml, "API page freshness bar"]
+  [indexHtml, "homepage benchmark ticker"],
+  [apiHtml, "API page benchmark ticker"]
 ]) {
-  includes(html, "Latest official score", context);
-  includes(html, benchmarkStatus.latestOfficialRoundId, `${context} latest official score`);
-  includes(html, "Live rounds", context);
-  includes(html, `<strong>${benchmarkStatus.liveRoundCount}</strong>`, `${context} live round count`);
-  includes(html, "Latest price close", context);
-  includes(html, benchmarkStatus.latestPriceLabel, `${context} latest price close`);
-  includes(html, "Next scheduled score", context);
-  includes(html, benchmarkStatus.nextScoreLabel, `${context} next scheduled score`);
-  includes(html, "Last data refresh", context);
-  includes(html, benchmarkStatus.refreshedAtLabel, `${context} refresh timestamp`);
+  includes(html, "CapitalBench Live", context);
+  includes(html, "AI benchmark tape", `${context} brand value`);
+  includes(html, "AI Positioning", `${context} risk item`);
+  includes(html, "Model Agreement", `${context} agreement item`);
+  includes(html, "Crowded Position", `${context} crowded position item`);
+  includes(html, "Biggest Shift", `${context} positioning shift item`);
+  includes(html, "Live MTM", `${context} live mark-to-market item`);
+  includes(html, "Latest Weekly", `${context} latest official item`);
+  includes(html, "Full Weekly History", `${context} cumulative item`);
+  includes(html, "not final", `${context} live mark-to-market disclaimer`);
+  includes(html, "Data", `${context} data chip`);
+  includes(html, "audited", `${context} audit coverage`);
+  for (const item of benchmarkTicker.items) {
+    includesAny(html, htmlTextVariants(item.label), `${context} ticker label ${item.key}`);
+    includesAny(html, htmlTextVariants(item.value), `${context} ticker value ${item.key}`);
+  }
+  includesAny(html, htmlTextVariants(benchmarkTicker.data.value), `${context} data price value`);
+  includesAny(html, htmlTextVariants(benchmarkTicker.data.detail), `${context} data audit detail`);
 }
 if (
   benchmarkStatus.nextScoreDate &&

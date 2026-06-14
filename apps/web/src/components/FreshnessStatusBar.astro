@@ -1,36 +1,53 @@
 ---
 import apiReadModel from "../generated/apiReadModel.js";
-import { buildBenchmarkStatus } from "../lib/benchmarkStatus.js";
+import { buildBenchmarkTickerTape } from "../lib/benchmarkStatus.js";
 
 interface Props {
   track?: "weekly" | "monthly";
 }
 
 const { track } = Astro.props;
-const status = buildBenchmarkStatus(apiReadModel, { track });
+const tape = buildBenchmarkTickerTape(apiReadModel, { track });
+const tickerItems = tape.items;
+const tickerCopies = [0, 1];
 ---
 
-<div class="freshness-status-bar" aria-label="CapitalBench data freshness">
-  <div class="freshness-status-inner">
-    <a href={status.latestOfficialRoundHref}>
-      <span>{status.latestOfficialLabel}</span>
-      <strong>{status.latestOfficialRoundId}</strong>
+<div class="freshness-status-bar benchmark-ticker-bar" aria-label="CapitalBench live benchmark ticker">
+  <div class="freshness-status-inner benchmark-ticker-inner">
+    <a class="benchmark-ticker-brand" href={tape.brand.href} title={tape.brand.detail}>
+      <span>{tape.brand.label}</span>
+      <strong>{tape.brand.value}</strong>
     </a>
-    <span>
-      <span>{status.liveRoundLabel}</span>
-      <strong>{status.liveRoundCount}</strong>
-    </span>
-    <span>
-      <span>Latest price close</span>
-      <strong>{status.latestPriceLabel}</strong>
-    </span>
-    <span>
-      <span>Next scheduled score</span>
-      <strong>{status.nextScoreLabel}</strong>
-    </span>
-    <span>
-      <span>Last data refresh</span>
-      <strong>{status.refreshedAtLabel}</strong>
-    </span>
+
+    <div class="benchmark-ticker-viewport">
+      <div class="benchmark-ticker-track" aria-label="Live benchmark signals">
+        {tickerCopies.map((copyIndex) => (
+          <div class="benchmark-ticker-segment" aria-hidden={copyIndex === 1 ? "true" : "false"}>
+            {tickerItems.map((item) => (
+              <a
+                class:list={["benchmark-ticker-item", `is-${item.tone}`]}
+                href={item.href}
+                title={`${item.label}: ${item.value}. ${item.detail}`}
+                tabindex={copyIndex === 1 ? "-1" : "0"}
+              >
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <em>{item.detail}</em>
+              </a>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <a
+      class:list={["benchmark-ticker-data", `is-${tape.data.tone}`]}
+      href={tape.data.href}
+      title={tape.data.title}
+    >
+      <span>{tape.data.label}</span>
+      <strong>{tape.data.value}</strong>
+      <em>{tape.data.detail}</em>
+    </a>
   </div>
 </div>
