@@ -30,8 +30,7 @@ import {
   allocationThemeClass,
   decisionAllocations,
   formatAllocationPct,
-  optionDisplayName,
-  optionShortDisplayName
+  optionDisplayName
 } from "../lib/allocations";
 import { dateOnly } from "../lib/format";
 import {
@@ -189,32 +188,30 @@ const currentRiskPulse = liveRiskSnapshot.current_decision_pulse;
 const outstandingBookRisk = liveRiskSnapshot.outstanding_live_book;
 const riskPulseTopAssets = currentRiskPulse.top_assets.slice(0, 6);
 const riskPulseRegimes = currentRiskPulse.regime_exposure.slice(0, 5);
-const previousRiskSetIds = [
-  currentRiskPulse.previous_round_ids?.weekly,
-  currentRiskPulse.previous_round_ids?.monthly
-].filter(Boolean);
-const previousRiskSetLabel =
-  previousRiskSetIds.length > 0 ? `previous live set: ${previousRiskSetIds.join(" + ")}` : "previous live portfolio set";
 const riskChangeValue = Number(currentRiskPulse.change_from_previous);
 const riskChangeDirection =
   Number.isFinite(riskChangeValue) && riskChangeValue > 0
-    ? "More risk-on"
+    ? "Models are allocating more aggressively than in the last frozen live portfolios."
     : Number.isFinite(riskChangeValue) && riskChangeValue < 0
-      ? "More defensive"
-      : "Unchanged";
+      ? "Models are allocating more defensively than in the last frozen live portfolios."
+      : Number.isFinite(riskChangeValue)
+        ? "Models are taking about the same amount of risk as the last frozen live portfolios."
+        : "No prior live portfolio comparison is available yet.";
 const riskChangeClass =
   Number.isFinite(riskChangeValue) && riskChangeValue > 0
     ? "is-risk-on"
     : Number.isFinite(riskChangeValue) && riskChangeValue < 0
       ? "is-defensive"
       : "is-neutral";
+const riskScaleExplainer =
+  "Higher means more allocation to growth, momentum, and cyclical assets. Lower means more cash, bonds, and defensive sectors.";
 const topRiskAssetNames = riskPulseTopAssets
   .slice(0, 3)
   .map((asset) => asset.label.toLowerCase())
   .filter(Boolean);
 const heroRiskExplanation =
   currentRiskPulse.regime === "Selective risk taking" && topRiskAssetNames.length > 0
-    ? `Models are risk-on, but concentrated in ${humanList(topRiskAssetNames)} rather than buying everything.`
+    ? `Models are taking risk, but concentrated in ${humanList(topRiskAssetNames)} rather than spreading allocations broadly.`
     : "Models are expressing their current market stance through the newest live portfolios.";
 const riskAppetiteProfiles = [...modelProfiles]
   .filter((profile) => profile.fingerprint.riskAppetite.score !== null)
@@ -408,6 +405,12 @@ function pctValue(value: number | null | undefined): string {
   return `${value.toFixed(2)}%`;
 }
 
+function assetLabelWithTicker(asset: { label?: string; ticker?: string; option_id?: string } | null | undefined): string {
+  if (!asset) return "n/a";
+  const label = asset.label || asset.option_id || "n/a";
+  return asset.ticker ? `${label} (${asset.ticker})` : label;
+}
+
 function humanList(values: string[]): string {
   if (values.length <= 1) return values[0] ?? "";
   if (values.length === 2) return `${values[0]} and ${values[1]}`;
@@ -524,12 +527,12 @@ const trackLaneCards = trackStates.map((track) => {
         <div class="hero-positioning-risk-score">
           <span>Risk-Taking Score</span>
           <strong>{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
-          <em>0 defensive · 50 balanced · 100 aggressive</em>
+          <em>{riskScaleExplainer}</em>
         </div>
         <div>
-          <span>Change in stance</span>
-          <strong class:list={[riskChangeClass]}>{signedPulseChange(currentRiskPulse.change_from_previous)}</strong>
-          <em>{riskChangeDirection} vs {previousRiskSetLabel}</em>
+          <span>Change from last live portfolios</span>
+          <strong class:list={[riskChangeClass]}>{signedPulseChange(currentRiskPulse.change_from_previous)}<small>pts</small></strong>
+          <em>{riskChangeDirection}</em>
         </div>
       </div>
 
@@ -612,12 +615,12 @@ const trackLaneCards = trackStates.map((track) => {
       <div class="hero-positioning-risk-score">
         <span>Risk-Taking Score</span>
         <strong>{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
-        <em>0 defensive · 50 balanced · 100 aggressive</em>
+        <em>{riskScaleExplainer}</em>
       </div>
       <div>
-        <span>Change in stance</span>
-        <strong class:list={[riskChangeClass]}>{signedPulseChange(currentRiskPulse.change_from_previous)}</strong>
-        <em>{riskChangeDirection} vs {previousRiskSetLabel}</em>
+        <span>Change from last live portfolios</span>
+        <strong class:list={[riskChangeClass]}>{signedPulseChange(currentRiskPulse.change_from_previous)}<small>pts</small></strong>
+        <em>{riskChangeDirection}</em>
       </div>
     </div>
 
@@ -663,7 +666,7 @@ const trackLaneCards = trackStates.map((track) => {
     </article>
     <article>
       <span>Consensus allocation</span>
-      <strong>{riskPulseTopAssets[0]?.ticker || riskPulseTopAssets[0]?.option_id || "n/a"}</strong>
+      <strong>{assetLabelWithTicker(riskPulseTopAssets[0])}</strong>
       <em>{riskPulseTopAssets[0] ? `${pctValue(riskPulseTopAssets[0].allocation_pct)} average live weight` : "No live allocation"}</em>
     </article>
     <article>
@@ -754,7 +757,7 @@ const trackLaneCards = trackStates.map((track) => {
         <div class="live-risk-driver-list">
           {riskPulseTopAssets.map((asset) => (
             <span>
-              <strong>{asset.ticker || asset.option_id}</strong>
+              <strong>{assetLabelWithTicker(asset)}</strong>
               <em>{pctValue(asset.allocation_pct)}</em>
             </span>
           ))}
@@ -1128,7 +1131,7 @@ const trackLaneCards = trackStates.map((track) => {
                               title={`${optionDisplayName(allocation.option_id, track.optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
                             >
                               <i class={allocationThemeClass(allocation.option_id)} aria-hidden="true"></i>
-                              <strong>{optionShortDisplayName(allocation.option_id, track.optionsById)}</strong>
+                              <strong>{optionDisplayName(allocation.option_id, track.optionsById)}</strong>
                               <em>{formatAllocationPct(allocation.allocation_pct)}</em>
                             </span>
                           ))

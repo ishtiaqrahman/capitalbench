@@ -8,9 +8,12 @@ import { pct } from "../lib/format";
 
 interface Props {
   scorecard: TrackScorecardData;
+  compact?: boolean;
 }
 
-const { scorecard } = Astro.props;
+const { scorecard, compact = false } = Astro.props;
+const titleId = `${scorecard.track}-track-scorecard-title`;
+const scoreTitleId = `${scorecard.track}-normalized-score-title`;
 
 function finiteNumber(value: number | null | undefined): value is number {
   return typeof value === "number" && Number.isFinite(value);
@@ -145,38 +148,38 @@ function scoreAuditText(row: TrackScorecardNormalizedRow | undefined): string {
 }
 
 const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
+const scorecardBadgeItems = [
+  `${scorecard.comparisonRoundCount} resolved rounds compared`,
+  rankedModelLabel,
+  ...(provisionalScoreRows.length > 0 ? [shortHistoryLabel] : []),
+  `Newest resolved round: ${scorecard.latestRoundId}`
+];
 ---
 
-<section class={`track-scorecard-panel track-scorecard-${scorecard.track}`} aria-labelledby={`${scorecard.track}-track-scorecard-title`}>
-  <div class="track-scorecard-head">
-    <div>
-      <span class="panel-kicker">{scorecard.label} track</span>
-      <h3 id={`${scorecard.track}-track-scorecard-title`}>Full-History {scorecard.label} Scores</h3>
-      <p>
-        This chart compares total model return with total oracle return across every resolved {scorecard.label.toLowerCase()} round. The latest single-round result and
-        short-history models are kept separate.
-      </p>
+<section class:list={[`track-scorecard-panel track-scorecard-${scorecard.track}`, compact && "track-scorecard-panel-compact"]} aria-labelledby={titleId}>
+  {compact ? (
+    <h3 id={titleId} class="sr-only">Full-History {scorecard.label} Scores</h3>
+  ) : (
+    <div class="track-scorecard-head">
+      <div>
+        <span class="panel-kicker">{scorecard.label} track</span>
+        <h3 id={titleId}>Full-History {scorecard.label} Scores</h3>
+        <p>Resolved {scorecard.label.toLowerCase()} rounds only.</p>
+      </div>
+      <div class="track-scorecard-badges track-scorecard-badges-head" aria-label={`${scorecard.label} scorecard status`}>
+        {scorecardBadgeItems.map((item) => <span>{item}</span>)}
+      </div>
     </div>
-    <div class="track-scorecard-badges" aria-label={`${scorecard.label} scorecard status`}>
-      <span>{scorecard.comparisonRoundCount} resolved rounds compared</span>
-      <span>{rankedModelLabel}</span>
-      {provisionalScoreRows.length > 0 && <span>{shortHistoryLabel}</span>}
-      <span>Newest resolved round: {scorecard.latestRoundId}</span>
-    </div>
-  </div>
+  )}
 
   <div class="track-scorecard-grid">
-    <article class="track-scorecard-chart track-scorecard-score-chart" aria-labelledby={`${scorecard.track}-normalized-score-title`}>
+    <article class="track-scorecard-chart track-scorecard-score-chart" aria-labelledby={scoreTitleId}>
       <div class="track-scorecard-chart-head">
         <div>
           <span>All resolved rounds</span>
-          <h4 id={`${scorecard.track}-normalized-score-title`}>Full-History Model Scores</h4>
+          <h4 id={scoreTitleId}>Full-History Model Scores</h4>
         </div>
-        <p>
-          Max possible is the hindsight best-performing eligible asset in each resolved round. It scores 100; models and
-          S&amp;P 500 are shown as a percentage of that reference.{" "}
-          <a href="/scoring/#capitalbench-score">See the calculation</a>.
-        </p>
+        <p>Max possible = best asset in each completed round. <a href="/scoring/#capitalbench-score">Calculation</a>.</p>
       </div>
 
       <div class="score-chart-frame track-score-benchmark-frame">
@@ -266,6 +269,16 @@ const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
         </div>
       </div>
     </article>
+
+    <div
+      class:list={[
+        "track-scorecard-badges",
+        compact ? "track-scorecard-badges-after" : "track-scorecard-badges-mobile-after"
+      ]}
+      aria-label={`${scorecard.label} scorecard status`}
+    >
+      {scorecardBadgeItems.map((item) => <span>{item}</span>)}
+    </div>
 
     <article class="track-scorecard-chart track-scorecard-return-chart" aria-labelledby={`${scorecard.track}-average-return-title`}>
       <div class="track-scorecard-chart-head track-scorecard-return-head">

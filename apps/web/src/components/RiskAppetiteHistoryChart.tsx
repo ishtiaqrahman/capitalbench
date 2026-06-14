@@ -112,6 +112,10 @@ function pct(value: number | null | undefined): string {
   return `${value.toFixed(value >= 10 ? 1 : 2)}%`;
 }
 
+function assetLabel(asset: AssetDriver): string {
+  return asset.ticker ? `${asset.label} (${asset.ticker})` : asset.label || asset.option_id;
+}
+
 function shortDate(value: string): string {
   const [year, month, day] = value.split("-").map(Number);
   if (!year || !month || !day) return value;
@@ -598,7 +602,7 @@ export default function RiskAppetiteHistoryChart({ decisionHistory, outstandingH
                 <span>Largest allocation drivers</span>
                 {decisionPoint.top_assets.slice(0, 4).map((asset) => (
                   <div key={asset.option_id}>
-                    <strong>{asset.ticker || asset.option_id}</strong>
+                    <strong>{assetLabel(asset)}</strong>
                     <em>{pct(asset.allocation_pct)}</em>
                   </div>
                 ))}

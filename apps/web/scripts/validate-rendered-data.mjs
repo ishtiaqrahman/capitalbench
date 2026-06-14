@@ -1819,15 +1819,15 @@ for (const track of ["weekly", "monthly"]) {
   const cumulativeHtml = readHtml(pagePath);
   const cumulativeScorecardHtml = htmlSection(
     cumulativeHtml,
-    `<section class="track-scorecard-panel track-scorecard-${track}"`,
+    `<section class="track-scorecard-panel track-scorecard-${track}`,
     `${track} cumulative scorecard`
   );
   const context = `${track} cumulative page`;
 
   includes(cumulativeHtml, `${cumulative.comparison.comparison_round_count} resolved`, context);
   includes(cumulativeScorecardHtml, score, context);
-  includes(cumulativeScorecardHtml, "compares total model return with total oracle return", context);
-  includes(cumulativeScorecardHtml, "Max possible is the hindsight best-performing eligible asset", `${context} max possible explanation`);
+  includes(cumulativeScorecardHtml, `Resolved ${track} rounds only.`, context);
+  includes(cumulativeScorecardHtml, "Max possible = best asset in each completed round.", `${context} max possible explanation`);
   includes(cumulativeScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, context);
   includes(cumulativeScorecardHtml, "full-history models ranked", context);
   includes(cumulativeScorecardHtml, `Newest resolved round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
@@ -1883,15 +1883,15 @@ for (const track of ["weekly", "monthly"]) {
   if (track === "weekly") {
     const homepageWeeklyScorecardHtml = htmlSection(
       indexHtml,
-      '<section class="track-scorecard-panel track-scorecard-weekly"',
+      '<section class="track-scorecard-panel track-scorecard-weekly',
       "homepage weekly cumulative scorecard"
     );
     includes(indexHtml, "Full-history leader", "homepage weekly lane");
     includes(indexHtml, `${score} score · ${countLabel}`, "homepage weekly lane");
     includes(indexHtml, leader.label, "homepage weekly lane");
-    includes(indexHtml, "Each bar compares total model return with total oracle return", "homepage scorecard oracle explanation");
+    includes(indexHtml, "Each model is compared with the best asset it could have picked in completed rounds. Switch weekly/monthly.", "homepage scorecard oracle explanation");
     includes(homepageWeeklyScorecardHtml, "Full-History Model Scores", "homepage weekly cumulative chart title");
-    includes(homepageWeeklyScorecardHtml, "Max possible is the hindsight best-performing eligible asset", "homepage weekly max possible explanation");
+    includes(homepageWeeklyScorecardHtml, "Max possible = best asset in each completed round.", "homepage weekly max possible explanation");
     includes(homepageWeeklyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, "homepage weekly cumulative comparison count");
     includes(homepageWeeklyScorecardHtml, "full-history models ranked", "homepage weekly cumulative ranked model count");
     includes(homepageWeeklyScorecardHtml, `Newest resolved round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative newest included");
@@ -1948,11 +1948,11 @@ for (const track of ["weekly", "monthly"]) {
   if (track === "monthly") {
     const homepageMonthlyScorecardHtml = htmlSection(
       indexHtml,
-      '<section class="track-scorecard-panel track-scorecard-monthly"',
+      '<section class="track-scorecard-panel track-scorecard-monthly',
       "homepage monthly cumulative scorecard"
     );
     includes(homepageMonthlyScorecardHtml, "Full-History Monthly Scores", "homepage monthly cumulative chart title");
-    includes(homepageMonthlyScorecardHtml, "Max possible is the hindsight best-performing eligible asset", "homepage monthly max possible explanation");
+    includes(homepageMonthlyScorecardHtml, "Max possible = best asset in each completed round.", "homepage monthly max possible explanation");
     includes(homepageMonthlyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, "homepage monthly cumulative comparison count");
     includes(homepageMonthlyScorecardHtml, leader.label, "homepage monthly cumulative leader");
     includes(homepageMonthlyScorecardHtml, score, "homepage monthly cumulative leader score");

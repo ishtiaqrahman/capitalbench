@@ -17,10 +17,7 @@ const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "
       <div>
         <span class="panel-kicker">Benchmark results</span>
         <h2 id="track-scorecards-title">Model Performance</h2>
-        <p>
-          Each bar compares total model return with total oracle return across all resolved rounds in that track.
-          Switch between weekly and monthly full-history scores inside the same panel.
-        </p>
+        <p>Each model is compared with the best asset it could have picked in completed rounds. Switch weekly/monthly.</p>
       </div>
       <a class="section-profile-link" href="/leaderboards">All benchmark results</a>
     </section>
@@ -29,7 +26,7 @@ const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "
       class="track-scorecard-tab-shell"
       data-track-scorecard-tabs
       data-active-track={defaultTrack}
-      aria-label="Full-history weekly and monthly model scores"
+      aria-label="Weekly and monthly model scores"
     >
       <div class="track-scorecard-tabs" role="tablist" aria-label="Choose full-history score horizon">
         {visibleScorecards.map((scorecard) => {
@@ -68,7 +65,7 @@ const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "
               data-track-scorecard-panel={scorecard.track}
               hidden={!active}
             >
-              <TrackScorecard scorecard={scorecard} />
+              <TrackScorecard scorecard={scorecard} compact />
             </div>
           );
         })}

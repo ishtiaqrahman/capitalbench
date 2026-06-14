@@ -7,7 +7,6 @@ import {
   decisionAllocations,
   formatAllocationPct,
   optionDisplayName,
-  optionShortDisplayName,
   protocolLabel,
   type DisplayAllocation,
   type OptionLabelMap
@@ -63,7 +62,7 @@ function AllocationPortfolioView({
             title={`${optionDisplayName(allocation.option_id, optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
           >
             <span className={`allocation-dot ${allocationThemeClass(allocation.option_id)}`} aria-hidden="true" />
-            <strong>{optionShortDisplayName(allocation.option_id, optionsById)}</strong>
+            <strong>{optionDisplayName(allocation.option_id, optionsById)}</strong>
             <span>{formatAllocationPct(allocation.allocation_pct)}</span>
           </span>
         ))}

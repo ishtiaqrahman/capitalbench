@@ -1558,6 +1558,11 @@ a.snapshot-model-chip:hover {
   font-variant-numeric: tabular-nums;
 }
 
+.ai-positioning-summary article:nth-child(2) strong {
+  font-size: clamp(1.05rem, 1.8vw, 1.45rem);
+  line-height: 1.12;
+}
+
 .ai-positioning-summary strong.is-negative {
   color: #a9342b;
 }
@@ -1984,10 +1989,10 @@ a.snapshot-model-chip:hover {
 }
 
 .decision-allocation-pill {
-  max-width: 100%;
+  max-width: min(100%, 260px);
   min-height: 27px;
   display: inline-grid;
-  grid-template-columns: 8px minmax(0, auto) auto;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
   align-items: center;
   gap: 6px;
   border: 1px solid #dce5e1;
@@ -2020,6 +2025,7 @@ a.snapshot-model-chip:hover {
   font-size: 0.74rem;
   font-weight: 850;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .decision-allocation-pill em {
@@ -3468,9 +3474,9 @@ a.snapshot-model-chip:hover {
 
 .track-scorecard-tab-shell {
   display: grid;
-  gap: 18px;
+  gap: 12px;
   margin-bottom: clamp(26px, 4vw, 42px);
-  padding: clamp(20px, 3vw, 30px);
+  padding: clamp(14px, 2vw, 18px);
   border: 1px solid var(--line);
   border-top: 4px solid var(--accent);
   border-radius: 8px;
@@ -3485,7 +3491,7 @@ a.snapshot-model-chip:hover {
 }
 
 .track-scorecard-tabs {
-  width: min(100%, 460px);
+  width: min(100%, 390px);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 4px;
@@ -3497,13 +3503,13 @@ a.snapshot-model-chip:hover {
 
 .track-scorecard-tab {
   min-width: 0;
-  min-height: 52px;
+  min-height: 44px;
   display: grid;
   gap: 2px;
   align-content: center;
   border: 1px solid transparent;
   border-radius: 6px;
-  padding: 8px 12px;
+  padding: 6px 10px;
   background: transparent;
   color: var(--muted);
   font: inherit;
@@ -3532,13 +3538,13 @@ a.snapshot-model-chip:hover {
 }
 
 .track-scorecard-tab strong {
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 850;
 }
 
 .track-scorecard-tab span {
   color: inherit;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 750;
   opacity: 0.78;
 }
@@ -3557,7 +3563,7 @@ a.snapshot-model-chip:hover {
 }
 
 .track-scorecard-tab-shell .track-scorecard-panel {
-  padding: 18px 0 0;
+  padding: 10px 0 0;
   border: 0;
   border-top: 1px solid rgb(213 223 219 / 78%);
   border-radius: 0;
@@ -3567,7 +3573,7 @@ a.snapshot-model-chip:hover {
 
 .track-scorecard-panel {
   display: grid;
-  gap: 20px;
+  gap: 14px;
   padding: clamp(20px, 3vw, 30px);
   border: 1px solid var(--line);
   border-top: 4px solid var(--accent);
@@ -3578,40 +3584,44 @@ a.snapshot-model-chip:hover {
   box-shadow: var(--shadow);
 }
 
+.track-scorecard-panel-compact {
+  gap: 12px;
+}
+
 .track-scorecard-monthly {
   border-top-color: var(--accent-2);
 }
 
 .track-scorecard-head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 14px;
 }
 
 .track-scorecard-head h3 {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
   color: var(--ink-strong);
   font-family: var(--font-display);
-  font-size: clamp(1.85rem, 3vw, 2.85rem);
+  font-size: clamp(1.45rem, 2.2vw, 2.1rem);
   line-height: 1.06;
 }
 
 .track-scorecard-head p {
   max-width: 720px;
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   color: var(--muted);
-  font-size: 0.95rem;
-  line-height: 1.45;
+  font-size: 0.82rem;
+  line-height: 1.25;
 }
 
 .track-scorecard-badges {
   display: flex;
-  flex: 0 0 auto;
+  flex: 1 1 560px;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 8px;
-  max-width: 460px;
+  gap: 5px;
+  max-width: none;
 }
 
 .track-scorecard-badges span,
@@ -3621,10 +3631,10 @@ a.snapshot-model-chip:hover {
   gap: 6px;
   border: 1px solid rgb(213 223 219 / 78%);
   border-radius: 999px;
-  padding: 7px 10px;
+  padding: 5px 8px;
   background: rgb(255 255 255 / 72%);
   color: var(--muted);
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: 750;
   line-height: 1.2;
 }
@@ -3639,15 +3649,23 @@ a.snapshot-model-chip:hover {
 .track-scorecard-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
+  gap: 12px;
   border-top: 1px solid rgb(213 223 219 / 78%);
+}
+
+.track-scorecard-panel-compact .track-scorecard-grid {
+  border-top: 0;
 }
 
 .track-scorecard-chart {
   display: grid;
   min-width: 0;
-  gap: 12px;
-  padding: 20px 0 0;
+  gap: 8px;
+  padding: 12px 0 0;
+}
+
+.track-scorecard-panel-compact .track-scorecard-chart {
+  padding-top: 0;
 }
 
 .track-scorecard-chart + .track-scorecard-chart {
@@ -3656,12 +3674,22 @@ a.snapshot-model-chip:hover {
 }
 
 .track-scorecard-score-chart {
-  gap: 14px;
+  gap: 10px;
 }
 
 .score-chart-frame.track-score-benchmark-frame {
   margin-top: 2px;
   overflow: visible;
+}
+
+.track-scorecard-badges-after {
+  justify-content: flex-start;
+  border-top: 1px solid rgb(213 223 219 / 78%);
+  padding-top: 10px;
+}
+
+.track-scorecard-badges-mobile-after {
+  display: none;
 }
 
 .track-score-vertical-inner {
@@ -3773,16 +3801,16 @@ a.snapshot-model-chip:hover {
   margin: 3px 0 0;
   color: var(--ink-strong);
   font-family: var(--font-display);
-  font-size: clamp(1.18rem, 1.8vw, 1.5rem);
+  font-size: clamp(1.05rem, 1.4vw, 1.28rem);
   line-height: 1.08;
 }
 
 .track-scorecard-chart-head p {
-  max-width: 340px;
+  max-width: 310px;
   margin: 0;
   color: var(--muted);
-  font-size: 0.78rem;
-  line-height: 1.35;
+  font-size: 0.72rem;
+  line-height: 1.25;
   text-align: right;
 }
 
@@ -5461,6 +5489,7 @@ a.snapshot-model-chip:hover {
 
 .weekly-readout-pills span {
   min-width: 0;
+  max-width: min(100%, 260px);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -5474,8 +5503,12 @@ a.snapshot-model-chip:hover {
 }
 
 .weekly-readout-pills strong {
+  min-width: 0;
+  overflow: hidden;
   font-size: 0.74rem;
   font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .weekly-readout-pills em {
@@ -5652,6 +5685,7 @@ a.snapshot-model-chip:hover {
 
 .latest-weekly-allocation-list strong {
   min-width: 0;
+  display: block;
   color: var(--ink-strong);
   font-size: 0.72rem;
   font-weight: 850;
@@ -7293,6 +7327,7 @@ a.snapshot-model-chip:hover {
 }
 
 .allocation-chip {
+  min-width: 0;
   max-width: 100%;
   min-height: 26px;
   display: inline-flex;
@@ -7309,11 +7344,16 @@ a.snapshot-model-chip:hover {
 }
 
 .allocation-chip strong {
+  flex: 1 1 auto;
+  display: block;
   min-width: 0;
+  max-width: 26ch;
   color: var(--ink-strong);
   font-size: 0.76rem;
   font-weight: 600;
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .allocation-chip span:last-child {
@@ -7337,8 +7377,13 @@ a.snapshot-model-chip:hover {
 
 .allocation-chip-row.compact .allocation-chip {
   min-height: 24px;
+  max-width: min(100%, 260px);
   padding-block: 2px;
   font-size: 0.72rem;
+}
+
+.allocation-chip-row.compact .allocation-chip strong {
+  max-width: 22ch;
 }
 
 .output-stack {
@@ -10394,6 +10439,17 @@ tbody tr:hover {
   .track-scorecard-badges {
     justify-content: flex-start;
     max-width: none;
+  }
+
+  .track-scorecard-badges-head {
+    display: none;
+  }
+
+  .track-scorecard-badges-mobile-after {
+    display: flex;
+    justify-content: flex-start;
+    border-top: 1px solid rgb(213 223 219 / 78%);
+    padding-top: 10px;
   }
 
   .track-scorecard-chart,
@@ -14708,6 +14764,13 @@ tbody tr:hover {
   overflow-wrap: break-word;
 }
 
+.model-live-stat-grid strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .model-profile-stats small,
 .model-live-stat-grid small {
   display: block;
@@ -17435,8 +17498,9 @@ tbody tr:hover {
 
 .live-risk-driver-list span {
   min-width: 72px;
+  max-width: min(100%, 220px);
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 7px;
   border: 1px solid #dce5e1;
   border-radius: 7px;
@@ -17445,8 +17509,12 @@ tbody tr:hover {
 }
 
 .live-risk-driver-list strong {
+  min-width: 0;
+  overflow: hidden;
   color: var(--ink-strong);
   font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .live-risk-driver-list em {
@@ -18258,10 +18326,13 @@ tbody tr:hover {
 .risk-history-detail-list strong,
 .risk-history-regime-list span {
   min-width: 0;
+  overflow: hidden;
   color: var(--ink-strong);
   font-size: 0.78rem;
   font-weight: 800;
   line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .risk-history-detail-list em,

@@ -23,7 +23,7 @@ import {
   type WeeklyPerformanceRecord,
   universeOptions
 } from "../../data/fallback";
-import { allocationThemeClass, formatAllocationPct, optionDisplayName, optionShortDisplayName } from "../../lib/allocations";
+import { allocationThemeClass, formatAllocationPct, optionDisplayName } from "../../lib/allocations";
 import { capitalBenchScore } from "../../lib/capitalBenchScore.js";
 import { dateOnly, pct } from "../../lib/format";
 import {
@@ -1070,7 +1070,7 @@ const attributionColumns = [
                           title={`${optionDisplayName(allocation.option_id, roundOptionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
                         >
                           <span class={`allocation-dot ${allocationThemeClass(allocation.option_id)}`} aria-hidden="true"></span>
-                          <strong>{optionShortDisplayName(allocation.option_id, roundOptionsById)}</strong>
+                          <strong>{optionDisplayName(allocation.option_id, roundOptionsById)}</strong>
                           <span>{formatAllocationPct(allocation.allocation_pct)}</span>
                         </span>
                       ))}

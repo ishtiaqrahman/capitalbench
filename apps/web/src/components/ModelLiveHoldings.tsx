@@ -119,7 +119,7 @@ export default function ModelLiveHoldings({ scopes }: Props) {
               <div className="model-live-stat-grid">
                 <div>
                   <span>Top holding</span>
-                  <strong>{scope.topHolding?.shortLabel ?? "None"}</strong>
+                  <strong>{scope.topHolding?.label ?? "None"}</strong>
                   <small>{scope.topHolding ? formatPct(scope.topHolding.exposurePct) : "0%"}</small>
                 </div>
                 <div>

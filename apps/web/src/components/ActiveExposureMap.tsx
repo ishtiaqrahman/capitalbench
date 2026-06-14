@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { modelLabel, providerLabel, type RoundRecord, type SubmissionRecord, type UniverseOption } from "../data/fallback";
-import { decisionAllocations, optionDisplayName, optionShortDisplayName, type OptionLabelMap } from "../lib/allocations";
+import { decisionAllocations, optionDisplayName, type OptionLabelMap } from "../lib/allocations";
 import { providerLogoSrc } from "../lib/scoreReturnChart";
 
 type ActiveTrack = "all" | "weekly" | "monthly";
@@ -482,7 +482,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
             <>
               <div>
                 <span>Largest asset</span>
-                <strong>{largestExposure ? optionShortDisplayName(largestExposure.optionId, summary.optionsById) : "None"}</strong>
+                <strong>{largestExposure ? optionDisplayName(largestExposure.optionId, summary.optionsById) : "None"}</strong>
                 <small>{largestExposure ? formatPct(largestExposure.exposurePct) : "0%"}</small>
               </div>
               <div>
@@ -510,7 +510,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
               </div>
               <div>
                 <span>Shared top holding</span>
-                <strong>{sharedTopHolding ? optionShortDisplayName(sharedTopHolding.optionId, modelSummary.optionsById) : "None"}</strong>
+                <strong>{sharedTopHolding ? optionDisplayName(sharedTopHolding.optionId, modelSummary.optionsById) : "None"}</strong>
                 <small>
                   {sharedTopHolding ? `${sharedTopHolding.count} of ${modelSummary.models.length} models` : "No common top asset"}
                 </small>
@@ -520,7 +520,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
                 <strong>{modelSummary.mostConcentrated ? modelLabel(modelSummary.mostConcentrated.modelId) : "None"}</strong>
                 <small>
                   {modelSummary.mostConcentrated?.topAsset
-                    ? `${optionShortDisplayName(
+                    ? `${optionDisplayName(
                         modelSummary.mostConcentrated.topAsset.optionId,
                         modelSummary.optionsById
                       )} ${formatPct(modelSummary.mostConcentrated.topAsset.exposurePct)}`
@@ -702,7 +702,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
               <div className="active-model-insights" aria-label="Model allocation highlights">
                 <div>
                   <span>Most common top asset</span>
-                  <strong>{sharedTopHolding ? optionShortDisplayName(sharedTopHolding.optionId, modelSummary.optionsById) : "None"}</strong>
+                  <strong>{sharedTopHolding ? optionDisplayName(sharedTopHolding.optionId, modelSummary.optionsById) : "None"}</strong>
                   <small>
                     {sharedTopHolding ? `${sharedTopHolding.count} models lead with it` : "No open top pick"}
                   </small>
@@ -712,7 +712,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
                   <strong>{modelSummary.mostConcentrated ? modelLabel(modelSummary.mostConcentrated.modelId) : "None"}</strong>
                   <small>
                     {modelSummary.mostConcentrated?.topAsset
-                      ? `${formatPct(modelSummary.mostConcentrated.topAsset.exposurePct)} in ${optionShortDisplayName(
+                      ? `${formatPct(modelSummary.mostConcentrated.topAsset.exposurePct)} in ${optionDisplayName(
                           modelSummary.mostConcentrated.topAsset.optionId,
                           modelSummary.optionsById
                         )}`
@@ -759,7 +759,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
                           <span>Largest holding</span>
                           <strong>
                             {model.topAsset
-                              ? `${optionShortDisplayName(model.topAsset.optionId, modelSummary.optionsById)} ${formatPct(model.topAsset.exposurePct)}`
+                              ? `${optionDisplayName(model.topAsset.optionId, modelSummary.optionsById)} ${formatPct(model.topAsset.exposurePct)}`
                               : "None"}
                           </strong>
                         </div>

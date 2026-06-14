@@ -653,7 +653,7 @@ const defaultOracleChartTab = oracleChartTabs[0]?.key ?? "latest";
                     <div class="weekly-readout-pills">
                       {topCrowdedExposureRows.map((row) => (
                         <span title={row.label}>
-                          <strong>{row.shortLabel}</strong>
+                          <strong>{row.label}</strong>
                           <em>{formatAllocationPct(row.averagePct)} avg</em>
                         </span>
                       ))}
@@ -666,7 +666,7 @@ const defaultOracleChartTab = oracleChartTabs[0]?.key ?? "latest";
                     <div class="weekly-readout-pills weekly-readout-pills-positive">
                       {bestReturnRows.map((row) => (
                         <span title={row.label}>
-                          <strong>{row.shortLabel}</strong>
+                          <strong>{row.label}</strong>
                           <em>{pct(row.returnValue)}</em>
                         </span>
                       ))}
@@ -679,7 +679,7 @@ const defaultOracleChartTab = oracleChartTabs[0]?.key ?? "latest";
                     <div class="weekly-readout-pills weekly-readout-pills-negative">
                       {crowdedLossRows.map((row) => (
                         <span title={row.label}>
-                          <strong>{row.shortLabel}</strong>
+                          <strong>{row.label}</strong>
                           <em>{pct(row.returnValue)}</em>
                         </span>
                       ))}
@@ -893,7 +893,7 @@ const defaultOracleChartTab = oracleChartTabs[0]?.key ?? "latest";
                     {allocations.map((allocation) => (
                       <span title={`${optionDisplayName(allocation.option_id, resultOptionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}>
                         <i class={allocationThemeClass(allocation.option_id)}></i>
-                        <strong>{optionShortDisplayName(allocation.option_id, resultOptionsById)}</strong>
+                        <strong>{optionDisplayName(allocation.option_id, resultOptionsById)}</strong>
                         <em>{formatAllocationPct(allocation.allocation_pct)}</em>
                       </span>
                     ))}
