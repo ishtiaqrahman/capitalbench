@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-06-05-1W / official-20260605
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-06-05-1W
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-20260605
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench June 5 2026 One-Week Portfolio Round
+- Description: One-week CapitalBench portfolio evaluation round scored from the June 5, 2026 adjusted close to the June 12, 2026 adjusted close.
+- Decision date: 2026-06-05
 - Decision deadline: 2026-06-05T20:35:00Z
 - Horizon: one week
-- Official run ID: official-20260605
-- Mock: no
+- Entry date: 2026-06-05
+- Exit date: 2026-06-12
+- Entry rule: Use adjusted close on Friday, June 5, 2026 for each option; CASH return is 0 unless explicitly priced.
+- Exit rule: Use adjusted close on Friday, June 12, 2026 for each selected option; CASH return is 0 unless explicitly priced.
+- Options: 70
 
 ## Model Decisions
 
@@ -93,26 +108,84 @@
 | SOFTWARE | Software | 95.8499984741211 | 90.6999969482 | -0.053729802899387336 | 69 |
 | OIL | Crude Oil | 133.02000427246094 | 125.4300003052 | -0.057059116850684766 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| anthropic-claude-opus-4-7 | portfolio | HEALTHCARE | 5 | 0.55 | 0.0052284365759409646 | 0.00903610379354367 | 0.0033415579640477585 | 0.11802591000053 |  | True | True |
-| anthropic-claude-opus-4-8 | portfolio | HEALTHCARE | 5 | 0.55 | 0.0052284365759409646 | 0.008544917027765997 | 0.0028503711982700852 | 0.11851709676630767 |  | True | True |
-| xai-grok-4-3 | portfolio | ENERGY | 3 | 0.55 | -0.002080786121993139 | 0.006701805036666064 | 0.0010072592071701525 | 0.1203602087574076 |  | True | True |
-| google-gemini-3-1-pro | portfolio | SHORT_TREASURY | 3 | 0.65 | 0.0006561529793354115 | 0.0012067563279185122 | -0.004487789501577399 | 0.12585525746615517 |  | False | True |
-| openai-gpt-5-5 | portfolio | OIL | 5 | 0.58 | -0.057059116850684766 | -0.018720252890285678 | -0.02441479871978159 | 0.14578226668435934 |  | False | False |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-opus-4-7 | HEALTHCARE | 30.0 | 0.0052284365759409646 | 0.0015685309727822892 | Defensive leadership with positive recent momentum amid risk-off tape; low beta into CPI/PPI week. |
+| anthropic-claude-opus-4-7 | LOW_VOL | 25.0 | 0.01361099745994121 | 0.0034027493649853024 | Outperforming defensively (+1.7% 7d) amid elevated VIX 21.5 and soft sentiment. |
+| anthropic-claude-opus-4-7 | CONSUMER_STAPLES | 15.0 | 0.02852345618116492 | 0.004278518427174738 | Defensive ballast; hot CPI/PPI risk favors staples over discretionary. |
+| anthropic-claude-opus-4-7 | ENERGY | 15.0 | -0.002080786121993139 | -0.0003121179182989708 | WTI $90, EIA forecasting inventory draws; sector showing relative strength. |
+| anthropic-claude-opus-4-7 | SHORT_TREASURY | 15.0 | 0.0006561529793354115 | 9.842294690031173e-05 | Carry with no duration risk ahead of hot CPI/PPI prints and 3/10/30Y auctions. |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 30.0 | 0.0052284365759409646 | 0.0015685309727822892 | Defensive sector with strong recent relative strength (+2.37% 7d while market fell); low beta into hot CPI/PPI prints during the week. |
+| anthropic-claude-opus-4-8 | ENERGY | 20.0 | -0.002080786121993139 | -0.00041615722439862783 | Energy leading on firm oil ($90 WTI) and EIA inventory draw forecasts; positive momentum and inflation tailwind ahead of CPI/PPI. |
+| anthropic-claude-opus-4-8 | CONSUMER_STAPLES | 15.0 | 0.02852345618116492 | 0.004278518427174738 | Defensive positioning with positive 7d return; cushions against equity drawdown risk into inflation data. |
+| anthropic-claude-opus-4-8 | FINANCIALS | 15.0 | 0.0198852950422701 | 0.002982794256340515 | Outperformed broad market recently (+1.40% 7d), supported by strong FDIC bank profits and rising yields/steeper curve. |
+| anthropic-claude-opus-4-8 | SHORT_TREASURY | 20.0 | 0.0006561529793354115 | 0.0001312305958670823 | Cash-like ballast yielding positive carry; protects against hot CPI/PPI selloff and elevated VIX while keeping flexibility. |
+| google-gemini-3-1-pro | SHORT_TREASURY | 40.0 | 0.0006561529793354115 | 0.0002624611917341646 | Provides a stable, low-risk yield while avoiding equity market volatility ahead of key inflation data. |
+| google-gemini-3-1-pro | HEALTHCARE | 30.0 | 0.0052284365759409646 | 0.0015685309727822892 | A defensive sector that has shown recent positive momentum and is less sensitive to immediate macroeconomic shocks. |
+| google-gemini-3-1-pro | ENERGY | 30.0 | -0.002080786121993139 | -0.0006242358365979416 | Offers exposure to a sector with strong recent performance and potential upside from tight global oil inventories. |
+| openai-gpt-5-5 | OIL | 35.0 | -0.057059116850684766 | -0.019970690897739667 | Crude has positive short-term momentum, WTI is elevated, and upcoming EIA reports plus a forecast inventory draw create a near-term catalyst for continued energy commodity strength. |
+| openai-gpt-5-5 | ENERGY | 25.0 | -0.002080786121993139 | -0.0005201965304982847 | Energy equities can benefit from high oil prices and inflation persistence while offering better equity-market beta than broad growth sectors if rates stay pressured. |
+| openai-gpt-5-5 | US_DOLLAR | 15.0 | -0.0024982046295533022 | -0.0003747306944329953 | Hot inflation data, high Treasury yields, and risk-off conditions around CPI/PPI could support the dollar over the one-week window. |
+| openai-gpt-5-5 | HEALTHCARE | 15.0 | 0.0052284365759409646 | 0.0007842654863911446 | Healthcare has recent relative strength and defensive characteristics that may outperform the S&P 500 if inflation data pressures broad equities. |
+| openai-gpt-5-5 | LOW_VOL | 10.0 | 0.01361099745994121 | 0.001361099745994121 | Low-volatility equities provide defensive equity exposure and have shown recent resilience during the prior week’s broad market weakness. |
+| xai-grok-4-3 | ENERGY | 40.0 | -0.002080786121993139 | -0.0008323144487972557 | Oil at $90+ and positive recent sector returns amid sticky inflation data. |
+| xai-grok-4-3 | FINANCIALS | 30.0 | 0.0198852950422701 | 0.00596558851268103 | Resilient to rate environment with recent positive performance and stable labor data. |
+| xai-grok-4-3 | HEALTHCARE | 30.0 | 0.0052284365759409646 | 0.0015685309727822892 | Defensive qualities ahead of CPI and PPI releases within the scoring window. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| anthropic-claude-opus-4-7 | HEALTHCARE | 5 | 0.55 | 0.0052284365759409646 | 0.00903610379354367 | 0.0033415579640477585 | 0.11802591000053 |  | True | True |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 5 | 0.55 | 0.0052284365759409646 | 0.008544917027765997 | 0.0028503711982700852 | 0.11851709676630767 |  | True | True |
+| xai-grok-4-3 | ENERGY | 3 | 0.55 | -0.002080786121993139 | 0.006701805036666064 | 0.0010072592071701525 | 0.1203602087574076 |  | True | True |
+| google-gemini-3-1-pro | SHORT_TREASURY | 3 | 0.65 | 0.0006561529793354115 | 0.0012067563279185122 | -0.004487789501577399 | 0.12585525746615517 |  | False | True |
+| openai-gpt-5-5 | OIL | 5 | 0.58 | -0.057059116850684766 | -0.018720252890285678 | -0.02441479871978159 | 0.14578226668435934 |  | False | False |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | f8d9bb05eab91cb0136381882864d6eb302ac26bf20d7c95392c40894b806c27 |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | 03b5e9792d4c6bade89526a62f43cbdf51184fe03753997a0637de246e708b81 |
+| manifest.yaml | e6723ee12d24d4583d30b84583c1ff925e89490ef938f3ab7bded36d95dc6ec4 |
+| market_data/universe_trailing_returns.csv | 30efc20118b973b5a836953a08852bad01096fd828eed623d3d196aa04324b6a |
+| market_data/universe_trailing_returns.md | f3580ea3bf260aa7c674328c329f4602535148cf7de1f0acfb51de3ee610e8c9 |
+| market_data/universe_trailing_returns.json | e308b733de0aa6e291b26f72cdd2ffd14a6f4552d59deb8dafb6c3e678751f4b |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | a9220eceafde6b728ac0179196d915eaf25b425a7acc9753f4ce25436319b6ef | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | c3c1ac7dda4f498830d979eb8dc630e093abb98bc4b179045f67addc0660570e | yes |
+| Final briefing | research/final_briefing.md | model-facing | f8d9bb05eab91cb0136381882864d6eb302ac26bf20d7c95392c40894b806c27 | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-06-08-1W has no scored official run.
-- Round CB-2026-06-09-1W has no scored official run.
-- Round CB-2026-06-12-1W has no scored official run.
-- Round CB-2026-06-13-1W has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.

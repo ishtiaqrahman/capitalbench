@@ -76,6 +76,15 @@ function collapseWhitespace(value) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
 }
 
+function visibleText(html) {
+  return collapseWhitespace(
+    String(html ?? "")
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<[^>]*>/g, " ")
+  );
+}
+
 function includesCollapsed(html, expected, context) {
   if (!collapseWhitespace(html).includes(collapseWhitespace(expected))) {
     failures.push(`${context} missing rendered text: ${expected}`);
@@ -90,6 +99,14 @@ function includesAny(html, expectedValues, context) {
 
 function excludes(html, unexpected, context) {
   if (html.includes(unexpected)) failures.push(`${context} contains stale rendered text: ${unexpected}`);
+}
+
+function excludesVisibleText(html, unexpected, context) {
+  const renderedText = ` ${visibleText(html)} `;
+  const renderedUnexpected = ` ${collapseWhitespace(unexpected)} `;
+  if (renderedText.includes(renderedUnexpected)) {
+    failures.push(`${context} contains stale rendered text: ${unexpected}`);
+  }
 }
 
 function latestDate(values) {
@@ -2000,7 +2017,7 @@ for (const track of ["weekly", "monthly"]) {
       if (typeof row.capitalbench_score !== "number") continue;
       const latestOnlyScore = scoreLabel(row.capitalbench_score);
       if (latestOnlyScore !== "0.0" && !cumulativeScoreLabels.has(latestOnlyScore)) {
-        excludes(homepageScorecardWithoutLeaderAudit, latestOnlyScore, `homepage weekly scorecard latest-only ${row.model_id} score`);
+        excludesVisibleText(homepageScorecardWithoutLeaderAudit, latestOnlyScore, `homepage weekly scorecard latest-only ${row.model_id} score`);
       }
     }
   }
