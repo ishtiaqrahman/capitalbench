@@ -27,7 +27,7 @@ export type TrackScorecardAverageRow = {
   testsIncluded: number;
   testsRequired: number;
   isRankEligible: boolean;
-  sampleStatus: "eligible" | "provisional" | "reference";
+  sampleStatus: "eligible" | "provisional" | "reference" | "current" | "forming" | "not_ranked";
   roundsIncluded: string[];
 };
 
@@ -45,7 +45,7 @@ export type TrackScorecardNormalizedRow = {
   testsIncluded: number;
   testsRequired: number;
   isRankEligible: boolean;
-  sampleStatus: "eligible" | "provisional" | "reference";
+  sampleStatus: "eligible" | "provisional" | "reference" | "current" | "forming" | "not_ranked";
   roundsIncluded: string[];
   scoreValues: number[];
 };
@@ -53,13 +53,32 @@ export type TrackScorecardNormalizedRow = {
 export type TrackScorecardData = {
   track: BenchmarkTrack;
   label: string;
+  setId?: string;
+  setLabel?: string;
+  setShortLabel?: string;
+  setDescription?: string;
+  displayKicker?: string;
+  displayTitle?: string;
+  description?: string;
+  scoreChartKicker?: string;
+  scoreChartTitle?: string;
+  scoreChartDescription?: string;
   completedRoundCount: number;
   completedRoundIds: string[];
   comparisonRoundCount: number;
   comparisonRoundIds: string[];
   excludedRoundIds: string[];
   comparisonModelCount: number;
-  comparisonMode: "all_resolved_rounds";
+  comparisonMode: "all_resolved_rounds" | "comparison_set";
+  qualificationThreshold?: number;
+  isQualified?: boolean;
+  isCurrent?: boolean;
+  excludedRounds?: Array<{
+    round_id: string;
+    missing_model_ids: string[];
+    present_model_ids: string[];
+    reason: string;
+  }>;
   isEarlyCohort: boolean;
   latestRoundId: string;
   averageRows: TrackScorecardAverageRow[];

@@ -9,11 +9,22 @@ import { pct } from "../lib/format";
 interface Props {
   scorecard: TrackScorecardData;
   compact?: boolean;
+  focusModelId?: string;
 }
 
-const { scorecard, compact = false } = Astro.props;
-const titleId = `${scorecard.track}-track-scorecard-title`;
-const scoreTitleId = `${scorecard.track}-normalized-score-title`;
+const { scorecard, compact = false, focusModelId } = Astro.props;
+const idPrefix = (scorecard.setId ?? scorecard.track).replace(/[^a-zA-Z0-9_-]/g, "-");
+const titleId = `${idPrefix}-track-scorecard-title`;
+const scoreTitleId = `${idPrefix}-normalized-score-title`;
+const averageTitleId = `${idPrefix}-average-return-title`;
+const isComparisonSet = scorecard.comparisonMode === "comparison_set";
+const displayKicker = scorecard.displayKicker ?? `${scorecard.label} track`;
+const displayTitle = scorecard.displayTitle ?? `Full-History ${scorecard.label} Scores`;
+const displayDescription = scorecard.description ?? `Resolved ${scorecard.label.toLowerCase()} rounds only.`;
+const scoreChartKicker = scorecard.scoreChartKicker ?? "All resolved rounds";
+const scoreChartTitle = scorecard.scoreChartTitle ?? "Full-History Model Scores";
+const scoreChartDescription =
+  scorecard.scoreChartDescription ?? "Max possible = best asset in each completed round.";
 
 function finiteNumber(value: number | null | undefined): value is number {
   return typeof value === "number" && Number.isFinite(value);
@@ -56,7 +67,8 @@ function averageRowClass(row: TrackScorecardAverageRow): string {
   return [
     "track-scorecard-row",
     `track-scorecard-row-${row.kind}`,
-    row.provider ? `track-scorecard-row-${row.provider}` : ""
+    row.provider ? `track-scorecard-row-${row.provider}` : "",
+    row.kind === "model" && focusModelId === row.key ? "track-scorecard-row-focused" : ""
   ].filter(Boolean).join(" ");
 }
 
@@ -69,6 +81,7 @@ function chipLabel(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow):
 function rowMeta(row: TrackScorecardAverageRow | TrackScorecardNormalizedRow): string {
   if (row.kind === "reference") return "Hindsight best-performing eligible asset in each round, not a model portfolio";
   if (row.kind === "benchmark") return `S&P 500 · ${scoredTestsLabel(row)}`;
+  if (isComparisonSet) return `${row.providerLabel ?? "Model"} · ${scoredTestsLabel(row)}`;
   const sampleLabel = row.isRankEligible ? scoredTestsLabel(row) : `short history · ${scoredTestsLabel(row)}`;
   return `${row.providerLabel ?? "Model"} · ${sampleLabel}`;
 }
@@ -97,6 +110,7 @@ function scoreColumnClass(row: TrackScorecardNormalizedRow): string {
     row.kind === "benchmark" ? "score-vertical-column-benchmark" : "",
     row.kind === "reference" ? "score-vertical-column-reference score-vertical-column-best-asset" : "",
     row.kind === "model" && scorecard.topNormalizedRow?.key === row.key ? "score-vertical-column-winner" : "",
+    row.kind === "model" && focusModelId === row.key ? "score-vertical-column-focused" : "",
     row.kind === "model" && !row.isRankEligible ? "score-vertical-column-provisional" : ""
   ].filter(Boolean).join(" ");
 }
@@ -104,7 +118,9 @@ function scoreColumnClass(row: TrackScorecardNormalizedRow): string {
 const provisionalScoreRows = scorecard.normalizedRows.filter((row) => row.kind === "model" && !row.isRankEligible);
 const scoreRows = scorecard.normalizedRows.filter((row) => row.kind !== "model" || row.isRankEligible);
 const rankedModelCount = scoreRows.filter((row) => row.kind === "model").length;
-const rankedModelLabel = `${rankedModelCount} full-history model${rankedModelCount === 1 ? "" : "s"} ranked`;
+const rankedModelLabel = isComparisonSet
+  ? `${rankedModelCount} equal-run model${rankedModelCount === 1 ? "" : "s"} ranked`
+  : `${rankedModelCount} full-history model${rankedModelCount === 1 ? "" : "s"} ranked`;
 const shortHistoryLabel = `${provisionalScoreRows.length} short-history model${provisionalScoreRows.length === 1 ? "" : "s"} separated`;
 const scoreValues = scoreRows.map((row) => row.averageScore).filter(finiteNumber);
 const scoreMobileMagnitudeMax = Math.max(100, ...scoreValues.map((value) => Math.abs(value)));
@@ -135,7 +151,7 @@ function scoreLabelTitle(row: TrackScorecardNormalizedRow): string {
   if (row.kind === "reference") {
     return "Max possible: 100.0. Hindsight reference using the best-performing eligible asset in each resolved round; not a model portfolio.";
   }
-  return `${row.label}: ${scoreLabel(row.averageScore)} versus Max possible. ${rowMeta(row)}`;
+  return `${row.label}: ${scoreLabel(row.averageScore)} versus Max possible. ${focusModelId === row.key ? "Focused model. " : ""}${rowMeta(row)}`;
 }
 
 function provisionalAverageReturn(row: TrackScorecardNormalizedRow): number | undefined {
@@ -149,22 +165,31 @@ function scoreAuditText(row: TrackScorecardNormalizedRow | undefined): string {
 
 const leaderScoreAuditText = scoreAuditText(scorecard.topNormalizedRow);
 const scorecardBadgeItems = [
-  `${scorecard.comparisonRoundCount} resolved rounds compared`,
+  isComparisonSet
+    ? `${scorecard.comparisonRoundCount} shared resolved rounds`
+    : `${scorecard.comparisonRoundCount} resolved rounds compared`,
   rankedModelLabel,
   ...(provisionalScoreRows.length > 0 ? [shortHistoryLabel] : []),
-  `Newest resolved round: ${scorecard.latestRoundId}`
+  ...(isComparisonSet && scorecard.qualificationThreshold
+    ? [
+        scorecard.isQualified
+          ? `Qualified at ${scorecard.qualificationThreshold}+ shared rounds`
+          : `${Math.max(0, scorecard.qualificationThreshold - scorecard.comparisonRoundCount)} more shared rounds to qualify`
+      ]
+    : []),
+  `Newest included round: ${scorecard.latestRoundId}`
 ];
 ---
 
 <section class:list={[`track-scorecard-panel track-scorecard-${scorecard.track}`, compact && "track-scorecard-panel-compact"]} aria-labelledby={titleId}>
   {compact ? (
-    <h3 id={titleId} class="sr-only">Full-History {scorecard.label} Scores</h3>
+    <h3 id={titleId} class="sr-only">{displayTitle}</h3>
   ) : (
     <div class="track-scorecard-head">
       <div>
-        <span class="panel-kicker">{scorecard.label} track</span>
-        <h3 id={titleId}>Full-History {scorecard.label} Scores</h3>
-        <p>Resolved {scorecard.label.toLowerCase()} rounds only.</p>
+        <span class="panel-kicker">{displayKicker}</span>
+        <h3 id={titleId}>{displayTitle}</h3>
+        <p>{displayDescription}</p>
       </div>
       <div class="track-scorecard-badges track-scorecard-badges-head" aria-label={`${scorecard.label} scorecard status`}>
         {scorecardBadgeItems.map((item) => <span>{item}</span>)}
@@ -176,10 +201,10 @@ const scorecardBadgeItems = [
     <article class="track-scorecard-chart track-scorecard-score-chart" aria-labelledby={scoreTitleId}>
       <div class="track-scorecard-chart-head">
         <div>
-          <span>All resolved rounds</span>
-          <h4 id={scoreTitleId}>Full-History Model Scores</h4>
+          <span>{scoreChartKicker}</span>
+          <h4 id={scoreTitleId}>{scoreChartTitle}</h4>
         </div>
-        <p>Max possible = best asset in each completed round. <a href="/scoring/#capitalbench-score">Calculation</a>.</p>
+        <p>{scoreChartDescription} <a href="/scoring/#capitalbench-score">Calculation</a>.</p>
       </div>
 
       <div class="score-chart-frame track-score-benchmark-frame">
@@ -211,7 +236,9 @@ const scorecardBadgeItems = [
                 <div
                   class={`score-vertical-label ${
                     row.kind === "benchmark" ? "score-vertical-label-benchmark" : ""
-                  } ${row.kind === "reference" ? "score-vertical-label-reference" : ""}`}
+                  } ${row.kind === "reference" ? "score-vertical-label-reference" : ""} ${
+                    row.kind === "model" && focusModelId === row.key ? "score-vertical-label-focused" : ""
+                  }`}
                   title={scoreLabelTitle(row)}
                 >
                   {row.kind === "model" && row.logoSrc ? (
@@ -224,8 +251,9 @@ const scorecardBadgeItems = [
                     <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
                   )}
                   <strong>{row.label}</strong>
+                  {row.kind === "model" && focusModelId === row.key && <em>This model</em>}
                   {row.kind === "reference" && <em>hindsight best asset</em>}
-                  {row.kind === "model" && !row.isRankEligible && (
+                  {row.kind === "model" && !row.isRankEligible && !isComparisonSet && (
                     <em>short history · {row.testsIncluded}/{row.testsRequired}</em>
                   )}
                 </div>
@@ -238,6 +266,8 @@ const scorecardBadgeItems = [
               <article
                 class={`score-mobile-rank-row score-mobile-rank-row-${row.kind} ${
                   row.kind === "model" && scorecard.topNormalizedRow?.key === row.key ? "score-mobile-rank-row-winner" : ""
+                } ${
+                  row.kind === "model" && focusModelId === row.key ? "score-mobile-rank-row-focused" : ""
                 } ${
                   row.kind === "model" && !row.isRankEligible ? "score-mobile-rank-row-provisional" : ""
                 }`}
@@ -280,11 +310,11 @@ const scorecardBadgeItems = [
       {scorecardBadgeItems.map((item) => <span>{item}</span>)}
     </div>
 
-    <article class="track-scorecard-chart track-scorecard-return-chart" aria-labelledby={`${scorecard.track}-average-return-title`}>
+    <article class="track-scorecard-chart track-scorecard-return-chart" aria-labelledby={averageTitleId}>
       <div class="track-scorecard-chart-head track-scorecard-return-head">
         <div>
           <span>Return context</span>
-          <h4 id={`${scorecard.track}-average-return-title`}>Average Return Details</h4>
+          <h4 id={averageTitleId}>Average Return Details</h4>
           <p>Average portfolio return across the same finished rounds.</p>
         </div>
         {scorecard.topAverageRow && (
@@ -375,10 +405,25 @@ const scorecardBadgeItems = [
   <div class="track-scorecard-notes" aria-label={`${scorecard.label} scorecard notes`}>
     <span><strong>Rounds included:</strong> {scorecard.comparisonRoundIds.join(", ")}</span>
     {scorecard.excludedRoundIds.length > 0 && (
-      <span><strong>Excluded rounds:</strong> {scorecard.excludedRoundIds.join(", ")}</span>
+      <span>
+        <strong>Excluded for fairness:</strong>{" "}
+        {(scorecard.excludedRounds ?? []).length > 0
+          ? scorecard.excludedRounds?.map((round) => `${round.round_id} missing ${round.missing_model_ids.join(", ")}`).join("; ")
+          : scorecard.excludedRoundIds.join(", ")}
+      </span>
     )}
-    {scorecard.isEarlyCohort && (
+    {scorecard.isEarlyCohort && !isComparisonSet && (
       <span><strong>Early track:</strong> this track has one completed round.</span>
+    )}
+    {isComparisonSet && (
+      <span>
+        <strong>Fairness rule:</strong> every ranked model completed every included round. A missed round is excluded from this set for everyone.
+      </span>
+    )}
+    {isComparisonSet && !scorecard.isQualified && scorecard.qualificationThreshold && (
+      <span>
+        <strong>Forming:</strong> this set becomes the Current {scorecard.label} Benchmark at {scorecard.qualificationThreshold} shared resolved rounds.
+      </span>
     )}
     {provisionalScoreRows.length > 0 && (
       <span><strong>Short history:</strong> models missing resolved rounds are shown but cannot lead the full-history score.</span>

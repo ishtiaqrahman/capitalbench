@@ -17,9 +17,9 @@ const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "
       <div>
         <span class="panel-kicker">Benchmark results</span>
         <h2 id="track-scorecards-title">Model Performance</h2>
-        <p>Each model is compared with the best asset it could have picked in completed rounds. Switch weekly/monthly.</p>
+        <p>Current benchmarks rank models only inside equal-run comparison sets. Switch weekly/monthly.</p>
       </div>
-      <a class="section-profile-link" href="/leaderboards">All benchmark results</a>
+      <a class="section-profile-link" href="/leaderboards/benchmark-sets">All comparison sets</a>
     </section>
 
     <div
@@ -28,7 +28,7 @@ const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "
       data-active-track={defaultTrack}
       aria-label="Weekly and monthly model scores"
     >
-      <div class="track-scorecard-tabs" role="tablist" aria-label="Choose full-history score horizon">
+      <div class="track-scorecard-tabs" role="tablist" aria-label="Choose benchmark score horizon">
         {visibleScorecards.map((scorecard) => {
           const active = scorecard.track === defaultTrack;
           const tabId = `track-scorecard-tab-${scorecard.track}`;
@@ -45,7 +45,9 @@ const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "
               data-track-scorecard-tab={scorecard.track}
             >
               <strong>{scorecard.label}</strong>
-              <span>{scorecard.comparisonRoundCount} resolved {scorecard.comparisonRoundCount === 1 ? "round" : "rounds"}</span>
+              <span>
+                {scorecard.isCurrent ? "Current" : scorecard.isQualified ? "Qualified" : "Forming"} · {scorecard.comparisonRoundCount} shared {scorecard.comparisonRoundCount === 1 ? "round" : "rounds"}
+              </span>
             </button>
           );
         })}

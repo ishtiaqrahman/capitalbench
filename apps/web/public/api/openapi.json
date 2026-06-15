@@ -397,7 +397,7 @@
       "get": {
         "tags": ["Leaderboards"],
         "summary": "Cumulative leaderboard",
-        "description": "All resolved model results by weekly track or monthly track, ranked by CapitalBench Score where available. Weekly and monthly scoreboards are not combined.",
+        "description": "All available resolved model results by weekly track or monthly track. Weekly and monthly scoreboards are not combined.",
         "parameters": [{ "$ref": "#/components/parameters/LeaderboardTrack" }],
         "responses": {
           "200": {
@@ -409,6 +409,45 @@
             }
           },
           "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/leaderboards/benchmark-sets": {
+      "get": {
+        "tags": ["Leaderboards"],
+        "summary": "Benchmark comparison sets",
+        "description": "Living equal-run comparison sets, including the current weekly and monthly benchmarks.",
+        "parameters": [{ "$ref": "#/components/parameters/Track" }],
+        "responses": {
+          "200": {
+            "description": "Benchmark comparison sets response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BenchmarkSetsResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/leaderboards/benchmark-sets/{set_id}": {
+      "get": {
+        "tags": ["Leaderboards"],
+        "summary": "Benchmark comparison set",
+        "description": "One comparison set with model roster, included rounds, excluded rounds, and CapitalBench Scores.",
+        "parameters": [{ "$ref": "#/components/parameters/BenchmarkSetIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Benchmark comparison set response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BenchmarkSet" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     },
@@ -658,6 +697,13 @@
         "required": true,
         "schema": { "type": "string" },
         "description": "CapitalBench round identifier."
+      },
+      "BenchmarkSetIdPath": {
+        "name": "set_id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "CapitalBench benchmark comparison set identifier."
       },
       "AsOf": {
         "name": "as_of",
@@ -1165,6 +1211,99 @@
           "data": { "type": "array", "items": { "$ref": "#/components/schemas/LeaderboardRow" } }
         },
         "required": ["round_id", "benchmark_return_pct", "data"]
+      },
+      "BenchmarkSetsResponse": {
+        "type": "object",
+        "properties": {
+          "policy": { "$ref": "#/components/schemas/BenchmarkSetPolicy" },
+          "current": {
+            "type": "object",
+            "properties": {
+              "weekly": { "type": ["string", "null"] },
+              "monthly": { "type": ["string", "null"] }
+            }
+          },
+          "sets": { "type": "array", "items": { "$ref": "#/components/schemas/BenchmarkSet" } }
+        },
+        "required": ["policy", "current", "sets"]
+      },
+      "BenchmarkSetPolicy": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "string" },
+          "qualification_thresholds": {
+            "type": "object",
+            "properties": {
+              "weekly": { "type": "integer" },
+              "monthly": { "type": "integer" }
+            }
+          }
+        },
+        "required": ["version", "qualification_thresholds"]
+      },
+      "BenchmarkSet": {
+        "type": "object",
+        "properties": {
+          "set_id": { "type": "string" },
+          "track": { "type": "string", "enum": ["weekly", "monthly"] },
+          "label": { "type": "string" },
+          "description": { "type": "string" },
+          "started_round_id": { "type": "string" },
+          "model_ids": { "type": "array", "items": { "type": "string" } },
+          "qualification_threshold": { "type": "integer" },
+          "is_qualified": { "type": "boolean" },
+          "is_current": { "type": "boolean" },
+          "status": { "type": "string", "enum": ["current", "qualified", "forming", "waiting"] },
+          "comparison": { "$ref": "#/components/schemas/BenchmarkSetComparison" },
+          "excluded_rounds": { "type": "array", "items": { "$ref": "#/components/schemas/BenchmarkSetExcludedRound" } },
+          "leader": { "anyOf": [{ "$ref": "#/components/schemas/BenchmarkSetRow" }, { "type": "null" }] },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/BenchmarkSetRow" } }
+        },
+        "required": ["set_id", "track", "label", "model_ids", "qualification_threshold", "is_qualified", "is_current", "status", "comparison", "excluded_rounds", "data"]
+      },
+      "BenchmarkSetComparison": {
+        "type": "object",
+        "description": "Shared-round metadata for an equal-run comparison set.",
+        "properties": {
+          "mode": { "type": "string", "enum": ["comparison_set"] },
+          "completed_round_count": { "type": "integer" },
+          "completed_round_ids": { "type": "array", "items": { "type": "string" } },
+          "comparison_round_count": { "type": "integer" },
+          "comparison_round_ids": { "type": "array", "items": { "type": "string" } },
+          "excluded_round_count": { "type": "integer" },
+          "excluded_round_ids": { "type": "array", "items": { "type": "string" } },
+          "comparison_model_count": { "type": "integer" },
+          "qualification_threshold": { "type": "integer" },
+          "is_qualified": { "type": "boolean" },
+          "is_current": { "type": "boolean" },
+          "status": { "type": "string" }
+        },
+        "required": ["mode", "completed_round_count", "completed_round_ids", "comparison_round_count", "comparison_round_ids", "excluded_round_ids", "comparison_model_count", "qualification_threshold", "is_qualified", "is_current", "status"]
+      },
+      "BenchmarkSetExcludedRound": {
+        "type": "object",
+        "properties": {
+          "round_id": { "type": "string" },
+          "missing_model_ids": { "type": "array", "items": { "type": "string" } },
+          "present_model_ids": { "type": "array", "items": { "type": "string" } },
+          "reason": { "type": "string" }
+        },
+        "required": ["round_id", "missing_model_ids", "present_model_ids", "reason"]
+      },
+      "BenchmarkSetRow": {
+        "allOf": [
+          { "$ref": "#/components/schemas/LeaderboardRow" },
+          {
+            "type": "object",
+            "properties": {
+              "provider": { "type": "string" },
+              "provider_label": { "type": "string" },
+              "total_portfolio_return_pct": { "type": "number" },
+              "total_max_possible_return_pct": { "type": "number" },
+              "included_round_ids": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        ]
       },
       "LeaderboardResponse": {
         "type": "object",

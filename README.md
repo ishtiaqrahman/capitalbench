@@ -141,7 +141,10 @@ CapitalBench does not create:
 - unversioned portfolio rules
 
 New models become eligible only for future rounds. They are not penalized for
-missing older rounds, and older round leaderboards remain unchanged.
+missing older rounds, and older round leaderboards remain unchanged. Benchmark
+comparison sets are generated from selected official rosters when no existing
+set already contains that roster, so temporary model outages do not create new
+smaller sets.
 
 ## Official Versus Stability
 

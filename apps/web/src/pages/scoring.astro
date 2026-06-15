@@ -84,14 +84,15 @@ import PageHeader from "../components/PageHeader.astro";
         </div>
       </div>
 
-      <h2>Overall Results</h2>
+      <h2>Comparison Set Results</h2>
       <p>
-        Overall results keep weekly and monthly tracks separate. Across all resolved rounds in a track, CapitalBench
-        divides summed model returns by summed oracle returns:
+        Current benchmark results keep weekly and monthly tracks separate and rank models inside equal-run comparison
+        sets. Across the shared included rounds in a set, CapitalBench divides summed model returns by summed oracle
+        returns:
       </p>
       <div class="formula-grid">
         <div>
-          <span>Full-history CapitalBench Score</span>
+          <span>Comparison-set CapitalBench Score</span>
           <code>100 * sum(portfolio_returns) / sum(oracle_returns)</code>
         </div>
       </div>
@@ -103,8 +104,9 @@ import PageHeader from "../components/PageHeader.astro";
       </p>
       <p>
         Rounds are not compounded because CapitalBench rounds may overlap and represent separate benchmark experiments,
-        not one sequential investable portfolio. A model added later is shown with fewer included rounds and marked
-        short history.
+        not one sequential investable portfolio. A model added later starts a new comparison set with the existing models.
+        A set includes only rounds every model in that set completed; missed rounds are excluded from that set for everyone.
+        All-available history remains available as context, but comparison sets are the fair ranking surface.
       </p>
 
       <h2>Consistency Checks</h2>
@@ -129,8 +131,8 @@ import PageHeader from "../components/PageHeader.astro";
     <aside class="side-panel">
       <strong>Main score</strong>
       <p>
-        CapitalBench Score is model return divided by oracle return. The full-history score uses total model return
-        divided by total oracle return, so loss severity remains part of the comparison.
+        CapitalBench Score is model return divided by oracle return. In comparison sets, every ranked model has the same
+        included rounds, so loss severity remains part of a fair comparison.
       </p>
     </aside>
   </section>

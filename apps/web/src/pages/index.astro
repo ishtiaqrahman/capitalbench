@@ -41,7 +41,8 @@ import {
   staticUniverseOptions
 } from "../lib/localRoundRecords";
 import { providerLogoSrc } from "../lib/scoreReturnChart";
-import { buildTrackScorecard } from "../lib/trackScorecard";
+import { benchmarkSetToScorecard, featuredBenchmarkSet } from "../lib/benchmarkSets";
+import type { TrackScorecardData } from "../lib/trackScorecard";
 import { buildRunConcentration, type ConcentrationAsset, type RunConcentration } from "../lib/runConcentration";
 import { siteConfig } from "../lib/seo";
 import { staticModelProfiles } from "../lib/modelProfiles";
@@ -66,7 +67,7 @@ type TrackHomeState = {
   exposures: ConcentrationAsset[];
   topExposure?: ConcentrationAsset;
   latestHref: string;
-  cumulativeHref: string;
+  benchmarkHref: string;
   roundHref?: string;
   roundCount: number;
 };
@@ -106,7 +107,7 @@ function buildTrackState(
     exposures,
     topExposure: concentration.topAsset,
     latestHref: `/leaderboards/latest-${key}`,
-    cumulativeHref: `/leaderboards/cumulative-${key}`,
+    benchmarkHref: "/leaderboards/benchmark-sets",
     roundHref: round ? `/rounds/${round.round_id}/` : undefined,
     roundCount
   };
@@ -116,8 +117,8 @@ const trackStates = [
   buildTrackState("weekly", "Weekly", "One-week test", latestWeeklyRound, weeklyRounds.length),
   buildTrackState("monthly", "Monthly", "One-month test", latestMonthlyRound, monthlyRounds.length)
 ];
-const weeklyScorecard = buildTrackScorecard(roundRows, "weekly");
-const monthlyScorecard = buildTrackScorecard(roundRows, "monthly");
+const weeklyScorecard = benchmarkSetToScorecard(featuredBenchmarkSet(apiReadModel, "weekly")) as TrackScorecardData | null;
+const monthlyScorecard = benchmarkSetToScorecard(featuredBenchmarkSet(apiReadModel, "monthly")) as TrackScorecardData | null;
 const aggregateScorecards = [
   weeklyScorecard,
   monthlyScorecard
@@ -484,13 +485,24 @@ const trackLaneCards = trackStates.map((track) => {
   const leader = scorecard?.topNormalizedRow;
   const score = leader?.averageScore;
   const resolvedScoreCount = scorecard?.comparisonRoundCount ?? 0;
+  const leaderLabel = scorecard?.comparisonMode === "comparison_set"
+    ? scorecard.isCurrent
+      ? "Current benchmark leader"
+      : scorecard.isQualified
+        ? "Qualified set leader"
+        : "Forming benchmark leader"
+    : "All-history leader";
+  const scoreCountLabel = scorecard?.comparisonMode === "comparison_set" ? "shared" : "resolved";
   return {
     ...track,
     scorecard,
     leader,
     leaderScore: typeof score === "number" && Number.isFinite(score) ? score.toFixed(1) : null,
+    leaderLabel,
     resolvedScoreCount,
+    scoreCountLabel,
     leaderLogo: leader?.logoSrc,
+    benchmarkHref: scorecard?.setId ? `/leaderboards/benchmark-sets/${scorecard.setId}/` : track.benchmarkHref,
     completedCount: resolvedRounds.length,
     liveCount: liveRounds.length,
     latestResolvedRound,
@@ -1256,11 +1268,11 @@ const trackLaneCards = trackStates.map((track) => {
                 <span class="leaderboard-lane-logo leaderboard-lane-logo-empty">{track.label.slice(0, 1)}</span>
               )}
               <div>
-                <span>{track.leader ? "Full-history leader" : "Current state"}</span>
+                <span>{track.leader ? track.leaderLabel : "Current state"}</span>
                 <strong>{track.leader?.label ?? "Waiting for first result"}</strong>
                 <em>
                   {track.leaderScore
-                    ? `${track.leaderScore} score · ${track.resolvedScoreCount} resolved round${track.resolvedScoreCount === 1 ? "" : "s"}`
+                    ? `${track.leaderScore} score · ${track.resolvedScoreCount} ${track.scoreCountLabel} round${track.resolvedScoreCount === 1 ? "" : "s"}`
                     : scoreShortLine(track.latestLiveRound)}
                 </em>
               </div>
@@ -1290,7 +1302,7 @@ const trackLaneCards = trackStates.map((track) => {
 
           <div class="leaderboard-lane-actions">
             <a class="small-button" href={track.latestHref}>Latest {track.label.toLowerCase()}</a>
-            <a class="small-button" href={track.cumulativeHref}>Overall {track.label.toLowerCase()}</a>
+            <a class="small-button" href={track.benchmarkHref}>Equal-run benchmark</a>
           </div>
         </article>
       ))}

@@ -3,6 +3,7 @@ import { join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
+import { buildBenchmarkSetsData } from "../src/lib/benchmarkSets.js";
 import { buildCumulativeLeaderboardData } from "../src/lib/dataApi.js";
 
 const repoRoot = resolve(process.cwd(), "../..");
@@ -1225,6 +1226,120 @@ for (const track of cumulativeTracks) {
   const latestRosterSize = new Set(rows.filter((row) => row.round_id === latestRoundId).map((row) => row.model_id)).size;
   if (latestRosterSize === 0) {
     failures.push(`${context} has no latest roster`);
+  }
+}
+
+const benchmarkSets = buildBenchmarkSetsData(apiReadModel);
+const benchmarkConfig = readYaml(join(repoRoot, "benchmark_sets.yaml"), {}) ?? {};
+if (benchmarkConfig.version !== benchmarkSets.policy.version) {
+  failures.push(`benchmark set policy version ${benchmarkSets.policy.version} does not match benchmark_sets.yaml ${benchmarkConfig.version}`);
+}
+const configuredSetIds = new Set((benchmarkConfig.sets ?? []).map((set) => String(set.set_id ?? "")).filter(Boolean));
+const generatedSetIds = new Set();
+for (const definition of apiReadModel.benchmark_set_definitions ?? []) {
+  if (generatedSetIds.has(definition.set_id)) failures.push(`duplicate benchmark set definition ${definition.set_id}`);
+  generatedSetIds.add(definition.set_id);
+}
+for (const setId of configuredSetIds) {
+  if (!generatedSetIds.has(setId)) failures.push(`configured benchmark set ${setId} is missing from generated definitions`);
+}
+
+const roundByIdForSets = new Map(apiReadModel.rounds.map((round) => [round.round_id, round]));
+const modelByIdForSets = new Map(apiReadModel.models.map((model) => [model.model_id, model]));
+for (const track of ["weekly", "monthly"]) {
+  const sets = benchmarkSets.sets.filter((set) => set.track === track);
+  const currentSets = sets.filter((set) => set.is_current);
+  const qualifiedSets = sets.filter((set) => set.is_qualified);
+  if (currentSets.length > 1) failures.push(`${track} benchmark sets have ${currentSets.length} current sets`);
+  if (qualifiedSets.length > 0 && currentSets.length !== 1) {
+    failures.push(`${track} benchmark sets have qualified sets but no current set`);
+  }
+  for (const current of currentSets) {
+    if (current.comparison.comparison_round_count < current.qualification_threshold) {
+      failures.push(`${track} current set ${current.set_id} is below qualification threshold`);
+    }
+  }
+  const expectedCurrent = [...qualifiedSets].sort((left, right) => {
+    const leftRound = roundByIdForSets.get(left.started_round_id);
+    const rightRound = roundByIdForSets.get(right.started_round_id);
+    return roundSortValue(rightRound).localeCompare(roundSortValue(leftRound)) || right.set_id.localeCompare(left.set_id);
+  })[0];
+  if (expectedCurrent && currentSets[0]?.set_id !== expectedCurrent.set_id) {
+    failures.push(`${track} current set ${currentSets[0]?.set_id} does not match newest qualified set ${expectedCurrent.set_id}`);
+  }
+
+  for (const round of apiReadModel.rounds.filter((item) => item.track === track && item.official_run_id)) {
+    const roster = Array.from(
+      new Set(
+        apiReadModel.portfolios
+          .filter((portfolio) => portfolio.round_id === round.round_id && portfolio.run_id === round.official_run_id)
+          .map((portfolio) => portfolio.model_id)
+          .filter(Boolean)
+      )
+    ).sort();
+    if (roster.length === 0) continue;
+    const covered = sets.some((set) => {
+      const setModels = new Set(set.model_ids);
+      return roster.every((modelId) => setModels.has(modelId));
+    });
+    if (!covered) {
+      failures.push(`${track} official roster for ${round.round_id} is not covered by any benchmark set: ${roster.join(", ")}`);
+    }
+  }
+}
+
+for (const set of benchmarkSets.sets) {
+  const context = `benchmark set ${set.set_id}`;
+  const startRound = roundByIdForSets.get(set.started_round_id);
+  if (!startRound) failures.push(`${context} start round ${set.started_round_id} does not exist`);
+  if (startRound && startRound.track !== set.track) {
+    failures.push(`${context} start round ${set.started_round_id} track ${startRound.track} does not match ${set.track}`);
+  }
+  for (const modelId of set.model_ids) {
+    if (!modelByIdForSets.has(modelId)) failures.push(`${context} model ${modelId} does not exist in generated model list`);
+  }
+
+  for (const roundId of set.comparison.comparison_round_ids) {
+    const round = roundByIdForSets.get(roundId);
+    const rows = apiReadModel.results.filter(
+      (row) => row.round_id === roundId && (!round?.official_run_id || row.run_id === round.official_run_id)
+    );
+    const present = new Set(rows.map((row) => row.model_id));
+    for (const modelId of set.model_ids) {
+      if (!present.has(modelId)) failures.push(`${context} included round ${roundId} is missing ${modelId}`);
+    }
+  }
+
+  for (const excluded of set.excluded_rounds) {
+    const round = roundByIdForSets.get(excluded.round_id);
+    const rows = apiReadModel.results.filter(
+      (row) => row.round_id === excluded.round_id && (!round?.official_run_id || row.run_id === round.official_run_id)
+    );
+    const present = new Set(rows.map((row) => row.model_id));
+    const expectedMissing = set.model_ids.filter((modelId) => !present.has(modelId)).sort();
+    if (JSON.stringify([...excluded.missing_model_ids].sort()) !== JSON.stringify(expectedMissing)) {
+      failures.push(`${context} excluded round ${excluded.round_id} missing models ${JSON.stringify(excluded.missing_model_ids)} do not match expected ${JSON.stringify(expectedMissing)}`);
+    }
+    if (expectedMissing.length === 0) failures.push(`${context} excluded round ${excluded.round_id} has no missing set models`);
+  }
+
+  for (const row of set.data) {
+    if (row.tests_included !== set.comparison.comparison_round_count) {
+      failures.push(`${context}/${row.model_id} tests_included ${row.tests_included} does not match shared round count ${set.comparison.comparison_round_count}`);
+    }
+    if (row.is_rank_eligible !== (set.comparison.comparison_round_count > 0 && row.tests_included === set.comparison.comparison_round_count)) {
+      failures.push(`${context}/${row.model_id} rank eligibility is inconsistent`);
+    }
+    const modelRows = apiReadModel.results.filter(
+      (result) => result.model_id === row.model_id && set.comparison.comparison_round_ids.includes(result.round_id)
+    );
+    const expectedScore = cumulativeCapitalBenchScore(
+      modelRows.map((result) => result.portfolio_return_pct).filter(isFiniteNumber),
+      modelRows.map((result) => result.max_possible_return_pct).filter(isFiniteNumber)
+    );
+    if (!sameNullableNumber(row.capitalbench_score, expectedScore)) {
+      failures.push(`${context}/${row.model_id} CapitalBench Score ${row.capitalbench_score} does not match expected ${expectedScore}`);
+    }
   }
 }
 

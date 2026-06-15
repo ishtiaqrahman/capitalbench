@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
 import apiReadModel from "../src/generated/apiReadModel.js";
+import { buildBenchmarkSetsData } from "../src/lib/benchmarkSets.js";
 import { buildBenchmarkStatus, buildBenchmarkTickerTape } from "../src/lib/benchmarkStatus.js";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { buildCumulativeLeaderboardData, createMemoryApiAuthRepository, handleDataApiRequest } from "../src/lib/dataApi.js";
@@ -76,15 +77,6 @@ function collapseWhitespace(value) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
 }
 
-function visibleText(html) {
-  return collapseWhitespace(
-    String(html ?? "")
-      .replace(/<script[\s\S]*?<\/script>/gi, " ")
-      .replace(/<style[\s\S]*?<\/style>/gi, " ")
-      .replace(/<[^>]*>/g, " ")
-  );
-}
-
 function includesCollapsed(html, expected, context) {
   if (!collapseWhitespace(html).includes(collapseWhitespace(expected))) {
     failures.push(`${context} missing rendered text: ${expected}`);
@@ -99,14 +91,6 @@ function includesAny(html, expectedValues, context) {
 
 function excludes(html, unexpected, context) {
   if (html.includes(unexpected)) failures.push(`${context} contains stale rendered text: ${unexpected}`);
-}
-
-function excludesVisibleText(html, unexpected, context) {
-  const renderedText = ` ${visibleText(html)} `;
-  const renderedUnexpected = ` ${collapseWhitespace(unexpected)} `;
-  if (renderedText.includes(renderedUnexpected)) {
-    failures.push(`${context} contains stale rendered text: ${unexpected}`);
-  }
 }
 
 function latestDate(values) {
@@ -296,10 +280,6 @@ function allocationLabels(value) {
   return Number.isInteger(numeric) ? [`${numeric}%`, `${numeric.toFixed(1)}%`] : [`${numeric.toFixed(1)}%`];
 }
 
-function resolvedLabel(count) {
-  return `${count} resolved round${count === 1 ? "" : "s"}`;
-}
-
 function modelLabel(modelId) {
   return apiReadModel.models.find((model) => model.model_id === modelId)?.label ?? modelId;
 }
@@ -466,6 +446,27 @@ function cumulativeLeaderScoreAuditText(track, leader) {
   const totalReturn = rows.reduce((total, row) => total + row.portfolio_return_pct, 0);
   const totalOracle = rows.reduce((total, row) => total + row.max_possible_return_pct, 0);
   return `${leader.label} ${scoreLabel(leader.capitalbench_score)} = ${percentPointLabel(totalReturn)} total return / ${percentPointLabel(totalOracle)} oracle return × 100.`;
+}
+
+const benchmarkSetsData = buildBenchmarkSetsData(apiReadModel);
+
+function featuredBenchmarkSetForTrack(track) {
+  const sets = benchmarkSetsData.sets.filter((set) => set.track === track);
+  return (
+    sets.find((set) => set.is_current) ??
+    [...sets].sort(
+      (left, right) =>
+        right.comparison.comparison_round_count - left.comparison.comparison_round_count ||
+        String(right.started_at ?? "").localeCompare(String(left.started_at ?? ""))
+    )[0] ??
+    null
+  );
+}
+
+function benchmarkSetLeaderScoreAuditText(set) {
+  const leader = set?.leader;
+  if (!leader) return "";
+  return `${leader.label} ${scoreLabel(leader.capitalbench_score)} = ${percentPointLabel(leader.total_portfolio_return_pct)} total return / ${percentPointLabel(leader.total_max_possible_return_pct)} oracle return × 100.`;
 }
 
 function shortDate(value) {
@@ -1859,6 +1860,7 @@ function validateLatestOfficialResultsBrowser(html, track, context) {
 
 const indexHtml = readHtml("index.html");
 const leaderboardsHtml = readHtml("leaderboards/index.html");
+const benchmarkSetsHtml = readHtml("leaderboards/benchmark-sets/index.html");
 const latestMonthlyHtml = readHtml("leaderboards/latest-monthly/index.html");
 const modelsIndexHtml = readHtml("models/index.html");
 const roundsIndexHtml = readHtml("rounds/index.html");
@@ -1871,6 +1873,27 @@ const changelogHtml = readHtml("changelog/index.html");
 const changelogSource = readRepoText("apps", "web", "src", "data", "changelog.ts");
 const latestChangelogMatch = changelogSource.match(/id:\s*"([^"]+)"[\s\S]*?date:\s*"(\d{4}-\d{2}-\d{2})"[\s\S]*?title:\s*"([^"]+)"/);
 const changelogEntryCount = [...changelogSource.matchAll(/^\s*id:\s*"/gm)].length;
+includes(benchmarkSetsHtml, "Benchmark Sets", "benchmark sets page title");
+includes(benchmarkSetsHtml, "All Benchmark Sets", "benchmark sets page list heading");
+includes(benchmarkSetsHtml, 'data-benchmark-set-browser', "benchmark sets page filter browser");
+includes(benchmarkSetsHtml, 'data-benchmark-set-filter="weekly"', "benchmark sets page weekly filter");
+includes(benchmarkSetsHtml, 'data-benchmark-set-filter="monthly"', "benchmark sets page monthly filter");
+includes(benchmarkSetsHtml, 'data-benchmark-set-filter="active"', "benchmark sets page active filter");
+includes(benchmarkSetsHtml, "Featured Equal-Run Results", "benchmark sets page featured chart heading");
+excludes(benchmarkSetsHtml, "Current Benchmarks Are Selected Automatically", "benchmark sets page stale intro heading");
+const benchmarkSetListIndex = benchmarkSetsHtml.indexOf('class="benchmark-set-list"');
+const benchmarkSetFeaturedIndex = benchmarkSetsHtml.indexOf("Featured Equal-Run Results");
+if (benchmarkSetListIndex === -1) failures.push("benchmark sets page list missing");
+if (benchmarkSetFeaturedIndex === -1) failures.push("benchmark sets page featured charts missing");
+if (benchmarkSetListIndex !== -1 && benchmarkSetFeaturedIndex !== -1 && benchmarkSetListIndex > benchmarkSetFeaturedIndex) {
+  failures.push("benchmark sets page shows featured charts before the set list");
+}
+for (const set of benchmarkSetsData.sets) {
+  const context = `benchmark sets page ${set.set_id}`;
+  includes(benchmarkSetsHtml, `/leaderboards/benchmark-sets/${set.set_id}/`, `${context} link`);
+  includes(benchmarkSetsHtml, `${String(set.label).replace(/^(Weekly|Monthly) Set:\s*/, "")} roster`, `${context} row title`);
+  includes(benchmarkSetsHtml, set.description, `${context} description`);
+}
 if (latestChangelogMatch) {
   includes(changelogHtml, latestChangelogMatch[1], "changelog latest entry id");
   includes(changelogHtml, latestChangelogMatch[2], "changelog latest entry date");
@@ -1890,7 +1913,6 @@ for (const track of ["weekly", "monthly"]) {
   if (!leader) failures.push(`${track} cumulative leaderboard has no rank-eligible leader`);
 
   const score = leader ? scoreLabel(leader.capitalbench_score) : "";
-  const countLabel = resolvedLabel(cumulative.comparison.comparison_round_count);
   const pagePath = `leaderboards/cumulative-${track}/index.html`;
   const cumulativeHtml = readHtml(pagePath);
   const cumulativeScorecardHtml = htmlSection(
@@ -1906,7 +1928,7 @@ for (const track of ["weekly", "monthly"]) {
   includes(cumulativeScorecardHtml, "Max possible = best asset in each completed round.", `${context} max possible explanation`);
   includes(cumulativeScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, context);
   includes(cumulativeScorecardHtml, "full-history models ranked", context);
-  includes(cumulativeScorecardHtml, `Newest resolved round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
+  includes(cumulativeScorecardHtml, `Newest included round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
   includes(cumulativeScorecardHtml, "Leader audit", `${context} score calculation audit`);
   includes(cumulativeScorecardHtml, cumulativeLeaderScoreAuditText(track, leader), `${context} score calculation audit`);
   includes(cumulativeScorecardHtml, "Rounds included:", context);
@@ -1956,92 +1978,56 @@ for (const track of ["weekly", "monthly"]) {
     }
   }
 
-  if (track === "weekly") {
-    const homepageWeeklyScorecardHtml = htmlSection(
+  const featuredSet = featuredBenchmarkSetForTrack(track);
+  if (featuredSet) {
+    const homepageScorecardHtml = htmlSection(
       indexHtml,
-      '<section class="track-scorecard-panel track-scorecard-weekly',
-      "homepage weekly cumulative scorecard"
+      `<section class="track-scorecard-panel track-scorecard-${track}`,
+      `homepage ${track} comparison set scorecard`
     );
-    includes(indexHtml, "Full-history leader", "homepage weekly lane");
-    includes(indexHtml, `${score} score · ${countLabel}`, "homepage weekly lane");
-    includes(indexHtml, leader.label, "homepage weekly lane");
-    includes(indexHtml, "Each model is compared with the best asset it could have picked in completed rounds. Switch weekly/monthly.", "homepage scorecard oracle explanation");
-    includes(homepageWeeklyScorecardHtml, "Full-History Model Scores", "homepage weekly cumulative chart title");
-    includes(homepageWeeklyScorecardHtml, "Max possible = best asset in each completed round.", "homepage weekly max possible explanation");
-    includes(homepageWeeklyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, "homepage weekly cumulative comparison count");
-    includes(homepageWeeklyScorecardHtml, "full-history models ranked", "homepage weekly cumulative ranked model count");
-    includes(homepageWeeklyScorecardHtml, `Newest resolved round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage weekly cumulative newest included");
-    includes(homepageWeeklyScorecardHtml, "Leader audit", "homepage weekly score calculation audit");
-    includes(homepageWeeklyScorecardHtml, cumulativeLeaderScoreAuditText(track, leader), "homepage weekly score calculation audit");
-    includes(homepageWeeklyScorecardHtml, "Rounds included:", "homepage weekly cumulative included rounds");
-    for (const row of cumulative.data) {
-      includes(homepageWeeklyScorecardHtml, row.label, `homepage weekly cumulative ${row.model_id}`);
-      if (typeof row.capitalbench_score === "number") {
-        includes(homepageWeeklyScorecardHtml, scoreLabel(row.capitalbench_score), `homepage weekly cumulative ${row.model_id} CapitalBench Score`);
-      }
-      includes(homepageWeeklyScorecardHtml, `${row.tests_included}/${row.tests_required}`, `homepage weekly cumulative ${row.model_id} scored tests`);
+    const setLeader = featuredSet.leader;
+    includes(indexHtml, "Current benchmarks rank models only inside equal-run comparison sets. Switch weekly/monthly.", "homepage scorecard comparison-set explanation");
+    includes(homepageScorecardHtml, featuredSet.is_current ? `Current ${trackLabel(track)} Benchmark` : `${trackLabel(track)} Benchmark Forming`, `homepage ${track} comparison title`);
+    includes(homepageScorecardHtml, "CapitalBench Score", `homepage ${track} comparison chart title`);
+    includes(homepageScorecardHtml, "Max possible = best eligible asset in each included round.", `homepage ${track} max possible explanation`);
+    includes(homepageScorecardHtml, `${featuredSet.comparison.comparison_round_count} shared resolved rounds`, `homepage ${track} shared round count`);
+    includes(homepageScorecardHtml, "equal-run models ranked", `homepage ${track} equal-run ranked model count`);
+    includes(homepageScorecardHtml, `Newest included round: ${featuredSet.latest_included_round_id}`, `homepage ${track} newest included`);
+    includes(homepageScorecardHtml, "Fairness rule:", `homepage ${track} fairness rule`);
+    includes(homepageScorecardHtml, "Rounds included:", `homepage ${track} included rounds`);
+    if (featuredSet.is_qualified) {
+      includes(homepageScorecardHtml, `Qualified at ${featuredSet.qualification_threshold}+ shared rounds`, `homepage ${track} qualification status`);
+    } else {
+      includes(homepageScorecardHtml, `this set becomes the Current ${trackLabel(track)} Benchmark at ${featuredSet.qualification_threshold} shared resolved rounds`, `homepage ${track} forming status`);
     }
-    if (provisionalRows.length > 0) {
-      includes(homepageWeeklyScorecardHtml, "Not ranked yet", "homepage weekly scorecard provisional section");
-      includes(homepageWeeklyScorecardHtml, "not included in the main ranking", "homepage weekly scorecard provisional scope");
+    if (setLeader) {
+      includes(homepageScorecardHtml, setLeader.label, `homepage ${track} comparison leader`);
+      includes(homepageScorecardHtml, scoreLabel(setLeader.capitalbench_score), `homepage ${track} comparison leader score`);
+      includes(homepageScorecardHtml, "Leader audit", `homepage ${track} score calculation audit`);
+      includes(homepageScorecardHtml, benchmarkSetLeaderScoreAuditText(featuredSet), `homepage ${track} score calculation audit`);
     }
-    includes(homepageWeeklyScorecardHtml, "Average Return Details", "homepage weekly scorecard average return chart");
-    for (const row of scorecard.averageRows) {
-      if (typeof row.value === "number") {
-        includesAny(homepageWeeklyScorecardHtml, htmlTextVariants(row.label), `homepage weekly average return ${row.key} label`);
-        includes(homepageWeeklyScorecardHtml, percentPointLabel(row.value), `homepage weekly average return ${row.key} value`);
-      }
+    for (const row of featuredSet.data) {
+      includes(homepageScorecardHtml, row.label, `homepage ${track} comparison ${row.model_id}`);
+      includes(homepageScorecardHtml, scoreLabel(row.capitalbench_score), `homepage ${track} comparison ${row.model_id} CapitalBench Score`);
+      includes(homepageScorecardHtml, `${row.tests_included}/${row.tests_required}`, `homepage ${track} comparison ${row.model_id} scored tests`);
+      includes(homepageScorecardHtml, percentPointLabel(row.portfolio_return_pct), `homepage ${track} comparison ${row.model_id} average return`);
     }
-    if (benchmarkScore && typeof benchmarkScore.value === "number") {
-      includes(homepageWeeklyScorecardHtml, scoreLabel(benchmarkScore.value), "homepage weekly S&P 500 CapitalBench Score");
+    if (featuredSet.benchmark?.capitalbench_score !== null && featuredSet.benchmark?.capitalbench_score !== undefined) {
+      includes(homepageScorecardHtml, scoreLabel(featuredSet.benchmark.capitalbench_score), `homepage ${track} comparison S&P 500 CapitalBench Score`);
     }
-    if (maxPossibleScore && typeof maxPossibleScore.value === "number") {
-      includes(homepageWeeklyScorecardHtml, "Max possible", "homepage weekly max possible score label");
-      includes(homepageWeeklyScorecardHtml, "MAX", "homepage weekly max possible score chip");
-      includes(homepageWeeklyScorecardHtml, scoreLabel(maxPossibleScore.value), "homepage weekly max possible CapitalBench Score");
-      includes(homepageWeeklyScorecardHtml, "hindsight best asset", "homepage weekly max possible short explanation");
+    if (featuredSet.max_possible) {
+      includes(homepageScorecardHtml, "Max possible", `homepage ${track} max possible score label`);
+      includes(homepageScorecardHtml, "MAX", `homepage ${track} max possible score chip`);
+      includes(homepageScorecardHtml, scoreLabel(featuredSet.max_possible.capitalbench_score), `homepage ${track} max possible CapitalBench Score`);
+      includes(homepageScorecardHtml, "hindsight best asset", `homepage ${track} max possible short explanation`);
     }
-    if (scorecard.topReturnModel && typeof scorecard.topReturnModel.portfolio_return_pct === "number") {
-      includes(homepageWeeklyScorecardHtml, "Return leader", "homepage weekly return leader label");
-      includes(homepageWeeklyScorecardHtml, scorecard.topReturnModel.label, "homepage weekly return leader model");
-      includes(homepageWeeklyScorecardHtml, percentPointLabel(scorecard.topReturnModel.portfolio_return_pct), "homepage weekly return leader value");
-    }
-    const allowedScoreAuditText = cumulativeLeaderScoreAuditText(track, leader);
-    const homepageScorecardWithoutLeaderAudit = allowedScoreAuditText
-      ? homepageWeeklyScorecardHtml.replace(allowedScoreAuditText, "")
-      : homepageWeeklyScorecardHtml;
-    const cumulativeScoreLabels = new Set(
-      scorecard.normalizedRows.filter((row) => typeof row.value === "number").map((row) => scoreLabel(row.value))
-    );
-    for (const row of latestResultForTrack(track).leaderboard) {
-      if (typeof row.capitalbench_score !== "number") continue;
-      const latestOnlyScore = scoreLabel(row.capitalbench_score);
-      if (latestOnlyScore !== "0.0" && !cumulativeScoreLabels.has(latestOnlyScore)) {
-        excludesVisibleText(homepageScorecardWithoutLeaderAudit, latestOnlyScore, `homepage weekly scorecard latest-only ${row.model_id} score`);
-      }
-    }
-  }
-  if (track === "monthly") {
-    const homepageMonthlyScorecardHtml = htmlSection(
-      indexHtml,
-      '<section class="track-scorecard-panel track-scorecard-monthly',
-      "homepage monthly cumulative scorecard"
-    );
-    includes(homepageMonthlyScorecardHtml, "Full-History Monthly Scores", "homepage monthly cumulative chart title");
-    includes(homepageMonthlyScorecardHtml, "Max possible = best asset in each completed round.", "homepage monthly max possible explanation");
-    includes(homepageMonthlyScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, "homepage monthly cumulative comparison count");
-    includes(homepageMonthlyScorecardHtml, leader.label, "homepage monthly cumulative leader");
-    includes(homepageMonthlyScorecardHtml, score, "homepage monthly cumulative leader score");
-    if (maxPossibleScore && typeof maxPossibleScore.value === "number") {
-      includes(homepageMonthlyScorecardHtml, "Max possible", "homepage monthly max possible score label");
-      includes(homepageMonthlyScorecardHtml, "MAX", "homepage monthly max possible score chip");
-      includes(homepageMonthlyScorecardHtml, scoreLabel(maxPossibleScore.value), "homepage monthly max possible CapitalBench Score");
-    }
-    includes(homepageMonthlyScorecardHtml, `Newest resolved round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, "homepage monthly cumulative newest included");
   }
   includes(leaderboardsHtml, leader.label, `leaderboards index ${track} leader`);
   includes(leaderboardsHtml, score, `leaderboards index ${track} leader score`);
-  includes(leaderboardsHtml, `${cumulative.comparison.comparison_round_count} resolved`, `leaderboards index ${track} resolved count`);
+  const featuredSetForIndex = featuredBenchmarkSetForTrack(track);
+  if (featuredSetForIndex) {
+    includes(leaderboardsHtml, `${featuredSetForIndex.comparison.comparison_round_count} shared`, `leaderboards index ${track} shared count`);
+  }
 }
 
 for (const [context, html] of [
@@ -2160,11 +2146,12 @@ for (const state of resultStates) {
   includes(leaderboardsHtml, state.pendingRound?.round_id ?? "None", `${context} pending round label`);
   includes(leaderboardsHtml, state.track === "weekly" ? "One market week" : "One market month", `${context} horizon`);
 
-  if (state.cumulative.data.length > 0 && state.leader) {
-    includes(leaderboardsHtml, `${modelLabel(state.leader.model_id)} Leads`, `${context} leader title`);
-    includes(leaderboardsHtml, scoreLabel(state.leader.capitalbench_score), `${context} CapitalBench Score`);
-    includes(leaderboardsHtml, providerLabelForModel(state.leader.model_id), `${context} provider`);
-    includes(leaderboardsHtml, `${state.completedCount} rounds`, `${context} route completed count`);
+  const featuredSet = featuredBenchmarkSetForTrack(state.track);
+  if (featuredSet?.leader) {
+    includes(leaderboardsHtml, `${featuredSet.leader.label} Leads`, `${context} leader title`);
+    includes(leaderboardsHtml, scoreLabel(featuredSet.leader.capitalbench_score), `${context} CapitalBench Score`);
+    includes(leaderboardsHtml, providerLabelForModel(featuredSet.leader.model_id), `${context} provider`);
+    includes(leaderboardsHtml, `${featuredSet.comparison.comparison_round_count} rounds`, `${context} route completed count`);
   } else {
     includes(leaderboardsHtml, `${state.label} Track`, `${context} pending title`);
     includes(leaderboardsHtml, "Waiting for the first completed score", `${context} pending copy`);
@@ -2186,7 +2173,7 @@ for (const state of resultStates) {
   if (state.cumulative.comparison.comparison_round_count > 0) {
     includes(
       leaderboardsHtml,
-      `${state.cumulative.comparison.comparison_round_count} resolved ${state.label.toLowerCase()} round`,
+      `${state.cumulative.comparison.comparison_round_count} all-available ${state.label.toLowerCase()} round`,
       `${context} aggregate route description`
     );
   }
@@ -2330,8 +2317,9 @@ for (const [context, html] of [
   includes(html, "max_possible_return - portfolio_return", `${context} regret formula`);
   includes(html, "portfolio_return - sp500_return", `${context} S&P formula`);
   includes(html, "summed model returns", `${context} cumulative score aggregation explanation`);
-  includesAny(html, ["all resolved rounds", "every resolved round", "resolved round in that track"], `${context} cumulative scope`);
-  includes(html, "short history", `${context} late-added model scope`);
+  includesAny(html, ["comparison sets", "Comparison Sets", "Comparison Set"], `${context} comparison set scope`);
+  includesAny(html, ["All-available history", "all-available history", "All Available History"], `${context} all available history scope`);
+  includesAny(html, ["misses a round", "missed rounds", "misses a resolved round"], `${context} missed round fairness scope`);
 }
 includes(scoringHtml, "Below 0:", "scoring score scale explanation");
 includes(scoringHtml, "portfolio returns 3.93%", "scoring portfolio return example");
@@ -2480,7 +2468,7 @@ includes(indexHtml, "Get score alerts", "homepage hero score alert CTA");
 includes(indexHtml, "Request API access", "homepage hero API CTA");
 includes(indexHtml, "What AI Models Are Allocating To Now", "homepage AI positioning heading");
 includes(indexHtml, "Model Performance", "homepage model performance heading");
-includes(indexHtml, "Choose full-history score horizon", "homepage scorecard tablist");
+includes(indexHtml, "Choose benchmark score horizon", "homepage scorecard tablist");
 includes(indexHtml, 'data-track-scorecard-tab="weekly"', "homepage weekly scorecard tab");
 includes(indexHtml, 'data-track-scorecard-tab="monthly"', "homepage monthly scorecard tab");
 includes(indexHtml, 'data-track-scorecard-panel="weekly"', "homepage weekly scorecard panel");
@@ -3182,6 +3170,34 @@ for (const model of apiReadModel.models) {
     if (summary.hitRate !== null) includes(html, pctValue(summary.hitRate), `${context} ${track} hit rate`);
     if (summary.averageRank !== null) includes(html, summary.averageRank.toFixed(1), `${context} ${track} average rank`);
     if (summary.bestRound) includes(html, summary.bestRound.round_id, `${context} ${track} best round`);
+  }
+
+  const modelBenchmarkSets = benchmarkSetsData.sets.filter((set) => set.model_ids.includes(model.model_id));
+  if (modelBenchmarkSets.length > 0) {
+    includes(html, "Benchmark Sets Including This Model", `${context} benchmark sets section`);
+    includes(html, 'data-model-benchmark-sets', `${context} benchmark set tabs controller`);
+    includes(html, 'data-model-set-filter="weekly"', `${context} weekly benchmark set filter`);
+    includes(html, 'data-model-set-filter="monthly"', `${context} monthly benchmark set filter`);
+    includes(html, 'data-model-set-filter="active"', `${context} active benchmark set filter`);
+    for (const set of modelBenchmarkSets) {
+      const setContext = `${context} benchmark set ${set.set_id}`;
+      const setTitle = `${String(set.label).replace(/^(Weekly|Monthly) Set:\s*/, "")} roster`;
+      includes(html, `/leaderboards/benchmark-sets/${set.set_id}/`, `${setContext} link`);
+      includes(html, `data-model-set-tab="${set.set_id}"`, `${setContext} tab`);
+      includes(html, setTitle, `${setContext} title`);
+      includes(html, set.description, `${setContext} description`);
+      includes(html, `${set.comparison.comparison_round_count} shared`, `${setContext} shared round count`);
+      const row = set.data.find((item) => item.model_id === model.model_id);
+      if (row) {
+        includes(html, `#${row.rank}`, `${setContext} model rank`);
+        includes(html, row.capitalbench_score.toFixed(1), `${setContext} model score`);
+      } else {
+        includes(html, "This set is waiting for its first shared resolved round.", `${setContext} waiting state`);
+      }
+    }
+    if (modelBenchmarkSets.some((set) => set.data.some((row) => row.model_id === model.model_id))) {
+      includes(html, "This model", `${context} focused model chart marker`);
+    }
   }
 
   const style = apiReadModel.model_styles.find((row) => row.model_id === model.model_id);

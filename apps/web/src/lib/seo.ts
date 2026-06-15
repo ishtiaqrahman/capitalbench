@@ -1,5 +1,7 @@
 import { staticRoundRecords } from "./localRoundRecords";
 import { staticModelProfiles } from "./modelProfiles";
+import apiReadModel from "../generated/apiReadModel.js";
+import { buildBenchmarkSetsData } from "./benchmarkSets.js";
 import { changelogEntries } from "../data/changelog";
 
 export type RouteMeta = {
@@ -39,6 +41,7 @@ const latestPublicChangeDate = changelogEntries[0]?.date ?? "2026-05-26";
 const defaultLastmod = latestPublicChangeDate;
 const publicRounds = staticRoundRecords();
 const publicModels = staticModelProfiles();
+const benchmarkSets = buildBenchmarkSetsData(apiReadModel).sets as any[];
 
 export const routeMeta: RouteMeta[] = [
   {
@@ -85,6 +88,23 @@ export const routeMeta: RouteMeta[] = [
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
+  {
+    path: "/leaderboards/benchmark-sets",
+    title: "Benchmark Sets",
+    description:
+      "CapitalBench equal-run comparison sets for fair weekly and monthly AI model benchmark rankings.",
+    priority: 0.88,
+    changefreq: "weekly",
+    lastmod: defaultLastmod
+  },
+  ...benchmarkSets.map((set) => ({
+    path: `/leaderboards/benchmark-sets/${set.set_id}`,
+    title: `${set.label} CapitalBench Comparison Set`,
+    description: `${set.label} ranks AI models only on ${set.track} rounds every set model completed.`,
+    priority: set.is_current ? 0.86 : 0.78,
+    changefreq: "weekly" as const,
+    lastmod: defaultLastmod
+  })),
   {
     path: "/leaderboards/cumulative-official",
     title: "Overall CapitalBench Results",

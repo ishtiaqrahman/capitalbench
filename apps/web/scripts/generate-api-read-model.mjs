@@ -60,6 +60,114 @@ function readYaml(path, fallback = null) {
 
 const assetRiskModel = readYaml(join(repoRoot, "configs", "asset_risk_model.yaml"), {});
 const assetRiskDefinitions = assetRiskModel.assets ?? {};
+const benchmarkSetConfig = readYaml(join(repoRoot, "benchmark_sets.yaml"), {
+  version: "benchmark_sets_v1",
+  qualification_thresholds: { weekly: 6, monthly: 3 },
+  sets: []
+});
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function normalizeModelIds(modelIds) {
+  return Array.from(new Set(modelIds.map(String).filter(Boolean))).sort();
+}
+
+function rosterContains(definition, modelIds) {
+  const definitionIds = new Set(definition.model_ids ?? []);
+  return modelIds.every((modelId) => definitionIds.has(modelId));
+}
+
+function roundSortValue(round) {
+  return `${round?.exit_date ?? ""}:${round?.decision_deadline_utc ?? ""}:${round?.round_id ?? ""}`;
+}
+
+function trackLabel(track) {
+  return track === "weekly" ? "Weekly" : "Monthly";
+}
+
+function shortMonthDay(dateString) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(dateString ?? ""));
+  if (!match) return String(dateString ?? "Unknown date");
+  const monthIndex = Number(match[2]) - 1;
+  return `${MONTH_LABELS[monthIndex] ?? match[2]} ${Number(match[3])}`;
+}
+
+function dateIdForRound(round) {
+  const decisionMatch = /^(\d{4}-\d{2}-\d{2})/.exec(String(round?.decision_date ?? ""));
+  if (decisionMatch) return decisionMatch[1];
+  const roundMatch = /^CB-(\d{4})-(\d{2})-(\d{2})/.exec(String(round?.round_id ?? ""));
+  if (roundMatch) return `${roundMatch[1]}-${roundMatch[2]}-${roundMatch[3]}`;
+  return String(round?.round_id ?? "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function uniqueSetId(baseId, usedIds) {
+  if (!usedIds.has(baseId)) return baseId;
+  let suffix = 2;
+  while (usedIds.has(`${baseId}-${suffix}`)) suffix += 1;
+  return `${baseId}-${suffix}`;
+}
+
+function configuredBenchmarkSetDefinitions() {
+  return Array.isArray(benchmarkSetConfig.sets)
+    ? benchmarkSetConfig.sets
+        .map((set) => ({
+          set_id: String(set.set_id ?? ""),
+          track: String(set.track ?? ""),
+          label: String(set.label ?? set.set_id ?? ""),
+          short_label: String(set.short_label ?? set.label ?? set.set_id ?? ""),
+          description: String(set.description ?? ""),
+          started_round_id: String(set.started_round_id ?? ""),
+          model_ids: normalizeModelIds(Array.isArray(set.model_ids) ? set.model_ids : [])
+        }))
+        .filter((set) => set.set_id && ["weekly", "monthly"].includes(set.track) && set.model_ids.length > 0)
+    : [];
+}
+
+function autoBenchmarkSetDescription(round, modelIds) {
+  return `${trackLabel(round.track)} comparison set automatically opened when the ${shortMonthDay(round.decision_date)} official roster first required a new equal-run benchmark group across ${modelIds.length} models.`;
+}
+
+function buildBenchmarkSetDefinitions({ rounds, portfolios }) {
+  const definitions = configuredBenchmarkSetDefinitions();
+  const usedIds = new Set(definitions.map((set) => set.set_id));
+  const definitionsByTrack = new Map([
+    ["weekly", definitions.filter((set) => set.track === "weekly")],
+    ["monthly", definitions.filter((set) => set.track === "monthly")]
+  ]);
+
+  const chronologicalRounds = [...rounds]
+    .filter((round) => ["weekly", "monthly"].includes(round.track) && round.official_run_id)
+    .sort((left, right) => roundSortValue(left).localeCompare(roundSortValue(right)));
+
+  for (const round of chronologicalRounds) {
+    const modelIds = normalizeModelIds(
+      portfolios
+        .filter((portfolio) => portfolio.round_id === round.round_id && portfolio.run_id === round.official_run_id)
+        .map((portfolio) => portfolio.model_id)
+    );
+    if (modelIds.length === 0) continue;
+
+    const trackDefinitions = definitionsByTrack.get(round.track) ?? [];
+    if (trackDefinitions.some((definition) => rosterContains(definition, modelIds))) continue;
+
+    const baseId = `${round.track}-set-${dateIdForRound(round)}`;
+    const setId = uniqueSetId(baseId, usedIds);
+    usedIds.add(setId);
+    const definition = {
+      set_id: setId,
+      track: round.track,
+      label: `${trackLabel(round.track)} Set: ${shortMonthDay(round.decision_date)}, ${String(round.decision_date).slice(0, 4)}`,
+      short_label: `${shortMonthDay(round.decision_date)} ${trackLabel(round.track)}`,
+      description: autoBenchmarkSetDescription(round, modelIds),
+      started_round_id: round.round_id,
+      model_ids: modelIds
+    };
+    definitions.push(definition);
+    trackDefinitions.push(definition);
+    definitionsByTrack.set(round.track, trackDefinitions);
+  }
+
+  return definitions;
+}
 
 function assetRiskDefinition(optionId) {
   const definition = assetRiskDefinitions[optionId];
@@ -631,6 +739,14 @@ function buildReadModel() {
     api_version: "v1",
     source: "capitalbench_local_rounds",
     current_universe_round_id: latestRoundWithOptions?.round.round_id ?? null,
+    benchmark_set_policy: {
+      version: String(benchmarkSetConfig.version ?? "benchmark_sets_v1"),
+      qualification_thresholds: {
+        weekly: Number(benchmarkSetConfig.qualification_thresholds?.weekly ?? 6),
+        monthly: Number(benchmarkSetConfig.qualification_thresholds?.monthly ?? 3)
+      }
+    },
+    benchmark_set_definitions: buildBenchmarkSetDefinitions({ rounds, portfolios }),
     rounds,
     models,
     assets,

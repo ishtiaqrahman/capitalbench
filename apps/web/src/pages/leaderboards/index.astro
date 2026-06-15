@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import GitHubLogo from "../../components/GitHubLogo.astro";
 import ScoreReturnChart from "../../components/ScoreReturnChart.astro";
 import TrackScorecard from "../../components/TrackScorecard.astro";
+import apiReadModel from "../../generated/apiReadModel.js";
 import {
   ArrowRight,
   BarChart3,
@@ -31,6 +32,7 @@ import {
   staticUniverseOptions
 } from "../../lib/localRoundRecords";
 import { buildScoreReturnChartData, providerLogoSrc } from "../../lib/scoreReturnChart";
+import { benchmarkSetToScorecard, buildBenchmarkSetsData, featuredBenchmarkSet } from "../../lib/benchmarkSets";
 import { buildTrackScorecard, type TrackScorecardData } from "../../lib/trackScorecard";
 import {
   latestPendingRoundForTrack,
@@ -57,8 +59,15 @@ type ResultsTrackState = {
 };
 
 const roundRows = staticRoundRecords();
-const weeklyScorecard = buildTrackScorecard(roundRows, "weekly");
-const monthlyScorecard = buildTrackScorecard(roundRows, "monthly");
+const benchmarkSets = buildBenchmarkSetsData(apiReadModel) as any;
+const weeklyScorecard = benchmarkSetToScorecard(featuredBenchmarkSet(apiReadModel, "weekly")) as TrackScorecardData | null;
+const monthlyScorecard = benchmarkSetToScorecard(featuredBenchmarkSet(apiReadModel, "monthly")) as TrackScorecardData | null;
+const weeklyAllHistoryScorecard = buildTrackScorecard(roundRows, "weekly");
+const monthlyAllHistoryScorecard = buildTrackScorecard(roundRows, "monthly");
+const allHistoryScorecards = {
+  weekly: weeklyAllHistoryScorecard,
+  monthly: monthlyAllHistoryScorecard
+};
 const scorecards = [weeklyScorecard, monthlyScorecard].filter(
   (scorecard): scorecard is TrackScorecardData => scorecard !== null
 );
@@ -93,7 +102,7 @@ function buildTrackState(
     leaderboard,
     winner,
     winnerReturn: leaderboardReturn(winner),
-    completedCount: scorecard?.completedRoundCount ?? trackRounds.filter((round) => round.status === "resolved").length,
+    completedCount: scorecard?.comparisonRoundCount ?? trackRounds.filter((round) => round.status === "resolved").length,
     totalCount: trackRounds.length,
     latestHref: `/leaderboards/latest-${key}`,
     cumulativeHref: `/leaderboards/cumulative-${key}`
@@ -186,7 +195,9 @@ function routeDescription(track: ResultsTrackState, kind: "latest" | "overall"):
     return "No published round yet.";
   }
   if (track.scorecard) {
-    return `${track.scorecard.comparisonRoundCount} resolved ${track.label.toLowerCase()} round${track.scorecard.comparisonRoundCount === 1 ? "" : "s"} in the full track history.`;
+    const allHistory = allHistoryScorecards[track.key];
+    const count = allHistory?.comparisonRoundCount ?? track.scorecard.comparisonRoundCount;
+    return `${count} all-available ${track.label.toLowerCase()} round${count === 1 ? "" : "s"} for context. Fair rankings use comparison sets.`;
   }
   return track.pendingRound ? "Overall chart appears after the first scored round." : "No completed rounds yet.";
 }
@@ -251,7 +262,8 @@ const proofLinks = [
           Latest weekly
           <ArrowRight size={15} aria-hidden="true" />
         </a>
-        <a class="action-link" href="/leaderboards/cumulative-weekly">Weekly scorecard</a>
+        <a class="action-link" href="/leaderboards/benchmark-sets">Comparison sets</a>
+        <a class="action-link" href="/leaderboards/cumulative-weekly">All weekly history</a>
         <a class="action-link" href="#combined-results">Combined results</a>
         <a class="action-link" href="#proof-data">Audit and data</a>
       </div>
@@ -275,7 +287,7 @@ const proofLinks = [
       </div>
 
       <div class="results-status-leader">
-        <span class="metric-label">Current weekly leader</span>
+        <span class="metric-label">Current weekly benchmark leader</span>
         <div class="results-status-leader-row">
           {weeklyLeaderLogoSrc ? (
             <span class="results-track-logo">
@@ -327,7 +339,7 @@ const proofLinks = [
 
       <div class="results-status-actions" aria-label="Benchmark status links">
         <a class="small-button" href={weeklyTrack.latestHref}>Latest weekly result</a>
-        <a class="small-button" href={weeklyTrack.cumulativeHref}>Overall weekly scorecard</a>
+        <a class="small-button" href="/leaderboards/benchmark-sets">Comparison sets</a>
         <a class="small-button" href="/rounds">All rounds</a>
       </div>
     </div>
@@ -342,7 +354,7 @@ const proofLinks = [
             <div>
               <span class="panel-kicker">{track.label} track</span>
               <h2>{track.scorecard ? `${trackLeaderName(track)} Leads` : `${track.label} Track`}</h2>
-              <p>{track.scorecard ? "CapitalBench Score leader across all resolved rounds in this track." : "Waiting for the first completed score."}</p>
+              <p>{track.scorecard ? "CapitalBench Score leader inside the featured equal-run comparison set." : "Waiting for enough shared rounds."}</p>
             </div>
             <span class={`status-badge ${track.scorecard ? "status-resolved" : "status-pending"}`}>{trackStateLabel(track)}</span>
           </div>
@@ -371,8 +383,8 @@ const proofLinks = [
               <strong>{averageReturnValue(track)}</strong>
             </span>
             <span>
-              <small>Latest result</small>
-              <strong>{track.latestResultRound?.round_id ?? "Pending"}</strong>
+              <small>Shared rounds</small>
+              <strong>{track.scorecard?.comparisonRoundCount ?? 0}</strong>
             </span>
             <span>
               <small>Timeline</small>
@@ -382,7 +394,8 @@ const proofLinks = [
 
           <div class="track-card-actions">
             <a class="small-button" href={track.latestHref}>Latest result</a>
-            <a class="small-button" href={track.cumulativeHref}>Overall scorecard</a>
+            <a class="small-button" href="/leaderboards/benchmark-sets">Comparison sets</a>
+            <a class="small-button" href={track.cumulativeHref}>All history</a>
             {track.latestResultRound && <a class="small-button" href={`/rounds/${track.latestResultRound.round_id}/`}>Audit packet</a>}
           </div>
         </article>
@@ -395,13 +408,13 @@ const proofLinks = [
       <section class="home-section-heading home-section-heading-with-action" id="combined-results" aria-labelledby="combined-results-title">
         <div>
           <span class="panel-kicker">Completed results</span>
-          <h2 id="combined-results-title">CapitalBench Scores</h2>
+          <h2 id="combined-results-title">Current Benchmark Scores</h2>
           <p>
-            The primary benchmark score combines every resolved round in each track. 100 means matching the highest-returning scored
-            option. Overall scores divide total model return by total oracle return, preserving the difference between smaller and larger losses.
+            These are equal-run comparison sets. Every ranked model completed every included round, and missed rounds are excluded
+            from the set for everyone.
           </p>
         </div>
-        <a class="section-profile-link" href="/leaderboards/cumulative-weekly">Open weekly scorecard</a>
+        <a class="section-profile-link" href="/leaderboards/benchmark-sets">Open comparison sets</a>
       </section>
 
       <div class="track-scorecard-stack results-scorecard-stack" aria-label="Combined completed result charts">
@@ -409,6 +422,30 @@ const proofLinks = [
       </div>
     </>
   )}
+
+  <section class="home-section-heading home-section-heading-with-action" aria-labelledby="benchmark-sets-title">
+    <div>
+      <span class="panel-kicker">Fair model comparisons</span>
+      <h2 id="benchmark-sets-title">Benchmark Comparison Sets</h2>
+      <p>
+        Sets are living groups. Older sets keep adding shared rounds, while newer model rosters become current automatically
+        after enough shared results.
+      </p>
+    </div>
+    <a class="section-profile-link" href="/leaderboards/benchmark-sets">View all sets</a>
+  </section>
+
+  <section class="results-route-grid" aria-label="Benchmark comparison sets">
+    {benchmarkSets.sets.map((set: any) => (
+      <a class={`results-route-card results-route-${set.track}`} href={`/leaderboards/benchmark-sets/${set.set_id}/`}>
+        <span class="results-route-icon" aria-hidden="true"><Layers3 size={18} /></span>
+        <span class="panel-kicker">{set.is_current ? "Current benchmark" : set.is_qualified ? "Qualified set" : "Forming set"}</span>
+        <strong>{set.label}</strong>
+        <p>{set.comparison.comparison_round_count} shared resolved rounds across {set.models.length} models.</p>
+        <em>{set.is_qualified ? `Qualified at ${set.qualification_threshold}+ shared rounds` : `${Math.max(0, set.qualification_threshold - set.comparison.comparison_round_count)} more shared rounds to qualify`}</em>
+      </a>
+    ))}
+  </section>
 
   {latestPublishedResult && latestResultRound && latestScoreChart.rows.length > 0 && (
     <>
@@ -459,7 +496,7 @@ const proofLinks = [
     <div>
       <span class="panel-kicker">Benchmark result paths</span>
       <h2 id="results-routes-title">Choose The Result View</h2>
-      <p>Latest pages show one completed round. Overall pages combine completed rounds within the same track.</p>
+      <p>Latest pages show one completed round. All-history pages are context. Comparison sets are the fair ranking view.</p>
     </div>
     <a class="section-profile-link" href="/rounds">All rounds</a>
   </section>

@@ -1,0 +1,148 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import TrackScorecard from "../../../components/TrackScorecard.astro";
+import apiReadModel from "../../../generated/apiReadModel.js";
+import { benchmarkSetToScorecard, buildBenchmarkSetsData } from "../../../lib/benchmarkSets";
+import type { TrackScorecardData } from "../../../lib/trackScorecard";
+
+export function getStaticPaths() {
+  return (buildBenchmarkSetsData(apiReadModel) as any).sets.map((set: any) => ({
+    params: { set_id: set.set_id },
+    props: { set }
+  }));
+}
+
+interface Props {
+  set: any;
+}
+
+const { set } = Astro.props as Props;
+const scorecard = benchmarkSetToScorecard(set) as TrackScorecardData | null;
+const status = set.is_current ? "Current Benchmark" : set.is_qualified ? "Qualified Comparison Set" : "Benchmark Forming";
+const trackLabel = set.track === "weekly" ? "Weekly" : "Monthly";
+const remainingRounds = Math.max(0, set.qualification_threshold - set.comparison.comparison_round_count);
+const title = `${set.label} | CapitalBench`;
+const description = `${set.label} ranks ${set.models.length} AI models only on shared ${set.track} rounds that every model completed.`;
+---
+
+<BaseLayout title={title} description={description}>
+  <PageHeader
+    eyebrow={`${trackLabel} comparison set`}
+    title={set.label}
+    summary={set.description || "A living equal-run comparison set for CapitalBench model rankings."}
+  />
+
+  <section class="section">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">{status}</span>
+          <h2>Fairness Scope</h2>
+          <p>
+            Every ranked model in this set is scored only on rounds that all {set.models.length} listed models completed.
+            If one model misses a resolved round, that round is excluded from this set for everyone.
+          </p>
+        </div>
+        <a class="action-link" href="/leaderboards/benchmark-sets">All comparison sets</a>
+      </div>
+      <div class="published-score-context" aria-label="Comparison set summary">
+        <span><strong>Shared rounds</strong>{set.comparison.comparison_round_count}</span>
+        <span><strong>Models</strong>{set.models.length}</span>
+        <span><strong>Threshold</strong>{set.qualification_threshold}</span>
+        <span><strong>Status</strong>{status}</span>
+      </div>
+    </div>
+  </section>
+
+  {scorecard ? (
+    <section class="section">
+      <TrackScorecard scorecard={scorecard} />
+    </section>
+  ) : (
+    <section class="section">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <span class="panel-kicker">Waiting for shared results</span>
+            <h2>No Shared Resolved Rounds Yet</h2>
+            <p>
+              This set will show a chart after the first resolved {set.track} round where every listed model has an official result.
+              It becomes the Current {trackLabel} Benchmark after {set.qualification_threshold} shared resolved rounds.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Roster</span>
+          <h2>Models In This Set</h2>
+          <p>This roster stays fixed so the set can keep growing as a clean equal-run comparison.</p>
+        </div>
+      </div>
+      <div class="results-route-grid" aria-label="Models in comparison set">
+        {set.models.map((model: any) => (
+          <a class="results-route-card" href={`/models/${model.model_id}/`}>
+            <span class="panel-kicker">{model.provider_label}</span>
+            <strong>{model.label}</strong>
+            <p>{model.model_id}</p>
+            <em>{set.comparison.comparison_round_count} shared rounds in this set</em>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Round audit</span>
+          <h2>Included And Excluded Rounds</h2>
+          <p>
+            Included rounds count toward the score. Excluded rounds are resolved rounds after the set started where at least
+            one set model was missing.
+          </p>
+        </div>
+        {!set.is_qualified && (
+          <span class="status-badge status-pending">{remainingRounds} more to qualify</span>
+        )}
+      </div>
+      <div class="leaderboard-lanes-status-grid">
+        <div>
+          <strong>Included rounds</strong>
+          <span>{set.comparison.comparison_round_ids.length ? set.comparison.comparison_round_ids.join(", ") : "None yet"}</span>
+        </div>
+        <div>
+          <strong>Excluded for fairness</strong>
+          <span>
+            {set.excluded_rounds.length
+              ? set.excluded_rounds.map((round: any) => `${round.round_id} missing ${round.missing_model_ids.join(", ")}`).join("; ")
+              : "None"}
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Calculation</span>
+          <h2>How The Score Is Calculated</h2>
+          <p>
+            CapitalBench Score equals total model return across included shared rounds divided by total max-possible return
+            across those same rounds, multiplied by 100. Max possible is the best eligible asset in each included round in hindsight.
+          </p>
+        </div>
+        <a class="action-link" href="/scoring/#capitalbench-score">Scoring details</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

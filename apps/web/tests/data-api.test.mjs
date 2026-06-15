@@ -431,6 +431,7 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
   const optionId = apiReadModel.assets.find((row) => row.option_id === "SEMICONDUCTORS")?.option_id ?? apiReadModel.assets[0].option_id;
   const activeRoundId = latestRoundId("weekly", { status: "active" });
   const resolvedRoundId = latestRoundId("weekly", { status: "resolved" });
+  const benchmarkSetId = apiReadModel.benchmark_set_definitions.find((set) => set.track === "weekly")?.set_id ?? "weekly-set-2026-05-28";
   const sampleByOpenApiPath = new Map([
     ["/v1/positioning/active", "/api/v1/positioning/active?track=all&group_by=asset"],
     ["/v1/positioning/cumulative", `/api/v1/positioning/cumulative?track=weekly&model_id=${modelId}&group_by=asset`],
@@ -449,6 +450,8 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
     ["/v1/rounds/{round_id}/results", `/api/v1/rounds/${resolvedRoundId}/results`],
     ["/v1/leaderboards/latest", "/api/v1/leaderboards/latest?track=weekly"],
     ["/v1/leaderboards/cumulative", "/api/v1/leaderboards/cumulative?track=weekly"],
+    ["/v1/leaderboards/benchmark-sets", "/api/v1/leaderboards/benchmark-sets?track=weekly"],
+    ["/v1/leaderboards/benchmark-sets/{set_id}", `/api/v1/leaderboards/benchmark-sets/${benchmarkSetId}`],
     ["/v1/models", "/api/v1/models"],
     ["/v1/models/{model_id}", `/api/v1/models/${modelId}`],
     ["/v1/models/{model_id}/holdings", `/api/v1/models/${modelId}/holdings?track=all&scope=active`],

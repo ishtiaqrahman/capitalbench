@@ -48,6 +48,7 @@ const coreDataPaths = [
   "/leaderboards/latest/",
   "/leaderboards/latest-weekly/",
   "/leaderboards/latest-monthly/",
+  "/leaderboards/benchmark-sets/",
   "/leaderboards/cumulative-official/",
   "/leaderboards/cumulative-weekly/",
   "/leaderboards/cumulative-monthly/",

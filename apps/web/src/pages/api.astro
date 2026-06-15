@@ -112,6 +112,48 @@ const leaderboardExample = exampleBlock("/api/v1/leaderboards/latest?track=weekl
     : []
 });
 
+const benchmarkSetsBody = await apiBody("/api/v1/leaderboards/benchmark-sets?track=weekly");
+const benchmarkSetTop = benchmarkSetsBody.sets?.[0];
+const benchmarkSetsExample = exampleBlock("/api/v1/leaderboards/benchmark-sets?track=weekly", {
+  policy: benchmarkSetsBody.policy,
+  current: benchmarkSetsBody.current,
+  sets: benchmarkSetTop
+    ? [
+        {
+          set_id: benchmarkSetTop.set_id,
+          label: benchmarkSetTop.label,
+          track: benchmarkSetTop.track,
+          status: benchmarkSetTop.status,
+          is_current: benchmarkSetTop.is_current,
+          is_qualified: benchmarkSetTop.is_qualified,
+          qualification_threshold: benchmarkSetTop.qualification_threshold,
+          comparison: benchmarkSetTop.comparison,
+          leader: benchmarkSetTop.leader
+            ? {
+                model_id: benchmarkSetTop.leader.model_id,
+                label: benchmarkSetTop.leader.label,
+                capitalbench_score: benchmarkSetTop.leader.capitalbench_score
+              }
+            : null
+        }
+      ]
+    : []
+});
+
+const benchmarkSetDetailPath = benchmarkSetTop
+  ? `/api/v1/leaderboards/benchmark-sets/${benchmarkSetTop.set_id}`
+  : "/api/v1/leaderboards/benchmark-sets/weekly-set-2026-05-28";
+const benchmarkSetDetailBody = await apiBody(benchmarkSetDetailPath);
+const benchmarkSetDetailExample = exampleBlock(benchmarkSetDetailPath, {
+  set_id: benchmarkSetDetailBody.set_id,
+  label: benchmarkSetDetailBody.label,
+  track: benchmarkSetDetailBody.track,
+  model_ids: benchmarkSetDetailBody.model_ids,
+  comparison: benchmarkSetDetailBody.comparison,
+  excluded_rounds: benchmarkSetDetailBody.excluded_rounds,
+  data: benchmarkSetDetailBody.data?.slice(0, 2)
+});
+
 const latestActiveWeeklyRound = apiReadModel.rounds.find((round) => round.track === "weekly" && round.status === "active");
 if (!latestActiveWeeklyRound) {
   throw new Error("API docs concentration example requires an active weekly round in the generated read model.");
@@ -155,7 +197,9 @@ const endpointGroups = [
       ["GET", "/v1/rounds/{round_id}/live-performance", "Interim mark-to-market rows for an unresolved round."],
       ["GET", "/v1/rounds/{round_id}/results", "Resolved portfolio returns, S&P 500 returns, Portfolio Minus S&P 500, regret, and max-possible context."],
       ["GET", "/v1/leaderboards/latest", "Most recent scored weekly or monthly leaderboard."],
-      ["GET", "/v1/leaderboards/cumulative", "All resolved model results by track, ranked by CapitalBench Score where available."]
+      ["GET", "/v1/leaderboards/benchmark-sets", "Living equal-run comparison sets, including the current weekly and monthly benchmarks."],
+      ["GET", "/v1/leaderboards/benchmark-sets/{set_id}", "One comparison set with model roster, included rounds, excluded rounds, and CapitalBench Scores."],
+      ["GET", "/v1/leaderboards/cumulative", "All available resolved model history by track, with unequal histories marked where applicable."]
     ]
   },
   {
@@ -176,14 +220,16 @@ const endpointGroups = [
 
 const concepts = [
   ["Active", "Only unresolved rounds. Use this for live model positioning."],
-  ["Cumulative", "All saved allocations. Use this for model behavior and style analysis."],
+  ["Cumulative", "All saved allocations or all available result history. Use this for model behavior and context."],
+  ["Comparison Set", "A fixed model roster scored only on rounds every model in that roster completed."],
+  ["Current Benchmark", "The newest qualified comparison set for a track. Weekly qualifies at 6 shared rounds; monthly qualifies at 3."],
   ["Track", "Weekly and monthly rounds stay separate because they measure different horizons."],
   ["Positioning", "Portfolio weights aggregated by asset, category, model, or track."],
   ["Audit", "Round files, hashes, timestamps, prompt inputs, prices, and portfolio records."],
   ["Portfolio Minus S&P 500", "Model portfolio return minus the S&P 500 return, in percentage points."],
   ["CapitalBench Score", "Model return relative to the hindsight oracle; cumulative rows divide total model return by total oracle return."],
   ["AI Risk Appetite", "A 0–100 allocation signal calculated from the newest live weekly and monthly AI model portfolios. It does not use prices or returns."],
-  ["Resolved score set", "All completed rounds used for headline cumulative scores in the selected track."]
+  ["Shared Rounds", "Resolved rounds included in a comparison set because every set model has an official result."]
 ];
 
 const fields = [
@@ -399,6 +445,14 @@ const curlExample = `curl "https://www.capitalbench.org/api/v1/positioning/activ
           <article class="api-example">
             <h3>Latest Scored Test</h3>
             <pre><code>{leaderboardExample}</code></pre>
+          </article>
+          <article class="api-example">
+            <h3>Benchmark Comparison Sets</h3>
+            <pre><code>{benchmarkSetsExample}</code></pre>
+          </article>
+          <article class="api-example">
+            <h3>One Comparison Set</h3>
+            <pre><code>{benchmarkSetDetailExample}</code></pre>
           </article>
           <article class="api-example">
             <h3>Run Concentration</h3>

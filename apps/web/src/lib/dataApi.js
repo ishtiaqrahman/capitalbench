@@ -1,4 +1,5 @@
 import apiReadModel from "../generated/apiReadModel.js";
+import { benchmarkSetById, buildBenchmarkSetsData } from "./benchmarkSets.js";
 import { cumulativeCapitalBenchScore } from "./capitalBenchScore.js";
 
 const API_VERSION = "v1";
@@ -797,6 +798,22 @@ function cumulativeLeaderboard(url) {
   return jsonApiResult(200, buildCumulativeLeaderboardData(apiReadModel, track));
 }
 
+function benchmarkSetsLeaderboard(url) {
+  const track = normalizedTrack(url);
+  if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  const body = buildBenchmarkSetsData(apiReadModel);
+  return jsonApiResult(200, {
+    ...body,
+    sets: track === "all" ? body.sets : body.sets.filter((set) => set.track === track)
+  });
+}
+
+function benchmarkSetDetails(setId) {
+  const set = benchmarkSetById(apiReadModel, setId);
+  if (!set) return errorResult(404, "not_found", "Benchmark comparison set not found.");
+  return jsonApiResult(200, set);
+}
+
 function listRounds(url) {
   const track = normalizedTrack(url);
   if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
@@ -994,6 +1011,8 @@ function indexResponse() {
       "/v1/rounds/{round_id}/results",
       "/v1/leaderboards/latest",
       "/v1/leaderboards/cumulative",
+      "/v1/leaderboards/benchmark-sets",
+      "/v1/leaderboards/benchmark-sets/{set_id}",
       "/v1/models",
       "/v1/models/{model_id}",
       "/v1/models/{model_id}/holdings",
@@ -1036,6 +1055,8 @@ function routeGet(request) {
   if (parts[0] === "leaderboards") {
     if (parts[1] === "latest") return latestLeaderboard(url);
     if (parts[1] === "cumulative") return cumulativeLeaderboard(url);
+    if (parts[1] === "benchmark-sets" && parts.length === 2) return benchmarkSetsLeaderboard(url);
+    if (parts[1] === "benchmark-sets" && parts[2]) return benchmarkSetDetails(parts[2]);
   }
 
   if (parts[0] === "models") {

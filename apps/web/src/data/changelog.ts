@@ -26,6 +26,27 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-15-equal-run-benchmark-sets",
+    date: "2026-06-15",
+    title: "Equal-run benchmark sets added",
+    category: "Benchmark",
+    status: "published",
+    summary:
+      "CapitalBench now publishes fair weekly and monthly benchmark sets that compare only models sharing the same resolved rounds.",
+    details: [
+      "The homepage and leaderboard pages now surface current weekly and monthly benchmark sets scored against the same oracle-relative CapitalBench Score scale.",
+      "Dedicated benchmark-set pages show fixed rosters, shared included rounds, fairness exclusions, and score calculations for each set.",
+      "Model profile pages now show the benchmark sets each model belongs to, with filters and focused score charts for weekly and monthly comparisons.",
+      "New official run rosters automatically open a set only when no existing set for that track already contains the models in the run.",
+      "Temporary model outages do not create smaller sets; those rounds remain covered by the larger roster and are excluded from that set until every required model has an official result."
+    ],
+    links: [
+      { label: "Benchmark sets", href: "/leaderboards/benchmark-sets" },
+      { label: "Scoring", href: "/scoring#capitalbench-score" },
+      { label: "Models", href: "/models" }
+    ]
+  },
+  {
     id: "2026-06-09-claude-fable-5-added",
     date: "2026-06-09",
     title: "Claude Fable 5 joins CapitalBench",

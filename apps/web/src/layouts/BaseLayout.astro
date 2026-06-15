@@ -27,6 +27,7 @@ interface Props {
   imageAlt?: string;
   noindex?: boolean;
   hideFooterSignup?: boolean;
+  hideEmailAlertWidget?: boolean;
   freshnessTrack?: "weekly" | "monthly";
   structuredData?: JsonLdRecord | JsonLdRecord[];
 }
@@ -40,6 +41,7 @@ const {
   imageAlt = siteConfig.ogImageAlt,
   noindex = routeMeta?.noindex ?? false,
   hideFooterSignup = false,
+  hideEmailAlertWidget = false,
   freshnessTrack,
   structuredData = []
 } = Astro.props;
@@ -101,8 +103,9 @@ const navItems = [
     analyticsEvent: "contribute_click"
   }
 ];
-const emailWidgetContext =
-  currentPath === "/"
+const emailWidgetContext = hideEmailAlertWidget
+  ? null
+  : currentPath === "/"
     ? "home"
     : currentPath.startsWith("/rounds")
       ? "round"
@@ -202,6 +205,7 @@ const emailWidgetContext =
                 }
                 <a href="/leaderboards/latest-weekly">Weekly Results</a>
                 <a href="/leaderboards/latest-monthly">Monthly Results</a>
+                <a href="/leaderboards/benchmark-sets">Comparison Sets</a>
                 <a href="/leaderboards/cumulative-weekly">Overall Weekly</a>
                 <a href="/leaderboards/cumulative-monthly">Overall Monthly</a>
               </div>

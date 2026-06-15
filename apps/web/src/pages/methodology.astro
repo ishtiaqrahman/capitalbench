@@ -394,8 +394,14 @@ const earlierUniverseText = joinWithAnd(
           scored option, 0 means no net return, and negative values preserve losses. Overall scores divide summed model returns by summed oracle returns.
         </p>
         <p>
-          Overall track scorecards combine all resolved rounds in the track. If a model is added later, it is shown with
-          fewer included rounds and marked short history instead of being backfilled into older rounds.
+          Benchmark Comparison Sets are the fair headline ranking system. A set has a fixed model roster and includes only
+          resolved rounds where every model in that roster has an official result. If one model misses a round, that round
+          is excluded from the set for everyone.
+        </p>
+        <p>
+          All-available history remains useful context, but it is not the headline fair ranking when model histories differ.
+          Weekly comparison sets become the Current Benchmark at 6 shared resolved rounds. Monthly comparison sets become
+          the Current Benchmark at 3 shared resolved rounds.
         </p>
         <p>
           Interim tracking can be generated from reusable price snapshots after the start date and before the final end
@@ -410,6 +416,24 @@ const earlierUniverseText = joinWithAnd(
   --full-universe</code></pre>
       </section>
 
+      <section id="comparison-sets">
+        <h2>Benchmark Comparison Sets</h2>
+        <div class="leaderboard-defs">
+          <div>
+            <h3>Comparison Set</h3>
+            <p>A fixed model roster scored only on shared rounds completed by every model in the set.</p>
+          </div>
+          <div>
+            <h3>Current Benchmark</h3>
+            <p>The newest qualified comparison set for a track. Weekly qualifies at 6 shared rounds; monthly qualifies at 3.</p>
+          </div>
+          <div>
+            <h3>Excluded For Fairness</h3>
+            <p>If a set model misses a resolved round, that round is excluded from that set for every model.</p>
+          </div>
+        </div>
+      </section>
+
       <section id="leaderboards">
         <h2>Benchmark Result Definitions</h2>
         <div class="leaderboard-defs">
@@ -418,8 +442,8 @@ const earlierUniverseText = joinWithAnd(
             <p>Newest completed public run only. If the latest round is pending, model portfolios may be shown but final performance is withheld.</p>
           </div>
           <div>
-            <h3>Overall Benchmark Result</h3>
-            <p>Average CapitalBench Score across all resolved rounds in a track. New models show fewer included rounds until they build history.</p>
+            <h3>All Available History</h3>
+            <p>Context across all resolved rounds in a track. This view can include unequal model histories.</p>
           </div>
           <div>
             <h3>Consistency Result</h3>

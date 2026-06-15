@@ -1,8 +1,12 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ModelLiveHoldings from "../../components/ModelLiveHoldings";
+import TrackScorecard from "../../components/TrackScorecard.astro";
+import apiReadModel from "../../generated/apiReadModel.js";
 import { staticAllWeeklyPerformance } from "../../lib/localRoundRecords";
+import { benchmarkSetToScorecard, benchmarkSetsForModel } from "../../lib/benchmarkSets";
 import { siteConfig } from "../../lib/seo";
+import type { TrackScorecardData } from "../../lib/trackScorecard";
 import { staticModelProfiles, type ModelResultRow, type ModelTrackScore } from "../../lib/modelProfiles";
 
 export function getStaticPaths() {
@@ -29,6 +33,23 @@ const liveMarkTrackRows = (["weekly", "monthly"] as const).map((track) => {
     averageAlpha: averageDecimal(rows.map((row) => row.alpha_vs_sp500))
   };
 });
+const modelBenchmarkSets = benchmarkSetsForModel(apiReadModel, profile.modelId);
+const modelBenchmarkSetCards = modelBenchmarkSets.map((set: any) => ({
+  set,
+  status: benchmarkSetStatus(set),
+  scorecard: benchmarkSetToScorecard(set) as TrackScorecardData | null,
+  modelRow: set.model_row ?? null
+}));
+const modelBenchmarkFilters = [
+  { key: "all", label: "All", count: modelBenchmarkSetCards.length },
+  { key: "weekly", label: "Weekly", count: modelBenchmarkSetCards.filter((item: any) => item.set.track === "weekly").length },
+  { key: "monthly", label: "Monthly", count: modelBenchmarkSetCards.filter((item: any) => item.set.track === "monthly").length },
+  {
+    key: "active",
+    label: "Current/Qualified",
+    count: modelBenchmarkSetCards.filter((item: any) => item.set.is_current || item.set.is_qualified).length
+  }
+];
 
 function pctDecimal(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
@@ -102,6 +123,37 @@ function latestLiveMarkRows(modelId: string) {
 function scorecardLabel(scorecard: ModelTrackScore): string {
   if (scorecard.completedTests === 0) return "No completed rounds";
   return `${scorecard.wins} wins / ${scorecard.completedTests} completed`;
+}
+
+function benchmarkSetStatus(set: any): string {
+  if (set.is_current) return "Current";
+  if (set.is_qualified) return "Qualified";
+  if (set.comparison.comparison_round_count > 0) return "Forming";
+  return "Waiting";
+}
+
+function benchmarkSetTitle(set: any): string {
+  return String(set.label).replace(/^(Weekly|Monthly) Set:\s*/, "");
+}
+
+function benchmarkSetTrackLabel(track: string): string {
+  return track === "weekly" ? "Weekly" : "Monthly";
+}
+
+function modelSetRankLabel(row: any): string {
+  return row?.rank ? `#${row.rank}` : "n/a";
+}
+
+function modelSetScoreLabel(row: any): string {
+  return typeof row?.capitalbench_score === "number" && Number.isFinite(row.capitalbench_score)
+    ? row.capitalbench_score.toFixed(1)
+    : "n/a";
+}
+
+function modelSetReturnLabel(row: any): string {
+  return typeof row?.total_portfolio_return_pct === "number" && Number.isFinite(row.total_portfolio_return_pct)
+    ? pctValue(row.total_portfolio_return_pct)
+    : "n/a";
 }
 
 function alphaBarStyle(row: ModelResultRow): string {
@@ -288,6 +340,191 @@ function alphaBarStyle(row: ModelResultRow): string {
       );
     })}
   </section>
+
+  {modelBenchmarkSetCards.length > 0 && (
+    <section class="section model-benchmark-sets" id="benchmark-sets" aria-labelledby="model-benchmark-sets-title" data-model-benchmark-sets>
+      <div class="model-section-heading">
+        <div>
+          <span class="panel-kicker">Equal-run benchmark sets</span>
+          <h2 id="model-benchmark-sets-title">Benchmark Sets Including This Model</h2>
+        </div>
+        <p>These are the equal-run rankings this model belongs to. Each set compares a fixed roster only on rounds every model in that roster completed.</p>
+      </div>
+
+      <div class="model-benchmark-set-shell">
+        <div class="model-benchmark-set-controls">
+          <div class="model-benchmark-set-filters" aria-label="Filter benchmark sets for this model">
+            {modelBenchmarkFilters.map((filter) => (
+              <button
+                class:list={["model-benchmark-filter", filter.key === "all" && "is-active"]}
+                type="button"
+                data-model-set-filter={filter.key}
+                aria-pressed={filter.key === "all" ? "true" : "false"}
+                disabled={filter.count === 0}
+              >
+                <span>{filter.label}</span>
+                <strong>{filter.count}</strong>
+              </button>
+            ))}
+          </div>
+
+          <div class="model-benchmark-set-tabs" role="tablist" aria-label={`${profile.label} benchmark sets`}>
+            {modelBenchmarkSetCards.map((item: any, index: number) => (
+              <button
+                id={`model-set-tab-${item.set.set_id}`}
+                class:list={["model-benchmark-set-tab", index === 0 && "is-active"]}
+                type="button"
+                role="tab"
+                aria-selected={index === 0 ? "true" : "false"}
+                aria-controls={`model-set-panel-${item.set.set_id}`}
+                tabindex={index === 0 ? "0" : "-1"}
+                data-model-set-tab={item.set.set_id}
+                data-track={item.set.track}
+                data-status={item.set.status}
+              >
+                <span>{benchmarkSetTrackLabel(item.set.track)} · {item.status}</span>
+                <strong>{benchmarkSetTitle(item.set)}</strong>
+                <em>{item.set.comparison.comparison_round_count} shared {item.set.comparison.comparison_round_count === 1 ? "round" : "rounds"}</em>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="model-benchmark-set-panels">
+          {modelBenchmarkSetCards.map((item: any, index: number) => (
+            <article
+              id={`model-set-panel-${item.set.set_id}`}
+              class="model-benchmark-set-panel"
+              role="tabpanel"
+              aria-labelledby={`model-set-tab-${item.set.set_id}`}
+              data-model-set-panel={item.set.set_id}
+              data-track={item.set.track}
+              data-status={item.set.status}
+              hidden={index !== 0}
+            >
+              <div class="model-benchmark-set-panel-head">
+                <div>
+                  <span class={`model-benchmark-status model-benchmark-status-${item.set.status}`}>
+                    {benchmarkSetTrackLabel(item.set.track)} · {item.status}
+                  </span>
+                  <h3>{benchmarkSetTitle(item.set)} roster</h3>
+                  <p>{item.set.description}</p>
+                </div>
+                <a class="small-button" href={`/leaderboards/benchmark-sets/${item.set.set_id}/`}>Open full set</a>
+              </div>
+
+              <div class="model-benchmark-set-metrics" aria-label={`${profile.label} ${item.set.label} metrics`}>
+                <span>
+                  <strong>{modelSetRankLabel(item.modelRow)}</strong>
+                  <em>Rank in set</em>
+                </span>
+                <span>
+                  <strong>{modelSetScoreLabel(item.modelRow)}</strong>
+                  <em>CapitalBench Score</em>
+                </span>
+                <span>
+                  <strong>{modelSetReturnLabel(item.modelRow)}</strong>
+                  <em>Total return</em>
+                </span>
+                <span>
+                  <strong>{item.set.comparison.comparison_round_count}</strong>
+                  <em>Shared rounds</em>
+                </span>
+              </div>
+
+              {item.scorecard ? (
+                <TrackScorecard scorecard={item.scorecard} compact focusModelId={profile.modelId} />
+              ) : (
+                <div class="model-benchmark-empty">
+                  <strong>This set is waiting for its first shared resolved round.</strong>
+                  <span>
+                    The chart appears after every model in the {item.set.models.length}-model roster has an official result in the same {benchmarkSetTrackLabel(item.set.track).toLowerCase()} round.
+                  </span>
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <script is:inline>
+        if (!window.__capitalbenchModelBenchmarkSets) {
+          window.__capitalbenchModelBenchmarkSets = true;
+
+          function setupModelBenchmarkSets(root) {
+            const filters = Array.from(root.querySelectorAll("[data-model-set-filter]"));
+            const tabs = Array.from(root.querySelectorAll("[data-model-set-tab]"));
+            const panels = Array.from(root.querySelectorAll("[data-model-set-panel]"));
+
+            function matchesFilter(element, filter) {
+              if (filter === "all") return true;
+              if (filter === "weekly" || filter === "monthly") return element.dataset.track === filter;
+              if (filter === "active") return element.dataset.status === "current" || element.dataset.status === "qualified";
+              return true;
+            }
+
+            function selectSet(setId) {
+              if (!setId) return;
+              tabs.forEach((tab) => {
+                const active = tab.dataset.modelSetTab === setId;
+                tab.classList.toggle("is-active", active);
+                tab.setAttribute("aria-selected", active ? "true" : "false");
+                tab.setAttribute("tabindex", active ? "0" : "-1");
+              });
+              panels.forEach((panel) => {
+                panel.hidden = panel.dataset.modelSetPanel !== setId;
+              });
+            }
+
+            function applyFilter(filter) {
+              let firstVisibleTab = null;
+              filters.forEach((button) => {
+                const active = button.dataset.modelSetFilter === filter;
+                button.classList.toggle("is-active", active);
+                button.setAttribute("aria-pressed", active ? "true" : "false");
+              });
+              tabs.forEach((tab) => {
+                const visible = matchesFilter(tab, filter);
+                tab.hidden = !visible;
+                if (visible && !firstVisibleTab) firstVisibleTab = tab;
+              });
+              panels.forEach((panel) => {
+                panel.dataset.filterHidden = matchesFilter(panel, filter) ? "false" : "true";
+              });
+              const activeTab = tabs.find((tab) => tab.classList.contains("is-active") && !tab.hidden);
+              selectSet(activeTab?.dataset.modelSetTab || firstVisibleTab?.dataset.modelSetTab);
+            }
+
+            tabs.forEach((tab) => {
+              tab.addEventListener("click", () => selectSet(tab.dataset.modelSetTab));
+              tab.addEventListener("keydown", (event) => {
+                if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+                event.preventDefault();
+                const visibleTabs = tabs.filter((item) => !item.hidden);
+                const currentIndex = visibleTabs.indexOf(tab);
+                const nextIndex =
+                  event.key === "Home"
+                    ? 0
+                    : event.key === "End"
+                      ? visibleTabs.length - 1
+                      : event.key === "ArrowRight"
+                        ? (currentIndex + 1) % visibleTabs.length
+                        : (currentIndex - 1 + visibleTabs.length) % visibleTabs.length;
+                visibleTabs[nextIndex]?.focus();
+                selectSet(visibleTabs[nextIndex]?.dataset.modelSetTab);
+              });
+            });
+
+            filters.forEach((button) => {
+              button.addEventListener("click", () => applyFilter(button.dataset.modelSetFilter || "all"));
+            });
+          }
+
+          document.querySelectorAll("[data-model-benchmark-sets]").forEach(setupModelBenchmarkSets);
+        }
+      </script>
+    </section>
+  )}
 
   <section class="section model-performance-panel" aria-labelledby="model-performance-title">
     <div class="model-section-heading">

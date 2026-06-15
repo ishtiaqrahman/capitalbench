@@ -254,11 +254,16 @@ The cumulative official view also includes average model return, S&P 500
 comparison, hit rates, regret, and cost summaries when cost data exists. Those
 fields are supporting context, not the primary benchmark score.
 
-Models may have different `resolved_rounds` counts because new models enter
-only in future rounds. CapitalBench does not backfill new models into old
-official rounds. The primary cumulative scorecard ranks full-history models
-first by cumulative CapitalBench Score and labels shorter histories separately.
-Supporting alpha tables may sort by average alpha versus the S&P 500.
+All-available history may have different `resolved_rounds` counts because new
+models enter only in future rounds. CapitalBench does not backfill new models
+into old official rounds. Fair headline rankings use Benchmark Comparison Sets:
+a fixed model roster scored only on rounds every model in that roster completed.
+If one set model misses a round, that round is excluded from the set for
+everyone. New official rosters open a set automatically only when no existing
+set for that track already contains the models in that run. Weekly sets become
+the Current Benchmark at 6 shared resolved rounds; monthly sets become the
+Current Benchmark at 3 shared resolved rounds. See
+[`docs/benchmark-sets.md`](benchmark-sets.md).
 
 ## Cumulative Stability Leaderboard
 

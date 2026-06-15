@@ -1,0 +1,225 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import TrackScorecard from "../../../components/TrackScorecard.astro";
+import apiReadModel from "../../../generated/apiReadModel.js";
+import { benchmarkSetToScorecard, buildBenchmarkSetsData, featuredBenchmarkSet } from "../../../lib/benchmarkSets";
+import type { TrackScorecardData } from "../../../lib/trackScorecard";
+
+const benchmarkSets = buildBenchmarkSetsData(apiReadModel) as any;
+const featuredScorecards = ["weekly", "monthly"]
+  .map((track) => benchmarkSetToScorecard(featuredBenchmarkSet(apiReadModel, track)) as TrackScorecardData | null)
+  .filter((scorecard): scorecard is TrackScorecardData => scorecard !== null);
+
+const statusPriority: Record<string, number> = {
+  current: 0,
+  qualified: 1,
+  forming: 2,
+  waiting: 3
+};
+const trackPriority: Record<string, number> = {
+  weekly: 0,
+  monthly: 1
+};
+
+function statusKey(set: any) {
+  if (set.is_current) return "current";
+  if (set.is_qualified) return "qualified";
+  if (set.comparison.comparison_round_count > 0) return "forming";
+  return "waiting";
+}
+
+function statusLabel(set: any) {
+  if (set.is_current) return "Current Benchmark";
+  if (set.is_qualified) return "Qualified";
+  if (set.comparison.comparison_round_count > 0) return "Forming";
+  return "Waiting";
+}
+
+function setDateLabel(set: any) {
+  return String(set.label).replace(/^(Weekly|Monthly) Set:\s*/, "");
+}
+
+function progressValue(set: any) {
+  return set.is_qualified ? "Met" : `${set.comparison.comparison_round_count}/${set.qualification_threshold}`;
+}
+
+function progressLabel(set: any) {
+  if (set.is_current) return "current threshold";
+  if (set.is_qualified) return `${set.qualification_threshold}+ threshold`;
+  const remaining = Math.max(0, set.qualification_threshold - set.comparison.comparison_round_count);
+  return `${remaining} more to qualify`;
+}
+
+const setRows = [...benchmarkSets.sets].sort(
+  (left: any, right: any) =>
+    statusPriority[statusKey(left)] - statusPriority[statusKey(right)] ||
+    trackPriority[left.track] - trackPriority[right.track] ||
+    String(right.started_at ?? "").localeCompare(String(left.started_at ?? ""))
+);
+const filterOptions = [
+  { key: "all", label: "All", count: setRows.length },
+  { key: "weekly", label: "Weekly", count: setRows.filter((set: any) => set.track === "weekly").length },
+  { key: "monthly", label: "Monthly", count: setRows.filter((set: any) => set.track === "monthly").length },
+  { key: "active", label: "Current/Qualified", count: setRows.filter((set: any) => set.is_current || set.is_qualified).length }
+];
+---
+
+<BaseLayout
+  title="Benchmark Sets | CapitalBench"
+  description="CapitalBench comparison sets rank AI models only on equal-run weekly or monthly benchmark rounds."
+  hideEmailAlertWidget={true}
+>
+  <PageHeader
+    eyebrow="Fair model comparisons"
+    title="Benchmark Sets"
+    summary="Equal-run rankings for fixed model rosters using only shared completed rounds."
+    className="benchmark-set-page-header"
+  />
+
+  <section class="section benchmark-set-index-section" aria-labelledby="all-benchmark-sets-title">
+    <div class="panel benchmark-set-index-panel" data-benchmark-set-browser>
+      <div class="benchmark-set-index-head">
+        <div>
+          <span class="panel-kicker">Living equal-run rosters</span>
+          <h2 id="all-benchmark-sets-title">All Benchmark Sets</h2>
+          <p>
+            Older sets keep accumulating shared rounds. New official rosters are opened automatically only when no
+            existing set already contains the models in that run. Sets qualify at {benchmarkSets.policy.qualification_thresholds.weekly} weekly shared rounds or {benchmarkSets.policy.qualification_thresholds.monthly} monthly shared rounds.
+          </p>
+        </div>
+        <a class="action-link" href="/methodology/#comparison-sets">Methodology</a>
+      </div>
+
+      <div class="benchmark-set-filters" aria-label="Filter benchmark sets">
+        {filterOptions.map((option) => (
+          <button
+            class:list={["benchmark-set-filter", option.key === "all" && "is-active"]}
+            type="button"
+            data-benchmark-set-filter={option.key}
+            aria-pressed={option.key === "all" ? "true" : "false"}
+          >
+            <span>{option.label}</span>
+            <strong>{option.count}</strong>
+          </button>
+        ))}
+      </div>
+
+      <div class="benchmark-set-list" aria-label="All benchmark comparison sets">
+        <div class="benchmark-set-list-head" aria-hidden="true">
+          <span>Set</span>
+          <span>Shared comparison</span>
+          <span>Action</span>
+        </div>
+        {setRows.map((set: any) => {
+          const sharedRounds = set.comparison.comparison_round_count;
+          const status = statusKey(set);
+          return (
+            <a
+              class:list={["benchmark-set-row", `benchmark-set-row-${set.track}`, `benchmark-set-row-state-${status}`]}
+              href={`/leaderboards/benchmark-sets/${set.set_id}/`}
+              data-benchmark-set-row
+              data-track={set.track}
+              data-status={status}
+            >
+              <div class="benchmark-set-main">
+                <div class="benchmark-set-tags">
+                  <span class="benchmark-set-track">{set.track === "weekly" ? "Weekly" : "Monthly"}</span>
+                  <span class={`benchmark-set-status benchmark-set-status-${status}`}>{statusLabel(set)}</span>
+                </div>
+                <strong>{setDateLabel(set)} roster</strong>
+                <p>{set.description}</p>
+              </div>
+              <div class="benchmark-set-metrics" aria-label={`${set.label} metrics`}>
+                <span>
+                  <strong>{sharedRounds}</strong>
+                  <em>shared rounds</em>
+                </span>
+                <span>
+                  <strong>{set.models.length}</strong>
+                  <em>models</em>
+                </span>
+                <span>
+                  <strong>{progressValue(set)}</strong>
+                  <em>{progressLabel(set)}</em>
+                </span>
+              </div>
+              <span class="benchmark-set-open">Open set</span>
+            </a>
+          );
+        })}
+      </div>
+      <p class="benchmark-set-empty" data-benchmark-set-empty hidden>No benchmark sets match this filter.</p>
+    </div>
+  </section>
+
+  <section class="section benchmark-set-rules-section" aria-labelledby="benchmark-set-rules-title">
+    <div class="benchmark-set-rule-panel">
+      <div>
+        <span class="panel-kicker">Selection rule</span>
+        <h2 id="benchmark-set-rules-title">How A Set Becomes Current</h2>
+      </div>
+      <div class="benchmark-set-rule-grid">
+        <span>
+          <strong>Fixed roster</strong>
+          <em>A set starts when the model roster changes.</em>
+        </span>
+        <span>
+          <strong>Missed rounds excluded</strong>
+          <em>If one set model is missing, that round is excluded for everyone.</em>
+        </span>
+        <span>
+          <strong>Newest qualified wins</strong>
+          <em>The newest qualified weekly or monthly set becomes current automatically.</em>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  {featuredScorecards.length > 0 && (
+    <section class="section benchmark-set-featured-section" aria-labelledby="benchmark-set-featured-title">
+      <div class="home-section-heading">
+        <span class="panel-kicker">Benchmark charts</span>
+        <h2 id="benchmark-set-featured-title">Featured Equal-Run Results</h2>
+        <p>The index above is the source of truth for all sets. These charts show the current weekly set and the best available monthly set.</p>
+      </div>
+      <div class="track-scorecard-stack results-scorecard-stack">
+        {featuredScorecards.map((scorecard) => <TrackScorecard scorecard={scorecard} />)}
+      </div>
+    </section>
+  )}
+
+  <script is:inline>
+    document.querySelectorAll("[data-benchmark-set-browser]").forEach((root) => {
+      const buttons = Array.from(root.querySelectorAll("[data-benchmark-set-filter]"));
+      const rows = Array.from(root.querySelectorAll("[data-benchmark-set-row]"));
+      const empty = root.querySelector("[data-benchmark-set-empty]");
+
+      function rowMatches(row, filter) {
+        if (filter === "all") return true;
+        if (filter === "weekly" || filter === "monthly") return row.dataset.track === filter;
+        if (filter === "active") return row.dataset.status === "current" || row.dataset.status === "qualified";
+        return true;
+      }
+
+      function applyFilter(filter) {
+        let visibleCount = 0;
+        rows.forEach((row) => {
+          const visible = rowMatches(row, filter);
+          row.hidden = !visible;
+          if (visible) visibleCount += 1;
+        });
+        buttons.forEach((button) => {
+          const active = button.dataset.benchmarkSetFilter === filter;
+          button.classList.toggle("is-active", active);
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        if (empty) empty.hidden = visibleCount > 0;
+      }
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => applyFilter(button.dataset.benchmarkSetFilter || "all"));
+      });
+    });
+  </script>
+</BaseLayout>

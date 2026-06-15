@@ -10,13 +10,13 @@ const scorecard = buildTrackScorecard(staticRoundRecords(), "weekly");
 ---
 
 <BaseLayout
-  title="Overall Weekly CapitalBench Results"
-  description="Overall CapitalBench results for completed one-week market rounds only."
+  title="All Available Weekly History | CapitalBench"
+  description="All available weekly CapitalBench history for completed one-week market rounds."
 >
   <PageHeader
     eyebrow="One-week rounds"
-    title="Overall Weekly Results"
-    summary="Total model return compared with total oracle return across every resolved one-week round. Monthly rounds are scored separately."
+    title="All Available Weekly History"
+    summary="Context across every resolved one-week round. Fair model-vs-model rankings use equal-run comparison sets."
   />
   {scorecard ? (
     <section class="section">
@@ -33,9 +33,9 @@ const scorecard = buildTrackScorecard(staticRoundRecords(), "weekly");
         <div>
           <span class="panel-kicker">Scope</span>
           <h2>What This Scorecard Includes</h2>
-          <p>Average raw return, S&amp;P 500 context, and max-possible return context are shown across the same resolved weekly rounds. Consistency checks stay separate.</p>
+          <p>This all-history view can include unequal model histories. Use Benchmark Comparison Sets for the fair headline ranking where every model has the exact same included rounds.</p>
         </div>
-        <a class="action-link" href="/leaderboards/cumulative-stability">Consistency results</a>
+        <a class="action-link" href="/leaderboards/benchmark-sets">Comparison sets</a>
       </div>
     </div>
   </section>
