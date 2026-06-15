@@ -189,14 +189,28 @@ const outstandingBookRisk = liveRiskSnapshot.outstanding_live_book;
 const riskPulseTopAssets = currentRiskPulse.top_assets.slice(0, 6);
 const riskPulseRegimes = currentRiskPulse.regime_exposure.slice(0, 5);
 const riskChangeValue = Number(currentRiskPulse.change_from_previous);
-const riskChangeDirection =
+const riskCurrentDateLabel = pairedPulseDateLabel(currentRiskPulse.weekly?.decision_date, currentRiskPulse.monthly?.decision_date);
+const riskPreviousDateLabel = pairedPulseDateLabel(
+  dateFromRoundId(currentRiskPulse.previous_round_ids?.weekly),
+  dateFromRoundId(currentRiskPulse.previous_round_ids?.monthly)
+);
+const riskPreviousScore = Number(currentRiskPulse.previous_score);
+const riskChangeLabel = riskPreviousDateLabel ? `Change vs ${riskPreviousDateLabel} portfolios` : "Change vs earlier portfolios";
+const riskChangeVerb =
   Number.isFinite(riskChangeValue) && riskChangeValue > 0
-    ? "Models are allocating more aggressively than in the last frozen live portfolios."
+    ? "up"
     : Number.isFinite(riskChangeValue) && riskChangeValue < 0
-      ? "Models are allocating more defensively than in the last frozen live portfolios."
-      : Number.isFinite(riskChangeValue)
-        ? "Models are taking about the same amount of risk as the last frozen live portfolios."
-        : "No prior live portfolio comparison is available yet.";
+      ? "down"
+      : "unchanged";
+const riskChangeDirection =
+  Number.isFinite(riskChangeValue) &&
+  Number.isFinite(Number(currentRiskPulse.score)) &&
+  Number.isFinite(riskPreviousScore) &&
+  riskCurrentDateLabel &&
+  riskPreviousDateLabel
+    ? `${riskCurrentDateLabel} portfolios scored ${pulseScore(currentRiskPulse.score)}/100 for risk-taking, ${riskChangeVerb} from ${pulseScore(riskPreviousScore)}/100 on ${riskPreviousDateLabel}.`
+    : "No earlier weekly + monthly portfolio set is available for comparison yet.";
+const riskCalculationHref = "/risk-appetite/#risk-calculation-title";
 const riskChangeClass =
   Number.isFinite(riskChangeValue) && riskChangeValue > 0
     ? "is-risk-on"
@@ -367,11 +381,11 @@ function windowLabel(round?: RoundRecord): string {
   return `${dateOnly(round.entry_date)} to ${dateOnly(round.exit_date)}`;
 }
 
-function scoreLine(round?: RoundRecord): string {
-  if (!round) return "No score window declared yet.";
-  if (round.status === "resolved") return "Scores are published.";
-  if (round.status === "overdue") return `Resolution is due; the ${dateOnly(round.exit_date)} ending close has passed.`;
-  return `Results publish after the ${dateOnly(round.exit_date)} ending close.`;
+function calendarStatusLabel(round?: RoundRecord): string {
+  if (!round) return "Awaiting next test";
+  if (round.status === "resolved") return "Scores published";
+  if (round.status === "overdue") return "Score due";
+  return "Live now";
 }
 
 function shortMonthDay(value?: string): string {
@@ -381,6 +395,56 @@ function shortMonthDay(value?: string): string {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(
     new Date(Date.UTC(year, month - 1, day))
   );
+}
+
+function dateFromRoundId(roundId?: string | null): string {
+  const match = roundId?.match(/^CB-(\d{4}-\d{2}-\d{2})-/);
+  return match?.[1] ?? "";
+}
+
+function pairedPulseDateLabel(weeklyDate?: string, monthlyDate?: string): string {
+  const weekly = shortMonthDay(weeklyDate);
+  const monthly = shortMonthDay(monthlyDate);
+  if (weekly && monthly && weekly === monthly) return weekly;
+  if (weekly && monthly) return `${weekly} weekly + ${monthly} monthly`;
+  return weekly || monthly || "";
+}
+
+function lockDateLabel(round?: RoundRecord): string {
+  return round ? shortMonthDay(round.decision_deadline_utc || round.decision_date) : "Pending";
+}
+
+function marketWindowCalendarLabel(round?: RoundRecord): string {
+  if (!round) return "No window declared";
+  return `${shortMonthDay(round.entry_date)} close to ${shortMonthDay(round.exit_date)} close`;
+}
+
+function calendarScoreDateLabel(round?: RoundRecord): string {
+  if (!round) return "Not scheduled";
+  if (round.status === "resolved") return `Published after ${shortMonthDay(round.exit_date)} close`;
+  if (round.status === "overdue") return `Due after ${shortMonthDay(round.exit_date)} close`;
+  return `After ${shortMonthDay(round.exit_date)} close`;
+}
+
+function liveTestDescription(track: BenchmarkTrack): string {
+  if (track === "weekly") return "Short-term test of AI positioning over one market week.";
+  return "Longer test of AI allocation over one month.";
+}
+
+function liveTestStateLabel(round?: RoundRecord): string {
+  if (!round) return "Awaiting next test.";
+  if (round.status === "resolved") return "Official scores are published.";
+  if (round.status === "overdue") return "Portfolios are locked and the official score is due.";
+  return "Portfolios locked; scoring pending.";
+}
+
+function liveTrackRiskScore(track: BenchmarkTrack): string {
+  const pulse = track === "weekly" ? currentRiskPulse.weekly : currentRiskPulse.monthly;
+  return pulseScore(pulse?.score);
+}
+
+function topConsensusLabel(track: TrackHomeState): string {
+  return track.topExposure ? optionDisplayName(track.topExposure.optionId, track.optionsById) : "No consensus yet";
 }
 
 function scoreShortLine(round?: RoundRecord): string {
@@ -530,9 +594,9 @@ const trackLaneCards = trackStates.map((track) => {
           <em>{riskScaleExplainer}</em>
         </div>
         <div>
-          <span>Change from last live portfolios</span>
+          <span>{riskChangeLabel}</span>
           <strong class:list={[riskChangeClass]}>{signedPulseChange(currentRiskPulse.change_from_previous)}<small>pts</small></strong>
-          <em>{riskChangeDirection}</em>
+          <em>{riskChangeDirection} <a href={riskCalculationHref}>How it is calculated</a>.</em>
         </div>
       </div>
 
@@ -554,7 +618,7 @@ const trackLaneCards = trackStates.map((track) => {
 
       <div class="benchmark-process-note hero-positioning-note">
         <strong>Allocation signal only.</strong>
-        <span>This does not use returns and is not a trading recommendation. <a href="/risk-appetite">How it is calculated</a>.</span>
+        <span>This does not use returns and is not a trading recommendation. <a href={riskCalculationHref}>How it is calculated</a>.</span>
       </div>
     </div>
   </section>
@@ -618,9 +682,9 @@ const trackLaneCards = trackStates.map((track) => {
         <em>{riskScaleExplainer}</em>
       </div>
       <div>
-        <span>Change from last live portfolios</span>
+        <span>{riskChangeLabel}</span>
         <strong class:list={[riskChangeClass]}>{signedPulseChange(currentRiskPulse.change_from_previous)}<small>pts</small></strong>
-        <em>{riskChangeDirection}</em>
+        <em>{riskChangeDirection} <a href={riskCalculationHref}>How it is calculated</a>.</em>
       </div>
     </div>
 
@@ -642,7 +706,7 @@ const trackLaneCards = trackStates.map((track) => {
 
     <div class="benchmark-process-note hero-positioning-note">
       <strong>Allocation signal only.</strong>
-      <span>This does not use returns and is not a trading recommendation. <a href="/risk-appetite">How it is calculated</a>.</span>
+      <span>This does not use returns and is not a trading recommendation. <a href={riskCalculationHref}>How it is calculated</a>.</span>
     </div>
   </div>
 
@@ -1317,86 +1381,108 @@ const trackLaneCards = trackStates.map((track) => {
   </section>
 
   <section class="home-section-heading track-summary-heading" aria-labelledby="current-tests-title">
-    <span class="panel-kicker">Live rounds</span>
-    <h2 id="current-tests-title">Latest Weekly And Monthly Rounds</h2>
+    <span class="panel-kicker">Live benchmark tests</span>
+    <h2 id="current-tests-title">Live Benchmark Tests</h2>
     <p>
-      These are the newest rounds. Each one already has frozen model portfolios and waits for final prices.
+      These are the open tests you can inspect now. Models already submitted portfolios; official scores wait for final
+      closing prices.
     </p>
   </section>
 
-  <section class="track-summary" aria-label="Latest weekly and monthly rounds">
+  <section class="track-summary live-test-summary" aria-label="Live weekly and monthly benchmark tests">
     {trackStates.map((track) => (
-      <article class={`track-card track-card-${track.key}`}>
+      <article class={`track-card track-card-${track.key} live-test-card`}>
         <div class="track-card-head">
           <div>
-            <span class="panel-kicker">{track.label} round</span>
-            <h3>{track.round?.round_id ?? "No round yet"}</h3>
+            <span class="panel-kicker">{track.label} test</span>
+            <h3>{track.horizonLabel}</h3>
           </div>
-          <span class={`status-badge ${statusClass(track.round)}`}>{statusLabel(track.round)}</span>
+          <span class={`status-badge ${statusClass(track.round)}`}>{calendarStatusLabel(track.round)}</span>
         </div>
         {track.round ? (
           <>
-            <p>{track.horizonLabel}. {scoreLine(track.round)}</p>
-            <div class="track-card-grid">
-              <span>Dates <strong>{windowLabel(track.round)}</strong></span>
-              <span>Portfolios <strong>{track.submissions.length}</strong></span>
-              <span>Asset list <strong>{track.options.length} assets</strong></span>
-              <span>Run id <strong>{track.round.official_run_id}</strong></span>
+            <p class="live-test-description">{liveTestDescription(track.key)}</p>
+            <p class="live-test-state">{liveTestStateLabel(track.round)}</p>
+            <div class="track-card-grid live-test-grid">
+              <span>Model portfolios <strong>{track.submissions.length}</strong></span>
+              <span>Eligible assets <strong>{track.options.length}</strong></span>
+              <span>Risk-taking score <strong>{liveTrackRiskScore(track.key)}<small>/100</small></strong></span>
+              <span>
+                Top consensus
+                <strong>{topConsensusLabel(track)}</strong>
+                {track.topExposure && <small>{formatAllocationPct(track.topExposure.averagePct)} average weight</small>}
+              </span>
             </div>
           </>
         ) : (
-          <p>No {track.label.toLowerCase()} round is published yet.</p>
+          <p class="live-test-description">No {track.label.toLowerCase()} test is live yet.</p>
         )}
-        <div class="track-card-actions">
-          <a class="small-button" href={track.latestHref}>Results</a>
-          <a class="small-button" href={track.cumulativeHref}>Overall</a>
+        <div class="track-card-actions live-test-actions">
+          <a class="small-button" href="#current-picks">View portfolios</a>
+          <a class="small-button" href="/universe">Asset universe</a>
           {track.roundHref && <a class="small-button" href={track.roundHref}>Audit packet</a>}
         </div>
       </article>
     ))}
+    <p class="live-test-footnote">Internal IDs and full reproducibility files are inside each audit packet.</p>
   </section>
 
-  <section class="timeline-lanes" aria-labelledby="track-timeline-title">
+  <section class="timeline-lanes scoring-calendar" aria-labelledby="track-timeline-title">
     <div class="home-section-heading">
-      <span class="panel-kicker">{roundRows.length}-round record</span>
-      <h2 id="track-timeline-title">When Each Round Gets Scored</h2>
+      <span class="panel-kicker">Scoring calendar</span>
+      <h2 id="track-timeline-title">Current Scoring Calendar</h2>
       <p>
-        Each round has three moments: portfolios are frozen, time passes, and final results publish after ending prices are
-        available.
+        Models have already picked portfolios. Official scores publish only after the market window ends and final closing
+        prices are available.
       </p>
     </div>
-    <div class="timeline-lane-grid">
+    <div class="timeline-lane-grid scoring-calendar-grid">
       {trackStates.map((track) => (
-        <article class="timeline-lane">
-          <div class="timeline-lane-head">
-            <span class="panel-kicker">{track.label} timeline</span>
-            <strong>{track.round?.round_id ?? "Awaiting round"}</strong>
+        <article class={`timeline-lane scoring-calendar-card scoring-calendar-card-${track.key}`}>
+          <div class="timeline-lane-head scoring-calendar-head">
+            <div>
+              <span class="panel-kicker">{track.label} test</span>
+              <strong>{track.horizonLabel}</strong>
+            </div>
+            <span class={`status-badge ${statusClass(track.round)}`}>{calendarStatusLabel(track.round)}</span>
           </div>
-          <ol>
-            <li class={track.round ? "phase-complete" : ""}>
-              <span>1</span>
-              <div>
-                <strong>Portfolios frozen</strong>
-                <p>{track.round ? dateOnly(track.round.decision_deadline_utc) : "Pending"}</p>
+          {track.round ? (
+            <>
+              <p class="scoring-calendar-summary">
+                {track.submissions.length} model portfolio{track.submissions.length === 1 ? "" : "s"} locked and waiting for official scoring.
+              </p>
+              <dl class="scoring-calendar-facts">
+                <div>
+                  <dt>Locked</dt>
+                  <dd>{lockDateLabel(track.round)}</dd>
+                </div>
+                <div>
+                  <dt>Market window</dt>
+                  <dd>{marketWindowCalendarLabel(track.round)}</dd>
+                </div>
+                <div>
+                  <dt>Official score</dt>
+                  <dd>{calendarScoreDateLabel(track.round)}</dd>
+                </div>
+              </dl>
+              <div class="track-card-actions scoring-calendar-actions">
+                <a class="small-button" href="#current-picks">View current portfolios</a>
+                <a class="small-button" href={track.latestHref}>See latest results</a>
+                <a class="small-button" href="#score-alert-panel-home" data-score-alert-trigger>Get score alert</a>
               </div>
-            </li>
-            <li class={track.round ? "phase-current" : ""}>
-              <span>2</span>
-              <div>
-                <strong>{track.horizonLabel}</strong>
-                <p>{track.round ? windowLabel(track.round) : "No window declared"}</p>
-              </div>
-            </li>
-            <li class={track.round?.status === "resolved" ? "phase-complete" : track.round?.status === "overdue" ? "phase-overdue" : "phase-current"}>
-              <span>3</span>
-              <div>
-                <strong>{track.round?.status === "resolved" ? "Scores published" : track.round?.status === "overdue" ? "Resolution due" : "Score after ending prices"}</strong>
-                <p>{track.round ? scoreLine(track.round) : "Resolution pending."}</p>
-              </div>
-            </li>
-          </ol>
+            </>
+          ) : (
+            <p class="scoring-calendar-summary">No {track.label.toLowerCase()} test is live yet.</p>
+          )}
         </article>
       ))}
+    </div>
+    <div class="scoring-calendar-record">
+      <div>
+        <strong>{roundRows.length} official rounds recorded</strong>
+        <span>Internal round and run IDs stay in the public audit trail.</span>
+      </div>
+      <a class="small-button" href="/rounds">View audit trail</a>
     </div>
   </section>
 

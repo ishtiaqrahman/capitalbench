@@ -1117,11 +1117,30 @@ function scoreEtaLine(round) {
   return `Scores after the ${round.exit_date} close.`;
 }
 
-function homepageScoreLine(round) {
-  if (!round) return "No score window declared yet.";
-  if (round.status === "resolved") return "Scores are published.";
-  if (round.status === "overdue") return `Resolution is due; the ${dateOnly(round.exit_date)} ending close has passed.`;
-  return `Results publish after the ${dateOnly(round.exit_date)} ending close.`;
+function calendarMarketWindowLabel(round) {
+  if (!round) return "No window declared";
+  return `${dateLabel(round.entry_date)} close to ${dateLabel(round.exit_date)} close`;
+}
+
+function calendarScoreDateLabel(round) {
+  if (!round) return "Not scheduled";
+  if (round.status === "resolved") return `Published after ${dateLabel(round.exit_date)} close`;
+  if (round.status === "overdue") return `Due after ${dateLabel(round.exit_date)} close`;
+  return `After ${dateLabel(round.exit_date)} close`;
+}
+
+function calendarPortfolioCount(round) {
+  if (!round) return 0;
+  return new Set(
+    apiReadModel.portfolios
+      .filter((portfolio) => portfolio.round_id === round.round_id && portfolio.run_id === round.official_run_id)
+      .map((portfolio) => portfolio.model_id)
+  ).size;
+}
+
+function liveTrackRiskScore(track) {
+  const pulse = apiReadModel.risk_appetite?.current_decision_pulse?.[track];
+  return scoreLabel(pulse?.score);
 }
 
 function trackStatusLabel(round) {
@@ -2004,7 +2023,10 @@ includes(indexHtml, `${apiReadModel.rounds.length} rounds`, "homepage all-rounds
 includes(indexHtml, `same ${currentUniverseOptionCount} assets`, "homepage process asset count");
 includes(indexHtml, `${currentUniverseOptionCount} current assets`, "homepage safeguard current asset count");
 includes(indexHtml, `${activeRoundCount} live rounds waiting for results`, "homepage safeguard live round count");
-includes(indexHtml, `${apiReadModel.rounds.length}-round record`, "homepage timeline total round count");
+includes(indexHtml, "Current Scoring Calendar", "homepage scoring calendar heading");
+includes(indexHtml, `${apiReadModel.rounds.length} official rounds recorded`, "homepage scoring calendar total round count");
+excludes(indexHtml, `${apiReadModel.rounds.length}-round record`, "homepage scoring calendar old total-round label");
+excludes(indexHtml, "When Each Round Gets Scored", "homepage scoring calendar old heading");
 includes(indexHtml, `<strong>${apiReadModel.models.length}</strong>`, "homepage current setup model count");
 includes(indexHtml, `<strong>${currentUniverseOptionCount}</strong>`, "homepage current setup asset count");
 includes(indexHtml, `<strong>${activeRoundCount}</strong>`, "homepage current setup open test count");
@@ -2013,11 +2035,52 @@ includes(indexHtml, "<strong>Weekly</strong>", "homepage current setup weekly la
 includes(indexHtml, "7 days", "homepage current setup weekly duration");
 includes(indexHtml, "<strong>Monthly</strong>", "homepage current setup monthly label");
 includes(indexHtml, "1 month", "homepage current setup monthly duration");
+const homepageLiveTestsHeadingHtml = htmlSection(
+  indexHtml,
+  'class="home-section-heading track-summary-heading"',
+  "homepage live benchmark tests heading"
+);
+const homepageLiveTestsHtml = htmlSection(indexHtml, 'class="track-summary live-test-summary"', "homepage live benchmark tests");
+includes(homepageLiveTestsHeadingHtml, "Live benchmark tests", "homepage live tests kicker");
+includes(homepageLiveTestsHeadingHtml, "These are the open tests you can inspect now.", "homepage live tests purpose");
+includes(homepageLiveTestsHtml, "Internal IDs and full reproducibility files are inside each audit packet.", "homepage live tests audit note");
+excludes(homepageLiveTestsHeadingHtml + homepageLiveTestsHtml, "Latest Weekly And Monthly Rounds", "homepage live tests old heading");
+excludes(homepageLiveTestsHtml, "Run id", "homepage live tests run-id label");
 for (const round of homepageTrackRounds) {
   includes(indexHtml, round.round_id, `homepage current setup latest ${round.track} round`);
-  includes(indexHtml, dateOnly(round.decision_deadline_utc), `homepage timeline ${round.round_id} decision date`);
-  includes(indexHtml, trackWindowLabel(round), `homepage timeline ${round.round_id} window`);
-  includes(indexHtml, homepageScoreLine(round), `homepage timeline ${round.round_id} score line`);
+  const concentration = buildRoundConcentration(round);
+  const topAsset = concentration.assets[0];
+  const portfolioCount = calendarPortfolioCount(round);
+  const liveTestDescription =
+    round.track === "weekly"
+      ? "Short-term test of AI positioning over one market week."
+      : "Longer test of AI allocation over one month.";
+  includes(homepageLiveTestsHtml, liveTestDescription, `homepage live tests ${round.track} description`);
+  includes(homepageLiveTestsHtml, `Model portfolios <strong>${portfolioCount}</strong>`, `homepage live tests ${round.track} portfolio count`);
+  includes(homepageLiveTestsHtml, `Eligible assets <strong>${currentUniverseOptionCount}</strong>`, `homepage live tests ${round.track} eligible assets`);
+  includes(
+    homepageLiveTestsHtml,
+    `Risk-taking score <strong>${liveTrackRiskScore(round.track)}<small>/100</small></strong>`,
+    `homepage live tests ${round.track} risk score`
+  );
+  if (topAsset) {
+    includesAny(
+      homepageLiveTestsHtml,
+      htmlTextVariants(optionDisplay(topAsset)),
+      `homepage live tests ${round.track} top consensus asset`
+    );
+    includes(homepageLiveTestsHtml, `${allocationPctLabel(topAsset.average_pct)} average weight`, `homepage live tests ${round.track} top consensus weight`);
+  } else {
+    failures.push(`homepage live tests ${round.track} missing top consensus asset`);
+  }
+  includes(indexHtml, dateLabel(round.decision_deadline_utc), `homepage scoring calendar ${round.round_id} lock date`);
+  includes(indexHtml, calendarMarketWindowLabel(round), `homepage scoring calendar ${round.round_id} window`);
+  includes(indexHtml, calendarScoreDateLabel(round), `homepage scoring calendar ${round.round_id} score date`);
+  includes(
+    indexHtml,
+    `${portfolioCount} model portfolio${portfolioCount === 1 ? "" : "s"} locked and waiting for official scoring.`,
+    `homepage scoring calendar ${round.round_id} portfolio count`
+  );
 }
 
 const resultStates = ["weekly", "monthly"].map(resultTrackState);

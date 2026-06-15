@@ -1121,6 +1121,13 @@ h3 {
   line-height: 1.35;
 }
 
+.hero-positioning-score em a {
+  color: #a9d6ff;
+  font-weight: 850;
+  text-decoration-color: rgb(169 214 255 / 52%);
+  text-underline-offset: 2px;
+}
+
 .hero-positioning-score strong.is-risk-on {
   color: #8ec7ff;
 }
@@ -1508,10 +1515,25 @@ a.snapshot-model-chip:hover {
 .benchmark-process-section .benchmark-process-list li {
   grid-template-columns: 1fr;
   align-content: start;
+  justify-items: center;
+  text-align: center;
 }
 
 .benchmark-process-section .benchmark-process-index {
   margin-bottom: 3px;
+}
+
+.benchmark-process-section .benchmark-process-list strong {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
+.benchmark-process-section .benchmark-process-list p {
+  max-width: 16rem;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
 }
 
 .ai-positioning-summary {
@@ -1887,11 +1909,71 @@ a.snapshot-model-chip:hover {
   overflow-wrap: anywhere;
 }
 
+.track-card-grid small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted-2);
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
 .track-card-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 14px;
+}
+
+.live-test-card {
+  display: grid;
+  align-content: start;
+}
+
+.live-test-description {
+  margin-top: 14px;
+  color: var(--ink);
+  font-size: 0.98rem;
+  font-weight: 650;
+}
+
+.live-test-state {
+  width: fit-content;
+  margin-top: 8px;
+  border-left: 3px solid var(--gold);
+  padding: 5px 0 5px 10px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.live-test-grid span {
+  background: #f8faf9;
+}
+
+.live-test-grid span:nth-child(3),
+.live-test-grid span:nth-child(4) {
+  background: #ffffff;
+}
+
+.live-test-grid strong small {
+  display: inline;
+  margin: 0;
+  color: var(--muted-2);
+  font-size: 0.72em;
+}
+
+.live-test-footnote {
+  grid-column: 1 / -1;
+  margin: -2px 0 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 13px 14px;
+  background: var(--surface-muted);
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 
 .decision-track-grid {
@@ -6398,6 +6480,86 @@ a.snapshot-model-chip:hover {
   line-height: 1.45;
 }
 
+.scoring-calendar-card {
+  display: grid;
+  align-content: start;
+}
+
+.scoring-calendar-summary {
+  margin: 0;
+  padding: 16px 18px 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.scoring-calendar-facts {
+  display: grid;
+  gap: 10px;
+  margin: 14px 18px 0;
+}
+
+.scoring-calendar-facts div {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(112px, 0.42fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #f8faf9;
+}
+
+.scoring-calendar-facts dt {
+  color: var(--muted-2);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.scoring-calendar-facts dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--ink-strong);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.scoring-calendar-actions {
+  padding: 0 18px 18px;
+}
+
+.scoring-calendar-record {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: var(--surface-muted);
+}
+
+.scoring-calendar-record div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.scoring-calendar-record strong {
+  color: var(--ink-strong);
+  line-height: 1.2;
+}
+
+.scoring-calendar-record span {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
 .score-countdown {
   min-width: 0;
   max-width: 100%;
@@ -9955,9 +10117,61 @@ tbody tr:hover {
     height: 40px;
   }
 
+  .scoring-calendar-head,
+  .scoring-calendar-record {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .scoring-calendar-facts div {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .scoring-calendar-actions .small-button,
+  .scoring-calendar-record .small-button {
+    width: 100%;
+    justify-content: center;
+  }
+
   .hero-positioning-score,
   .benchmark-process-section .benchmark-process-list {
     grid-template-columns: 1fr;
+  }
+
+  .hero-positioning-score {
+    text-align: center;
+  }
+
+  .hero-positioning-score div {
+    justify-items: center;
+    gap: 7px;
+    padding: 14px 16px 16px;
+    text-align: center;
+  }
+
+  .hero-positioning-score span {
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero-positioning-score strong {
+    width: 100%;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+  }
+
+  .hero-positioning-score strong small {
+    white-space: nowrap;
+  }
+
+  .hero-positioning-score em {
+    max-width: 30rem;
+    font-size: 0.74rem;
+    line-height: 1.42;
+    text-align: center;
+    text-transform: none;
   }
 
   .hero-positioning-assets,
@@ -10217,7 +10431,10 @@ tbody tr:hover {
 
   .home-hero-copy {
     display: block;
+    width: min(100%, 350px);
+    margin-inline: auto;
     padding-top: 0;
+    text-align: center;
   }
 
   .home-hero-copy h1 {
@@ -10252,6 +10469,7 @@ tbody tr:hover {
     display: grid;
     grid-template-columns: 1fr;
     gap: 8px;
+    text-align: center;
   }
 
   #active-exposure,
