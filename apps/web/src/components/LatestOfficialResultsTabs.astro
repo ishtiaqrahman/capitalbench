@@ -1,0 +1,248 @@
+---
+import ScoreReturnChart from "./ScoreReturnChart.astro";
+import type { LatestOfficialResultTrack } from "../lib/latestOfficialResults";
+
+interface Props {
+  tracks: LatestOfficialResultTrack[];
+  headingKicker?: string;
+  headingTitle?: string;
+  headingDescription?: string;
+  sectionLinkHref?: string;
+  sectionLinkLabel?: string;
+  showHeading?: boolean;
+}
+
+const {
+  tracks,
+  headingKicker = "Latest official results",
+  headingTitle = "Finished Benchmark Results",
+  headingDescription = "Switch between weekly and monthly results, then move backward or forward through completed rounds in that track.",
+  sectionLinkHref = "/leaderboards",
+  sectionLinkLabel = "All benchmark results",
+  showHeading = true
+} = Astro.props;
+const visibleTracks = tracks.filter((track) => track.results.length > 0);
+const defaultTrack = visibleTracks.find((track) => track.track === "weekly")?.track ?? visibleTracks[0]?.track;
+const showTabs = visibleTracks.length > 1;
+---
+
+{visibleTracks.length > 0 && (
+  <>
+    {showHeading && (
+      <section class="home-section-heading home-section-heading-with-action latest-official-heading" aria-labelledby="latest-official-results-title">
+        <div>
+          <span class="panel-kicker">{headingKicker}</span>
+          <h2 id="latest-official-results-title">{headingTitle}</h2>
+          <p>{headingDescription}</p>
+        </div>
+        <a class="section-profile-link" href={sectionLinkHref}>{sectionLinkLabel}</a>
+      </section>
+    )}
+
+    <div
+      class:list={["latest-official-shell", !showTabs && "latest-official-shell-single"]}
+      data-latest-official-results
+      data-active-track={defaultTrack}
+      aria-label="Latest official weekly and monthly results"
+    >
+      {showTabs && (
+        <div class="latest-official-tabs" role="tablist" aria-label="Choose official result track">
+          {visibleTracks.map((track) => {
+            const active = track.track === defaultTrack;
+            const tabId = `latest-official-tab-${track.track}`;
+            const panelId = `latest-official-panel-${track.track}`;
+            return (
+              <button
+                id={tabId}
+                class:list={["latest-official-tab", active && "is-active"]}
+                type="button"
+                role="tab"
+                aria-selected={active ? "true" : "false"}
+                aria-controls={panelId}
+                tabindex={active ? "0" : "-1"}
+                data-latest-official-tab={track.track}
+              >
+                <strong>{track.tabLabel}</strong>
+                <span>{track.results.length} completed {track.results.length === 1 ? "round" : "rounds"}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      <div class="latest-official-track-panels">
+        {visibleTracks.map((track) => {
+          const active = track.track === defaultTrack;
+          const tabId = `latest-official-tab-${track.track}`;
+          const panelId = `latest-official-panel-${track.track}`;
+          return (
+            <section
+              id={panelId}
+              class={`latest-official-track-panel latest-official-track-panel-${track.track}`}
+              role={showTabs ? "tabpanel" : undefined}
+              aria-labelledby={showTabs ? tabId : undefined}
+              aria-label={!showTabs ? `${track.label} official result history` : undefined}
+              data-latest-official-track-panel={track.track}
+              data-active-index="0"
+              hidden={!active}
+            >
+              <div class="latest-official-track-head">
+                <div>
+                  <span class="panel-kicker">{track.label} official results</span>
+                  <h3>{track.description}</h3>
+                </div>
+                <div class="latest-official-round-nav" aria-label={`${track.label} result navigation`}>
+                  <button
+                    type="button"
+                    class="small-button latest-official-nav-button"
+                    data-latest-official-prev
+                    aria-label={`Previous ${track.label.toLowerCase()} result`}
+                    disabled={track.results.length <= 1}
+                  >
+                    Previous
+                  </button>
+                  <span class="latest-official-position" aria-live="polite">
+                    <strong>{track.label} result</strong>
+                    <span><b data-latest-official-position>1</b> of {track.results.length}</span>
+                  </span>
+                  <button
+                    type="button"
+                    class="small-button latest-official-nav-button"
+                    data-latest-official-next
+                    aria-label={`Next ${track.label.toLowerCase()} result`}
+                    disabled
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+
+              {track.results.map((result, index) => (
+                <article
+                  class="published-score-panel latest-official-result-panel"
+                  data-latest-official-result
+                  data-result-index={index}
+                  hidden={index !== 0}
+                >
+                  <ScoreReturnChart
+                    chart={result.chart}
+                    label={result.chartLabel}
+                    title={result.title}
+                    description={result.subtitle}
+                  />
+
+                  <div class="published-score-summary published-score-run-details latest-official-summary">
+                    <div class="published-score-summary-head">
+                      <div class="published-result-head">
+                        <div>
+                          <span class="panel-kicker">Official scored round</span>
+                          <h3>{result.title}</h3>
+                          <p>Audit ID: {result.roundId}</p>
+                        </div>
+                      </div>
+
+                      <div class="track-card-actions">
+                        <a class="small-button" href={result.auditHref}>Audit packet</a>
+                        <a class="small-button" href={result.leaderboardHref}>Track results</a>
+                      </div>
+                    </div>
+
+                    <div class="published-score-context" aria-label={`${track.label} scoring context`}>
+                      <span><strong>Scored</strong>{result.scoreDateLabel}</span>
+                      <span><strong>Window</strong>{result.dateRangeLabel}</span>
+                      <span><strong>Models</strong>{result.modelCount}</span>
+                      <span><strong>Asset choices</strong>{result.assetCount}</span>
+                      <span><strong>Leader</strong>{result.winnerLabel}</span>
+                      <span><strong>Horizon</strong>{result.horizonLabel}</span>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </section>
+          );
+        })}
+      </div>
+    </div>
+
+    <script is:inline>
+      if (!window.__capitalbenchLatestOfficialResults) {
+        window.__capitalbenchLatestOfficialResults = true;
+
+        function setupLatestOfficialResults(root) {
+          const tabs = Array.from(root.querySelectorAll("[data-latest-official-tab]"));
+          const trackPanels = Array.from(root.querySelectorAll("[data-latest-official-track-panel]"));
+
+          function clampIndex(panel, index) {
+            const results = Array.from(panel.querySelectorAll("[data-latest-official-result]"));
+            if (!results.length) return 0;
+            return Math.min(results.length - 1, Math.max(0, index));
+          }
+
+          function setResultIndex(panel, nextIndex) {
+            const results = Array.from(panel.querySelectorAll("[data-latest-official-result]"));
+            const index = clampIndex(panel, nextIndex);
+            panel.dataset.activeIndex = String(index);
+            results.forEach((result, resultIndex) => {
+              result.hidden = resultIndex !== index;
+            });
+
+            const position = panel.querySelector("[data-latest-official-position]");
+            if (position) position.textContent = String(index + 1);
+
+            const previous = panel.querySelector("[data-latest-official-prev]");
+            const next = panel.querySelector("[data-latest-official-next]");
+            if (previous) previous.disabled = index >= results.length - 1;
+            if (next) next.disabled = index <= 0;
+          }
+
+          function selectTrack(track) {
+            if (!track) return;
+            root.dataset.activeTrack = track;
+            tabs.forEach((tab) => {
+              const active = tab.dataset.latestOfficialTab === track;
+              tab.classList.toggle("is-active", active);
+              tab.setAttribute("aria-selected", active ? "true" : "false");
+              tab.setAttribute("tabindex", active ? "0" : "-1");
+            });
+
+            trackPanels.forEach((panel) => {
+              const active = panel.dataset.latestOfficialTrackPanel === track;
+              panel.hidden = !active;
+              if (active) setResultIndex(panel, Number(panel.dataset.activeIndex || "0"));
+            });
+          }
+
+          trackPanels.forEach((panel) => {
+            const previous = panel.querySelector("[data-latest-official-prev]");
+            const next = panel.querySelector("[data-latest-official-next]");
+            previous?.addEventListener("click", () => setResultIndex(panel, Number(panel.dataset.activeIndex || "0") + 1));
+            next?.addEventListener("click", () => setResultIndex(panel, Number(panel.dataset.activeIndex || "0") - 1));
+            setResultIndex(panel, Number(panel.dataset.activeIndex || "0"));
+          });
+
+          tabs.forEach((tab, index) => {
+            tab.addEventListener("click", () => selectTrack(tab.dataset.latestOfficialTab));
+            tab.addEventListener("keydown", (event) => {
+              if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+              event.preventDefault();
+              const nextIndex =
+                event.key === "Home"
+                  ? 0
+                  : event.key === "End"
+                    ? tabs.length - 1
+                    : event.key === "ArrowRight"
+                      ? (index + 1) % tabs.length
+                      : (index - 1 + tabs.length) % tabs.length;
+              tabs[nextIndex]?.focus();
+              selectTrack(tabs[nextIndex]?.dataset.latestOfficialTab);
+            });
+          });
+
+          selectTrack(root.dataset.activeTrack || tabs[0]?.dataset.latestOfficialTab);
+        }
+
+        document.querySelectorAll("[data-latest-official-results]").forEach(setupLatestOfficialResults);
+      }
+    </script>
+  </>
+)}

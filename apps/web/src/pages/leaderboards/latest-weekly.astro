@@ -5,7 +5,7 @@ import StatusCards from "../../components/StatusCards.astro";
 import OfficialPicksTable from "../../components/OfficialPicksTable";
 import LeaderboardTable from "../../components/LeaderboardTable";
 import PendingLeaderboardGuide from "../../components/PendingLeaderboardGuide.astro";
-import ScoreReturnChart from "../../components/ScoreReturnChart.astro";
+import LatestOfficialResultsTabs from "../../components/LatestOfficialResultsTabs.astro";
 import { dateOnly, pct, signedPp } from "../../lib/format";
 import {
   staticOfficialSubmissions,
@@ -18,7 +18,8 @@ import {
 import { latestPendingRoundForTrack, latestResolvedRoundForTrack, latestSlotForTrack } from "../../lib/tracks";
 import { modelLabel, providerLabel } from "../../data/fallback";
 import { capitalBenchScore } from "../../lib/capitalBenchScore.js";
-import { buildScoreReturnChartData, providerLogoSrc } from "../../lib/scoreReturnChart";
+import { providerLogoSrc } from "../../lib/scoreReturnChart";
+import { buildLatestOfficialResultTracks } from "../../lib/latestOfficialResults";
 import {
   allocationThemeClass,
   decisionAllocations,
@@ -35,6 +36,7 @@ import {
 const track = "weekly" as const;
 const roundRows = staticRoundRecords();
 const weeklyResultsModel = buildWeeklyResultsPageModel(roundRows);
+const weeklyOfficialResultTracks = buildLatestOfficialResultTracks(roundRows, [track]);
 const weeklyContext = weeklyResultsModel.context;
 const latestOracleChart = weeklyResultsModel.latestOracleChart;
 const cumulativeOracleChart = weeklyResultsModel.cumulativeOracleChart;
@@ -54,14 +56,6 @@ const resultUniverseOptions = resultRound ? staticUniverseOptions(resultRound.ro
 const resultOptionsById = Object.fromEntries(resultUniverseOptions.map((option) => [option.option_id, option]));
 const resultReturns = resultRound ? staticRoundReturns(resultRound.round_id, resultRound.official_run_id) : [];
 const resultAllocations = resultRound ? staticRoundAllocations(resultRound.round_id, resultRound.official_run_id) : [];
-const resultScoreChart = resultRound
-  ? buildScoreReturnChartData({
-      leaderboard: resultRows,
-      returns: resultReturns,
-      optionsById: resultOptionsById,
-      allocations: resultAllocations
-    })
-  : { rows: [], ticks: [] };
 const winnerReturn = winner ? winner.portfolio_return ?? winner.selected_asset_return : undefined;
 const maxPossibleReturnRow = resultReturns
   .filter((row) => typeof row.return === "number" && Number.isFinite(row.return))
@@ -689,16 +683,14 @@ const defaultOracleChartTab = oracleChartTabs[0]?.key ?? "latest";
               </div>
             </div>
 
-            {resultScoreChart.rows.length > 0 && (
-              <div class="published-score-panel latest-weekly-score-panel">
-                <ScoreReturnChart
-                  chart={resultScoreChart}
-                  label="Weekly result"
-                  title="Portfolio Returns"
-                  description="Models, S&P 500, and maximum possible return are shown on one scale."
-                />
-              </div>
-            )}
+            <LatestOfficialResultsTabs
+              tracks={weeklyOfficialResultTracks}
+              headingKicker="Official weekly result history"
+              headingTitle="Browse Weekly Official Results"
+              headingDescription="Move backward or forward through completed weekly rounds without leaving the weekly results page."
+              sectionLinkHref="/leaderboards/cumulative-weekly"
+              sectionLinkLabel="Full weekly history"
+            />
 
             <div class="latest-weekly-proof-row" aria-label="Audit and data links">
               <a class="small-button" href={`/rounds/${resultRound.round_id}/`}>Full round</a>

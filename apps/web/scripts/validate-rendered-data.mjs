@@ -1800,6 +1800,46 @@ function resultTrackState(track) {
   };
 }
 
+function validateLatestOfficialResultsBrowser(html, track, context) {
+  const label = trackLabel(track);
+  const resolvedRounds = apiReadModel.rounds
+    .filter(
+      (round) =>
+        round.track === track &&
+        round.status === "resolved" &&
+        apiReadModel.results.some((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
+    )
+    .sort((left, right) => roundSortKey(right).localeCompare(roundSortKey(left)));
+  if (resolvedRounds.length === 0) return;
+
+  const latestRound = resolvedRounds[0];
+  const resultRows = apiReadModel.results
+    .filter((row) => row.round_id === latestRound.round_id && row.run_id === latestRound.official_run_id)
+    .sort((left, right) => left.rank - right.rank);
+  const returnRows = apiReadModel.returns.filter((row) => row.round_id === latestRound.round_id && row.run_id === latestRound.official_run_id);
+
+  includes(html, "data-latest-official-results", `${context} controller`);
+  includes(html, `${label} results, newest official score first`, `${context} panel heading`);
+  includes(html, `aria-label="Previous ${track} result"`, `${context} previous button`);
+  includes(html, `aria-label="Next ${track} result"`, `${context} next button`);
+  includes(html, `<b data-latest-official-position>1</b> of ${resolvedRounds.length}`, `${context} position`);
+  includes(html, `${label} result scored ${dateLabel(latestRound.exit_date)}`, `${context} latest result title`);
+  includes(html, `Audit ID: ${latestRound.round_id}`, `${context} audit id`);
+  includes(html, `<span><strong>Scored</strong>${dateLabel(latestRound.exit_date)}</span>`, `${context} scored date`);
+  includes(html, `<span><strong>Window</strong>${dateLabel(latestRound.entry_date)} to ${dateLabel(latestRound.exit_date)}</span>`, `${context} window`);
+  includes(html, `<span><strong>Models</strong>${resultRows.length}</span>`, `${context} model count`);
+  includes(html, `<span><strong>Asset choices</strong>${returnRows.length}</span>`, `${context} asset count`);
+  includes(html, `<span><strong>Leader</strong>${modelLabel(resultRows[0]?.model_id)}</span>`, `${context} leader`);
+  includes(html, `<span><strong>Horizon</strong>${label}</span>`, `${context} horizon`);
+  includes(html, `${label} official result`, `${context} chart label`);
+  includes(html, "S&amp;P 500 benchmark", `${context} chart benchmark legend`);
+
+  if (resolvedRounds.length > 1) {
+    const oldestRound = resolvedRounds.at(-1);
+    includes(html, `${label} result scored ${dateLabel(oldestRound.exit_date)}`, `${context} older result rendered`);
+  }
+}
+
 const indexHtml = readHtml("index.html");
 const leaderboardsHtml = readHtml("leaderboards/index.html");
 const latestMonthlyHtml = readHtml("leaderboards/latest-monthly/index.html");
@@ -2176,6 +2216,22 @@ const latestResolvedMonthlyRound = latestRound("monthly", "resolved");
 const latestMonthlyDisplayRound = latestResolvedMonthlyRound ?? latestActiveMonthly;
 if (latestResolvedMonthlyRound) {
   validateLeaderboardTableIsland(latestMonthlyHtml, latestResolvedMonthlyRound, "latest monthly page");
+  validateLatestOfficialResultsBrowser(latestMonthlyHtml, "monthly", "latest monthly page official result browser");
+  includes(latestMonthlyHtml, "Browse Monthly Official Results", "latest monthly page official result browser heading");
+  includes(latestMonthlyHtml, "Full monthly history", "latest monthly page official result browser cumulative link");
+
+  const monthlyHeroIndex = latestMonthlyHtml.indexOf("Latest published monthly result");
+  const monthlyBrowserIndex = latestMonthlyHtml.indexOf("Browse Monthly Official Results");
+  const monthlyLeaderboardIndex = latestMonthlyHtml.indexOf("Official monthly leaderboard");
+  if (monthlyHeroIndex === -1) failures.push("latest monthly page missing latest result hero");
+  if (monthlyBrowserIndex === -1) failures.push("latest monthly page missing official result browser");
+  if (monthlyLeaderboardIndex === -1) failures.push("latest monthly page missing leaderboard section");
+  if (monthlyHeroIndex !== -1 && monthlyBrowserIndex !== -1 && monthlyBrowserIndex < monthlyHeroIndex) {
+    failures.push("latest monthly page official result browser appears before latest result hero");
+  }
+  if (monthlyBrowserIndex !== -1 && monthlyLeaderboardIndex !== -1 && monthlyBrowserIndex > monthlyLeaderboardIndex) {
+    failures.push("latest monthly page official result browser appears after leaderboard section");
+  }
 }
 if (latestMonthlyDisplayRound) {
   validateOfficialPicksIsland(latestMonthlyHtml, latestMonthlyDisplayRound, "latest monthly page");
@@ -2432,38 +2488,59 @@ if (aiPositioningIndex !== -1 && methodologyIndex !== -1 && methodologyIndex > a
   failures.push("homepage methodology section appears after AI positioning");
 }
 
-const latestResolvedScoredRound = apiReadModel.rounds
-  .filter(
-    (round) =>
-      round.status === "resolved" &&
-      apiReadModel.results.some((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
-  )
-  .sort((left, right) => roundSortKey(right).localeCompare(roundSortKey(left)))[0];
+includes(indexHtml, "Finished Benchmark Results", "homepage latest official results heading");
+includes(indexHtml, "Switch between weekly and monthly results", "homepage latest official results purpose");
+includes(indexHtml, 'data-latest-official-results', "homepage latest official results controller");
+includes(indexHtml, 'data-latest-official-prev', "homepage latest official previous control");
+includes(indexHtml, 'data-latest-official-next', "homepage latest official next control");
+excludes(indexHtml, "Most Recent Finished Round", "homepage latest official old heading");
 
-if (latestResolvedScoredRound) {
-  const context = "homepage latest scored chart";
+for (const track of ["weekly", "monthly"]) {
+  const label = trackLabel(track);
+  const context = `homepage latest official ${track} result`;
+  const resolvedRounds = apiReadModel.rounds
+    .filter(
+      (round) =>
+        round.track === track &&
+        round.status === "resolved" &&
+        apiReadModel.results.some((row) => row.round_id === round.round_id && row.run_id === round.official_run_id)
+    )
+    .sort((left, right) => roundSortKey(right).localeCompare(roundSortKey(left)));
+  if (resolvedRounds.length === 0) continue;
+
+  includes(indexHtml, `data-latest-official-tab="${track}"`, `${context} tab`);
+  includes(indexHtml, `<strong>${label}</strong><span>${resolvedRounds.length} completed`, `${context} tab count`);
+  includes(indexHtml, `${label} results, newest official score first`, `${context} panel heading`);
+  includes(indexHtml, `aria-label="Previous ${track} result"`, `${context} previous button`);
+  includes(indexHtml, `aria-label="Next ${track} result"`, `${context} next button`);
+  includes(indexHtml, `<b data-latest-official-position>1</b> of ${resolvedRounds.length}`, `${context} position`);
+
+  const latestRound = resolvedRounds[0];
   const resultRows = apiReadModel.results
-    .filter((row) => row.round_id === latestResolvedScoredRound.round_id && row.run_id === latestResolvedScoredRound.official_run_id)
+    .filter((row) => row.round_id === latestRound.round_id && row.run_id === latestRound.official_run_id)
     .sort((left, right) => left.rank - right.rank);
-  const returnRows = apiReadModel.returns.filter(
-    (row) => row.round_id === latestResolvedScoredRound.round_id && row.run_id === latestResolvedScoredRound.official_run_id
-  );
+  const returnRows = apiReadModel.returns.filter((row) => row.round_id === latestRound.round_id && row.run_id === latestRound.official_run_id);
   const benchmarkReturn = returnRows.find((row) => row.is_benchmark)?.return_pct;
   const maxReturnRow = [...returnRows]
     .filter((row) => typeof row.return_pct === "number")
     .sort((left, right) => right.return_pct - left.return_pct)[0];
-  const allocationRows = apiReadModel.allocations.filter(
-    (row) => row.round_id === latestResolvedScoredRound.round_id && row.run_id === latestResolvedScoredRound.official_run_id
-  );
+  const allocationRows = apiReadModel.allocations.filter((row) => row.round_id === latestRound.round_id && row.run_id === latestRound.official_run_id);
 
-  includes(indexHtml, "Most Recent Finished Round", context);
-  includes(indexHtml, "Portfolio Return And S&amp;P 500", context);
-  includes(indexHtml, latestResolvedScoredRound.round_id, context);
-  includes(indexHtml, latestResolvedScoredRound.entry_date, `${context} entry date`);
-  includes(indexHtml, latestResolvedScoredRound.exit_date, `${context} exit date`);
+  includes(indexHtml, `${label} result scored ${dateLabel(latestRound.exit_date)}`, `${context} title`);
+  includes(indexHtml, `Audit ID: ${latestRound.round_id}`, `${context} audit id`);
+  includes(indexHtml, `<span><strong>Scored</strong>${dateLabel(latestRound.exit_date)}</span>`, `${context} scored date`);
+  includes(indexHtml, `<span><strong>Window</strong>${dateLabel(latestRound.entry_date)} to ${dateLabel(latestRound.exit_date)}</span>`, `${context} window`);
   includes(indexHtml, `<span><strong>Models</strong>${resultRows.length}</span>`, `${context} model count`);
   includes(indexHtml, `<span><strong>Asset choices</strong>${returnRows.length}</span>`, `${context} asset count`);
-  includes(indexHtml, `<span><strong>Horizon</strong>${latestResolvedScoredRound.track === "weekly" ? "Weekly" : "Monthly"}</span>`, `${context} track label`);
+  includes(indexHtml, `<span><strong>Leader</strong>${modelLabel(resultRows[0]?.model_id)}</span>`, `${context} leader`);
+  includes(indexHtml, `<span><strong>Horizon</strong>${label}</span>`, `${context} track label`);
+  includes(indexHtml, `${label} official result`, `${context} chart label`);
+  includes(indexHtml, "S&amp;P 500 benchmark", `${context} chart benchmark legend`);
+
+  if (resolvedRounds.length > 1) {
+    const oldestRound = resolvedRounds.at(-1);
+    includes(indexHtml, `${label} result scored ${dateLabel(oldestRound.exit_date)}`, `${context} older result rendered`);
+  }
 
   if (typeof benchmarkReturn === "number") {
     includes(indexHtml, percentPointLabel(benchmarkReturn), `${context} S&P 500 return`);
@@ -2745,6 +2822,21 @@ const latestResolvedWeeklyRound = latestRound("weekly", "resolved");
 if (latestResolvedWeeklyRound) {
   const latestWeeklyHtml = readHtml("leaderboards/latest-weekly/index.html");
   validateLeaderboardTableIsland(latestWeeklyHtml, latestResolvedWeeklyRound, "latest weekly page");
+  validateLatestOfficialResultsBrowser(latestWeeklyHtml, "weekly", "latest weekly page official result browser");
+  includes(latestWeeklyHtml, "Browse Weekly Official Results", "latest weekly page official result browser heading");
+  includes(latestWeeklyHtml, "Full weekly history", "latest weekly page official result browser cumulative link");
+  const weeklyReadoutIndex = latestWeeklyHtml.indexOf("Investor readout");
+  const weeklyBrowserIndex = latestWeeklyHtml.indexOf("Browse Weekly Official Results");
+  const weeklyProofIndex = latestWeeklyHtml.indexOf("Audit and data links");
+  if (weeklyReadoutIndex === -1) failures.push("latest weekly page missing investor readout");
+  if (weeklyBrowserIndex === -1) failures.push("latest weekly page missing official result browser");
+  if (weeklyProofIndex === -1) failures.push("latest weekly page missing audit/data links");
+  if (weeklyReadoutIndex !== -1 && weeklyBrowserIndex !== -1 && weeklyBrowserIndex < weeklyReadoutIndex) {
+    failures.push("latest weekly page official result browser appears before investor readout");
+  }
+  if (weeklyBrowserIndex !== -1 && weeklyProofIndex !== -1 && weeklyBrowserIndex > weeklyProofIndex) {
+    failures.push("latest weekly page official result browser appears after audit/data links");
+  }
   const latestWeeklyDisplayRound = latestResolvedWeeklyRound ?? latestActiveWeeklyRound;
   if (latestWeeklyDisplayRound) validateOfficialPicksIsland(latestWeeklyHtml, latestWeeklyDisplayRound, "latest weekly page");
   const latestWeeklyRows = apiReadModel.results

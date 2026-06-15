@@ -2,8 +2,8 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ActiveExposureMap from "../components/ActiveExposureMap";
 import GitHubLogo from "../components/GitHubLogo.astro";
+import LatestOfficialResultsTabs from "../components/LatestOfficialResultsTabs.astro";
 import LivePerformanceChart from "../components/LivePerformanceChart";
-import ScoreReturnChart from "../components/ScoreReturnChart.astro";
 import TrackScorecardTabs from "../components/TrackScorecardTabs.astro";
 import {
   ArrowRight,
@@ -37,17 +37,15 @@ import {
   staticAllOfficialSubmissions,
   staticAllWeeklyPerformance,
   staticOfficialSubmissions,
-  staticRoundAllocations,
-  staticRoundLeaderboard,
-  staticRoundReturns,
   staticRoundRecords,
   staticUniverseOptions
 } from "../lib/localRoundRecords";
-import { buildScoreReturnChartData, providerLogoSrc } from "../lib/scoreReturnChart";
+import { providerLogoSrc } from "../lib/scoreReturnChart";
 import { buildTrackScorecard } from "../lib/trackScorecard";
 import { buildRunConcentration, type ConcentrationAsset, type RunConcentration } from "../lib/runConcentration";
 import { siteConfig } from "../lib/seo";
 import { staticModelProfiles } from "../lib/modelProfiles";
+import { buildLatestOfficialResultTracks } from "../lib/latestOfficialResults";
 import {
   latestResolvedRoundForTrack,
   latestRoundForTrack,
@@ -124,47 +122,8 @@ const aggregateScorecards = [
   weeklyScorecard,
   monthlyScorecard
 ].filter((scorecard): scorecard is NonNullable<typeof scorecard> => scorecard !== null);
-const publishedResults = [
-  {
-    key: "weekly" as const,
-    label: "Weekly",
-    round: latestResolvedWeeklyRound,
-    leaderboard: latestResolvedWeeklyRound
-      ? staticRoundLeaderboard(latestResolvedWeeklyRound.round_id, latestResolvedWeeklyRound.official_run_id)
-      : []
-  },
-  {
-    key: "monthly" as const,
-    label: "Monthly",
-    round: latestResolvedMonthlyRound,
-    leaderboard: latestResolvedMonthlyRound
-      ? staticRoundLeaderboard(latestResolvedMonthlyRound.round_id, latestResolvedMonthlyRound.official_run_id)
-      : []
-  }
-].map((item) => ({ ...item, winner: item.leaderboard[0] }));
-const completedPublishedResults = publishedResults
-  .filter((result) => result.round && result.winner)
-  .sort((a, b) => (b.round?.exit_date ?? "").localeCompare(a.round?.exit_date ?? ""));
-const latestPublishedResult = completedPublishedResults[0];
-const latestCompletedRound = latestPublishedResult?.round;
-const latestCompletedWinner = latestPublishedResult?.winner;
-const latestResultOptions = latestCompletedRound ? staticUniverseOptions(latestCompletedRound.round_id) : [];
-const latestResultOptionsById: Record<string, UniverseOption | undefined> = Object.fromEntries(
-  latestResultOptions.map((option) => [option.option_id, option])
-);
-const latestResultReturns = latestCompletedRound
-  ? staticRoundReturns(latestCompletedRound.round_id, latestCompletedRound.official_run_id)
-  : [];
-const latestResultAllocations = latestCompletedRound
-  ? staticRoundAllocations(latestCompletedRound.round_id, latestCompletedRound.official_run_id)
-  : [];
-const latestScoreChart = buildScoreReturnChartData({
-  leaderboard: latestPublishedResult?.leaderboard ?? [],
-  returns: latestResultReturns,
-  optionsById: latestResultOptionsById,
-  allocations: latestResultAllocations
-});
-const latestResultEligibleAssetCount = latestResultOptions.length;
+
+const latestOfficialResultTracks = buildLatestOfficialResultTracks(roundRows);
 const activeExposureRounds = roundRows
   .filter((round) => round.status === "pending" && round.official_run_id)
   .map((round) => {
@@ -855,49 +814,7 @@ const trackLaneCards = trackStates.map((track) => {
 
   <LivePerformanceChart client:visible rows={livePerformanceRows} openRoundCounts={openRoundCounts} />
 
-  {latestPublishedResult && latestCompletedRound && latestCompletedWinner && (
-    <>
-      <section class="home-section-heading" aria-labelledby="published-results-title">
-        <span class="panel-kicker">Latest official result</span>
-        <h2 id="published-results-title">Most Recent Finished Round</h2>
-        <p>
-          This chart shows how each frozen portfolio performed after the scoring window ended. Live rounds stay out
-          until final prices are available.
-        </p>
-      </section>
-
-      <section
-        class="published-score-panel"
-        aria-label={`Latest scored ${latestPublishedResult.label.toLowerCase()} result`}
-      >
-        <ScoreReturnChart chart={latestScoreChart} label={`${latestPublishedResult.label} result`} />
-
-        <div class="published-score-summary published-score-run-details">
-          <div class="published-score-summary-head">
-            <div class="published-result-head">
-              <div>
-                <span class="panel-kicker">Scored round</span>
-                <h3>{latestCompletedRound.round_id}</h3>
-                <p>Dates, asset universe, and audit packet.</p>
-              </div>
-            </div>
-
-            <div class="track-card-actions">
-              <a class="small-button" href={`/rounds/${latestCompletedRound.round_id}/`}>Full result</a>
-              <a class="small-button" href={`/leaderboards/latest-${latestPublishedResult.key}`}>Benchmark results</a>
-            </div>
-          </div>
-
-          <div class="published-score-context" aria-label="Scoring context">
-            <span><strong>Dates</strong>{dateOnly(latestCompletedRound.entry_date)} to {dateOnly(latestCompletedRound.exit_date)}</span>
-            <span><strong>Models</strong>{latestPublishedResult.leaderboard.length}</span>
-            <span><strong>Asset choices</strong>{latestResultEligibleAssetCount}</span>
-            <span><strong>Horizon</strong>{latestPublishedResult.label}</span>
-          </div>
-        </div>
-      </section>
-    </>
-  )}
+  <LatestOfficialResultsTabs tracks={latestOfficialResultTracks} />
 
   <section class="current-setup-panel" aria-labelledby="current-setup-title">
     <div class="current-setup-head">
