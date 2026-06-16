@@ -1,3 +1,5 @@
+import { insightHref, leadInsightsByCategory } from "./insights.js";
+
 function shortDate(value) {
   if (!value) return "n/a";
   const date = new Date(`${String(value).slice(0, 10)}T00:00:00Z`);
@@ -591,6 +593,11 @@ export function buildBenchmarkTickerTape(readModel, options = {}) {
   const activeWeeklyCount = rounds.filter((round) => round.status === "active" && roundTrack(round) === "weekly").length;
   const activeMonthlyCount = rounds.filter((round) => round.status === "active" && roundTrack(round) === "monthly").length;
   const topAsset = active.assets[0];
+  const tickerInsight = leadInsightsByCategory(
+    readModel,
+    ["current_positioning", "risk_regime", "horizon_agreement", "live_performance", "oracle_comparison"],
+    1
+  )[0];
 
   const items = [
     {
@@ -623,6 +630,17 @@ export function buildBenchmarkTickerTape(readModel, options = {}) {
         href: "/risk-appetite"
       });
     }
+  }
+
+  if (tickerInsight) {
+    items.push({
+      key: "benchmark-insight",
+      tone: "neutral",
+      label: "Insight",
+      value: tickerInsight.title,
+      detail: tickerInsight.summary,
+      href: insightHref(tickerInsight)
+    });
   }
 
   if (topAsset) {

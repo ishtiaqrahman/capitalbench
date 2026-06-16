@@ -1,10 +1,12 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import InsightStrip from "../../components/InsightStrip.astro";
 import ModelLiveHoldings from "../../components/ModelLiveHoldings";
 import TrackScorecard from "../../components/TrackScorecard.astro";
 import apiReadModel from "../../generated/apiReadModel.js";
 import { staticAllWeeklyPerformance } from "../../lib/localRoundRecords";
 import { benchmarkSetToScorecard, benchmarkSetsForModel } from "../../lib/benchmarkSets";
+import { insightsForModel } from "../../lib/insights.js";
 import { siteConfig } from "../../lib/seo";
 import type { TrackScorecardData } from "../../lib/trackScorecard";
 import { staticModelProfiles, type ModelResultRow, type ModelTrackScore } from "../../lib/modelProfiles";
@@ -19,6 +21,7 @@ export function getStaticPaths() {
 const { profile } = Astro.props;
 const repoRoot = `${siteConfig.githubUrl}/tree/main`;
 const repoBlob = `${siteConfig.githubUrl}/blob/main`;
+const modelInsights = insightsForModel(apiReadModel, { modelId: profile.modelId, modelName: profile.label, limit: 3 });
 const resultRows = [...profile.allResults].sort((a, b) => a.entryDate.localeCompare(b.entryDate));
 const maxAlphaPct = Math.max(1, ...resultRows.map((row) => Math.abs((row.alphaVsSp500 ?? 0) * 100)));
 const riskAppetite = profile.fingerprint.riskAppetite;
@@ -219,6 +222,16 @@ function alphaBarStyle(row: ModelResultRow): string {
       </div>
     </div>
   </section>
+
+  <InsightStrip
+    id="model-insights"
+    kicker="Model insights"
+    title={`What The Benchmark Flags For ${profile.label}`}
+    description="Behavior and performance notes connected to this model, with fallback context from model-behavior and attribution signals."
+    insights={modelInsights}
+    viewAllHref="/insights"
+    viewAllLabel="All insights"
+  />
 
   <section class="section model-section" id="live-holdings" aria-labelledby="live-holdings-title">
     <div class="model-section-heading">

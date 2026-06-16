@@ -1,0 +1,832 @@
+{
+  "data_as_of": "2026-06-15",
+  "engine_version": "deterministic_insights_v1+nvidia_llm_rewrite_v1",
+  "generated_at": "2026-06-16T20:26:46Z",
+  "insight_count": 16,
+  "insights": [
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "sum(average_model_allocation * asset_return)",
+          "name": "consensus_portfolio_return",
+          "unit": "percent",
+          "value": 0.7713
+        },
+        {
+          "formula": "average resolved model portfolio return",
+          "name": "average_model_return",
+          "unit": "percent",
+          "value": 0.7713
+        },
+        {
+          "formula": "100 * consensus_return / oracle_return",
+          "name": "consensus_capitalbench_score",
+          "unit": "points",
+          "value": 11.8249
+        }
+      ],
+      "category": "consensus_performance",
+      "confidence": "high",
+      "data_as_of": "2026-06-10",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-05-10-1M",
+          "label": "Monthly result",
+          "source": "rounds/CB-2026-05-10-1M/runs/official-round-1-clean/results"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "consensus-performance-CB-2026-05-10-1M",
+      "importance_score": 92.0,
+      "llm_assisted_by": {
+        "candidate_id": "consensus-performance-CB-2026-05-10-1M",
+        "model": "meta/llama-3.1-8b-instruct",
+        "prompt_version": "capitalbench_insight_llm_prompt_v1",
+        "provider": "nvidia_nim"
+      },
+      "related": [
+        {
+          "href": "/leaderboards/latest-monthly",
+          "label": "Latest monthly results"
+        }
+      ],
+      "source_type": "llm_assisted",
+      "status": "published",
+      "summary": "The AI consensus portfolio returned +0.77% versus -1.65% for the S&P 500 and +6.52% for the hindsight best asset.",
+      "title": "AI Consensus Portfolio Scored 11.8 vs. Oracle",
+      "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "sum(average_model_allocation * asset_return)",
+          "name": "consensus_portfolio_return",
+          "unit": "percent",
+          "value": -0.1166
+        },
+        {
+          "formula": "average resolved model portfolio return",
+          "name": "average_model_return",
+          "unit": "percent",
+          "value": -0.1166
+        },
+        {
+          "formula": "100 * consensus_return / oracle_return",
+          "name": "consensus_capitalbench_score",
+          "unit": "points",
+          "value": -0.8388
+        }
+      ],
+      "category": "consensus_performance",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-08-1W",
+          "label": "Weekly result",
+          "source": "rounds/CB-2026-06-08-1W/runs/official-20260608/results"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "consensus-performance-CB-2026-06-08-1W",
+      "importance_score": 92.0,
+      "llm_assisted_by": {
+        "candidate_id": "consensus-performance-CB-2026-06-08-1W",
+        "model": "meta/llama-3.1-8b-instruct",
+        "prompt_version": "capitalbench_insight_llm_prompt_v1",
+        "provider": "nvidia_nim"
+      },
+      "related": [
+        {
+          "href": "/leaderboards/latest-weekly",
+          "label": "Latest weekly results"
+        }
+      ],
+      "source_type": "llm_assisted",
+      "status": "published",
+      "summary": "The AI consensus portfolio returned -0.12% versus +2.11% for the S&P 500 and +13.90% for the hindsight best asset.",
+      "title": "AI Consensus Portfolio Scored -0.8 vs. Oracle",
+      "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "max(scored asset returns)",
+          "name": "oracle_return",
+          "unit": "percent",
+          "value": 6.5231
+        },
+        {
+          "formula": "min(scored asset returns)",
+          "name": "worst_asset_return",
+          "unit": "percent",
+          "value": -13.5929
+        },
+        {
+          "formula": "positive asset count / scored asset count",
+          "name": "positive_universe_share",
+          "unit": "percent",
+          "value": 32.5
+        }
+      ],
+      "category": "benchmark_difficulty",
+      "confidence": "high",
+      "data_as_of": "2026-06-10",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-05-10-1M",
+          "label": "Monthly result",
+          "source": "rounds/CB-2026-05-10-1M/runs/official-round-1-clean/results/returns.csv"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "benchmark-difficulty-CB-2026-05-10-1M",
+      "importance_score": 90.0,
+      "llm_assisted_by": {
+        "candidate_id": "benchmark-difficulty-CB-2026-05-10-1M",
+        "model": "meta/llama-3.1-8b-instruct",
+        "prompt_version": "capitalbench_insight_llm_prompt_v1",
+        "provider": "nvidia_nim"
+      },
+      "related": [
+        {
+          "href": "/scoring",
+          "label": "Scoring"
+        }
+      ],
+      "source_type": "llm_assisted",
+      "status": "published",
+      "summary": "The best scored asset returned +6.52%, the worst returned -13.59%, and +32.50% of the universe was positive.",
+      "title": "Monthly Round Had +20.12% Asset Dispersion",
+      "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "max(scored asset returns)",
+          "name": "oracle_return",
+          "unit": "percent",
+          "value": 13.9033
+        },
+        {
+          "formula": "min(scored asset returns)",
+          "name": "worst_asset_return",
+          "unit": "percent",
+          "value": -10.3145
+        },
+        {
+          "formula": "positive asset count / scored asset count",
+          "name": "positive_universe_share",
+          "unit": "percent",
+          "value": 87.1429
+        }
+      ],
+      "category": "benchmark_difficulty",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-08-1W",
+          "label": "Weekly result",
+          "source": "rounds/CB-2026-06-08-1W/runs/official-20260608/results/returns.csv"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "benchmark-difficulty-CB-2026-06-08-1W",
+      "importance_score": 90.0,
+      "llm_assisted_by": {
+        "candidate_id": "benchmark-difficulty-CB-2026-06-08-1W",
+        "model": "meta/llama-3.1-8b-instruct",
+        "prompt_version": "capitalbench_insight_llm_prompt_v1",
+        "provider": "nvidia_nim"
+      },
+      "related": [
+        {
+          "href": "/scoring",
+          "label": "Scoring"
+        }
+      ],
+      "source_type": "llm_assisted",
+      "status": "published",
+      "summary": "The best scored asset returned +13.90%, the worst returned -10.31%, and +87.14% of the universe was positive.",
+      "title": "Weekly Round Had +24.22% Asset Dispersion",
+      "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "count models with positive allocation to oracle asset",
+          "name": "oracle_asset_holder_count",
+          "unit": "models",
+          "value": 0
+        },
+        {
+          "formula": "average allocation to oracle asset across model portfolios",
+          "name": "average_oracle_asset_allocation",
+          "unit": "percentage_points",
+          "value": 0.0
+        }
+      ],
+      "category": "oracle_comparison",
+      "confidence": "high",
+      "data_as_of": "2026-06-10",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-05-10-1M",
+          "label": "Monthly result",
+          "source": "rounds/CB-2026-05-10-1M/runs/official-round-1-clean/results"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "missed-oracle-CB-2026-05-10-1M",
+      "importance_score": 89.0,
+      "related": [
+        {
+          "href": "/scoring#capitalbench-score",
+          "label": "Scoring"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The hindsight best asset was Healthcare Sector (XLV) at +6.52%. 0 of 4 models held it, with +0.00% average allocation.",
+      "title": "Models missed the monthly oracle asset",
+      "why_it_matters": "This shows whether models identified the eventual best asset before scoring, even when portfolio weights were too small to fully capture the oracle return."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "count models with positive allocation to oracle asset",
+          "name": "oracle_asset_holder_count",
+          "unit": "models",
+          "value": 0
+        },
+        {
+          "formula": "average allocation to oracle asset across model portfolios",
+          "name": "average_oracle_asset_allocation",
+          "unit": "percentage_points",
+          "value": 0.0
+        }
+      ],
+      "category": "oracle_comparison",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-08-1W",
+          "label": "Weekly result",
+          "source": "rounds/CB-2026-06-08-1W/runs/official-20260608/results"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "missed-oracle-CB-2026-06-08-1W",
+      "importance_score": 89.0,
+      "related": [
+        {
+          "href": "/scoring#capitalbench-score",
+          "label": "Scoring"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The hindsight best asset was South Korea Equities (EWY) at +13.90%. 0 of 5 models held it, with +0.00% average allocation.",
+      "title": "Models missed the weekly oracle asset",
+      "why_it_matters": "This shows whether models identified the eventual best asset before scoring, even when portfolio weights were too small to fully capture the oracle return."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders"
+      ],
+      "calculations": [
+        {
+          "formula": "average allocation across newest live model portfolios",
+          "name": "aggregate_live_allocation",
+          "unit": "percentage_points",
+          "value": 35.0
+        }
+      ],
+      "category": "current_positioning",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-15-1W",
+          "label": "Weekly live round",
+          "source": "rounds/CB-2026-06-15-1W"
+        },
+        {
+          "href": "/rounds/CB-2026-06-15-1M",
+          "label": "Monthly live round",
+          "source": "rounds/CB-2026-06-15-1M"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "active-positioning-2026-06-15",
+      "importance_score": 88.0,
+      "related": [
+        {
+          "href": "/risk-appetite",
+          "label": "AI Risk Appetite"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "Across the newest live weekly and monthly portfolios, Semiconductors (SMH) is the largest aggregate allocation at +35.00%.",
+      "title": "Live AI portfolios are concentrated in Semiconductors (SMH)",
+      "why_it_matters": "This shows the current crowding point in model capital allocation, before the open rounds receive their final market scores."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders"
+      ],
+      "calculations": [
+        {
+          "formula": "50 + 50 * weighted average asset risk-on loading",
+          "name": "live_risk_taking_score",
+          "unit": "points",
+          "value": 88.9125
+        }
+      ],
+      "category": "risk_regime",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-15-1W",
+          "label": "Weekly live round",
+          "source": "rounds/CB-2026-06-15-1W"
+        },
+        {
+          "href": "/rounds/CB-2026-06-15-1M",
+          "label": "Monthly live round",
+          "source": "rounds/CB-2026-06-15-1M"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "active-risk-2026-06-15",
+      "importance_score": 86.0,
+      "related": [
+        {
+          "href": "/risk-appetite",
+          "label": "AI Risk Appetite"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The newest live portfolios have a deterministic risk-taking score of 88.9 out of 100.",
+      "title": "Live AI risk posture is aggressive",
+      "why_it_matters": "The score translates allocations into a common risk scale, so readers can see whether models are collectively leaning defensive, balanced, or aggressive."
+    },
+    {
+      "audiences": [
+        "ai_researchers",
+        "capital_allocators",
+        "investors"
+      ],
+      "calculations": [
+        {
+          "formula": "average return for confidence >= median confidence",
+          "name": "high_confidence_average_return",
+          "unit": "percent",
+          "value": -1.6195
+        },
+        {
+          "formula": "average return for confidence < median confidence",
+          "name": "low_confidence_average_return",
+          "unit": "percent",
+          "value": -2.6114
+        },
+        {
+          "formula": "average CapitalBench Score for confidence >= median confidence",
+          "name": "high_confidence_average_capitalbench_score",
+          "unit": "points",
+          "value": -58.9948
+        },
+        {
+          "formula": "average CapitalBench Score for confidence < median confidence",
+          "name": "low_confidence_average_capitalbench_score",
+          "unit": "points",
+          "value": -117.6395
+        }
+      ],
+      "category": "confidence_calibration",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/leaderboards/latest",
+          "label": "Results",
+          "source": "resolved official leaderboard rows"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "confidence-calibration-2026-06-15",
+      "importance_score": 85.0,
+      "related": [
+        {
+          "href": "/scoring",
+          "label": "Scoring"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "Across resolved official results, submissions at or above the median confidence of 0.55 averaged -1.62%, while lower-confidence submissions averaged -2.61%.",
+      "title": "High-confidence model calls have outperformed lower-confidence calls",
+      "why_it_matters": "Confidence calibration helps readers judge whether model self-reported confidence carries useful information about realized benchmark performance."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "average weekly allocation by asset-risk regime",
+          "name": "weekly_top_regime_allocation",
+          "unit": "percentage_points",
+          "value": 81.0
+        },
+        {
+          "formula": "average monthly allocation by asset-risk regime",
+          "name": "monthly_top_regime_allocation",
+          "unit": "percentage_points",
+          "value": 74.0
+        }
+      ],
+      "category": "horizon_agreement",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-15-1W",
+          "label": "Weekly live round",
+          "source": "rounds/CB-2026-06-15-1W"
+        },
+        {
+          "href": "/rounds/CB-2026-06-15-1M",
+          "label": "Monthly live round",
+          "source": "rounds/CB-2026-06-15-1M"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "horizon-agreement-2026-06-15",
+      "importance_score": 84.0,
+      "related": [
+        {
+          "href": "/risk-appetite",
+          "label": "AI Risk Appetite"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The newest weekly portfolios allocate +81.00% to growth and technology, while the newest monthly portfolios allocate +74.00%.",
+      "title": "Weekly and monthly AI portfolios both favor growth and technology",
+      "why_it_matters": "Agreement across horizons signals that the current model posture is not just a short-term tactical move."
+    },
+    {
+      "audiences": [
+        "traders",
+        "capital_allocators",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "allocation weight * asset return",
+          "name": "largest_positive_contribution",
+          "unit": "percent",
+          "value": 0.7713
+        },
+        {
+          "formula": "allocation weight * asset return",
+          "name": "smallest_positive_contribution",
+          "unit": "percent",
+          "value": 0.7713
+        }
+      ],
+      "category": "performance_attribution",
+      "confidence": "high",
+      "data_as_of": "2026-06-10",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-05-10-1M",
+          "label": "Monthly result",
+          "source": "rounds/CB-2026-05-10-1M/runs/official-round-1-clean/results/allocations.csv"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "attribution-CB-2026-05-10-1M-anthropic-claude-opus-4-7",
+      "importance_score": 83.0,
+      "related": [
+        {
+          "href": "/leaderboards/latest-monthly",
+          "label": "Latest monthly results"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "In the latest monthly result, Semiconductors contributed +0.77% to Claude Opus 4.7's portfolio. No holding detracted from the portfolio in this one-holding attribution view.",
+      "title": "Claude Opus 4.7's result was driven by Semiconductors",
+      "why_it_matters": "Attribution turns a model score into an explanation of which holdings actually helped or hurt the frozen portfolio."
+    },
+    {
+      "audiences": [
+        "traders",
+        "capital_allocators",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "allocation weight * asset return",
+          "name": "largest_positive_contribution",
+          "unit": "percent",
+          "value": 0.6801
+        },
+        {
+          "formula": "allocation weight * asset return",
+          "name": "smallest_positive_contribution",
+          "unit": "percent",
+          "value": 0.0055
+        }
+      ],
+      "category": "performance_attribution",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-08-1W",
+          "label": "Weekly result",
+          "source": "rounds/CB-2026-06-08-1W/runs/official-20260608/results/allocations.csv"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "attribution-CB-2026-06-08-1W-anthropic-claude-opus-4-7",
+      "importance_score": 83.0,
+      "related": [
+        {
+          "href": "/leaderboards/latest-weekly",
+          "label": "Latest weekly results"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "In the latest weekly result, Aerospace and Defense contributed +0.68% to Claude Opus 4.7's portfolio. No holding detracted; the smallest positive contribution came from Short-Term Treasury Bills at +0.01%.",
+      "title": "Claude Opus 4.7's result was driven by Aerospace and Defense",
+      "why_it_matters": "Attribution turns a model score into an explanation of which holdings actually helped or hurt the frozen portfolio."
+    },
+    {
+      "audiences": [
+        "traders",
+        "ai_researchers",
+        "capital_allocators"
+      ],
+      "calculations": [
+        {
+          "formula": "average allocation to assets in the top 20% by pre-run 30-day trailing return",
+          "name": "allocation_to_top_30d_momentum_quintile",
+          "unit": "percentage_points",
+          "value": 67.0
+        },
+        {
+          "formula": "average allocation to assets in the bottom 20% by pre-run 30-day trailing return",
+          "name": "allocation_to_bottom_30d_momentum_quintile",
+          "unit": "percentage_points",
+          "value": 6.0
+        }
+      ],
+      "category": "model_behavior",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-15-1M",
+          "label": "Monthly round",
+          "source": "rounds/CB-2026-06-15-1M/market_data/universe_trailing_returns.json"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "momentum-exposure-CB-2026-06-15-1M",
+      "importance_score": 80.0,
+      "related": [
+        {
+          "href": "/rounds",
+          "label": "Round list"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The newest monthly portfolios allocate +67.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was South Korea Equities (EWY).",
+      "title": "Monthly models are leaning into recent winners",
+      "why_it_matters": "This measures whether models are chasing recent momentum or allocating away from it before outcomes are known."
+    },
+    {
+      "audiences": [
+        "traders",
+        "ai_researchers",
+        "capital_allocators"
+      ],
+      "calculations": [
+        {
+          "formula": "average allocation to assets in the top 20% by pre-run 30-day trailing return",
+          "name": "allocation_to_top_30d_momentum_quintile",
+          "unit": "percentage_points",
+          "value": 71.0
+        },
+        {
+          "formula": "average allocation to assets in the bottom 20% by pre-run 30-day trailing return",
+          "name": "allocation_to_bottom_30d_momentum_quintile",
+          "unit": "percentage_points",
+          "value": 0.0
+        }
+      ],
+      "category": "model_behavior",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-15-1W",
+          "label": "Weekly round",
+          "source": "rounds/CB-2026-06-15-1W/market_data/universe_trailing_returns.json"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "momentum-exposure-CB-2026-06-15-1W",
+      "importance_score": 80.0,
+      "related": [
+        {
+          "href": "/rounds",
+          "label": "Round list"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The newest weekly portfolios allocate +71.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was South Korea Equities (EWY).",
+      "title": "Weekly models are leaning into recent winners",
+      "why_it_matters": "This measures whether models are chasing recent momentum or allocating away from it before outcomes are known."
+    },
+    {
+      "audiences": [
+        "traders",
+        "investors",
+        "capital_allocators"
+      ],
+      "calculations": [
+        {
+          "formula": "interim model return - interim S&P 500 return",
+          "name": "best_live_alpha",
+          "unit": "percentage_points",
+          "value": 6.3898
+        },
+        {
+          "formula": "interim model return - interim S&P 500 return",
+          "name": "worst_live_alpha",
+          "unit": "percentage_points",
+          "value": -6.2817
+        }
+      ],
+      "category": "live_performance",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/",
+          "label": "Live performance",
+          "source": "weekly_performance.csv"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "live-path-2026-06-15",
+      "importance_score": 77.0,
+      "related": [
+        {
+          "href": "/rounds",
+          "label": "Rounds"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "Using the latest available interim close, GPT-5.5 in CB-2026-05-24-1M is ahead of the S&P 500 by +6.39 percentage points, while GPT-5.5 in CB-2026-06-02-1M is at -6.28 percentage points.",
+      "title": "GPT-5.5 has the strongest live alpha",
+      "why_it_matters": "Live alpha is provisional, but it shows how open model portfolios are moving before the final official score."
+    },
+    {
+      "audiences": [
+        "ai_researchers",
+        "capital_allocators"
+      ],
+      "calculations": [
+        {
+          "formula": "cosine similarity between live allocation vectors",
+          "name": "closest_pair_cosine_similarity",
+          "unit": "ratio",
+          "value": 0.9505
+        },
+        {
+          "formula": "1 - average cosine similarity versus other live model allocation vectors",
+          "name": "outlier_average_distance",
+          "unit": "ratio",
+          "value": 0.2973
+        }
+      ],
+      "category": "model_similarity",
+      "confidence": "high",
+      "data_as_of": "2026-06-15",
+      "date": "2026-06-16",
+      "evidence": [
+        {
+          "href": "/models",
+          "label": "Models",
+          "source": "live parsed submissions"
+        }
+      ],
+      "generated_at": "2026-06-16T20:26:46Z",
+      "id": "model-similarity-2026-06-15",
+      "importance_score": 76.0,
+      "related": [
+        {
+          "href": "/risk-appetite",
+          "label": "AI Risk Appetite"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The closest live allocation pair is Claude Opus 4.7 and Claude Opus 4.8 with +95.05% cosine similarity. The current allocation outlier is GPT-5.5.",
+      "title": "Live model portfolios are tightly clustered",
+      "why_it_matters": "Similarity analysis shows whether models are independently converging on the same portfolio or expressing meaningfully different capital-allocation behavior."
+    }
+  ],
+  "run_date": "2026-06-16",
+  "source": {
+    "capitalbench_generated_at": "2026-06-16T20:26:46Z",
+    "data_fingerprint": "bc3d257be4f1886bea832d3cdfa6c0321396c226ecc91650024cbd9912a9a828",
+    "data_fingerprint_version": "capitalbench_insights_data_fingerprint_v1",
+    "input_version": "capitalbench_insights_input_v1",
+    "llm": {
+      "model": "meta/llama-3.1-8b-instruct",
+      "prompt_version": "capitalbench_insight_llm_prompt_v1",
+      "provider": "nvidia_nim",
+      "selected_candidate_ids": [
+        "consensus-performance-CB-2026-05-10-1M",
+        "consensus-performance-CB-2026-06-08-1W",
+        "benchmark-difficulty-CB-2026-05-10-1M",
+        "benchmark-difficulty-CB-2026-06-08-1W"
+      ],
+      "status": "succeeded"
+    },
+    "type": "llm_assisted"
+  },
+  "version": "capitalbench_insights_v1"
+}

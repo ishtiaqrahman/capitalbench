@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ActiveExposureMap from "../components/ActiveExposureMap";
 import GitHubLogo from "../components/GitHubLogo.astro";
+import InsightStrip from "../components/InsightStrip.astro";
 import LatestOfficialResultsTabs from "../components/LatestOfficialResultsTabs.astro";
 import LivePerformanceChart from "../components/LivePerformanceChart";
 import TrackScorecardTabs from "../components/TrackScorecardTabs.astro";
@@ -47,6 +48,7 @@ import { buildRunConcentration, type ConcentrationAsset, type RunConcentration }
 import { siteConfig } from "../lib/seo";
 import { staticModelProfiles } from "../lib/modelProfiles";
 import { buildLatestOfficialResultTracks } from "../lib/latestOfficialResults";
+import { insightHref, leadInsightsByCategory } from "../lib/insights.js";
 import {
   latestResolvedRoundForTrack,
   latestRoundForTrack,
@@ -179,6 +181,9 @@ const riskChangeClass =
       : "is-neutral";
 const riskScaleExplainer =
   "Higher means more allocation to growth, momentum, and cyclical assets. Lower means more cash, bonds, and defensive sectors.";
+const homeInsightCategories = ["current_positioning", "risk_regime", "horizon_agreement", "live_performance", "oracle_comparison"];
+const homeInsights = leadInsightsByCategory(apiReadModel, homeInsightCategories, 3);
+const heroInsight = leadInsightsByCategory(apiReadModel, ["current_positioning", "risk_regime"], 1)[0];
 const topRiskAssetNames = riskPulseTopAssets
   .slice(0, 3)
   .map((asset) => asset.label.toLowerCase())
@@ -557,6 +562,12 @@ const trackLaneCards = trackStates.map((track) => {
       </div>
 
       <p class="hero-positioning-explainer">{heroRiskExplanation}</p>
+      {heroInsight && (
+        <a class="hero-current-read" href={insightHref(heroInsight)}>
+          <span>Current read</span>
+          <strong>{heroInsight.title}</strong>
+        </a>
+      )}
 
       <div class="hero-positioning-score">
         <div class="hero-positioning-risk-score">
@@ -645,6 +656,12 @@ const trackLaneCards = trackStates.map((track) => {
     </div>
 
     <p class="hero-positioning-explainer">{heroRiskExplanation}</p>
+    {heroInsight && (
+      <a class="hero-current-read" href={insightHref(heroInsight)}>
+        <span>Current read</span>
+        <strong>{heroInsight.title}</strong>
+      </a>
+    )}
 
     <div class="hero-positioning-score">
       <div class="hero-positioning-risk-score">
@@ -717,6 +734,16 @@ const trackLaneCards = trackStates.map((track) => {
       <em>{pulseScore(currentRiskPulse.agreement.standard_deviation)} point dispersion</em>
     </article>
   </section>
+
+  <InsightStrip
+    id="benchmark-insights"
+    kicker="Benchmark insights"
+    title="What The Latest AI Decisions Suggest"
+    description="A compact readout from the insight engine, focused on current positioning, live marks, model agreement, and latest official results."
+    insights={homeInsights}
+    viewAllHref="/insights"
+    viewAllLabel="Full insight feed"
+  />
 
   <section class="live-risk-pulse" aria-labelledby="live-risk-pulse-title">
     <div class="live-risk-pulse-head">

@@ -6,6 +6,8 @@ import OfficialPicksTable from "../../components/OfficialPicksTable";
 import LeaderboardTable from "../../components/LeaderboardTable";
 import PendingLeaderboardGuide from "../../components/PendingLeaderboardGuide.astro";
 import LatestOfficialResultsTabs from "../../components/LatestOfficialResultsTabs.astro";
+import InsightStrip from "../../components/InsightStrip.astro";
+import apiReadModel from "../../generated/apiReadModel.js";
 import { pct } from "../../lib/format";
 import {
   staticOfficialSubmissions,
@@ -16,6 +18,7 @@ import {
 import { latestPendingRoundForTrack, latestResolvedRoundForTrack, latestSlotForTrack } from "../../lib/tracks";
 import { modelLabel, providerLabel } from "../../data/fallback";
 import { buildLatestOfficialResultTracks } from "../../lib/latestOfficialResults";
+import { insightsForRound, topInsightsByCategory } from "../../lib/insights.js";
 
 const track = "monthly" as const;
 const roundRows = staticRoundRecords();
@@ -25,6 +28,9 @@ const pendingRound = latestPendingRoundForTrack(roundRows, track);
 const displayRound = resultRound ?? pendingRound;
 const resultRows = resultRound ? staticRoundLeaderboard(resultRound.round_id, resultRound.official_run_id) : [];
 const winner = resultRows[0];
+const monthlyPageInsights = resultRound
+  ? insightsForRound(apiReadModel, resultRound.round_id, 3)
+  : topInsightsByCategory(apiReadModel, ["consensus_performance", "oracle_comparison", "benchmark_difficulty"], 3);
 const officialSubmissions = displayRound
   ? staticOfficialSubmissions(displayRound.round_id, displayRound.official_run_id)
   : [];
@@ -97,6 +103,15 @@ const initialNowIso = new Date().toISOString();
               headingDescription="Move backward or forward through completed monthly rounds without leaving the monthly results page."
               sectionLinkHref="/leaderboards/cumulative-monthly"
               sectionLinkLabel="Full monthly history"
+            />
+            <InsightStrip
+              id="monthly-result-insights"
+              kicker="Result insights"
+              title="What The Latest Monthly Result Shows"
+              description="Context generated from the scored monthly round, including consensus performance, oracle comparison, and benchmark difficulty."
+              insights={monthlyPageInsights}
+              viewAllHref="/insights"
+              viewAllLabel="All insights"
             />
           </section>
           <StatusCards

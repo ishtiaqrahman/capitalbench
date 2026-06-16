@@ -1,0 +1,335 @@
+{
+  "authorization": "redacted",
+  "endpoint_host": "https://integrate.api.nvidia.com/v1",
+  "endpoint_path": "/chat/completions",
+  "input_packet": {
+    "benchmark_context": {
+      "description": "The live benchmark for AI capital allocation.",
+      "method": "Frontier AI models receive the same market brief, portfolios are frozen, and results are scored against real market returns.",
+      "name": "CapitalBench",
+      "not_financial_advice": true
+    },
+    "candidate_insights": [
+      {
+        "audiences": [
+          "investors",
+          "capital_allocators",
+          "traders",
+          "ai_researchers"
+        ],
+        "calculations": [
+          {
+            "formula": "sum(average_model_allocation * asset_return)",
+            "name": "consensus_portfolio_return",
+            "unit": "percent",
+            "value": 0.7713
+          },
+          {
+            "formula": "average resolved model portfolio return",
+            "name": "average_model_return",
+            "unit": "percent",
+            "value": 0.7713
+          },
+          {
+            "formula": "100 * consensus_return / oracle_return",
+            "name": "consensus_capitalbench_score",
+            "unit": "points",
+            "value": 11.8249
+          }
+        ],
+        "category": "consensus_performance",
+        "confidence": "high",
+        "data_as_of": "2026-06-10",
+        "evidence": [
+          {
+            "href": "/rounds/CB-2026-05-10-1M",
+            "label": "Monthly result",
+            "source": "rounds/CB-2026-05-10-1M/runs/official-round-1-clean/results"
+          }
+        ],
+        "id": "consensus-performance-CB-2026-05-10-1M",
+        "importance_score": 92.0,
+        "related": [
+          {
+            "href": "/leaderboards/latest-monthly",
+            "label": "Latest monthly results"
+          }
+        ],
+        "summary": "If the monthly model allocations were averaged into one consensus portfolio, it returned +0.77% versus -1.65% for the S&P 500 and +6.52% for the hindsight best asset.",
+        "title": "AI consensus portfolio scored 11.8 versus the oracle",
+        "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
+      },
+      {
+        "audiences": [
+          "investors",
+          "capital_allocators",
+          "traders",
+          "ai_researchers"
+        ],
+        "calculations": [
+          {
+            "formula": "sum(average_model_allocation * asset_return)",
+            "name": "consensus_portfolio_return",
+            "unit": "percent",
+            "value": -0.1166
+          },
+          {
+            "formula": "average resolved model portfolio return",
+            "name": "average_model_return",
+            "unit": "percent",
+            "value": -0.1166
+          },
+          {
+            "formula": "100 * consensus_return / oracle_return",
+            "name": "consensus_capitalbench_score",
+            "unit": "points",
+            "value": -0.8388
+          }
+        ],
+        "category": "consensus_performance",
+        "confidence": "high",
+        "data_as_of": "2026-06-15",
+        "evidence": [
+          {
+            "href": "/rounds/CB-2026-06-08-1W",
+            "label": "Weekly result",
+            "source": "rounds/CB-2026-06-08-1W/runs/official-20260608/results"
+          }
+        ],
+        "id": "consensus-performance-CB-2026-06-08-1W",
+        "importance_score": 92.0,
+        "related": [
+          {
+            "href": "/leaderboards/latest-weekly",
+            "label": "Latest weekly results"
+          }
+        ],
+        "summary": "If the weekly model allocations were averaged into one consensus portfolio, it returned -0.12% versus +2.11% for the S&P 500 and +13.90% for the hindsight best asset.",
+        "title": "AI consensus portfolio scored -0.8 versus the oracle",
+        "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
+      },
+      {
+        "audiences": [
+          "investors",
+          "capital_allocators",
+          "ai_researchers"
+        ],
+        "calculations": [
+          {
+            "formula": "max(scored asset returns)",
+            "name": "oracle_return",
+            "unit": "percent",
+            "value": 6.5231
+          },
+          {
+            "formula": "min(scored asset returns)",
+            "name": "worst_asset_return",
+            "unit": "percent",
+            "value": -13.5929
+          },
+          {
+            "formula": "positive asset count / scored asset count",
+            "name": "positive_universe_share",
+            "unit": "percent",
+            "value": 32.5
+          }
+        ],
+        "category": "benchmark_difficulty",
+        "confidence": "high",
+        "data_as_of": "2026-06-10",
+        "evidence": [
+          {
+            "href": "/rounds/CB-2026-05-10-1M",
+            "label": "Monthly result",
+            "source": "rounds/CB-2026-05-10-1M/runs/official-round-1-clean/results/returns.csv"
+          }
+        ],
+        "id": "benchmark-difficulty-CB-2026-05-10-1M",
+        "importance_score": 90.0,
+        "related": [
+          {
+            "href": "/scoring",
+            "label": "Scoring"
+          }
+        ],
+        "summary": "The best scored asset returned +6.52%, the worst returned -13.59%, and +32.50% of the universe was positive. The S&P 500 ranked 27 out of 40 options.",
+        "title": "Monthly round had +20.12% asset dispersion",
+        "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
+      },
+      {
+        "audiences": [
+          "investors",
+          "capital_allocators",
+          "ai_researchers"
+        ],
+        "calculations": [
+          {
+            "formula": "max(scored asset returns)",
+            "name": "oracle_return",
+            "unit": "percent",
+            "value": 13.9033
+          },
+          {
+            "formula": "min(scored asset returns)",
+            "name": "worst_asset_return",
+            "unit": "percent",
+            "value": -10.3145
+          },
+          {
+            "formula": "positive asset count / scored asset count",
+            "name": "positive_universe_share",
+            "unit": "percent",
+            "value": 87.1429
+          }
+        ],
+        "category": "benchmark_difficulty",
+        "confidence": "high",
+        "data_as_of": "2026-06-15",
+        "evidence": [
+          {
+            "href": "/rounds/CB-2026-06-08-1W",
+            "label": "Weekly result",
+            "source": "rounds/CB-2026-06-08-1W/runs/official-20260608/results/returns.csv"
+          }
+        ],
+        "id": "benchmark-difficulty-CB-2026-06-08-1W",
+        "importance_score": 90.0,
+        "related": [
+          {
+            "href": "/scoring",
+            "label": "Scoring"
+          }
+        ],
+        "summary": "The best scored asset returned +13.90%, the worst returned -10.31%, and +87.14% of the universe was positive. The S&P 500 ranked 40 out of 70 options.",
+        "title": "Weekly round had +24.22% asset dispersion",
+        "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
+      }
+    ],
+    "data_as_of": "2026-06-15",
+    "generated_at": "2026-06-16T20:26:46Z",
+    "latest_round_context": [
+      {
+        "decision_date": "2026-06-15",
+        "exit_date": "2026-06-22",
+        "model_count": 5,
+        "result_count": 0,
+        "round_id": "CB-2026-06-15-1W",
+        "status": "active",
+        "track": "weekly"
+      },
+      {
+        "decision_date": "2026-06-15",
+        "exit_date": "2026-07-15",
+        "model_count": 5,
+        "result_count": 0,
+        "round_id": "CB-2026-06-15-1M",
+        "status": "active",
+        "track": "monthly"
+      },
+      {
+        "decision_date": "2026-06-13",
+        "exit_date": "2026-06-19",
+        "model_count": 6,
+        "result_count": 0,
+        "round_id": "CB-2026-06-13-1W",
+        "status": "active",
+        "track": "weekly"
+      },
+      {
+        "decision_date": "2026-06-13",
+        "exit_date": "2026-07-13",
+        "model_count": 5,
+        "result_count": 0,
+        "round_id": "CB-2026-06-13-1M",
+        "status": "active",
+        "track": "monthly"
+      },
+      {
+        "decision_date": "2026-06-12",
+        "exit_date": "2026-06-19",
+        "model_count": 6,
+        "result_count": 0,
+        "round_id": "CB-2026-06-12-1W",
+        "status": "active",
+        "track": "weekly"
+      },
+      {
+        "decision_date": "2026-06-12",
+        "exit_date": "2026-07-13",
+        "model_count": 6,
+        "result_count": 0,
+        "round_id": "CB-2026-06-12-1M",
+        "status": "active",
+        "track": "monthly"
+      },
+      {
+        "decision_date": "2026-06-09",
+        "exit_date": "2026-06-16",
+        "model_count": 6,
+        "result_count": 0,
+        "round_id": "CB-2026-06-09-1W",
+        "status": "active",
+        "track": "weekly"
+      },
+      {
+        "decision_date": "2026-06-09",
+        "exit_date": "2026-07-09",
+        "model_count": 6,
+        "result_count": 0,
+        "round_id": "CB-2026-06-09-1M",
+        "status": "active",
+        "track": "monthly"
+      }
+    ],
+    "llm_model": "meta/llama-3.1-8b-instruct",
+    "prompt_version": "capitalbench_insight_llm_prompt_v1",
+    "required_output_schema": {
+      "rejected_candidate_ids": [
+        "candidate ids that should not be rewritten"
+      ],
+      "rewrites": [
+        {
+          "candidate_id": "candidate id",
+          "summary": "optional rewritten summary",
+          "title": "optional rewritten title",
+          "why_it_matters": "optional rewritten why_it_matters"
+        }
+      ],
+      "selected_candidate_ids": [
+        "candidate id strings in preferred display order"
+      ],
+      "version": "insight_llm_output_v1"
+    },
+    "run_date": "2026-06-16",
+    "style_rules": [
+      "Use plain English for investors, capital allocators, traders, and AI researchers.",
+      "Explain benchmark meaning, not trading advice.",
+      "Do not invent facts, causes, market news, or external context.",
+      "Do not introduce new numbers. Use only numbers already present in the candidate insight.",
+      "Use asset names before tickers, for example Semiconductors (SMH).",
+      "Avoid buy, sell, long, short, price-target, or recommendation language.",
+      "Rewrite no more than four candidates.",
+      "Keep titles under 80 characters.",
+      "Keep summaries under 260 characters.",
+      "Keep why_it_matters under 240 characters.",
+      "Keep titles direct and institutional.",
+      "Keep summaries one or two sentences."
+    ],
+    "version": "capitalbench_insight_llm_input_v1"
+  },
+  "input_sha256": "ed433f64ae33d94abdc506409b109e7669775bf27690a8a608fe4001cb2aa4ad",
+  "model": "meta/llama-3.1-8b-instruct",
+  "prompt_version": "capitalbench_insight_llm_prompt_v1",
+  "provider": "nvidia_nim",
+  "request_parameters": {
+    "max_tokens": 2000,
+    "response_format": {
+      "type": "json_object"
+    },
+    "stream": false,
+    "temperature": 0,
+    "top_p": 1
+  },
+  "system_prompt": "You are the CapitalBench insight editor. Rewrite deterministic benchmark insights for clarity. Return only valid JSON matching the requested schema. Do not use markdown. Do not add facts, causes, market commentary, or numbers that are not already present in the candidate. Do not give investment advice or trade recommendations. Keep all evidence, calculations, and benchmark meaning intact. Keep the JSON compact: at most four rewrite objects, with short title, summary, and why_it_matters strings.",
+  "version": "capitalbench_llm_request_redacted_v1"
+}

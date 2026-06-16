@@ -9,7 +9,9 @@ import OfficialPicksTable from "../../components/OfficialPicksTable";
 import RoundPerformanceChart from "../../components/RoundPerformanceChart";
 import ScoreReturnChart from "../../components/ScoreReturnChart.astro";
 import HashTable from "../../components/HashTable";
+import InsightStrip from "../../components/InsightStrip.astro";
 import TableIsland from "../../components/TableIsland";
+import apiReadModel from "../../generated/apiReadModel.js";
 import {
   auditHashes,
   entryPrices,
@@ -37,6 +39,7 @@ import {
 import { buildScoreReturnChartData } from "../../lib/scoreReturnChart";
 import { datasetSchema } from "../../lib/seo";
 import { buildRunConcentration, type ConcentrationAsset } from "../../lib/runConcentration";
+import { insightsForRound } from "../../lib/insights.js";
 import { roundTrack, trackLabel } from "../../lib/tracks";
 
 const repoRoot = repoRootPath();
@@ -48,6 +51,7 @@ export function getStaticPaths() {
 const { round } = Astro.props;
 const roundRoot = resolve(repoRoot, "rounds", round.round_id);
 const officialRunId = round.official_run_id;
+const roundInsights = insightsForRound(apiReadModel, round.round_id, 3);
 const fallbackRoundSubmissions = officialSubmissions.filter(
   (submission) => submission.round_id === round.round_id && submission.run_id === officialRunId
 );
@@ -670,6 +674,16 @@ const attributionColumns = [
     entryDate={round.entry_date}
     exitDate={round.exit_date}
     officialRunId={round.official_run_id}
+  />
+
+  <InsightStrip
+    id="round-insights"
+    kicker="Round insights"
+    title="What The Insight Engine Flags For This Round"
+    description="Only insights with evidence tied to this round are shown here, so the interpretation stays connected to the audit packet."
+    insights={roundInsights}
+    viewAllHref="/insights"
+    viewAllLabel="All insights"
   />
 
   <section class="phase-band compact" aria-label="Round lifecycle">

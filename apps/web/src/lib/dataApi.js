@@ -982,6 +982,40 @@ function riskAppetite() {
   return jsonApiResult(200, apiReadModel.risk_appetite);
 }
 
+function listInsights(url) {
+  const payload = apiReadModel.insights ?? { insights: [] };
+  let rows = Array.isArray(payload.insights)
+    ? payload.insights.map((insight, index) => ({ insight, index }))
+    : [];
+  const category = url.searchParams.get("category");
+  if (category) rows = rows.filter((row) => row.insight.category === category);
+  rows = rows
+    .filter((row) => row.insight.status !== "draft")
+    .sort(
+      (left, right) =>
+        Number(right.insight.importance_score ?? 0) - Number(left.insight.importance_score ?? 0) ||
+        String(right.insight.generated_at ?? "").localeCompare(String(left.insight.generated_at ?? "")) ||
+        left.index - right.index
+    )
+    .map((row) => row.insight);
+  const categories = Array.from(new Set((payload.insights ?? []).map((row) => row.category).filter(Boolean))).sort();
+  return jsonApiResult(200, {
+    engine_version: payload.engine_version ?? null,
+    generated_at: payload.generated_at ?? null,
+    data_as_of: payload.data_as_of ?? null,
+    insight_count: rows.length,
+    categories,
+    ...pageRows(rows, url)
+  });
+}
+
+function insightDetails(insightId) {
+  const rows = Array.isArray(apiReadModel.insights?.insights) ? apiReadModel.insights.insights : [];
+  const insight = rows.find((row) => row.id === insightId && row.status !== "draft");
+  if (!insight) return errorResult(404, "not_found", "Insight not found.");
+  return jsonApiResult(200, insight);
+}
+
 function assetDetails(optionId) {
   const asset = enrichedAsset(assetById.get(optionId));
   if (!asset) return errorResult(404, "not_found", "Asset not found.");
@@ -1013,6 +1047,8 @@ function indexResponse() {
       "/v1/leaderboards/cumulative",
       "/v1/leaderboards/benchmark-sets",
       "/v1/leaderboards/benchmark-sets/{set_id}",
+      "/v1/insights",
+      "/v1/insights/{insight_id}",
       "/v1/models",
       "/v1/models/{model_id}",
       "/v1/models/{model_id}/holdings",
@@ -1042,6 +1078,8 @@ function routeGet(request) {
 
   if (parts[0] === "live" && parts[1] === "performance") return livePerformance(url);
   if (parts[0] === "risk-appetite" && parts.length === 1) return riskAppetite();
+  if (parts[0] === "insights" && parts.length === 1) return listInsights(url);
+  if (parts[0] === "insights" && parts.length === 2) return insightDetails(parts[1]);
 
   if (parts[0] === "rounds") {
     if (parts.length === 1) return listRounds(url);

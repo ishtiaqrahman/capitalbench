@@ -425,6 +425,39 @@ test("model holdings and asset holder endpoints filter correctly", async () => {
   assert.ok(holders.body.data.length > 0);
 });
 
+test("insights endpoint returns ranked public insights with detail lookups", async () => {
+  const list = await apiGet("/api/v1/insights?limit=3");
+
+  assert.equal(list.status, 200);
+  assert.equal(list.body.engine_version, apiReadModel.insights.engine_version);
+  assert.ok(list.body.insight_count >= list.body.data.length);
+  assert.equal(list.body.data.length, Math.min(3, list.body.insight_count));
+  assert.ok(list.body.categories.length > 0);
+  assert.ok(list.body.data.every((insight) => insight.status === "published"));
+  for (let index = 1; index < list.body.data.length; index += 1) {
+    assert.ok(list.body.data[index - 1].importance_score >= list.body.data[index].importance_score);
+  }
+
+  const first = list.body.data[0];
+  assert.ok(first.id);
+  assert.ok(first.title);
+  assert.ok(first.summary);
+  assert.ok(first.evidence.length > 0);
+
+  const detail = await apiGet(`/api/v1/insights/${first.id}`);
+  assert.equal(detail.status, 200);
+  assert.deepEqual(detail.body, first);
+
+  const category = first.category;
+  const filtered = await apiGet(`/api/v1/insights?category=${category}&limit=20`);
+  assert.equal(filtered.status, 200);
+  assert.ok(filtered.body.data.length > 0);
+  assert.ok(filtered.body.data.every((insight) => insight.category === category));
+
+  const missing = await apiGet("/api/v1/insights/not-a-real-insight");
+  assert.equal(missing.status, 404);
+});
+
 test("OpenAPI documented endpoints are served by the data API", async () => {
   const spec = JSON.parse(readFileSync(new URL("../public/api/openapi.json", import.meta.url), "utf8"));
   const modelId = apiReadModel.models[0].model_id;
@@ -432,6 +465,7 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
   const activeRoundId = latestRoundId("weekly", { status: "active" });
   const resolvedRoundId = latestRoundId("weekly", { status: "resolved" });
   const benchmarkSetId = apiReadModel.benchmark_set_definitions.find((set) => set.track === "weekly")?.set_id ?? "weekly-set-2026-05-28";
+  const insightId = apiReadModel.insights.insights[0]?.id ?? "no-insight";
   const sampleByOpenApiPath = new Map([
     ["/v1/positioning/active", "/api/v1/positioning/active?track=all&group_by=asset"],
     ["/v1/positioning/cumulative", `/api/v1/positioning/cumulative?track=weekly&model_id=${modelId}&group_by=asset`],
@@ -452,6 +486,8 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
     ["/v1/leaderboards/cumulative", "/api/v1/leaderboards/cumulative?track=weekly"],
     ["/v1/leaderboards/benchmark-sets", "/api/v1/leaderboards/benchmark-sets?track=weekly"],
     ["/v1/leaderboards/benchmark-sets/{set_id}", `/api/v1/leaderboards/benchmark-sets/${benchmarkSetId}`],
+    ["/v1/insights", "/api/v1/insights?limit=5"],
+    ["/v1/insights/{insight_id}", `/api/v1/insights/${insightId}`],
     ["/v1/models", "/api/v1/models"],
     ["/v1/models/{model_id}", `/api/v1/models/${modelId}`],
     ["/v1/models/{model_id}/holdings", `/api/v1/models/${modelId}/holdings?track=all&scope=active`],

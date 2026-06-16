@@ -166,6 +166,15 @@ export const routeMeta: RouteMeta[] = [
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
+  {
+    path: "/insights",
+    title: "CapitalBench Insights",
+    description:
+      "CapitalBench insights generated from AI model positioning, benchmark results, risk appetite, model behavior, and market-window math.",
+    priority: 0.86,
+    changefreq: "weekly",
+    lastmod: defaultLastmod
+  },
   ...publicModels.map((profile) => ({
     path: `/models/${profile.modelId}`,
     title: `${profile.label} CapitalBench Model Profile`,
@@ -309,6 +318,7 @@ const labelOverrides: Record<string, string> = {
   rounds: "Rounds",
   models: "Models",
   api: "API",
+  insights: "Insights",
   methodology: "Methodology",
   "risk-appetite": "AI Risk Appetite",
   universe: "Asset List",

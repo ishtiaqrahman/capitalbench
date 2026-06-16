@@ -36,6 +36,10 @@
     {
       "name": "Leaderboards",
       "description": "Latest and cumulative model scores."
+    },
+    {
+      "name": "Insights",
+      "description": "Readable findings generated from CapitalBench benchmark data."
     }
   ],
   "paths": {
@@ -238,6 +242,48 @@
             }
           },
           "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/insights": {
+      "get": {
+        "tags": ["Insights"],
+        "summary": "List insights",
+        "description": "Ranked insight feed with category filters, evidence links, calculations, and confidence metadata.",
+        "parameters": [
+          { "$ref": "#/components/parameters/InsightCategory" },
+          { "$ref": "#/components/parameters/Limit" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Insight list response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/InsightListResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/insights/{insight_id}": {
+      "get": {
+        "tags": ["Insights"],
+        "summary": "Get insight",
+        "description": "One insight with supporting calculations and source evidence.",
+        "parameters": [{ "$ref": "#/components/parameters/InsightIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Insight response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Insight" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     },
@@ -705,6 +751,19 @@
         "schema": { "type": "string" },
         "description": "CapitalBench benchmark comparison set identifier."
       },
+      "InsightIdPath": {
+        "name": "insight_id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "CapitalBench insight identifier."
+      },
+      "InsightCategory": {
+        "name": "category",
+        "in": "query",
+        "schema": { "type": "string" },
+        "description": "Optional insight category filter."
+      },
       "AsOf": {
         "name": "as_of",
         "in": "query",
@@ -1114,6 +1173,60 @@
           }
         },
         "required": ["rank", "model_id", "label", "provider", "portfolio_return_pct", "sp500_return_pct", "alpha_pp", "live_round_count"]
+      },
+      "InsightListResponse": {
+        "type": "object",
+        "properties": {
+          "engine_version": { "type": ["string", "null"] },
+          "generated_at": { "type": ["string", "null"], "format": "date-time" },
+          "data_as_of": { "type": ["string", "null"], "format": "date" },
+          "insight_count": { "type": "integer" },
+          "categories": { "type": "array", "items": { "type": "string" } },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/Insight" } },
+          "next_cursor": { "type": ["string", "null"] }
+        },
+        "required": ["engine_version", "generated_at", "data_as_of", "insight_count", "categories", "data", "next_cursor"]
+      },
+      "Insight": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "category": { "type": "string" },
+          "title": { "type": "string" },
+          "summary": { "type": "string" },
+          "why_it_matters": { "type": "string" },
+          "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+          "source_type": { "type": "string" },
+          "status": { "type": "string" },
+          "importance_score": { "type": "number", "minimum": 0, "maximum": 100 },
+          "data_as_of": { "type": ["string", "null"], "format": "date" },
+          "generated_at": { "type": "string", "format": "date-time" },
+          "audiences": { "type": "array", "items": { "type": "string" } },
+          "calculations": { "type": "array", "items": { "$ref": "#/components/schemas/InsightCalculation" } },
+          "evidence": { "type": "array", "items": { "$ref": "#/components/schemas/InsightEvidence" } },
+          "related": { "type": "array", "items": { "$ref": "#/components/schemas/InsightEvidence" } }
+        },
+        "required": ["id", "date", "category", "title", "summary", "why_it_matters", "confidence", "source_type", "status", "importance_score", "calculations", "evidence"]
+      },
+      "InsightCalculation": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": ["number", "string", "null"] },
+          "unit": { "type": ["string", "null"] },
+          "formula": { "type": ["string", "null"] }
+        },
+        "required": ["name", "value"]
+      },
+      "InsightEvidence": {
+        "type": "object",
+        "properties": {
+          "label": { "type": "string" },
+          "href": { "type": ["string", "null"] },
+          "source": { "type": ["string", "null"] }
+        },
+        "required": ["label"]
       },
       "PortfolioResponse": {
         "type": "object",

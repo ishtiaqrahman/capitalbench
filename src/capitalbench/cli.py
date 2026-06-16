@@ -16,6 +16,7 @@ from .automation import (
 )
 from .cumulative import cumulative_status, publish_cumulative, publish_latest
 from .hashing import write_round_hashes
+from .insights import build_insights_input, generate_insights, validate_insights
 from .interim import DEFAULT_SNAPSHOTS_DIR, update_interim_performance
 from .performance import fetch_universe_performance
 from .prices import fetch_selected_prices
@@ -457,6 +458,51 @@ def _cmd_sync_web(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_build_insights_input(args: argparse.Namespace) -> int:
+    output = build_insights_input(
+        rounds_dir=args.rounds_dir,
+        output_path=args.output,
+        run_date=args.run_date,
+    )
+    print(f"wrote insights input: {output.output_path}")
+    print(f"rounds: {output.round_count}")
+    print(f"portfolios: {output.portfolio_count}")
+    print(f"results: {output.result_count}")
+    return 0
+
+
+def _cmd_generate_insights(args: argparse.Namespace) -> int:
+    output = generate_insights(
+        input_path=args.input,
+        output_dir=args.output,
+        llm_mode=args.llm,
+        nvidia_model_id=args.nvidia_model,
+        nvidia_base_url=args.nvidia_base_url,
+        max_llm_candidates=args.max_llm_candidates,
+        force=args.force,
+    )
+    if output.published:
+        print(f"wrote insights run: {output.run_dir}")
+        print(f"wrote latest insights: {output.latest_path}")
+        print(f"wrote insights index: {output.index_path}")
+    else:
+        print(f"skipped insights publish: {output.skipped_reason}")
+    print(f"insights: {output.insight_count}")
+    print(f"llm_status: {output.llm_status}")
+    if output.llm_model:
+        print(f"llm_model: {output.llm_model}")
+    print(f"data_fingerprint: {output.data_fingerprint}")
+    return 0
+
+
+def _cmd_validate_insights(args: argparse.Namespace) -> int:
+    output = validate_insights(insights_dir=args.insights_dir)
+    print(f"validated latest insights: {output.latest_path}")
+    print(f"insights: {output.insight_count}")
+    print(f"dated runs: {output.run_count}")
+    return 0
+
+
 def _print_sync_summary(summary) -> None:
     label = summary.round_id or "global"
     if summary.run_id:
@@ -773,6 +819,55 @@ def build_parser() -> argparse.ArgumentParser:
     )
     sync_parser.add_argument("--selection", type=Path)
     sync_parser.set_defaults(func=_cmd_sync_web)
+
+    insights_input_parser = subparsers.add_parser(
+        "build-insights-input",
+        help="build the canonical deterministic input packet for CapitalBench insights",
+    )
+    insights_input_parser.add_argument("--rounds-dir", type=Path, required=True)
+    insights_input_parser.add_argument("--output", type=Path, required=True)
+    insights_input_parser.add_argument("--run-date", help="optional run date for the input packet, YYYY-MM-DD")
+    insights_input_parser.set_defaults(func=_cmd_build_insights_input)
+
+    generate_insights_parser = subparsers.add_parser(
+        "generate-insights",
+        help="generate deterministic CapitalBench insights from an input packet",
+    )
+    generate_insights_parser.add_argument("--input", type=Path, required=True)
+    generate_insights_parser.add_argument("--output", type=Path, required=True, help="insights output directory")
+    generate_insights_parser.add_argument(
+        "--llm",
+        choices=["auto", "off", "required"],
+        default="auto",
+        help="NVIDIA LLM rewrite mode: auto uses NVIDIA_API_KEY when present, off disables LLM, required fails without a successful LLM call",
+    )
+    generate_insights_parser.add_argument(
+        "--nvidia-model",
+        help="override NVIDIA model id; defaults to NVIDIA_MODEL_ID or meta/llama-3.1-8b-instruct",
+    )
+    generate_insights_parser.add_argument(
+        "--nvidia-base-url",
+        help="override NVIDIA base URL; defaults to NVIDIA_BASE_URL or https://integrate.api.nvidia.com/v1",
+    )
+    generate_insights_parser.add_argument(
+        "--max-llm-candidates",
+        type=int,
+        default=4,
+        help="maximum deterministic candidates sent to the NVIDIA LLM rewrite step",
+    )
+    generate_insights_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="publish a fresh insights artifact even when the benchmark data fingerprint has not changed",
+    )
+    generate_insights_parser.set_defaults(func=_cmd_generate_insights)
+
+    validate_insights_parser = subparsers.add_parser(
+        "validate-insights",
+        help="validate generated CapitalBench insight artifacts",
+    )
+    validate_insights_parser.add_argument("--insights-dir", type=Path, required=True)
+    validate_insights_parser.set_defaults(func=_cmd_validate_insights)
 
     return parser
 

@@ -1,0 +1,335 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import apiReadModel from "../generated/apiReadModel.js";
+
+type InsightCalculation = {
+  name?: string;
+  value?: number | string | null;
+  unit?: string | null;
+  formula?: string | null;
+};
+
+type InsightLink = {
+  label: string;
+  href?: string | null;
+  source?: string | null;
+};
+
+type InsightRecord = {
+  id: string;
+  category: string;
+  title: string;
+  summary: string;
+  why_it_matters: string;
+  confidence?: string;
+  source_type?: string;
+  status?: string;
+  importance_score?: number;
+  data_as_of?: string | null;
+  generated_at?: string | null;
+  calculations?: InsightCalculation[];
+  evidence?: InsightLink[];
+};
+
+const snapshot = apiReadModel.insights ?? {
+  engine_version: null,
+  generated_at: null,
+  data_as_of: null,
+  insight_count: 0,
+  insights: []
+};
+const insights = Array.isArray(snapshot.insights)
+  ? (snapshot.insights as InsightRecord[])
+      .map((insight, index) => ({ insight, index }))
+      .filter((row) => row.insight.status !== "draft")
+      .sort(
+        (left, right) =>
+          Number(right.insight.importance_score ?? 0) - Number(left.insight.importance_score ?? 0) ||
+          String(right.insight.generated_at ?? "").localeCompare(String(left.insight.generated_at ?? "")) ||
+          left.index - right.index
+      )
+      .map((row) => row.insight)
+  : [];
+const leadInsight = insights[0];
+const highConfidenceCount = insights.filter((insight) => insight.confidence === "high").length;
+const deterministicCount = insights.filter((insight) => insight.source_type === "deterministic").length;
+const categories = Array.from(
+  insights.reduce((map, insight) => {
+    map.set(insight.category, (map.get(insight.category) ?? 0) + 1);
+    return map;
+  }, new Map())
+).sort((left, right) => right[1] - left[1] || categoryLabel(left[0]).localeCompare(categoryLabel(right[0])));
+
+const categoryHighlights = categories
+  .map(([category, count]) => ({
+    category,
+    count,
+    insight: insights.find((row) => row.category === category)
+  }))
+  .filter((row): row is { category: string; count: number; insight: InsightRecord } => Boolean(row.insight))
+  .slice(0, 6);
+
+const metricCards = [
+  ["Published insights", String(insights.length), "Ranked signals in the latest generated feed."],
+  ["Data through", dateLabel(snapshot.data_as_of), "Most recent close or result date used by the engine."],
+  ["High confidence", String(highConfidenceCount), "Findings backed by deterministic calculations and direct evidence."],
+  ["Deterministic math", String(deterministicCount), "Insights generated without LLM interpretation."]
+];
+
+function categoryLabel(value: string | null | undefined) {
+  return String(value ?? "unknown")
+    .split("_")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function dateLabel(value: string | null | undefined) {
+  if (!value) return "n/a";
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(value));
+  if (!match) return String(value);
+  const date = new Date(`${match[1]}-${match[2]}-${match[3]}T00:00:00Z`);
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(date);
+}
+
+function dateTimeLabel(value: string | null | undefined) {
+  if (!value) return "n/a";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "UTC",
+    timeZoneName: "short"
+  }).format(date);
+}
+
+function calculationLabel(value: string | null | undefined) {
+  return String(value ?? "")
+    .split("_")
+    .filter(Boolean)
+    .map((part) => {
+      if (part.toLowerCase() === "sp500") return "S&P 500";
+      if (part.toLowerCase() === "ai") return "AI";
+      return part.charAt(0).toUpperCase() + part.slice(1);
+    })
+    .join(" ");
+}
+
+function calculationValue(calculation: InsightCalculation) {
+  const value = calculation?.value;
+  if (typeof value !== "number" || !Number.isFinite(value)) return value ?? "n/a";
+  const unit = String(calculation.unit ?? "").toLowerCase();
+  if (unit === "percent") return `${value > 0 ? "+" : ""}${value.toFixed(Math.abs(value) >= 10 ? 1 : 2)}%`;
+  if (unit === "points") return value.toFixed(1);
+  if (unit === "count") return String(Math.round(value));
+  return value.toFixed(Math.abs(value) >= 10 ? 1 : 2);
+}
+
+function confidenceLabel(value: string | null | undefined) {
+  const label = String(value ?? "unknown");
+  return `${label.charAt(0).toUpperCase()}${label.slice(1)}`;
+}
+
+function insightCalculations(insight: InsightRecord) {
+  return insight.calculations ?? [];
+}
+---
+
+<BaseLayout
+  title="CapitalBench Insights"
+  description="CapitalBench insights generated from AI model positioning, benchmark results, risk appetite, model behavior, and market-window math."
+>
+  <section class="insights-hero" aria-labelledby="insights-title">
+    <div class="insights-hero-copy">
+      <span class="panel-kicker">Insights</span>
+      <h1 id="insights-title">Readable signals from the AI capital allocation benchmark</h1>
+      <p>
+        Daily findings from model portfolios, scoring windows, AI Risk Appetite, benchmark difficulty, consensus
+        positioning, and model behavior.
+      </p>
+      <div class="insights-hero-actions">
+        <a class="action-link action-primary" href="#latest-insights">View Latest Insights</a>
+        <a class="action-link" href="/api">Use The API</a>
+      </div>
+    </div>
+
+    <aside class="insights-lead-panel" aria-label="Lead insight">
+      {leadInsight ? (
+        <>
+          <div class="insights-lead-topline">
+            <span>{categoryLabel(leadInsight.category)}</span>
+            <strong>{confidenceLabel(leadInsight.confidence)} confidence</strong>
+          </div>
+          <h2>{leadInsight.title}</h2>
+          <p>{leadInsight.summary}</p>
+          <div class="insights-lead-why">
+            <span>Why it matters</span>
+            <strong>{leadInsight.why_it_matters}</strong>
+          </div>
+          <div class="insights-evidence-links">
+            {leadInsight.evidence?.slice(0, 2).map((item) =>
+              item.href ? <a href={item.href}>{item.label}</a> : <span>{item.label}</span>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <span class="panel-kicker">Not generated yet</span>
+          <h2>No insights are published</h2>
+          <p>Run the insights pipeline to publish the first insight feed.</p>
+        </>
+      )}
+    </aside>
+  </section>
+
+  <section class="insights-metrics" aria-label="Insight feed freshness">
+    {metricCards.map(([label, value, description]) => (
+      <article>
+        <span>{label}</span>
+        <strong>{value}</strong>
+        <p>{description}</p>
+      </article>
+    ))}
+  </section>
+
+  <section id="latest-insights" class="section insights-section" aria-labelledby="latest-insights-title">
+    <div class="home-section-heading home-section-heading-with-action">
+      <div>
+        <span class="panel-kicker">Latest feed</span>
+        <h2 id="latest-insights-title">What The Benchmark Is Showing Now</h2>
+        <p>
+          Each card includes the calculation source, evidence links, and why the signal may matter to investors,
+          allocators, traders, and AI researchers.
+        </p>
+      </div>
+      <a class="section-profile-link" href="/api/v1/insights">JSON Feed</a>
+    </div>
+
+    <div class="insights-filter-row" aria-label="Filter insights by category" data-insight-filters>
+      <button type="button" class="is-active" data-insight-filter="all" aria-pressed="true">All <span>{insights.length}</span></button>
+      {categories.map(([category, count]) => (
+        <button type="button" data-insight-filter={category} aria-pressed="false">
+          {categoryLabel(category)} <span>{count}</span>
+        </button>
+      ))}
+    </div>
+
+    <div class="insight-card-grid">
+      {insights.slice(0, 9).map((insight) => (
+        <article class="insight-card" id={insight.id} data-insight-category={insight.category}>
+          <header>
+            <span>{categoryLabel(insight.category)}</span>
+            <strong>{Number(insight.importance_score ?? 0).toFixed(0)}</strong>
+          </header>
+          <h3>{insight.title}</h3>
+          <p>{insight.summary}</p>
+          <div class="insight-card-meta">
+            <span>{confidenceLabel(insight.confidence)} confidence</span>
+            <span>{insight.source_type === "deterministic" ? "Deterministic" : "LLM assisted"}</span>
+            <span>Data: {dateLabel(insight.data_as_of)}</span>
+          </div>
+          {insightCalculations(insight).length > 0 && (
+            <dl class="insight-calculation-list">
+              {insightCalculations(insight).slice(0, 3).map((calculation) => (
+                <div>
+                  <dt>{calculationLabel(calculation.name)}</dt>
+                  <dd>{calculationValue(calculation)}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          <div class="insight-card-footer">
+            <span>Why it matters</span>
+            <p>{insight.why_it_matters}</p>
+            <div>
+              {insight.evidence?.slice(0, 2).map((item) =>
+                item.href ? <a href={item.href}>{item.label}</a> : <span>{item.label}</span>
+              )}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <script is:inline>
+    const insightFilters = document.querySelector("[data-insight-filters]");
+    const insightCards = Array.from(document.querySelectorAll("[data-insight-category]"));
+    if (insightFilters && insightCards.length > 0) {
+      insightFilters.addEventListener("click", (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        const button = target?.closest("[data-insight-filter]");
+        if (!button) return;
+        const selected = button.getAttribute("data-insight-filter");
+        for (const item of insightFilters.querySelectorAll("[data-insight-filter]")) {
+          const active = item === button;
+          item.classList.toggle("is-active", active);
+          item.setAttribute("aria-pressed", active ? "true" : "false");
+        }
+        for (const card of insightCards) {
+          const visible = selected === "all" || card.getAttribute("data-insight-category") === selected;
+          card.hidden = !visible;
+        }
+      });
+    }
+  </script>
+
+  <section class="section insights-section" aria-labelledby="insight-families-title">
+    <div class="home-section-heading">
+      <span class="panel-kicker">Insight families</span>
+      <h2 id="insight-families-title">What The Engine Looks For</h2>
+      <p>
+        The engine is designed to surface useful behavior and performance patterns, not generic market commentary.
+      </p>
+    </div>
+    <div class="insight-family-grid">
+      {categoryHighlights.map((row) => (
+        <article>
+          <span>{row.count} signal{row.count === 1 ? "" : "s"}</span>
+          <h3>{categoryLabel(row.category)}</h3>
+          <p>{row.insight.summary}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section insights-method" aria-labelledby="insight-method-title">
+    <div class="insights-method-copy">
+      <span class="panel-kicker">Method</span>
+      <h2 id="insight-method-title">How Insights Are Produced</h2>
+      <p>
+        Deterministic calculations are the source of truth. LLM-generated language can be added later, but it must
+        explain validated findings and cite the same evidence packet.
+      </p>
+      <p class="insights-method-freshness">
+        Latest generation: <strong>{dateTimeLabel(snapshot.generated_at)}</strong>
+      </p>
+    </div>
+    <ol class="insights-method-steps">
+      <li>
+        <span>1</span>
+        <strong>Build the input packet</strong>
+        <p>Collect public rounds, official portfolios, results, live marks, asset risk ratings, and benchmark sets.</p>
+      </li>
+      <li>
+        <span>2</span>
+        <strong>Run deterministic math</strong>
+        <p>Calculate consensus performance, benchmark difficulty, risk posture, similarity, attribution, and live paths.</p>
+      </li>
+      <li>
+        <span>3</span>
+        <strong>Attach evidence</strong>
+        <p>Every insight links back to round pages, leaderboard pages, scoring files, or methodology pages.</p>
+      </li>
+      <li>
+        <span>4</span>
+        <strong>Validate before publishing</strong>
+        <p>The feed must pass schema checks before the website and API expose it.</p>
+      </li>
+    </ol>
+  </section>
+</BaseLayout>

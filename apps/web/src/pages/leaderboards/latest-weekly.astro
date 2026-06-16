@@ -6,6 +6,8 @@ import OfficialPicksTable from "../../components/OfficialPicksTable";
 import LeaderboardTable from "../../components/LeaderboardTable";
 import PendingLeaderboardGuide from "../../components/PendingLeaderboardGuide.astro";
 import LatestOfficialResultsTabs from "../../components/LatestOfficialResultsTabs.astro";
+import InsightStrip from "../../components/InsightStrip.astro";
+import apiReadModel from "../../generated/apiReadModel.js";
 import { dateOnly, pct, signedPp } from "../../lib/format";
 import {
   staticOfficialSubmissions,
@@ -20,6 +22,7 @@ import { modelLabel, providerLabel } from "../../data/fallback";
 import { capitalBenchScore } from "../../lib/capitalBenchScore.js";
 import { providerLogoSrc } from "../../lib/scoreReturnChart";
 import { buildLatestOfficialResultTracks } from "../../lib/latestOfficialResults";
+import { insightsForRound, topInsightsByCategory } from "../../lib/insights.js";
 import {
   allocationThemeClass,
   decisionAllocations,
@@ -194,6 +197,9 @@ const bestReturnRows = resultReturns
     shortLabel: optionShortDisplayName(row.option_id, resultOptionsById),
     returnValue: row.return
   }));
+const weeklyPageInsights = resultRound
+  ? insightsForRound(apiReadModel, resultRound.round_id, 3)
+  : topInsightsByCategory(apiReadModel, ["consensus_performance", "oracle_comparison", "benchmark_difficulty"], 3);
 
 function scoreLabel(value: number | null | undefined): string {
   return finiteNumber(value) ? value.toFixed(1) : "n/a";
@@ -690,6 +696,16 @@ const defaultOracleChartTab = oracleChartTabs[0]?.key ?? "latest";
               headingDescription="Move backward or forward through completed weekly rounds without leaving the weekly results page."
               sectionLinkHref="/leaderboards/cumulative-weekly"
               sectionLinkLabel="Full weekly history"
+            />
+
+            <InsightStrip
+              id="weekly-result-insights"
+              kicker="Result insights"
+              title="What The Latest Weekly Result Shows"
+              description="Context generated from the scored weekly round, including consensus performance, oracle comparison, and benchmark difficulty."
+              insights={weeklyPageInsights}
+              viewAllHref="/insights"
+              viewAllLabel="All insights"
             />
 
             <div class="latest-weekly-proof-row" aria-label="Audit and data links">

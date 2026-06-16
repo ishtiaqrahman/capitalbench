@@ -9,6 +9,7 @@ import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
 
 const repoRoot = resolve(process.cwd(), "../..");
 const roundsRoot = join(repoRoot, "rounds");
+const insightsRoot = join(repoRoot, "insights");
 const outputPath = join(process.cwd(), "src", "generated", "apiReadModel.js");
 const buildDate = new Date().toISOString().slice(0, 10);
 
@@ -56,6 +57,21 @@ function readYaml(path, fallback = null) {
   } catch {
     return fallback;
   }
+}
+
+function loadLatestInsights() {
+  const payload = readJson(join(insightsRoot, "latest.json"), null);
+  if (!payload || !Array.isArray(payload.insights)) {
+    return {
+      status: "unavailable",
+      engine_version: null,
+      generated_at: null,
+      data_as_of: null,
+      insight_count: 0,
+      insights: []
+    };
+  }
+  return payload;
 }
 
 const assetRiskModel = readYaml(join(repoRoot, "configs", "asset_risk_model.yaml"), {});
@@ -768,6 +784,7 @@ function buildReadModel() {
     interim_performance: interimPerformance,
     model_styles: modelStyles,
     risk_appetite: riskAppetite,
+    insights: loadLatestInsights(),
     proof
   };
 }

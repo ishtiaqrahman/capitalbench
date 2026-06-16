@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import GitHubLogo from "../../components/GitHubLogo.astro";
+import InsightStrip from "../../components/InsightStrip.astro";
 import ScoreReturnChart from "../../components/ScoreReturnChart.astro";
 import TrackScorecard from "../../components/TrackScorecard.astro";
 import apiReadModel from "../../generated/apiReadModel.js";
@@ -33,6 +34,7 @@ import {
 } from "../../lib/localRoundRecords";
 import { buildScoreReturnChartData, providerLogoSrc } from "../../lib/scoreReturnChart";
 import { benchmarkSetToScorecard, buildBenchmarkSetsData, featuredBenchmarkSet } from "../../lib/benchmarkSets";
+import { topInsightsByCategory } from "../../lib/insights.js";
 import { buildTrackScorecard, type TrackScorecardData } from "../../lib/trackScorecard";
 import {
   latestPendingRoundForTrack,
@@ -146,6 +148,11 @@ const liveRoundLabel = liveTracks
   .map((track) => track.pendingRound?.round_id)
   .filter(Boolean)
   .join(" / ") || "None";
+const resultsHubInsights = topInsightsByCategory(
+  apiReadModel,
+  ["consensus_performance", "oracle_comparison", "benchmark_difficulty", "confidence_calibration"],
+  3
+);
 
 function trackStateLabel(track: ResultsTrackState): string {
   if (track.scorecard) return `${track.completedCount} scored`;
@@ -344,6 +351,16 @@ const proofLinks = [
       </div>
     </div>
   </section>
+
+  <InsightStrip
+    id="results-insights"
+    kicker="Results insights"
+    title="How To Read The Latest Benchmark Results"
+    description="Signals generated from scored rounds, oracle comparisons, benchmark difficulty, and model confidence behavior."
+    insights={resultsHubInsights}
+    viewAllHref="/insights"
+    viewAllLabel="All insights"
+  />
 
   <section class="results-track-leaders" aria-label="Current track leaders">
     {trackStates.map((track) => {

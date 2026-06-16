@@ -126,6 +126,48 @@ packages from other rounds as eligible snapshots. That keeps free-tier Tiingo
 usage low: one new daily full-universe pull can update all active weekly and
 monthly charts.
 
+## Insights Refresh
+
+The insights workflow is coordinated with benchmark data updates instead of
+depending only on a clock.
+
+Primary triggers:
+
+- Successful `CapitalBench Resolver` completion, after any official rounds have
+  been settled, committed, and deployed.
+- Successful `Interim Performance Refresh` completion, after live
+  mark-to-market data has been refreshed, committed, and deployed.
+
+Backstop trigger:
+
+- `06:12 UTC` Tuesday-Saturday. This gives the `03:15 UTC` interim refresh and
+  several resolver cycles time to finish after the prior U.S. market close.
+
+The workflow builds the input packet in runner temp storage, computes a stable
+benchmark-data fingerprint, and compares it with `insights/latest.json`. If the
+fingerprint has not changed, it skips the NVIDIA call and exits without
+rewriting public insight artifacts. If benchmark data changed, it generates
+insights, validates artifacts, commits `insights/`, and deploys the website
+when deployment credentials are configured.
+
+Manual refresh:
+
+```bash
+capitalbench build-insights-input \
+  --rounds-dir rounds \
+  --output /tmp/capitalbench-insights-input.json \
+  --run-date YYYY-MM-DD
+capitalbench generate-insights \
+  --input /tmp/capitalbench-insights-input.json \
+  --output insights \
+  --llm auto
+capitalbench validate-insights --insights-dir insights
+```
+
+Use `--force` on `generate-insights` only when you intentionally want to
+republish insights for unchanged benchmark data, such as after an insight copy
+or prompt-policy fix.
+
 ## Manual Recovery
 
 Retry a local job:

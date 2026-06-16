@@ -1,0 +1,95 @@
+---
+import {
+  calculationLabel,
+  calculationValue,
+  categoryLabel,
+  confidenceLabel,
+  dateLabel,
+  insightHref
+} from "../lib/insights.js";
+
+interface Props {
+  insights?: any[];
+  kicker?: string;
+  title: string;
+  description?: string;
+  viewAllHref?: string;
+  viewAllLabel?: string;
+  id?: string;
+  compact?: boolean;
+}
+
+type InsightCalculation = {
+  name?: string;
+  value?: number | string | null;
+  unit?: string | null;
+};
+
+type InsightLink = {
+  label: string;
+  href?: string | null;
+};
+
+const {
+  insights = [],
+  kicker = "Benchmark insights",
+  title,
+  description,
+  viewAllHref = "/insights",
+  viewAllLabel = "All insights",
+  id,
+  compact = false
+} = Astro.props;
+const visibleInsights = insights.filter(Boolean).slice(0, compact ? 2 : 3);
+---
+
+{visibleInsights.length > 0 && (
+  <section class:list={["context-insights", compact && "context-insights-compact"]} id={id} aria-labelledby={id ? `${id}-title` : undefined}>
+    <div class="context-insights-head">
+      <div>
+        <span class="panel-kicker">{kicker}</span>
+        <h2 id={id ? `${id}-title` : undefined}>{title}</h2>
+        {description && <p>{description}</p>}
+      </div>
+      <a class="section-profile-link" href={viewAllHref}>{viewAllLabel}</a>
+    </div>
+
+    <div class="context-insight-grid">
+      {visibleInsights.map((insight) => {
+        const calculations: InsightCalculation[] = Array.isArray(insight.calculations) ? insight.calculations.slice(0, 2) : [];
+        const evidence: InsightLink[] = Array.isArray(insight.evidence) ? insight.evidence.slice(0, 2) : [];
+        return (
+          <article class="context-insight-card">
+            <header>
+              <span>{categoryLabel(insight.category)}</span>
+              <strong>{Number(insight.importance_score ?? 0).toFixed(0)}</strong>
+            </header>
+            <h3><a href={insightHref(insight)}>{insight.title}</a></h3>
+            <p>{insight.summary}</p>
+            <div class="context-insight-meta">
+              <span>{confidenceLabel(insight.confidence)} confidence</span>
+              <span>Data: {dateLabel(insight.data_as_of)}</span>
+            </div>
+            {calculations.length > 0 && (
+              <dl class="context-insight-calculations">
+                {calculations.map((calculation) => (
+                  <div>
+                    <dt>{calculationLabel(calculation.name)}</dt>
+                    <dd>{calculationValue(calculation)}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            <footer>
+              <span>{insight.why_it_matters}</span>
+              <div>
+                <a href={insightHref(insight)}>Open insight</a>
+                {evidence.map((item) => item.href ? <a href={item.href}>{item.label}</a> : <em>{item.label}</em>)}
+              </div>
+            </footer>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+)}

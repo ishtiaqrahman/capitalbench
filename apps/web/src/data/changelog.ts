@@ -26,6 +26,33 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-06-16-insights-engine-v1",
+    date: "2026-06-16",
+    title: "Insights engine v1 added",
+    category: "Research",
+    status: "published",
+    summary:
+      "CapitalBench now publishes deterministic insights generated from benchmark positioning, results, risk appetite, and model behavior data.",
+    details: [
+      "The new insights pipeline builds canonical input packets, generates deterministic insight candidates, validates the public feed, and writes dated audit artifacts under insights/.",
+      "An optional NVIDIA NIM rewrite step now uses meta/llama-3.1-8b-instruct by default to improve wording without changing calculations, evidence, or benchmark facts.",
+      "LLM output is rejected if it references unknown candidates, introduces unsupported numbers, or uses investment-action language; deterministic insights publish when NVIDIA is unavailable.",
+      "The website now has a dedicated Insights page and the Data API exposes /v1/insights plus /v1/insights/{insight_id}.",
+      "The weekday GitHub Actions schedule is documented and ready to publish once workflow-file write scope is available; the first public artifact was generated manually with NVIDIA.",
+      "A stable benchmark-data fingerprint prevents unchanged holiday or stale-data runs from calling NVIDIA, rewriting latest insights, or deploying the site.",
+      "Deterministic calculations remain the source of truth."
+    ],
+    links: [
+      { label: "Insights", href: "/insights" },
+      { label: "Data API", href: "/api" },
+      { label: "Audit and data", href: "/docs" },
+      {
+        label: "Insights engine plan",
+        href: "https://github.com/ishtiaqrahman/capitalbench/blob/main/docs/insights_engine_plan.md"
+      }
+    ]
+  },
+  {
     id: "2026-06-15-equal-run-benchmark-sets",
     date: "2026-06-15",
     title: "Equal-run benchmark sets added",

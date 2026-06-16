@@ -91,6 +91,26 @@ const riskAppetiteExample = exampleBlock("/api/v1/risk-appetite", {
   }
 });
 
+const insightsBody = await apiBody("/api/v1/insights?limit=3");
+const insightsExample = exampleBlock("/api/v1/insights?limit=3", {
+  engine_version: insightsBody.engine_version,
+  generated_at: insightsBody.generated_at,
+  data_as_of: insightsBody.data_as_of,
+  insight_count: insightsBody.insight_count,
+  categories: insightsBody.categories,
+  data: insightsBody.data?.map((insight: any) => ({
+    id: insight.id,
+    category: insight.category,
+    title: insight.title,
+    summary: insight.summary,
+    why_it_matters: insight.why_it_matters,
+    confidence: insight.confidence,
+    source_type: insight.source_type,
+    importance_score: insight.importance_score,
+    evidence: insight.evidence
+  }))
+});
+
 const leaderboardBody = await apiBody("/api/v1/leaderboards/latest?track=weekly");
 const leaderboardTop = leaderboardBody.data?.[0];
 const leaderboardExample = exampleBlock("/api/v1/leaderboards/latest?track=weekly", {
@@ -187,6 +207,14 @@ const endpointGroups = [
     ]
   },
   {
+    title: "Insights",
+    description: "Readable signals generated from benchmark math, model behavior, positioning, and scored results.",
+    endpoints: [
+      ["GET", "/v1/insights", "Ranked insight feed with category filters, evidence links, calculations, and confidence metadata."],
+      ["GET", "/v1/insights/{insight_id}", "One insight with its supporting calculations and source evidence."]
+    ]
+  },
+  {
     title: "Rounds And Results",
     description: "The published round record: timing, inputs, model portfolios, prices, max-possible context, and scores.",
     endpoints: [
@@ -228,7 +256,8 @@ const concepts = [
   ["Audit", "Round files, hashes, timestamps, prompt inputs, prices, and portfolio records."],
   ["Portfolio Minus S&P 500", "Model portfolio return minus the S&P 500 return, in percentage points."],
   ["CapitalBench Score", "Model return relative to the hindsight oracle; cumulative rows divide total model return by total oracle return."],
-  ["AI Risk Appetite", "A 0–100 allocation signal calculated from the newest live weekly and monthly AI model portfolios. It does not use prices or returns."],
+  ["AI Risk Appetite", "A 0-100 allocation signal calculated from the newest live weekly and monthly AI model portfolios. It does not use prices or returns."],
+  ["Insight", "A deterministic or LLM-assisted finding with source evidence, calculations, confidence, and audience tags."],
   ["Shared Rounds", "Resolved rounds included in a comparison set because every set model has an official result."]
 ];
 
@@ -239,6 +268,7 @@ const fields = [
   ["comparison", "Cumulative leaderboard metadata showing included resolved rounds, test counts, and aggregation mode."],
   ["effective_asset_count", "Concentration metric equal to one divided by summed squared asset shares."],
   ["max_possible_return_pct", "Highest realized return among scored options in the saved universe; cumulative rows report the average per-test oracle return as supporting context."],
+  ["importance_score", "0-100 editorial ranking used to order public insights by usefulness and urgency."],
   ["model_id", "Stable CapitalBench model identifier."],
   ["next_cursor", "Pagination cursor returned when more records are available."],
   ["option_id", "Stable asset identifier from the saved universe."],
@@ -441,6 +471,10 @@ const curlExample = `curl "https://www.capitalbench.org/api/v1/positioning/activ
           <article class="api-example">
             <h3>Current AI Risk Appetite</h3>
             <pre><code>{riskAppetiteExample}</code></pre>
+          </article>
+          <article class="api-example">
+            <h3>Insight Feed</h3>
+            <pre><code>{insightsExample}</code></pre>
           </article>
           <article class="api-example">
             <h3>Latest Scored Test</h3>
