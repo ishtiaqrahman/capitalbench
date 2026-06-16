@@ -8,11 +8,11 @@ Each round is a separate market decision with its own declared scoring window. O
 
 | Rank | Model | Provider | Resolved Rounds | Avg Return | Avg S&P Return | Avg Alpha | Hit Rate vs S&P | Avg Regret | Cumulative Return | Cumulative S&P Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | xai-grok-4-3 | xai | 8 | -1.37% | -0.87% | -0.50% | 50.00% | 8.45% | -11.21% | -6.88% |
-| 2 | anthropic-claude-opus-4-7 | anthropic | 8 | -1.39% | -0.87% | -0.52% | 50.00% | 8.48% | -11.35% | -6.88% |
-| 3 | anthropic-claude-opus-4-8 | anthropic | 6 | -2.49% | -1.60% | -0.89% | 33.33% | 7.87% | -14.41% | -9.30% |
-| 4 | openai-gpt-5-5 | openai | 8 | -2.83% | -0.87% | -1.96% | 37.50% | 9.92% | -21.75% | -6.88% |
-| 5 | google-gemini-3-1-pro | google | 8 | -2.86% | -0.87% | -1.99% | 37.50% | 9.95% | -22.06% | -6.88% |
+| 1 | anthropic-claude-opus-4-7 | anthropic | 9 | -1.04% | -0.54% | -0.50% | 44.44% | 8.88% | -9.78% | -4.91% |
+| 2 | xai-grok-4-3 | xai | 9 | -1.28% | -0.54% | -0.74% | 44.44% | 9.12% | -11.70% | -4.91% |
+| 3 | anthropic-claude-opus-4-8 | anthropic | 7 | -2.12% | -1.07% | -1.04% | 28.57% | 8.71% | -14.28% | -7.38% |
+| 4 | openai-gpt-5-5 | openai | 9 | -2.58% | -0.54% | -2.04% | 33.33% | 10.43% | -22.22% | -4.91% |
+| 5 | google-gemini-3-1-pro | google | 9 | -2.70% | -0.54% | -2.16% | 33.33% | 10.54% | -23.12% | -4.91% |
 
 ## Cumulative Stability Leaderboard
 
@@ -30,10 +30,11 @@ _No rows._
 | CB-2026-06-02-1W | official-20260602-clean |  | yes | no |  |
 | CB-2026-06-03-1W | official-20260603 |  | yes | no |  |
 | CB-2026-06-05-1W | official-20260605 |  | yes | no |  |
+| CB-2026-06-08-1W | official-20260608 |  | yes | no |  |
 
 ## Methodology
 
-Official cumulative score: the public website averages CapitalBench Score across all completed rounds in the selected track. Models that did not participate in every resolved round are shown as short history until they build a full track history. CapitalBench Score compares the model return with the maximum possible return from the scored universe in that window.
+Official cumulative score: the public website divides summed model returns by summed oracle returns across all completed rounds in the selected track. Models that did not participate in every resolved round are shown as short history until they build a full track history. A score of 100 matches the hindsight oracle, 0 means no net return, and negative values preserve losses.
 
 Stability cumulative score: For each model, we average its repeated-run alpha and consistency across the rounds where each model participated.
 
@@ -54,7 +55,7 @@ The official leaderboard measures the saved public model decision. The stability
 
 ## Warnings
 
-- Round CB-2026-06-08-1W has no scored official or stability runs.
 - Round CB-2026-06-09-1W has no scored official or stability runs.
 - Round CB-2026-06-12-1W has no scored official or stability runs.
 - Round CB-2026-06-13-1W has no scored official or stability runs.
+- Round CB-2026-06-15-1W has no scored official or stability runs.
