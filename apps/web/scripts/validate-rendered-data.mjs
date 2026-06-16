@@ -2663,6 +2663,9 @@ includes(riskAppetiteHtml, pulseScore(liveRisk.outstanding_live_book.score), "ri
 includes(riskAppetiteHtml, signedPulseScore(livePulse.change_from_previous), "risk appetite change");
 includes(riskAppetiteHtml, livePulse.regime, "risk appetite regime");
 includes(riskAppetiteHtml, livePulse.agreement.label, "risk appetite agreement");
+includes(riskAppetiteHtml, "Tight means below 5", "risk appetite agreement tight threshold");
+includes(riskAppetiteHtml, "Mixed means 5 to 12 points", "risk appetite agreement mixed threshold");
+includes(riskAppetiteHtml, "Divided means above 12 points", "risk appetite agreement divided threshold");
 includes(riskAppetiteHtml, "Historical AI Risk Appetite", "risk appetite historical chart");
 includes(riskAppetiteHtml, "Pulse", "risk appetite pulse tab");
 includes(riskAppetiteHtml, "Agreement", "risk appetite agreement tab");
