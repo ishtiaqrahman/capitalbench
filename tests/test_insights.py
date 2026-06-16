@@ -217,6 +217,10 @@ def test_generate_and_validate_deterministic_insights(tmp_path: Path) -> None:
     consensus = next(row for row in latest["insights"] if row["category"] == "consensus_performance")
     consensus_return = next(row for row in consensus["calculations"] if row["name"] == "consensus_portfolio_return")
     assert consensus_return["value"] == 2.5
+    assert consensus["context"]["track"] == "weekly"
+    assert consensus["context"]["round_id"] == "CB-2026-01-01-1W"
+    assert consensus["context"]["primary_label"] == "Weekly result"
+    assert consensus["context"]["oracle_asset"]["display"] == "Technology Sector (XLK)"
     manifest = json.loads((generated.run_dir / "run_manifest.json").read_text(encoding="utf-8"))
     assert manifest["llm_status"] == "not_configured"
     assert manifest["data_fingerprint"] == latest["source"]["data_fingerprint"]

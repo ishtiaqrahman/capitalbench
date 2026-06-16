@@ -17444,11 +17444,11 @@ tbody tr:hover {
 }
 
 .insights-hero {
-  width: min(1180px, calc(100vw - 40px));
-  margin: 46px auto 18px;
+  width: min(1200px, calc(100vw - 40px));
+  margin: 38px auto 20px;
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-  gap: 18px;
+  grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1fr);
+  gap: 22px;
   align-items: stretch;
 }
 
@@ -17462,7 +17462,7 @@ tbody tr:hover {
 }
 
 .insights-hero-copy {
-  padding: 32px;
+  padding: 36px;
   display: grid;
   align-content: center;
 }
@@ -17471,8 +17471,8 @@ tbody tr:hover {
   max-width: 680px;
   margin-top: 7px;
   color: var(--ink-strong);
-  font-size: clamp(2.15rem, 4vw, 4.2rem);
-  line-height: 0.98;
+  font-size: clamp(2.35rem, 3.35vw, 3.75rem);
+  line-height: 1;
 }
 
 .insights-hero-copy p {
@@ -17491,12 +17491,12 @@ tbody tr:hover {
 }
 
 .insights-lead-panel {
-  padding: 24px;
+  padding: 26px;
   display: grid;
   align-content: start;
-  gap: 16px;
+  gap: 15px;
   background:
-    linear-gradient(135deg, rgb(255 255 255 / 92%), rgb(244 248 247 / 95%)),
+    linear-gradient(135deg, rgb(255 255 255 / 94%), rgb(239 247 244 / 96%)),
     var(--surface);
 }
 
@@ -17511,6 +17511,7 @@ tbody tr:hover {
 .insights-lead-topline span,
 .insights-lead-topline strong,
 .insight-card-meta span,
+.insight-context-strip span,
 .insights-evidence-links a,
 .insights-evidence-links span,
 .insight-card-footer a,
@@ -17536,13 +17537,13 @@ tbody tr:hover {
 
 .insights-lead-panel h2 {
   color: var(--ink-strong);
-  font-size: 1.65rem;
-  line-height: 1.12;
+  font-size: 1.72rem;
+  line-height: 1.14;
 }
 
 .insights-lead-panel p {
   color: var(--muted);
-  line-height: 1.55;
+  line-height: 1.58;
 }
 
 .insights-lead-why {
@@ -17581,8 +17582,8 @@ tbody tr:hover {
 }
 
 .insights-metrics {
-  width: min(1180px, calc(100vw - 40px));
-  margin: 0 auto 16px;
+  width: min(1200px, calc(100vw - 40px));
+  margin: 0 auto 18px;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   border: 1px solid var(--line);
@@ -17627,21 +17628,26 @@ tbody tr:hover {
 }
 
 .insights-section {
-  width: min(1180px, calc(100vw - 40px));
+  width: min(1200px, calc(100vw - 40px));
   margin: 0 auto;
 }
 
 .insight-card-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
 }
 
 .insights-filter-row {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 0 0 16px;
+  margin: 0 0 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: rgb(255 255 255 / 72%);
+  box-shadow: 0 8px 22px rgb(24 42 38 / 5%);
 }
 
 .insights-filter-row button {
@@ -17679,9 +17685,9 @@ tbody tr:hover {
 }
 
 .insight-card {
-  padding: 18px;
+  padding: 22px;
   display: grid;
-  gap: 13px;
+  gap: 14px;
   align-content: start;
   scroll-margin-top: 118px;
 }
@@ -17692,40 +17698,74 @@ tbody tr:hover {
   justify-content: space-between;
   gap: 10px;
   align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
 }
 
 .insight-card header span {
   color: var(--muted-2);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 800;
   text-transform: uppercase;
 }
 
 .insight-card header strong {
-  min-width: 34px;
+  min-width: 0;
   min-height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
+  max-width: 62%;
   border-radius: 999px;
+  padding: 0 10px;
   background: var(--accent-bg);
   color: var(--accent);
   font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.insight-context-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.insight-context-strip span {
+  border-color: rgb(15 23 42 / 12%);
+  background: #f7fbfa;
+  color: var(--ink);
+  font-weight: 800;
 }
 
 .insight-card h3 {
   color: var(--ink-strong);
-  font-size: 1.08rem;
-  line-height: 1.22;
+  font-size: 1.24rem;
+  line-height: 1.24;
 }
 
 .insight-card > p,
+.insight-definition,
 .insight-card-footer p,
 .insight-family-grid p,
 .insights-method-copy p,
 .insights-method-steps p {
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.55;
+}
+
+.insight-card > p {
+  font-size: 0.96rem;
+}
+
+.insight-definition {
+  margin: 0;
+  border-left: 3px solid rgb(0 107 95 / 32%);
+  padding: 10px 12px;
+  border-radius: 0 7px 7px 0;
+  background: #f5faf8;
+  font-size: 0.9rem;
 }
 
 .insight-card-meta {
@@ -17745,7 +17785,7 @@ tbody tr:hover {
   min-width: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 10px;
+  padding: 11px;
   background: #f8faf9;
 }
 
@@ -17768,7 +17808,7 @@ tbody tr:hover {
 
 .insight-card-footer {
   border-top: 1px solid var(--line);
-  padding-top: 13px;
+  padding-top: 14px;
 }
 
 .insight-card-footer p {
@@ -17779,11 +17819,11 @@ tbody tr:hover {
 .insight-family-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
 
 .insight-family-grid article {
-  padding: 18px;
+  padding: 20px;
 }
 
 .insight-family-grid h3 {
@@ -17796,11 +17836,11 @@ tbody tr:hover {
 }
 
 .insights-method {
-  width: min(1180px, calc(100vw - 40px));
+  width: min(1200px, calc(100vw - 40px));
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(260px, 0.55fr) minmax(0, 1fr);
-  gap: 18px;
+  gap: 20px;
   align-items: start;
 }
 
@@ -18506,6 +18546,7 @@ tbody tr:hover {
   .insights-hero {
     width: min(100%, calc(100vw - 28px));
     margin-top: 26px;
+    gap: 14px;
   }
 
   .insights-hero-copy,
@@ -18514,8 +18555,8 @@ tbody tr:hover {
   }
 
   .insights-hero-copy h1 {
-    font-size: 2.35rem;
-    line-height: 1.02;
+    font-size: 2.15rem;
+    line-height: 1.04;
   }
 
   .insights-hero-copy p {
@@ -18526,6 +18567,24 @@ tbody tr:hover {
   .insights-section,
   .insights-method {
     width: min(100%, calc(100vw - 28px));
+  }
+
+  .insights-lead-panel h2 {
+    font-size: 1.42rem;
+  }
+
+  .insights-filter-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-bottom: 14px;
+    padding: 8px;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .insights-filter-row button {
+    flex: 0 0 auto;
+    min-height: 32px;
   }
 
   .insights-metrics,
@@ -18552,7 +18611,31 @@ tbody tr:hover {
   .insight-family-grid article,
   .insights-method-copy,
   .insights-method-steps li {
-    padding: 15px;
+    padding: 16px;
+  }
+
+  .insight-card {
+    gap: 12px;
+  }
+
+  .insight-card header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .insight-card header strong {
+    max-width: 100%;
+  }
+
+  .insight-card h3 {
+    font-size: 1.12rem;
+  }
+
+  .insight-card > p,
+  .insight-definition,
+  .insight-card-footer p {
+    font-size: 0.9rem;
   }
 
   .api-hero {

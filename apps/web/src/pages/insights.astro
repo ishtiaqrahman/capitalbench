@@ -15,6 +15,39 @@ type InsightLink = {
   source?: string | null;
 };
 
+type InsightContext = {
+  scope?: string;
+  track?: string;
+  track_label?: string;
+  round_id?: string;
+  run_id?: string;
+  primary_label?: string;
+  status?: string;
+  status_label?: string;
+  decision_date?: string;
+  entry_date?: string;
+  exit_date?: string;
+  data_as_of?: string;
+  model_count?: number;
+  result_count?: number;
+  asset_count?: number;
+  round_count?: number;
+  round_ids?: string[];
+  decision_dates?: string[];
+  median_confidence?: number;
+  oracle_asset?: {
+    option_id?: string;
+    name?: string;
+    ticker?: string;
+    display?: string;
+    return_pct?: number;
+  };
+  model?: {
+    model_id?: string;
+    label?: string;
+  };
+};
+
 type InsightRecord = {
   id: string;
   category: string;
@@ -27,6 +60,7 @@ type InsightRecord = {
   importance_score?: number;
   data_as_of?: string | null;
   generated_at?: string | null;
+  context?: InsightContext;
   calculations?: InsightCalculation[];
   evidence?: InsightLink[];
 };
@@ -64,13 +98,14 @@ const categoryHighlights = categories
   .map(([category, count]) => ({
     category,
     count,
-    insight: insights.find((row) => row.category === category)
+    insight: insights.find((row) => row.category === category),
+    description: categoryDescription(category)
   }))
-  .filter((row): row is { category: string; count: number; insight: InsightRecord } => Boolean(row.insight))
+  .filter((row): row is { category: string; count: number; insight: InsightRecord; description: string } => Boolean(row.insight))
   .slice(0, 6);
 
 const metricCards = [
-  ["Published insights", String(insights.length), "Ranked signals in the latest generated feed."],
+  ["Published insights", String(insights.length), "Readable signals in the latest generated feed."],
   ["Data through", dateLabel(snapshot.data_as_of), "Most recent close or result date used by the engine."],
   ["High confidence", String(highConfidenceCount), "Findings backed by deterministic calculations and direct evidence."],
   ["Deterministic math", String(deterministicCount), "Insights generated without LLM interpretation."]
@@ -90,6 +125,14 @@ function dateLabel(value: string | null | undefined) {
   if (!match) return String(value);
   const date = new Date(`${match[1]}-${match[2]}-${match[3]}T00:00:00Z`);
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(date);
+}
+
+function shortDateLabel(value: string | null | undefined) {
+  if (!value) return "n/a";
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(value));
+  if (!match) return String(value);
+  const date = new Date(`${match[1]}-${match[2]}-${match[3]}T00:00:00Z`);
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(date);
 }
 
 function dateTimeLabel(value: string | null | undefined) {
@@ -137,6 +180,113 @@ function confidenceLabel(value: string | null | undefined) {
 function insightCalculations(insight: InsightRecord) {
   return insight.calculations ?? [];
 }
+
+function roundWindowLabel(context: InsightContext) {
+  if (context.decision_date && context.exit_date && context.decision_date !== context.exit_date) {
+    return `${shortDateLabel(context.decision_date)}-${shortDateLabel(context.exit_date)}`;
+  }
+  if (context.decision_date) return shortDateLabel(context.decision_date);
+  if (context.data_as_of) return `Data through ${shortDateLabel(context.data_as_of)}`;
+  return null;
+}
+
+function insightTimeframeLabel(insight: InsightRecord) {
+  const context = insight.context ?? {};
+  const window = roundWindowLabel(context);
+  if (window) return window.replace("Data through ", "As of ");
+  const dataAsOf = context.data_as_of ?? insight.data_as_of;
+  if (dataAsOf) return `As of ${shortDateLabel(dataAsOf)}`;
+  return context.primary_label ?? `${confidenceLabel(insight.confidence)} confidence`;
+}
+
+function uniqueStrings(values: Array<string | null | undefined>) {
+  return Array.from(new Set(values.filter((value): value is string => Boolean(value))));
+}
+
+function contextPills(insight: InsightRecord) {
+  const context = insight.context ?? {};
+  const pills: string[] = [];
+  if (context.primary_label) pills.push(context.primary_label);
+  if (context.scope === "round" && context.round_id) pills.push(context.round_id);
+  if (context.scope === "live_rounds" && context.round_count) pills.push(`${context.round_count} live rounds`);
+  if (context.scope === "live_interim" && context.round_count) pills.push(`${context.round_count} open rounds`);
+  if (context.scope === "resolved_history" && context.round_count) pills.push(`${context.round_count} resolved rounds`);
+  if (context.model_count) pills.push(`${context.model_count} model${context.model_count === 1 ? "" : "s"}`);
+  if (context.result_count && context.scope !== "round") pills.push(`${context.result_count} scored results`);
+  if (context.oracle_asset?.display) {
+    const oracleReturn = typeof context.oracle_asset.return_pct === "number" ? `, ${context.oracle_asset.return_pct > 0 ? "+" : ""}${context.oracle_asset.return_pct.toFixed(2)}%` : "";
+    pills.push(`Oracle: ${context.oracle_asset.display}${oracleReturn}`);
+  }
+  if (context.model?.label) pills.push(`Model: ${context.model.label}`);
+  if (typeof context.median_confidence === "number") pills.push(`Median confidence ${context.median_confidence.toFixed(2)}`);
+  if (context.status_label) pills.push(context.status_label);
+  return uniqueStrings(pills).slice(0, 6);
+}
+
+function sourcePills(insight: InsightRecord) {
+  const pills = [`${confidenceLabel(insight.confidence)} confidence`, "Math: deterministic"];
+  if (insight.source_type === "llm_assisted") pills.push("Wording: LLM-assisted");
+  pills.push(`Data through ${dateLabel(insight.data_as_of)}`);
+  return pills;
+}
+
+function insightDefinition(insight: InsightRecord) {
+  switch (insight.category) {
+    case "consensus_performance":
+      return "Consensus means the average of model allocations in the same round. CapitalBench Score compares that return with the hindsight-best eligible asset for that exact scoring window.";
+    case "benchmark_difficulty":
+      return "Asset dispersion is the gap between the best and worst eligible assets in the same round. Wider dispersion makes missed allocation choices more costly.";
+    case "oracle_comparison":
+      return "Oracle means the best eligible asset in hindsight for that round. Models do not know it when portfolios are frozen.";
+    case "current_positioning":
+      return "Aggregate allocation averages the newest live model portfolios before final scores are known.";
+    case "risk_regime":
+      return "Risk-taking score is allocation-based, not performance-based: higher means more weight in growth, momentum, cyclical, and higher-risk assets.";
+    case "confidence_calibration":
+      return "Confidence is the model's own 0-1 self-reported confidence at submission time, compared with later realized returns.";
+    case "horizon_agreement":
+      return "Horizon agreement compares the newest weekly and monthly live portfolios to see whether short- and longer-window model stances line up.";
+    case "performance_attribution":
+      return "Attribution multiplies each frozen holding's weight by its asset return to show what helped or hurt the model portfolio.";
+    case "model_behavior":
+      return "Momentum exposure measures how much of the frozen portfolio went into assets that had already been recent winners before the model made its allocation.";
+    case "live_performance":
+      return "Live alpha is interim model return minus interim S&P 500 return. It is provisional until the round reaches its official score date.";
+    case "model_similarity":
+      return "Cosine similarity measures allocation overlap between model portfolios. A value near 1.00 means the weights are very similar.";
+    default:
+      return "This insight is generated from CapitalBench public rounds, frozen portfolios, scored results, and linked evidence files.";
+  }
+}
+
+function categoryDescription(category: string) {
+  switch (category) {
+    case "benchmark_difficulty":
+      return "How hard a scoring window was, based on the spread between the best, worst, and broad market outcomes.";
+    case "consensus_performance":
+      return "Whether the average AI portfolio performed well against the S&P 500 and the hindsight-best asset in the same round.";
+    case "model_behavior":
+      return "How models are allocating before outcomes are known, including momentum chasing and allocation style.";
+    case "oracle_comparison":
+      return "Whether models found, missed, or underweighted the asset that later turned out to be best.";
+    case "performance_attribution":
+      return "Which holdings drove a model's realized result after the frozen portfolio was scored.";
+    case "confidence_calibration":
+      return "Whether self-reported model confidence has contained useful information about later results.";
+    case "current_positioning":
+      return "Where live AI portfolios are currently concentrated before official scores are final.";
+    case "horizon_agreement":
+      return "Whether weekly and monthly live portfolios point in the same regime direction.";
+    case "live_performance":
+      return "How open portfolios are moving versus the S&P 500 before final score dates.";
+    case "model_similarity":
+      return "How much the live portfolios overlap across models and which model is the allocation outlier.";
+    case "risk_regime":
+      return "Whether live portfolios are collectively defensive, balanced, or aggressive based on holdings.";
+    default:
+      return "A validated signal generated from CapitalBench benchmark data.";
+  }
+}
 ---
 
 <BaseLayout
@@ -162,10 +312,17 @@ function insightCalculations(insight: InsightRecord) {
         <>
           <div class="insights-lead-topline">
             <span>{categoryLabel(leadInsight.category)}</span>
-            <strong>{confidenceLabel(leadInsight.confidence)} confidence</strong>
+            <strong title="Timeframe for this insight">{insightTimeframeLabel(leadInsight)}</strong>
+          </div>
+          <div class="insight-context-strip" aria-label="Lead insight context">
+            {contextPills(leadInsight).map((pill) => <span>{pill}</span>)}
           </div>
           <h2>{leadInsight.title}</h2>
           <p>{leadInsight.summary}</p>
+          <p class="insight-definition">{insightDefinition(leadInsight)}</p>
+          <div class="insight-card-meta">
+            {sourcePills(leadInsight).map((pill) => <span>{pill}</span>)}
+          </div>
           <div class="insights-lead-why">
             <span>Why it matters</span>
             <strong>{leadInsight.why_it_matters}</strong>
@@ -219,18 +376,20 @@ function insightCalculations(insight: InsightRecord) {
     </div>
 
     <div class="insight-card-grid">
-      {insights.slice(0, 9).map((insight) => (
+      {insights.map((insight) => (
         <article class="insight-card" id={insight.id} data-insight-category={insight.category}>
           <header>
             <span>{categoryLabel(insight.category)}</span>
-            <strong>{Number(insight.importance_score ?? 0).toFixed(0)}</strong>
+            <strong title="Timeframe for this insight">{insightTimeframeLabel(insight)}</strong>
           </header>
+          <div class="insight-context-strip" aria-label={`${insight.title} context`}>
+            {contextPills(insight).map((pill) => <span>{pill}</span>)}
+          </div>
           <h3>{insight.title}</h3>
           <p>{insight.summary}</p>
+          <p class="insight-definition">{insightDefinition(insight)}</p>
           <div class="insight-card-meta">
-            <span>{confidenceLabel(insight.confidence)} confidence</span>
-            <span>{insight.source_type === "deterministic" ? "Deterministic" : "LLM assisted"}</span>
-            <span>Data: {dateLabel(insight.data_as_of)}</span>
+            {sourcePills(insight).map((pill) => <span>{pill}</span>)}
           </div>
           {insightCalculations(insight).length > 0 && (
             <dl class="insight-calculation-list">
@@ -291,7 +450,7 @@ function insightCalculations(insight: InsightRecord) {
         <article>
           <span>{row.count} signal{row.count === 1 ? "" : "s"}</span>
           <h3>{categoryLabel(row.category)}</h3>
-          <p>{row.insight.summary}</p>
+          <p>{row.description}</p>
         </article>
       ))}
     </div>
@@ -302,8 +461,8 @@ function insightCalculations(insight: InsightRecord) {
       <span class="panel-kicker">Method</span>
       <h2 id="insight-method-title">How Insights Are Produced</h2>
       <p>
-        Deterministic calculations are the source of truth. LLM-generated language can be added later, but it must
-        explain validated findings and cite the same evidence packet.
+        Deterministic calculations are the source of truth. LLM-assisted wording can polish selected titles and summaries,
+        but it cannot change calculations, evidence links, round context, or benchmark facts.
       </p>
       <p class="insights-method-freshness">
         Latest generation: <strong>{dateTimeLabel(snapshot.generated_at)}</strong>

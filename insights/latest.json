@@ -1,7 +1,7 @@
 {
   "data_as_of": "2026-06-15",
-  "engine_version": "deterministic_insights_v1+nvidia_llm_rewrite_v1",
-  "generated_at": "2026-06-16T20:26:46Z",
+  "engine_version": "deterministic_insights_v1",
+  "generated_at": "2026-06-16T23:35:01Z",
   "insight_count": 16,
   "insights": [
     {
@@ -33,6 +33,30 @@
       ],
       "category": "consensus_performance",
       "confidence": "high",
+      "context": {
+        "asset_count": 40,
+        "data_as_of": "2026-06-10",
+        "decision_date": "2026-05-10",
+        "entry_date": "2026-05-08",
+        "exit_date": "2026-06-10",
+        "model_count": 4,
+        "oracle_asset": {
+          "display": "Healthcare Sector (XLV)",
+          "name": "Healthcare Sector",
+          "option_id": "HEALTHCARE",
+          "return_pct": 6.5231,
+          "ticker": "XLV"
+        },
+        "primary_label": "Monthly result",
+        "result_count": 4,
+        "round_id": "CB-2026-05-10-1M",
+        "run_id": "official-round-1-clean",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "monthly",
+        "track_label": "Monthly"
+      },
       "data_as_of": "2026-06-10",
       "date": "2026-06-16",
       "evidence": [
@@ -42,25 +66,19 @@
           "source": "rounds/CB-2026-05-10-1M/runs/official-round-1-clean/results"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "consensus-performance-CB-2026-05-10-1M",
       "importance_score": 92.0,
-      "llm_assisted_by": {
-        "candidate_id": "consensus-performance-CB-2026-05-10-1M",
-        "model": "meta/llama-3.1-8b-instruct",
-        "prompt_version": "capitalbench_insight_llm_prompt_v1",
-        "provider": "nvidia_nim"
-      },
       "related": [
         {
           "href": "/leaderboards/latest-monthly",
           "label": "Latest monthly results"
         }
       ],
-      "source_type": "llm_assisted",
+      "source_type": "deterministic",
       "status": "published",
-      "summary": "The AI consensus portfolio returned +0.77% versus -1.65% for the S&P 500 and +6.52% for the hindsight best asset.",
-      "title": "AI Consensus Portfolio Scored 11.8 vs. Oracle",
+      "summary": "If the monthly model allocations were averaged into one consensus portfolio, it returned +0.77% versus -1.65% for the S&P 500 and +6.52% for the hindsight best asset.",
+      "title": "AI consensus portfolio scored 11.8 versus the oracle",
       "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
     },
     {
@@ -92,6 +110,30 @@
       ],
       "category": "consensus_performance",
       "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-15",
+        "decision_date": "2026-06-08",
+        "entry_date": "2026-06-08",
+        "exit_date": "2026-06-15",
+        "model_count": 5,
+        "oracle_asset": {
+          "display": "South Korea Equities (EWY)",
+          "name": "South Korea Equities",
+          "option_id": "SOUTH_KOREA",
+          "return_pct": 13.9033,
+          "ticker": "EWY"
+        },
+        "primary_label": "Weekly result",
+        "result_count": 5,
+        "round_id": "CB-2026-06-08-1W",
+        "run_id": "official-20260608",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "weekly",
+        "track_label": "Weekly"
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -101,25 +143,19 @@
           "source": "rounds/CB-2026-06-08-1W/runs/official-20260608/results"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "consensus-performance-CB-2026-06-08-1W",
       "importance_score": 92.0,
-      "llm_assisted_by": {
-        "candidate_id": "consensus-performance-CB-2026-06-08-1W",
-        "model": "meta/llama-3.1-8b-instruct",
-        "prompt_version": "capitalbench_insight_llm_prompt_v1",
-        "provider": "nvidia_nim"
-      },
       "related": [
         {
           "href": "/leaderboards/latest-weekly",
           "label": "Latest weekly results"
         }
       ],
-      "source_type": "llm_assisted",
+      "source_type": "deterministic",
       "status": "published",
-      "summary": "The AI consensus portfolio returned -0.12% versus +2.11% for the S&P 500 and +13.90% for the hindsight best asset.",
-      "title": "AI Consensus Portfolio Scored -0.8 vs. Oracle",
+      "summary": "If the weekly model allocations were averaged into one consensus portfolio, it returned -0.12% versus +2.11% for the S&P 500 and +13.90% for the hindsight best asset.",
+      "title": "AI consensus portfolio scored -0.8 versus the oracle",
       "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
     },
     {
@@ -150,6 +186,30 @@
       ],
       "category": "benchmark_difficulty",
       "confidence": "high",
+      "context": {
+        "asset_count": 40,
+        "data_as_of": "2026-06-10",
+        "decision_date": "2026-05-10",
+        "entry_date": "2026-05-08",
+        "exit_date": "2026-06-10",
+        "model_count": 4,
+        "oracle_asset": {
+          "display": "Healthcare Sector (XLV)",
+          "name": "Healthcare Sector",
+          "option_id": "HEALTHCARE",
+          "return_pct": 6.5231,
+          "ticker": "XLV"
+        },
+        "primary_label": "Monthly result",
+        "result_count": 4,
+        "round_id": "CB-2026-05-10-1M",
+        "run_id": "official-round-1-clean",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "monthly",
+        "track_label": "Monthly"
+      },
       "data_as_of": "2026-06-10",
       "date": "2026-06-16",
       "evidence": [
@@ -159,25 +219,19 @@
           "source": "rounds/CB-2026-05-10-1M/runs/official-round-1-clean/results/returns.csv"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "benchmark-difficulty-CB-2026-05-10-1M",
       "importance_score": 90.0,
-      "llm_assisted_by": {
-        "candidate_id": "benchmark-difficulty-CB-2026-05-10-1M",
-        "model": "meta/llama-3.1-8b-instruct",
-        "prompt_version": "capitalbench_insight_llm_prompt_v1",
-        "provider": "nvidia_nim"
-      },
       "related": [
         {
           "href": "/scoring",
           "label": "Scoring"
         }
       ],
-      "source_type": "llm_assisted",
+      "source_type": "deterministic",
       "status": "published",
-      "summary": "The best scored asset returned +6.52%, the worst returned -13.59%, and +32.50% of the universe was positive.",
-      "title": "Monthly Round Had +20.12% Asset Dispersion",
+      "summary": "The best scored asset returned +6.52%, the worst returned -13.59%, and +32.50% of the universe was positive. The S&P 500 ranked 27 out of 40 options.",
+      "title": "Monthly round had +20.12% asset dispersion",
       "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
     },
     {
@@ -208,6 +262,30 @@
       ],
       "category": "benchmark_difficulty",
       "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-15",
+        "decision_date": "2026-06-08",
+        "entry_date": "2026-06-08",
+        "exit_date": "2026-06-15",
+        "model_count": 5,
+        "oracle_asset": {
+          "display": "South Korea Equities (EWY)",
+          "name": "South Korea Equities",
+          "option_id": "SOUTH_KOREA",
+          "return_pct": 13.9033,
+          "ticker": "EWY"
+        },
+        "primary_label": "Weekly result",
+        "result_count": 5,
+        "round_id": "CB-2026-06-08-1W",
+        "run_id": "official-20260608",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "weekly",
+        "track_label": "Weekly"
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -217,25 +295,19 @@
           "source": "rounds/CB-2026-06-08-1W/runs/official-20260608/results/returns.csv"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "benchmark-difficulty-CB-2026-06-08-1W",
       "importance_score": 90.0,
-      "llm_assisted_by": {
-        "candidate_id": "benchmark-difficulty-CB-2026-06-08-1W",
-        "model": "meta/llama-3.1-8b-instruct",
-        "prompt_version": "capitalbench_insight_llm_prompt_v1",
-        "provider": "nvidia_nim"
-      },
       "related": [
         {
           "href": "/scoring",
           "label": "Scoring"
         }
       ],
-      "source_type": "llm_assisted",
+      "source_type": "deterministic",
       "status": "published",
-      "summary": "The best scored asset returned +13.90%, the worst returned -10.31%, and +87.14% of the universe was positive.",
-      "title": "Weekly Round Had +24.22% Asset Dispersion",
+      "summary": "The best scored asset returned +13.90%, the worst returned -10.31%, and +87.14% of the universe was positive. The S&P 500 ranked 40 out of 70 options.",
+      "title": "Weekly round had +24.22% asset dispersion",
       "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
     },
     {
@@ -261,6 +333,30 @@
       ],
       "category": "oracle_comparison",
       "confidence": "high",
+      "context": {
+        "asset_count": 40,
+        "data_as_of": "2026-06-10",
+        "decision_date": "2026-05-10",
+        "entry_date": "2026-05-08",
+        "exit_date": "2026-06-10",
+        "model_count": 4,
+        "oracle_asset": {
+          "display": "Healthcare Sector (XLV)",
+          "name": "Healthcare Sector",
+          "option_id": "HEALTHCARE",
+          "return_pct": 6.5231,
+          "ticker": "XLV"
+        },
+        "primary_label": "Monthly result",
+        "result_count": 4,
+        "round_id": "CB-2026-05-10-1M",
+        "run_id": "official-round-1-clean",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "monthly",
+        "track_label": "Monthly"
+      },
       "data_as_of": "2026-06-10",
       "date": "2026-06-16",
       "evidence": [
@@ -270,7 +366,7 @@
           "source": "rounds/CB-2026-05-10-1M/runs/official-round-1-clean/results"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "missed-oracle-CB-2026-05-10-1M",
       "importance_score": 89.0,
       "related": [
@@ -308,6 +404,30 @@
       ],
       "category": "oracle_comparison",
       "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-15",
+        "decision_date": "2026-06-08",
+        "entry_date": "2026-06-08",
+        "exit_date": "2026-06-15",
+        "model_count": 5,
+        "oracle_asset": {
+          "display": "South Korea Equities (EWY)",
+          "name": "South Korea Equities",
+          "option_id": "SOUTH_KOREA",
+          "return_pct": 13.9033,
+          "ticker": "EWY"
+        },
+        "primary_label": "Weekly result",
+        "result_count": 5,
+        "round_id": "CB-2026-06-08-1W",
+        "run_id": "official-20260608",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "weekly",
+        "track_label": "Weekly"
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -317,7 +437,7 @@
           "source": "rounds/CB-2026-06-08-1W/runs/official-20260608/results"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "missed-oracle-CB-2026-06-08-1W",
       "importance_score": 89.0,
       "related": [
@@ -348,6 +468,25 @@
       ],
       "category": "current_positioning",
       "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-15",
+        "decision_dates": [
+          "2026-06-15",
+          "2026-06-15"
+        ],
+        "model_count": 10,
+        "primary_label": "Latest live portfolios",
+        "round_count": 2,
+        "round_ids": [
+          "CB-2026-06-15-1W",
+          "CB-2026-06-15-1M"
+        ],
+        "scope": "live_rounds",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly_monthly",
+        "track_label": "Weekly + Monthly"
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -362,7 +501,7 @@
           "source": "rounds/CB-2026-06-15-1M"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "active-positioning-2026-06-15",
       "importance_score": 88.0,
       "related": [
@@ -393,6 +532,25 @@
       ],
       "category": "risk_regime",
       "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-15",
+        "decision_dates": [
+          "2026-06-15",
+          "2026-06-15"
+        ],
+        "model_count": 10,
+        "primary_label": "Latest live portfolios",
+        "round_count": 2,
+        "round_ids": [
+          "CB-2026-06-15-1W",
+          "CB-2026-06-15-1M"
+        ],
+        "scope": "live_rounds",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly_monthly",
+        "track_label": "Weekly + Monthly"
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -407,7 +565,7 @@
           "source": "rounds/CB-2026-06-15-1M"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "active-risk-2026-06-15",
       "importance_score": 86.0,
       "related": [
@@ -456,6 +614,18 @@
       ],
       "category": "confidence_calibration",
       "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-15",
+        "median_confidence": 0.55,
+        "primary_label": "All resolved official results",
+        "result_count": 47,
+        "round_count": 10,
+        "scope": "resolved_history",
+        "status": "resolved",
+        "status_label": "Resolved history",
+        "track": "all",
+        "track_label": "Weekly + Monthly"
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -465,7 +635,7 @@
           "source": "resolved official leaderboard rows"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "confidence-calibration-2026-06-15",
       "importance_score": 85.0,
       "related": [
@@ -503,6 +673,25 @@
       ],
       "category": "horizon_agreement",
       "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-15",
+        "decision_dates": [
+          "2026-06-15",
+          "2026-06-15"
+        ],
+        "model_count": 10,
+        "primary_label": "Latest live portfolios",
+        "round_count": 2,
+        "round_ids": [
+          "CB-2026-06-15-1W",
+          "CB-2026-06-15-1M"
+        ],
+        "scope": "live_rounds",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly_monthly",
+        "track_label": "Weekly + Monthly"
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -517,7 +706,7 @@
           "source": "rounds/CB-2026-06-15-1M"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "horizon-agreement-2026-06-15",
       "importance_score": 84.0,
       "related": [
@@ -554,6 +743,27 @@
       ],
       "category": "performance_attribution",
       "confidence": "high",
+      "context": {
+        "asset_count": 40,
+        "data_as_of": "2026-06-10",
+        "decision_date": "2026-05-10",
+        "entry_date": "2026-05-08",
+        "exit_date": "2026-06-10",
+        "model": {
+          "label": "Claude Opus 4.7",
+          "model_id": "anthropic-claude-opus-4-7"
+        },
+        "model_count": 4,
+        "primary_label": "Monthly result",
+        "result_count": 4,
+        "round_id": "CB-2026-05-10-1M",
+        "run_id": "official-round-1-clean",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "monthly",
+        "track_label": "Monthly"
+      },
       "data_as_of": "2026-06-10",
       "date": "2026-06-16",
       "evidence": [
@@ -563,7 +773,7 @@
           "source": "rounds/CB-2026-05-10-1M/runs/official-round-1-clean/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "attribution-CB-2026-05-10-1M-anthropic-claude-opus-4-7",
       "importance_score": 83.0,
       "related": [
@@ -600,6 +810,27 @@
       ],
       "category": "performance_attribution",
       "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-15",
+        "decision_date": "2026-06-08",
+        "entry_date": "2026-06-08",
+        "exit_date": "2026-06-15",
+        "model": {
+          "label": "Claude Opus 4.7",
+          "model_id": "anthropic-claude-opus-4-7"
+        },
+        "model_count": 5,
+        "primary_label": "Weekly result",
+        "result_count": 5,
+        "round_id": "CB-2026-06-08-1W",
+        "run_id": "official-20260608",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "weekly",
+        "track_label": "Weekly"
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -609,7 +840,7 @@
           "source": "rounds/CB-2026-06-08-1W/runs/official-20260608/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "attribution-CB-2026-06-08-1W-anthropic-claude-opus-4-7",
       "importance_score": 83.0,
       "related": [
@@ -646,6 +877,23 @@
       ],
       "category": "model_behavior",
       "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-15",
+        "decision_date": "2026-06-15",
+        "entry_date": "2026-06-15",
+        "exit_date": "2026-07-15",
+        "model_count": 5,
+        "primary_label": "Monthly live round",
+        "result_count": 0,
+        "round_id": "CB-2026-06-15-1M",
+        "run_id": "official-20260615-no-fable",
+        "scope": "round",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "monthly",
+        "track_label": "Monthly"
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -655,7 +903,7 @@
           "source": "rounds/CB-2026-06-15-1M/market_data/universe_trailing_returns.json"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "momentum-exposure-CB-2026-06-15-1M",
       "importance_score": 80.0,
       "related": [
@@ -692,6 +940,23 @@
       ],
       "category": "model_behavior",
       "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-15",
+        "decision_date": "2026-06-15",
+        "entry_date": "2026-06-15",
+        "exit_date": "2026-06-22",
+        "model_count": 5,
+        "primary_label": "Weekly live round",
+        "result_count": 0,
+        "round_id": "CB-2026-06-15-1W",
+        "run_id": "official-20260615-no-fable",
+        "scope": "round",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly",
+        "track_label": "Weekly"
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -701,7 +966,7 @@
           "source": "rounds/CB-2026-06-15-1W/market_data/universe_trailing_returns.json"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "momentum-exposure-CB-2026-06-15-1W",
       "importance_score": 80.0,
       "related": [
@@ -738,6 +1003,44 @@
       ],
       "category": "live_performance",
       "confidence": "high",
+      "context": {
+        "best": {
+          "model_id": "openai-gpt-5-5",
+          "model_label": "GPT-5.5",
+          "round_id": "CB-2026-05-24-1M"
+        },
+        "data_as_of": "2026-06-15",
+        "model_count": 6,
+        "primary_label": "Open-round interim performance",
+        "round_count": 15,
+        "round_ids": [
+          "CB-2026-05-17-1M",
+          "CB-2026-05-24-1M",
+          "CB-2026-05-28-1M",
+          "CB-2026-05-29-1M",
+          "CB-2026-06-01-1M",
+          "CB-2026-06-02-1M",
+          "CB-2026-06-03-1M",
+          "CB-2026-06-05-1M",
+          "CB-2026-06-08-1M",
+          "CB-2026-06-09-1M",
+          "CB-2026-06-09-1W",
+          "CB-2026-06-12-1M",
+          "CB-2026-06-12-1W",
+          "CB-2026-06-13-1M",
+          "CB-2026-06-13-1W"
+        ],
+        "scope": "live_interim",
+        "status": "active",
+        "status_label": "Interim, not final",
+        "track": "all_live",
+        "track_label": "Open weekly + monthly",
+        "worst": {
+          "model_id": "openai-gpt-5-5",
+          "model_label": "GPT-5.5",
+          "round_id": "CB-2026-06-02-1M"
+        }
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -747,7 +1050,7 @@
           "source": "weekly_performance.csv"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "live-path-2026-06-15",
       "importance_score": 77.0,
       "related": [
@@ -783,6 +1086,25 @@
       ],
       "category": "model_similarity",
       "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-15",
+        "decision_dates": [
+          "2026-06-15",
+          "2026-06-15"
+        ],
+        "model_count": 10,
+        "primary_label": "Latest live portfolios",
+        "round_count": 2,
+        "round_ids": [
+          "CB-2026-06-15-1W",
+          "CB-2026-06-15-1M"
+        ],
+        "scope": "live_rounds",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly_monthly",
+        "track_label": "Weekly + Monthly"
+      },
       "data_as_of": "2026-06-15",
       "date": "2026-06-16",
       "evidence": [
@@ -792,7 +1114,7 @@
           "source": "live parsed submissions"
         }
       ],
-      "generated_at": "2026-06-16T20:26:46Z",
+      "generated_at": "2026-06-16T23:35:01Z",
       "id": "model-similarity-2026-06-15",
       "importance_score": 76.0,
       "related": [
@@ -810,23 +1132,18 @@
   ],
   "run_date": "2026-06-16",
   "source": {
-    "capitalbench_generated_at": "2026-06-16T20:26:46Z",
+    "capitalbench_generated_at": "2026-06-16T23:35:01Z",
     "data_fingerprint": "bc3d257be4f1886bea832d3cdfa6c0321396c226ecc91650024cbd9912a9a828",
     "data_fingerprint_version": "capitalbench_insights_data_fingerprint_v1",
     "input_version": "capitalbench_insights_input_v1",
     "llm": {
       "model": "meta/llama-3.1-8b-instruct",
-      "prompt_version": "capitalbench_insight_llm_prompt_v1",
-      "provider": "nvidia_nim",
-      "selected_candidate_ids": [
-        "consensus-performance-CB-2026-05-10-1M",
-        "consensus-performance-CB-2026-06-08-1W",
-        "benchmark-difficulty-CB-2026-05-10-1M",
-        "benchmark-difficulty-CB-2026-06-08-1W"
-      ],
-      "status": "succeeded"
+      "prompt_version": null,
+      "provider": null,
+      "selected_candidate_ids": [],
+      "status": "disabled"
     },
-    "type": "llm_assisted"
+    "type": "deterministic"
   },
   "version": "capitalbench_insights_v1"
 }

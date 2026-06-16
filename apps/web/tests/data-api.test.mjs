@@ -442,6 +442,8 @@ test("insights endpoint returns ranked public insights with detail lookups", asy
   assert.ok(first.id);
   assert.ok(first.title);
   assert.ok(first.summary);
+  assert.ok(first.context);
+  assert.ok(first.context.primary_label);
   assert.ok(first.evidence.length > 0);
 
   const detail = await apiGet(`/api/v1/insights/${first.id}`);

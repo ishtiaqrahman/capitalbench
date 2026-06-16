@@ -249,7 +249,7 @@
       "get": {
         "tags": ["Insights"],
         "summary": "List insights",
-        "description": "Ranked insight feed with category filters, evidence links, calculations, and confidence metadata.",
+        "description": "Ranked insight feed with category filters, round context, evidence links, calculations, and confidence metadata.",
         "parameters": [
           { "$ref": "#/components/parameters/InsightCategory" },
           { "$ref": "#/components/parameters/Limit" }
@@ -271,7 +271,7 @@
       "get": {
         "tags": ["Insights"],
         "summary": "Get insight",
-        "description": "One insight with supporting calculations and source evidence.",
+        "description": "One insight with round context, supporting calculations, and source evidence.",
         "parameters": [{ "$ref": "#/components/parameters/InsightIdPath" }],
         "responses": {
           "200": {
@@ -1202,12 +1202,58 @@
           "importance_score": { "type": "number", "minimum": 0, "maximum": 100 },
           "data_as_of": { "type": ["string", "null"], "format": "date" },
           "generated_at": { "type": "string", "format": "date-time" },
+          "context": { "$ref": "#/components/schemas/InsightContext" },
           "audiences": { "type": "array", "items": { "type": "string" } },
           "calculations": { "type": "array", "items": { "$ref": "#/components/schemas/InsightCalculation" } },
           "evidence": { "type": "array", "items": { "$ref": "#/components/schemas/InsightEvidence" } },
           "related": { "type": "array", "items": { "$ref": "#/components/schemas/InsightEvidence" } }
         },
-        "required": ["id", "date", "category", "title", "summary", "why_it_matters", "confidence", "source_type", "status", "importance_score", "calculations", "evidence"]
+        "required": ["id", "date", "category", "title", "summary", "why_it_matters", "confidence", "source_type", "status", "importance_score", "context", "calculations", "evidence"]
+      },
+      "InsightContext": {
+        "type": "object",
+        "description": "Human-readable benchmark context for the insight, including whether it is weekly/monthly, live/resolved, and which round or oracle asset it references.",
+        "properties": {
+          "scope": { "type": "string" },
+          "track": { "type": "string" },
+          "track_label": { "type": "string" },
+          "round_id": { "type": ["string", "null"] },
+          "run_id": { "type": ["string", "null"] },
+          "primary_label": { "type": "string" },
+          "status": { "type": ["string", "null"] },
+          "status_label": { "type": ["string", "null"] },
+          "decision_date": { "type": ["string", "null"], "format": "date" },
+          "entry_date": { "type": ["string", "null"], "format": "date" },
+          "exit_date": { "type": ["string", "null"], "format": "date" },
+          "data_as_of": { "type": ["string", "null"], "format": "date" },
+          "model_count": { "type": ["integer", "null"] },
+          "result_count": { "type": ["integer", "null"] },
+          "asset_count": { "type": ["integer", "null"] },
+          "round_count": { "type": ["integer", "null"] },
+          "round_ids": { "type": "array", "items": { "type": "string" } },
+          "decision_dates": { "type": "array", "items": { "type": "string", "format": "date" } },
+          "median_confidence": { "type": ["number", "null"] },
+          "oracle_asset": { "$ref": "#/components/schemas/InsightAssetContext" },
+          "model": { "$ref": "#/components/schemas/InsightModelContext" }
+        },
+        "required": ["scope", "primary_label"]
+      },
+      "InsightAssetContext": {
+        "type": "object",
+        "properties": {
+          "option_id": { "type": ["string", "null"] },
+          "name": { "type": ["string", "null"] },
+          "ticker": { "type": ["string", "null"] },
+          "display": { "type": ["string", "null"] },
+          "return_pct": { "type": ["number", "null"] }
+        }
+      },
+      "InsightModelContext": {
+        "type": "object",
+        "properties": {
+          "model_id": { "type": ["string", "null"] },
+          "label": { "type": ["string", "null"] }
+        }
       },
       "InsightCalculation": {
         "type": "object",

@@ -178,10 +178,16 @@ def generate_insights(
     run_dir.mkdir(parents=True, exist_ok=True)
     write_json(run_dir / "input.json", snapshot)
     write_json(run_dir / "deterministic_candidates.json", {"insights": candidates})
+    llm_request_path = run_dir / "llm_request.redacted.json"
+    llm_response_path = run_dir / "llm_response.json"
     if llm_result.get("request") is not None:
-        write_json(run_dir / "llm_request.redacted.json", llm_result["request"])
+        write_json(llm_request_path, llm_result["request"])
+    else:
+        llm_request_path.unlink(missing_ok=True)
     if llm_result.get("response") is not None:
-        write_json(run_dir / "llm_response.json", llm_result["response"])
+        write_json(llm_response_path, llm_result["response"])
+    else:
+        llm_response_path.unlink(missing_ok=True)
     write_json(run_dir / "insights.json", public)
     write_json(
         run_dir / "run_manifest.json",
@@ -422,6 +428,7 @@ def _compact_candidate_for_llm(candidate: dict[str, Any]) -> dict[str, Any]:
         "importance_score": candidate.get("importance_score"),
         "confidence": candidate.get("confidence"),
         "data_as_of": candidate.get("data_as_of"),
+        "context": candidate.get("context") or {},
         "title": candidate.get("title"),
         "summary": candidate.get("summary"),
         "why_it_matters": candidate.get("why_it_matters"),
@@ -1093,6 +1100,7 @@ def _active_positioning_insights(snapshot: dict[str, Any], generated_at: str) ->
         for round_item in current_rounds
     ]
     top_name = _asset_name(top_option)
+    context = _live_rounds_context(current_rounds, data_as_of=data_as_of)
     insights = [
         _insight(
             insight_id=f"active-positioning-{_slug(data_as_of)}",
@@ -1120,6 +1128,7 @@ def _active_positioning_insights(snapshot: dict[str, Any], generated_at: str) ->
             ],
             evidence=evidence,
             related=[{"label": "AI Risk Appetite", "href": "/risk-appetite"}],
+            context=context,
         )
     ]
     if risk_score is not None:
@@ -1150,6 +1159,7 @@ def _active_positioning_insights(snapshot: dict[str, Any], generated_at: str) ->
                 ],
                 evidence=evidence,
                 related=[{"label": "AI Risk Appetite", "href": "/risk-appetite"}],
+                context=context,
             )
         )
     return insights
@@ -1167,6 +1177,7 @@ def _horizon_agreement_insights(snapshot: dict[str, Any], generated_at: str) -> 
     if not weekly_regime or not monthly_regime:
         return []
     data_as_of = max(_round_date(weekly), _round_date(monthly))
+    context = _live_rounds_context([weekly, monthly], data_as_of=data_as_of)
     if weekly_regime[0] == monthly_regime[0]:
         title = f"Weekly and monthly AI portfolios both favor {REGIME_LABELS.get(weekly_regime[0], weekly_regime[0])}"
         summary = (
@@ -1214,6 +1225,7 @@ def _horizon_agreement_insights(snapshot: dict[str, Any], generated_at: str) -> 
                 {"label": "Monthly live round", "href": f"/rounds/{monthly['round_id']}", "source": f"rounds/{monthly['round_id']}"},
             ],
             related=[{"label": "AI Risk Appetite", "href": "/risk-appetite"}],
+            context=context,
         )
     ]
 
@@ -1268,6 +1280,7 @@ def _momentum_exposure_insights(snapshot: dict[str, Any], generated_at: str) -> 
                     {"label": f"{_track_label(round_item['track'])} round", "href": f"/rounds/{round_item['round_id']}", "source": f"rounds/{round_item['round_id']}/market_data/universe_trailing_returns.json"}
                 ],
                 related=[{"label": "Round list", "href": "/rounds"}],
+                context=_round_context(round_item, status_label="Live portfolios"),
             )
         )
     return insights
@@ -1304,6 +1317,7 @@ def _model_similarity_insights(snapshot: dict[str, Any], generated_at: str) -> l
         avg_distance[model_id] = 1 - _average(similarities) if similarities else 0
     outlier = max(avg_distance.items(), key=lambda item: item[1])
     data_as_of = max((_round_date(round_item) for round_item in current), default=_snapshot_data_as_of(snapshot))
+    context = _live_rounds_context(current, data_as_of=data_as_of)
     return [
         _insight(
             insight_id=f"model-similarity-{_slug(data_as_of)}",
@@ -1339,6 +1353,7 @@ def _model_similarity_insights(snapshot: dict[str, Any], generated_at: str) -> l
                 {"label": "Models", "href": "/models", "source": "live parsed submissions"}
             ],
             related=[{"label": "AI Risk Appetite", "href": "/risk-appetite"}],
+            context=context,
         )
     ]
 
@@ -1361,6 +1376,7 @@ def _consensus_performance_insight(round_item: dict[str, Any], generated_at: str
     consensus_return = sum((allocation_pct / 100) * returns.get(option_id, 0.0) for option_id, allocation_pct in consensus_allocations)
     sp500_return = _sp500_return(round_item)
     oracle_return = _oracle_return(round_item["returns"])
+    oracle_row = _oracle_asset(round_item["returns"])
     avg_model_return = _average([row.get("portfolio_return") for row in round_item["results"]])
     consensus_score = _capitalbench_score(consensus_return, oracle_return)
     data_as_of = _round_date(round_item, prefer_exit=True)
@@ -1406,6 +1422,7 @@ def _consensus_performance_insight(round_item: dict[str, Any], generated_at: str
                 {"label": f"{_track_label(round_item['track'])} result", "href": f"/rounds/{round_item['round_id']}", "source": f"rounds/{round_item['round_id']}/runs/{round_item['run_id']}/results"}
             ],
             related=[{"label": f"Latest {_track_label(round_item['track']).lower()} results", "href": f"/leaderboards/latest-{round_item['track']}"}],
+            context=_round_context(round_item, oracle=oracle_row),
         )
     ]
 
@@ -1449,6 +1466,7 @@ def _benchmark_difficulty_insight(round_item: dict[str, Any], generated_at: str)
                 {"label": f"{_track_label(round_item['track'])} result", "href": f"/rounds/{round_item['round_id']}", "source": f"rounds/{round_item['round_id']}/runs/{round_item['run_id']}/results/returns.csv"}
             ],
             related=[{"label": "Scoring", "href": "/scoring"}],
+            context=_round_context(round_item, oracle=best),
         )
     ]
 
@@ -1496,6 +1514,7 @@ def _missed_oracle_insight(round_item: dict[str, Any], generated_at: str) -> lis
                 {"label": f"{_track_label(round_item['track'])} result", "href": f"/rounds/{round_item['round_id']}", "source": f"rounds/{round_item['round_id']}/runs/{round_item['run_id']}/results"}
             ],
             related=[{"label": "Scoring", "href": "/scoring#capitalbench-score"}],
+            context=_round_context(round_item, oracle=best),
         )
     ]
 
@@ -1546,6 +1565,7 @@ def _attribution_insight(round_item: dict[str, Any], generated_at: str) -> list[
                 {"label": f"{_track_label(round_item['track'])} result", "href": f"/rounds/{round_item['round_id']}", "source": f"rounds/{round_item['round_id']}/runs/{round_item['run_id']}/results/allocations.csv"}
             ],
             related=[{"label": f"Latest {_track_label(round_item['track']).lower()} results", "href": f"/leaderboards/latest-{round_item['track']}"}],
+            context=_round_context(round_item, model_id=winner["model_id"]),
         )
     ]
 
@@ -1598,6 +1618,7 @@ def _confidence_calibration_insights(snapshot: dict[str, Any], generated_at: str
                 {"label": "Results", "href": "/leaderboards/latest", "source": "resolved official leaderboard rows"}
             ],
             related=[{"label": "Scoring", "href": "/scoring"}],
+            context=_resolved_history_context(snapshot, result_count=len(rows), median_confidence=median_confidence),
         )
     ]
 
@@ -1645,6 +1666,7 @@ def _live_path_insights(snapshot: dict[str, Any], generated_at: str) -> list[dic
                 {"label": "Live performance", "href": "/", "source": "weekly_performance.csv"}
             ],
             related=[{"label": "Rounds", "href": "/rounds"}],
+            context=_live_interim_context(latest_rows, data_as_of=data_as_of, best=best, worst=worst),
         )
     ]
 
@@ -1746,6 +1768,11 @@ def _oracle_return(returns: list[dict[str, Any]]) -> float | None:
     return max(values) if values else None
 
 
+def _oracle_asset(returns: list[dict[str, Any]]) -> dict[str, Any] | None:
+    rows = [row for row in returns if _finite(row.get("return"))]
+    return max(rows, key=lambda row: row["return"]) if rows else None
+
+
 def _weighted_return(allocations: list[dict[str, Any]], return_by_option: dict[str, float]) -> float | None:
     if not return_by_option or not allocations:
         return None
@@ -1776,6 +1803,117 @@ def _cosine_similarity(left: dict[str, float], right: dict[str, float]) -> float
     return dot / (left_norm * right_norm)
 
 
+def _asset_context(row: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not row:
+        return None
+    output = {
+        "option_id": _text(row.get("option_id")),
+        "name": _text(row.get("label")) or _text(row.get("option_id")),
+        "ticker": _text(row.get("ticker")),
+        "display": _asset_name(row),
+    }
+    if _finite(row.get("return")):
+        output["return_pct"] = round(float(row["return"]) * 100, 4)
+    return output
+
+
+def _round_context(
+    round_item: dict[str, Any],
+    *,
+    status_label: str | None = None,
+    oracle: dict[str, Any] | None = None,
+    model_id: str | None = None,
+) -> dict[str, Any]:
+    track = _text(round_item.get("track"))
+    status = _text(round_item.get("status"))
+    resolved = status == "resolved"
+    context = {
+        "scope": "round",
+        "track": track,
+        "track_label": _track_label(track),
+        "round_id": _text(round_item.get("round_id")),
+        "run_id": _text(round_item.get("run_id")),
+        "primary_label": f"{_track_label(track)} {'result' if resolved else 'live round'}",
+        "status": status,
+        "status_label": status_label or ("Resolved result" if resolved else "Live portfolios"),
+        "decision_date": _text(round_item.get("decision_date")),
+        "entry_date": _text(round_item.get("entry_date")),
+        "exit_date": _text(round_item.get("exit_date")),
+        "data_as_of": _round_date(round_item, prefer_exit=resolved),
+        "model_count": len(round_item.get("portfolios") or []),
+        "result_count": len(round_item.get("results") or []),
+        "asset_count": len(round_item.get("returns") or round_item.get("options") or []),
+    }
+    oracle_context = _asset_context(oracle)
+    if oracle_context:
+        context["oracle_asset"] = oracle_context
+    if model_id:
+        context["model"] = {"model_id": model_id, "label": _model_label(model_id)}
+    return context
+
+
+def _live_rounds_context(rounds: list[dict[str, Any]], *, data_as_of: str) -> dict[str, Any]:
+    round_ids = [_text(round_item.get("round_id")) for round_item in rounds if round_item.get("round_id")]
+    tracks = [_text(round_item.get("track")) for round_item in rounds if round_item.get("track")]
+    model_count = sum(len(round_item.get("portfolios") or []) for round_item in rounds)
+    return {
+        "scope": "live_rounds",
+        "track": "weekly_monthly" if set(tracks) == {"weekly", "monthly"} else (tracks[0] if tracks else "live"),
+        "track_label": "Weekly + Monthly" if set(tracks) == {"weekly", "monthly"} else (_track_label(tracks[0]) if tracks else "Live"),
+        "primary_label": "Latest live portfolios",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "data_as_of": data_as_of,
+        "round_ids": round_ids,
+        "round_count": len(round_ids),
+        "model_count": model_count,
+        "decision_dates": [_text(round_item.get("decision_date")) for round_item in rounds if round_item.get("decision_date")],
+    }
+
+
+def _resolved_history_context(snapshot: dict[str, Any], *, result_count: int, median_confidence: float | None = None) -> dict[str, Any]:
+    resolved_rounds = [round_item for round_item in snapshot.get("rounds") or [] if round_item.get("status") == "resolved"]
+    context = {
+        "scope": "resolved_history",
+        "track": "all",
+        "track_label": "Weekly + Monthly",
+        "primary_label": "All resolved official results",
+        "status": "resolved",
+        "status_label": "Resolved history",
+        "data_as_of": _snapshot_data_as_of(snapshot),
+        "round_count": len(resolved_rounds),
+        "result_count": result_count,
+    }
+    if median_confidence is not None:
+        context["median_confidence"] = round(float(median_confidence), 4)
+    return context
+
+
+def _live_interim_context(
+    rows: list[dict[str, Any]],
+    *,
+    data_as_of: str,
+    best: dict[str, Any],
+    worst: dict[str, Any],
+) -> dict[str, Any]:
+    round_ids = sorted({_text(row.get("round_id")) for row in rows if row.get("round_id")})
+    model_ids = sorted({_text(row.get("model_id")) for row in rows if row.get("model_id")})
+    return {
+        "scope": "live_interim",
+        "track": "all_live",
+        "track_label": "Open weekly + monthly",
+        "primary_label": "Open-round interim performance",
+        "status": "active",
+        "status_label": "Interim, not final",
+        "data_as_of": data_as_of,
+        "round_ids": round_ids,
+        "round_count": len(round_ids),
+        "model_count": len(model_ids),
+        "best": {"round_id": _text(best.get("round_id")), "model_id": _text(best.get("model_id")), "model_label": _model_label(_text(best.get("model_id")))},
+        "worst": {"round_id": _text(worst.get("round_id")), "model_id": _text(worst.get("model_id")), "model_label": _model_label(_text(worst.get("model_id")))},
+    }
+
+
 def _insight(
     *,
     insight_id: str,
@@ -1790,6 +1928,7 @@ def _insight(
     calculations: list[dict[str, Any]],
     evidence: list[dict[str, str]],
     related: list[dict[str, str]] | None = None,
+    context: dict[str, Any] | None = None,
     confidence: str = "high",
     source_type: str = "deterministic",
 ) -> dict[str, Any]:
@@ -1807,6 +1946,7 @@ def _insight(
         "importance_score": round(float(importance), 4),
         "confidence": confidence,
         "status": "published",
+        "context": context or {"scope": "unknown", "primary_label": "Benchmark insight", "data_as_of": data_as_of},
         "calculations": calculations,
         "evidence": evidence,
         "related": related or [],
@@ -1834,6 +1974,7 @@ def _validate_public_insights(payload: dict[str, Any], path: Path) -> None:
         "importance_score",
         "confidence",
         "status",
+        "context",
         "calculations",
         "evidence",
     }
@@ -1851,6 +1992,8 @@ def _validate_public_insights(payload: dict[str, Any], path: Path) -> None:
                 raise ValueError(f"{path} insight {insight['id']} has blank {text_field}")
         if not insight.get("evidence"):
             raise ValueError(f"{path} insight {insight['id']} has no evidence")
+        if not isinstance(insight.get("context"), dict) or not insight["context"].get("primary_label"):
+            raise ValueError(f"{path} insight {insight['id']} has invalid context")
         if insight.get("source_type") not in {"deterministic", "llm_assisted", "system"}:
             raise ValueError(f"{path} insight {insight['id']} has invalid source_type")
 
@@ -1865,9 +2008,20 @@ def _write_report(path: Path, public: dict[str, Any]) -> None:
         "",
     ]
     for insight in public["insights"]:
+        context = insight.get("context") or {}
+        context_bits = [
+            str(context.get("primary_label") or "").strip(),
+            str(context.get("round_id") or "").strip(),
+            str(context.get("status_label") or "").strip(),
+        ]
+        oracle = context.get("oracle_asset") if isinstance(context.get("oracle_asset"), dict) else None
+        if oracle and oracle.get("display"):
+            context_bits.append(f"Oracle: {oracle['display']}")
         lines.extend(
             [
                 f"## {insight['title']}",
+                "",
+                f"Context: {' · '.join(bit for bit in context_bits if bit)}",
                 "",
                 insight["summary"],
                 "",
