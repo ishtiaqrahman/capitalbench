@@ -79,9 +79,12 @@ sets:
 ```
 
 Configured sets are loaded first. The automatic discovery step then adds any
-uncovered official rosters. Use `benchmark_sets.yaml` when a set needs a stable
-label, description, or manually chosen start round; otherwise a new model roster
-does not require a manual YAML entry.
+uncovered official rosters. A set only covers rounds at or after its own
+`started_round_id`; future set metadata cannot hide an earlier new-model cohort.
+Validation also fails if a later set is redundant because an earlier set or
+larger roster already covers it. Use `benchmark_sets.yaml` when a set needs a
+stable label, description, or manually chosen start round; otherwise a new model
+roster does not require a manual YAML entry.
 
 The build computes included rounds, excluded rounds, scores, qualification, and current benchmark status.
 
@@ -90,8 +93,8 @@ The build computes included rounds, excluded rounds, scores, qualification, and 
 1. Add the model to future official weekly and monthly runs only.
 2. Run the official round normally.
 3. Build the site data.
-4. The generator opens a new comparison set automatically if no existing set for
-   that track already contains the official run roster.
+4. The generator opens a new comparison set automatically if no already-started
+   set for that track contains the official run roster.
 5. Add a YAML override only if the generated label, description, or start round
    needs to be curated.
 6. Run the validation commands.

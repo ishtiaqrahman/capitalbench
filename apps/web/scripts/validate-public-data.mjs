@@ -1279,6 +1279,8 @@ for (const track of ["weekly", "monthly"]) {
     ).sort();
     if (roster.length === 0) continue;
     const covered = sets.some((set) => {
+      const startRound = roundByIdForSets.get(set.started_round_id);
+      if (!startRound || roundSortValue(startRound) > roundSortValue(round)) return false;
       const setModels = new Set(set.model_ids);
       return roster.every((modelId) => setModels.has(modelId));
     });
@@ -1294,6 +1296,17 @@ for (const set of benchmarkSets.sets) {
   if (!startRound) failures.push(`${context} start round ${set.started_round_id} does not exist`);
   if (startRound && startRound.track !== set.track) {
     failures.push(`${context} start round ${set.started_round_id} track ${startRound.track} does not match ${set.track}`);
+  }
+  for (const earlierSet of benchmarkSets.sets.filter((item) => item.track === set.track && item.set_id !== set.set_id)) {
+    const earlierStart = roundByIdForSets.get(earlierSet.started_round_id);
+    if (!startRound || !earlierStart || roundSortValue(earlierStart) >= roundSortValue(startRound)) continue;
+    const earlierModels = new Set(earlierSet.model_ids);
+    const redundant = set.model_ids.every((modelId) => earlierModels.has(modelId));
+    if (redundant) {
+      failures.push(
+        `${context} is redundant: earlier ${earlierSet.set_id} already covers this ${set.track} roster or a larger roster`
+      );
+    }
   }
   for (const modelId of set.model_ids) {
     if (!modelByIdForSets.has(modelId)) failures.push(`${context} model ${modelId} does not exist in generated model list`);

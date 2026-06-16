@@ -80,6 +80,13 @@ function roundSortValue(round) {
   return `${round?.exit_date ?? ""}:${round?.decision_deadline_utc ?? ""}:${round?.round_id ?? ""}`;
 }
 
+function definitionStartsAtOrBeforeRound(definition, roundById, round) {
+  const startRound = roundById.get(definition.started_round_id);
+  if (!startRound) return false;
+  if (startRound.track !== round.track) return false;
+  return roundSortValue(startRound) <= roundSortValue(round);
+}
+
 function trackLabel(track) {
   return track === "weekly" ? "Weekly" : "Monthly";
 }
@@ -128,6 +135,7 @@ function autoBenchmarkSetDescription(round, modelIds) {
 
 function buildBenchmarkSetDefinitions({ rounds, portfolios }) {
   const definitions = configuredBenchmarkSetDefinitions();
+  const roundById = new Map(rounds.map((round) => [round.round_id, round]));
   const usedIds = new Set(definitions.map((set) => set.set_id));
   const definitionsByTrack = new Map([
     ["weekly", definitions.filter((set) => set.track === "weekly")],
@@ -147,7 +155,10 @@ function buildBenchmarkSetDefinitions({ rounds, portfolios }) {
     if (modelIds.length === 0) continue;
 
     const trackDefinitions = definitionsByTrack.get(round.track) ?? [];
-    if (trackDefinitions.some((definition) => rosterContains(definition, modelIds))) continue;
+    const coveredByStartedSet = trackDefinitions.some(
+      (definition) => definitionStartsAtOrBeforeRound(definition, roundById, round) && rosterContains(definition, modelIds)
+    );
+    if (coveredByStartedSet) continue;
 
     const baseId = `${round.track}-set-${dateIdForRound(round)}`;
     const setId = uniqueSetId(baseId, usedIds);

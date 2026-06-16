@@ -37,7 +37,8 @@ export const changelogEntries: ChangelogEntry[] = [
       "The homepage and leaderboard pages now surface current weekly and monthly benchmark sets scored against the same oracle-relative CapitalBench Score scale.",
       "Dedicated benchmark-set pages show fixed rosters, shared included rounds, fairness exclusions, and score calculations for each set.",
       "Model profile pages now show the benchmark sets each model belongs to, with filters and focused score charts for weekly and monthly comparisons.",
-      "New official run rosters automatically open a set only when no existing set for that track already contains the models in the run.",
+      "New official run rosters automatically open a set only when no already-started set for that track already contains the models in the run.",
+      "Set coverage is time-aware, so future manual metadata cannot hide an earlier new-model cohort.",
       "Temporary model outages do not create smaller sets; those rounds remain covered by the larger roster and are excluded from that set until every required model has an official result."
     ],
     links: [
