@@ -29,6 +29,15 @@ export function dateLabel(value) {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(date);
 }
 
+export function shortDateLabel(value) {
+  if (!value) return "n/a";
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(value));
+  if (!match) return String(value);
+  const date = new Date(`${match[1]}-${match[2]}-${match[3]}T00:00:00Z`);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(date);
+}
+
 export function calculationLabel(value) {
   return String(value ?? "")
     .split("_")
@@ -52,6 +61,87 @@ export function calculationValue(calculation) {
   if (unit === "points") return value.toFixed(1);
   if (unit === "count" || unit === "models") return String(Math.round(value));
   return value.toFixed(Math.abs(value) >= 10 ? 1 : 2);
+}
+
+function roundWindowLabel(context) {
+  if (context?.decision_date && context?.exit_date && context.decision_date !== context.exit_date) {
+    return `${shortDateLabel(context.decision_date)}-${shortDateLabel(context.exit_date)}`;
+  }
+  if (context?.decision_date) return shortDateLabel(context.decision_date);
+  if (context?.data_as_of) return `Data through ${shortDateLabel(context.data_as_of)}`;
+  return null;
+}
+
+export function insightTimeframeLabel(insight) {
+  const context = insight?.context ?? {};
+  const window = roundWindowLabel(context);
+  if (window) return window.replace("Data through ", "As of ");
+  const dataAsOf = context.data_as_of ?? insight?.data_as_of;
+  if (dataAsOf) return `As of ${shortDateLabel(dataAsOf)}`;
+  return context.primary_label ?? `${confidenceLabel(insight?.confidence)} confidence`;
+}
+
+function uniqueStrings(values) {
+  return Array.from(new Set(values.filter(Boolean)));
+}
+
+export function contextPills(insight) {
+  const context = insight?.context ?? {};
+  const pills = [];
+  if (context.primary_label) pills.push(context.primary_label);
+  if (context.scope === "round" && context.round_id) pills.push(context.round_id);
+  if (context.scope === "live_rounds" && context.round_count) pills.push(`${context.round_count} live rounds`);
+  if (context.scope === "live_interim" && context.round_count) pills.push(`${context.round_count} open rounds`);
+  if (context.scope === "resolved_history" && context.round_count) pills.push(`${context.round_count} resolved rounds`);
+  if (context.model_count) pills.push(`${context.model_count} model${context.model_count === 1 ? "" : "s"}`);
+  if (context.result_count && context.scope !== "round") pills.push(`${context.result_count} scored results`);
+  if (context.oracle_asset?.display) {
+    const oracleReturn =
+      typeof context.oracle_asset.return_pct === "number"
+        ? `, ${context.oracle_asset.return_pct > 0 ? "+" : ""}${context.oracle_asset.return_pct.toFixed(2)}%`
+        : "";
+    pills.push(`Oracle: ${context.oracle_asset.display}${oracleReturn}`);
+  }
+  if (context.model?.label) pills.push(`Model: ${context.model.label}`);
+  if (typeof context.median_confidence === "number") pills.push(`Median confidence ${context.median_confidence.toFixed(2)}`);
+  if (context.status_label) pills.push(context.status_label);
+  return uniqueStrings(pills).slice(0, 6);
+}
+
+export function sourcePills(insight) {
+  const pills = [`${confidenceLabel(insight?.confidence)} confidence`, "Math: deterministic"];
+  if (insight?.source_type === "llm_assisted") pills.push("Wording: LLM-assisted");
+  pills.push(`Data through ${dateLabel(insight?.data_as_of)}`);
+  return pills;
+}
+
+export function insightDefinition(insight) {
+  switch (insight?.category) {
+    case "consensus_performance":
+      return "Consensus means the average of model allocations in the same round. CapitalBench Score compares that return with the hindsight-best eligible asset for that exact scoring window.";
+    case "benchmark_difficulty":
+      return "Asset dispersion is the gap between the best and worst eligible assets in the same round. Wider dispersion makes missed allocation choices more costly.";
+    case "oracle_comparison":
+      return "Oracle means the best eligible asset in hindsight for that round. Models do not know it when portfolios are frozen.";
+    case "current_positioning":
+      return "Aggregate allocation averages the newest live model portfolios before final scores are known.";
+    case "risk_regime":
+      return "Risk-taking score is allocation-based, not performance-based: higher means more weight in growth, momentum, cyclical, and higher-risk assets.";
+    case "confidence_calibration":
+      return "Confidence is the model's own 0-1 self-reported confidence at submission time, compared with later realized returns.";
+    case "horizon_agreement":
+      return "Horizon agreement compares the newest weekly and monthly live portfolios to see whether short- and longer-window model stances line up.";
+    case "performance_attribution":
+      return "Attribution multiplies each frozen holding's weight by its asset return to show what helped or hurt the model portfolio.";
+    case "model_behavior":
+      return "Momentum exposure measures how much of the frozen portfolio went into assets that had already been recent winners before the model made its allocation.";
+    case "live_performance":
+      return "Live alpha is interim model return minus interim S&P 500 return. It is provisional until the round reaches its official score date.";
+    case "model_similarity":
+      return "Cosine similarity measures allocation overlap between model portfolios. A value near 1.00 means the weights are very similar.";
+    default:
+      return "This insight is generated from CapitalBench public rounds, frozen portfolios, scored results, and linked evidence files.";
+  }
 }
 
 export function publishedInsights(readModel) {

@@ -17809,6 +17809,23 @@ tbody tr:hover {
   text-underline-offset: 0.2em;
 }
 
+.context-insights-featured {
+  width: min(1200px, calc(100vw - 40px));
+  margin: 34px auto;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.context-insights-featured .context-insights-head {
+  margin-bottom: 18px;
+}
+
+.context-insights-featured .context-insights-head h2 {
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+}
+
 .hero-current-read {
   display: grid;
   gap: 4px;
@@ -18138,6 +18155,15 @@ tbody tr:hover {
   color: var(--ink-strong);
   font-size: 1.24rem;
   line-height: 1.24;
+}
+
+.insight-card h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.insight-card h3 a:hover {
+  color: var(--accent);
 }
 
 .insight-card > p,

@@ -3,9 +3,11 @@ import {
   calculationLabel,
   calculationValue,
   categoryLabel,
-  confidenceLabel,
-  dateLabel,
-  insightHref
+  contextPills,
+  insightDefinition,
+  insightHref,
+  insightTimeframeLabel,
+  sourcePills
 } from "../lib/insights.js";
 
 interface Props {
@@ -17,6 +19,7 @@ interface Props {
   viewAllLabel?: string;
   id?: string;
   compact?: boolean;
+  featured?: boolean;
 }
 
 type InsightCalculation = {
@@ -38,13 +41,14 @@ const {
   viewAllHref = "/insights",
   viewAllLabel = "All insights",
   id,
-  compact = false
+  compact = false,
+  featured = false
 } = Astro.props;
 const visibleInsights = insights.filter(Boolean).slice(0, compact ? 2 : 3);
 ---
 
 {visibleInsights.length > 0 && (
-  <section class:list={["context-insights", compact && "context-insights-compact"]} id={id} aria-labelledby={id ? `${id}-title` : undefined}>
+  <section class:list={["context-insights", featured && "context-insights-featured", compact && "context-insights-compact"]} id={id} aria-labelledby={id ? `${id}-title` : undefined}>
     <div class="context-insights-head">
       <div>
         <span class="panel-kicker">{kicker}</span>
@@ -54,24 +58,27 @@ const visibleInsights = insights.filter(Boolean).slice(0, compact ? 2 : 3);
       <a class="section-profile-link" href={viewAllHref}>{viewAllLabel}</a>
     </div>
 
-    <div class="context-insight-grid">
+    <div class:list={["insight-card-grid", compact && "insight-card-grid-compact"]}>
       {visibleInsights.map((insight) => {
-        const calculations: InsightCalculation[] = Array.isArray(insight.calculations) ? insight.calculations.slice(0, 2) : [];
+        const calculations: InsightCalculation[] = Array.isArray(insight.calculations) ? insight.calculations.slice(0, 3) : [];
         const evidence: InsightLink[] = Array.isArray(insight.evidence) ? insight.evidence.slice(0, 2) : [];
         return (
-          <article class="context-insight-card">
+          <article class="insight-card">
             <header>
               <span>{categoryLabel(insight.category)}</span>
-              <strong>{Number(insight.importance_score ?? 0).toFixed(0)}</strong>
+              <strong title="Timeframe for this insight">{insightTimeframeLabel(insight)}</strong>
             </header>
+            <div class="insight-context-strip" aria-label={`${insight.title} context`}>
+              {contextPills(insight).map((pill) => <span>{pill}</span>)}
+            </div>
             <h3><a href={insightHref(insight)}>{insight.title}</a></h3>
             <p>{insight.summary}</p>
-            <div class="context-insight-meta">
-              <span>{confidenceLabel(insight.confidence)} confidence</span>
-              <span>Data: {dateLabel(insight.data_as_of)}</span>
+            <p class="insight-definition">{insightDefinition(insight)}</p>
+            <div class="insight-card-meta">
+              {sourcePills(insight).map((pill) => <span>{pill}</span>)}
             </div>
             {calculations.length > 0 && (
-              <dl class="context-insight-calculations">
+              <dl class="insight-calculation-list">
                 {calculations.map((calculation) => (
                   <div>
                     <dt>{calculationLabel(calculation.name)}</dt>
@@ -80,8 +87,9 @@ const visibleInsights = insights.filter(Boolean).slice(0, compact ? 2 : 3);
                 ))}
               </dl>
             )}
-            <footer>
-              <span>{insight.why_it_matters}</span>
+            <footer class="insight-card-footer">
+              <span>Why it matters</span>
+              <p>{insight.why_it_matters}</p>
               <div>
                 <a href={insightHref(insight)}>Open insight</a>
                 {evidence.map((item) => item.href ? <a href={item.href}>{item.label}</a> : <em>{item.label}</em>)}
