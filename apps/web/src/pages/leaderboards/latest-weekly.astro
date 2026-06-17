@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import BenchmarkEvidencePanel from "../../components/BenchmarkEvidencePanel.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import StatusCards from "../../components/StatusCards.astro";
 import OfficialPicksTable from "../../components/OfficialPicksTable";
@@ -398,6 +399,13 @@ const defaultOracleChartTab = oracleChartTabs[0]?.key ?? "latest";
                 )}
               </div>
             </div>
+
+            <BenchmarkEvidencePanel
+              evidence={apiReadModel.benchmark_evidence}
+              track="weekly"
+              compact
+              title="Weekly Evidence Context"
+            />
 
             {oracleChartTabs.length > 0 && (
               <div

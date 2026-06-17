@@ -7,6 +7,7 @@ import {
   historicalRiskLabel
 } from "../src/lib/riskAppetiteCore.js";
 import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
+import { buildBenchmarkEvidence } from "../src/lib/benchmarkEvidence.js";
 
 const repoRoot = resolve(process.cwd(), "../..");
 const roundsRoot = join(repoRoot, "rounds");
@@ -1841,8 +1842,10 @@ function buildReadModel() {
     version: String(assetRiskModel.version ?? "")
   });
 
-  return {
-    generated_at: new Date().toISOString(),
+  const generatedAt = new Date().toISOString();
+  const benchmarkSetDefinitions = buildBenchmarkSetDefinitions({ rounds, portfolios });
+  const readModel = {
+    generated_at: generatedAt,
     api_version: "v1",
     source: "capitalbench_local_rounds",
     current_universe_round_id: latestRoundWithOptions?.round.round_id ?? null,
@@ -1853,7 +1856,7 @@ function buildReadModel() {
         monthly: Number(benchmarkSetConfig.qualification_thresholds?.monthly ?? 3)
       }
     },
-    benchmark_set_definitions: buildBenchmarkSetDefinitions({ rounds, portfolios }),
+    benchmark_set_definitions: benchmarkSetDefinitions,
     rounds,
     models,
     assets,
@@ -1867,6 +1870,10 @@ function buildReadModel() {
     risk_appetite: riskAppetite,
     insights: loadLatestInsights(),
     proof
+  };
+  return {
+    ...readModel,
+    benchmark_evidence: buildBenchmarkEvidence(readModel)
   };
 }
 

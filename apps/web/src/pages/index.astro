@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ActiveExposureMap from "../components/ActiveExposureMap";
+import BenchmarkEvidencePanel from "../components/BenchmarkEvidencePanel.astro";
 import GitHubLogo from "../components/GitHubLogo.astro";
 import InsightStrip from "../components/InsightStrip.astro";
 import LatestOfficialResultsTabs from "../components/LatestOfficialResultsTabs.astro";
@@ -624,6 +625,12 @@ const trackLaneCards = trackStates.map((track) => {
   </section>
 
   <TrackScorecardTabs scorecards={aggregateScorecards} />
+
+  <BenchmarkEvidencePanel
+    evidence={apiReadModel.benchmark_evidence}
+    tracks={["weekly", "monthly"]}
+    title="How Much Evidence Is Behind These Scores?"
+  />
 
   <section class="benchmark-process-card benchmark-process-section" id="how-it-works" aria-label="CapitalBench methodology summary">
     <div class="console-header">

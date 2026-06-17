@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import BenchmarkEvidencePanel from "../../../components/BenchmarkEvidencePanel.astro";
 import PageHeader from "../../../components/PageHeader.astro";
 import TrackScorecard from "../../../components/TrackScorecard.astro";
 import apiReadModel from "../../../generated/apiReadModel.js";
@@ -57,6 +58,13 @@ const description = `${set.label} ranks ${set.models.length} AI models only on s
 
   {scorecard ? (
     <section class="section">
+      <BenchmarkEvidencePanel
+        evidence={apiReadModel.benchmark_evidence}
+        track={set.track}
+        benchmarkSet={set}
+        compact
+        title="Evidence Behind This Comparison"
+      />
       <TrackScorecard scorecard={scorecard} />
     </section>
   ) : (

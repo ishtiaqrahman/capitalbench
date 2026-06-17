@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import BenchmarkEvidencePanel from "../../components/BenchmarkEvidencePanel.astro";
 import GitHubLogo from "../../components/GitHubLogo.astro";
 import InsightStrip from "../../components/InsightStrip.astro";
 import ScoreReturnChart from "../../components/ScoreReturnChart.astro";
@@ -437,6 +438,12 @@ const proofLinks = [
       <div class="track-scorecard-stack results-scorecard-stack" aria-label="Combined completed result charts">
         {scorecards.map((scorecard) => <TrackScorecard scorecard={scorecard} />)}
       </div>
+
+      <BenchmarkEvidencePanel
+        evidence={apiReadModel.benchmark_evidence}
+        tracks={["weekly", "monthly"]}
+        title="Evidence Behind The Current Benchmarks"
+      />
     </>
   )}
 

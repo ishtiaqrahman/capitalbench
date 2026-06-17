@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import BenchmarkEvidencePanel from "../../components/BenchmarkEvidencePanel.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import StatusCards from "../../components/StatusCards.astro";
 import OfficialPicksTable from "../../components/OfficialPicksTable";
@@ -96,6 +97,12 @@ const initialNowIso = new Date().toISOString();
                 <a href={`/rounds/${pendingRound.round_id}/`}>View current portfolios</a>
               </div>
             )}
+            <BenchmarkEvidencePanel
+              evidence={apiReadModel.benchmark_evidence}
+              track="monthly"
+              compact
+              title="Monthly Evidence Context"
+            />
             <LatestOfficialResultsTabs
               tracks={monthlyOfficialResultTracks}
               headingKicker="Official monthly result history"

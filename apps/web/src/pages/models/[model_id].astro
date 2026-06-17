@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import BenchmarkEvidencePanel from "../../components/BenchmarkEvidencePanel.astro";
 import InsightStrip from "../../components/InsightStrip.astro";
 import ModelLiveHoldings from "../../components/ModelLiveHoldings";
 import TrackScorecard from "../../components/TrackScorecard.astro";
@@ -548,6 +549,14 @@ function alphaBarStyle(row: ModelResultRow): string {
                 </div>
                 <a class="small-button" href={`/leaderboards/benchmark-sets/${item.set.set_id}/`}>Open full set</a>
               </div>
+
+              <BenchmarkEvidencePanel
+                evidence={apiReadModel.benchmark_evidence}
+                track={item.set.track}
+                benchmarkSet={item.set}
+                compact
+                title="Evidence Behind This Comparison"
+              />
 
               <div class="model-benchmark-set-metrics" aria-label={`${profile.label} ${item.set.label} metrics`}>
                 <span>
