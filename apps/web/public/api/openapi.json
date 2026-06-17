@@ -612,13 +612,31 @@
       "get": {
         "tags": ["Models"],
         "summary": "Model behavior profiles",
-        "description": "Canonical deterministic model behavior profiles with archetype labels, risk-taking score, concentration, turnover, peer similarity, and resolved performance context.",
+        "description": "Canonical deterministic model behavior profiles with archetype labels, risk-taking score, concentration, turnover, peer similarity, resolved performance context, and the dynamic pattern report.",
         "responses": {
           "200": {
             "description": "Model behavior profile collection",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ModelBehaviorResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/models/patterns": {
+      "get": {
+        "tags": ["Models"],
+        "summary": "Model behavior pattern report",
+        "description": "Direct access to the dynamic model behavior pattern report used by the public comparison page.",
+        "responses": {
+          "200": {
+            "description": "Model behavior pattern report",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ModelPatternReport" }
               }
             }
           },
@@ -1588,6 +1606,7 @@
           "methodology_href": { "type": "string" },
           "summary": { "type": "object" },
           "profiles": { "type": "array", "items": { "$ref": "#/components/schemas/ModelBehaviorProfile" } },
+          "pattern_report": { "$ref": "#/components/schemas/ModelPatternReport" },
           "pairwise_similarity": {
             "type": "array",
             "items": {
@@ -1603,6 +1622,83 @@
           }
         },
         "required": ["version", "profiles", "pairwise_similarity"]
+      },
+      "ModelPatternReport": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "string" },
+          "generated_at": { "type": "string", "format": "date-time" },
+          "data_as_of": { "type": ["string", "null"], "format": "date" },
+          "data_fingerprint": { "type": "string" },
+          "summary": { "type": "object" },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "model_id": { "type": "string" },
+                "label": { "type": "string" },
+                "provider_label": { "type": "string" },
+                "archetype": { "type": "object" },
+                "sample_status": { "type": "string" },
+                "sample_caveat": { "type": ["string", "null"] },
+                "sample": { "type": "object" },
+                "behavior_summary": { "type": "string" },
+                "traits": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": { "type": "string" },
+                      "label": { "type": "string" },
+                      "evidence": { "type": "string" },
+                      "metric_keys": { "type": "array", "items": { "type": "string" } }
+                    },
+                    "required": ["key", "label", "evidence", "metric_keys"]
+                  }
+                },
+                "key_numbers": { "type": "object", "additionalProperties": { "type": ["number", "integer", "null"] } },
+                "top_assets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "option_id": { "type": "string" },
+                      "label": { "type": "string" },
+                      "ticker": { "type": "string" },
+                      "display": { "type": "string" },
+                      "average_allocation_pct": { "type": "number" },
+                      "frequency_pct": { "type": "number" }
+                    },
+                    "required": ["option_id", "label", "display"]
+                  }
+                },
+                "closest_peer": { "type": ["object", "null"] },
+                "methodology_href": { "type": "string" }
+              },
+              "required": ["model_id", "label", "behavior_summary", "traits", "key_numbers", "top_assets", "methodology_href"]
+            }
+          },
+          "comparative_findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": { "type": "string" },
+                "title": { "type": "string" },
+                "body": { "type": "string" },
+                "model_ids": { "type": "array", "items": { "type": "string" } },
+                "supported_metric_keys": { "type": "array", "items": { "type": "string" } }
+              },
+              "required": ["key", "title", "body", "model_ids", "supported_metric_keys"]
+            }
+          },
+          "metric_definitions": { "type": "array", "items": { "type": "object" } },
+          "sample_rules": { "type": "object" },
+          "llm_provenance": { "type": "object" },
+          "llm_input_contract": { "type": "object" }
+        },
+        "required": ["version", "rows", "comparative_findings", "metric_definitions", "sample_rules"]
       },
       "ModelBehaviorProfile": {
         "type": "object",

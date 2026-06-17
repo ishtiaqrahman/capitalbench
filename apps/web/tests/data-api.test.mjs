@@ -427,6 +427,7 @@ test("model holdings and asset holder endpoints filter correctly", async () => {
 
 test("model behavior endpoint exposes canonical behavior profiles", async () => {
   const list = await apiGet("/api/v1/models/behavior");
+  const patterns = await apiGet("/api/v1/models/patterns");
   const modelId = "openai-gpt-5-5";
   const detail = await apiGet(`/api/v1/models/${modelId}/behavior`);
 
@@ -435,6 +436,13 @@ test("model behavior endpoint exposes canonical behavior profiles", async () => 
   assert.equal(list.body.profiles.length, apiReadModel.models.length);
   assert.ok(list.body.summary.highest_risk_model_id);
   assert.ok(list.body.pairwise_similarity.length > 0);
+  assert.equal(list.body.pattern_report.version, "model_behavior_pattern_report_v1");
+  assert.equal(list.body.pattern_report.rows.length, apiReadModel.models.length);
+
+  assert.equal(patterns.status, 200);
+  assert.equal(patterns.body.version, "model_behavior_pattern_report_v1");
+  assert.deepEqual(patterns.body.rows.map((row) => row.model_id).sort(), apiReadModel.models.map((model) => model.model_id).sort());
+  assert.ok(patterns.body.llm_provenance.prompt_version);
 
   assert.equal(detail.status, 200);
   assert.equal(detail.body.model_id, modelId);
@@ -516,6 +524,7 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
     ["/v1/models/{model_id}/live-performance", `/api/v1/models/${modelId}/live-performance?track=all`],
     ["/v1/models/{model_id}/style", `/api/v1/models/${modelId}/style`],
     ["/v1/models/behavior", "/api/v1/models/behavior"],
+    ["/v1/models/patterns", "/api/v1/models/patterns"],
     ["/v1/models/{model_id}/behavior", `/api/v1/models/${modelId}/behavior`],
     ["/v1/universe/current", "/api/v1/universe/current"],
     ["/v1/assets/{option_id}", `/api/v1/assets/${optionId}`],

@@ -223,20 +223,22 @@ const riskLabelSet = Array.from(new Set(riskAppetiteProfiles.map((profile) => pr
 const riskClusterLabel = riskLabelSet.length === 1 ? `All ${riskLabelSet[0]}` : riskLabelSet.join(" / ");
 const riskPortfolioCount = riskAppetiteProfiles.reduce((total, profile) => total + profile.fingerprint.portfolioCount, 0);
 const modelBehavior: any = apiReadModel.model_behavior ?? { summary: {}, profiles: [], methodology_href: "/risk-appetite/#model-behavior-methodology" };
-const behaviorProfiles = Array.isArray(modelBehavior.profiles) ? modelBehavior.profiles : [];
-const behaviorProfileById = new Map(behaviorProfiles.map((profile: any) => [profile.model_id, profile]));
-const behaviorHighlightSpecs = [
-  { key: "highest_risk_model_id", label: "Most risk-seeking", metric: "Risk-taking score", value: (profile: any) => pulseScore(profile.metrics?.average_risk_pulse) },
-  { key: "most_concentrated_model_id", label: "Most concentrated", metric: "Avg top holding", value: (profile: any) => pctValue(profile.metrics?.average_top_allocation_pct) },
-  { key: "most_defensive_model_id", label: "Most defensive ballast", metric: "Defensive exposure", value: (profile: any) => pctValue(profile.metrics?.defensive_pct) },
-  { key: "lowest_turnover_model_id", label: "Most stable", metric: "Avg turnover", value: (profile: any) => pctValue(profile.turnover?.average_turnover_pct) }
+const modelPatternReport = modelBehavior.pattern_report ?? { rows: [], comparative_findings: [], summary: {} };
+const modelPatternRows = Array.isArray(modelPatternReport.rows) ? modelPatternReport.rows : [];
+const modelPatternRowById = new Map(modelPatternRows.map((row: any) => [row.model_id, row]));
+const modelPatternLeaderSpecs = [
+  { key: "highest_risk_model_id", label: "Most risk-seeking", metric: "Risk-taking score", value: (row: any) => pulseScore(row.key_numbers?.risk_taking_score) },
+  { key: "most_concentrated_model_id", label: "Most concentrated", metric: "Avg top holding", value: (row: any) => pctValue(row.key_numbers?.average_top_allocation_pct) },
+  { key: "most_defensive_model_id", label: "Most defensive", metric: "Defensive exposure", value: (row: any) => pctValue(row.key_numbers?.defensive_pct) },
+  { key: "lowest_turnover_model_id", label: "Lowest turnover", metric: "Avg turnover", value: (row: any) => pctValue(row.key_numbers?.average_turnover_pct) }
 ];
-const behaviorHighlights = behaviorHighlightSpecs
+const modelPatternLeaders = modelPatternLeaderSpecs
   .map((item) => {
-    const profile = behaviorProfileById.get(modelBehavior.summary?.[item.key]);
-    return profile ? { ...item, profile } : null;
+    const row = modelPatternRowById.get(modelPatternReport.summary?.[item.key]);
+    return row ? { ...item, row } : null;
   })
   .filter(Boolean);
+const modelPatternFinding = Array.isArray(modelPatternReport.comparative_findings) ? modelPatternReport.comparative_findings[0] : null;
 const latestUniverseOptionCount = Math.max(0, ...trackStates.map((track) => track.options.length));
 const currentRound = latestMonthlyRound ?? latestWeeklyRound ?? roundRows[0] ?? fallbackRounds[0];
 const currentUniverseOptionCount = latestUniverseOptionCount || staticUniverseOptions(currentRound.round_id).length;
@@ -1128,38 +1130,55 @@ const trackLaneCards = trackStates.map((track) => {
     </section>
   )}
 
-  {behaviorHighlights.length > 0 && (
-    <section class="model-behavior-panel" aria-labelledby="model-behavior-title">
+  {modelPatternLeaders.length > 0 && (
+    <section class="model-behavior-panel model-behavior-panel-pattern" aria-labelledby="model-behavior-title">
       <div class="model-behavior-head">
         <div>
           <span class="panel-kicker">Model behavior patterns</span>
           <h3 id="model-behavior-title">How The AI Allocators Differ</h3>
           <p>
-            Deterministic peer comparisons from every official frozen portfolio. These labels describe allocation behavior,
-            not investment skill, and update when new official portfolios or scores are published.
+            Dynamic peer comparisons from official frozen portfolios. The full report separates risk appetite,
+            concentration, defensive ballast, peer overlap, turnover, and resolved performance profile.
           </p>
         </div>
-        <a class="section-profile-link" href={modelBehavior.methodology_href ?? "/risk-appetite/#model-behavior-methodology"}>Calculation method</a>
+        <a class="section-profile-link" href="/models/patterns/">View full report</a>
       </div>
 
-      <div class="model-behavior-grid">
-        {behaviorHighlights.map((item: any) => (
-          <a class="model-behavior-card" href={`/models/${item.profile.model_id}/#model-behavior`}>
-            <span>{item.label}</span>
-            <strong>{item.profile.label}</strong>
-            <em>{item.profile.archetype?.label}</em>
-            <dl>
-              <div>
-                <dt>{item.metric}</dt>
-                <dd>{item.value(item.profile)}</dd>
-              </div>
-              <div>
-                <dt>Saved portfolios</dt>
-                <dd>{item.profile.sample?.portfolio_count ?? "n/a"}</dd>
-              </div>
-            </dl>
+      <div class="model-behavior-pattern-layout">
+        {modelPatternFinding && (
+          <a class="model-behavior-finding" href="/models/patterns/#findings-title">
+            <span>What stands out</span>
+            <strong>{modelPatternFinding.title}</strong>
+            <p>{modelPatternFinding.body}</p>
           </a>
-        ))}
+        )}
+
+        <div class="model-behavior-grid model-behavior-grid-pattern">
+          {modelPatternLeaders.map((item: any) => (
+            <a class="model-behavior-card model-behavior-card-pattern" href={`/models/${item.row.model_id}/#model-behavior`}>
+              <span class="model-behavior-card-kicker">{item.label}</span>
+              <span class="model-behavior-card-headline">
+                <span class="model-behavior-card-logo" aria-hidden="true">
+                  {providerLogoSrc(item.row.provider) ? <img src={providerLogoSrc(item.row.provider)} alt="" loading="lazy" /> : item.row.provider_label?.slice(0, 1)}
+                </span>
+                <span>
+                  <strong>{item.row.label}</strong>
+                  <em>{item.row.archetype?.label}</em>
+                </span>
+              </span>
+              <dl>
+                <div>
+                  <dt>{item.metric}</dt>
+                  <dd>{item.value(item.row)}</dd>
+                </div>
+                <div>
+                  <dt>Saved portfolios</dt>
+                  <dd>{item.row.sample?.portfolio_count ?? "n/a"}</dd>
+                </div>
+              </dl>
+            </a>
+          ))}
+        </div>
       </div>
     </section>
   )}

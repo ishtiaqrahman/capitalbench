@@ -1444,10 +1444,11 @@ def _model_behavior_profile_insights(snapshot: dict[str, Any], generated_at: str
                 },
             ],
             evidence=[
-                {"label": "Model profiles", "href": "/models", "source": "official parsed submissions"},
-                {"label": "Behavior methodology", "href": "/risk-appetite/#model-behavior-methodology", "source": "asset risk model and behavior formulas"},
+                {"label": "Model behavior patterns", "href": "/models/patterns", "source": "official parsed submissions"},
+                {"label": "Behavior methodology", "href": "/models/patterns/#methodology", "source": "asset risk model and behavior formulas"},
             ],
             related=[
+                {"label": "Pattern report", "href": "/models/patterns"},
                 {"label": "AI Risk Appetite", "href": "/risk-appetite"},
                 {"label": "Insights", "href": "/insights?category=model_behavior"},
             ],

@@ -113,6 +113,7 @@ const insightsExample = exampleBlock("/api/v1/insights?limit=3", {
 
 const modelBehaviorBody = await apiBody("/api/v1/models/behavior");
 const modelBehaviorTop = modelBehaviorBody.profiles?.[0];
+const modelPatternTop = modelBehaviorBody.pattern_report?.rows?.[0];
 const modelBehaviorExample = exampleBlock("/api/v1/models/behavior", {
   version: modelBehaviorBody.version,
   generated_at: modelBehaviorBody.generated_at,
@@ -134,7 +135,25 @@ const modelBehaviorExample = exampleBlock("/api/v1/models/behavior", {
           turnover: modelBehaviorTop.turnover
         }
       ]
-    : []
+    : [],
+  pattern_report: {
+    version: modelBehaviorBody.pattern_report?.version,
+    data_as_of: modelBehaviorBody.pattern_report?.data_as_of,
+    data_fingerprint: modelBehaviorBody.pattern_report?.data_fingerprint,
+    llm_provenance: modelBehaviorBody.pattern_report?.llm_provenance,
+    rows: modelPatternTop
+      ? [
+          {
+            model_id: modelPatternTop.model_id,
+            label: modelPatternTop.label,
+            behavior_summary: modelPatternTop.behavior_summary,
+            traits: modelPatternTop.traits?.slice(0, 3),
+            key_numbers: modelPatternTop.key_numbers,
+            top_assets: modelPatternTop.top_assets?.slice(0, 3)
+          }
+        ]
+      : []
+  }
 });
 
 const leaderboardBody = await apiBody("/api/v1/leaderboards/latest?track=weekly");
@@ -265,7 +284,8 @@ const endpointGroups = [
       ["GET", "/v1/models/{model_id}/holdings", "Active and historical holdings for one model."],
       ["GET", "/v1/models/{model_id}/live-performance", "One model's live return across live rounds."],
       ["GET", "/v1/models/{model_id}/style", "Risk appetite and allocation fingerprint metrics."],
-      ["GET", "/v1/models/behavior", "Canonical model behavior profiles, peer comparisons, turnover, concentration, and archetype labels."],
+      ["GET", "/v1/models/behavior", "Canonical model behavior profiles plus the dynamic pattern report, peer comparisons, turnover, concentration, and archetype labels."],
+      ["GET", "/v1/models/patterns", "Direct access to the dynamic model behavior pattern report used by the comparison page."],
       ["GET", "/v1/models/{model_id}/behavior", "One model's behavior profile with methodology and peer-context fields."],
       ["GET", "/v1/universe/current", "Current list of valid model choices."],
       ["GET", "/v1/assets/{option_id}", "Asset metadata and ticker mapping."],
@@ -285,7 +305,7 @@ const concepts = [
   ["Portfolio Minus S&P 500", "Model portfolio return minus the S&P 500 return, in percentage points."],
   ["CapitalBench Score", "Model return relative to the hindsight oracle; cumulative rows divide total model return by total oracle return."],
   ["AI Risk Appetite", "A 0-100 allocation signal calculated from the newest live weekly and monthly AI model portfolios. It does not use prices or returns."],
-  ["Model Behavior", "A deterministic model-level profile describing allocation style, concentration, turnover, peer similarity, and resolved performance context."],
+  ["Model Behavior", "A deterministic model-level profile describing allocation style, concentration, turnover, peer similarity, pattern-report summaries, and resolved performance context."],
   ["Insight", "A deterministic or LLM-assisted finding with source evidence, calculations, confidence, and audience tags."],
   ["Shared Rounds", "Resolved rounds included in a comparison set because every set model has an official result."]
 ];
@@ -304,6 +324,7 @@ const fields = [
   ["model_id", "Stable CapitalBench model identifier."],
   ["next_cursor", "Pagination cursor returned when more records are available."],
   ["option_id", "Stable asset identifier from the saved universe."],
+  ["pattern_report", "Dynamic model behavior comparison report with one row per model, deterministic traits, key numbers, comparative findings, freshness metadata, and NVIDIA prompt provenance."],
   ["portfolio_count", "Number of model portfolios included in an aggregate calculation."],
   ["risk_on_loading", "Versioned asset loading from -1 defensive to +1 risk seeking, used by AI Risk Appetite."],
   ["risk_score_1_5", "Standalone asset-risk rating used by the existing historical model profile."],

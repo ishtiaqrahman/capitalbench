@@ -976,6 +976,11 @@ function listModelBehavior() {
   return jsonApiResult(200, apiReadModel.model_behavior ?? { version: "model_behavior_v1", profiles: [] });
 }
 
+function listModelPatterns() {
+  const report = apiReadModel.model_behavior?.pattern_report;
+  return jsonApiResult(200, report ?? { version: "model_behavior_pattern_report_v1", rows: [] });
+}
+
 function modelBehavior(modelId) {
   if (!modelById.has(modelId)) return errorResult(404, "not_found", "Model not found.");
   return jsonApiResult(200, behaviorByModelId.get(modelId) ?? { model_id: modelId, status: "not_available" });
@@ -1067,6 +1072,7 @@ function indexResponse() {
       "/v1/models/{model_id}/style",
       "/v1/models/{model_id}/behavior",
       "/v1/models/behavior",
+      "/v1/models/patterns",
       "/v1/universe/current",
       "/v1/assets/{option_id}",
       "/v1/assets/{option_id}/model-holders"
@@ -1112,6 +1118,7 @@ function routeGet(request) {
 
   if (parts[0] === "models") {
     if (parts.length === 2 && parts[1] === "behavior") return listModelBehavior();
+    if (parts.length === 2 && parts[1] === "patterns") return listModelPatterns();
     if (parts.length === 1) return listModels();
     if (parts.length === 2) return modelDetails(parts[1]);
     if (parts.length === 3 && parts[2] === "holdings") return modelHoldings(parts[1], url);

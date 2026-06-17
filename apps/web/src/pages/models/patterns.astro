@@ -1,0 +1,325 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import apiReadModel from "../../generated/apiReadModel.js";
+import { providerLogoSrc } from "../../lib/scoreReturnChart";
+
+type PatternRow = {
+  model_id: string;
+  label: string;
+  provider: string;
+  provider_label: string;
+  archetype: { label: string; description: string; confidence?: string };
+  sample_status: string;
+  sample_caveat?: string | null;
+  sample: Record<string, number | string | null>;
+  behavior_summary: string;
+  traits: Array<{ key: string; label: string; evidence: string; metric_keys: string[] }>;
+  key_numbers: Record<string, number | null>;
+  top_assets: Array<{ display: string; average_allocation_pct?: number; frequency_pct?: number }>;
+  closest_peer?: { label?: string; similarity_pct?: number | null } | null;
+};
+
+type PatternFinding = {
+  key: string;
+  title: string;
+  body: string;
+  model_ids: string[];
+  supported_metric_keys: string[];
+};
+
+const modelBehavior: any = apiReadModel.model_behavior ?? {};
+const report = modelBehavior.pattern_report ?? {
+  rows: [],
+  comparative_findings: [],
+  summary: {},
+  metric_definitions: [],
+  sample_rules: {},
+  generated_at: modelBehavior.generated_at,
+  data_as_of: modelBehavior.data_as_of,
+  llm_provenance: null
+};
+const rows = (Array.isArray(report.rows) ? report.rows : []) as PatternRow[];
+const findings = (Array.isArray(report.comparative_findings) ? report.comparative_findings : []) as PatternFinding[];
+const metricDefinitions = Array.isArray(report.metric_definitions) ? report.metric_definitions : [];
+const rowById = new Map(rows.map((row) => [row.model_id, row]));
+const leaderCards = [
+  ["Most risk-seeking", report.summary?.highest_risk_model_id, "Highest average risk-taking score"],
+  ["Most concentrated", report.summary?.most_concentrated_model_id, "Highest concentration across saved portfolios"],
+  ["Most defensive", report.summary?.most_defensive_model_id, "Largest defensive allocation"],
+  ["Lowest turnover", report.summary?.lowest_turnover_model_id, "Smallest average portfolio turnover"],
+  ["Closest to peers", report.summary?.most_consensus_aligned_model_id, "Highest average peer overlap"],
+  ["Most distinctive", report.summary?.most_distinctive_model_id, "Lowest average peer overlap"]
+]
+  .map(([label, modelId, description]) => {
+    const row = rowById.get(String(modelId ?? ""));
+    return row ? { label, description, row } : null;
+  })
+  .filter(Boolean) as Array<{ label: string; description: string; row: PatternRow }>;
+
+const keyMetricColumns = [
+  ["risk_taking_score", "Risk"],
+  ["average_holding_count", "Holdings"],
+  ["average_top_allocation_pct", "Top holding"],
+  ["high_risk_pct", "High risk"],
+  ["defensive_pct", "Defensive"],
+  ["peer_similarity", "Peer overlap"],
+  ["average_turnover_pct", "Turnover"],
+  ["average_rank", "Avg rank"],
+  ["first_last", "1st / last"],
+  ["beat_sp500_rate_pct", "Beat S&P"]
+];
+
+function dateLabel(value: string | null | undefined) {
+  if (!value) return "n/a";
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(value));
+  if (!match) return String(value);
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(
+    new Date(`${match[1]}-${match[2]}-${match[3]}T00:00:00Z`)
+  );
+}
+
+function dateTimeLabel(value: string | null | undefined) {
+  if (!value) return "n/a";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "UTC",
+    timeZoneName: "short"
+  }).format(date);
+}
+
+function numberLabel(value: number | null | undefined, digits = 1) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "n/a";
+  return value.toFixed(digits);
+}
+
+function pctLabel(value: number | null | undefined, digits = 1) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "n/a";
+  return `${value.toFixed(digits)}%`;
+}
+
+function metricValue(row: PatternRow, key: string) {
+  const value = row.key_numbers?.[key];
+  switch (key) {
+    case "risk_taking_score":
+      return `${numberLabel(value, 1)} / 100`;
+    case "average_holding_count":
+      return numberLabel(value, 2);
+    case "average_rank":
+      return numberLabel(value, 2);
+    case "peer_similarity":
+      return pctLabel(typeof value === "number" ? value * 100 : null, 1);
+    case "first_last":
+      return `${row.key_numbers?.first_place_count ?? 0} / ${row.key_numbers?.last_place_count ?? 0}`;
+    case "beat_sp500_rate_pct":
+      return `${row.key_numbers?.beat_sp500_count ?? 0}/${row.key_numbers?.resolved_round_count ?? 0}`;
+    default:
+      return pctLabel(value, 1);
+  }
+}
+
+function modelList(ids: string[]) {
+  return ids.map((id) => rowById.get(id)?.label).filter(Boolean).join(", ");
+}
+
+function rowLogoSrc(row: PatternRow) {
+  return providerLogoSrc(row.provider);
+}
+---
+
+<BaseLayout
+  title="CapitalBench Model Behavior Patterns"
+  description="CapitalBench model behavior patterns compare how AI models differ by risk appetite, concentration, defensive ballast, peer overlap, turnover, and resolved performance profile."
+>
+  <section class="pattern-hero" aria-labelledby="pattern-title">
+    <div class="pattern-hero-copy">
+      <span class="panel-kicker">Model behavior patterns</span>
+      <h1 id="pattern-title">How The AI Allocators Differ</h1>
+      <p>
+        A dynamic comparison of each model's allocation style across official frozen portfolios. The report separates
+        risk appetite, concentration, defensive ballast, peer overlap, turnover, and resolved performance profile in one view.
+      </p>
+    </div>
+    <aside class="pattern-freshness" aria-label="Pattern report freshness">
+      <div>
+        <span>Data through</span>
+        <strong>{dateLabel(report.data_as_of)}</strong>
+      </div>
+      <div>
+        <span>Saved portfolios</span>
+        <strong>{report.summary?.portfolio_count ?? rows.reduce((total, row) => total + Number(row.sample?.portfolio_count ?? 0), 0)}</strong>
+      </div>
+      <div>
+        <span>Resolved results</span>
+        <strong>{report.summary?.resolved_result_count ?? 0}</strong>
+      </div>
+      <div>
+        <span>Generated</span>
+        <strong>{dateTimeLabel(report.generated_at)}</strong>
+      </div>
+    </aside>
+  </section>
+
+  <section class="pattern-leaders" aria-label="Model behavior leaders">
+    {leaderCards.map((card) => (
+      <a href={`/models/${card.row.model_id}/#model-behavior`}>
+        <span>{card.label}</span>
+        <strong>{card.row.label}</strong>
+        <small>{card.description}</small>
+      </a>
+    ))}
+  </section>
+
+  <section class="section pattern-section" aria-labelledby="comparison-title">
+    <div class="home-section-heading home-section-heading-with-action">
+      <div>
+        <span class="panel-kicker">Comparison matrix</span>
+        <h2 id="comparison-title">Distinct Behavior By Model</h2>
+        <p>
+          Summaries are generated from deterministic metrics. NVIDIA-assisted wording can polish future summaries, but
+          the metric rows below remain the source of truth.
+        </p>
+      </div>
+      <a class="section-profile-link" href="#methodology">Calculation method</a>
+    </div>
+
+    <div class="pattern-matrix" role="table" aria-label="Model behavior comparison">
+      <div class="pattern-matrix-head" role="row">
+        <span role="columnheader">Model</span>
+        <span role="columnheader">Distinct behavior</span>
+        <span role="columnheader">Evidence</span>
+        <span role="columnheader">Common exposures</span>
+      </div>
+      {rows.map((row) => (
+        <article class="pattern-matrix-row" role="row">
+          <div class="pattern-model-cell" role="cell">
+            <span class="pattern-model-logo" aria-hidden="true">
+              {rowLogoSrc(row) ? <img src={rowLogoSrc(row)} alt="" loading="lazy" /> : row.provider_label.slice(0, 1)}
+            </span>
+            <span class="pattern-model-copy">
+              <a href={`/models/${row.model_id}/#model-behavior`}>{row.label}</a>
+              <span>{row.provider_label}</span>
+              <small>{row.sample_status}</small>
+            </span>
+          </div>
+          <div class="pattern-summary-cell" role="cell">
+            <strong>{row.archetype?.label}</strong>
+            <p>{row.behavior_summary}</p>
+            {row.sample_caveat && <em>{row.sample_caveat}</em>}
+          </div>
+          <div class="pattern-evidence-cell" role="cell">
+            {row.traits.slice(0, 4).map((trait) => (
+              <span title={trait.evidence}>{trait.label}</span>
+            ))}
+          </div>
+          <div class="pattern-asset-cell" role="cell">
+            {row.top_assets.slice(0, 3).map((asset) => (
+              <span>
+                <strong>{asset.display}</strong>
+                <small>{pctLabel(asset.average_allocation_pct)} avg</small>
+              </span>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section pattern-section" aria-labelledby="numbers-title">
+    <div class="home-section-heading">
+      <span class="panel-kicker">Key numbers</span>
+      <h2 id="numbers-title">Behavior Metrics In One Table</h2>
+      <p>
+        These are cumulative model-level measures across official saved portfolios and resolved results. A lower average
+        rank is better. Beat S&amp;P shows resolved rounds where model return exceeded the S&amp;P 500.
+      </p>
+    </div>
+
+    <div class="pattern-number-table-shell">
+      <table class="pattern-number-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            {keyMetricColumns.map(([, label]) => <th>{label}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr>
+              <th scope="row">
+                <a class="pattern-table-model-link" href={`/models/${row.model_id}/#model-behavior`}>
+                  <span class="pattern-table-logo" aria-hidden="true">
+                    {rowLogoSrc(row) ? <img src={rowLogoSrc(row)} alt="" loading="lazy" /> : row.provider_label.slice(0, 1)}
+                  </span>
+                  <span>{row.label}</span>
+                </a>
+              </th>
+              {keyMetricColumns.map(([key]) => <td>{metricValue(row, key)}</td>)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {findings.length > 0 && (
+    <section class="section pattern-section pattern-findings" aria-labelledby="findings-title">
+      <div class="home-section-heading">
+        <span class="panel-kicker">Comparative findings</span>
+        <h2 id="findings-title">What Stands Out</h2>
+        <p>Each finding is tied to model IDs and metric keys in the generated report.</p>
+      </div>
+
+      <div class="pattern-finding-grid">
+        {findings.map((finding) => (
+          <article>
+            <span>{modelList(finding.model_ids)}</span>
+            <h3>{finding.title}</h3>
+            <p>{finding.body}</p>
+            <div>
+              {finding.supported_metric_keys.slice(0, 4).map((key) => <small>{key.replaceAll("_", " ")}</small>)}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section id="methodology" class="section pattern-method" aria-labelledby="methodology-title">
+    <div class="pattern-method-copy">
+      <span class="panel-kicker">Methodology</span>
+      <h2 id="methodology-title">How The Pattern Report Is Calculated</h2>
+      <p>
+        The report is generated from official frozen portfolios and resolved result rows during the website build. No
+        page copy is manually assigned to a model. New models appear automatically after they have official saved portfolios.
+      </p>
+      <p>
+        Models with fewer than {report.sample_rules?.stable_behavior_min_portfolios ?? 8} saved portfolios are marked
+        as early sample. Performance language is caveated until at least {report.sample_rules?.performance_context_min_resolved_rounds ?? 3}
+        resolved results are available.
+      </p>
+      <p>
+        NVIDIA-assisted text is allowed only as a rewrite layer. The prompt receives the structured model rows, traits,
+        metric keys, top assets, and comparative candidates. It is not allowed to add unsupported numbers, assets, causes,
+        stale dates, or investment advice.
+      </p>
+      <p class="pattern-provenance">
+        Prompt contract: <strong>{report.llm_provenance?.prompt_version ?? "n/a"}</strong>
+      </p>
+    </div>
+    <div class="pattern-definition-list">
+      {metricDefinitions.map((metric: any) => (
+        <article>
+          <span>{metric.unit}</span>
+          <strong>{metric.label}</strong>
+          <p>{metric.definition}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

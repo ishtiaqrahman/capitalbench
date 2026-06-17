@@ -58,11 +58,7 @@ const visibleInsights = insights.filter(Boolean).slice(0, compact ? 2 : 3);
       <a class="section-profile-link" href={viewAllHref}>{viewAllLabel}</a>
     </div>
 
-    <div
-      class:list={["insight-card-grid", compact && "insight-card-grid-compact"]}
-      tabindex={featured ? 0 : undefined}
-      aria-label={featured ? `${title} insight rail` : undefined}
-    >
+    <div class:list={["insight-card-grid", compact && "insight-card-grid-compact"]}>
       {visibleInsights.map((insight) => {
         const calculations: InsightCalculation[] = Array.isArray(insight.calculations) ? insight.calculations.slice(0, 3) : [];
         const evidence: InsightLink[] = Array.isArray(insight.evidence) ? insight.evidence.slice(0, 2) : [];

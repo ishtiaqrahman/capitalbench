@@ -158,6 +158,15 @@ export const routeMeta: RouteMeta[] = [
     lastmod: defaultLastmod
   },
   {
+    path: "/models/patterns",
+    title: "CapitalBench Model Behavior Patterns",
+    description:
+      "CapitalBench model behavior patterns compare how AI models differ by risk appetite, concentration, defensive ballast, peer overlap, turnover, and resolved performance profile.",
+    priority: 0.84,
+    changefreq: "weekly",
+    lastmod: defaultLastmod
+  },
+  {
     path: "/api",
     title: "CapitalBench Data API",
     description:

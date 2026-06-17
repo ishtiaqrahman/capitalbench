@@ -1230,6 +1230,87 @@ if (!modelBehavior || modelBehavior.version !== "model_behavior_v1") {
       failures.push(`${context} methodology_href must link to model behavior methodology`);
     }
   }
+  const patternReport = modelBehavior.pattern_report;
+  if (!patternReport || patternReport.version !== "model_behavior_pattern_report_v1") {
+    failures.push("model_behavior is missing pattern_report v1");
+  } else {
+    const patternRows = Array.isArray(patternReport.rows) ? patternReport.rows : [];
+    const patternIds = new Set(patternRows.map((row) => row.model_id));
+    if (patternRows.length !== apiReadModel.models.length) {
+      failures.push(`pattern_report row count ${patternRows.length} does not match model count ${apiReadModel.models.length}`);
+    }
+    for (const model of apiReadModel.models) {
+      if (!patternIds.has(model.model_id)) failures.push(`${model.model_id} is missing a pattern_report row`);
+    }
+    if (!patternReport.data_as_of) failures.push("pattern_report is missing data_as_of");
+    if (!patternReport.data_fingerprint) failures.push("pattern_report is missing data_fingerprint");
+    if (patternReport.llm_provenance?.prompt_version !== "capitalbench_model_patterns_prompt_v1") {
+      failures.push("pattern_report is missing model pattern prompt provenance");
+    }
+    if (patternReport.llm_input_contract?.version !== "capitalbench_model_patterns_llm_input_v1") {
+      failures.push("pattern_report is missing model pattern LLM input contract");
+    }
+    const metricDefinitions = Array.isArray(patternReport.metric_definitions) ? patternReport.metric_definitions : [];
+    const metricKeys = new Set(metricDefinitions.map((metric) => metric.key));
+    for (const requiredMetric of ["risk_taking_score", "average_holding_count", "average_top_allocation_pct", "defensive_pct", "peer_similarity", "average_turnover_pct"]) {
+      if (!metricKeys.has(requiredMetric)) failures.push(`pattern_report metric_definitions missing ${requiredMetric}`);
+    }
+    for (const row of patternRows) {
+      const context = `${row.model_id} pattern_report`;
+      const profile = profiles.find((item) => item.model_id === row.model_id);
+      if (!profile) {
+        failures.push(`${context} references missing behavior profile`);
+        continue;
+      }
+      if (!row.behavior_summary || String(row.behavior_summary).trim().length < 24) {
+        failures.push(`${context} has a missing or too-short behavior_summary`);
+      }
+      if (!String(row.methodology_href ?? "").includes("/models/patterns/#methodology")) {
+        failures.push(`${context} methodology_href must link to /models/patterns/#methodology`);
+      }
+      if (row.sample?.portfolio_count !== profile.sample?.portfolio_count) {
+        failures.push(`${context} sample portfolio_count does not match behavior profile`);
+      }
+      if (profile.sample?.portfolio_count < 8 && !row.sample_caveat) {
+        failures.push(`${context} early-sample row must include a sample_caveat`);
+      }
+      if (!row.key_numbers || !isFiniteNumber(row.key_numbers.risk_taking_score)) {
+        failures.push(`${context} key_numbers missing risk_taking_score`);
+      }
+      const expectedRisk = Number(profile.metrics.average_risk_pulse.toFixed(2));
+      if (row.key_numbers?.risk_taking_score !== expectedRisk) {
+        failures.push(`${context} risk_taking_score ${row.key_numbers?.risk_taking_score} does not match expected ${expectedRisk}`);
+      }
+      const traits = Array.isArray(row.traits) ? row.traits : [];
+      if (traits.length === 0) failures.push(`${context} must include at least one deterministic trait`);
+      for (const trait of traits) {
+        if (!trait.key || !trait.label || !trait.evidence) failures.push(`${context} has incomplete trait`);
+        for (const metricKey of trait.metric_keys ?? []) {
+          if (!metricKeys.has(metricKey) && !Object.prototype.hasOwnProperty.call(row.key_numbers ?? {}, metricKey)) {
+            failures.push(`${context} trait ${trait.key} references unknown metric key ${metricKey}`);
+          }
+        }
+      }
+      for (const asset of row.top_assets ?? []) {
+        if (!asset.display || !asset.label) failures.push(`${context} top asset ${asset.option_id} is missing display or label`);
+        if (asset.ticker && !String(asset.display).includes(`(${asset.ticker})`)) {
+          failures.push(`${context} top asset ${asset.option_id} display must include ticker in parentheses`);
+        }
+      }
+    }
+    for (const finding of patternReport.comparative_findings ?? []) {
+      const context = `pattern_report finding ${finding.key}`;
+      if (!finding.title || !finding.body) failures.push(`${context} missing title or body`);
+      for (const modelId of finding.model_ids ?? []) {
+        if (!modelById.has(modelId)) failures.push(`${context} references missing model ${modelId}`);
+      }
+      for (const metricKey of finding.supported_metric_keys ?? []) {
+        if (!metricKeys.has(metricKey) && !patternRows.some((row) => Object.prototype.hasOwnProperty.call(row.key_numbers ?? {}, metricKey))) {
+          failures.push(`${context} references unknown metric key ${metricKey}`);
+        }
+      }
+    }
+  }
   const seenPairs = new Set();
   for (const pair of modelBehavior.pairwise_similarity ?? []) {
     if (!modelById.has(pair.left_model_id) || !modelById.has(pair.right_model_id)) {

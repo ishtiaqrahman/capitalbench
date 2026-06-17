@@ -295,7 +295,8 @@ function alphaBarStyle(row: ModelResultRow): string {
             Based on {behavior.sample.portfolio_count} official saved portfolios, including {behavior.sample.weekly_portfolio_count}
             weekly and {behavior.sample.monthly_portfolio_count} monthly portfolios.
           </p>
-          <a href={behavior.methodology_href ?? "/risk-appetite/#model-behavior-methodology"}>How this is calculated</a>
+          <a href="/models/patterns/">Compare all model patterns</a>
+          <a href={behavior.methodology_href ?? "/models/patterns/#methodology"}>How this is calculated</a>
         </article>
 
         <article class="model-behavior-metrics" aria-label={`${profile.label} behavior metrics`}>

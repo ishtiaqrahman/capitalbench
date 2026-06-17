@@ -156,6 +156,13 @@ not by the LLM. The `model_behavior` dataset updates whenever
 publish narrative model-behavior insights from those same official portfolio
 facts, but deterministic calculations remain the source of truth.
 
+The model behavior pattern report at `/models/patterns` is generated from
+`model_behavior.pattern_report`. It is rebuilt with the same read model and
+contains a versioned NVIDIA prompt packet for optional wording assistance. The
+LLM may rewrite summaries only from supplied metric keys, traits, top assets,
+and sample caveats. If the LLM is unavailable or fails validation, the
+deterministic summaries remain publishable.
+
 Manual refresh:
 
 ```bash

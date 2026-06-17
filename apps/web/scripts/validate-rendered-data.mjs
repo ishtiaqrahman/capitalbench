@@ -1863,6 +1863,7 @@ const leaderboardsHtml = readHtml("leaderboards/index.html");
 const benchmarkSetsHtml = readHtml("leaderboards/benchmark-sets/index.html");
 const latestMonthlyHtml = readHtml("leaderboards/latest-monthly/index.html");
 const modelsIndexHtml = readHtml("models/index.html");
+const modelPatternsHtml = readHtml("models/patterns/index.html");
 const roundsIndexHtml = readHtml("rounds/index.html");
 const universeHtml = readHtml("universe/index.html");
 const apiHtml = readHtml("api/index.html");
@@ -3083,6 +3084,48 @@ for (const round of apiReadModel.rounds) {
       includes(html, "Live chart pending", `${context} live performance pending state`);
     }
   }
+}
+
+const patternReport = apiReadModel.model_behavior?.pattern_report;
+includes(modelPatternsHtml, "How The AI Allocators Differ", "model patterns page title");
+includes(modelPatternsHtml, "Distinct Behavior By Model", "model patterns comparison section");
+includes(modelPatternsHtml, "Behavior Metrics In One Table", "model patterns key numbers section");
+includes(modelPatternsHtml, "How The Pattern Report Is Calculated", "model patterns methodology section");
+if (patternReport) {
+  includes(modelPatternsHtml, patternReport.llm_provenance?.prompt_version ?? "", "model patterns prompt provenance");
+  includes(modelPatternsHtml, patternReport.data_as_of ? dateLabel(patternReport.data_as_of) : "n/a", "model patterns data_as_of");
+  const providerLogos = {
+    anthropic: "/labs/icons/claude-icon.svg",
+    google: "/labs/icons/gemini-icon.svg",
+    openai: "/labs/icons/openai-icon.svg",
+    xai: "/labs/icons/xai-icon.svg"
+  };
+  for (const row of patternReport.rows ?? []) {
+    const context = `model patterns page ${row.model_id}`;
+    includes(modelPatternsHtml, row.label, context);
+    includes(modelPatternsHtml, row.provider_label, `${context} provider`);
+    const provider = apiReadModel.models.find((model) => model.model_id === row.model_id)?.provider;
+    if (providerLogos[provider]) {
+      includes(modelPatternsHtml, providerLogos[provider], `${context} provider logo`);
+    }
+    includesAny(modelPatternsHtml, [row.behavior_summary, htmlText(row.behavior_summary)], `${context} behavior summary`);
+    includes(modelPatternsHtml, `${numberLabel(row.key_numbers.risk_taking_score, 1)} / 100`, `${context} risk-taking score`);
+    includes(modelPatternsHtml, numberLabel(row.key_numbers.average_holding_count, 2), `${context} average holding count`);
+    includes(modelPatternsHtml, pctValue(row.key_numbers.average_top_allocation_pct), `${context} average top holding`);
+    if (row.sample_caveat) includesAny(modelPatternsHtml, [row.sample_caveat, htmlText(row.sample_caveat)], `${context} sample caveat`);
+    for (const trait of (row.traits ?? []).slice(0, 2)) {
+      includes(modelPatternsHtml, trait.label, `${context} trait ${trait.key}`);
+    }
+    for (const asset of (row.top_assets ?? []).slice(0, 3)) {
+      includesAny(modelPatternsHtml, [asset.display, htmlText(asset.display)], `${context} top asset ${asset.option_id}`);
+    }
+  }
+  for (const finding of patternReport.comparative_findings ?? []) {
+    includesAny(modelPatternsHtml, [finding.title, htmlText(finding.title)], `model patterns finding ${finding.key} title`);
+    includesAny(modelPatternsHtml, [finding.body, htmlText(finding.body)], `model patterns finding ${finding.key} body`);
+  }
+} else {
+  failures.push("model patterns page cannot be validated because pattern_report is missing");
 }
 
 for (const model of apiReadModel.models) {
