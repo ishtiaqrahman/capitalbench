@@ -18684,18 +18684,18 @@ tbody tr:hover {
 #benchmark-insights.context-insights-featured .context-insights-head {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  justify-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  place-items: center;
+  gap: 14px;
+  margin: 0 auto 28px;
   text-align: center;
 }
 
 #benchmark-insights.context-insights-featured .context-insights-head > div {
   justify-self: center;
-  width: min(100%, 760px);
+  width: min(100%, 800px);
   display: grid;
   justify-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-inline: auto;
   text-align: center;
 }
@@ -18709,16 +18709,19 @@ tbody tr:hover {
 
 #benchmark-insights.context-insights-featured .context-insights-head h2 {
   margin: 0 auto;
+  max-width: 720px;
+  line-height: 1.12;
 }
 
 #benchmark-insights.context-insights-featured .context-insights-head p {
-  margin-right: auto;
-  margin-left: auto;
-  max-width: 720px;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
 }
 
 #benchmark-insights.context-insights-featured .context-insights-head .section-profile-link {
   justify-self: center;
+  margin-top: 2px;
 }
 
 #benchmark-insights.context-insights-featured .insight-card-grid {
@@ -18761,6 +18764,8 @@ tbody tr:hover {
 #benchmark-insights.context-insights-featured .insight-card h3,
 #benchmark-insights.context-insights-featured .insight-card > p {
   max-width: 31rem;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 #benchmark-insights.context-insights-featured .insight-card-meta {
