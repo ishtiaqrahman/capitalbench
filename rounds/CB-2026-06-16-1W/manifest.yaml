@@ -1,0 +1,23 @@
+round_id: CB-2026-06-16-1W
+title: CapitalBench CB-2026-06-16-1W
+description: One-week market allocation evaluation round.
+decision_date: '2026-06-16'
+decision_deadline: '2026-06-17T02:30:00Z'
+horizon: one week
+methodology_version: portfolio-v1.0
+universe_version: v2.1
+submission_format: portfolio
+portfolio_constraints:
+  min_holdings: 1
+  max_holdings: 5
+  allocation_increment_pct: 5
+  min_allocation_pct: 5
+  max_total_allocation_pct: 100
+  allow_cash: true
+  allow_benchmark_asset: true
+entry_rule: Use adjusted close prices on Tuesday, June 16, 2026 as the post-close entry snapshot, supplied in prices/entry_prices.csv.
+exit_rule: Use adjusted close prices on Tuesday, June 23, 2026 as the one-week exit snapshot, calculated after regular trading ends and supplied in prices/exit_prices.csv.
+entry_date: '2026-06-16'
+exit_date: '2026-06-23'
+created_at: '2026-06-17T00:06:21.583057+00:00'
+notes: Research assembled after the June 16, 2026 U.S. market close. Fable 5 is excluded from this run at operator instruction.
