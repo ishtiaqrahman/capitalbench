@@ -1,4 +1,5 @@
 import { insightHref, leadInsightsByCategory } from "./insights.js";
+import { signedPulseChangeLabel } from "./riskFormatting.js";
 
 function shortDate(value) {
   if (!value) return "n/a";
@@ -457,7 +458,7 @@ export function buildBenchmarkPulseSlides(readModel, options = {}) {
   if (pulse) {
     const agreement = pulse.agreement?.label ? ` Model agreement: ${pulse.agreement.label}.` : "";
     const changeText = Number.isFinite(Number(pulse.change_from_previous))
-      ? ` ${Number(pulse.change_from_previous) >= 0 ? "+" : ""}${numberLabel(pulse.change_from_previous)} vs prior pulse.`
+      ? ` ${signedPulseChangeLabel(pulse.change_from_previous)} vs prior pulse.`
       : "";
     const outstandingText = outstanding?.score
       ? ` Open-book risk: ${outstanding.label ?? "live"} ${numberLabel(outstanding.score)}/100.`

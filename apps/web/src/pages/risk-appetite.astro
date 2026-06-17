@@ -8,6 +8,7 @@ import apiReadModel from "../generated/apiReadModel.js";
 import { assetRiskModel } from "../lib/assetRisk";
 import { topInsightsByCategory } from "../lib/insights.js";
 import { RISK_REGIME_LABELS } from "../lib/riskAppetiteCore.js";
+import { signedPulseChangeLabel } from "../lib/riskFormatting.js";
 
 const riskModel = assetRiskModel();
 const snapshot = apiReadModel.risk_appetite;
@@ -36,8 +37,7 @@ function score(value: number | null | undefined): string {
 }
 
 function signedScore(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
-  return `${value > 0 ? "+" : ""}${value.toFixed(1)}`;
+  return signedPulseChangeLabel(value);
 }
 
 function pct(value: number | null | undefined): string {

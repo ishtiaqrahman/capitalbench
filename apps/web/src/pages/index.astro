@@ -34,6 +34,7 @@ import {
   formatAllocationPct,
   optionDisplayName
 } from "../lib/allocations";
+import { signedPulseChangeLabel } from "../lib/riskFormatting.js";
 import { dateOnly } from "../lib/format";
 import {
   staticAllOfficialSubmissions,
@@ -480,8 +481,7 @@ function pulseScore(value: number | null | undefined): string {
 }
 
 function signedPulseChange(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
-  return `${value > 0 ? "+" : ""}${value.toFixed(1)}`;
+  return signedPulseChangeLabel(value);
 }
 
 function riskWidth(value: number | null | undefined): string {

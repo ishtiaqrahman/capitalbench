@@ -6,6 +6,7 @@ import { buildBenchmarkSetsData } from "../src/lib/benchmarkSets.js";
 import { buildBenchmarkStatus, buildBenchmarkTickerTape } from "../src/lib/benchmarkStatus.js";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { buildCumulativeLeaderboardData, createMemoryApiAuthRepository, handleDataApiRequest } from "../src/lib/dataApi.js";
+import { signedPulseChangeLabel } from "../src/lib/riskFormatting.js";
 
 const failures = [];
 const distRoot = join(process.cwd(), "dist");
@@ -1220,12 +1221,6 @@ function riskScoreShort(value) {
 function pulseScore(value) {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric.toFixed(1) : "n/a";
-}
-
-function signedPulseScore(value) {
-  const numeric = Number(value);
-  if (!Number.isFinite(numeric)) return "n/a";
-  return `${numeric > 0 ? "+" : ""}${numeric.toFixed(1)}`;
 }
 
 function riskPagePct(value) {
@@ -2667,7 +2662,7 @@ includes(indexHtml, "Historical trend and methodology", "homepage model risk his
 includes(indexHtml, pulseScore(livePulse.score), "homepage model risk combined score");
 includes(indexHtml, pulseScore(livePulse.weekly?.score), "homepage model risk weekly score");
 includes(indexHtml, pulseScore(livePulse.monthly?.score), "homepage model risk monthly score");
-includes(indexHtml, signedPulseScore(livePulse.change_from_previous), "homepage model risk change");
+includes(indexHtml, signedPulseChangeLabel(livePulse.change_from_previous), "homepage model risk change");
 includes(indexHtml, livePulse.agreement.label, "homepage model risk agreement");
 includes(indexHtml, livePulse.regime, "homepage model risk regime");
 includes(indexHtml, pulseScore(liveRisk.outstanding_live_book.score), "homepage outstanding live-book risk score");
@@ -2687,7 +2682,7 @@ includes(riskAppetiteHtml, pulseScore(livePulse.score), "risk appetite current s
 includes(riskAppetiteHtml, pulseScore(livePulse.weekly?.score), "risk appetite weekly score");
 includes(riskAppetiteHtml, pulseScore(livePulse.monthly?.score), "risk appetite monthly score");
 includes(riskAppetiteHtml, pulseScore(liveRisk.outstanding_live_book.score), "risk appetite outstanding score");
-includes(riskAppetiteHtml, signedPulseScore(livePulse.change_from_previous), "risk appetite change");
+includes(riskAppetiteHtml, signedPulseChangeLabel(livePulse.change_from_previous), "risk appetite change");
 includes(riskAppetiteHtml, livePulse.regime, "risk appetite regime");
 includes(riskAppetiteHtml, livePulse.agreement.label, "risk appetite agreement");
 includes(riskAppetiteHtml, "Tight means below 5", "risk appetite agreement tight threshold");
