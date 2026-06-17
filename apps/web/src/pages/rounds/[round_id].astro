@@ -194,6 +194,26 @@ function priceValue(row: Record<string, string>): number | null {
   return null;
 }
 
+function publicPrice(value: number | string | null | undefined): string {
+  if (value === null || value === undefined || value === "") return "";
+  const numeric = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numeric)) return "";
+  return numeric.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function publicPriceSource(value: string | null | undefined): string {
+  const normalized = String(value ?? "").trim().toLowerCase();
+  if (!normalized) return "";
+  if (normalized === "adj_close" || normalized === "adjclose" || normalized.includes("adjusted")) return "Adjusted close";
+  if (normalized === "close") return "Close";
+  if (normalized.includes("tiingo")) return "Tiingo adjusted close";
+  if (normalized.includes("yahoo")) return "Yahoo adjusted close";
+  return String(value).replaceAll("_", " ");
+}
+
 function loadRoundEntryPrices(): EntryPrice[] {
   const text = readRoundText("prices", "entry_prices.csv");
   if (!text) return existsSync(roundRoot) ? [] : entryPrices;
@@ -518,7 +538,7 @@ const roundDataset = datasetSchema({
   ]
 });
 const priceColumns = [
-  { key: "option_id", label: "Option" },
+  { key: "option_label", label: "Asset" },
   { key: "symbol", label: "Symbol" },
   { key: "entry_date", label: "Entry Date" },
   { key: "entry_price", label: "Entry Price", align: "right" as const },
@@ -533,21 +553,23 @@ const priceColumns = [
 ];
 const priceTableRows = scoringPriceRows.map((row) => ({
   ...row,
-  return: row.return === undefined ? "" : pct(row.return)
+  option_label: optionDisplayName(row.option_id, roundOptionsById),
+  entry_price: publicPrice(row.entry_price),
+  exit_price: publicPrice(row.exit_price),
+  return: row.return === undefined ? "" : pct(row.return),
+  source: publicPriceSource(row.source)
 }));
 const resultReturnRows = resultReturns.slice(0, 12).map((row) => ({
   rank: row.rank,
-  option_id: row.option_id,
-  label: row.label,
+  option_label: optionDisplayName(row.option_id, roundOptionsById),
   symbol: row.asset_symbol,
   return: pct(row.return),
-  entry_price: row.entry_price,
-  exit_price: row.exit_price
+  entry_price: publicPrice(row.entry_price),
+  exit_price: publicPrice(row.exit_price)
 }));
 const assetReturnColumns = [
   { key: "rank", label: "Rank", align: "right" as const },
-  { key: "option_id", label: "Option" },
-  { key: "label", label: "Name" },
+  { key: "option_label", label: "Asset" },
   { key: "symbol", label: "Symbol" },
   { key: "return", label: "Return", align: "right" as const },
   { key: "entry_price", label: "Entry", align: "right" as const },
@@ -555,14 +577,14 @@ const assetReturnColumns = [
 ];
 const attributionRows = allocationResultRows.map((row) => ({
   model: modelLabel(row.model_id),
-  option_id: row.option_id,
+  option_label: optionDisplayName(row.option_id, roundOptionsById),
   allocation: formatAllocationPct(row.allocation_pct),
   option_return: pct(row.option_return),
   contribution: pct(row.return_contribution)
 }));
 const attributionColumns = [
   { key: "model", label: "Model" },
-  { key: "option_id", label: "Holding" },
+  { key: "option_label", label: "Holding" },
   { key: "allocation", label: "Allocation", align: "right" as const },
   { key: "option_return", label: "Asset Return", align: "right" as const },
   { key: "contribution", label: "Contribution", align: "right" as const }
@@ -974,14 +996,14 @@ const attributionColumns = [
 
   {isResolvedRound && attributionRows.length > 0 && (
     <section class="section" id="attribution">
-      <div class="panel">
-        <div class="panel-header">
+      <details class="panel mobile-collapsible-panel" open data-mobile-collapsible>
+        <summary class="panel-header mobile-collapsible-summary">
           <div>
             <span class="panel-kicker">Portfolio attribution</span>
             <h2>How Each Holding Contributed</h2>
             <p>Contribution equals submitted allocation multiplied by the asset return over the scoring window.</p>
           </div>
-        </div>
+        </summary>
         <TableIsland
           client:visible
           rows={attributionRows}
@@ -990,13 +1012,13 @@ const attributionColumns = [
           tableLabel="Portfolio attribution"
           csvFilename={`${round.round_id}-portfolio-attribution.csv`}
         />
-      </div>
+      </details>
     </section>
   )}
 
   <section class="section" id="inputs">
-    <div class="panel">
-      <div class="panel-header">
+    <details class="panel mobile-collapsible-panel" open data-mobile-collapsible>
+      <summary class="panel-header mobile-collapsible-summary">
         <div>
           <span class="panel-kicker">Saved model-facing context</span>
           <h2>Prompt And Input Packet</h2>
@@ -1005,7 +1027,7 @@ const attributionColumns = [
             small model-specific identifier block shown after the artifacts.
           </p>
         </div>
-      </div>
+      </summary>
       <div class="audit-packet">
         <details class="artifact-card artifact-primary">
           <summary>
@@ -1042,12 +1064,12 @@ const attributionColumns = [
           </div>
         </details>
       </div>
-    </div>
+    </details>
   </section>
 
   <section class="section" id="outputs">
-    <div class="panel">
-      <div class="panel-header">
+    <details class="panel mobile-collapsible-panel" open data-mobile-collapsible>
+      <summary class="panel-header mobile-collapsible-summary">
         <div>
           <span class="panel-kicker">Parsed provider responses</span>
           <h2>Model Outputs</h2>
@@ -1056,7 +1078,7 @@ const attributionColumns = [
             from the public site.
           </p>
         </div>
-      </div>
+      </summary>
       <div class="model-output-grid">
         {modelOutputs.map((output) => {
           const allocations = outputAllocations(output);
@@ -1144,7 +1166,7 @@ const attributionColumns = [
           );
         })}
       </div>
-    </div>
+    </details>
   </section>
 
   <section class="section" id="picks">
@@ -1167,8 +1189,8 @@ const attributionColumns = [
   </section>
 
   <section class="section" id="prices">
-    <div class="panel">
-      <div class="panel-header">
+    <details class="panel mobile-collapsible-panel" open data-mobile-collapsible>
+      <summary class="panel-header mobile-collapsible-summary">
         <div>
           <span class="panel-kicker">Pricing</span>
           <h2>{isResolvedRound ? "Scoring Prices" : "Starting Prices"}</h2>
@@ -1180,7 +1202,7 @@ const attributionColumns = [
               : "Ending prices are intentionally absent until the round is complete."}
           </p>
         </div>
-      </div>
+      </summary>
       <TableIsland
         client:visible
         rows={priceTableRows}
@@ -1189,19 +1211,27 @@ const attributionColumns = [
         tableLabel={isResolvedRound ? "Scoring prices" : "Starting prices"}
         csvFilename={isResolvedRound ? "capitalbench-scoring-prices.csv" : "capitalbench-starting-prices.csv"}
       />
-    </div>
+    </details>
   </section>
 
   <section class="section" id="audit">
-    <div class="panel">
-      <div class="panel-header">
+    <details class="panel mobile-collapsible-panel" open data-mobile-collapsible>
+      <summary class="panel-header mobile-collapsible-summary">
         <div>
           <span class="panel-kicker">Audit</span>
           <h2>Published Hashes</h2>
           <p>Round inputs are hashed before model calls and mirrored into the public read model.</p>
         </div>
-      </div>
+      </summary>
       <HashTable client:visible rows={roundAuditHashes} />
-    </div>
+    </details>
   </section>
+
+  <script is:inline>
+    if (window.matchMedia("(max-width: 760px)").matches) {
+      document.querySelectorAll("[data-mobile-collapsible]").forEach((panel) => {
+        panel.removeAttribute("open");
+      });
+    }
+  </script>
 </BaseLayout>

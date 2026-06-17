@@ -190,6 +190,7 @@ const copy = {
       function show(reason, options = {}) {
         const isManual = options.manual === true;
         if (visible) return true;
+        if (isMobileViewport() && !isManual) return false;
         if (shouldSuppress({ manual: isManual }) || (!isManual && !hasScrolledEnough()) || (!isManual && footerSignupIsVisible())) return false;
         widget.hidden = false;
         if (!expanded) widget.dataset.state = "collapsed";
@@ -203,6 +204,7 @@ const copy = {
 
       function expand(reason) {
         const isManual = reason === "chip_click";
+        if (isMobileViewport() && !isManual) return;
         if (expanded || shouldSuppress({ manual: isManual }) || (!isManual && !hasScrolledEnough()) || (!isManual && userIsTyping())) return;
         if (isMobileViewport() && !isManual) {
           show(reason);

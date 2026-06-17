@@ -147,7 +147,7 @@ const emailWidgetContext = hideEmailAlertWidget
     <script is:inline type="application/ld+json" set:html={jsonLd} />
     <GoogleAnalytics />
   </head>
-  <body>
+  <body class:list={[emailWidgetContext && "has-score-alert-widget"]}>
     <a class="skip-link" href="#content">Skip to content</a>
     <div class="site-shell">
       <header class="site-header">

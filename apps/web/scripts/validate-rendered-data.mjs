@@ -309,9 +309,36 @@ function optionShortDisplay(row) {
   return row.ticker || row.label || row.option_id;
 }
 
+function optionDisplayNameForRound(optionId, roundId) {
+  const option = roundUniverseOptions(roundId).find((row) => row.option_id === optionId);
+  if (!option) return optionId;
+  if (option.is_cash) return option.name || optionId;
+  return option.symbol ? `${option.name || optionId} (${option.symbol})` : option.name || optionId;
+}
+
 function allocationPctLabel(value) {
   const numeric = Number(value);
   return Number.isInteger(numeric) ? `${numeric}%` : `${numeric.toFixed(1)}%`;
+}
+
+function publicPrice(value) {
+  if (value === null || value === undefined || value === "") return "";
+  const numeric = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numeric)) return "";
+  return numeric.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function publicPriceSource(value) {
+  const normalized = String(value ?? "").trim().toLowerCase();
+  if (!normalized) return "";
+  if (normalized === "adj_close" || normalized === "adjclose" || normalized.includes("adjusted")) return "Adjusted close";
+  if (normalized === "close") return "Close";
+  if (normalized.includes("tiingo")) return "Tiingo adjusted close";
+  if (normalized.includes("yahoo")) return "Yahoo adjusted close";
+  return String(value).replaceAll("_", " ");
 }
 
 function publicRoundStatus(status) {
@@ -959,12 +986,11 @@ function expectedResultReturnTableRows(round) {
     .slice(0, 12)
     .map((row) => ({
       rank: row.rank,
-      option_id: row.option_id,
-      label: row.label,
+      option_label: optionDisplayNameForRound(row.option_id, round.round_id),
       symbol: row.ticker,
       return: percentPointLabel(row.return_pct),
-      entry_price: row.entry_price,
-      exit_price: row.exit_price
+      entry_price: publicPrice(row.entry_price),
+      exit_price: publicPrice(row.exit_price)
     }));
 }
 
@@ -981,7 +1007,7 @@ function expectedAttributionTableRows(round) {
       const optionReturn = returnByOption.get(row.option_id) ?? 0;
       return {
         model: modelLabel(row.model_id),
-        option_id: row.option_id,
+        option_label: optionDisplayNameForRound(row.option_id, round.round_id),
         allocation: allocationPctLabel(row.allocation_pct),
         option_return: percentPointLabel(optionReturn),
         contribution: percentPointLabel((row.allocation_pct / 100) * optionReturn)
@@ -997,22 +1023,22 @@ function expectedPriceTableRows(round) {
     const entryById = new Map(roundPriceRows(round.round_id, "entry").map((row) => [row.option_id, row]));
     const exitById = new Map(roundPriceRows(round.round_id, "exit").map((row) => [row.option_id, row]));
     return returns.map((row) => ({
-      option_id: row.option_id,
+      option_label: optionDisplayNameForRound(row.option_id, round.round_id),
       symbol: row.ticker,
       entry_date: entryById.get(row.option_id)?.date ?? "",
-      entry_price: row.entry_price,
+      entry_price: publicPrice(row.entry_price),
       exit_date: exitById.get(row.option_id)?.date ?? "",
-      exit_price: row.exit_price,
+      exit_price: publicPrice(row.exit_price),
       return: percentPointLabel(row.return_pct),
-      source: row.exit_price_source || row.entry_price_source
+      source: publicPriceSource(row.exit_price_source || row.entry_price_source)
     }));
   }
   return roundPriceRows(round.round_id, "entry").map((row) => ({
-    option_id: row.option_id,
+    option_label: optionDisplayNameForRound(row.option_id, round.round_id),
     symbol: row.symbol,
     entry_date: row.date,
-    entry_price: row.price,
-    source: row.source
+    entry_price: publicPrice(row.price),
+    source: publicPriceSource(row.source)
   }));
 }
 
@@ -3032,8 +3058,12 @@ for (const round of apiReadModel.rounds) {
       includes(html, row.label, `${returnContext} label`);
       if (row.ticker) includes(html, row.ticker, `${returnContext} ticker`);
       includes(html, percentPointLabel(row.return_pct), `${returnContext} return`);
-      includes(html, String(row.entry_price), `${returnContext} entry price`);
-      includes(html, String(row.exit_price), `${returnContext} exit price`);
+      if (row.entry_price !== null && row.entry_price !== undefined) {
+        includes(html, publicPrice(row.entry_price), `${returnContext} entry price`);
+      }
+      if (row.exit_price !== null && row.exit_price !== undefined) {
+        includes(html, publicPrice(row.exit_price), `${returnContext} exit price`);
+      }
     }
     for (const row of resultRows) {
       includes(html, modelLabel(row.model_id), `${context} result ${row.model_id}`);

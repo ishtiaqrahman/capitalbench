@@ -14,8 +14,13 @@ const tickerCopies = [0, 1];
 
 <div class="freshness-status-bar benchmark-ticker-bar" aria-label="CapitalBench live benchmark ticker">
   <div class="freshness-status-inner benchmark-ticker-inner">
-    <a class="benchmark-ticker-brand" href={tape.brand.href} title={tape.brand.detail}>
-      <span>{tape.brand.label}</span>
+    <a
+      class="benchmark-ticker-brand"
+      href={tape.brand.href}
+      title={tape.brand.detail}
+      aria-label={`${tape.brand.label}: ${tape.brand.value}`}
+    >
+      <span aria-hidden="true">{tape.brand.label}</span>
       <strong>{tape.brand.value}</strong>
     </a>
 
