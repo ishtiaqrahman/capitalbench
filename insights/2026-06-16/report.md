@@ -1,6 +1,6 @@
 # CapitalBench Insights
 
-Generated at: `2026-06-16T23:35:01Z`
+Generated at: `2026-06-16T18:44:10Z`
 Data as of: `2026-06-15`
 Engine: `deterministic_insights_v1`
 
@@ -103,6 +103,16 @@ The newest weekly portfolios allocate +81.00% to growth and technology, while th
 Why it matters: Agreement across horizons signals that the current model posture is not just a short-term tactical move.
 
 Category: `horizon_agreement`
+
+## Model allocation styles are separating into clear behavior profiles
+
+Context: Model behavior profiles
+
+GPT-5.5 has the highest average risk-taking score at 84.7/100. Gemini 3.1 Pro has the largest average top holding at +39.07%. Claude Opus 4.8 has the lowest measured turnover at +43.25%.
+
+Why it matters: Behavior profiles help readers separate model style from short-term score noise: some models seek more risk, some concentrate harder, and some change portfolios less between rounds.
+
+Category: `model_behavior`
 
 ## Claude Opus 4.7's result was driven by Semiconductors
 

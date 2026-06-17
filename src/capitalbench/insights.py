@@ -255,6 +255,7 @@ def build_deterministic_candidates(snapshot: dict[str, Any], *, generated_at: st
     candidates.extend(_horizon_agreement_insights(snapshot, generated_at))
     candidates.extend(_momentum_exposure_insights(snapshot, generated_at))
     candidates.extend(_model_similarity_insights(snapshot, generated_at))
+    candidates.extend(_model_behavior_profile_insights(snapshot, generated_at))
     candidates.extend(_latest_resolved_track_insights(snapshot, generated_at))
     candidates.extend(_confidence_calibration_insights(snapshot, generated_at))
     candidates.extend(_live_path_insights(snapshot, generated_at))
@@ -1358,6 +1359,112 @@ def _model_similarity_insights(snapshot: dict[str, Any], generated_at: str) -> l
     ]
 
 
+def _model_behavior_profile_insights(snapshot: dict[str, Any], generated_at: str) -> list[dict[str, Any]]:
+    rounds = [round_item for round_item in snapshot.get("rounds") or [] if round_item.get("portfolios")]
+    portfolios = [portfolio for round_item in rounds for portfolio in round_item.get("portfolios") or []]
+    if len(portfolios) < 10:
+        return []
+
+    by_model: dict[str, list[dict[str, Any]]] = {}
+    round_by_id = {round_item["round_id"]: round_item for round_item in rounds}
+    for portfolio in portfolios:
+        by_model.setdefault(portfolio["model_id"], []).append(portfolio)
+    model_rows = []
+    for model_id, model_portfolios in by_model.items():
+        if len(model_portfolios) < 2:
+            continue
+        risk_scores = [_portfolio_risk_score(portfolio) for portfolio in model_portfolios]
+        top_allocations = [_portfolio_top_allocation(portfolio) for portfolio in model_portfolios]
+        holding_counts = [len(portfolio.get("allocations") or []) for portfolio in model_portfolios]
+        turnover_values = _model_turnover_values(model_portfolios, round_by_id)
+        model_rows.append(
+            {
+                "model_id": model_id,
+                "portfolio_count": len(model_portfolios),
+                "average_risk_score": _average(risk_scores),
+                "average_top_allocation": _average(top_allocations),
+                "average_holding_count": _average(holding_counts),
+                "average_turnover": _average(turnover_values),
+                "turnover_count": len(turnover_values),
+            }
+        )
+    model_rows = [row for row in model_rows if _finite(row.get("average_risk_score")) and _finite(row.get("average_top_allocation"))]
+    if len(model_rows) < 3:
+        return []
+
+    highest_risk = max(model_rows, key=lambda row: float(row["average_risk_score"]))
+    most_concentrated = max(model_rows, key=lambda row: float(row["average_top_allocation"]))
+    stable_candidates = [row for row in model_rows if _finite(row.get("average_turnover"))]
+    most_stable = min(stable_candidates, key=lambda row: float(row["average_turnover"])) if stable_candidates else None
+    data_as_of = _snapshot_data_as_of(snapshot)
+    summary_tail = (
+        f" {_model_label(most_stable['model_id'])} has the lowest measured turnover at "
+        f"{_fmt_pct(float(most_stable['average_turnover']) / 100)}."
+        if most_stable
+        else ""
+    )
+    return [
+        _insight(
+            insight_id=f"model-behavior-profiles-{_slug(data_as_of)}",
+            generated_at=generated_at,
+            data_as_of=data_as_of,
+            category="model_behavior",
+            audiences=["investors", "capital_allocators", "traders", "ai_researchers"],
+            title="Model allocation styles are separating into clear behavior profiles",
+            summary=(
+                f"{_model_label(highest_risk['model_id'])} has the highest average risk-taking score at "
+                f"{float(highest_risk['average_risk_score']):.1f}/100. "
+                f"{_model_label(most_concentrated['model_id'])} has the largest average top holding at "
+                f"{_fmt_pct(float(most_concentrated['average_top_allocation']) / 100)}."
+                f"{summary_tail}"
+            ),
+            why=(
+                "Behavior profiles help readers separate model style from short-term score noise: some models seek more "
+                "risk, some concentrate harder, and some change portfolios less between rounds."
+            ),
+            importance=83,
+            calculations=[
+                {
+                    "name": "highest_average_risk_taking_score",
+                    "value": round(float(highest_risk["average_risk_score"]), 4),
+                    "unit": "points",
+                    "formula": "average portfolio risk-taking score across official saved portfolios",
+                },
+                {
+                    "name": "largest_average_top_holding",
+                    "value": round(float(most_concentrated["average_top_allocation"]), 4),
+                    "unit": "percentage_points",
+                    "formula": "average largest single holding across official saved portfolios",
+                },
+                {
+                    "name": "lowest_average_turnover",
+                    "value": None if most_stable is None else round(float(most_stable["average_turnover"]), 4),
+                    "unit": "percentage_points",
+                    "formula": "one-half of summed absolute allocation changes between consecutive same-track portfolios",
+                },
+            ],
+            evidence=[
+                {"label": "Model profiles", "href": "/models", "source": "official parsed submissions"},
+                {"label": "Behavior methodology", "href": "/risk-appetite/#model-behavior-methodology", "source": "asset risk model and behavior formulas"},
+            ],
+            related=[
+                {"label": "AI Risk Appetite", "href": "/risk-appetite"},
+                {"label": "Insights", "href": "/insights?category=model_behavior"},
+            ],
+            context={
+                "scope": "all official portfolios",
+                "primary_label": "Model behavior profiles",
+                "data_as_of": data_as_of,
+                "model_count": len(model_rows),
+                "portfolio_count": len(portfolios),
+                "highest_risk_model_id": highest_risk["model_id"],
+                "most_concentrated_model_id": most_concentrated["model_id"],
+                "most_stable_model_id": None if most_stable is None else most_stable["model_id"],
+            },
+        )
+    ]
+
+
 def _latest_resolved_track_insights(snapshot: dict[str, Any], generated_at: str) -> list[dict[str, Any]]:
     insights = []
     for track, round_item in _latest_resolved_by_track(snapshot).items():
@@ -1734,6 +1841,50 @@ def _portfolio_risk_score(portfolio: dict[str, Any]) -> float | None:
         score += weight * (50 + 50 * loading)
         denominator += weight
     return score / denominator if denominator else None
+
+
+def _portfolio_top_allocation(portfolio: dict[str, Any]) -> float | None:
+    values = [_optional_float(allocation.get("allocation_pct")) for allocation in portfolio.get("allocations") or []]
+    finite = [float(value) for value in values if value is not None]
+    return max(finite) if finite else None
+
+
+def _portfolio_vector(portfolio: dict[str, Any]) -> dict[str, float]:
+    vector: dict[str, float] = {}
+    for allocation in portfolio.get("allocations") or []:
+        option_id = _text(allocation.get("option_id"))
+        allocation_pct = _optional_float(allocation.get("allocation_pct"))
+        if option_id and allocation_pct is not None:
+            vector[option_id] = vector.get(option_id, 0.0) + allocation_pct
+    return vector
+
+
+def _portfolio_turnover(left: dict[str, Any], right: dict[str, Any]) -> float:
+    left_vector = _portfolio_vector(left)
+    right_vector = _portfolio_vector(right)
+    option_ids = set(left_vector) | set(right_vector)
+    return sum(abs(right_vector.get(option_id, 0.0) - left_vector.get(option_id, 0.0)) for option_id in option_ids) / 2
+
+
+def _model_turnover_values(portfolios: list[dict[str, Any]], round_by_id: dict[str, dict[str, Any]]) -> list[float]:
+    by_track: dict[str, list[dict[str, Any]]] = {}
+    for portfolio in portfolios:
+        round_item = round_by_id.get(portfolio.get("round_id")) or {}
+        track = _text(round_item.get("track")) or _text(portfolio.get("track")) or "unknown"
+        by_track.setdefault(track, []).append(portfolio)
+    values = []
+    for rows in by_track.values():
+        sorted_rows = sorted(
+            rows,
+            key=lambda row: (
+                _text((round_by_id.get(row.get("round_id")) or {}).get("decision_date")),
+                _text(row.get("round_id")),
+                _text(row.get("run_id")),
+            ),
+        )
+        for index in range(1, len(sorted_rows)):
+            values.append(_portfolio_turnover(sorted_rows[index - 1], sorted_rows[index]))
+    return values
 
 
 def _find_allocation_loading(allocation: dict[str, Any]) -> float | None:

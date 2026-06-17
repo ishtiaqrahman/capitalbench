@@ -222,6 +222,21 @@ const highestRiskProfile = riskAppetiteProfiles[riskAppetiteProfiles.length - 1]
 const riskLabelSet = Array.from(new Set(riskAppetiteProfiles.map((profile) => profile.fingerprint.riskAppetite.label)));
 const riskClusterLabel = riskLabelSet.length === 1 ? `All ${riskLabelSet[0]}` : riskLabelSet.join(" / ");
 const riskPortfolioCount = riskAppetiteProfiles.reduce((total, profile) => total + profile.fingerprint.portfolioCount, 0);
+const modelBehavior: any = apiReadModel.model_behavior ?? { summary: {}, profiles: [], methodology_href: "/risk-appetite/#model-behavior-methodology" };
+const behaviorProfiles = Array.isArray(modelBehavior.profiles) ? modelBehavior.profiles : [];
+const behaviorProfileById = new Map(behaviorProfiles.map((profile: any) => [profile.model_id, profile]));
+const behaviorHighlightSpecs = [
+  { key: "highest_risk_model_id", label: "Most risk-seeking", metric: "Risk-taking score", value: (profile: any) => pulseScore(profile.metrics?.average_risk_pulse) },
+  { key: "most_concentrated_model_id", label: "Most concentrated", metric: "Avg top holding", value: (profile: any) => pctValue(profile.metrics?.average_top_allocation_pct) },
+  { key: "most_defensive_model_id", label: "Most defensive ballast", metric: "Defensive exposure", value: (profile: any) => pctValue(profile.metrics?.defensive_pct) },
+  { key: "lowest_turnover_model_id", label: "Most stable", metric: "Avg turnover", value: (profile: any) => pctValue(profile.turnover?.average_turnover_pct) }
+];
+const behaviorHighlights = behaviorHighlightSpecs
+  .map((item) => {
+    const profile = behaviorProfileById.get(modelBehavior.summary?.[item.key]);
+    return profile ? { ...item, profile } : null;
+  })
+  .filter(Boolean);
 const latestUniverseOptionCount = Math.max(0, ...trackStates.map((track) => track.options.length));
 const currentRound = latestMonthlyRound ?? latestWeeklyRound ?? roundRows[0] ?? fallbackRounds[0];
 const currentUniverseOptionCount = latestUniverseOptionCount || staticUniverseOptions(currentRound.round_id).length;
@@ -1107,6 +1122,42 @@ const trackLaneCards = trackStates.map((track) => {
             </a>
           );
         })}
+      </div>
+    </section>
+  )}
+
+  {behaviorHighlights.length > 0 && (
+    <section class="model-behavior-panel" aria-labelledby="model-behavior-title">
+      <div class="model-behavior-head">
+        <div>
+          <span class="panel-kicker">Model behavior patterns</span>
+          <h3 id="model-behavior-title">How The AI Allocators Differ</h3>
+          <p>
+            Deterministic peer comparisons from every official frozen portfolio. These labels describe allocation behavior,
+            not investment skill, and update when new official portfolios or scores are published.
+          </p>
+        </div>
+        <a class="section-profile-link" href={modelBehavior.methodology_href ?? "/risk-appetite/#model-behavior-methodology"}>Calculation method</a>
+      </div>
+
+      <div class="model-behavior-grid">
+        {behaviorHighlights.map((item: any) => (
+          <a class="model-behavior-card" href={`/models/${item.profile.model_id}/#model-behavior`}>
+            <span>{item.label}</span>
+            <strong>{item.profile.label}</strong>
+            <em>{item.profile.archetype?.label}</em>
+            <dl>
+              <div>
+                <dt>{item.metric}</dt>
+                <dd>{item.value(item.profile)}</dd>
+              </div>
+              <div>
+                <dt>Saved portfolios</dt>
+                <dd>{item.profile.sample?.portfolio_count ?? "n/a"}</dd>
+              </div>
+            </dl>
+          </a>
+        ))}
       </div>
     </section>
   )}

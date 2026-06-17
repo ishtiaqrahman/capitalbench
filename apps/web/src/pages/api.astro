@@ -111,6 +111,32 @@ const insightsExample = exampleBlock("/api/v1/insights?limit=3", {
   }))
 });
 
+const modelBehaviorBody = await apiBody("/api/v1/models/behavior");
+const modelBehaviorTop = modelBehaviorBody.profiles?.[0];
+const modelBehaviorExample = exampleBlock("/api/v1/models/behavior", {
+  version: modelBehaviorBody.version,
+  generated_at: modelBehaviorBody.generated_at,
+  data_as_of: modelBehaviorBody.data_as_of,
+  summary: modelBehaviorBody.summary,
+  profiles: modelBehaviorTop
+    ? [
+        {
+          model_id: modelBehaviorTop.model_id,
+          label: modelBehaviorTop.label,
+          archetype: modelBehaviorTop.archetype,
+          sample: modelBehaviorTop.sample,
+          metrics: {
+            average_risk_pulse: modelBehaviorTop.metrics.average_risk_pulse,
+            average_top_allocation_pct: modelBehaviorTop.metrics.average_top_allocation_pct,
+            defensive_pct: modelBehaviorTop.metrics.defensive_pct
+          },
+          peer: modelBehaviorTop.peer,
+          turnover: modelBehaviorTop.turnover
+        }
+      ]
+    : []
+});
+
 const leaderboardBody = await apiBody("/api/v1/leaderboards/latest?track=weekly");
 const leaderboardTop = leaderboardBody.data?.[0];
 const leaderboardExample = exampleBlock("/api/v1/leaderboards/latest?track=weekly", {
@@ -239,6 +265,8 @@ const endpointGroups = [
       ["GET", "/v1/models/{model_id}/holdings", "Active and historical holdings for one model."],
       ["GET", "/v1/models/{model_id}/live-performance", "One model's live return across live rounds."],
       ["GET", "/v1/models/{model_id}/style", "Risk appetite and allocation fingerprint metrics."],
+      ["GET", "/v1/models/behavior", "Canonical model behavior profiles, peer comparisons, turnover, concentration, and archetype labels."],
+      ["GET", "/v1/models/{model_id}/behavior", "One model's behavior profile with methodology and peer-context fields."],
       ["GET", "/v1/universe/current", "Current list of valid model choices."],
       ["GET", "/v1/assets/{option_id}", "Asset metadata and ticker mapping."],
       ["GET", "/v1/assets/{option_id}/model-holders", "Models holding a selected asset."]
@@ -257,6 +285,7 @@ const concepts = [
   ["Portfolio Minus S&P 500", "Model portfolio return minus the S&P 500 return, in percentage points."],
   ["CapitalBench Score", "Model return relative to the hindsight oracle; cumulative rows divide total model return by total oracle return."],
   ["AI Risk Appetite", "A 0-100 allocation signal calculated from the newest live weekly and monthly AI model portfolios. It does not use prices or returns."],
+  ["Model Behavior", "A deterministic model-level profile describing allocation style, concentration, turnover, peer similarity, and resolved performance context."],
   ["Insight", "A deterministic or LLM-assisted finding with source evidence, calculations, confidence, and audience tags."],
   ["Shared Rounds", "Resolved rounds included in a comparison set because every set model has an official result."]
 ];
@@ -269,6 +298,9 @@ const fields = [
   ["effective_asset_count", "Concentration metric equal to one divided by summed squared asset shares."],
   ["max_possible_return_pct", "Highest realized return among scored options in the saved universe; cumulative rows report the average per-test oracle return as supporting context."],
   ["importance_score", "0-100 editorial ranking used to order public insights by usefulness and urgency."],
+  ["average_peer_similarity", "Average cosine similarity between one model's portfolio weights and peer portfolio weights in the same official rounds."],
+  ["average_turnover_pct", "Average round-to-round portfolio change, calculated as one-half of summed absolute allocation changes."],
+  ["archetype", "Rule-based model behavior label with a plain-English description and confidence level."],
   ["model_id", "Stable CapitalBench model identifier."],
   ["next_cursor", "Pagination cursor returned when more records are available."],
   ["option_id", "Stable asset identifier from the saved universe."],
@@ -475,6 +507,10 @@ const curlExample = `curl "https://www.capitalbench.org/api/v1/positioning/activ
           <article class="api-example">
             <h3>Insight Feed</h3>
             <pre><code>{insightsExample}</code></pre>
+          </article>
+          <article class="api-example">
+            <h3>Model Behavior Profiles</h3>
+            <pre><code>{modelBehaviorExample}</code></pre>
           </article>
           <article class="api-example">
             <h3>Latest Scored Test</h3>

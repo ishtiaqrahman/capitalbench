@@ -1162,6 +1162,91 @@ for (const style of apiReadModel.model_styles ?? []) {
   }
 }
 
+const modelBehavior = apiReadModel.model_behavior;
+if (!modelBehavior || modelBehavior.version !== "model_behavior_v1") {
+  failures.push("generated read model is missing model_behavior v1");
+} else {
+  const profiles = Array.isArray(modelBehavior.profiles) ? modelBehavior.profiles : [];
+  const profileIds = new Set(profiles.map((profile) => profile.model_id));
+  if (profiles.length !== apiReadModel.models.length) {
+    failures.push(`model_behavior profile count ${profiles.length} does not match model count ${apiReadModel.models.length}`);
+  }
+  for (const model of apiReadModel.models) {
+    if (!profileIds.has(model.model_id)) failures.push(`${model.model_id} is missing a model_behavior profile`);
+  }
+  for (const [field, modelId] of Object.entries(modelBehavior.summary ?? {})) {
+    if (field.endsWith("_model_id") && modelId && !modelById.has(modelId)) {
+      failures.push(`model_behavior summary ${field} references missing model ${modelId}`);
+    }
+  }
+  for (const profile of profiles) {
+    const context = `${profile.model_id} model_behavior`;
+    if (!modelById.has(profile.model_id)) {
+      failures.push(`${context} references missing model`);
+      continue;
+    }
+    const modelPortfolios = apiReadModel.portfolios.filter((portfolio) => portfolio.model_id === profile.model_id);
+    const modelResults = apiReadModel.results.filter((row) => row.model_id === profile.model_id);
+    if (profile.sample?.portfolio_count !== modelPortfolios.length) {
+      failures.push(`${context} portfolio_count ${profile.sample?.portfolio_count} does not match ${modelPortfolios.length}`);
+    }
+    if (profile.sample?.weekly_portfolio_count !== modelPortfolios.filter((portfolio) => portfolio.track === "weekly").length) {
+      failures.push(`${context} weekly_portfolio_count does not match portfolios`);
+    }
+    if (profile.sample?.monthly_portfolio_count !== modelPortfolios.filter((portfolio) => portfolio.track === "monthly").length) {
+      failures.push(`${context} monthly_portfolio_count does not match portfolios`);
+    }
+    if (profile.sample?.resolved_round_count !== modelResults.length) {
+      failures.push(`${context} resolved_round_count ${profile.sample?.resolved_round_count} does not match ${modelResults.length}`);
+    }
+    if (!profile.archetype?.label || !profile.archetype?.description) {
+      failures.push(`${context} is missing archetype label or description`);
+    }
+    const metrics = profile.metrics ?? {};
+    percentInRange(metrics.average_risk_pulse, "average_risk_pulse", context);
+    if (isFiniteNumber(metrics.average_risk_score_1_5) && (metrics.average_risk_score_1_5 < 1 || metrics.average_risk_score_1_5 > 5)) {
+      failures.push(`${context} average_risk_score_1_5 ${metrics.average_risk_score_1_5} is outside 1-5`);
+    }
+    for (const field of ["high_risk_pct", "defensive_pct", "tech_pct", "cash_duration_pct", "international_pct", "real_assets_pct", "average_top_allocation_pct"]) {
+      percentInRange(metrics[field], field, context);
+    }
+    if (isFiniteNumber(metrics.concentration_hhi) && (metrics.concentration_hhi < 0 || metrics.concentration_hhi > 1)) {
+      failures.push(`${context} concentration_hhi ${metrics.concentration_hhi} is outside 0-1`);
+    }
+    if (isFiniteNumber(profile.peer?.average_peer_similarity) && (profile.peer.average_peer_similarity < 0 || profile.peer.average_peer_similarity > 1)) {
+      failures.push(`${context} average_peer_similarity ${profile.peer.average_peer_similarity} is outside 0-1`);
+    }
+    for (const field of ["average_turnover_pct", "weekly_turnover_pct", "monthly_turnover_pct"]) {
+      const value = profile.turnover?.[field];
+      if (value !== null && value !== undefined) percentInRange(value, field, context);
+    }
+    for (const [field, value] of Object.entries(profile.peer_percentiles ?? {})) {
+      if (value !== null && value !== undefined) percentInRange(value, `peer_percentiles.${field}`, context);
+    }
+    if (profile.sample?.portfolio_count < 8 && profile.archetype?.label !== "Early sample") {
+      failures.push(`${context} with fewer than 8 portfolios must use Early sample archetype`);
+    }
+    if (!String(profile.methodology_href ?? "").includes("#model-behavior-methodology")) {
+      failures.push(`${context} methodology_href must link to model behavior methodology`);
+    }
+  }
+  const seenPairs = new Set();
+  for (const pair of modelBehavior.pairwise_similarity ?? []) {
+    if (!modelById.has(pair.left_model_id) || !modelById.has(pair.right_model_id)) {
+      failures.push(`model_behavior pair references missing model: ${pair.left_model_id} / ${pair.right_model_id}`);
+    }
+    if (pair.left_model_id === pair.right_model_id) {
+      failures.push(`model_behavior pair compares ${pair.left_model_id} to itself`);
+    }
+    const pairKey = [pair.left_model_id, pair.right_model_id].sort().join("::");
+    if (seenPairs.has(pairKey)) failures.push(`model_behavior duplicate pair ${pairKey}`);
+    seenPairs.add(pairKey);
+    if (!isFiniteNumber(pair.average_similarity) || pair.average_similarity < 0 || pair.average_similarity > 1) {
+      failures.push(`model_behavior pair ${pairKey} similarity ${pair.average_similarity} is outside 0-1`);
+    }
+  }
+}
+
 const cumulativeTracks = ["weekly", "monthly"];
 for (const track of cumulativeTracks) {
   const rows = apiReadModel.results.filter((row) => row.track === track);

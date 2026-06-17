@@ -2679,6 +2679,8 @@ includes(
 includes(riskAppetiteHtml, "Portfolio Pulse = 50 + 50 × Σ(allocation weight × asset risk-on loading)", "risk appetite portfolio formula");
 includes(riskAppetiteHtml, "Combined Pulse = 50% × Weekly Pulse + 50% × Monthly Pulse", "risk appetite combined formula");
 includes(riskAppetiteHtml, `${liveRisk.outstanding_live_book.portfolio_count} unresolved portfolios`, "risk appetite outstanding portfolio count");
+includes(riskAppetiteHtml, "How Model Behavior Profiles Are Calculated", "risk appetite model behavior methodology");
+includes(riskAppetiteHtml, "Round-to-round turnover equals one-half of the summed absolute allocation change", "risk appetite behavior turnover formula");
 const riskHistoryProps = astroIslandProps(riskAppetiteHtml, "RiskAppetiteHistoryChart");
 const renderedDecisionHistory = Array.isArray(riskHistoryProps.decisionHistory) ? riskHistoryProps.decisionHistory : [];
 const renderedOutstandingHistory = Array.isArray(riskHistoryProps.outstandingHistory)
@@ -3109,6 +3111,12 @@ for (const model of apiReadModel.models) {
       includes(modelsIndexHtml, `${directoryStyle.risk_appetite_score.toFixed(2)} / 5`, `${directoryContext} risk score`);
     }
   }
+  const directoryBehavior = apiReadModel.model_behavior?.profiles?.find((row) => row.model_id === model.model_id);
+  if (directoryBehavior) {
+    includes(modelsIndexHtml, directoryBehavior.archetype.label, `${directoryContext} behavior archetype`);
+    includes(modelsIndexHtml, directoryBehavior.metrics.average_risk_pulse.toFixed(1), `${directoryContext} behavior risk-taking`);
+    includes(modelsIndexHtml, pctValue(directoryBehavior.metrics.average_top_allocation_pct), `${directoryContext} behavior top holding`);
+  }
 
   const weeklyAlpha = modelAverageAlpha(model.model_id, "weekly");
   const monthlyAlpha = modelAverageAlpha(model.model_id, "monthly");
@@ -3208,6 +3216,24 @@ for (const model of apiReadModel.models) {
     includes(html, style.risk_appetite_label, `${context} risk label`);
     if (typeof style.risk_appetite_score === "number") {
       includes(html, `${style.risk_appetite_score.toFixed(2)} / 5`, `${context} risk score`);
+    }
+  }
+
+  const behavior = apiReadModel.model_behavior?.profiles?.find((row) => row.model_id === model.model_id);
+  if (behavior) {
+    includes(html, "Behavior vs peers", `${context} behavior section`);
+    includes(html, behavior.archetype.label, `${context} behavior archetype`);
+    includesAny(html, [behavior.archetype.description, htmlText(behavior.archetype.description)], `${context} behavior description`);
+    includes(html, `${behavior.metrics.average_risk_pulse.toFixed(1)} / 100`, `${context} behavior risk score`);
+    includes(html, pctValue(behavior.metrics.average_top_allocation_pct), `${context} behavior average top holding`);
+    if (typeof behavior.peer.average_peer_similarity === "number") {
+      includes(html, pctValue(behavior.peer.average_peer_similarity * 100), `${context} behavior peer overlap`);
+    }
+    if (typeof behavior.turnover.average_turnover_pct === "number") {
+      includes(html, pctValue(behavior.turnover.average_turnover_pct), `${context} behavior turnover`);
+    }
+    for (const asset of behavior.top_assets.slice(0, 3)) {
+      includesAny(html, [asset.label, htmlText(asset.label)], `${context} behavior asset ${asset.option_id}`);
     }
   }
 

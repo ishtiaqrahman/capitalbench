@@ -1,4 +1,5 @@
 import { modelLabel, providerLabel, type LeaderboardRecord, type RoundRecord, type SubmissionRecord, type UniverseOption } from "../data/fallback";
+import apiReadModel from "../generated/apiReadModel.js";
 import { allocationThemeClass, decisionAllocations, optionDisplayName, optionShortDisplayName } from "./allocations";
 import {
   staticOfficialSubmissions,
@@ -113,6 +114,48 @@ export type ModelFingerprint = {
   categories: ModelFingerprintCategory[];
 };
 
+export type ModelBehaviorProfile = {
+  model_id: string;
+  label: string;
+  provider: string;
+  provider_label: string;
+  archetype: {
+    label: string;
+    description: string;
+    confidence: string;
+  };
+  sample: {
+    portfolio_count: number;
+    weekly_portfolio_count: number;
+    monthly_portfolio_count: number;
+    active_portfolio_count: number;
+    resolved_round_count: number;
+  };
+  metrics: Record<string, number | null>;
+  peer: {
+    average_peer_similarity: number | null;
+    similarity_observation_count: number;
+    outlier_round_count: number;
+    closest_peer?: {
+      peer_model_id: string;
+      average_similarity: number | null;
+      shared_round_count: number;
+    } | null;
+  };
+  turnover: {
+    average_turnover_pct: number | null;
+    weekly_turnover_pct: number | null;
+    monthly_turnover_pct: number | null;
+    turnover_observation_count: number;
+  };
+  performance: Record<string, any>;
+  recent: Record<string, any>;
+  top_assets: Array<Record<string, any>>;
+  top_categories: Array<Record<string, any>>;
+  peer_percentiles?: Record<string, number | null>;
+  methodology_href?: string;
+};
+
 export type ModelRoundHistoryRow = {
   roundId: string;
   runId: string;
@@ -147,6 +190,7 @@ export type ModelProfile = {
   scorecards: Record<BenchmarkTrack, ModelTrackScore>;
   allResults: ModelResultRow[];
   fingerprint: ModelFingerprint;
+  behavior?: ModelBehaviorProfile;
   history: ModelRoundHistoryRow[];
 };
 
@@ -543,6 +587,9 @@ function buildHistory(modelId: string, contexts: RoundContext[], results: ModelR
 
 export function staticModelProfiles(): ModelProfile[] {
   const contexts = roundContexts();
+  const behaviorByModelId = new Map<string, ModelBehaviorProfile>(
+    (((apiReadModel as any).model_behavior?.profiles ?? []) as ModelBehaviorProfile[]).map((profile) => [profile.model_id, profile])
+  );
   const modelProviders = new Map<string, string>();
   for (const context of contexts) {
     for (const submission of context.submissions) {
@@ -577,6 +624,7 @@ export function staticModelProfiles(): ModelProfile[] {
         },
         allResults: results,
         fingerprint: buildFingerprint(modelId, modelContexts),
+        behavior: behaviorByModelId.get(modelId),
         history
       } satisfies ModelProfile;
     })

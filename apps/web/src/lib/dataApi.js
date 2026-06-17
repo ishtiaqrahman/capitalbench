@@ -275,6 +275,7 @@ function pageRows(rows, url) {
 const assetById = new Map(apiReadModel.assets.map((asset) => [asset.option_id, asset]));
 const modelById = new Map(apiReadModel.models.map((model) => [model.model_id, model]));
 const styleByModelId = new Map(apiReadModel.model_styles.map((style) => [style.model_id, style]));
+const behaviorByModelId = new Map((apiReadModel.model_behavior?.profiles ?? []).map((profile) => [profile.model_id, profile]));
 const CATEGORY_LABEL_OVERRIDES = new Map([
   ["ai_and_technology", "AI and Technology"],
   ["cash", "Cash"],
@@ -300,7 +301,8 @@ function enrichedModel(model) {
   if (!model) return null;
   return {
     ...model,
-    style: styleByModelId.get(model.model_id) ?? null
+    style: styleByModelId.get(model.model_id) ?? null,
+    behavior: behaviorByModelId.get(model.model_id) ?? null
   };
 }
 
@@ -970,6 +972,15 @@ function modelStyle(modelId) {
   return jsonApiResult(200, styleByModelId.get(modelId) ?? { model_id: modelId, risk_appetite_score: null, sample_round_count: 0 });
 }
 
+function listModelBehavior() {
+  return jsonApiResult(200, apiReadModel.model_behavior ?? { version: "model_behavior_v1", profiles: [] });
+}
+
+function modelBehavior(modelId) {
+  if (!modelById.has(modelId)) return errorResult(404, "not_found", "Model not found.");
+  return jsonApiResult(200, behaviorByModelId.get(modelId) ?? { model_id: modelId, status: "not_available" });
+}
+
 function currentUniverse() {
   return jsonApiResult(200, {
     universe_version: apiReadModel.rounds.find((round) => round.round_id === apiReadModel.current_universe_round_id)?.universe_version ?? null,
@@ -1054,6 +1065,8 @@ function indexResponse() {
       "/v1/models/{model_id}/holdings",
       "/v1/models/{model_id}/live-performance",
       "/v1/models/{model_id}/style",
+      "/v1/models/{model_id}/behavior",
+      "/v1/models/behavior",
       "/v1/universe/current",
       "/v1/assets/{option_id}",
       "/v1/assets/{option_id}/model-holders"
@@ -1098,11 +1111,13 @@ function routeGet(request) {
   }
 
   if (parts[0] === "models") {
+    if (parts.length === 2 && parts[1] === "behavior") return listModelBehavior();
     if (parts.length === 1) return listModels();
     if (parts.length === 2) return modelDetails(parts[1]);
     if (parts.length === 3 && parts[2] === "holdings") return modelHoldings(parts[1], url);
     if (parts.length === 3 && parts[2] === "live-performance") return modelLivePerformance(parts[1], url);
     if (parts.length === 3 && parts[2] === "style") return modelStyle(parts[1]);
+    if (parts.length === 3 && parts[2] === "behavior") return modelBehavior(parts[1]);
   }
 
   if (parts[0] === "universe" && parts[1] === "current") return currentUniverse();

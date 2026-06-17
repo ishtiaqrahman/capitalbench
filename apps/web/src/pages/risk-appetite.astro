@@ -13,6 +13,7 @@ const riskModel = assetRiskModel();
 const snapshot = apiReadModel.risk_appetite;
 const pulse = snapshot.current_decision_pulse;
 const outstanding = snapshot.outstanding_live_book;
+const modelBehavior = apiReadModel.model_behavior ?? { summary: {}, profiles: [] };
 const riskInsights = topInsightsByCategory(apiReadModel, ["risk_regime", "horizon_agreement", "model_similarity"], 3);
 const assetsById = new Map(apiReadModel.assets.map((asset) => [asset.option_id, asset]));
 const assetDefinitions = Object.entries(riskModel.assets)
@@ -307,6 +308,61 @@ function width(value: number | null | undefined): string {
         <p>
           Separates growth, defensive equity, real assets, rates and credit, international equity, broad cyclicals,
           liquidity, and crypto.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section risk-method-document" id="model-behavior-methodology" aria-labelledby="model-behavior-methodology-title">
+    <div class="risk-method-document-head">
+      <span class="panel-kicker">Model behavior methodology</span>
+      <h2 id="model-behavior-methodology-title">How Model Behavior Profiles Are Calculated</h2>
+      <p>
+        Behavior profiles are deterministic summaries of official frozen portfolios. They update whenever the generated
+        public read model updates, and they separate allocation style from investment performance.
+      </p>
+    </div>
+    <div class="risk-method-dimension-grid">
+      <article>
+        <strong>Risk-taking score</strong>
+        <p>
+          Each portfolio is scored with the same -1 to +1 risk-on loading used by AI Risk Appetite, then converted to
+          a 0-100 scale. A model profile averages that score across its official saved portfolios.
+        </p>
+      </article>
+      <article>
+        <strong>Concentration</strong>
+        <p>
+          Average top holding and HHI measure whether a model spreads capital across many assets or expresses views
+          through a small number of larger positions.
+        </p>
+      </article>
+      <article>
+        <strong>Turnover</strong>
+        <p>
+          Round-to-round turnover equals one-half of the summed absolute allocation change across assets. Weekly and
+          monthly turnover are calculated separately, then combined for the headline metric.
+        </p>
+      </article>
+      <article>
+        <strong>Peer overlap</strong>
+        <p>
+          Portfolio overlap is cosine similarity between allocation vectors from models in the same official round.
+          Higher values mean a model tends to look more like the rest of the roster.
+        </p>
+      </article>
+      <article>
+        <strong>Performance context</strong>
+        <p>
+          Return, Portfolio Minus S&amp;P 500, rank, and CapitalBench Score use resolved rounds only. Live portfolios
+          can affect behavior labels but never finalized performance.
+        </p>
+      </article>
+      <article>
+        <strong>Sample-size gate</strong>
+        <p>
+          Models with fewer than 8 official saved portfolios are labeled Early sample. The current behavior dataset has
+          {modelBehavior.summary?.portfolio_count ?? 0} portfolios across {modelBehavior.summary?.model_count ?? 0} models.
         </p>
       </article>
     </div>

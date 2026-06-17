@@ -608,6 +608,44 @@
         }
       }
     },
+    "/v1/models/behavior": {
+      "get": {
+        "tags": ["Models"],
+        "summary": "Model behavior profiles",
+        "description": "Canonical deterministic model behavior profiles with archetype labels, risk-taking score, concentration, turnover, peer similarity, and resolved performance context.",
+        "responses": {
+          "200": {
+            "description": "Model behavior profile collection",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ModelBehaviorResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/v1/models/{model_id}/behavior": {
+      "get": {
+        "tags": ["Models"],
+        "summary": "One model behavior profile",
+        "description": "One model's deterministic behavior profile, including allocation style, sample size, peer similarity, turnover, and methodology link.",
+        "parameters": [{ "$ref": "#/components/parameters/ModelIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Model behavior profile",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ModelBehaviorProfile" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
     "/v1/universe/current": {
       "get": {
         "tags": ["Assets"],
@@ -1540,6 +1578,97 @@
           "sample_round_count": { "type": "integer" }
         },
         "required": ["model_id", "risk_appetite_score", "risk_appetite_label", "sample_round_count"]
+      },
+      "ModelBehaviorResponse": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "string" },
+          "generated_at": { "type": "string", "format": "date-time" },
+          "data_as_of": { "type": ["string", "null"], "format": "date" },
+          "methodology_href": { "type": "string" },
+          "summary": { "type": "object" },
+          "profiles": { "type": "array", "items": { "$ref": "#/components/schemas/ModelBehaviorProfile" } },
+          "pairwise_similarity": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "left_model_id": { "type": "string" },
+                "right_model_id": { "type": "string" },
+                "average_similarity": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+                "shared_round_count": { "type": "integer" }
+              },
+              "required": ["left_model_id", "right_model_id", "average_similarity", "shared_round_count"]
+            }
+          }
+        },
+        "required": ["version", "profiles", "pairwise_similarity"]
+      },
+      "ModelBehaviorProfile": {
+        "type": "object",
+        "properties": {
+          "model_id": { "type": "string" },
+          "label": { "type": "string" },
+          "provider": { "type": "string" },
+          "provider_label": { "type": "string" },
+          "archetype": {
+            "type": "object",
+            "properties": {
+              "label": { "type": "string" },
+              "description": { "type": "string" },
+              "confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+            },
+            "required": ["label", "description", "confidence"]
+          },
+          "sample": {
+            "type": "object",
+            "properties": {
+              "portfolio_count": { "type": "integer" },
+              "weekly_portfolio_count": { "type": "integer" },
+              "monthly_portfolio_count": { "type": "integer" },
+              "active_portfolio_count": { "type": "integer" },
+              "resolved_round_count": { "type": "integer" }
+            }
+          },
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "average_risk_pulse": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+              "average_risk_score_1_5": { "type": ["number", "null"], "minimum": 1, "maximum": 5 },
+              "high_risk_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+              "defensive_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+              "tech_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+              "average_holding_count": { "type": ["number", "null"] },
+              "average_top_allocation_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+              "concentration_hhi": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
+            }
+          },
+          "peer": {
+            "type": "object",
+            "properties": {
+              "average_peer_similarity": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+              "similarity_observation_count": { "type": "integer" },
+              "outlier_round_count": { "type": "integer" },
+              "closest_peer": { "type": ["object", "null"] }
+            }
+          },
+          "turnover": {
+            "type": "object",
+            "properties": {
+              "average_turnover_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+              "weekly_turnover_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+              "monthly_turnover_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+              "turnover_observation_count": { "type": "integer" }
+            }
+          },
+          "performance": { "type": "object" },
+          "recent": { "type": "object" },
+          "top_assets": { "type": "array", "items": { "type": "object" } },
+          "top_categories": { "type": "array", "items": { "type": "object" } },
+          "peer_percentiles": { "type": "object" },
+          "methodology_href": { "type": "string" }
+        },
+        "required": ["model_id", "label", "archetype", "sample", "metrics", "peer", "turnover", "methodology_href"]
       },
       "Proof": {
         "type": "object",

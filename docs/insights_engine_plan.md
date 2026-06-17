@@ -56,9 +56,10 @@ validated deterministic candidates.
   - If the key is absent or the LLM fails in `auto` mode, deterministic insights
     still publish and the run manifest records the LLM status.
 - Automation:
-  - The intended `.github/workflows/insights.yml` automation should be
-    coordinated by `workflow_run` after successful `CapitalBench Resolver` or
-    `Interim Performance Refresh` completions.
+  - The prepared `.github/workflows/insights.yml` automation is coordinated by
+    `workflow_run` after successful `CapitalBench Resolver` or `Interim
+    Performance Refresh` completions once the repository token has
+    workflow-file write scope.
   - A `06:12 UTC` Tuesday-Saturday cron is a backstop for late corrections or
     missed dispatches.
   - The workflow must compute a stable benchmark-data fingerprint before
@@ -84,9 +85,12 @@ insights:
   Risk Appetite and historical model risk profiles.
 - `apps/web/scripts/generate-api-read-model.mjs` turns local artifacts into the
   static website/API read model used by pages and API handlers.
+- The generated read model includes `model_behavior`, a deterministic profile
+  layer with archetype labels, risk-taking score, concentration, turnover, peer
+  similarity, resolved performance context, and methodology links.
 - `apps/web/src/lib/dataApi.js` already exposes positioning, risk appetite,
   live performance, rounds, models, assets, benchmark sets, latest results, and
-  cumulative results.
+  cumulative results, plus model behavior profile endpoints.
 - GitHub Actions already refresh active interim performance after market close
   and resolve due rounds. The Insights workflow should be published once the
   repository token has workflow-file write scope; it should run after those
@@ -418,12 +422,20 @@ V1 public surfaces:
 - `/leaderboards/benchmark-sets`: show benchmark-set fairness and current-set
   insights in a future page-specific integration.
 - `/models/<model_id>`: show model-specific behavior/performance insights in a
-  future page-specific integration.
+  dedicated behavior-vs-peers section.
+- `/models`: show behavior labels and compact behavior metrics on each model
+  card.
+- `/`: show the highest-signal behavior patterns near historical model risk
+  style.
+- `/risk-appetite`: documents the model behavior formulas because they share the
+  same asset-risk framework as AI Risk Appetite.
 
 Implemented Data API endpoints:
 
 - `GET /api/v1/insights?category=&limit=&cursor=`
 - `GET /api/v1/insights/{insight_id}`
+- `GET /api/v1/models/behavior`
+- `GET /api/v1/models/{model_id}/behavior`
 
 Future Data API endpoints:
 

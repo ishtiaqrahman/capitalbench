@@ -409,12 +409,624 @@ function average(values) {
   return finite.length > 0 ? finite.reduce((total, value) => total + value, 0) / finite.length : null;
 }
 
+function median(values) {
+  const finite = values.filter((value) => typeof value === "number" && Number.isFinite(value)).sort((a, b) => a - b);
+  if (finite.length === 0) return null;
+  const middle = Math.floor(finite.length / 2);
+  return finite.length % 2 ? finite[middle] : (finite[middle - 1] + finite[middle]) / 2;
+}
+
+function standardDeviation(values) {
+  const finite = values.filter((value) => typeof value === "number" && Number.isFinite(value));
+  const mean = average(finite);
+  if (mean === null) return null;
+  return Math.sqrt(finite.reduce((total, value) => total + (value - mean) ** 2, 0) / finite.length);
+}
+
 function isDefensive(optionId) {
   return Boolean(assetRiskDefinition(optionId).defensive);
 }
 
 function isTechnology(optionId) {
   return Boolean(assetRiskDefinition(optionId).technology);
+}
+
+function isCashDuration(optionId, assetsById) {
+  const asset = assetsById.get(optionId);
+  const regime = String(assetRiskDefinition(optionId).regime_group ?? "");
+  return Boolean(asset?.is_cash) || regime === "liquidity_defensive" || regime === "duration_credit";
+}
+
+function isInternational(optionId, assetsById) {
+  const asset = assetsById.get(optionId);
+  const regime = String(assetRiskDefinition(optionId).regime_group ?? "");
+  const category = String(asset?.category ?? "");
+  return regime === "international_equity" || category === "country_equity" || category === "international_equity";
+}
+
+function isRealAsset(optionId, assetsById) {
+  const asset = assetsById.get(optionId);
+  const regime = String(assetRiskDefinition(optionId).regime_group ?? "");
+  const category = String(asset?.category ?? "");
+  return regime === "real_assets_inflation" || category === "commodities" || category === "crypto";
+}
+
+function scoreRiskPulse(allocations) {
+  const totalPct = allocations.reduce((total, allocation) => total + allocation.allocation_pct, 0);
+  if (totalPct <= 0) return { risk_pulse: null, risk_score_1_5: null, risk_on_loading: null };
+  let riskOnLoading = 0;
+  let riskScore1To5 = 0;
+  for (const allocation of allocations) {
+    const weight = allocation.allocation_pct / totalPct;
+    const definition = assetRiskDefinition(allocation.option_id);
+    riskOnLoading += weight * Number(definition.risk_on_loading);
+    riskScore1To5 += weight * Number(definition.risk_score_1_5);
+  }
+  return {
+    risk_pulse: 50 + 50 * riskOnLoading,
+    risk_score_1_5: riskScore1To5,
+    risk_on_loading: riskOnLoading
+  };
+}
+
+function portfolioKey(row) {
+  return `${row.round_id}:${row.run_id}:${row.model_id}`;
+}
+
+function roundChronology(roundById, row) {
+  const round = roundById.get(row.round_id);
+  return `${round?.decision_deadline_utc ?? ""}:${round?.entry_date ?? row.entry_date ?? ""}:${row.round_id}:${row.run_id}`;
+}
+
+function scoredBehaviorPortfolios({ portfolios, rounds, assetsById }) {
+  const roundById = new Map(rounds.map((round) => [round.round_id, round]));
+  return portfolios
+    .map((portfolio) => {
+      const allocations = (portfolio.allocations ?? [])
+        .filter((allocation) => allocation.option_id && typeof allocation.allocation_pct === "number" && allocation.allocation_pct > 0)
+        .map((allocation) => ({
+          option_id: allocation.option_id,
+          label: allocation.label,
+          ticker: allocation.ticker,
+          category: allocation.category,
+          allocation_pct: allocation.allocation_pct
+        }));
+      const totalPct = allocations.reduce((total, allocation) => total + allocation.allocation_pct, 0);
+      if (totalPct <= 0) return null;
+      const normalized = allocations.map((allocation) => ({
+        ...allocation,
+        allocation_pct: (allocation.allocation_pct / totalPct) * 100
+      }));
+      const risk = scoreRiskPulse(normalized);
+      const topAllocation = Math.max(...normalized.map((allocation) => allocation.allocation_pct));
+      const hhi = normalized.reduce((total, allocation) => total + (allocation.allocation_pct / 100) ** 2, 0);
+      const highRiskPct = normalized
+        .filter((allocation) => riskScore(allocation.option_id) >= 4)
+        .reduce((total, allocation) => total + allocation.allocation_pct, 0);
+      const defensivePct = normalized
+        .filter((allocation) => isDefensive(allocation.option_id))
+        .reduce((total, allocation) => total + allocation.allocation_pct, 0);
+      const techPct = normalized
+        .filter((allocation) => isTechnology(allocation.option_id))
+        .reduce((total, allocation) => total + allocation.allocation_pct, 0);
+      const cashDurationPct = normalized
+        .filter((allocation) => isCashDuration(allocation.option_id, assetsById))
+        .reduce((total, allocation) => total + allocation.allocation_pct, 0);
+      const internationalPct = normalized
+        .filter((allocation) => isInternational(allocation.option_id, assetsById))
+        .reduce((total, allocation) => total + allocation.allocation_pct, 0);
+      const realAssetsPct = normalized
+        .filter((allocation) => isRealAsset(allocation.option_id, assetsById))
+        .reduce((total, allocation) => total + allocation.allocation_pct, 0);
+      return {
+        key: portfolioKey(portfolio),
+        round_id: portfolio.round_id,
+        run_id: portfolio.run_id,
+        model_id: portfolio.model_id,
+        provider: portfolio.provider,
+        track: portfolio.track,
+        status: portfolio.status,
+        entry_date: portfolio.entry_date,
+        exit_date: portfolio.exit_date,
+        chronology: roundChronology(roundById, portfolio),
+        holding_count: normalized.length,
+        top_allocation_pct: topAllocation,
+        concentration_hhi: hhi,
+        effective_asset_count: hhi > 0 ? 1 / hhi : null,
+        risk_pulse: risk.risk_pulse,
+        risk_score_1_5: risk.risk_score_1_5,
+        risk_on_loading: risk.risk_on_loading,
+        high_risk_pct: highRiskPct,
+        defensive_pct: defensivePct,
+        tech_pct: techPct,
+        cash_duration_pct: cashDurationPct,
+        international_pct: internationalPct,
+        real_assets_pct: realAssetsPct,
+        allocations: normalized
+      };
+    })
+    .filter(Boolean);
+}
+
+function cosineSimilarity(left, right) {
+  const leftMap = new Map(left.allocations.map((allocation) => [allocation.option_id, allocation.allocation_pct / 100]));
+  const rightMap = new Map(right.allocations.map((allocation) => [allocation.option_id, allocation.allocation_pct / 100]));
+  const keys = new Set([...leftMap.keys(), ...rightMap.keys()]);
+  let dot = 0;
+  let leftNorm = 0;
+  let rightNorm = 0;
+  for (const key of keys) {
+    const leftValue = leftMap.get(key) ?? 0;
+    const rightValue = rightMap.get(key) ?? 0;
+    dot += leftValue * rightValue;
+    leftNorm += leftValue ** 2;
+    rightNorm += rightValue ** 2;
+  }
+  if (leftNorm <= 0 || rightNorm <= 0) return null;
+  return dot / Math.sqrt(leftNorm * rightNorm);
+}
+
+function vectorTurnover(left, right) {
+  const leftMap = new Map(left.allocations.map((allocation) => [allocation.option_id, allocation.allocation_pct]));
+  const rightMap = new Map(right.allocations.map((allocation) => [allocation.option_id, allocation.allocation_pct]));
+  const keys = new Set([...leftMap.keys(), ...rightMap.keys()]);
+  let grossChange = 0;
+  for (const key of keys) {
+    grossChange += Math.abs((rightMap.get(key) ?? 0) - (leftMap.get(key) ?? 0));
+  }
+  return grossChange / 2;
+}
+
+function aggregateBehaviorHoldings(rows, assetsById, limit = 6) {
+  const byAsset = new Map();
+  for (const row of rows) {
+    for (const allocation of row.allocations) {
+      const existing =
+        byAsset.get(allocation.option_id) ??
+        {
+          option_id: allocation.option_id,
+          label: assetsById.get(allocation.option_id)?.label ?? allocation.label ?? allocation.option_id,
+          ticker: assetsById.get(allocation.option_id)?.ticker ?? allocation.ticker ?? "",
+          category: assetsById.get(allocation.option_id)?.category ?? allocation.category ?? "unknown",
+          allocation_values: [],
+          portfolio_keys: new Set()
+        };
+      existing.allocation_values.push(allocation.allocation_pct);
+      existing.portfolio_keys.add(row.key);
+      byAsset.set(allocation.option_id, existing);
+    }
+  }
+  const portfolioCount = rows.length || 1;
+  return Array.from(byAsset.values())
+    .map((row) => ({
+      option_id: row.option_id,
+      label: row.label,
+      ticker: row.ticker,
+      category: row.category,
+      average_allocation_pct: row.allocation_values.reduce((total, value) => total + value, 0) / portfolioCount,
+      frequency_pct: (row.portfolio_keys.size / portfolioCount) * 100
+    }))
+    .sort((a, b) => b.average_allocation_pct - a.average_allocation_pct || b.frequency_pct - a.frequency_pct || a.label.localeCompare(b.label))
+    .slice(0, limit);
+}
+
+function aggregateBehaviorCategories(rows, assetsById, limit = 6) {
+  const byCategory = new Map();
+  for (const row of rows) {
+    const rowCategories = new Map();
+    for (const allocation of row.allocations) {
+      const category = assetsById.get(allocation.option_id)?.category ?? allocation.category ?? "unknown";
+      rowCategories.set(category, (rowCategories.get(category) ?? 0) + allocation.allocation_pct);
+    }
+    for (const [category, value] of rowCategories.entries()) {
+      byCategory.set(category, (byCategory.get(category) ?? 0) + value);
+    }
+  }
+  const divisor = rows.length || 1;
+  return Array.from(byCategory.entries())
+    .map(([category, value]) => ({ category, average_allocation_pct: value / divisor }))
+    .sort((a, b) => b.average_allocation_pct - a.average_allocation_pct || a.category.localeCompare(b.category))
+    .slice(0, limit);
+}
+
+function peerSimilarityStats(scoredRows) {
+  const groups = new Map();
+  const modelValues = new Map();
+  const modelOutliers = new Map();
+  const pairValues = new Map();
+  for (const row of scoredRows) {
+    const key = `${row.round_id}:${row.run_id}`;
+    groups.set(key, [...(groups.get(key) ?? []), row]);
+  }
+  for (const rows of groups.values()) {
+    if (rows.length < 2) continue;
+    const roundModelValues = new Map();
+    for (let leftIndex = 0; leftIndex < rows.length; leftIndex += 1) {
+      for (let rightIndex = leftIndex + 1; rightIndex < rows.length; rightIndex += 1) {
+        const left = rows[leftIndex];
+        const right = rows[rightIndex];
+        const similarity = cosineSimilarity(left, right);
+        if (similarity === null) continue;
+        modelValues.set(left.model_id, [...(modelValues.get(left.model_id) ?? []), similarity]);
+        modelValues.set(right.model_id, [...(modelValues.get(right.model_id) ?? []), similarity]);
+        roundModelValues.set(left.model_id, [...(roundModelValues.get(left.model_id) ?? []), similarity]);
+        roundModelValues.set(right.model_id, [...(roundModelValues.get(right.model_id) ?? []), similarity]);
+        const [a, b] = [left.model_id, right.model_id].sort();
+        const pairKey = `${a}::${b}`;
+        pairValues.set(pairKey, [...(pairValues.get(pairKey) ?? []), similarity]);
+      }
+    }
+    const roundAverages = Array.from(roundModelValues.entries()).map(([modelId, values]) => ({
+      model_id: modelId,
+      average: average(values)
+    }));
+    const mean = average(roundAverages.map((row) => row.average));
+    const deviation = standardDeviation(roundAverages.map((row) => row.average));
+    if (mean !== null && deviation !== null && deviation > 0) {
+      for (const row of roundAverages) {
+        if (typeof row.average === "number" && row.average < mean - deviation) {
+          modelOutliers.set(row.model_id, (modelOutliers.get(row.model_id) ?? 0) + 1);
+        }
+      }
+    }
+  }
+
+  const modelStats = new Map();
+  for (const [modelId, values] of modelValues.entries()) {
+    const pairRows = Array.from(pairValues.entries())
+      .filter(([key]) => key.split("::").includes(modelId))
+      .map(([key, pair]) => {
+        const [left, right] = key.split("::");
+        return {
+          peer_model_id: left === modelId ? right : left,
+          average_similarity: average(pair),
+          shared_round_count: pair.length
+        };
+      })
+      .sort((a, b) => Number(b.average_similarity ?? -Infinity) - Number(a.average_similarity ?? -Infinity));
+    const eligiblePeerRows = pairRows.filter((row) => row.shared_round_count >= 6);
+    modelStats.set(modelId, {
+      average_peer_similarity: average(values),
+      similarity_observation_count: values.length,
+      outlier_round_count: modelOutliers.get(modelId) ?? 0,
+      closest_peer: eligiblePeerRows[0] ?? pairRows[0] ?? null
+    });
+  }
+
+  const pairwise = Array.from(pairValues.entries())
+    .map(([key, values]) => {
+      const [left, right] = key.split("::");
+      return {
+        left_model_id: left,
+        right_model_id: right,
+        average_similarity: average(values),
+        shared_round_count: values.length
+      };
+    })
+    .sort((a, b) => Number(b.average_similarity ?? -Infinity) - Number(a.average_similarity ?? -Infinity));
+  return { modelStats, pairwise };
+}
+
+function turnoverStats(scoredRows) {
+  const rowsByModelTrack = new Map();
+  for (const row of scoredRows) {
+    const key = `${row.model_id}:${row.track}`;
+    rowsByModelTrack.set(key, [...(rowsByModelTrack.get(key) ?? []), row]);
+  }
+  const output = new Map();
+  for (const [key, rows] of rowsByModelTrack.entries()) {
+    const [modelId, track] = key.split(":");
+    const sorted = [...rows].sort((a, b) => a.chronology.localeCompare(b.chronology));
+    const values = [];
+    for (let index = 1; index < sorted.length; index += 1) {
+      values.push(vectorTurnover(sorted[index - 1], sorted[index]));
+    }
+    const existing =
+      output.get(modelId) ??
+      {
+        all_values: [],
+        weekly_values: [],
+        monthly_values: []
+      };
+    existing.all_values.push(...values);
+    existing[`${track}_values`]?.push(...values);
+    output.set(modelId, existing);
+  }
+  return new Map(
+    Array.from(output.entries()).map(([modelId, values]) => [
+      modelId,
+      {
+        average_turnover_pct: average(values.all_values),
+        weekly_turnover_pct: average(values.weekly_values),
+        monthly_turnover_pct: average(values.monthly_values),
+        turnover_observation_count: values.all_values.length
+      }
+    ])
+  );
+}
+
+function performanceBehaviorStats(results) {
+  const roundModelCounts = new Map();
+  for (const row of results) {
+    roundModelCounts.set(row.round_id, (roundModelCounts.get(row.round_id) ?? 0) + 1);
+  }
+  const byModel = new Map();
+  for (const row of results) {
+    const existing =
+      byModel.get(row.model_id) ??
+      {
+        rows: [],
+        returns: [],
+        alphas: [],
+        scores: [],
+        ranks: [],
+        regrets: [],
+        confidence_rows: []
+      };
+    existing.rows.push(row);
+    if (typeof row.portfolio_return_pct === "number") existing.returns.push(row.portfolio_return_pct);
+    if (typeof row.alpha_pp === "number") existing.alphas.push(row.alpha_pp);
+    if (typeof row.capitalbench_score === "number") existing.scores.push(row.capitalbench_score);
+    if (typeof row.rank === "number") existing.ranks.push(row.rank);
+    if (typeof row.regret_vs_best_option_pct === "number") existing.regrets.push(row.regret_vs_best_option_pct);
+    if (typeof row.confidence === "number" && typeof row.portfolio_return_pct === "number") {
+      existing.confidence_rows.push({ confidence: row.confidence, return_pct: row.portfolio_return_pct });
+    }
+    byModel.set(row.model_id, existing);
+  }
+  return new Map(
+    Array.from(byModel.entries()).map(([modelId, values]) => {
+      const confidenceMedian = median(values.confidence_rows.map((row) => row.confidence));
+      const highConfidence = confidenceMedian === null ? [] : values.confidence_rows.filter((row) => row.confidence >= confidenceMedian);
+      const lowConfidence = confidenceMedian === null ? [] : values.confidence_rows.filter((row) => row.confidence < confidenceMedian);
+      const highReturn = average(highConfidence.map((row) => row.return_pct));
+      const lowReturn = average(lowConfidence.map((row) => row.return_pct));
+      return [
+        modelId,
+        {
+          resolved_round_count: values.rows.length,
+          average_return_pct: average(values.returns),
+          average_alpha_pp: average(values.alphas),
+          average_capitalbench_score: average(values.scores),
+          average_rank: average(values.ranks),
+          win_count: values.rows.filter((row) => row.rank === 1).length,
+          last_count: values.rows.filter((row) => row.rank === roundModelCounts.get(row.round_id)).length,
+          beat_sp500_count: values.rows.filter((row) => typeof row.alpha_pp === "number" && row.alpha_pp > 0).length,
+          beat_sp500_rate_pct: values.rows.length
+            ? (values.rows.filter((row) => typeof row.alpha_pp === "number" && row.alpha_pp > 0).length / values.rows.length) * 100
+            : null,
+          average_regret_vs_oracle_pct: average(values.regrets),
+          confidence_calibration:
+            values.confidence_rows.length >= 6 && highReturn !== null && lowReturn !== null
+              ? {
+                  median_confidence: confidenceMedian,
+                  high_confidence_average_return_pct: highReturn,
+                  low_confidence_average_return_pct: lowReturn,
+                  high_minus_low_return_pp: highReturn - lowReturn,
+                  observation_count: values.confidence_rows.length
+                }
+              : {
+                  median_confidence: confidenceMedian,
+                  high_confidence_average_return_pct: null,
+                  low_confidence_average_return_pct: null,
+                  high_minus_low_return_pp: null,
+                  observation_count: values.confidence_rows.length
+                }
+        }
+      ];
+    })
+  );
+}
+
+function behaviorArchetype({ sample, metrics, peer }) {
+  if (sample.portfolio_count < 8) {
+    return {
+      label: "Early sample",
+      description: "This model has too few saved official portfolios for a stable behavioral label.",
+      confidence: "low"
+    };
+  }
+  if (metrics.average_top_allocation_pct >= 37 && metrics.average_holding_count <= 4.1) {
+    return {
+      label: "High-conviction concentrator",
+      description: "Usually expresses views through fewer holdings and a larger top position than peers.",
+      confidence: "medium"
+    };
+  }
+  if (metrics.average_risk_pulse >= 82 && metrics.high_risk_pct >= 82 && metrics.defensive_pct < 8) {
+    return {
+      label: "Aggressive upside hunter",
+      description: "Often leans toward growth, momentum, and high-beta allocations with little defensive ballast.",
+      confidence: "medium"
+    };
+  }
+  if (metrics.defensive_pct >= 15 && metrics.average_holding_count >= 4.5) {
+    return {
+      label: "Risk-managed allocator",
+      description: "Keeps more diversified portfolios and pairs risk assets with defensive exposure more often than peers.",
+      confidence: "medium"
+    };
+  }
+  if (typeof peer.average_peer_similarity === "number" && peer.average_peer_similarity < 0.52) {
+    return {
+      label: "Contrarian allocator",
+      description: "Historically builds portfolios that overlap less with the rest of the model roster.",
+      confidence: "medium"
+    };
+  }
+  if (typeof peer.average_peer_similarity === "number" && peer.average_peer_similarity >= 0.64 && (metrics.tech_pct >= 45 || metrics.high_risk_pct >= 78)) {
+    return {
+      label: "Momentum consensus follower",
+      description: "Tends to align with the model crowd while emphasizing growth, technology, or momentum exposure.",
+      confidence: "medium"
+    };
+  }
+  return {
+    label: "Balanced allocator",
+    description: "Shows a mixed profile without one dominant allocation behavior standing out yet.",
+    confidence: "medium"
+  };
+}
+
+function percentileValue(rows, modelId, getter, { lowerIsHigher = false } = {}) {
+  const values = rows
+    .map((row) => ({ model_id: row.model_id, value: getter(row) }))
+    .filter((row) => typeof row.value === "number" && Number.isFinite(row.value));
+  const target = values.find((row) => row.model_id === modelId);
+  if (!target || values.length <= 1) return null;
+  const comparableCount = values.filter((row) => (lowerIsHigher ? row.value >= target.value : row.value <= target.value)).length;
+  return ((comparableCount - 1) / (values.length - 1)) * 100;
+}
+
+function buildModelBehavior({ models, rounds, portfolios, results, assetsById }) {
+  const scoredRows = scoredBehaviorPortfolios({ portfolios, rounds, assetsById });
+  const peer = peerSimilarityStats(scoredRows);
+  const turnover = turnoverStats(scoredRows);
+  const performance = performanceBehaviorStats(results);
+  const rowsByModel = new Map();
+  for (const row of scoredRows) {
+    rowsByModel.set(row.model_id, [...(rowsByModel.get(row.model_id) ?? []), row]);
+  }
+
+  const rawProfiles = models.map((model) => {
+    const rows = rowsByModel.get(model.model_id) ?? [];
+    const liveRows = rows.filter((row) => row.status === "active");
+    const sortedRows = [...rows].sort((a, b) => a.chronology.localeCompare(b.chronology));
+    const latestRows = liveRows.length ? liveRows : sortedRows.slice(-2);
+    const priorRows = sortedRows.filter((row) => !new Set(latestRows.map((item) => item.key)).has(row.key)).slice(-latestRows.length || -1);
+    const weeklyRows = rows.filter((row) => row.track === "weekly");
+    const monthlyRows = rows.filter((row) => row.track === "monthly");
+    const sample = {
+      portfolio_count: rows.length,
+      weekly_portfolio_count: weeklyRows.length,
+      monthly_portfolio_count: monthlyRows.length,
+      active_portfolio_count: liveRows.length,
+      resolved_round_count: performance.get(model.model_id)?.resolved_round_count ?? 0,
+      first_round_id: sortedRows[0]?.round_id ?? null,
+      latest_round_id: sortedRows.at(-1)?.round_id ?? null
+    };
+    const metrics = {
+      average_risk_pulse: average(rows.map((row) => row.risk_pulse)),
+      average_risk_score_1_5: average(rows.map((row) => row.risk_score_1_5)),
+      weekly_risk_pulse: average(weeklyRows.map((row) => row.risk_pulse)),
+      monthly_risk_pulse: average(monthlyRows.map((row) => row.risk_pulse)),
+      horizon_risk_delta_points:
+        average(monthlyRows.map((row) => row.risk_pulse)) !== null && average(weeklyRows.map((row) => row.risk_pulse)) !== null
+          ? average(monthlyRows.map((row) => row.risk_pulse)) - average(weeklyRows.map((row) => row.risk_pulse))
+          : null,
+      high_risk_pct: average(rows.map((row) => row.high_risk_pct)) ?? 0,
+      defensive_pct: average(rows.map((row) => row.defensive_pct)) ?? 0,
+      tech_pct: average(rows.map((row) => row.tech_pct)) ?? 0,
+      cash_duration_pct: average(rows.map((row) => row.cash_duration_pct)) ?? 0,
+      international_pct: average(rows.map((row) => row.international_pct)) ?? 0,
+      real_assets_pct: average(rows.map((row) => row.real_assets_pct)) ?? 0,
+      average_holding_count: average(rows.map((row) => row.holding_count)),
+      average_top_allocation_pct: average(rows.map((row) => row.top_allocation_pct)),
+      concentration_hhi: average(rows.map((row) => row.concentration_hhi)),
+      effective_asset_count: average(rows.map((row) => row.effective_asset_count))
+    };
+    const peerStats = peer.modelStats.get(model.model_id) ?? {
+      average_peer_similarity: null,
+      similarity_observation_count: 0,
+      outlier_round_count: 0,
+      closest_peer: null
+    };
+    const turnoverStatsForModel = turnover.get(model.model_id) ?? {
+      average_turnover_pct: null,
+      weekly_turnover_pct: null,
+      monthly_turnover_pct: null,
+      turnover_observation_count: 0
+    };
+    const recentScore = average(latestRows.map((row) => row.risk_pulse));
+    const priorScore = average(priorRows.map((row) => row.risk_pulse));
+    const recent = {
+      active_portfolio_count: liveRows.length,
+      current_or_latest_risk_pulse: recentScore,
+      previous_comparable_risk_pulse: priorScore,
+      risk_pulse_change_points: recentScore !== null && priorScore !== null ? recentScore - priorScore : null,
+      top_assets: aggregateBehaviorHoldings(latestRows, assetsById, 5)
+    };
+    const archetype = behaviorArchetype({ sample, metrics, peer: peerStats });
+    return {
+      model_id: model.model_id,
+      label: model.label,
+      provider: model.provider,
+      provider_label: model.provider_label,
+      archetype,
+      sample,
+      metrics,
+      peer: peerStats,
+      turnover: turnoverStatsForModel,
+      performance: performance.get(model.model_id) ?? {
+        resolved_round_count: 0,
+        average_return_pct: null,
+        average_alpha_pp: null,
+        average_capitalbench_score: null,
+        average_rank: null,
+        win_count: 0,
+        last_count: 0,
+        beat_sp500_count: 0,
+        beat_sp500_rate_pct: null,
+        average_regret_vs_oracle_pct: null,
+        confidence_calibration: {
+          median_confidence: null,
+          high_confidence_average_return_pct: null,
+          low_confidence_average_return_pct: null,
+          high_minus_low_return_pp: null,
+          observation_count: 0
+        }
+      },
+      recent,
+      top_assets: aggregateBehaviorHoldings(rows, assetsById, 8),
+      top_categories: aggregateBehaviorCategories(rows, assetsById, 8),
+      methodology_href: "/risk-appetite/#model-behavior-methodology"
+    };
+  });
+
+  const profiles = rawProfiles
+    .map((profile) => ({
+      ...profile,
+      peer_percentiles: {
+        risk_pulse: percentileValue(rawProfiles, profile.model_id, (row) => row.metrics.average_risk_pulse),
+        concentration: percentileValue(rawProfiles, profile.model_id, (row) => row.metrics.concentration_hhi),
+        defensiveness: percentileValue(rawProfiles, profile.model_id, (row) => row.metrics.defensive_pct),
+        peer_similarity: percentileValue(rawProfiles, profile.model_id, (row) => row.peer.average_peer_similarity),
+        turnover_stability: percentileValue(rawProfiles, profile.model_id, (row) => row.turnover.average_turnover_pct, { lowerIsHigher: true }),
+        capitalbench_score: percentileValue(rawProfiles, profile.model_id, (row) => row.performance.average_capitalbench_score)
+      }
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+  function leaderBy(getter, direction = "desc") {
+    return [...profiles]
+      .filter((profile) => typeof getter(profile) === "number" && Number.isFinite(getter(profile)))
+      .sort((a, b) =>
+        direction === "asc"
+          ? getter(a) - getter(b) || a.label.localeCompare(b.label)
+          : getter(b) - getter(a) || a.label.localeCompare(b.label)
+      )[0] ?? null;
+  }
+
+  const dataAsOf = portfolios.map((portfolio) => portfolio.entry_date || portfolio.exit_date || "").filter(Boolean).sort().at(-1) ?? null;
+  return {
+    version: "model_behavior_v1",
+    generated_at: new Date().toISOString(),
+    data_as_of: dataAsOf,
+    methodology_href: "/risk-appetite/#model-behavior-methodology",
+    summary: {
+      model_count: profiles.length,
+      portfolio_count: scoredRows.length,
+      resolved_result_count: results.length,
+      highest_risk_model_id: leaderBy((row) => row.metrics.average_risk_pulse)?.model_id ?? null,
+      most_concentrated_model_id: leaderBy((row) => row.metrics.concentration_hhi)?.model_id ?? null,
+      most_defensive_model_id: leaderBy((row) => row.metrics.defensive_pct)?.model_id ?? null,
+      most_consensus_aligned_model_id: leaderBy((row) => row.peer.average_peer_similarity)?.model_id ?? null,
+      most_distinctive_model_id: leaderBy((row) => row.peer.average_peer_similarity, "asc")?.model_id ?? null,
+      lowest_turnover_model_id: leaderBy((row) => row.turnover.average_turnover_pct, "asc")?.model_id ?? null
+    },
+    profiles,
+    pairwise_similarity: peer.pairwise
+  };
 }
 
 function loadRound(row) {
@@ -753,6 +1365,7 @@ function buildReadModel() {
     })
     .sort((a, b) => Number(a.sort_order ?? 9999) - Number(b.sort_order ?? 9999) || a.label.localeCompare(b.label));
   const modelStyles = buildModelStyles(models, allocations, assetsById);
+  const modelBehavior = buildModelBehavior({ models, rounds, portfolios, results, assetsById });
   const riskAppetite = buildRiskAppetiteSnapshot({
     rounds,
     portfolios,
@@ -783,6 +1396,7 @@ function buildReadModel() {
     returns,
     interim_performance: interimPerformance,
     model_styles: modelStyles,
+    model_behavior: modelBehavior,
     risk_appetite: riskAppetite,
     insights: loadLatestInsights(),
     proof

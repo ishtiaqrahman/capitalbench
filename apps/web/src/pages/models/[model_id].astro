@@ -22,6 +22,35 @@ const { profile } = Astro.props;
 const repoRoot = `${siteConfig.githubUrl}/tree/main`;
 const repoBlob = `${siteConfig.githubUrl}/blob/main`;
 const modelInsights = insightsForModel(apiReadModel, { modelId: profile.modelId, modelName: profile.label, limit: 3 });
+const behavior = profile.behavior;
+const modelLabelById = new Map(apiReadModel.models.map((model: any) => [model.model_id, model.label]));
+const closestPeerLabel = behavior?.peer?.closest_peer?.peer_model_id
+  ? modelLabelById.get(behavior.peer.closest_peer.peer_model_id) ?? behavior.peer.closest_peer.peer_model_id
+  : null;
+const behaviorMetricRows = behavior
+  ? [
+      {
+        label: "Risk-taking score",
+        value: score100(behavior.metrics.average_risk_pulse),
+        detail: "0 defensive to 100 aggressive"
+      },
+      {
+        label: "Average top holding",
+        value: pctValue(behavior.metrics.average_top_allocation_pct),
+        detail: "concentration of the largest position"
+      },
+      {
+        label: "Peer overlap",
+        value: similarityPct(behavior.peer.average_peer_similarity),
+        detail: closestPeerLabel ? `closest to ${closestPeerLabel}` : "allocation similarity to other models"
+      },
+      {
+        label: "Average turnover",
+        value: pctValue(behavior.turnover.average_turnover_pct),
+        detail: "round-to-round portfolio change"
+      }
+    ]
+  : [];
 const resultRows = [...profile.allResults].sort((a, b) => a.entryDate.localeCompare(b.entryDate));
 const maxAlphaPct = Math.max(1, ...resultRows.map((row) => Math.abs((row.alphaVsSp500 ?? 0) * 100)));
 const riskAppetite = profile.fingerprint.riskAppetite;
@@ -76,6 +105,21 @@ function pctValue(value: number | null | undefined): string {
 function numberValue(value: number | null | undefined, digits = 1): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
   return value.toFixed(digits);
+}
+
+function score100(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return `${value.toFixed(1)} / 100`;
+}
+
+function similarityPct(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return pctValue(value * 100);
+}
+
+function signedPointValue(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)} pts`;
 }
 
 function riskScoreValue(value: number | null | undefined): string {
@@ -232,6 +276,84 @@ function alphaBarStyle(row: ModelResultRow): string {
     viewAllHref="/insights"
     viewAllLabel="All insights"
   />
+
+  {behavior && (
+    <section class="section model-behavior-detail" id="model-behavior" aria-labelledby="model-behavior-title">
+      <div class="model-section-heading">
+        <div>
+          <span class="panel-kicker">Behavior vs peers</span>
+          <h2 id="model-behavior-title">{behavior.archetype.label}</h2>
+        </div>
+        <p>{behavior.archetype.description}</p>
+      </div>
+
+      <div class="model-behavior-detail-grid">
+        <article class="model-behavior-identity">
+          <span>Behavior label</span>
+          <strong>{behavior.archetype.label}</strong>
+          <p>
+            Based on {behavior.sample.portfolio_count} official saved portfolios, including {behavior.sample.weekly_portfolio_count}
+            weekly and {behavior.sample.monthly_portfolio_count} monthly portfolios.
+          </p>
+          <a href={behavior.methodology_href ?? "/risk-appetite/#model-behavior-methodology"}>How this is calculated</a>
+        </article>
+
+        <article class="model-behavior-metrics" aria-label={`${profile.label} behavior metrics`}>
+          {behaviorMetricRows.map((item) => (
+            <div>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </div>
+          ))}
+        </article>
+
+        <article class="model-behavior-comparison">
+          <div>
+            <span class="metric-label">Peer-relative read</span>
+            <h3>{closestPeerLabel ? `Closest behavior match: ${closestPeerLabel}` : "Peer comparison building"}</h3>
+            <p>
+              Average peer overlap is {similarityPct(behavior.peer.average_peer_similarity)} across matching official rounds.
+              {behavior.peer.outlier_round_count > 0
+                ? ` It was a clear allocation outlier in ${plural(behavior.peer.outlier_round_count, "round")}.`
+                : " It has not been a repeated allocation outlier by the current rule."}
+            </p>
+          </div>
+          <dl>
+            <div>
+              <dt>High-risk exposure</dt>
+              <dd>{pctValue(behavior.metrics.high_risk_pct)}</dd>
+            </div>
+            <div>
+              <dt>Defensive exposure</dt>
+              <dd>{pctValue(behavior.metrics.defensive_pct)}</dd>
+            </div>
+            <div>
+              <dt>Tech exposure</dt>
+              <dd>{pctValue(behavior.metrics.tech_pct)}</dd>
+            </div>
+            <div>
+              <dt>Live risk change</dt>
+              <dd>{signedPointValue(behavior.recent.risk_pulse_change_points)}</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="model-behavior-list">
+          <span class="metric-label">Most used assets</span>
+          {behavior.top_assets.slice(0, 6).map((asset: any) => (
+            <div>
+              <span>
+                <strong>{asset.ticker ? `${asset.label} (${asset.ticker})` : asset.label}</strong>
+                <small>{asset.category?.replaceAll("_", " ")}</small>
+              </span>
+              <b>{pctValue(asset.average_allocation_pct)}</b>
+            </div>
+          ))}
+        </article>
+      </div>
+    </section>
+  )}
 
   <section class="section model-section" id="live-holdings" aria-labelledby="live-holdings-title">
     <div class="model-section-heading">

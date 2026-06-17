@@ -425,6 +425,26 @@ test("model holdings and asset holder endpoints filter correctly", async () => {
   assert.ok(holders.body.data.length > 0);
 });
 
+test("model behavior endpoint exposes canonical behavior profiles", async () => {
+  const list = await apiGet("/api/v1/models/behavior");
+  const modelId = "openai-gpt-5-5";
+  const detail = await apiGet(`/api/v1/models/${modelId}/behavior`);
+
+  assert.equal(list.status, 200);
+  assert.equal(list.body.version, "model_behavior_v1");
+  assert.equal(list.body.profiles.length, apiReadModel.models.length);
+  assert.ok(list.body.summary.highest_risk_model_id);
+  assert.ok(list.body.pairwise_similarity.length > 0);
+
+  assert.equal(detail.status, 200);
+  assert.equal(detail.body.model_id, modelId);
+  assert.ok(detail.body.archetype.label);
+  assert.ok(detail.body.sample.portfolio_count > 0);
+  assert.ok(detail.body.metrics.average_risk_pulse >= 0);
+  assert.ok(detail.body.metrics.average_risk_pulse <= 100);
+  assert.ok(detail.body.methodology_href.includes("model-behavior-methodology"));
+});
+
 test("insights endpoint returns ranked public insights with detail lookups", async () => {
   const list = await apiGet("/api/v1/insights?limit=3");
 
@@ -495,6 +515,8 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
     ["/v1/models/{model_id}/holdings", `/api/v1/models/${modelId}/holdings?track=all&scope=active`],
     ["/v1/models/{model_id}/live-performance", `/api/v1/models/${modelId}/live-performance?track=all`],
     ["/v1/models/{model_id}/style", `/api/v1/models/${modelId}/style`],
+    ["/v1/models/behavior", "/api/v1/models/behavior"],
+    ["/v1/models/{model_id}/behavior", `/api/v1/models/${modelId}/behavior`],
     ["/v1/universe/current", "/api/v1/universe/current"],
     ["/v1/assets/{option_id}", `/api/v1/assets/${optionId}`],
     ["/v1/assets/{option_id}/model-holders", `/api/v1/assets/${optionId}/model-holders?scope=active&track=all`]

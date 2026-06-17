@@ -25,6 +25,11 @@ function riskWidth(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "0%";
   return `${Math.min(100, Math.max(0, value)).toFixed(2)}%`;
 }
+
+function scoreValue(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return value.toFixed(1);
+}
 ---
 
 <BaseLayout
@@ -91,6 +96,28 @@ function riskWidth(value: number | null | undefined): string {
                 <i style={`width: ${riskWidth(profile.fingerprint.riskAppetite.percentile)}`}></i>
               </span>
             </a>
+
+            {profile.behavior && (
+              <a class="model-card-behavior" href={`/models/${profile.modelId}/#model-behavior`}>
+                <span class="metric-label">Behavior profile</span>
+                <strong>{profile.behavior.archetype.label}</strong>
+                <p>{profile.behavior.archetype.description}</p>
+                <div>
+                  <span>
+                    <em>Risk-taking</em>
+                    <b>{scoreValue(profile.behavior.metrics.average_risk_pulse)}</b>
+                  </span>
+                  <span>
+                    <em>Top holding</em>
+                    <b>{pctValue(profile.behavior.metrics.average_top_allocation_pct)}</b>
+                  </span>
+                  <span>
+                    <em>Turnover</em>
+                    <b>{pctValue(profile.behavior.turnover.average_turnover_pct)}</b>
+                  </span>
+                </div>
+              </a>
+            )}
 
             <div class="model-card-live">
               <div>
