@@ -18683,6 +18683,7 @@ tbody tr:hover {
 
 #benchmark-insights.context-insights-featured .context-insights-head {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: 12px;
   margin-bottom: 24px;
@@ -18690,12 +18691,30 @@ tbody tr:hover {
 }
 
 #benchmark-insights.context-insights-featured .context-insights-head > div {
-  max-width: 760px;
+  justify-self: center;
+  width: min(100%, 760px);
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+#benchmark-insights.context-insights-featured .context-insights-head .panel-kicker,
+#benchmark-insights.context-insights-featured .context-insights-head h2,
+#benchmark-insights.context-insights-featured .context-insights-head p {
+  width: 100%;
+  text-align: center;
+}
+
+#benchmark-insights.context-insights-featured .context-insights-head h2 {
+  margin: 0 auto;
 }
 
 #benchmark-insights.context-insights-featured .context-insights-head p {
   margin-right: auto;
   margin-left: auto;
+  max-width: 720px;
 }
 
 #benchmark-insights.context-insights-featured .context-insights-head .section-profile-link {
