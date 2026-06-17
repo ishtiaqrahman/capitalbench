@@ -1,0 +1,52 @@
+{
+  "confidence": 0.6,
+  "is_official_score": true,
+  "key_risks": [
+    "Hawkish FOMC dots and rising 10Y yield (4.43%) could trigger a growth/semiconductor drawdown before exit",
+    "Semiconductor and Taiwan concentration creates correlated downside if AI sentiment or July earnings disappoint",
+    "Sticky inflation (4.2% CPI, energy +23.5% YoY) could pressure multiples broadly",
+    "July CPI (7/14) and June jobs (7/2) surprises could spike volatility within the window"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Strongest momentum across all timeframes (84% 6m, 14% 30d); AI capex cycle and semiconductor supply chain remain dominant earnings driver heading into July earnings season."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "MOMENTUM",
+      "rationale": "Momentum factor leading broad market with persistent trend; captures rotation winners with lower single-sector concentration risk than pure semis."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "TAIWAN",
+      "rationale": "Strong semiconductor-linked momentum (14.5% 30d) with TSMC earnings as a catalyst in mid-July; benefits from same AI demand theme."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "INDUSTRIALS",
+      "rationale": "Broad strength (5.8% 7d, 5.2% 30d) supported by aerospace/defense and resilient retail sales; cyclical exposure with less rate sensitivity."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Hedge against sticky inflation (CPI 4.2% YoY, hawkish dots) and rising yields; provides ballast given elevated VIX and FOMC hawkish tilt risk to equities."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward strongest momentum/AI-semiconductor themes with industrials cyclicality, partially hedged with short Treasuries against hawkish Fed and sticky inflation backdrop.",
+  "provider": "anthropic",
+  "rationale_summary": "Concentrate in trend-leading semiconductors, momentum, and Taiwan while balancing with industrials and short-duration cash to manage rate/inflation risk over the close-to-close month.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 21591,
+    "latency_seconds": 12.451844142982736,
+    "output_tokens": 839,
+    "total_tokens": 22430
+  }
+}
