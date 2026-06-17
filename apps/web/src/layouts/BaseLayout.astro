@@ -67,6 +67,7 @@ const jsonLd = jsonLdGraph([
 const navItems = [
   { href: "/leaderboards/latest", label: "Results", active: currentPath.startsWith("/leaderboards") },
   { href: "/insights", label: "Insights", active: currentPath.startsWith("/insights") },
+  { href: "/manifesto", label: "Manifesto", shortLabel: "Why", active: currentPath.startsWith("/manifesto") },
   { href: "/models", label: "Models", active: currentPath.startsWith("/models") },
   { href: "/api", label: "API", active: currentPath.startsWith("/api") },
   { href: "/#ai-positioning", label: "Positioning", active: false },
@@ -226,6 +227,7 @@ const emailWidgetContext = hideEmailAlertWidget
         <div class="footer-inner">
           <span>CapitalBench is a benchmark and research project, not financial advice.</span>
           <span class="footer-links">
+            <a href="/manifesto">Manifesto</a>
             <a href="/changelog">Changelog</a>
             <a href="/privacy">Privacy</a>
             <a href="/contribute" data-analytics-event="contribute_click" data-analytics-param-location="footer">Contribute</a>

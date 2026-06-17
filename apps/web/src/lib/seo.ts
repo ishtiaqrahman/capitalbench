@@ -175,6 +175,15 @@ export const routeMeta: RouteMeta[] = [
     changefreq: "weekly",
     lastmod: defaultLastmod
   },
+  {
+    path: "/manifesto",
+    title: "CapitalBench Manifesto",
+    description:
+      "AI is entering investment decision-making before the world has a trusted way to measure it. CapitalBench benchmarks leading AI models on real public-market portfolio decisions using frozen, auditable records and live market outcomes.",
+    priority: 0.84,
+    changefreq: "monthly",
+    lastmod: defaultLastmod
+  },
   ...publicModels.map((profile) => ({
     path: `/models/${profile.modelId}`,
     title: `${profile.label} CapitalBench Model Profile`,
@@ -319,6 +328,7 @@ const labelOverrides: Record<string, string> = {
   models: "Models",
   api: "API",
   insights: "Insights",
+  manifesto: "Manifesto",
   methodology: "Methodology",
   "risk-appetite": "AI Risk Appetite",
   universe: "Asset List",
