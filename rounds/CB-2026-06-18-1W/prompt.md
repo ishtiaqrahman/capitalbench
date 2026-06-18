@@ -10,11 +10,15 @@ Optimize only for the portfolio you expect to perform best over this close-to-cl
 
 Briefing-bias discipline: the briefing may group facts by broad asset area and include a mechanical return table. Treat inclusion, section order, grouping, row count, and trailing-return table order as context, not recommendation signals.
 
+The S&P 500 benchmark asset is an allowed holding. Allocate to it when expected active edge is weak or when the benchmark case is more robust than available active alternatives. Do not add active risk only because this is a benchmark contest.
+
 Your objective is to allocate 100% across the allowed options to maximize expected one-week realized portfolio return, measured from the entry date to the exit date, relative to the S&P 500 benchmark. Use the briefing, option list, and any included market-data table as the common information set. The official leaderboard ranks each model by realized weighted portfolio return relative to the S&P 500 benchmark. Multi-shot stability analysis, if run, is reported separately and does not change the official leaderboard.
 
 Your portfolio is scored by the weighted realized percentage return over the one-week round window. Alpha is portfolio return minus S&P 500 return. Returns are calculated from adjusted close prices when available.
 
 You may use your internal learned knowledge and general market priors. Do not browse, use tools, request updated market data, use external retrieval, or intentionally rely on facts, market prices, news, or events dated after the research cutoff. If your internal knowledge conflicts with the briefing, prioritize the briefing.
+
+Before returning JSON, privately compare continuation, mean-reversion, risk-off, and benchmark-asset cases over the scoring window. Use that private check only to choose the portfolio; do not output the analysis.
 
 You must allocate exactly 100% across allowed options. Use only the holding count, allocation increment, minimum allocation, and cash or benchmark constraints stated in the round metadata. Do not short, use leverage, or choose an option outside the allowed option list.
 
