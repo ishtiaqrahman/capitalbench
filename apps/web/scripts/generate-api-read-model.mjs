@@ -1089,6 +1089,14 @@ function modelPatternTraits(profile, summary) {
   if (Number(peer.outlier_round_count ?? 0) >= 4) {
     add("outlier_rounds", "Often different from peers", `${peer.outlier_round_count} rounds with unusually low peer overlap.`, ["outlier_round_count"]);
   }
+  if (traits.length === 0) {
+    add(
+      "balanced_profile",
+      "Balanced profile",
+      `${scoreLabel(metrics.average_risk_pulse)} / 100 average risk-taking, ${scoreLabel(metrics.average_holding_count, 2)} average holdings, and ${percentLabel(metrics.average_top_allocation_pct)} average largest holding.`,
+      ["risk_taking_score", "average_holding_count", "average_top_allocation_pct"]
+    );
+  }
   return traits.slice(0, 8);
 }
 
