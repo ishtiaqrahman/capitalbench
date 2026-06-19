@@ -186,7 +186,8 @@
   min-width: 0;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  gap: 7px;
   border: 1px solid rgb(213 223 219 / 78%);
   border-radius: 7px;
   padding: 13px 12px;
@@ -196,7 +197,6 @@
 
 .benchmark-evidence-facts span {
   display: block;
-  margin-bottom: 7px;
   color: var(--muted-2);
   font-size: 0.72rem;
   font-weight: 700;
@@ -206,7 +206,6 @@
 
 .benchmark-evidence-facts strong {
   display: block;
-  margin-bottom: 7px;
   color: var(--ink-strong);
   font-size: 0.96rem;
   line-height: 1.18;
@@ -1783,10 +1782,12 @@ a.snapshot-model-chip:hover {
   min-width: 0;
   display: grid;
   align-content: center;
+  justify-items: center;
   gap: 5px;
   min-height: 126px;
   border-right: 1px solid var(--line);
   padding: 16px;
+  text-align: center;
 }
 
 .ai-positioning-summary article:last-child {
@@ -1871,11 +1872,13 @@ a.snapshot-model-chip:hover {
 .current-setup-stat-row div {
   min-width: 0;
   display: grid;
+  justify-items: center;
   gap: 7px;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 14px;
   background: var(--surface-cool);
+  text-align: center;
 }
 
 .current-setup-stat-row span,
@@ -1944,6 +1947,7 @@ a.snapshot-model-chip:hover {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
+  justify-content: center;
   min-height: 34px;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -2024,11 +2028,13 @@ a.snapshot-model-chip:hover {
 .current-setup-rule-strip span {
   min-width: 0;
   display: grid;
+  justify-items: center;
   gap: 4px;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px;
   background: var(--surface-cool);
+  text-align: center;
 }
 
 .current-setup-rule-strip strong {
@@ -2049,12 +2055,14 @@ a.snapshot-model-chip:hover {
 .current-setup-round-list a {
   min-width: 0;
   display: grid;
+  justify-items: center;
   gap: 7px;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 12px;
   background: var(--surface-cool);
   color: inherit;
+  text-align: center;
   text-decoration: none;
 }
 
@@ -2159,9 +2167,24 @@ a.snapshot-model-chip:hover {
 .live-test-card {
   display: grid;
   align-content: start;
+  justify-items: center;
+  text-align: center;
+}
+
+.live-test-card .track-card-head {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.live-test-card .status-badge {
+  justify-self: center;
 }
 
 .live-test-description {
+  max-width: 38rem;
   margin-top: 14px;
   color: var(--ink);
   font-size: 0.98rem;
@@ -2169,18 +2192,23 @@ a.snapshot-model-chip:hover {
 }
 
 .live-test-state {
-  width: fit-content;
+  width: min(100%, 38rem);
   margin-top: 8px;
-  border-left: 3px solid var(--gold);
-  padding: 5px 0 5px 10px;
+  border-top: 3px solid var(--gold);
+  padding: 8px 10px 5px;
   color: var(--muted);
   font-size: 0.86rem;
   font-weight: 750;
   line-height: 1.35;
+  text-align: center;
 }
 
 .live-test-grid span {
+  display: grid;
+  align-content: center;
+  justify-items: center;
   background: #f8faf9;
+  text-align: center;
 }
 
 .live-test-grid span:nth-child(3),
@@ -2195,6 +2223,10 @@ a.snapshot-model-chip:hover {
   font-size: 0.72em;
 }
 
+.live-test-actions {
+  justify-content: center;
+}
+
 .live-test-footnote {
   grid-column: 1 / -1;
   margin: -2px 0 0;
@@ -2205,6 +2237,7 @@ a.snapshot-model-chip:hover {
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.45;
+  text-align: center;
 }
 
 .decision-track-grid {
@@ -3276,13 +3309,15 @@ a.snapshot-model-chip:hover {
 
 .leaderboard-lanes-principles li {
   display: grid;
-  grid-template-columns: minmax(78px, 0.42fr) minmax(0, 1fr);
+  grid-template-columns: 1fr;
   gap: 10px;
   align-items: center;
+  justify-items: center;
   border: 1px solid color-mix(in srgb, var(--accent-2) 16%, var(--line));
   border-radius: 8px;
   padding: 9px 10px;
   background: rgb(255 255 255 / 62%);
+  text-align: center;
 }
 
 .leaderboard-lanes-principles strong {
@@ -3306,6 +3341,7 @@ a.snapshot-model-chip:hover {
 
 .leaderboard-lanes-status .metric-label {
   margin: 0;
+  text-align: center;
 }
 
 .leaderboard-lanes-status-grid {
@@ -3316,14 +3352,16 @@ a.snapshot-model-chip:hover {
 .leaderboard-lanes-status-grid a {
   min-width: 0;
   display: grid;
-  grid-template-columns: minmax(74px, 0.34fr) minmax(0, 1fr);
-  gap: 4px 10px;
+  grid-template-columns: 1fr;
+  gap: 5px;
   align-items: center;
+  justify-items: center;
   border: 1px solid color-mix(in srgb, var(--accent) 13%, var(--line));
   border-radius: 8px;
   padding: 10px;
   background: rgb(255 255 255 / 72%);
   color: inherit;
+  text-align: center;
   text-decoration: none;
   transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
@@ -3348,7 +3386,7 @@ a.snapshot-model-chip:hover {
 }
 
 .leaderboard-lanes-status-grid em {
-  grid-column: 2;
+  grid-column: auto;
   color: var(--muted-2);
   font-size: 0.69rem;
   font-style: normal;
@@ -3369,6 +3407,7 @@ a.snapshot-model-chip:hover {
 .leaderboard-lane-card {
   min-width: 0;
   display: grid;
+  justify-items: center;
   gap: 16px;
   align-content: start;
   border: 1px solid var(--line);
@@ -3377,6 +3416,7 @@ a.snapshot-model-chip:hover {
   background: var(--surface-raised);
   box-shadow: 0 14px 30px rgb(17 24 39 / 6%);
   overflow: hidden;
+  text-align: center;
 }
 
 .leaderboard-lane-card.lane-weekly {
@@ -3404,25 +3444,38 @@ a.snapshot-model-chip:hover {
   line-height: 1.04;
 }
 
+.leaderboard-lane-card-head {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .leaderboard-lane-card-head .status-badge {
   flex: 0 0 auto;
+  justify-self: center;
   white-space: nowrap;
 }
 
 .leaderboard-lane-card-body {
+  width: 100%;
   display: grid;
   gap: 14px;
 }
 
 .leaderboard-lane-leader {
-  justify-content: flex-start;
+  display: grid;
+  justify-items: center;
+  justify-content: center;
   align-items: center;
   border-top: 1px solid var(--line);
   padding-top: 15px;
+  text-align: center;
 }
 
 .leaderboard-lane-leader-pending {
-  align-items: flex-start;
+  align-items: center;
   border: 1px solid color-mix(in srgb, var(--accent-2) 18%, var(--line));
   border-radius: 8px;
   padding: 13px;
@@ -3472,6 +3525,7 @@ a.snapshot-model-chip:hover {
 .leaderboard-lane-leader div {
   min-width: 0;
   display: grid;
+  justify-items: center;
   gap: 3px;
 }
 
@@ -3513,11 +3567,14 @@ a.snapshot-model-chip:hover {
 .leaderboard-lane-facts span {
   min-width: 0;
   display: grid;
+  align-content: center;
+  justify-items: center;
   gap: 5px;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px;
   background: color-mix(in srgb, var(--surface-cool) 72%, #ffffff);
+  text-align: center;
 }
 
 .leaderboard-lane-facts strong {
@@ -3528,7 +3585,7 @@ a.snapshot-model-chip:hover {
 }
 
 .leaderboard-lane-facts-pending span {
-  grid-template-columns: minmax(92px, 0.34fr) minmax(0, 1fr);
+  grid-template-columns: 1fr;
   align-items: center;
 }
 
@@ -3586,7 +3643,7 @@ a.snapshot-model-chip:hover {
 
 .leaderboard-lane-actions {
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
@@ -11835,9 +11892,9 @@ tbody tr:hover {
   }
 
   .current-setup-model-list a {
-    grid-template-columns: 38px minmax(0, 1fr);
-    justify-items: start;
-    text-align: left;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
   }
 
   .current-setup-model-list img {
@@ -12662,7 +12719,7 @@ tbody tr:hover {
 
   .leaderboard-lane-card-head,
   .leaderboard-lane-actions {
-    align-items: flex-start;
+    align-items: center;
     flex-direction: column;
   }
 
@@ -18733,6 +18790,11 @@ tbody tr:hover {
   align-items: stretch;
 }
 
+#benchmark-insights.context-insights-featured .insight-calculation-list:has(> div:only-child) {
+  grid-template-columns: minmax(0, min(100%, 260px));
+  justify-content: center;
+}
+
 #benchmark-insights.context-insights-featured .insight-calculation-list div {
   display: grid;
   align-content: center;
@@ -21407,11 +21469,13 @@ tbody tr:hover {
   min-width: 0;
   display: grid;
   align-content: center;
+  justify-items: center;
   gap: 4px;
   min-height: 104px;
   border-right: 1px solid #e1e9e5;
   border-bottom: 1px solid #e1e9e5;
   padding: 13px;
+  text-align: center;
 }
 
 .live-risk-pulse-stats article:nth-child(2n) {
