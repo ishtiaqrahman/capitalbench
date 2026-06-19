@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-05-17-1M / official-20260517
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-05-17-1M
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-20260517
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench May 17 2026 One-Month Portfolio Round
+- Description: One-month CapitalBench portfolio evaluation round using the frozen May 17, 2026 briefing and expanded v2.0 universe.
+- Decision date: 2026-05-17
 - Decision deadline: 2026-05-18T01:00:00Z
 - Horizon: one month
-- Official run ID: official-20260517
-- Mock: no
+- Entry date: 2026-05-15
+- Exit date: 2026-06-17
+- Entry rule: Use Tiingo EOD adjusted close from the last trading close before the decision deadline; CASH return is 0 unless explicitly priced.
+- Exit rule: Use Tiingo EOD adjusted close on the exit_date for each selected option; CASH return is 0 unless explicitly priced.
+- Options: 65
 
 ## Model Decisions
 
@@ -87,38 +102,80 @@
 | ETHEREUM_ETF | Ethereum ETF | 16.76 | 13.07 | -0.2201670644391409 | 64 |
 | OIL | Crude Oil | 148.23 | 114.23 | -0.22937327126762452 | 65 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| xai-grok-4-3 | portfolio | ENERGY | 3 | 0.6 | -0.0802489905787348 | -0.017360402653106018 | -0.019782037730287312 | 0.1688722343796616 |  | False | False |
-| anthropic-claude-opus-4-7 | portfolio | ENERGY | 5 | 0.62 | -0.0802489905787348 | -0.024136295050669263 | -0.026557930127850557 | 0.17564812677722486 |  | False | False |
-| google-gemini-3-1-pro | portfolio | ENERGY | 5 | 0.7 | -0.0802489905787348 | -0.04985580421981333 | -0.052277439296994625 | 0.20136763594636892 |  | False | False |
-| openai-gpt-5-5 | portfolio | OIL | 5 | 0.54 | -0.22937327126762452 | -0.08606965578088242 | -0.08849129085806372 | 0.23758148750743802 |  | False | False |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-opus-4-7 | ENERGY | 30.0 | -0.0802489905787348 | -0.02407469717362044 | Strait of Hormuz disruption with WTI at $105 and Brent $109; energy sector showing strongest momentum (+8% 30d) with clear supply-side catalyst persisting through window. |
+| anthropic-claude-opus-4-7 | GOLD | 25.0 | -0.06864694187814291 | -0.017161735469535727 | Inflation re-acceleration (CPI 3.8% YoY), geopolitical tension, weak consumer sentiment (48.2), and Fed leadership uncertainty support gold despite recent pullback; counter-trend entry after -6% 30d. |
+| anthropic-claude-opus-4-7 | SHORT_TREASURY | 20.0 | 0.0 | 0.0 | With 30Y at 5.11%, hike probability >30%, and inflation reaccelerating, short duration preserves capital while yielding ~4%+; avoids duration risk into June FOMC. |
+| anthropic-claude-opus-4-7 | SEMICONDUCTORS | 15.0 | 0.12156235395621384 | 0.018234353093432076 | Hyperscaler capex >$600B 2026-27 and $1.29T semi market forecast; strong momentum (+20% 30d) backed by structural AI demand despite stretched valuations. |
+| anthropic-claude-opus-4-7 | CONSUMER_STAPLES | 10.0 | -0.011342155009451682 | -0.0011342155009451682 | Defensive ballast given consumer sentiment collapse, sticky inflation, and high gasoline prices pressuring discretionary spending; positive recent performance amid market stress. |
+| google-gemini-3-1-pro | ENERGY | 30.0 | -0.0802489905787348 | -0.02407469717362044 | Strong momentum and high oil prices support the energy sector. |
+| google-gemini-3-1-pro | OIL | 20.0 | -0.22937327126762452 | -0.04587465425352491 | Direct exposure to elevated crude prices and potential supply disruptions. |
+| google-gemini-3-1-pro | SEMICONDUCTORS | 25.0 | 0.12156235395621384 | 0.03039058848905346 | Strong AI infrastructure spending and market revenue projections support semiconductors. |
+| google-gemini-3-1-pro | GOLD | 15.0 | -0.06864694187814291 | -0.010297041281721436 | Safe-haven asset amid inflation concerns and geopolitical uncertainties. |
+| google-gemini-3-1-pro | SHORT_TREASURY | 10.0 | 0.0 | 0.0 | Provides a risk-free yield and capital preservation amid market volatility. |
+| openai-gpt-5-5 | OIL | 30.0 | -0.22937327126762452 | -0.06881198138028735 | Crude oil has the strongest recent momentum and directly benefits if the reported Strait of Hormuz disruption keeps energy prices elevated through the one-month window. |
+| openai-gpt-5-5 | ENERGY | 25.0 | -0.0802489905787348 | -0.0200622476446837 | Energy equities provide leveraged but diversified exposure to high oil prices, with strong trailing returns and potential earnings support from elevated crude. |
+| openai-gpt-5-5 | BROAD_COMMODITIES | 20.0 | -0.11123052122514776 | -0.022246104245029555 | Broad commodities diversify the inflation and supply-shock exposure beyond crude while retaining strong recent trend strength. |
+| openai-gpt-5-5 | SEMICONDUCTORS | 20.0 | 0.12156235395621384 | 0.02431247079124277 | Semiconductors have exceptional 30-day and longer-term momentum supported by large AI infrastructure capex and 2026 market growth forecasts. |
+| openai-gpt-5-5 | US_DOLLAR | 5.0 | 0.014764133957508196 | 0.0007382066978754098 | A small dollar position provides ballast if hotter inflation, higher US yields, or risk-off flows pressure equities and commodities. |
+| xai-grok-4-3 | ENERGY | 40.0 | -0.0802489905787348 | -0.03209959623149392 | Elevated oil prices and potential supply disruptions from geopolitical tensions support near-term returns. |
+| xai-grok-4-3 | SEMICONDUCTORS | 35.0 | 0.12156235395621384 | 0.042546823884674845 | Projected $1.29 trillion semiconductor market and hyperscaler AI capex provide growth tailwinds. |
+| xai-grok-4-3 | BROAD_COMMODITIES | 25.0 | -0.11123052122514776 | -0.02780763030628694 | Hedge against observed 3.8% YoY CPI and persistent inflation pressures over the horizon. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| xai-grok-4-3 | ENERGY | 3 | 0.6 | -0.0802489905787348 | -0.017360402653106018 | -0.019782037730287312 | 0.1688722343796616 |  | False | False |
+| anthropic-claude-opus-4-7 | ENERGY | 5 | 0.62 | -0.0802489905787348 | -0.024136295050669263 | -0.026557930127850557 | 0.17564812677722486 |  | False | False |
+| google-gemini-3-1-pro | ENERGY | 5 | 0.7 | -0.0802489905787348 | -0.04985580421981333 | -0.052277439296994625 | 0.20136763594636892 |  | False | False |
+| openai-gpt-5-5 | OIL | 5 | 0.54 | -0.22937327126762452 | -0.08606965578088242 | -0.08849129085806372 | 0.23758148750743802 |  | False | False |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | 83b7dca6fadcfd788550022568ad23286614cfffe51b31f910e510ca90e0e4d9 |
+| options.yaml | 8e07e0a1d09976c253d8b385fffa546b2e406bbad7499c7fc9f3fe35f15afcb1 |
+| prompt.md | f2a9fb9fede7c53d40bc86dc6298ab139fb2652b3cefd8a7df643ebdbfc85c10 |
+| manifest.yaml | 12ec0d6700776a7f8919697f795275388bb968066f7f3203f859c574d6952bfd |
+| market_data/universe_trailing_returns.csv | c52c6af9cc57a3899c93fe6dc71fb04cb95d48581fbdcfe53576c5d8cf78178f |
+| market_data/universe_trailing_returns.md | 06ddfb8b48dc51f7df951cf202ba39e90e8d045c1b5b0b1fe58397a6b36b01e4 |
+| market_data/universe_trailing_returns.json | 2d286f824ff241e1ecb85a35711d9814617162f33dcab4d201533a8234eda041 |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | ca44857461a96e1fb5555b6166e5bc03b24c8736faa57df0e3026386964a7eef | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | 0f5270283060802b20db6b76760ec7b7e475d860317fc6feb3b340db1a870a94 | yes |
+| Final briefing | research/final_briefing.md | model-facing | 83b7dca6fadcfd788550022568ad23286614cfffe51b31f910e510ca90e0e4d9 | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-05-24-1M has no scored official run.
-- Round CB-2026-05-28-1M has no scored official run.
-- Round CB-2026-05-29-1M has no scored official run.
-- Round CB-2026-06-01-1M has no scored official run.
-- Round CB-2026-06-02-1M has no scored official run.
-- Round CB-2026-06-03-1M has no scored official run.
-- Round CB-2026-06-05-1M has no scored official run.
-- Round CB-2026-06-08-1M has no scored official run.
-- Round CB-2026-06-09-1M has no scored official run.
-- Round CB-2026-06-12-1M has no scored official run.
-- Round CB-2026-06-13-1M has no scored official run.
-- Round CB-2026-06-15-1M has no scored official run.
-- Round CB-2026-06-16-1M has no scored official run.
-- Round CB-2026-06-17-1M has no scored official run.
-- Round CB-2026-06-18-1M has no scored official run.
-- Round example-round has no scored official run.
-- Round example-round-2 has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.

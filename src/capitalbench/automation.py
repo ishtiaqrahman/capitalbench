@@ -198,7 +198,7 @@ def automation_run(
     selected_store = configured_automation_store_from_env()
     due_before = due_before_utc or _utc_now()
     if selected_store is not None:
-        return _automation_run_supabase(
+        summaries = _automation_run_supabase(
             rounds_dir,
             store=selected_store,
             due_before_utc=due_before,
@@ -208,6 +208,25 @@ def automation_run(
             selection_path=selection_path,
             worker_id=worker_id or f"local-{os.getpid()}",
         )
+        attempted_jobs = {
+            (summary.round_id, summary.run_id)
+            for summary in summaries
+            if summary.round_id and summary.run_id
+        }
+        remaining_capacity = max_jobs - len(summaries)
+        if remaining_capacity > 0:
+            summaries.extend(
+                _automation_run_local(
+                    rounds_dir,
+                    due_before_utc=due_before,
+                    max_jobs=remaining_capacity,
+                    latest_output=latest_output,
+                    cumulative_output=cumulative_output,
+                    selection_path=selection_path,
+                    skip_jobs=attempted_jobs,
+                )
+            )
+        return summaries
     return _automation_run_local(
         rounds_dir,
         due_before_utc=due_before,
@@ -370,12 +389,17 @@ def _automation_run_local(
     latest_output: Path,
     cumulative_output: Path,
     selection_path: Path | None,
+    skip_jobs: set[tuple[str, str]] | None = None,
 ) -> list[AutomationSummary]:
     due_before = _parse_utc(due_before_utc)
+    skipped = skip_jobs or set()
     jobs: list[dict[str, Any]] = []
     for path in sorted(rounds_dir.glob(f"*/{AUTOMATION_DIRNAME}/{RESOLUTION_JOB_FILENAME}")):
         job = read_yaml(path)
         job["_path"] = path
+        job_key = (str(job.get("round_id") or ""), str(job.get("run_id") or ""))
+        if job_key in skipped:
+            continue
         if _job_is_due(job, due_before):
             jobs.append(job)
     summaries: list[AutomationSummary] = []

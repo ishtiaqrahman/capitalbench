@@ -2044,11 +2044,16 @@ for (const track of ["weekly", "monthly"]) {
       includes(homepageScorecardHtml, "hindsight best asset", `homepage ${track} max possible short explanation`);
     }
   }
-  includes(leaderboardsHtml, leader.label, `leaderboards index ${track} leader`);
-  includes(leaderboardsHtml, score, `leaderboards index ${track} leader score`);
   const featuredSetForIndex = featuredBenchmarkSetForTrack(track);
   if (featuredSetForIndex) {
+    if (featuredSetForIndex.leader) {
+      includes(leaderboardsHtml, featuredSetForIndex.leader.label, `leaderboards index ${track} leader`);
+      includes(leaderboardsHtml, scoreLabel(featuredSetForIndex.leader.capitalbench_score), `leaderboards index ${track} leader score`);
+    }
     includes(leaderboardsHtml, `${featuredSetForIndex.comparison.comparison_round_count} shared`, `leaderboards index ${track} shared count`);
+  } else {
+    includes(leaderboardsHtml, leader.label, `leaderboards index ${track} leader`);
+    includes(leaderboardsHtml, score, `leaderboards index ${track} leader score`);
   }
 }
 

@@ -6,7 +6,7 @@ from typing import Any
 import pytest
 import yaml
 
-from capitalbench.automation import accept_run, resolve_accepted_round
+from capitalbench.automation import AutomationSummary, accept_run, automation_run, resolve_accepted_round
 from capitalbench.hashing import write_round_hashes
 
 
@@ -183,3 +183,42 @@ def test_resolve_accepted_round_refreshes_entry_and_exit_prices(tmp_path: Path, 
     assert calls[0]["price_side"] == "both"
     assert calls[0]["overwrite_prices"] is True
     assert calls[0]["full_universe"] is True
+
+
+def test_automation_run_falls_back_to_due_local_jobs_when_supabase_has_none(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    round_path = _copy_due_round(tmp_path)
+    accept_run(
+        round_path,
+        run_id="official-round-1-clean",
+        due_at_utc="2026-05-11T23:30:00+00:00",
+        store=FakeAutomationStore(),
+        sync_pending=False,
+    )
+    calls: list[dict[str, Any]] = []
+
+    def fake_resolve_accepted_round(*args: Any, **kwargs: Any) -> AutomationSummary:
+        calls.append(kwargs)
+        return AutomationSummary(
+            status="succeeded",
+            round_id=str(kwargs["round_id"]),
+            run_id=str(kwargs["run_id"]),
+            message="resolved by local fallback",
+        )
+
+    monkeypatch.setattr("capitalbench.automation.configured_automation_store_from_env", lambda: FakeAutomationStore())
+    monkeypatch.setattr("capitalbench.automation.resolve_accepted_round", fake_resolve_accepted_round)
+
+    summaries = automation_run(
+        tmp_path,
+        due_before_utc="2026-05-12T00:00:00+00:00",
+        max_jobs=1,
+        latest_output=tmp_path / "latest",
+        cumulative_output=tmp_path / "cumulative",
+    )
+
+    assert len(summaries) == 1
+    assert summaries[0].round_id == "CB-2026-05-10-1M"
+    assert calls[0]["round_id"] == "CB-2026-05-10-1M"
+    assert calls[0]["run_id"] == "official-round-1-clean"
