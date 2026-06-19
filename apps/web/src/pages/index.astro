@@ -240,7 +240,10 @@ const modelPatternLeaders = modelPatternLeaderSpecs
     return row ? { ...item, row } : null;
   })
   .filter(Boolean);
-const modelPatternFinding = Array.isArray(modelPatternReport.comparative_findings) ? modelPatternReport.comparative_findings[0] : null;
+const modelPatternPortfolioCount =
+  modelPatternReport.summary?.portfolio_count ??
+  modelPatternRows.reduce((total: number, row: any) => total + Number(row.sample?.portfolio_count ?? 0), 0);
+const modelPatternResolvedCount = modelPatternReport.summary?.resolved_result_count ?? 0;
 const latestUniverseOptionCount = Math.max(0, ...trackStates.map((track) => track.options.length));
 const currentRound = latestMonthlyRound ?? latestWeeklyRound ?? roundRows[0] ?? fallbackRounds[0];
 const currentUniverseOptionCount = latestUniverseOptionCount || staticUniverseOptions(currentRound.round_id).length;
@@ -771,6 +774,40 @@ const trackLaneCards = trackStates.map((track) => {
     featured
   />
 
+  {modelPatternLeaders.length > 0 && (
+    <section class="model-pattern-promo" aria-labelledby="model-pattern-promo-title">
+      <div class="model-pattern-promo-copy">
+        <span class="panel-kicker">Model behavior patterns</span>
+        <h2 id="model-pattern-promo-title">See Each AI Model's Allocation Personality</h2>
+        <p>
+          CapitalBench tracks whether each model behaves like a risk-seeker, concentrator, defensive allocator,
+          consensus follower, or distinctive outlier across official frozen portfolios.
+        </p>
+        <div class="model-pattern-promo-proof" aria-label="Model behavior report source">
+          <span>{modelPatternPortfolioCount} saved portfolios</span>
+          <span>{modelPatternResolvedCount} resolved results</span>
+          <span>Peer overlap, concentration, turnover, and risk appetite</span>
+        </div>
+      </div>
+
+      <div class="model-pattern-promo-side">
+        <div class="model-pattern-promo-badges" aria-label="Model behavior highlights">
+          {modelPatternLeaders.slice(0, 4).map((item: any) => (
+            <a href={`/models/${item.row.model_id}/#model-behavior`}>
+              <span>{item.label}</span>
+              <strong>{item.row.label}</strong>
+              <em>{item.metric}: {item.value(item.row)}</em>
+            </a>
+          ))}
+        </div>
+        <a class="model-pattern-promo-cta" href="/models/patterns/">
+          Explore model behavior patterns
+          <ArrowRight size={15} aria-hidden="true" />
+        </a>
+      </div>
+    </section>
+  )}
+
   <section class="live-risk-pulse" aria-labelledby="live-risk-pulse-title">
     <div class="live-risk-pulse-head">
       <div>
@@ -1133,59 +1170,6 @@ const trackLaneCards = trackStates.map((track) => {
             </a>
           );
         })}
-      </div>
-    </section>
-  )}
-
-  {modelPatternLeaders.length > 0 && (
-    <section class="model-behavior-panel model-behavior-panel-pattern" aria-labelledby="model-behavior-title">
-      <div class="model-behavior-head">
-        <div>
-          <span class="panel-kicker">Model behavior patterns</span>
-          <h3 id="model-behavior-title">How The AI Allocators Differ</h3>
-          <p>
-            Dynamic peer comparisons from official frozen portfolios. The full report separates risk appetite,
-            concentration, defensive ballast, peer overlap, turnover, and resolved performance profile.
-          </p>
-        </div>
-        <a class="section-profile-link" href="/models/patterns/">View full report</a>
-      </div>
-
-      <div class="model-behavior-pattern-layout">
-        {modelPatternFinding && (
-          <a class="model-behavior-finding" href="/models/patterns/#findings-title">
-            <span>What stands out</span>
-            <strong>{modelPatternFinding.title}</strong>
-            <p>{modelPatternFinding.body}</p>
-          </a>
-        )}
-
-        <div class="model-behavior-grid model-behavior-grid-pattern">
-          {modelPatternLeaders.map((item: any) => (
-            <a class="model-behavior-card model-behavior-card-pattern" href={`/models/${item.row.model_id}/#model-behavior`}>
-              <span class="model-behavior-card-kicker">{item.label}</span>
-              <span class="model-behavior-card-headline">
-                <span class="model-behavior-card-logo" aria-hidden="true">
-                  {providerLogoSrc(item.row.provider) ? <img src={providerLogoSrc(item.row.provider)} alt="" loading="lazy" /> : item.row.provider_label?.slice(0, 1)}
-                </span>
-                <span>
-                  <strong>{item.row.label}</strong>
-                  <em>{item.row.archetype?.label}</em>
-                </span>
-              </span>
-              <dl>
-                <div>
-                  <dt>{item.metric}</dt>
-                  <dd>{item.value(item.row)}</dd>
-                </div>
-                <div>
-                  <dt>Saved portfolios</dt>
-                  <dd>{item.row.sample?.portfolio_count ?? "n/a"}</dd>
-                </div>
-              </dl>
-            </a>
-          ))}
-        </div>
       </div>
     </section>
   )}
