@@ -55,6 +55,8 @@ export function calculationValue(calculation) {
   const value = calculation?.value;
   if (typeof value !== "number" || !Number.isFinite(value)) return value ?? "n/a";
   const unit = String(calculation.unit ?? "").toLowerCase();
+  const name = String(calculation.name ?? "").toLowerCase();
+  if (name.includes("risk_taking_score")) return `${value.toFixed(1)}/100`;
   if (unit === "percent" || unit === "percentage_points") {
     return `${value > 0 ? "+" : ""}${value.toFixed(Math.abs(value) >= 10 ? 1 : 2)}%`;
   }

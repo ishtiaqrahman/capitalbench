@@ -1821,6 +1821,21 @@ a.snapshot-model-chip:hover {
   color: #a9342b;
 }
 
+.risk-score-with-unit {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
+}
+
+.risk-score-with-unit small {
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 0.28em;
+  font-weight: 700;
+  line-height: 1;
+}
+
 .ai-positioning-summary em {
   color: var(--muted);
   font-size: 0.78rem;
@@ -14626,10 +14641,13 @@ tbody tr:hover {
     linear-gradient(135deg, #ffffff 0, #f5faf8 66%, #eef5f2 100%),
     var(--surface);
   box-shadow: 0 14px 32px rgb(17 24 39 / 7%);
+  text-align: center;
 }
 
 .model-pattern-link-band div {
   min-width: 0;
+  display: grid;
+  justify-items: center;
 }
 
 .model-pattern-link-band h2 {
@@ -14642,7 +14660,7 @@ tbody tr:hover {
 
 .model-pattern-link-band p {
   max-width: 800px;
-  margin: 8px 0 0;
+  margin: 8px auto 0;
   color: var(--muted);
   font-size: 0.94rem;
   line-height: 1.48;
@@ -16429,6 +16447,7 @@ tbody tr:hover {
     linear-gradient(135deg, rgb(255 255 255 / 94%), rgb(240 245 244 / 74%)),
     var(--surface);
   box-shadow: 0 18px 44px rgb(17 24 39 / 10%);
+  text-align: center;
 }
 
 .model-card-openai {
@@ -16461,8 +16480,15 @@ tbody tr:hover {
   grid-template-columns: auto minmax(0, 1fr);
   gap: 16px;
   align-items: center;
+  justify-items: center;
   color: inherit;
+  text-align: center;
   text-decoration: none;
+}
+
+.model-card-main > span:last-child {
+  display: grid;
+  justify-items: center;
 }
 
 .model-logo-shell {
@@ -16537,6 +16563,13 @@ tbody tr:hover {
   border-right: 1px solid var(--line);
 }
 
+.model-directory .model-card-stats div {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
 .model-card-stats div:last-child,
 .model-profile-stats div:last-child,
 .model-live-stat-grid div:last-child,
@@ -16593,13 +16626,15 @@ tbody tr:hover {
 .model-card-risk {
   min-width: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 1fr;
   gap: 8px 12px;
+  justify-items: center;
   border: 1px solid #cfdbd7;
   border-radius: 8px;
   padding: 12px;
   background: #ffffff;
   color: inherit;
+  text-align: center;
   text-decoration: none;
 }
 
@@ -16625,14 +16660,21 @@ tbody tr:hover {
   white-space: nowrap;
 }
 
+.model-card-risk .risk-meter {
+  width: 100%;
+  justify-self: stretch;
+}
+
 .model-card-behavior {
   display: grid;
   gap: 10px;
+  justify-items: center;
   border: 1px solid #d4dcd6;
   border-radius: 8px;
   padding: 14px;
   background: #f8faf9;
   color: inherit;
+  text-align: center;
   text-decoration: none;
 }
 
@@ -16655,6 +16697,7 @@ tbody tr:hover {
 }
 
 .model-card-behavior > div {
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
@@ -16663,11 +16706,13 @@ tbody tr:hover {
 .model-card-behavior > div span {
   min-width: 0;
   display: grid;
+  justify-items: center;
   gap: 3px;
   border: 1px solid #e0e8e4;
   border-radius: 7px;
   padding: 8px;
   background: #ffffff;
+  text-align: center;
 }
 
 .model-card-behavior em {
@@ -16686,7 +16731,14 @@ tbody tr:hover {
 
 .model-card-live {
   display: grid;
+  justify-items: center;
   gap: 12px;
+  text-align: center;
+}
+
+.model-card-live > div:not(.model-card-stack) {
+  display: grid;
+  justify-items: center;
 }
 
 .model-card-live strong {
@@ -16715,7 +16767,7 @@ tbody tr:hover {
 }
 
 .model-card-link {
-  justify-self: start;
+  justify-self: center;
   text-decoration: none;
 }
 
@@ -18994,8 +19046,12 @@ tbody tr:hover {
 
 .insights-metrics article {
   min-width: 0;
+  display: grid;
+  justify-items: center;
+  align-content: center;
   padding: 16px 18px;
   border-right: 1px solid var(--line);
+  text-align: center;
 }
 
 .insights-metrics article:last-child {
@@ -19017,6 +19073,8 @@ tbody tr:hover {
   color: var(--ink-strong);
   font-family: var(--font-display);
   font-size: 1.55rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
 }
 
 .insights-metrics p {
@@ -19191,10 +19249,14 @@ tbody tr:hover {
 
 .insight-calculation-list div {
   min-width: 0;
+  display: grid;
+  justify-items: center;
+  align-content: center;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 11px;
   background: #f8faf9;
+  text-align: center;
 }
 
 .insight-calculation-list dt {
@@ -19212,6 +19274,8 @@ tbody tr:hover {
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
 }
 
 .insight-card-footer {
@@ -19871,6 +19935,7 @@ tbody tr:hover {
 
 /* Manifesto page. */
 .manifesto-hero,
+.manifesto-narrative,
 .manifesto-section,
 .manifesto-closing {
   min-width: 0;
@@ -19883,8 +19948,7 @@ tbody tr:hover {
   gap: 28px;
   align-items: end;
   overflow: hidden;
-  border-bottom: 1px solid var(--line);
-  padding: 74px 0 58px;
+  padding: 74px 0 62px;
 }
 
 .manifesto-hero-grid {
@@ -19976,16 +20040,36 @@ tbody tr:hover {
   font-style: normal;
 }
 
-.manifesto-section {
+.manifesto-narrative {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(180px, 0.28fr) minmax(0, 1fr);
-  gap: 30px;
-  border-bottom: 1px solid var(--line);
-  padding: 64px 0;
+  margin: 0 0 58px;
+  padding-top: 8px;
+}
+
+.manifesto-narrative::before {
+  content: "";
+  position: absolute;
+  top: 44px;
+  bottom: 24px;
+  left: 3px;
+  z-index: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent 0, rgb(0 107 95 / 26%) 10%, rgb(0 107 95 / 16%) 88%, transparent 100%);
+  pointer-events: none;
+}
+
+.manifesto-section {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(150px, 0.2fr) minmax(0, 900px);
+  gap: 34px;
+  padding: 42px 0;
 }
 
 .manifesto-section-head {
-  grid-column: 1 / -1;
+  grid-column: 2;
   max-width: 860px;
 }
 
@@ -20003,6 +20087,25 @@ tbody tr:hover {
   max-width: 860px;
 }
 
+.manifesto-section-kicker {
+  display: inline-flex;
+  align-self: start;
+  justify-self: start;
+  align-items: center;
+  gap: 9px;
+  margin-top: 13px;
+}
+
+.manifesto-section-kicker::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 5px rgb(0 107 95 / 8%);
+}
+
 .manifesto-copy-stack p,
 .manifesto-section-head p,
 .manifesto-chart-head p,
@@ -20015,30 +20118,25 @@ tbody tr:hover {
 }
 
 .manifesto-problem {
-  border-radius: 8px;
-  padding-right: 24px;
-  padding-left: 24px;
-  background: rgb(255 255 255 / 58%);
+  padding-top: 30px;
 }
 
 .manifesto-chart-section {
-  display: block;
-  padding: 70px 0;
+  padding: 46px 0;
 }
 
 .manifesto-chart-head {
+  grid-column: 2;
   max-width: 780px;
   margin-bottom: 24px;
 }
 
 .manifesto-chart-card {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 24px;
-  background:
-    linear-gradient(180deg, #ffffff 0%, #f7faf9 100%),
-    var(--surface);
-  box-shadow: var(--shadow);
+  grid-column: 2;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 24px 0 20px;
+  background: transparent;
 }
 
 .manifesto-chart-scale {
@@ -20139,40 +20237,57 @@ tbody tr:hover {
 }
 
 .manifesto-no-list {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 24px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
 }
 
 .manifesto-no-list li,
 .manifesto-questions li,
 .manifesto-method-grid article {
   min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #ffffff;
+  background: transparent;
 }
 
 .manifesto-no-list li {
-  padding: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
   color: var(--ink-strong);
   font-weight: 800;
-  text-align: center;
+  text-align: left;
+}
+
+.manifesto-no-list li::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--accent);
 }
 
 .manifesto-method-grid {
-  grid-column: 1 / -1;
+  grid-column: 2;
   display: grid;
-  gap: 14px;
-}
-
-.manifesto-method-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
 .manifesto-method-grid article {
-  padding: 18px;
-  box-shadow: 0 10px 24px rgb(17 24 39 / 5%);
+  border-right: 1px solid var(--line);
+  padding: 20px 18px;
+}
+
+.manifesto-method-grid article:last-child {
+  border-right: 0;
 }
 
 .manifesto-method-grid article > span {
@@ -20198,41 +20313,55 @@ tbody tr:hover {
 
 .manifesto-questions {
   display: grid;
-  grid-template-columns: minmax(0, 0.55fr) minmax(0, 1fr);
+  grid-template-columns: minmax(150px, 0.2fr) minmax(0, 900px);
   align-items: start;
 }
 
 .manifesto-questions .manifesto-section-head {
-  grid-column: auto;
+  grid-column: 2;
+  max-width: 860px;
 }
 
 .manifesto-questions ul {
+  grid-column: 2;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 0 34px;
+  counter-reset: manifesto-question;
 }
 
 .manifesto-questions li {
-  padding: 15px 16px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  border-top: 1px solid var(--line);
+  padding: 15px 0;
   color: var(--ink-strong);
   font-size: 1.02rem;
   font-weight: 750;
 }
 
+.manifesto-questions li::before {
+  counter-increment: manifesto-question;
+  content: counter(manifesto-question, decimal-leading-zero);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1.7;
+}
+
 .manifesto-why-now {
-  border-radius: 8px;
-  padding-right: 24px;
-  padding-left: 24px;
-  background:
-    linear-gradient(135deg, rgb(255 255 255 / 72%), rgb(238 245 242 / 72%)),
-    var(--surface-muted);
+  padding-bottom: 48px;
 }
 
 .manifesto-support {
   display: block;
   border: 1px solid rgb(101 214 199 / 18%);
   border-radius: 8px;
-  padding: 34px;
+  margin-bottom: 72px;
+  padding: 38px;
   background:
     linear-gradient(145deg, rgb(11 20 19 / 98%), rgb(18 33 31 / 96%)),
     var(--dark);
@@ -20247,6 +20376,16 @@ tbody tr:hover {
 .manifesto-support h2 {
   max-width: 760px;
   color: #ffffff;
+}
+
+.manifesto-support-statement {
+  max-width: 900px;
+  display: block;
+  margin-top: 18px;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 2.22rem;
+  line-height: 1.1;
 }
 
 .manifesto-support p,
@@ -20264,20 +20403,6 @@ tbody tr:hover {
   border-color: rgb(255 255 255 / 18%);
   color: #ffffff;
   background: rgb(255 255 255 / 7%);
-}
-
-.manifesto-closing {
-  padding: 54px 0 72px;
-  text-align: center;
-}
-
-.manifesto-closing strong {
-  max-width: 850px;
-  display: inline-block;
-  color: var(--ink-strong);
-  font-family: var(--font-display);
-  font-size: 2.35rem;
-  line-height: 1.12;
 }
 
 @media (max-width: 1080px) {
@@ -20343,12 +20468,31 @@ tbody tr:hover {
     grid-template-columns: 1fr;
   }
 
+  .manifesto-narrative::before {
+    display: none;
+  }
+
+  .manifesto-section-head,
+  .manifesto-chart-head,
+  .manifesto-chart-card,
+  .manifesto-method-grid {
+    grid-column: 1;
+  }
+
   .manifesto-questions .manifesto-section-head {
     grid-column: 1;
   }
 
   .manifesto-method-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .manifesto-method-grid article:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .manifesto-method-grid article:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
   }
 
   .manifesto-chart-row {
@@ -20664,15 +20808,20 @@ tbody tr:hover {
     justify-content: center;
   }
 
+  .manifesto-narrative {
+    margin-bottom: 42px;
+    padding-top: 0;
+  }
+
   .manifesto-section {
     gap: 16px;
-    padding: 44px 0;
+    padding: 38px 0;
   }
 
   .manifesto-problem,
   .manifesto-why-now {
-    padding-right: 14px;
-    padding-left: 14px;
+    padding-right: 0;
+    padding-left: 0;
   }
 
   .manifesto-section h2,
@@ -20690,7 +20839,7 @@ tbody tr:hover {
   }
 
   .manifesto-chart-card {
-    padding: 16px;
+    padding: 18px 0;
   }
 
   .manifesto-chart-scale {
@@ -20720,20 +20869,39 @@ tbody tr:hover {
     grid-template-columns: 1fr;
   }
 
+  .manifesto-no-list {
+    display: grid;
+    gap: 7px;
+  }
+
   .manifesto-no-list li {
     text-align: left;
   }
 
+  .manifesto-method-grid article,
+  .manifesto-method-grid article:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .manifesto-method-grid article {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .manifesto-method-grid article:last-child {
+    border-bottom: 0;
+  }
+
+  .manifesto-questions ul {
+    gap: 0;
+  }
+
   .manifesto-support {
+    margin-bottom: 52px;
     padding: 22px;
   }
 
-  .manifesto-closing {
-    padding: 42px 0 58px;
-  }
-
-  .manifesto-closing strong {
-    font-size: 1.72rem;
+  .manifesto-support-statement {
+    font-size: 1.54rem;
   }
 
   .api-hero {
@@ -21355,6 +21523,10 @@ tbody tr:hover {
   font-variant-numeric: tabular-nums;
 }
 
+.live-risk-pulse-score .risk-score-with-unit small {
+  color: var(--dark-muted);
+}
+
 .live-risk-pulse-score em {
   color: #f5c86a;
   font-size: 0.8rem;
@@ -21508,6 +21680,14 @@ tbody tr:hover {
   color: var(--muted);
   font-size: 0.7rem;
   line-height: 1.2;
+}
+
+.live-risk-pulse-stats .risk-score-with-unit small {
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 0.28em;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .live-risk-pulse-detail {

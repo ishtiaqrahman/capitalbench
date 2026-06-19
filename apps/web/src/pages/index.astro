@@ -229,7 +229,7 @@ const modelPatternReport = modelBehavior.pattern_report ?? { rows: [], comparati
 const modelPatternRows = Array.isArray(modelPatternReport.rows) ? modelPatternReport.rows : [];
 const modelPatternRowById = new Map(modelPatternRows.map((row: any) => [row.model_id, row]));
 const modelPatternLeaderSpecs = [
-  { key: "highest_risk_model_id", label: "Most risk-seeking", metric: "Risk-taking score", value: (row: any) => pulseScore(row.key_numbers?.risk_taking_score) },
+  { key: "highest_risk_model_id", label: "Most risk-seeking", metric: "Risk-taking score", value: (row: any) => pulseScoreWithUnitText(row.key_numbers?.risk_taking_score) },
   { key: "most_concentrated_model_id", label: "Most concentrated", metric: "Avg top holding", value: (row: any) => pctValue(row.key_numbers?.average_top_allocation_pct) },
   { key: "most_defensive_model_id", label: "Most defensive", metric: "Defensive exposure", value: (row: any) => pctValue(row.key_numbers?.defensive_pct) },
   { key: "lowest_turnover_model_id", label: "Lowest turnover", metric: "Avg turnover", value: (row: any) => pctValue(row.key_numbers?.average_turnover_pct) }
@@ -481,6 +481,11 @@ function riskScoreShort(value: number | null | undefined): string {
 function pulseScore(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
   return value.toFixed(1);
+}
+
+function pulseScoreWithUnitText(value: number | null | undefined): string {
+  const score = pulseScore(value);
+  return score === "n/a" ? score : `${score}/100`;
 }
 
 function signedPulseChange(value: number | null | undefined): string {
@@ -741,7 +746,7 @@ const trackLaneCards = trackStates.map((track) => {
   <section class="ai-positioning-summary" aria-label="Current AI positioning highlights">
     <article>
       <span>AI risk appetite</span>
-      <strong>{pulseScore(currentRiskPulse.score)}</strong>
+      <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
       <em>{currentRiskPulse.label} / {currentRiskPulse.regime}</em>
     </article>
     <article>
@@ -825,7 +830,7 @@ const trackLaneCards = trackStates.map((track) => {
       <article class="live-risk-pulse-primary">
         <div class="live-risk-pulse-score">
           <span>Combined pulse</span>
-          <strong>{pulseScore(currentRiskPulse.score)}</strong>
+          <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
           <em>{currentRiskPulse.label}</em>
         </div>
         <div class="live-risk-pulse-regime">
@@ -853,12 +858,12 @@ const trackLaneCards = trackStates.map((track) => {
       <div class="live-risk-pulse-stats">
         <article>
           <span>Weekly tactical</span>
-          <strong>{pulseScore(currentRiskPulse.weekly?.score)}</strong>
+          <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.weekly?.score)}<small>/100</small></strong>
           <small>{currentRiskPulse.weekly?.label}</small>
         </article>
         <article>
           <span>Monthly strategic</span>
-          <strong>{pulseScore(currentRiskPulse.monthly?.score)}</strong>
+          <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.monthly?.score)}<small>/100</small></strong>
           <small>{currentRiskPulse.monthly?.label}</small>
         </article>
         <article>
@@ -902,7 +907,7 @@ const trackLaneCards = trackStates.map((track) => {
       </div>
       <aside>
         <span>Outstanding live book</span>
-        <strong>{pulseScore(outstandingBookRisk.score)}</strong>
+        <strong class="risk-score-with-unit">{pulseScore(outstandingBookRisk.score)}<small>/100</small></strong>
         <em>{outstandingBookRisk.label}</em>
         <p>
           All {outstandingBookRisk.portfolio_count} unresolved portfolios across {outstandingBookRisk.round_count}

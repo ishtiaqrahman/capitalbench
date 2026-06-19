@@ -75,128 +75,131 @@ const questions = [
     </aside>
   </section>
 
-  <section class="manifesto-section manifesto-thesis" aria-labelledby="manifesto-thesis-title">
-    <div class="manifesto-section-kicker">Opening thesis</div>
-    <div class="manifesto-copy-stack">
-      <h2 id="manifesto-thesis-title">AI is beginning to enter one of the most important decision loops in the world: where capital goes.</h2>
-      <p>LLMs are already reading filings, summarizing earnings, ranking opportunities, generating investment theses, and helping people decide what to buy, avoid, or hold.</p>
-      <p>Today they are research assistants. Soon they will become portfolio copilots. Eventually, many will become agentic allocators inside funds, apps, APIs, and advisory products.</p>
-      <p>But capital allocation is not a demo.</p>
-      <p>A model that writes well is not necessarily a model that invests well. A model that explains risk is not necessarily managing risk. A model that sounds confident may simply be wrong with better grammar.</p>
-    </div>
-  </section>
-
-  <section class="manifesto-section manifesto-problem" aria-labelledby="manifesto-problem-title">
-    <div class="manifesto-section-kicker">The gap</div>
-    <div class="manifesto-copy-stack">
-      <h2 id="manifesto-problem-title">The market has a measurement problem</h2>
-      <p>Most AI investing claims are still built on screenshots, cherry-picked calls, private prompts, and backtests that may never survive contact with live markets.</p>
-      <p>That is not evidence.</p>
-      <p>Capital allocation needs a public record. It needs repeatable tests, frozen decisions, real prices, and scoring that cannot be rewritten after the outcome is known.</p>
-      <p>The financial world is moving toward AI-assisted allocation before it has built the measurement layer required to trust it.</p>
-    </div>
-  </section>
-
-  <section class="manifesto-section manifesto-chart-section" aria-labelledby="manifesto-chart-title">
-    <div class="manifesto-chart-head">
-      <span class="manifesto-section-kicker">One chart business</span>
-      <h2 id="manifesto-chart-title">AI adoption is rising. Proof is still missing.</h2>
-      <p>Asset Managers Have AI Adoption. They Don't Yet Have Proof.</p>
-    </div>
-    <div class="manifesto-chart-card">
-      <div class="manifesto-chart-scale" aria-hidden="true">
-        <span>0</span>
-        <span>25</span>
-        <span>50</span>
-        <span>75</span>
-        <span>100%</span>
+  <article class="manifesto-narrative" aria-label="CapitalBench manifesto argument">
+    <section class="manifesto-section manifesto-thesis" aria-labelledby="manifesto-thesis-title">
+      <div class="manifesto-section-kicker">Opening thesis</div>
+      <div class="manifesto-copy-stack">
+        <h2 id="manifesto-thesis-title">AI is beginning to enter one of the most important decision loops in the world: where capital goes.</h2>
+        <p>LLMs are already reading filings, summarizing earnings, ranking opportunities, generating investment theses, and helping people decide what to buy, avoid, or hold.</p>
+        <p>Today they are research assistants. Soon they will become portfolio copilots. Eventually, many will become agentic allocators inside funds, apps, APIs, and advisory products.</p>
+        <p>But capital allocation is not a demo.</p>
+        <p>A model that writes well is not necessarily a model that invests well. A model that explains risk is not necessarily managing risk. A model that sounds confident may simply be wrong with better grammar.</p>
       </div>
-      <div class="manifesto-chart-bars">
-        {chartRows.map((row) => (
-          <div class:list={["manifesto-chart-row", row.group === "Proof" && "is-proof", row.group === "Decision use" && "is-decision"]}>
-            <div class="manifesto-chart-label">
-              <span>{row.group}</span>
-              <strong>{row.label}</strong>
+    </section>
+
+    <section class="manifesto-section manifesto-problem" aria-labelledby="manifesto-problem-title">
+      <div class="manifesto-section-kicker">The gap</div>
+      <div class="manifesto-copy-stack">
+        <h2 id="manifesto-problem-title">The market has a measurement problem</h2>
+        <p>Most AI investing claims are still built on screenshots, cherry-picked calls, private prompts, and backtests that may never survive contact with live markets.</p>
+        <p>That is not evidence.</p>
+        <p>Capital allocation needs a public record. It needs repeatable tests, frozen decisions, real prices, and scoring that cannot be rewritten after the outcome is known.</p>
+        <p>The financial world is moving toward AI-assisted allocation before it has built the measurement layer required to trust it.</p>
+      </div>
+    </section>
+
+    <section class="manifesto-section manifesto-chart-section" aria-labelledby="manifesto-chart-title">
+      <div class="manifesto-chart-head">
+        <span class="manifesto-section-kicker">Adoption vs proof</span>
+        <h2 id="manifesto-chart-title">AI adoption is rising. Proof is still missing.</h2>
+        <p>Asset managers have AI adoption. They do not yet have proof.</p>
+      </div>
+      <div class="manifesto-chart-card">
+        <div class="manifesto-chart-scale" aria-hidden="true">
+          <span>0</span>
+          <span>25</span>
+          <span>50</span>
+          <span>75</span>
+          <span>100%</span>
+        </div>
+        <div class="manifesto-chart-bars">
+          {chartRows.map((row) => (
+            <div class:list={["manifesto-chart-row", row.group === "Proof" && "is-proof", row.group === "Decision use" && "is-decision"]}>
+              <div class="manifesto-chart-label">
+                <span>{row.group}</span>
+                <strong>{row.label}</strong>
+              </div>
+              <div class="manifesto-chart-track" aria-hidden="true">
+                <span style={`--bar-value: ${row.value}%`}></span>
+              </div>
+              <b>{row.value}%</b>
             </div>
-            <div class="manifesto-chart-track" aria-hidden="true">
-              <span style={`--bar-value: ${row.value}%`}></span>
-            </div>
-            <b>{row.value}%</b>
-          </div>
+          ))}
+        </div>
+        <p class="manifesto-chart-caption">
+          AI is already entering investment workflows, but proof of return and risk impact remains scarce. That gap is the opening for CapitalBench.
+        </p>
+        <p class="manifesto-source">
+          Source:
+          <a href="https://www.mercer.com/insights/investments/market-outlook-and-trends/asset-managers-use-of-ai/" target="_blank" rel="noreferrer">
+            Mercer 2026 AI in Asset Management Survey
+          </a>.
+        </p>
+      </div>
+    </section>
+
+    <section class="manifesto-section manifesto-solution" aria-labelledby="manifesto-solution-title">
+      <div class="manifesto-section-kicker">The proof layer</div>
+      <div class="manifesto-copy-stack">
+        <h2 id="manifesto-solution-title">CapitalBench exists to build the proof layer</h2>
+        <p>CapitalBench benchmarks leading AI models on real capital allocation decisions.</p>
+        <p>Every model receives the same market brief, the same asset universe, and the same decision window. Every portfolio is frozen before results are known. Outcomes are scored against real market prices.</p>
+        <ul class="manifesto-no-list" aria-label="CapitalBench guardrails">
+          <li>No private retries.</li>
+          <li>No retroactive edits.</li>
+          <li>No moving the goalposts.</li>
+          <li>No vibes.</li>
+        </ul>
+        <p>The goal is not to prove that AI can beat markets every week.</p>
+        <p>The goal is to make AI investment behavior observable.</p>
+      </div>
+    </section>
+
+    <section class="manifesto-section manifesto-method-section" aria-labelledby="manifesto-method-title">
+      <div class="manifesto-section-head">
+        <span class="manifesto-section-kicker">Infrastructure</span>
+        <h2 id="manifesto-method-title">How the benchmark works</h2>
+      </div>
+      <div class="manifesto-method-grid">
+        {methodologyCards.map((card) => (
+          <article>
+            <span aria-hidden="true"></span>
+            <h3>{card.title}</h3>
+            <p>{card.text}</p>
+          </article>
         ))}
       </div>
-      <p class="manifesto-chart-caption">
-        AI is already entering investment workflows, but proof of return and risk impact remains scarce. That gap is the opening for CapitalBench.
-      </p>
-      <p class="manifesto-source">
-        Source:
-        <a href="https://www.mercer.com/insights/investments/market-outlook-and-trends/asset-managers-use-of-ai/" target="_blank" rel="noreferrer">
-          Mercer 2026 AI in Asset Management Survey
-        </a>.
-      </p>
-    </div>
-  </section>
+    </section>
 
-  <section class="manifesto-section manifesto-solution" aria-labelledby="manifesto-solution-title">
-    <div class="manifesto-section-kicker">The proof layer</div>
-    <div class="manifesto-copy-stack">
-      <h2 id="manifesto-solution-title">CapitalBench exists to build the proof layer</h2>
-      <p>CapitalBench benchmarks leading AI models on real capital allocation decisions.</p>
-      <p>Every model receives the same market brief, the same asset universe, and the same decision window. Every portfolio is frozen before results are known. Outcomes are scored against real market prices.</p>
-      <ul class="manifesto-no-list" aria-label="CapitalBench guardrails">
-        <li>No private retries.</li>
-        <li>No retroactive edits.</li>
-        <li>No moving the goalposts.</li>
-        <li>No vibes.</li>
+    <section class="manifesto-section manifesto-questions" aria-labelledby="manifesto-questions-title">
+      <div class="manifesto-section-head">
+        <span class="manifesto-section-kicker">Useful questions</span>
+        <h2 id="manifesto-questions-title">The questions that matter</h2>
+      </div>
+      <ul>
+        {questions.map((question) => <li>{question}</li>)}
       </ul>
-      <p>The goal is not to prove that AI can beat markets every week.</p>
-      <p>The goal is to make AI investment behavior observable.</p>
-    </div>
-  </section>
+    </section>
 
-  <section class="manifesto-section" aria-labelledby="manifesto-method-title">
-    <div class="manifesto-section-head">
-      <span class="manifesto-section-kicker">Infrastructure</span>
-      <h2 id="manifesto-method-title">How the benchmark works</h2>
-    </div>
-    <div class="manifesto-method-grid">
-      {methodologyCards.map((card) => (
-        <article>
-          <span aria-hidden="true"></span>
-          <h3>{card.title}</h3>
-          <p>{card.text}</p>
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <section class="manifesto-section manifesto-questions" aria-labelledby="manifesto-questions-title">
-    <div class="manifesto-section-head">
-      <span class="manifesto-section-kicker">Useful questions</span>
-      <h2 id="manifesto-questions-title">The questions that matter</h2>
-    </div>
-    <ul>
-      {questions.map((question) => <li>{question}</li>)}
-    </ul>
-  </section>
-
-  <section class="manifesto-section manifesto-why-now" aria-labelledby="manifesto-now-title">
-    <div class="manifesto-section-kicker">Why now</div>
-    <div class="manifesto-copy-stack">
-      <h2 id="manifesto-now-title">Why this matters now</h2>
-      <p>The first wave of AI benchmarks measured knowledge, reasoning, coding, math, and instruction following.</p>
-      <p>The next wave will need to measure judgment under uncertainty.</p>
-      <p>Capital allocation is one of the hardest forms of judgment. It requires tradeoffs, risk control, timing, humility, and the ability to make decisions with incomplete information.</p>
-      <p>As AI moves from research assistant to portfolio copilot to agentic allocator, investors will need an independent record of how these systems actually behave.</p>
-      <p>CapitalBench is starting with public-market portfolios because they are measurable, time-stamped, and brutally objective.</p>
-      <p>Prices move. Outcomes arrive. Narratives get tested.</p>
-    </div>
-  </section>
+    <section class="manifesto-section manifesto-why-now" aria-labelledby="manifesto-now-title">
+      <div class="manifesto-section-kicker">Why now</div>
+      <div class="manifesto-copy-stack">
+        <h2 id="manifesto-now-title">Why this matters now</h2>
+        <p>The first wave of AI benchmarks measured knowledge, reasoning, coding, math, and instruction following.</p>
+        <p>The next wave will need to measure judgment under uncertainty.</p>
+        <p>Capital allocation is one of the hardest forms of judgment. It requires tradeoffs, risk control, timing, humility, and the ability to make decisions with incomplete information.</p>
+        <p>As AI moves from research assistant to portfolio copilot to agentic allocator, investors will need an independent record of how these systems actually behave.</p>
+        <p>CapitalBench is starting with public-market portfolios because they are measurable, time-stamped, and brutally objective.</p>
+        <p>Prices move. Outcomes arrive. Narratives get tested.</p>
+      </div>
+    </section>
+  </article>
 
   <section class="manifesto-section manifesto-support" aria-labelledby="manifesto-support-title">
     <div>
       <span class="manifesto-section-kicker">Support</span>
       <h2 id="manifesto-support-title">Help build the public record</h2>
+      <strong class="manifesto-support-statement">CapitalBench is the public scoreboard for the age of AI capital allocation.</strong>
       <p>If AI is going to influence capital, the world needs a scoreboard before the money moves.</p>
       <p>CapitalBench is building that scoreboard in public.</p>
       <p>We are looking for supporters, collaborators, investors, model builders, researchers, and financial platforms who believe AI capital allocation should be measured with real evidence.</p>
@@ -207,9 +210,5 @@ const questions = [
       </div>
       <small>For research partnerships, data access, sponsorships, or API access, get in touch.</small>
     </div>
-  </section>
-
-  <section class="manifesto-closing" aria-label="Closing statement">
-    <strong>CapitalBench is the public scoreboard for the age of AI capital allocation.</strong>
   </section>
 </BaseLayout>
