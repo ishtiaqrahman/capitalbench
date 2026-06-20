@@ -7,6 +7,10 @@ import {
   handleApiAccessRequest
 } from "../src/lib/apiAccess.js";
 import {
+  createMemoryPrivateEvalRepository,
+  handlePrivateEvalRequest
+} from "../src/lib/privateEvals.js";
+import {
   WEBSITE_COLLECTION_GROUP,
   createMemoryEmailRepository,
   createUnsubscribeToken,
@@ -86,6 +90,30 @@ async function requestApiAccess(
     env,
     repo,
     now: new Date("2026-06-01T12:00:00Z")
+  });
+}
+
+async function requestPrivateEval(repo, env, body = {}) {
+  return await handlePrivateEvalRequest({
+    request: jsonRequest("https://www.capitalbench.org/api/private-evals", {
+      full_name: "Jane Analyst",
+      work_email: "jane@example.com",
+      company: "Example Capital",
+      company_website: "https://example.com",
+      role: "Head of Product",
+      evaluating: "AI investment agent",
+      business_decision: "Validate a release",
+      access_method: "Customer-hosted API endpoint",
+      start_period: "Next 2 weeks",
+      project_summary:
+        "We want to evaluate a release candidate investment assistant before enabling it for pilot customers.",
+      consent: "yes",
+      pageUrl: "https://www.capitalbench.org/private-evals/",
+      ...body
+    }),
+    env,
+    repo,
+    now: new Date("2026-06-20T12:00:00Z")
   });
 }
 
@@ -227,6 +255,84 @@ test("API access honeypot submission returns success without storing", async () 
     name: "Bot",
     email: "bot@example.com",
     company: "Bot Corp"
+  });
+
+  assert.equal(result.status, 200);
+  assert.equal(result.body.ok, true);
+  assert.equal(repo.requests.size, 0);
+  assert.equal(env.sent.length, 0);
+});
+
+test("private eval request stores full intake and sends notification", async () => {
+  const repo = createMemoryPrivateEvalRepository();
+  const env = makeEnv();
+
+  const result = await requestPrivateEval(repo, env, {
+    model_or_system_name: "Pilot Allocator",
+    current_model_provider: "Internal",
+    tools_or_browsing: "No",
+    nda_required: "Yes"
+  });
+
+  assert.equal(result.status, 200);
+  assert.equal(result.body.ok, true);
+  assert.equal(repo.requests.size, 1);
+  const evalRequest = Array.from(repo.requests.values())[0];
+  assert.equal(evalRequest.company, "Example Capital");
+  assert.equal(evalRequest.email_normalized, "jane@example.com");
+  assert.equal(evalRequest.evaluating, "AI investment agent");
+  assert.equal(evalRequest.business_decision, "Validate a release");
+  assert.equal(evalRequest.optional.model_or_system_name, "Pilot Allocator");
+  assert.equal(evalRequest.notification_status, "sent");
+  assert.equal(evalRequest.notification_provider, "cloudflare");
+  assert.equal(env.sent.length, 1);
+  assert.equal(env.sent[0].to, "evals@capitalbench.org");
+  assert.equal(env.sent[0].headers["Reply-To"], "jane@example.com");
+  assert.match(env.sent[0].subject, /Example Capital/);
+  assert.match(env.sent[0].text, /Project summary/);
+});
+
+test("private eval request uses configured notification recipient", async () => {
+  const repo = createMemoryPrivateEvalRepository();
+  const env = makeEnv({ PRIVATE_EVAL_NOTIFY_TO: "ops@example.com" });
+
+  const result = await requestPrivateEval(repo, env);
+
+  assert.equal(result.status, 200);
+  assert.equal(env.sent.length, 1);
+  assert.equal(env.sent[0].to, "ops@example.com");
+});
+
+test("private eval request rejects invalid required fields", async () => {
+  const repo = createMemoryPrivateEvalRepository();
+  const env = makeEnv();
+
+  const invalidWebsite = await requestPrivateEval(repo, env, {
+    company_website: "example"
+  });
+  const invalidOption = await requestPrivateEval(repo, env, {
+    evaluating: "Unlisted system"
+  });
+  const missingConsent = await requestPrivateEval(repo, env, {
+    consent: ""
+  });
+
+  assert.equal(invalidWebsite.status, 400);
+  assert.equal(invalidWebsite.body.error, "invalid_company_website");
+  assert.equal(invalidOption.status, 400);
+  assert.equal(invalidOption.body.error, "invalid_evaluating");
+  assert.equal(missingConsent.status, 400);
+  assert.equal(missingConsent.body.error, "missing_consent");
+  assert.equal(repo.requests.size, 0);
+  assert.equal(env.sent.length, 0);
+});
+
+test("private eval honeypot submission returns success without storing", async () => {
+  const repo = createMemoryPrivateEvalRepository();
+  const env = makeEnv();
+
+  const result = await requestPrivateEval(repo, env, {
+    fax: "bot-filled-field"
   });
 
   assert.equal(result.status, 200);

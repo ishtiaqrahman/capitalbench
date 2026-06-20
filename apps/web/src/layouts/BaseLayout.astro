@@ -23,6 +23,8 @@ import {
 interface Props {
   title?: string;
   description?: string;
+  ogTitle?: string;
+  ogDescription?: string;
   image?: string;
   imageAlt?: string;
   noindex?: boolean;
@@ -37,6 +39,8 @@ const routeMeta = getRouteMeta(currentPath);
 const {
   title = routeMeta?.title ?? siteConfig.name,
   description = routeMeta?.description ?? siteConfig.description,
+  ogTitle,
+  ogDescription,
   image = siteConfig.ogImage,
   imageAlt = siteConfig.ogImageAlt,
   noindex = routeMeta?.noindex ?? false,
@@ -52,6 +56,8 @@ const inferredFreshnessTrack = currentPath.includes("-weekly")
     : undefined;
 const resolvedFreshnessTrack = freshnessTrack ?? inferredFreshnessTrack;
 const resolvedTitle = pageTitle(title);
+const resolvedOgTitle = ogTitle ?? resolvedTitle;
+const resolvedOgDescription = ogDescription ?? description;
 const resolvedCanonicalUrl = canonicalUrl(currentPath);
 const resolvedImageUrl = image.startsWith("http") ? image : assetUrl(image);
 const robotsContent = noindex ? "noindex,follow" : "index,follow,max-image-preview:large";
@@ -70,6 +76,13 @@ const navItems = [
   { href: "/manifesto", label: "Manifesto", shortLabel: "Why", active: currentPath.startsWith("/manifesto") },
   { href: "/models", label: "Models", active: currentPath.startsWith("/models") },
   { href: "/api", label: "API", active: currentPath.startsWith("/api") },
+  {
+    href: "/private-evals",
+    label: "Private Evals",
+    active: currentPath.startsWith("/private-evals"),
+    privateEvalCta: true,
+    analyticsEvent: "private_eval_nav_click"
+  },
   { href: "/#ai-positioning", label: "Positioning", active: false },
   { href: "/rounds", label: "Rounds", active: currentPath.startsWith("/rounds") },
   {
@@ -129,16 +142,16 @@ const emailWidgetContext = hideEmailAlertWidget
     <link rel="canonical" href={resolvedCanonicalUrl} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={siteConfig.name} />
-    <meta property="og:title" content={resolvedTitle} />
-    <meta property="og:description" content={description} />
+    <meta property="og:title" content={resolvedOgTitle} />
+    <meta property="og:description" content={resolvedOgDescription} />
     <meta property="og:url" content={resolvedCanonicalUrl} />
     <meta property="og:image" content={resolvedImageUrl} />
     <meta property="og:image:width" content={String(siteConfig.ogImageWidth)} />
     <meta property="og:image:height" content={String(siteConfig.ogImageHeight)} />
     <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={resolvedTitle} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:title" content={resolvedOgTitle} />
+    <meta name="twitter:description" content={resolvedOgDescription} />
     <meta name="twitter:image" content={resolvedImageUrl} />
     <meta name="twitter:image:alt" content={imageAlt} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -162,6 +175,7 @@ const emailWidgetContext = hideEmailAlertWidget
                 <a
                   class:list={[
                     item.cta && "nav-cta",
+                    item.privateEvalCta && "nav-private-evals",
                     item.repository && "nav-repository",
                     item.shortLabel && "has-short-label"
                   ]}
@@ -183,6 +197,7 @@ const emailWidgetContext = hideEmailAlertWidget
             <a class="mobile-quick-link" href="/leaderboards/latest">Results</a>
             <a class="mobile-quick-link" href="/insights">Insights</a>
             <a class="mobile-quick-link" href="/models">Models</a>
+            <a class="mobile-private-evals" href="/private-evals">Private</a>
             <a class="mobile-contribute" href="/contribute">Contribute</a>
             <details class="mobile-menu">
               <summary aria-label="Open site menu">

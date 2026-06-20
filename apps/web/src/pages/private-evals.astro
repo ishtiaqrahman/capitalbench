@@ -1,0 +1,1378 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import apiReadModel from "../generated/apiReadModel.js";
+import { siteConfig, type JsonLdRecord } from "../lib/seo";
+
+const pageDescription =
+  "Privately benchmark your AI model, agent, or investment workflow against frontier models using frozen inputs, real market outcomes, consistency testing, and auditable results.";
+
+const rounds = apiReadModel.rounds ?? [];
+const models = (apiReadModel.models ?? []).filter((model: any) => model.active !== false);
+const assets = (apiReadModel.assets ?? []).filter((asset: any) => asset.in_current_universe !== false);
+const results = apiReadModel.results ?? [];
+const latestActiveWeeklyRound =
+  rounds.find((round: any) => round.track === "weekly" && round.status === "active") ??
+  rounds.find((round: any) => round.track === "weekly");
+const sampleRound =
+  rounds.find((round: any) => round.round_id === "CB-2026-05-28-1W") ??
+  rounds.find((round: any) => round.track === "weekly" && round.status === "resolved") ??
+  rounds[0];
+const sampleRoundHref = sampleRound?.proof?.round_page_url ?? `/rounds/${sampleRound?.round_id ?? "CB-2026-05-28-1W"}/`;
+const currentComparators = models
+  .filter((model: any) => model.latest_round_id === latestActiveWeeklyRound?.round_id)
+  .slice(0, 4);
+const comparatorLabels = currentComparators.length
+  ? currentComparators.map((model: any) => model.label)
+  : models.slice(0, 4).map((model: any) => model.label);
+
+const publicStats = [
+  { value: String(rounds.length), label: "public rounds in the read model" },
+  { value: String(models.length), label: "supported public model profiles" },
+  { value: String(assets.length), label: "current ETF and cash universe entries" },
+  { value: String(results.length), label: "scored public result rows" }
+];
+
+const scorecardRows = [
+  "Portfolio return",
+  "CapitalBench Score",
+  "Consistency",
+  "Valid output rate",
+  "Risk-taking score",
+  "Median latency"
+];
+
+const proofCells = [
+  ["Same frozen inputs", "Every system receives the same approved evaluation packet."],
+  ["Current comparators", "Compare against up to four supported frontier models."],
+  ["Real outcomes", "Official performance resolves using actual market prices."],
+  ["Consistency testing", "Repeated runs reveal unstable or highly variable decisions."],
+  ["Auditable files", "Inputs, outputs, timestamps, hashes, prices, and calculations are preserved."]
+];
+
+const valueCards = [
+  [
+    "Choose the right model",
+    "Compare your current system with frontier alternatives under identical conditions."
+  ],
+  [
+    "Validate a release",
+    "Test the exact model, prompt, workflow, and configuration you are considering shipping."
+  ],
+  [
+    "Diagnose behavior",
+    "Identify concentration, instability, invalid outputs, excessive risk-taking, weak diversification, or poor cost-performance trade-offs."
+  ],
+  [
+    "Support internal claims",
+    "Give product leaders, investors, research teams, and customers evidence that is more defensible than screenshots or selected examples."
+  ]
+];
+
+const decisionQuestions = [
+  "Which model should power our investment product?",
+  "Did our fine-tune or new prompt actually improve the system?",
+  "Is the model's allocation stable when the same decision is repeated?",
+  "Does a more expensive model produce meaningfully better results?",
+  "Is the system too concentrated, aggressive, or consensus-driven?",
+  "What should we fix before launching or retesting?"
+];
+
+const scopeRows = [
+  ["Client system", "One model, agent, workflow, or configuration"],
+  ["Comparator roster", "Up to four currently supported frontier models"],
+  ["Official evaluation", "One live weekly CapitalBench allocation round"],
+  ["Consistency evaluation", "Five separate non-official repeated runs per system"],
+  ["Asset universe", "Current CapitalBench public ETF and cash universe"],
+  ["Portfolio format", "One to five holdings, fixed allocation increments, 100% total"],
+  ["Information access", "Same frozen brief, prompt, universe, and market-data packet"],
+  ["Base evaluation mode", "Browsing, tools, and live retrieval disabled"],
+  ["Performance window", "Approximately one week"],
+  ["Final output", "Report, scorecard, data export, audit bundle, and readout"],
+  ["Confidentiality", "Private unless the client approves publication in writing"]
+];
+
+const evaluationPlanRows = [
+  ["System under test", "Model name, version, endpoint, prompt configuration, and relevant settings"],
+  ["Primary business question", "The decision the company wants the evaluation to support"],
+  ["Comparator roster", "Exact comparator models and versions"],
+  ["Evaluation mode", "Controlled or production workflow"],
+  ["Input packet", "Prompt, briefing, market data, asset universe, and schema"],
+  ["Portfolio constraints", "Holdings limit, allocation increments, cash rules, and total weight"],
+  ["Official-run policy", "Number of official calls and allowed retry conditions"],
+  ["Consistency protocol", "Number of repeats and settings"],
+  ["Market window", "Entry rule, exit rule, benchmark, and date fallback"],
+  ["Metrics", "Performance, consistency, validity, behavior, latency, and cost fields"],
+  ["Success thresholds", "Any agreed internal release or acceptance thresholds"],
+  ["Confidentiality", "Private, anonymized, or approved for public publication"],
+  ["Retention", "Credential, raw-output, and report retention periods"]
+];
+
+const processSteps = [
+  [
+    "Fit review",
+    "Before purchase",
+    "You submit your system type, business question, preferred access method, and desired timing. CapitalBench confirms whether the system can be evaluated fairly.",
+    "approximately 15-20 minutes",
+    "fit confirmation and proposed scope"
+  ],
+  [
+    "Evaluation design",
+    "Day 1",
+    "A kickoff call defines the tested configuration, comparators, success criteria, security requirements, and evaluation mode.",
+    "approximately 45 minutes",
+    "draft Evaluation Plan"
+  ],
+  [
+    "Technical connection",
+    "Day 1-2",
+    "The system is connected through a customer-hosted endpoint, temporary API credential, or customer-executed runner. A non-scored validation call confirms schema compatibility and access.",
+    "approximately 30-60 minutes with a technical contact",
+    "verified connection without consuming the official run"
+  ],
+  [
+    "Freeze and official execution",
+    "Day 2-3",
+    "The prompt, briefing, asset universe, constraints, model roster, and scoring rules are finalized and hashed. Every system receives the approved packet. One official response is collected from each system. Invalid and failed responses remain part of the audit record.",
+    "no live meeting required after approval",
+    "frozen allocations and audit hashes"
+  ],
+  [
+    "Consistency runs",
+    "Day 2-3",
+    "The same task is repeated under the pre-approved consistency protocol. These runs measure whether each system maintains a similar allocation or changes materially from one attempt to the next.",
+    "no live meeting required",
+    "consistency and allocation-dispersion dataset"
+  ],
+  [
+    "Live outcome window",
+    "Approximately seven calendar days",
+    "The official portfolios remain frozen while market prices resolve. Interim mark-to-market data may be shown privately, but no final ranking is issued before the scheduled exit rule.",
+    "none unless a data exception needs approval",
+    "final entry and exit price records"
+  ],
+  [
+    "Scoring and analysis",
+    "One to two business days after the exit price",
+    "CapitalBench calculates returns, benchmark differences, maximum-possible context, consistency, concentration, risk, validity, cost, latency, and performance attribution.",
+    "review questions only",
+    "final scorecard and report"
+  ],
+  [
+    "Executive readout",
+    "Final delivery",
+    "CapitalBench walks the team through the findings, limitations, failure modes, and recommended next actions.",
+    "one 60-minute readout",
+    "readout and seven days of written follow-up questions"
+  ]
+];
+
+const metricRows = [
+  ["Portfolio return", "How did the frozen allocation perform during the defined outcome window?"],
+  ["S&P 500 difference", "Did it outperform or underperform the benchmark, and by how much?"],
+  ["CapitalBench Score", "How did the return compare with the highest-returning eligible option in the same window?"],
+  ["Regret versus maximum", "How much return separated the portfolio from the hindsight-best eligible asset?"],
+  ["Valid-output rate", "Did the system reliably return a complete, schema-valid allocation?"],
+  ["Allocation consistency", "Did repeated runs produce similar holdings and weights?"],
+  ["Concentration", "How much capital was placed in the largest holding or narrowest theme?"],
+  ["Risk appetite", "How strongly did the portfolio lean toward growth, momentum, cyclicality, defense, cash, or other risk profiles?"],
+  ["Peer similarity", "Did the system follow the frontier-model consensus or take a distinctive position?"],
+  ["Explanation quality", "Did its stated rationale match its allocation, identify relevant risks, and avoid unsupported claims?"],
+  ["Latency", "How long did the system take to return a valid response?"],
+  ["Cost per valid run", "What did each completed response cost when provider usage information was available?"]
+];
+
+const deliverables = [
+  ["Approved Evaluation Plan", "The exact system, comparator roster, inputs, constraints, retry policy, metrics, timeline, confidentiality setting, and scoring rules.", "PDF or Markdown"],
+  ["Executive Evaluation Report", "A decision-focused report explaining the result, what it means, major risks, limitations, and recommended next actions.", "12-20 page PDF"],
+  ["Comparative Scorecard", "Side-by-side results for the client system and every comparator, including performance, consistency, validity, behavior, latency, and cost where available.", "PDF table, CSV, and JSON"],
+  ["Performance Attribution", "Holding-level explanation of which allocations helped or hurt the official result, with entry and exit prices and comparator context.", "Report section and CSV"],
+  ["Consistency and Reliability Analysis", "Repeated-run evidence covering portfolio overlap, weight dispersion, frequent holdings, invalid responses, confidence dispersion, and official-run representativeness.", "Report section and data export"],
+  ["Behavior Profile", "A concise behavior description generated from measurable allocation evidence. Weak samples are labelled as early sample rather than overclassified.", "Report section"],
+  ["Failure-Mode Register", "A prioritized record of observed weaknesses, severity, evidence, business impact, recommended action, and retest condition.", "Report table"],
+  ["Audit Packet", "Evaluation manifest, exact prompt, frozen briefing, asset universe, response schema, hashes, raw response references, parsed submissions, run log, price files, calculations, metadata, retry record, methodology version, and known limitations.", "Downloadable ZIP"],
+  ["Machine-readable export", "Structured outputs for internal dashboards, notebooks, product documentation, or future regression tests.", "CSV and JSON"],
+  ["Executive readout", "One 60-minute session plus seven calendar days of email-based clarification. Calculation or transcription errors are corrected and the report reissued at no additional charge.", "Video call and written follow-up"]
+];
+
+const failureRegisterRows = [
+  ["Finding", "Allocation changed materially across identical runs"],
+  ["Severity", "High"],
+  ["Evidence", "Weighted overlap fell below the approved threshold"],
+  ["Business impact", "User experience and output reliability may vary"],
+  ["Recommended action", "Add portfolio constraints or revise system prompt"],
+  ["Retest condition", "Repeat after configuration update"]
+];
+
+const reportPreviewCards = [
+  "Executive summary",
+  "Comparative scorecard",
+  "Allocation attribution",
+  "Consistency analysis",
+  "Risk and concentration",
+  "Audit-file index"
+];
+
+const assetLinks = [
+  ["Evaluation Plan template", "/private-eval-evaluation-plan-template.md"],
+  ["Mutual NDA template", "/private-eval-mutual-nda-template.md"],
+  ["Fixed SOW template", "/private-eval-sow-template.md"],
+  ["Data-handling process", "/private-eval-data-handling-process.md"],
+  ["Invoice workflow", "/private-eval-invoice-payment-workflow.md"],
+  ["Endpoint test procedure", "/private-eval-endpoint-test-procedure.md"],
+  ["Audit-packet manifest", "/private-eval-audit-packet-manifest.md"],
+  ["Audit delivery method", "/private-eval-audit-packet-delivery-method.md"],
+  ["Mock dry-run record", "/private-eval-mock-client-dry-run-record.md"]
+];
+
+const privacyItems = [
+  ["Private by default", "Client identity, system details, prompts, outputs, scores, and reports are not published without written approval."],
+  ["Purpose-limited access", "Credentials are used only to execute the agreed evaluation."],
+  ["No training use", "CapitalBench does not use private client inputs or outputs to train its own models."],
+  ["Credential deletion", "Temporary credentials are removed after execution is complete."],
+  ["Defined retention", "Unless the SOW states otherwise, private raw outputs are retained for 30 days after final delivery and then deleted. Final report retention is governed by the SOW."],
+  ["No sensitive production data required", "The standard sprint uses a CapitalBench market packet and does not require customer PII or live customer records."],
+  ["Provider transparency", "The Evaluation Plan identifies any third-party model providers used. Their handling of API data remains governed by their applicable terms."],
+  ["NDA available", "A mutual NDA may be completed before private technical details or credentials are shared."]
+];
+
+const addonRows = [
+  ["Additional client model, prompt, or configuration", "$750"],
+  ["Additional live weekly round", "$1,250"],
+  ["One-month outcome track", "$2,000"],
+  ["Custom asset universe or scoring rubric", "From $1,500"],
+  ["Production workflow mode with tools or retrieval", "From $2,500"],
+  ["Additional executive or technical workshop", "$500"],
+  ["Ongoing private monitoring", "From $2,500/month"]
+];
+
+const audienceCards = [
+  ["AI finance and research products", "Evaluate the model behind an AI analyst, investment copilot, portfolio assistant, or research workflow."],
+  ["Fintech and wealthtech companies", "Compare vendors or configurations before committing engineering effort to a production integration."],
+  ["Funds and investment research teams", "Evaluate an internal model, agent, or research workflow without connecting CapitalBench to brokerage systems or real capital."],
+  ["Model providers and evaluation teams", "Measure domain-specific allocation behavior that generic knowledge and reasoning benchmarks do not directly reveal."],
+  ["Investors and diligence teams", "Independently inspect performance claims made by a company building an AI investment product."]
+];
+
+const notFitItems = [
+  "A stock-picking or trading recommendation service",
+  "Personalized investment advice",
+  "A live portfolio management service",
+  "A brokerage integration",
+  "A security penetration test",
+  "A source-code audit",
+  "A regulatory certification",
+  "A guarantee that a model will outperform markets",
+  "Proof of durable investment skill from one short evaluation",
+  "A way to purchase a favorable ranking or endorsement"
+];
+
+const faqGroups = [
+  {
+    title: "Scope and fit",
+    items: [
+      ["What is a Private CapitalBench Eval Sprint?", "It is a fixed-scope evaluation of one AI model, agent, workflow, or configuration on a controlled capital-allocation task. The system is compared with frontier models using frozen inputs and an agreed scoring protocol."],
+      ["What business decision is it designed to support?", "Common decisions include selecting a model vendor, validating a new release, comparing a fine-tune with its base model, diagnosing unstable behavior, establishing a regression baseline, or substantiating a limited performance claim."],
+      ["What kinds of systems can be evaluated?", "API-accessible foundation models, fine-tuned models, proprietary models, RAG systems, investment research agents, prompt workflows, and third-party AI products may be evaluated when a stable execution method can be established."],
+      ["Can you evaluate two versions of our system?", "The standard sprint includes one client configuration. A second model, prompt, tool setup, or version can be added for $750."],
+      ["Can you evaluate a system that does not produce portfolios today?", "Usually, provided it can return the required structured output. CapitalBench supplies the schema and runs a non-scored validation test before the official evaluation."],
+      ["Do you need access to our source code or model weights?", "No. The standard evaluation requires only a working execution method, such as an API endpoint, temporary provider credential, or customer-executed runner."],
+      ["Do you need our brokerage account or real capital?", "No. CapitalBench evaluates simulated allocations and market outcomes. It does not place trades or connect to brokerage accounts."]
+    ]
+  },
+  {
+    title: "Method and fairness",
+    items: [
+      ["How are comparator models selected?", "The buyer and CapitalBench agree on up to four currently supported comparators before execution. The exact provider, model identifier, and version information available at the time are recorded in the Evaluation Plan."],
+      ["Does every model receive the same information?", "In Controlled Benchmark Mode, every system receives the same approved prompt, factual briefing, asset universe, market-data packet, portfolio constraints, and response schema."],
+      ["Can a model browse the web or use tools?", "Not in the standard Controlled Benchmark Mode. Tools and live retrieval are disabled where technically possible. A tool-enabled Production Workflow Mode is available as an add-on and is reported separately."],
+      ["What happens if a model returns invalid output?", "The raw attempt is retained and marked invalid. A retry is permitted only under the pre-approved policy for transport, truncation, malformed structured output, or similar infrastructure failure. A model is not retried merely because its allocation appears weak."],
+      ["Do you choose the best answer from repeated runs?", "No. The live outcome score uses one official frozen response. Repeated runs are used only for separately reported consistency analysis."],
+      ["Can the rules change after the market result is known?", "No material scoring or input rule is changed after the official responses are collected. Any necessary pre-outcome amendment is documented and approved."],
+      ["How are prices selected?", "The Evaluation Plan states the market-data source, entry rule, exit rule, benchmark, adjusted-price treatment, and fallback for non-trading days or unavailable data before execution."],
+      ["Why use a live market window instead of only historical data?", "Live execution reduces the risk that models already contain or infer the outcome. Historical replay may be useful for diagnostics, but it is labelled separately and is not presented as equivalent to a prospective live result."],
+      ["Is one week enough to determine which model is best?", "No. One round is a defined decision event, not proof of persistent skill. It can still expose differences in allocation, consistency, concentration, validity, latency, and behavior. Multiple rounds provide stronger evidence."],
+      ["Will we receive a pass or fail?", "Only when measurable thresholds are agreed before execution. Otherwise, the report provides a comparative scorecard and a recommendation such as ship, iterate, switch, or gather more evidence."]
+    ]
+  },
+  {
+    title: "Data and confidentiality",
+    items: [
+      ["Are the evaluation and results private?", "Yes. Private is the default. The client's identity, system, prompts, outputs, scores, and report are not published without written approval."],
+      ["Will CapitalBench sign an NDA?", "A mutual NDA can be completed before confidential technical details or access credentials are exchanged."],
+      ["Will our data be used for training?", "CapitalBench does not use private client inputs or outputs to train its own models. Any third-party API handling remains subject to the named provider's terms."],
+      ["How long is private data retained?", "The recommended default is 30 days after final delivery for raw private artifacts, unless the SOW specifies another period. Temporary credentials should be deleted immediately after execution."],
+      ["Are you SOC 2 or ISO 27001 certified?", "CapitalBench does not currently represent itself as SOC 2 or ISO 27001 certified. The standard sprint is designed not to require PII, production customer data, source code, or brokerage access. Customer-hosted execution is available where internal policy requires it."],
+      ["Can the evaluation run inside our environment?", "A customer-executed runner or customer-hosted endpoint can be used. The report clearly identifies who controlled execution and any resulting assurance limitations."]
+    ]
+  },
+  {
+    title: "Results and publication",
+    items: [
+      ["What happens if our system performs poorly?", "The result remains part of the private report. CapitalBench does not replace it with a more favorable run. The report focuses on why the system behaved as it did and what should change before a retest."],
+      ["Can we publish the result?", "Yes, with written agreement on the exact system version, evaluation date, scope, limitations, and wording. Publication is optional."],
+      ["Can we use the CapitalBench name or logo in marketing?", "Only with written approval. Any public statement must identify the tested version and evaluation window and must not imply certification, durable outperformance, or a broader endorsement than the evidence supports."],
+      ["Does paying for the sprint guarantee a favorable result?", "No. Payment covers the evaluation work, report, and delivery. It does not purchase a ranking, score, testimonial, badge, or endorsement."],
+      ["Does CapitalBench publish negative private evaluations?", "Not without client approval. Private results remain private, but they are not removed from the report delivered to the client."]
+    ]
+  },
+  {
+    title: "Pricing and delivery",
+    items: [
+      ["What is included in the $3,000 price?", "One client configuration, four comparators, one live weekly round, consistency testing, a report, CSV and JSON exports, an audit packet, a 60-minute readout, and seven days of written follow-up."],
+      ["Are model API costs included?", "Comparator model usage within the agreed scope is included. Charges incurred through the client's own endpoint or provider account remain the client's responsibility."],
+      ["How long does the sprint take?", "A standard weekly sprint typically takes 10-14 calendar days after access and scope are approved. Market holidays, data exceptions, or client delays may extend delivery."],
+      ["How much time does our team need to provide?", "Usually two to three hours in total: one kickoff, technical connection support, Evaluation Plan approval, and the final readout."],
+      ["When is payment due?", "Fifty percent is due after the SOW and Evaluation Plan are approved. The remaining fifty percent is due when the report and audit packet are delivered."],
+      ["What is the cancellation policy?", "Before technical setup begins, the deposit is refundable. After the Evaluation Plan is approved and official execution begins, the deposit is non-refundable. If CapitalBench cannot complete the agreed scope, fees for undelivered work are refunded."],
+      ["Is there an ongoing subscription?", "No subscription is required for the sprint. Additional rounds or ongoing monitoring are optional."],
+      ["What happens after the sprint?", "The client can implement the recommendations, test a revised configuration, add monthly rounds, or establish ongoing private monitoring. Any next engagement is separately scoped."]
+    ]
+  },
+  {
+    title: "Legal boundary",
+    items: [
+      ["Is this investment advice?", "No. CapitalBench evaluates AI-system behavior using simulated allocations and market data. It does not recommend that the client or any other person trade the evaluated portfolio."],
+      ["Is this a regulatory or model-risk certification?", "No. The report is research and evaluation evidence, not regulatory approval, legal advice, fiduciary advice, a security audit, or a guarantee of production suitability."]
+    ]
+  }
+];
+
+const evaluatingOptions = [
+  "Commercial foundation model",
+  "Fine-tuned model",
+  "Proprietary model",
+  "AI investment agent",
+  "RAG or research workflow",
+  "Prompt or configuration variant",
+  "Third-party vendor product",
+  "Other"
+];
+const decisionOptions = [
+  "Select a model or vendor",
+  "Validate a release",
+  "Compare two configurations",
+  "Diagnose inconsistent behavior",
+  "Establish an internal baseline",
+  "Support customer or investor diligence",
+  "Evaluate a third-party claim",
+  "Other"
+];
+const accessOptions = [
+  "Customer-hosted API endpoint",
+  "Temporary provider API key",
+  "CapitalBench provider account",
+  "Customer-executed runner",
+  "Not sure"
+];
+const startOptions = ["As soon as possible", "This week", "Next 2 weeks", "This month", "Next month", "Not sure"];
+
+const procurementRows = [
+  ["Service type", "Fixed-scope professional model evaluation"],
+  ["Contract", "Mutual NDA and SOW available"],
+  ["Billing currency", "USD"],
+  ["Payment", "Invoice and supported electronic payment methods"],
+  ["Primary contact", "evals@capitalbench.org"],
+  ["Security inquiries", "security@capitalbench.org"],
+  ["Contracting legal entity", "Specified in the SOW before invoice issuance"],
+  ["Business jurisdiction", "Specified in the SOW before invoice issuance"],
+  ["Billing address", "Provided on the invoice and SOW"],
+  ["Tax information", "Provided on the invoice where applicable"],
+  ["Legal contact", "evals@capitalbench.org"]
+];
+
+const serviceSchema: JsonLdRecord = {
+  "@type": "Service",
+  name: "Private CapitalBench Eval Sprint",
+  serviceType: "AI model evaluation",
+  provider: { "@id": `${siteConfig.url}/#organization` },
+  areaServed: "Global",
+  description:
+    "A fixed-scope private evaluation of one AI investment system against frontier comparators using frozen inputs, live market outcomes, consistency testing, and auditable results.",
+  offers: {
+    "@type": "Offer",
+    price: "3000",
+    priceCurrency: "USD",
+    availability: "https://schema.org/LimitedAvailability",
+    url: `${siteConfig.url}/private-evals/`
+  }
+};
+---
+
+<BaseLayout
+  title="Private AI Capital Allocation Evaluation | CapitalBench"
+  description={pageDescription}
+  ogTitle="Benchmark Your AI Investment System"
+  ogDescription="A fixed-scope, private CapitalBench evaluation against frontier AI models."
+  hideFooterSignup
+  structuredData={serviceSchema}
+>
+  <section class="private-evals-hero" aria-labelledby="private-evals-title">
+    <div class="private-evals-hero-copy">
+      <p class="eyebrow">PRIVATE CAPITALBENCH EVALS</p>
+      <h1 id="private-evals-title">Benchmark your AI investment system against frontier models.</h1>
+      <p>
+        CapitalBench independently evaluates your model, agent, or workflow using the same frozen market brief,
+        portfolio constraints, and outcome window as leading AI systems.
+      </p>
+      <p>
+        You receive a private comparative scorecard, consistency analysis, failure-mode review, machine-readable
+        results, and a complete audit packet.
+      </p>
+      <p class="private-evals-trust">Private by default · No source code or model weights required · No real capital traded</p>
+      <div class="private-evals-actions">
+        <a class="action-link action-primary" href="#request">
+          Request a Private Eval
+        </a>
+        <a
+          class="action-link"
+          href="/private-eval-sample-report.md"
+          data-analytics-event="private_eval_sample_report_click"
+        >
+          View Sample Report
+        </a>
+      </div>
+      <p class="private-evals-commercial">
+        Launch price: <strong>$3,000 USD</strong> · Typical completion: <strong>10-14 calendar days</strong> · Fixed scope
+      </p>
+    </div>
+
+    <aside class="private-evals-scorecard" aria-label="Illustrative CapitalBench scorecard preview">
+      <div class="private-evals-scorecard-head">
+        <div>
+          <span class="panel-kicker">Private scorecard preview</span>
+          <h2>Illustrative scorecard · Actual results vary</h2>
+        </div>
+        <span>{sampleRound?.round_id ?? "Public round"}</span>
+      </div>
+      <div class="private-evals-scorecard-table" role="table" aria-label="Illustrative scorecard metrics">
+        <div role="row" class="private-evals-scorecard-row private-evals-scorecard-header">
+          <span role="columnheader">Metric</span>
+          <span role="columnheader">Your system</span>
+          <span role="columnheader">Frontier median</span>
+          <span role="columnheader">Best comparator</span>
+        </div>
+        {scorecardRows.map((row) => (
+          <div role="row" class="private-evals-scorecard-row">
+            <span role="cell">{row}</span>
+            <span role="cell">&mdash;</span>
+            <span role="cell">&mdash;</span>
+            <span role="cell">&mdash;</span>
+          </div>
+        ))}
+      </div>
+      <div class="private-evals-stat-strip" aria-label="Current public benchmark statistics">
+        {publicStats.map((stat) => (
+          <div>
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+          </div>
+        ))}
+      </div>
+      <div class="private-evals-comparator-strip" aria-label="Dynamic comparator roster example">
+        <span>Current comparator source</span>
+        <div>
+          {comparatorLabels.map((label) => <small>{label}</small>)}
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <nav class="private-evals-sticky-nav" aria-label="Private eval page sections">
+    <div>
+      <a href="#overview">Overview</a>
+      <a href="#scope">Scope</a>
+      <a href="#process">Process</a>
+      <a href="#metrics">Metrics</a>
+      <a href="#deliverables">Deliverables</a>
+      <a href="#security">Security</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a class="private-evals-sticky-button" href="#request">Request an Eval</a>
+  </nav>
+
+  <section class="private-evals-proof" aria-labelledby="private-evals-proof-title">
+    <h2 id="private-evals-proof-title" class="sr-only">Proof points</h2>
+    <div class="private-evals-proof-grid">
+      {proofCells.map(([title, text]) => (
+        <article>
+          <h3>{title}</h3>
+          <p>{text}</p>
+        </article>
+      ))}
+    </div>
+    <div class="private-evals-proof-footer">
+      <p>Built on CapitalBench's public methodology, model registry, scoring pipeline, and audit infrastructure.</p>
+      <div>
+        <a href="/methodology/" data-analytics-event="private_eval_methodology_click">View Methodology</a>
+        <a href={sampleRoundHref} data-analytics-event="private_eval_audit_packet_click">Open a Public Audit Packet</a>
+        <a href="/api/">Inspect the API</a>
+        <a href={siteConfig.githubUrl} target="_blank" rel="noreferrer">View Source</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="overview" class="private-evals-section private-evals-overview" aria-labelledby="overview-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Decision evidence</span>
+      <h2 id="overview-title">Make a consequential model decision with evidence.</h2>
+      <p>
+        A model can produce an impressive investment thesis and still make unstable, overconcentrated, expensive, or
+        poorly calibrated allocation decisions.
+      </p>
+      <p>
+        A Private CapitalBench Eval turns one specific model configuration into a documented decision record. It shows
+        what the system selected, how consistently it selected it, what risk it took, how it compared with frontier
+        alternatives, and how the allocation performed after the market window closed.
+      </p>
+    </div>
+    <div class="private-evals-card-grid four">
+      {valueCards.map(([title, text]) => (
+        <article class="private-evals-card">
+          <h3>{title}</h3>
+          <p>{text}</p>
+        </article>
+      ))}
+    </div>
+    <aside class="private-evals-question-panel">
+      <h3>The sprint is designed to answer questions such as:</h3>
+      <ul>
+        {decisionQuestions.map((question) => <li>{question}</li>)}
+      </ul>
+    </aside>
+  </section>
+
+  <section id="scope" class="private-evals-section" aria-labelledby="scope-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Standard sprint scope</span>
+      <h2 id="scope-title">One defined system. One controlled evaluation. No moving goalposts.</h2>
+    </div>
+    <div class="private-evals-table-wrap">
+      <table class="private-evals-table">
+        <thead>
+          <tr>
+            <th>Scope item</th>
+            <th>Standard sprint</th>
+          </tr>
+        </thead>
+        <tbody>
+          {scopeRows.map(([item, value]) => (
+            <tr>
+              <th scope="row">{item}</th>
+              <td>{value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <aside class="private-evals-callout">
+      <h3>One official run determines the live outcome score.</h3>
+      <p>
+        Repeated runs are reported separately as consistency evidence. They are not searched for a more favorable answer
+        and do not replace the official decision.
+      </p>
+    </aside>
+  </section>
+
+  <section class="private-evals-section" aria-labelledby="mode-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Evaluation modes</span>
+      <h2 id="mode-title">Controlled mode versus production mode</h2>
+      <p>A sprint may include both modes, but their scores are never mixed into one misleading comparison.</p>
+    </div>
+    <div class="private-evals-mode-grid">
+      <article class="private-evals-mode-card">
+        <span>Included in the $3,000 sprint</span>
+        <h3>Controlled Benchmark Mode</h3>
+        <p>
+          The system receives the same frozen external information as every comparator. Browsing, search, code
+          execution, live prices, and external retrieval are disabled where technically possible.
+        </p>
+        <p>This mode isolates allocation judgment and creates the fairest comparison with the public CapitalBench benchmark.</p>
+      </article>
+      <article class="private-evals-mode-card">
+        <span>Optional add-on</span>
+        <h3>Production Workflow Mode</h3>
+        <p>The system runs using its normal retrieval, tools, prompts, or internal workflow.</p>
+        <p>
+          Production-mode results are reported separately because a tool-enabled agent should not be placed on the same
+          headline ranking as a closed-capability model receiving only frozen inputs.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="private-evals-section" aria-labelledby="plan-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Evaluation Plan</span>
+      <h2 id="plan-title">The rules are approved and frozen before any official run.</h2>
+      <p>Every buyer receives a short Evaluation Plan before execution.</p>
+    </div>
+    <div class="private-evals-table-wrap">
+      <table class="private-evals-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>What is frozen</th>
+          </tr>
+        </thead>
+        <tbody>
+          {evaluationPlanRows.map(([field, value]) => (
+            <tr>
+              <th scope="row">{field}</th>
+              <td>{value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="private-evals-note">
+      Nothing material is changed after the official outputs have been collected. If a rule must change because of a
+      technical issue, the change is documented and approved before the market outcome is known.
+    </p>
+  </section>
+
+  <section id="process" class="private-evals-section" aria-labelledby="process-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Process</span>
+      <h2 id="process-title">From system access to final report</h2>
+    </div>
+    <div class="private-evals-timeline">
+      {processSteps.map(([title, timing, copy, clientTime, output], index) => (
+        <article>
+          <span>{index + 1}</span>
+          <small>{timing}</small>
+          <h3>{title}</h3>
+          <p>{copy}</p>
+          <dl>
+            <div>
+              <dt>Client time</dt>
+              <dd>{clientTime}</dd>
+            </div>
+            <div>
+              <dt>Output</dt>
+              <dd>{output}</dd>
+            </div>
+          </dl>
+        </article>
+      ))}
+    </div>
+    <div class="private-evals-two-col">
+      <aside class="private-evals-callout">
+        <h3>Timeline note</h3>
+        <p>
+          Most standard weekly sprints finish within 10-14 calendar days after access and scope are approved. Market
+          holidays, market-data exceptions, or delayed client access may extend the schedule. A one-month evaluation
+          track extends delivery until its stated outcome window closes.
+        </p>
+      </aside>
+      <aside class="private-evals-callout">
+        <h3>Expected client commitment: two to three hours total</h3>
+        <p>
+          One decision-maker, one technical contact, one approved model configuration, and timely approval of the
+          Evaluation Plan.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <section id="metrics" class="private-evals-section" aria-labelledby="metrics-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Metrics and scoring</span>
+      <h2 id="metrics-title">Performance is only one part of the scorecard.</h2>
+    </div>
+    <div class="private-evals-table-wrap">
+      <table class="private-evals-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>What it answers</th>
+          </tr>
+        </thead>
+        <tbody>
+          {metricRows.map(([metric, value]) => (
+            <tr>
+              <th scope="row">{metric}</th>
+              <td>{value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <details class="private-evals-details">
+      <summary>See calculation details</summary>
+      <div>
+        <p><strong>Portfolio return</strong> = sum of each holding's weight multiplied by its realized return.</p>
+        <p><strong>Portfolio minus S&amp;P 500</strong> = portfolio return minus S&amp;P 500 return.</p>
+        <p><strong>CapitalBench Score</strong> = portfolio return relative to the hindsight-best eligible asset return in that same window.</p>
+        <p><strong>Regret</strong> = hindsight-best eligible asset return minus portfolio return.</p>
+        <p><strong>Consistency</strong> = similarity of holdings and weights across repeated identical tasks.</p>
+        <p>
+          Performance, consistency, cost, and latency remain visible as separate fields. CapitalBench does not hide
+          materially different trade-offs inside one unexplained composite grade.
+        </p>
+      </div>
+    </details>
+    <aside class="private-evals-callout">
+      <h3>Success thresholds</h3>
+      <p>
+        CapitalBench does not automatically issue a universal "pass" or "fail." A pass/fail recommendation is included
+        only when the buyer defines measurable thresholds before execution, such as minimum valid-output rate, maximum
+        concentration, acceptable latency, or minimum consistency.
+      </p>
+    </aside>
+  </section>
+
+  <section id="deliverables" class="private-evals-section" aria-labelledby="deliverables-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Deliverables</span>
+      <h2 id="deliverables-title">Everything you receive</h2>
+    </div>
+    <div class="private-evals-deliverable-grid">
+      {deliverables.map(([title, text, format], index) => (
+        <article>
+          <span>{index + 1}</span>
+          <h3>{title}</h3>
+          <p>{text}</p>
+          <small>{format}</small>
+        </article>
+      ))}
+    </div>
+    <aside class="private-evals-failure-register">
+      <div>
+        <h3>Failure-mode register example</h3>
+        <p>Each finding includes a decision-useful record, not just a narrative observation.</p>
+      </div>
+      <div class="private-evals-table-wrap">
+        <table class="private-evals-table">
+          <tbody>
+            {failureRegisterRows.map(([field, example]) => (
+              <tr>
+                <th scope="row">{field}</th>
+                <td>{example}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </aside>
+  </section>
+
+  <section class="private-evals-section private-evals-report" aria-labelledby="report-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Sample report preview</span>
+      <h2 id="report-title">See the evidence before you buy</h2>
+      <p>
+        The ungated sample report uses public CapitalBench round {sampleRound?.round_id ?? "evidence"} and presents it
+        in the private-report format.
+      </p>
+    </div>
+    <div class="private-evals-preview-grid">
+      {reportPreviewCards.map((title, index) => (
+        <article>
+          <span>0{index + 1}</span>
+          <h3>{title}</h3>
+          <p>Preview of the private report section, using public benchmark evidence and marked scope limits.</p>
+        </article>
+      ))}
+    </div>
+    <div class="private-evals-actions">
+      <a
+        class="action-link action-primary"
+        href="/private-eval-sample-report.md"
+        data-analytics-event="private_eval_sample_report_click"
+      >
+        Download Sample Report
+      </a>
+      <a class="action-link" href={sampleRoundHref} data-analytics-event="private_eval_audit_packet_click">
+        Open the Underlying Public Audit Packet
+      </a>
+    </div>
+    <div class="private-evals-asset-links" aria-label="Private eval supporting templates">
+      {assetLinks.map(([label, href]) => (
+        <a href={href}>{label}</a>
+      ))}
+    </div>
+  </section>
+
+  <section id="security" class="private-evals-section private-evals-security" aria-labelledby="security-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Security and data handling</span>
+      <h2 id="security-title">Designed to evaluate the system without taking control of it.</h2>
+      <p class="private-evals-security-top">
+        The standard sprint does not require source code, model weights, production databases, customer records,
+        brokerage credentials, fund holdings, or access to real capital.
+      </p>
+    </div>
+    <div class="private-evals-table-wrap">
+      <table class="private-evals-table">
+        <thead>
+          <tr>
+            <th>Access method</th>
+            <th>How it works</th>
+            <th>Best for</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Customer-hosted endpoint</th>
+            <td>The client creates a temporary, restricted credential for a non-production or isolated endpoint.</td>
+            <td>Proprietary models and agents</td>
+          </tr>
+          <tr>
+            <th scope="row">Provider API access</th>
+            <td>CapitalBench runs the named model through an approved provider account or temporary client-provided key.</td>
+            <td>Commercial foundation models</td>
+          </tr>
+          <tr>
+            <th scope="row">Customer-executed runner</th>
+            <td>CapitalBench supplies the frozen packet and execution instructions. The client returns timestamped raw outputs and logs.</td>
+            <td>Strict internal security policies</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="private-evals-note">
+      Customer-executed results are clearly identified because CapitalBench did not directly control execution. They may
+      still be useful internally, but they provide weaker independent execution assurance.
+    </p>
+    <div class="private-evals-card-grid four">
+      {privacyItems.map(([title, text]) => (
+        <article class="private-evals-card">
+          <h3>{title}</h3>
+          <p>{text}</p>
+        </article>
+      ))}
+    </div>
+    <aside class="private-evals-honesty">
+      <h3>Security claims boundary</h3>
+      <p>
+        CapitalBench should not claim SOC 2, ISO 27001, regulatory certification, "compliance readiness," or enterprise
+        security credentials unless those statements are actually true.
+      </p>
+      <p>
+        Where a company requires a certified vendor, offer customer-hosted execution or state that the current service
+        may not satisfy its procurement requirements.
+      </p>
+    </aside>
+  </section>
+
+  <section class="private-evals-section" aria-labelledby="independence-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Independence policy</span>
+      <h2 id="independence-title">Payment buys the evaluation, not a favorable result.</h2>
+      <p>
+        CapitalBench is paid to design, execute, and document the agreed evaluation. Payment does not determine the
+        score, model ranking, interpretation of valid results, or whether failures appear in the final report.
+      </p>
+      <p>
+        Inputs and rules are frozen before official execution. Failed and invalid attempts remain part of the record.
+        Results are not replaced because a model selected an undesirable asset or performed poorly.
+      </p>
+      <p>
+        The client controls confidentiality and publication. It does not control the underlying calculation after the
+        Evaluation Plan has been approved.
+      </p>
+    </div>
+    <div class="private-evals-principles">
+      <span>No pay-to-rank</span>
+      <span>No private answer shopping</span>
+      <span>No retroactive scoring changes</span>
+      <span>No publication without client approval</span>
+    </div>
+  </section>
+
+  <section id="pricing" class="private-evals-section private-evals-pricing-section" aria-labelledby="pricing-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Pricing</span>
+      <h2 id="pricing-title">Fixed scope. Transparent price.</h2>
+    </div>
+    <article class="private-evals-pricing-card" data-private-eval-pricing>
+      <div class="private-evals-price-head">
+        <div>
+          <span>Private CapitalBench Eval Sprint</span>
+          <h3>$3,000 USD</h3>
+          <p>Launch pricing for the first five completed private engagements.</p>
+        </div>
+        <a class="action-link action-primary" href="#request">Request a Founding Sprint</a>
+      </div>
+      <div class="private-evals-included">
+        <h4>Included</h4>
+        <ul>
+          <li>One client system or configuration</li>
+          <li>Up to four frontier comparator models</li>
+          <li>One official live weekly evaluation</li>
+          <li>Five consistency runs per system</li>
+          <li>Current CapitalBench asset universe</li>
+          <li>Performance, risk, concentration, and consistency scoring</li>
+          <li>Cost and latency analysis where available</li>
+          <li>12-20 page private report</li>
+          <li>CSV and JSON exports</li>
+          <li>Complete audit packet</li>
+          <li>60-minute executive readout</li>
+          <li>Seven days of written follow-up</li>
+        </ul>
+      </div>
+      <div class="private-evals-payment-grid">
+        <div>
+          <h4>Payment terms</h4>
+          <p>50% after the Evaluation Plan and SOW are approved. 50% when the final report and audit packet are delivered.</p>
+        </div>
+        <div>
+          <h4>Cost details</h4>
+          <p>
+            Comparator model API costs within the agreed scope are included. Usage charges incurred through the client's
+            own endpoint or provider account remain the client's responsibility. Applicable taxes are additional.
+          </p>
+        </div>
+        <div>
+          <h4>Future standard price</h4>
+          <p>Standard price after the first five completed engagements: <strong>$5,000 USD</strong></p>
+        </div>
+      </div>
+      <p class="private-evals-note">
+        No payment is required to submit a request. CapitalBench confirms fit, access method, comparator roster,
+        timeline, and fixed scope before issuing an invoice.
+      </p>
+    </article>
+
+    <div class="private-evals-addons" data-private-eval-addons>
+      <h3>Add-ons</h3>
+      <div class="private-evals-table-wrap">
+        <table class="private-evals-table">
+          <thead>
+            <tr>
+              <th>Add-on</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {addonRows.map(([addon, price]) => (
+              <tr>
+                <th scope="row">{addon}</th>
+                <td>{price}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p>Every add-on is agreed in writing before execution. CapitalBench does not add unapproved hourly charges.</p>
+    </div>
+  </section>
+
+  <section class="private-evals-section private-evals-fit" aria-labelledby="fit-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Fit</span>
+      <h2 id="fit-title">Built for teams putting AI near investment decisions</h2>
+    </div>
+    <div class="private-evals-card-grid five">
+      {audienceCards.map(([title, text]) => (
+        <article class="private-evals-card">
+          <h3>{title}</h3>
+          <p>{text}</p>
+        </article>
+      ))}
+    </div>
+    <aside class="private-evals-not-fit">
+      <h3>Not the right fit</h3>
+      <p>A Private CapitalBench Eval Sprint is not:</p>
+      <ul>
+        {notFitItems.map((item) => <li>{item}</li>)}
+      </ul>
+    </aside>
+  </section>
+
+  <section class="private-evals-section" aria-labelledby="limitations-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Limitations</span>
+      <h2 id="limitations-title">What a responsible evaluation can and cannot prove</h2>
+      <p>
+        A one-week market result can be affected by noise, unusual events, and the chosen asset universe. It is a real
+        outcome, but it is not by itself proof of persistent investment skill.
+      </p>
+      <p>
+        The result applies only to the tested model version, configuration, input packet, constraints, and outcome
+        window. A model update or workflow change may produce different behavior.
+      </p>
+      <p>
+        CapitalBench therefore reports performance alongside consistency, validity, concentration, risk, cost, latency,
+        and explicit limitations. Companies seeking stronger evidence should run multiple weekly and monthly rounds.
+      </p>
+    </div>
+  </section>
+
+  <section id="faq" class="private-evals-section private-evals-faq" aria-labelledby="faq-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">FAQ</span>
+      <h2 id="faq-title">Complete FAQ</h2>
+    </div>
+    <div class="private-evals-faq-groups">
+      {faqGroups.map((group) => (
+        <section aria-labelledby={`${group.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-faq`}>
+          <h3 id={`${group.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-faq`}>{group.title}</h3>
+          <div class="faq-list">
+            {group.items.map(([question, answer]) => (
+              <details data-private-eval-faq={question}>
+                <summary>{question}</summary>
+                <p>{answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+
+  <section class="private-evals-final-cta" aria-labelledby="final-cta-title">
+    <div>
+      <span class="panel-kicker">Request scope review</span>
+      <h2 id="final-cta-title">Your AI may sound convincing. Find out how it allocates.</h2>
+      <p>
+        Submit the system you want evaluated and the decision you need to make. CapitalBench will confirm fit, access
+        method, comparator roster, timing, and fixed scope before you pay.
+      </p>
+      <p class="private-evals-trust">No payment at submission. Private by default. NDA available before technical access.</p>
+    </div>
+    <div class="private-evals-actions">
+      <a class="action-link action-primary" href="#request">Request a Private Eval</a>
+      <a
+        class="action-link"
+        href="/private-eval-sample-report.md"
+        data-analytics-event="private_eval_sample_report_click"
+      >
+        Download Sample Report
+      </a>
+    </div>
+  </section>
+
+  <section id="request" class="private-evals-section private-evals-request" aria-labelledby="request-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Intake form</span>
+      <h2 id="request-title">Request Scope Review</h2>
+      <p>
+        The next step is a fit review followed by a proposed Evaluation Plan and fixed SOW. No payment or system access
+        is requested until scope is agreed.
+      </p>
+    </div>
+    <form class="private-evals-form" data-private-eval-form>
+      <input type="hidden" name="source" value="private_evals" />
+      <input type="hidden" name="pageUrl" value={`${siteConfig.url}/private-evals/`} />
+      <label class="private-evals-honeypot">
+        Fax
+        <input type="text" name="fax" tabindex="-1" autocomplete="off" />
+      </label>
+      <div class="private-evals-form-grid">
+        <label>
+          Full name
+          <input name="full_name" type="text" autocomplete="name" required />
+        </label>
+        <label>
+          Work email
+          <input name="work_email" type="email" autocomplete="email" required />
+        </label>
+        <label>
+          Company
+          <input name="company" type="text" autocomplete="organization" required />
+        </label>
+        <label>
+          Company website
+          <input name="company_website" type="url" autocomplete="url" placeholder="https://example.com" required />
+        </label>
+        <label>
+          Role
+          <input name="role" type="text" autocomplete="organization-title" required />
+        </label>
+        <label>
+          What are you evaluating?
+          <select name="evaluating" required>
+            <option value="">Select one</option>
+            {evaluatingOptions.map((option) => <option value={option}>{option}</option>)}
+          </select>
+        </label>
+        <label>
+          Primary business decision
+          <select name="business_decision" required>
+            <option value="">Select one</option>
+            {decisionOptions.map((option) => <option value={option}>{option}</option>)}
+          </select>
+        </label>
+        <label>
+          Preferred access method
+          <select name="access_method" required>
+            <option value="">Select one</option>
+            {accessOptions.map((option) => <option value={option}>{option}</option>)}
+          </select>
+        </label>
+        <label>
+          Desired start period
+          <select name="start_period" required>
+            <option value="">Select one</option>
+            {startOptions.map((option) => <option value={option}>{option}</option>)}
+          </select>
+        </label>
+        <label>
+          Model or system name
+          <input name="model_or_system_name" type="text" />
+        </label>
+        <label>
+          Current model provider
+          <input name="current_model_provider" type="text" />
+        </label>
+        <label>
+          Tools or browsing used?
+          <select name="tools_or_browsing">
+            <option value="">Select one</option>
+            <option>No</option>
+            <option>Yes</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+        <label>
+          Custom asset universe required?
+          <select name="custom_asset_universe_required">
+            <option value="">Select one</option>
+            <option>No</option>
+            <option>Yes</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+        <label>
+          NDA required before discussion?
+          <select name="nda_required">
+            <option value="">Select one</option>
+            <option>No</option>
+            <option>Yes</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+        <label>
+          Sensitive or regulated data involved?
+          <select name="sensitive_or_regulated_data">
+            <option value="">Select one</option>
+            <option>No</option>
+            <option>Yes</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+        <label>
+          Procurement or security review required?
+          <select name="procurement_or_security_review">
+            <option value="">Select one</option>
+            <option>No</option>
+            <option>Yes</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+        <label>
+          How did you hear about CapitalBench?
+          <input name="referral_source" type="text" />
+        </label>
+      </div>
+      <label class="private-evals-form-wide">
+        Project summary
+        <textarea
+          name="project_summary"
+          rows="6"
+          minlength="20"
+          required
+          placeholder="Tell us what system you want tested, the decision this supports, and any timing or access constraints."
+        ></textarea>
+      </label>
+      <label class="private-evals-consent">
+        <input type="checkbox" name="consent" value="yes" required />
+        <span>
+          By submitting, you agree that CapitalBench may contact you about this evaluation request. Do not submit API
+          keys, passwords, source code, customer data, or other secrets through this form.
+        </span>
+      </label>
+      <div class="private-evals-form-footer">
+        <button type="submit">Request Scope Review</button>
+        <p data-private-eval-form-status role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </section>
+
+  <section id="procurement" class="private-evals-section private-evals-procurement" aria-labelledby="procurement-title">
+    <div class="private-evals-section-head">
+      <span class="panel-kicker">Procurement</span>
+      <h2 id="procurement-title">Procurement and billing</h2>
+    </div>
+    <div class="private-evals-procurement-grid">
+      {procurementRows.map(([label, value]) => (
+        <div>
+          <span>{label}</span>
+          {
+            value.includes("@") ? (
+              <a
+                href={`mailto:${value}`}
+                data-analytics-event={value.startsWith("evals@") ? "private_eval_email_click" : undefined}
+              >
+                {value}
+              </a>
+            ) : (
+              <strong>{value}</strong>
+            )
+          }
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section id="final-disclaimer" class="private-evals-disclaimer" aria-label="CapitalBench private eval disclaimer">
+    <p>
+      CapitalBench provides AI-model evaluation and research services. Results apply only to the tested system, version,
+      configuration, inputs, constraints, and evaluation window. Results do not constitute investment advice, a
+      recommendation to trade, certification, regulatory approval, endorsement, or a guarantee of future performance.
+      Short market windows may be affected by noise and unusual events. The applicable SOW governs confidentiality, data
+      handling, permitted use, payment, and delivery.
+    </p>
+    <nav aria-label="Private eval footer links">
+      <a href="/methodology/">Methodology</a>
+      <a href={sampleRoundHref}>Audit</a>
+      <a href="/private-eval-sample-report.md" data-analytics-event="private_eval_sample_report_click">Sample Report</a>
+      <a href="#security">Data Handling</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="#procurement">Terms</a>
+      <a href="mailto:evals@capitalbench.org" data-analytics-event="private_eval_email_click">Contact</a>
+    </nav>
+  </section>
+
+  <a class="private-evals-mobile-cta" href="#request">Request a Private Eval</a>
+
+  <script is:inline>
+    (() => {
+      const eventNameRe = /^[a-z][a-z0-9_]{0,39}$/;
+      const track = (name, params = {}) => {
+        if (!eventNameRe.test(name)) return;
+        if (window.capitalbenchAnalytics && typeof window.capitalbenchAnalytics.track === "function") {
+          window.capitalbenchAnalytics.track(name, params);
+          return;
+        }
+        if (typeof window.gtag === "function") {
+          window.gtag("event", name, {
+            ...params,
+            page_path: window.location.pathname || "/",
+            page_location: `${window.location.origin}${window.location.pathname || "/"}`,
+            transport_type: "beacon"
+          });
+        }
+      };
+
+      const onReady = (callback) => {
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", callback, { once: true });
+        } else {
+          callback();
+        }
+      };
+
+      onReady(() => {
+        track("private_eval_page_view");
+
+        const observeOnce = (selector, eventName) => {
+          const element = document.querySelector(selector);
+          if (!element || !("IntersectionObserver" in window)) return;
+          const observer = new IntersectionObserver(
+            (entries) => {
+              if (!entries.some((entry) => entry.isIntersecting)) return;
+              track(eventName);
+              observer.disconnect();
+            },
+            { threshold: 0.35 }
+          );
+          observer.observe(element);
+        };
+
+        observeOnce("[data-private-eval-pricing]", "private_eval_pricing_view");
+        observeOnce("[data-private-eval-addons]", "private_eval_addon_view");
+
+        const mobileCta = document.querySelector(".private-evals-mobile-cta");
+        const hero = document.querySelector(".private-evals-hero");
+        if (mobileCta && hero && "IntersectionObserver" in window) {
+          const ctaObserver = new IntersectionObserver(
+            (entries) => {
+              const entry = entries[0];
+              mobileCta.classList.toggle("is-visible", !entry.isIntersecting || entry.intersectionRatio < 0.15);
+            },
+            { threshold: [0, 0.15] }
+          );
+          ctaObserver.observe(hero);
+        } else if (mobileCta) {
+          const toggleMobileCta = () => {
+            mobileCta.classList.toggle("is-visible", window.scrollY > 560);
+          };
+          toggleMobileCta();
+          window.addEventListener("scroll", toggleMobileCta, { passive: true });
+        }
+
+        document.querySelectorAll("[data-private-eval-faq]").forEach((details) => {
+          details.addEventListener("toggle", () => {
+            if (details.open) {
+              track("private_eval_faq_open", {
+                question: details.getAttribute("data-private-eval-faq") || ""
+              });
+            }
+          });
+        });
+
+        const form = document.querySelector("[data-private-eval-form]");
+        if (!form) return;
+        const status = form.querySelector("[data-private-eval-form-status]");
+        let started = false;
+
+        form.addEventListener("input", () => {
+          if (started) return;
+          started = true;
+          track("private_eval_form_start");
+        });
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const button = form.querySelector("button[type='submit']");
+          const originalButtonText = button ? button.textContent : "";
+          if (button) {
+            button.disabled = true;
+            button.textContent = "Submitting...";
+          }
+          if (status) status.textContent = "";
+
+          try {
+            const payload = Object.fromEntries(new FormData(form).entries());
+            payload.pageUrl = window.location.href;
+            const response = await fetch("/api/private-evals", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok || !result.ok) {
+              throw new Error(result.error || "private_eval_form_error");
+            }
+
+            track("private_eval_form_submit");
+            form.reset();
+            if (status) {
+              status.textContent =
+                result.message ||
+                "Your request has been received. The next step is a fit review followed by a proposed Evaluation Plan and fixed SOW. No payment or system access is requested until scope is agreed.";
+            }
+          } catch (error) {
+            track("private_eval_form_error", {
+              error: error instanceof Error ? error.message : "unknown"
+            });
+            if (status) {
+              status.textContent =
+                "The request could not be submitted. Email evals@capitalbench.org with the same details.";
+            }
+          } finally {
+            if (button) {
+              button.disabled = false;
+              button.textContent = originalButtonText || "Request Scope Review";
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</BaseLayout>

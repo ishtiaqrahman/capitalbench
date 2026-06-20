@@ -176,6 +176,15 @@ export const routeMeta: RouteMeta[] = [
     lastmod: defaultLastmod
   },
   {
+    path: "/private-evals",
+    title: "Private AI Capital Allocation Evaluation | CapitalBench",
+    description:
+      "Privately benchmark your AI model, agent, or investment workflow against frontier models using frozen inputs, real market outcomes, consistency testing, and auditable results.",
+    priority: 0.86,
+    changefreq: "monthly",
+    lastmod: defaultLastmod
+  },
+  {
     path: "/insights",
     title: "CapitalBench Insights",
     description:
@@ -336,6 +345,7 @@ const labelOverrides: Record<string, string> = {
   rounds: "Rounds",
   models: "Models",
   api: "API",
+  "private-evals": "Private Evals",
   insights: "Insights",
   manifesto: "Manifesto",
   methodology: "Methodology",
