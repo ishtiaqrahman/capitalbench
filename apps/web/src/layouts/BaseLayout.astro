@@ -76,13 +76,6 @@ const navItems = [
   { href: "/manifesto", label: "Manifesto", shortLabel: "Why", active: currentPath.startsWith("/manifesto") },
   { href: "/models", label: "Models", active: currentPath.startsWith("/models") },
   { href: "/api", label: "API", active: currentPath.startsWith("/api") },
-  {
-    href: "/private-evals",
-    label: "Private Evals",
-    active: currentPath.startsWith("/private-evals"),
-    privateEvalCta: true,
-    analyticsEvent: "private_eval_nav_click"
-  },
   { href: "/#ai-positioning", label: "Positioning", active: false },
   { href: "/rounds", label: "Rounds", active: currentPath.startsWith("/rounds") },
   {
@@ -175,7 +168,6 @@ const emailWidgetContext = hideEmailAlertWidget
                 <a
                   class:list={[
                     item.cta && "nav-cta",
-                    item.privateEvalCta && "nav-private-evals",
                     item.repository && "nav-repository",
                     item.shortLabel && "has-short-label"
                   ]}
@@ -197,12 +189,12 @@ const emailWidgetContext = hideEmailAlertWidget
             <a class="mobile-quick-link" href="/leaderboards/latest">Results</a>
             <a class="mobile-quick-link" href="/insights">Insights</a>
             <a class="mobile-quick-link" href="/models">Models</a>
-            <a class="mobile-private-evals" href="/private-evals">Private</a>
             <a class="mobile-contribute" href="/contribute">Contribute</a>
             <details class="mobile-menu">
               <summary aria-label="Open site menu">
                 <span aria-hidden="true"></span>
-                Menu
+                <span class="mobile-menu-label-open">Menu</span>
+                <span class="mobile-menu-label-close">Close</span>
               </summary>
               <div class="mobile-menu-panel">
                 {

@@ -185,6 +185,15 @@ export const routeMeta: RouteMeta[] = [
     lastmod: defaultLastmod
   },
   {
+    path: "/private-eval-sample-report",
+    title: "Sample Private Eval Report",
+    description:
+      "A rendered sample CapitalBench private evaluation report using public benchmark evidence and the private-report format.",
+    priority: 0.58,
+    changefreq: "monthly",
+    lastmod: defaultLastmod
+  },
+  {
     path: "/insights",
     title: "CapitalBench Insights",
     description:
@@ -346,6 +355,7 @@ const labelOverrides: Record<string, string> = {
   models: "Models",
   api: "API",
   "private-evals": "Private Evals",
+  "private-eval-sample-report": "Sample Private Eval Report",
   insights: "Insights",
   manifesto: "Manifesto",
   methodology: "Methodology",

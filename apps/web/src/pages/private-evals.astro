@@ -32,13 +32,43 @@ const publicStats = [
   { value: String(results.length), label: "scored public result rows" }
 ];
 
-const scorecardRows = [
-  "Portfolio return",
-  "CapitalBench Score",
-  "Consistency",
-  "Valid output rate",
-  "Risk-taking score",
-  "Median latency"
+const modelLabelById = new Map(models.map((model: any) => [model.model_id, model.label]));
+const sampleRoundResults = results
+  .filter((result: any) => result.round_id === sampleRound?.round_id)
+  .sort((left: any, right: any) => (left.rank ?? 999) - (right.rank ?? 999));
+const sampleRoundReturns = (apiReadModel.returns ?? [])
+  .filter((result: any) => result.round_id === sampleRound?.round_id)
+  .sort((left: any, right: any) => (left.rank ?? 999) - (right.rank ?? 999));
+const topSampleResult = sampleRoundResults[0];
+const bestSampleAsset = sampleRoundReturns.find((row: any) => row.rank === 1) ?? sampleRoundReturns[0];
+const benchmarkSampleReturn =
+  topSampleResult?.benchmark_return_pct ??
+  sampleRoundReturns.find((row: any) => row.is_benchmark)?.return_pct;
+const medianNumber = (values: number[]) => {
+  const cleanValues = values.filter((value) => Number.isFinite(value)).sort((left, right) => left - right);
+  if (!cleanValues.length) return null;
+  const middle = Math.floor(cleanValues.length / 2);
+  return cleanValues.length % 2
+    ? cleanValues[middle]
+    : (cleanValues[middle - 1] + cleanValues[middle]) / 2;
+};
+const formatPct = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? `${value.toFixed(2)}%` : "Reported privately";
+const formatScore = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? value.toFixed(1) : "Reported privately";
+const topSampleModel = topSampleResult
+  ? (modelLabelById.get(topSampleResult.model_id) ?? topSampleResult.model_id)
+  : "Top public model";
+const medianPortfolioReturn = medianNumber(sampleRoundResults.map((result: any) => result.portfolio_return_pct));
+const medianScore = medianNumber(sampleRoundResults.map((result: any) => result.capitalbench_score));
+const medianAlpha = medianNumber(sampleRoundResults.map((result: any) => result.alpha_pp));
+const sampleScorecardRows = [
+  ["Best public model", topSampleModel, `${sampleRoundResults.length || "Current"} public systems`, bestSampleAsset?.label ?? "Best eligible asset"],
+  ["Portfolio return", formatPct(topSampleResult?.portfolio_return_pct), formatPct(medianPortfolioReturn), `${bestSampleAsset?.ticker ?? bestSampleAsset?.label ?? "Oracle"} ${formatPct(bestSampleAsset?.return_pct)}`],
+  ["CapitalBench Score", formatScore(topSampleResult?.capitalbench_score), formatScore(medianScore), "100.0 oracle"],
+  ["S&P difference", formatPct(topSampleResult?.alpha_pp), formatPct(medianAlpha), `S&P 500 ${formatPct(benchmarkSampleReturn)}`],
+  ["Consistency evidence", "5 repeated runs", "Overlap and dispersion", "Raw outputs audited"],
+  ["Private delivery", "Report + CSV/JSON", "Failure register", "Audit packet"]
 ];
 
 const proofCells = [
@@ -109,60 +139,39 @@ const evaluationPlanRows = [
 
 const processSteps = [
   [
-    "Fit review",
+    "Scope review",
     "Before purchase",
-    "You submit your system type, business question, preferred access method, and desired timing. CapitalBench confirms whether the system can be evaluated fairly.",
-    "approximately 15-20 minutes",
-    "fit confirmation and proposed scope"
+    "CapitalBench confirms the system, business question, access method, comparator roster, and whether the evaluation can be run fairly.",
+    "15-20 minutes",
+    "fit confirmation and fixed scope"
   ],
   [
-    "Evaluation design",
-    "Day 1",
-    "A kickoff call defines the tested configuration, comparators, success criteria, security requirements, and evaluation mode.",
-    "approximately 45 minutes",
-    "draft Evaluation Plan"
-  ],
-  [
-    "Technical connection",
+    "Plan and connection",
     "Day 1-2",
-    "The system is connected through a customer-hosted endpoint, temporary API credential, or customer-executed runner. A non-scored validation call confirms schema compatibility and access.",
-    "approximately 30-60 minutes with a technical contact",
-    "verified connection without consuming the official run"
+    "A short Evaluation Plan freezes the tested configuration, inputs, constraints, comparators, retry rules, and technical access path.",
+    "60-90 minutes total",
+    "approved plan and verified connection"
   ],
   [
-    "Freeze and official execution",
+    "Official and consistency runs",
     "Day 2-3",
-    "The prompt, briefing, asset universe, constraints, model roster, and scoring rules are finalized and hashed. Every system receives the approved packet. One official response is collected from each system. Invalid and failed responses remain part of the audit record.",
+    "One official allocation determines the live outcome score. Repeated runs measure stability, invalid outputs, and allocation dispersion.",
     "no live meeting required after approval",
-    "frozen allocations and audit hashes"
+    "frozen outputs, run log, and hashes"
   ],
   [
-    "Consistency runs",
-    "Day 2-3",
-    "The same task is repeated under the pre-approved consistency protocol. These runs measure whether each system maintains a similar allocation or changes materially from one attempt to the next.",
-    "no live meeting required",
-    "consistency and allocation-dispersion dataset"
-  ],
-  [
-    "Live outcome window",
-    "Approximately seven calendar days",
-    "The official portfolios remain frozen while market prices resolve. Interim mark-to-market data may be shown privately, but no final ranking is issued before the scheduled exit rule.",
-    "none unless a data exception needs approval",
-    "final entry and exit price records"
-  ],
-  [
-    "Scoring and analysis",
-    "One to two business days after the exit price",
-    "CapitalBench calculates returns, benchmark differences, maximum-possible context, consistency, concentration, risk, validity, cost, latency, and performance attribution.",
+    "Market resolution and scoring",
+    "About seven days",
+    "The frozen portfolios resolve against actual market prices, then CapitalBench calculates performance, risk, concentration, validity, cost, latency, and consistency.",
     "review questions only",
-    "final scorecard and report"
+    "scorecard, attribution, and evidence files"
   ],
   [
-    "Executive readout",
+    "Report and readout",
     "Final delivery",
-    "CapitalBench walks the team through the findings, limitations, failure modes, and recommended next actions.",
+    "The final packet includes the decision report, machine-readable exports, audit bundle, failure-mode register, and a 60-minute readout.",
     "one 60-minute readout",
-    "readout and seven days of written follow-up questions"
+    "report, audit packet, and follow-up window"
   ]
 ];
 
@@ -170,28 +179,20 @@ const metricRows = [
   ["Portfolio return", "How did the frozen allocation perform during the defined outcome window?"],
   ["S&P 500 difference", "Did it outperform or underperform the benchmark, and by how much?"],
   ["CapitalBench Score", "How did the return compare with the highest-returning eligible option in the same window?"],
-  ["Regret versus maximum", "How much return separated the portfolio from the hindsight-best eligible asset?"],
   ["Valid-output rate", "Did the system reliably return a complete, schema-valid allocation?"],
   ["Allocation consistency", "Did repeated runs produce similar holdings and weights?"],
   ["Concentration", "How much capital was placed in the largest holding or narrowest theme?"],
   ["Risk appetite", "How strongly did the portfolio lean toward growth, momentum, cyclicality, defense, cash, or other risk profiles?"],
-  ["Peer similarity", "Did the system follow the frontier-model consensus or take a distinctive position?"],
-  ["Explanation quality", "Did its stated rationale match its allocation, identify relevant risks, and avoid unsupported claims?"],
-  ["Latency", "How long did the system take to return a valid response?"],
-  ["Cost per valid run", "What did each completed response cost when provider usage information was available?"]
+  ["Cost and latency", "How much time and provider usage were required for valid responses where available?"]
 ];
 
 const deliverables = [
   ["Approved Evaluation Plan", "The exact system, comparator roster, inputs, constraints, retry policy, metrics, timeline, confidentiality setting, and scoring rules.", "PDF or Markdown"],
   ["Executive Evaluation Report", "A decision-focused report explaining the result, what it means, major risks, limitations, and recommended next actions.", "12-20 page PDF"],
   ["Comparative Scorecard", "Side-by-side results for the client system and every comparator, including performance, consistency, validity, behavior, latency, and cost where available.", "PDF table, CSV, and JSON"],
-  ["Performance Attribution", "Holding-level explanation of which allocations helped or hurt the official result, with entry and exit prices and comparator context.", "Report section and CSV"],
   ["Consistency and Reliability Analysis", "Repeated-run evidence covering portfolio overlap, weight dispersion, frequent holdings, invalid responses, confidence dispersion, and official-run representativeness.", "Report section and data export"],
-  ["Behavior Profile", "A concise behavior description generated from measurable allocation evidence. Weak samples are labelled as early sample rather than overclassified.", "Report section"],
   ["Failure-Mode Register", "A prioritized record of observed weaknesses, severity, evidence, business impact, recommended action, and retest condition.", "Report table"],
-  ["Audit Packet", "Evaluation manifest, exact prompt, frozen briefing, asset universe, response schema, hashes, raw response references, parsed submissions, run log, price files, calculations, metadata, retry record, methodology version, and known limitations.", "Downloadable ZIP"],
-  ["Machine-readable export", "Structured outputs for internal dashboards, notebooks, product documentation, or future regression tests.", "CSV and JSON"],
-  ["Executive readout", "One 60-minute session plus seven calendar days of email-based clarification. Calculation or transcription errors are corrected and the report reissued at no additional charge.", "Video call and written follow-up"]
+  ["Audit Packet and Exports", "Prompt, frozen briefing, asset universe, schema, hashes, raw-output references, parsed submissions, price files, calculations, CSV, and JSON.", "Downloadable bundle"]
 ];
 
 const failureRegisterRows = [
@@ -229,9 +230,7 @@ const privacyItems = [
   ["Purpose-limited access", "Credentials are used only to execute the agreed evaluation."],
   ["No training use", "CapitalBench does not use private client inputs or outputs to train its own models."],
   ["Credential deletion", "Temporary credentials are removed after execution is complete."],
-  ["Defined retention", "Unless the SOW states otherwise, private raw outputs are retained for 30 days after final delivery and then deleted. Final report retention is governed by the SOW."],
   ["No sensitive production data required", "The standard sprint uses a CapitalBench market packet and does not require customer PII or live customer records."],
-  ["Provider transparency", "The Evaluation Plan identifies any third-party model providers used. Their handling of API data remains governed by their applicable terms."],
   ["NDA available", "A mutual NDA may be completed before private technical details or credentials are shared."]
 ];
 
@@ -257,12 +256,8 @@ const notFitItems = [
   "A stock-picking or trading recommendation service",
   "Personalized investment advice",
   "A live portfolio management service",
-  "A brokerage integration",
-  "A security penetration test",
-  "A source-code audit",
   "A regulatory certification",
   "A guarantee that a model will outperform markets",
-  "Proof of durable investment skill from one short evaluation",
   "A way to purchase a favorable ranking or endorsement"
 ];
 
@@ -409,23 +404,18 @@ const serviceSchema: JsonLdRecord = {
   <section class="private-evals-hero" aria-labelledby="private-evals-title">
     <div class="private-evals-hero-copy">
       <p class="eyebrow">PRIVATE CAPITALBENCH EVALS</p>
-      <h1 id="private-evals-title">Benchmark your AI investment system against frontier models.</h1>
+      <h1 id="private-evals-title">Private AI capital allocation evals.</h1>
       <p>
         CapitalBench independently evaluates your model, agent, or workflow using the same frozen market brief,
         portfolio constraints, and outcome window as leading AI systems.
       </p>
-      <p>
-        You receive a private comparative scorecard, consistency analysis, failure-mode review, machine-readable
-        results, and a complete audit packet.
-      </p>
-      <p class="private-evals-trust">Private by default · No source code or model weights required · No real capital traded</p>
       <div class="private-evals-actions">
         <a class="action-link action-primary" href="#request">
-          Request a Private Eval
+          Request Scope Review
         </a>
         <a
           class="action-link"
-          href="/private-eval-sample-report.md"
+          href="/private-eval-sample-report/"
           data-analytics-event="private_eval_sample_report_click"
         >
           View Sample Report
@@ -434,6 +424,11 @@ const serviceSchema: JsonLdRecord = {
       <p class="private-evals-commercial">
         Launch price: <strong>$3,000 USD</strong> · Typical completion: <strong>10-14 calendar days</strong> · Fixed scope
       </p>
+      <p>
+        You receive a private comparative scorecard, consistency analysis, failure-mode review, machine-readable
+        results, and a complete audit packet.
+      </p>
+      <p class="private-evals-trust">Private by default · No source code or model weights required · No real capital traded</p>
     </div>
 
     <aside class="private-evals-scorecard" aria-label="Illustrative CapitalBench scorecard preview">
@@ -444,22 +439,42 @@ const serviceSchema: JsonLdRecord = {
         </div>
         <span>{sampleRound?.round_id ?? "Public round"}</span>
       </div>
+      <div class="private-evals-dossier-tabs" aria-label="Private evaluation dossier artifacts">
+        <span>Scorecard</span>
+        <span>Audit</span>
+        <span>Consistency</span>
+        <span>Readout</span>
+      </div>
       <div class="private-evals-scorecard-table" role="table" aria-label="Illustrative scorecard metrics">
         <div role="row" class="private-evals-scorecard-row private-evals-scorecard-header">
           <span role="columnheader">Metric</span>
-          <span role="columnheader">Your system</span>
-          <span role="columnheader">Frontier median</span>
-          <span role="columnheader">Best comparator</span>
+          <span role="columnheader">Sample leader</span>
+          <span role="columnheader">Public median</span>
+          <span role="columnheader">Context</span>
         </div>
-        {scorecardRows.map((row) => (
+        {sampleScorecardRows.map(([metric, leader, median, context]) => (
           <div role="row" class="private-evals-scorecard-row">
-            <span role="cell">{row}</span>
-            <span role="cell">&mdash;</span>
-            <span role="cell">&mdash;</span>
-            <span role="cell">&mdash;</span>
+            <span role="cell">{metric}</span>
+            <span role="cell">{leader}</span>
+            <span role="cell">{median}</span>
+            <span role="cell">{context}</span>
           </div>
         ))}
       </div>
+      <dl class="private-evals-dossier-meta">
+        <div>
+          <dt>Evaluation type</dt>
+          <dd>Private sprint</dd>
+        </div>
+        <div>
+          <dt>Official run</dt>
+          <dd>Weekly window</dd>
+        </div>
+        <div>
+          <dt>Execution</dt>
+          <dd>No real capital</dd>
+        </div>
+      </dl>
       <div class="private-evals-stat-strip" aria-label="Current public benchmark statistics">
         {publicStats.map((stat) => (
           <div>
@@ -488,7 +503,7 @@ const serviceSchema: JsonLdRecord = {
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
     </div>
-    <a class="private-evals-sticky-button" href="#request">Request an Eval</a>
+    <a class="private-evals-sticky-button" href="#request">Request Scope Review</a>
   </nav>
 
   <section class="private-evals-proof" aria-labelledby="private-evals-proof-title">
@@ -581,7 +596,7 @@ const serviceSchema: JsonLdRecord = {
       <p>A sprint may include both modes, but their scores are never mixed into one misleading comparison.</p>
     </div>
     <div class="private-evals-mode-grid">
-      <article class="private-evals-mode-card">
+      <article class="private-evals-mode-card private-evals-mode-primary">
         <span>Included in the $3,000 sprint</span>
         <h3>Controlled Benchmark Mode</h3>
         <p>
@@ -590,7 +605,7 @@ const serviceSchema: JsonLdRecord = {
         </p>
         <p>This mode isolates allocation judgment and creates the fairest comparison with the public CapitalBench benchmark.</p>
       </article>
-      <article class="private-evals-mode-card">
+      <article class="private-evals-mode-card private-evals-mode-secondary">
         <span>Optional add-on</span>
         <h3>Production Workflow Mode</h3>
         <p>The system runs using its normal retrieval, tools, prompts, or internal workflow.</p>
@@ -608,24 +623,27 @@ const serviceSchema: JsonLdRecord = {
       <h2 id="plan-title">The rules are approved and frozen before any official run.</h2>
       <p>Every buyer receives a short Evaluation Plan before execution.</p>
     </div>
-    <div class="private-evals-table-wrap">
-      <table class="private-evals-table">
-        <thead>
-          <tr>
-            <th>Field</th>
-            <th>What is frozen</th>
-          </tr>
-        </thead>
-        <tbody>
-          {evaluationPlanRows.map(([field, value]) => (
+    <details class="private-evals-details private-evals-plan-details">
+      <summary>What gets frozen in the Evaluation Plan</summary>
+      <div class="private-evals-table-wrap">
+        <table class="private-evals-table">
+          <thead>
             <tr>
-              <th scope="row">{field}</th>
-              <td>{value}</td>
+              <th>Field</th>
+              <th>What is frozen</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {evaluationPlanRows.map(([field, value]) => (
+              <tr>
+                <th scope="row">{field}</th>
+                <td>{value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </details>
     <p class="private-evals-note">
       Nothing material is changed after the official outputs have been collected. If a rule must change because of a
       technical issue, the change is documented and approved before the market outcome is known.
@@ -728,15 +746,24 @@ const serviceSchema: JsonLdRecord = {
       <span class="panel-kicker">Deliverables</span>
       <h2 id="deliverables-title">Everything you receive</h2>
     </div>
-    <div class="private-evals-deliverable-grid">
-      {deliverables.map(([title, text, format], index) => (
-        <article>
-          <span>{index + 1}</span>
-          <h3>{title}</h3>
-          <p>{text}</p>
-          <small>{format}</small>
-        </article>
-      ))}
+    <div class="private-evals-packet-shell">
+      <aside class="private-evals-packet-sidebar" aria-label="Private eval delivery packet summary">
+        <span>Delivery packet</span>
+        <h3>Report, data, evidence, and readout stay connected.</h3>
+        <p>
+          Each deliverable points back to the same frozen inputs, raw outputs, price records, and scoring calculations.
+        </p>
+      </aside>
+      <div class="private-evals-deliverable-grid">
+        {deliverables.map(([title, text, format], index) => (
+          <article>
+            <span>{index + 1}</span>
+            <h3>{title}</h3>
+            <p>{text}</p>
+            <small>{format}</small>
+          </article>
+        ))}
+      </div>
     </div>
     <aside class="private-evals-failure-register">
       <div>
@@ -767,31 +794,35 @@ const serviceSchema: JsonLdRecord = {
         in the private-report format.
       </p>
     </div>
-    <div class="private-evals-preview-grid">
-      {reportPreviewCards.map((title, index) => (
-        <article>
-          <span>0{index + 1}</span>
-          <h3>{title}</h3>
-          <p>Preview of the private report section, using public benchmark evidence and marked scope limits.</p>
-        </article>
-      ))}
-    </div>
-    <div class="private-evals-actions">
-      <a
-        class="action-link action-primary"
-        href="/private-eval-sample-report.md"
-        data-analytics-event="private_eval_sample_report_click"
-      >
-        Download Sample Report
-      </a>
-      <a class="action-link" href={sampleRoundHref} data-analytics-event="private_eval_audit_packet_click">
-        Open the Underlying Public Audit Packet
-      </a>
-    </div>
-    <div class="private-evals-asset-links" aria-label="Private eval supporting templates">
-      {assetLinks.map(([label, href]) => (
-        <a href={href}>{label}</a>
-      ))}
+    <div class="private-evals-report-shelf">
+      <div class="private-evals-preview-grid">
+        {reportPreviewCards.map((title, index) => (
+          <article>
+            <span>0{index + 1}</span>
+            <h3>{title}</h3>
+            <p>Preview of the private report section, using public benchmark evidence and marked scope limits.</p>
+          </article>
+        ))}
+      </div>
+      <div class="private-evals-report-actions">
+        <div class="private-evals-actions">
+          <a
+            class="action-link action-primary"
+            href="/private-eval-sample-report/"
+            data-analytics-event="private_eval_sample_report_click"
+          >
+            View Sample Report
+          </a>
+          <a class="action-link" href={sampleRoundHref} data-analytics-event="private_eval_audit_packet_click">
+            Open the Underlying Public Audit Packet
+          </a>
+        </div>
+        <div class="private-evals-asset-links" aria-label="Private eval supporting templates">
+          {assetLinks.map(([label, href]) => (
+            <a href={href}>{label}</a>
+          ))}
+        </div>
+      </div>
     </div>
   </section>
 
@@ -894,7 +925,7 @@ const serviceSchema: JsonLdRecord = {
           <h3>$3,000 USD</h3>
           <p>Launch pricing for the first five completed private engagements.</p>
         </div>
-        <a class="action-link action-primary" href="#request">Request a Founding Sprint</a>
+        <a class="action-link action-primary" href="#request">Request Scope Review</a>
       </div>
       <div class="private-evals-included">
         <h4>Included</h4>
@@ -936,8 +967,8 @@ const serviceSchema: JsonLdRecord = {
       </p>
     </article>
 
-    <div class="private-evals-addons" data-private-eval-addons>
-      <h3>Add-ons</h3>
+    <details class="private-evals-addons" data-private-eval-addons>
+      <summary>Add-ons and extended scope</summary>
       <div class="private-evals-table-wrap">
         <table class="private-evals-table">
           <thead>
@@ -957,7 +988,7 @@ const serviceSchema: JsonLdRecord = {
         </table>
       </div>
       <p>Every add-on is agreed in writing before execution. CapitalBench does not add unapproved hourly charges.</p>
-    </div>
+    </details>
   </section>
 
   <section class="private-evals-section private-evals-fit" aria-labelledby="fit-title">
@@ -1008,8 +1039,8 @@ const serviceSchema: JsonLdRecord = {
     </div>
     <div class="private-evals-faq-groups">
       {faqGroups.map((group) => (
-        <section aria-labelledby={`${group.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-faq`}>
-          <h3 id={`${group.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-faq`}>{group.title}</h3>
+        <details class="private-evals-faq-group" open={group.title === "Scope and fit" ? true : undefined}>
+          <summary id={`${group.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-faq`}>{group.title}</summary>
           <div class="faq-list">
             {group.items.map(([question, answer]) => (
               <details data-private-eval-faq={question}>
@@ -1018,7 +1049,7 @@ const serviceSchema: JsonLdRecord = {
               </details>
             ))}
           </div>
-        </section>
+        </details>
       ))}
     </div>
   </section>
@@ -1034,13 +1065,13 @@ const serviceSchema: JsonLdRecord = {
       <p class="private-evals-trust">No payment at submission. Private by default. NDA available before technical access.</p>
     </div>
     <div class="private-evals-actions">
-      <a class="action-link action-primary" href="#request">Request a Private Eval</a>
+      <a class="action-link action-primary" href="#request">Request Scope Review</a>
       <a
         class="action-link"
-        href="/private-eval-sample-report.md"
+        href="/private-eval-sample-report/"
         data-analytics-event="private_eval_sample_report_click"
       >
-        Download Sample Report
+        View Sample Report
       </a>
     </div>
   </section>
@@ -1057,127 +1088,160 @@ const serviceSchema: JsonLdRecord = {
     <form class="private-evals-form" data-private-eval-form>
       <input type="hidden" name="source" value="private_evals" />
       <input type="hidden" name="pageUrl" value={`${siteConfig.url}/private-evals/`} />
-      <label class="private-evals-honeypot">
+      <label class="private-evals-honeypot" aria-hidden="true">
         Fax
         <input type="text" name="fax" tabindex="-1" autocomplete="off" />
       </label>
-      <div class="private-evals-form-grid">
-        <label>
-          Full name
-          <input name="full_name" type="text" autocomplete="name" required />
-        </label>
-        <label>
-          Work email
-          <input name="work_email" type="email" autocomplete="email" required />
-        </label>
-        <label>
-          Company
-          <input name="company" type="text" autocomplete="organization" required />
-        </label>
-        <label>
-          Company website
-          <input name="company_website" type="url" autocomplete="url" placeholder="https://example.com" required />
-        </label>
-        <label>
-          Role
-          <input name="role" type="text" autocomplete="organization-title" required />
-        </label>
-        <label>
-          What are you evaluating?
-          <select name="evaluating" required>
-            <option value="">Select one</option>
-            {evaluatingOptions.map((option) => <option value={option}>{option}</option>)}
-          </select>
-        </label>
-        <label>
-          Primary business decision
-          <select name="business_decision" required>
-            <option value="">Select one</option>
-            {decisionOptions.map((option) => <option value={option}>{option}</option>)}
-          </select>
-        </label>
-        <label>
-          Preferred access method
-          <select name="access_method" required>
-            <option value="">Select one</option>
-            {accessOptions.map((option) => <option value={option}>{option}</option>)}
-          </select>
-        </label>
-        <label>
-          Desired start period
-          <select name="start_period" required>
-            <option value="">Select one</option>
-            {startOptions.map((option) => <option value={option}>{option}</option>)}
-          </select>
-        </label>
-        <label>
-          Model or system name
-          <input name="model_or_system_name" type="text" />
-        </label>
-        <label>
-          Current model provider
-          <input name="current_model_provider" type="text" />
-        </label>
-        <label>
-          Tools or browsing used?
-          <select name="tools_or_browsing">
-            <option value="">Select one</option>
-            <option>No</option>
-            <option>Yes</option>
-            <option>Not sure</option>
-          </select>
-        </label>
-        <label>
-          Custom asset universe required?
-          <select name="custom_asset_universe_required">
-            <option value="">Select one</option>
-            <option>No</option>
-            <option>Yes</option>
-            <option>Not sure</option>
-          </select>
-        </label>
-        <label>
-          NDA required before discussion?
-          <select name="nda_required">
-            <option value="">Select one</option>
-            <option>No</option>
-            <option>Yes</option>
-            <option>Not sure</option>
-          </select>
-        </label>
-        <label>
-          Sensitive or regulated data involved?
-          <select name="sensitive_or_regulated_data">
-            <option value="">Select one</option>
-            <option>No</option>
-            <option>Yes</option>
-            <option>Not sure</option>
-          </select>
-        </label>
-        <label>
-          Procurement or security review required?
-          <select name="procurement_or_security_review">
-            <option value="">Select one</option>
-            <option>No</option>
-            <option>Yes</option>
-            <option>Not sure</option>
-          </select>
-        </label>
-        <label>
-          How did you hear about CapitalBench?
-          <input name="referral_source" type="text" />
+      <p class="private-evals-required-note">Required fields are marked <span aria-hidden="true">*</span>.</p>
+      <div class="private-evals-form-group">
+        <div class="private-evals-form-group-head">
+          <span>01</span>
+          <h3>Contact and company</h3>
+        </div>
+        <div class="private-evals-form-grid">
+          <label>
+            Full name <span class="private-evals-required" aria-hidden="true">*</span>
+            <input name="full_name" type="text" autocomplete="name" required />
+          </label>
+          <label>
+            Work email <span class="private-evals-required" aria-hidden="true">*</span>
+            <input name="work_email" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            Company <span class="private-evals-required" aria-hidden="true">*</span>
+            <input name="company" type="text" autocomplete="organization" required />
+          </label>
+          <label>
+            Company website <span class="private-evals-required" aria-hidden="true">*</span>
+            <input name="company_website" type="url" autocomplete="url" placeholder="https://example.com" required />
+          </label>
+          <label>
+            Role <span class="private-evals-required" aria-hidden="true">*</span>
+            <input name="role" type="text" autocomplete="organization-title" required />
+          </label>
+          <label>
+            How did you hear about CapitalBench?
+            <input name="referral_source" type="text" />
+          </label>
+        </div>
+      </div>
+      <div class="private-evals-form-group">
+        <div class="private-evals-form-group-head">
+          <span>02</span>
+          <h3>Evaluation target</h3>
+        </div>
+        <div class="private-evals-form-grid">
+          <label>
+            What are you evaluating? <span class="private-evals-required" aria-hidden="true">*</span>
+            <select name="evaluating" required>
+              <option value="">Select one</option>
+              {evaluatingOptions.map((option) => <option value={option}>{option}</option>)}
+            </select>
+          </label>
+          <label>
+            Primary business decision <span class="private-evals-required" aria-hidden="true">*</span>
+            <select name="business_decision" required>
+              <option value="">Select one</option>
+              {decisionOptions.map((option) => <option value={option}>{option}</option>)}
+            </select>
+          </label>
+          <label>
+            Model or system name
+            <input name="model_or_system_name" type="text" />
+          </label>
+          <label>
+            Current model provider
+            <input name="current_model_provider" type="text" />
+          </label>
+          <label>
+            Tools or browsing used?
+            <select name="tools_or_browsing">
+              <option value="">Select one</option>
+              <option>No</option>
+              <option>Yes</option>
+              <option>Not sure</option>
+            </select>
+            <small class="private-evals-field-note">Select yes if the normal workflow retrieves live data, uses tools, or browses.</small>
+          </label>
+          <label>
+            Custom asset universe required?
+            <select name="custom_asset_universe_required">
+              <option value="">Select one</option>
+              <option>No</option>
+              <option>Yes</option>
+              <option>Not sure</option>
+            </select>
+            <small class="private-evals-field-note">The standard sprint uses the current public CapitalBench ETF and cash universe.</small>
+          </label>
+        </div>
+      </div>
+      <div class="private-evals-form-group">
+        <div class="private-evals-form-group-head">
+          <span>03</span>
+          <h3>Access and timing</h3>
+        </div>
+        <div class="private-evals-form-grid">
+          <label>
+            Preferred access method <span class="private-evals-required" aria-hidden="true">*</span>
+            <select name="access_method" required>
+              <option value="">Select one</option>
+              {accessOptions.map((option) => <option value={option}>{option}</option>)}
+            </select>
+            <small class="private-evals-field-note">Choose the closest option; access is finalized only after scope review.</small>
+          </label>
+          <label>
+            Desired start period <span class="private-evals-required" aria-hidden="true">*</span>
+            <select name="start_period" required>
+              <option value="">Select one</option>
+              {startOptions.map((option) => <option value={option}>{option}</option>)}
+            </select>
+          </label>
+          <label>
+            NDA required before discussion?
+            <select name="nda_required">
+              <option value="">Select one</option>
+              <option>No</option>
+              <option>Yes</option>
+              <option>Not sure</option>
+            </select>
+          </label>
+          <label>
+            Sensitive or regulated data involved?
+            <select name="sensitive_or_regulated_data">
+              <option value="">Select one</option>
+              <option>No</option>
+              <option>Yes</option>
+              <option>Not sure</option>
+            </select>
+            <small class="private-evals-field-note">Do not submit sensitive data in this form.</small>
+          </label>
+          <label>
+            Procurement or security review required?
+            <select name="procurement_or_security_review">
+              <option value="">Select one</option>
+              <option>No</option>
+              <option>Yes</option>
+              <option>Not sure</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="private-evals-form-group">
+        <div class="private-evals-form-group-head">
+          <span>04</span>
+          <h3>Project summary</h3>
+        </div>
+        <label class="private-evals-form-wide">
+          Project summary <span class="private-evals-required" aria-hidden="true">*</span>
+          <textarea
+            name="project_summary"
+            rows="6"
+            minlength="20"
+            required
+            placeholder="Tell us what system you want tested, the decision this supports, and any timing or access constraints."
+          ></textarea>
         </label>
       </div>
-      <label class="private-evals-form-wide">
-        Project summary
-        <textarea
-          name="project_summary"
-          rows="6"
-          minlength="20"
-          required
-          placeholder="Tell us what system you want tested, the decision this supports, and any timing or access constraints."
-        ></textarea>
-      </label>
       <label class="private-evals-consent">
         <input type="checkbox" name="consent" value="yes" required />
         <span>
@@ -1229,7 +1293,7 @@ const serviceSchema: JsonLdRecord = {
     <nav aria-label="Private eval footer links">
       <a href="/methodology/">Methodology</a>
       <a href={sampleRoundHref}>Audit</a>
-      <a href="/private-eval-sample-report.md" data-analytics-event="private_eval_sample_report_click">Sample Report</a>
+      <a href="/private-eval-sample-report/" data-analytics-event="private_eval_sample_report_click">Sample Report</a>
       <a href="#security">Data Handling</a>
       <a href="/privacy/">Privacy</a>
       <a href="#procurement">Terms</a>
@@ -1237,7 +1301,7 @@ const serviceSchema: JsonLdRecord = {
     </nav>
   </section>
 
-  <a class="private-evals-mobile-cta" href="#request">Request a Private Eval</a>
+  <a class="private-evals-mobile-cta" href="#request">Request Scope Review</a>
 
   <script is:inline>
     (() => {
@@ -1288,21 +1352,16 @@ const serviceSchema: JsonLdRecord = {
 
         const mobileCta = document.querySelector(".private-evals-mobile-cta");
         const hero = document.querySelector(".private-evals-hero");
-        if (mobileCta && hero && "IntersectionObserver" in window) {
-          const ctaObserver = new IntersectionObserver(
-            (entries) => {
-              const entry = entries[0];
-              mobileCta.classList.toggle("is-visible", !entry.isIntersecting || entry.intersectionRatio < 0.15);
-            },
-            { threshold: [0, 0.15] }
-          );
-          ctaObserver.observe(hero);
-        } else if (mobileCta) {
+        const requestSection = document.querySelector("#request");
+        if (mobileCta && hero) {
           const toggleMobileCta = () => {
-            mobileCta.classList.toggle("is-visible", window.scrollY > 560);
+            const heroBottom = hero.getBoundingClientRect().bottom;
+            const requestTop = requestSection?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY;
+            mobileCta.classList.toggle("is-visible", heroBottom < 80 && requestTop > window.innerHeight * 0.82);
           };
           toggleMobileCta();
           window.addEventListener("scroll", toggleMobileCta, { passive: true });
+          window.addEventListener("resize", toggleMobileCta);
         }
 
         document.querySelectorAll("[data-private-eval-faq]").forEach((details) => {

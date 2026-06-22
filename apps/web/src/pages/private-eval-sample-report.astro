@@ -1,0 +1,164 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import apiReadModel from "../generated/apiReadModel.js";
+
+const rounds = apiReadModel.rounds ?? [];
+const results = apiReadModel.results ?? [];
+const returns = apiReadModel.returns ?? [];
+const models = apiReadModel.models ?? [];
+const modelLabelById = new Map(models.map((model: any) => [model.model_id, model.label]));
+
+const sampleRound =
+  rounds.find((round: any) => round.round_id === "CB-2026-05-28-1W") ??
+  rounds.find((round: any) => round.track === "weekly" && round.status === "resolved") ??
+  rounds[0];
+const sampleResults = results
+  .filter((result: any) => result.round_id === sampleRound?.round_id)
+  .sort((left: any, right: any) => (left.rank ?? 999) - (right.rank ?? 999));
+const sampleReturns = returns
+  .filter((result: any) => result.round_id === sampleRound?.round_id)
+  .sort((left: any, right: any) => (left.rank ?? 999) - (right.rank ?? 999));
+const leader = sampleResults[0];
+const runnerUp = sampleResults[1];
+const bestAsset = sampleReturns.find((row: any) => row.rank === 1) ?? sampleReturns[0];
+const benchmark = sampleReturns.find((row: any) => row.is_benchmark);
+const formatPct = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? `${value.toFixed(2)}%` : "n/a";
+const formatScore = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? value.toFixed(1) : "n/a";
+const leaderLabel = leader ? (modelLabelById.get(leader.model_id) ?? leader.model_id) : "Top public model";
+const runnerUpLabel = runnerUp ? (modelLabelById.get(runnerUp.model_id) ?? runnerUp.model_id) : "Runner-up model";
+
+const scoreRows = [
+  ["Top model", leaderLabel],
+  ["Portfolio return", formatPct(leader?.portfolio_return_pct)],
+  ["CapitalBench Score", formatScore(leader?.capitalbench_score)],
+  ["S&P 500 return", formatPct(benchmark?.return_pct ?? leader?.benchmark_return_pct)],
+  ["Best eligible asset", `${bestAsset?.label ?? "Best asset"} ${bestAsset?.ticker ? `(${bestAsset.ticker})` : ""}`],
+  ["Oracle return", formatPct(bestAsset?.return_pct ?? leader?.max_possible_return_pct)]
+];
+
+const sections = [
+  ["Executive summary", "The sample report explains which system led the public comparator set, where returns came from, and what the result can and cannot prove."],
+  ["Comparative scorecard", "Performance, score, benchmark difference, validity, consistency, concentration, cost, and latency are kept as separate fields."],
+  ["Failure-mode register", "Findings are written as decision records with severity, evidence, likely business impact, and a retest condition."],
+  ["Audit packet index", "The final packet links frozen inputs, raw outputs, parsed submissions, prices, hashes, calculations, and methodology version."]
+];
+---
+
+<BaseLayout
+  title="Sample Private Eval Report | CapitalBench"
+  description="A rendered sample CapitalBench private evaluation report using public benchmark evidence."
+  hideFooterSignup
+>
+  <section class="sample-report-hero" aria-labelledby="sample-report-title">
+    <p class="eyebrow">SAMPLE PRIVATE EVAL REPORT</p>
+    <h1 id="sample-report-title">A private-report format built from public benchmark evidence.</h1>
+    <p>
+      This sample uses public round {sampleRound?.round_id ?? "evidence"} to show the structure buyers receive:
+      decision summary, scorecard, attribution, consistency evidence, failure-mode review, and audit index.
+    </p>
+    <div class="private-evals-actions">
+      <a class="action-link action-primary" href="/private-evals/#request">Request Scope Review</a>
+      <a class="action-link" href={sampleRound?.proof?.round_page_url ?? `/rounds/${sampleRound?.round_id}/`}>
+        Open Public Audit Packet
+      </a>
+      <a class="action-link" href="/private-eval-sample-report.md">Download Markdown Source</a>
+    </div>
+  </section>
+
+  <article class="sample-report-sheet" aria-label="Sample private evaluation report">
+    <header class="sample-report-cover">
+      <div>
+        <span>CapitalBench Private Eval Sample</span>
+        <h2>{sampleRound?.round_id ?? "Public round"} report preview</h2>
+      </div>
+      <dl>
+        <div>
+          <dt>Outcome window</dt>
+          <dd>{sampleRound?.entry_date} to {sampleRound?.exit_date}</dd>
+        </div>
+        <div>
+          <dt>Systems compared</dt>
+          <dd>{sampleResults.length}</dd>
+        </div>
+        <div>
+          <dt>Methodology</dt>
+          <dd>{sampleRound?.methodology_version ?? "portfolio-v1.0"}</dd>
+        </div>
+      </dl>
+    </header>
+
+    <section class="sample-report-summary" aria-labelledby="sample-report-summary-title">
+      <div>
+        <span>Decision summary</span>
+        <h2 id="sample-report-summary-title">{leaderLabel} led this public sample round.</h2>
+        <p>
+          The leading portfolio returned {formatPct(leader?.portfolio_return_pct)} against an S&amp;P 500 return of
+          {formatPct(benchmark?.return_pct ?? leader?.benchmark_return_pct)}. The best eligible asset was
+          {bestAsset?.label ?? "the oracle asset"} with a {formatPct(bestAsset?.return_pct)} return.
+        </p>
+        <p>
+          A real private report replaces these public comparator rows with the buyer's system, repeated-run evidence,
+          access notes, cost and latency records, and client-approved confidentiality terms.
+        </p>
+      </div>
+      <aside>
+        <strong>{formatScore(leader?.capitalbench_score)}</strong>
+        <span>sample CapitalBench Score</span>
+      </aside>
+    </section>
+
+    <section class="sample-report-table-section" aria-labelledby="sample-scorecard-title">
+      <h2 id="sample-scorecard-title">Scorecard extract</h2>
+      <div class="private-evals-table-wrap">
+        <table class="private-evals-table">
+          <tbody>
+            {scoreRows.map(([label, value]) => (
+              <tr>
+                <th scope="row">{label}</th>
+                <td>{value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sample-report-sections" aria-label="Report contents">
+      {sections.map(([title, copy], index) => (
+        <article>
+          <span>0{index + 1}</span>
+          <h3>{title}</h3>
+          <p>{copy}</p>
+        </article>
+      ))}
+    </section>
+
+    <section class="sample-report-register" aria-labelledby="sample-register-title">
+      <h2 id="sample-register-title">Example finding format</h2>
+      <div class="private-evals-table-wrap">
+        <table class="private-evals-table">
+          <tbody>
+            <tr>
+              <th scope="row">Finding</th>
+              <td>{runnerUpLabel} trailed the leading sample result but still selected a valid diversified portfolio.</td>
+            </tr>
+            <tr>
+              <th scope="row">Evidence</th>
+              <td>Portfolio return, CapitalBench Score, holdings, and price records are linked to the audit packet.</td>
+            </tr>
+            <tr>
+              <th scope="row">Limitation</th>
+              <td>One weekly window is real outcome evidence, not proof of durable investment skill.</td>
+            </tr>
+            <tr>
+              <th scope="row">Retest condition</th>
+              <td>Run additional weekly or monthly windows after the tested configuration changes.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </article>
+</BaseLayout>

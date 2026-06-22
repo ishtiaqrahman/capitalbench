@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
+import { numberValue, pctLabel, portfolioReturnValue, scoreLabel } from "./audit-score-math-helpers.mjs";
 
 const repoRoot = resolve(process.cwd(), "../..");
 const roundsRoot = join(repoRoot, "rounds");
@@ -54,24 +55,6 @@ function readCsv(path) {
 function readYaml(path) {
   if (!existsSync(path)) return {};
   return parseYaml(readFileSync(path, "utf8")) ?? {};
-}
-
-function numberValue(value) {
-  if (value === undefined || value === null || value === "") return null;
-  const numeric = Number(value);
-  return Number.isFinite(numeric) ? numeric : null;
-}
-
-function decimalToPct(value) {
-  return value * 100;
-}
-
-function pctLabel(value) {
-  return `${decimalToPct(value).toFixed(4)}%`;
-}
-
-function scoreLabel(value) {
-  return value.toFixed(1);
 }
 
 function closeEnough(actual, expected, epsilon = EPSILON) {
@@ -202,7 +185,7 @@ function auditRound(round) {
       }
     }
 
-    const portfolioReturn = numberValue(row.portfolio_return ?? row.selected_asset_return);
+    const portfolioReturn = portfolioReturnValue(row);
     const selectedReturn = numberValue(row.selected_asset_return);
     const benchmarkReturn = numberValue(row.sp500_return);
     const alpha = numberValue(row.alpha_vs_sp500);

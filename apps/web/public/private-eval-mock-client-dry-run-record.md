@@ -7,7 +7,7 @@ This record documents the launch dry run used for the public private-evals page.
 - Mock client system: public CapitalBench round evidence presented in private-report format
 - Evidence round: CB-2026-05-28-1W
 - Public audit packet: https://www.capitalbench.org/rounds/CB-2026-05-28-1W/
-- Sample report: /private-eval-sample-report.md
+- Sample report: /private-eval-sample-report/
 
 ## Dry Run Checklist
 
