@@ -67,6 +67,18 @@ jobs:
             --cumulative-output cumulative \
             --worker-id "github-actions-${{ github.run_id }}"
 
+      - name: Refresh benchmark insights
+        run: |
+          capitalbench build-insights-input \
+            --rounds-dir rounds \
+            --output /tmp/capitalbench-insights-input.json \
+            --run-date "$(date -u +%F)"
+          capitalbench generate-insights \
+            --input /tmp/capitalbench-insights-input.json \
+            --output insights \
+            --llm auto
+          capitalbench validate-insights --insights-dir insights
+
       - name: Audit public repository contents
         run: python scripts/public_repo_audit.py
 
@@ -75,7 +87,7 @@ jobs:
         run: |
           git config user.name "capitalbench-bot"
           git config user.email "actions@capitalbench.org"
-          git add rounds latest cumulative || true
+          git add rounds latest cumulative insights || true
           if git diff --cached --quiet; then
             echo "No generated artifacts changed."
             echo "changed=false" >> "$GITHUB_OUTPUT"
