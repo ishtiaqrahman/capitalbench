@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import os
 from dataclasses import dataclass
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -71,6 +72,8 @@ def fetch_selected_prices(
     overwrite_prices: bool = False,
     full_universe: bool = False,
     price_side: str = "both",
+    allow_previous_trading_day_exit: bool = False,
+    fallback_lookback_days: int = 7,
     fetcher: TiingoFetcher | None = None,
 ) -> SelectedPriceFetchOutput:
     if price_side not in {"entry", "exit", "both"}:
@@ -111,7 +114,14 @@ def fetch_selected_prices(
         _write_price_csv(entry_path, entry_rows)
     if price_side in {"exit", "both"}:
         assert exit_date is not None
-        exit_rows = _price_rows_for_date(options, exit_date, api_key, fetch)
+        exit_rows = _price_rows_for_date(
+            options,
+            exit_date,
+            api_key,
+            fetch,
+            allow_previous_trading_day=allow_previous_trading_day_exit,
+            fallback_lookback_days=fallback_lookback_days,
+        )
         _write_price_csv(exit_path, exit_rows)
     fetched_symbols = sorted(
         {
@@ -132,8 +142,21 @@ def fetch_selected_prices(
     )
 
 
-def _price_rows_for_date(options: list, price_date: str, api_key: str, fetch: TiingoFetcher) -> list[dict[str, Any]]:
+def _price_rows_for_date(
+    options: list,
+    price_date: str,
+    api_key: str,
+    fetch: TiingoFetcher,
+    *,
+    allow_previous_trading_day: bool = False,
+    fallback_lookback_days: int = 7,
+) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
+    start_date = (
+        _fallback_start_date(price_date, fallback_lookback_days)
+        if allow_previous_trading_day
+        else price_date
+    )
     for option in options:
         if _is_cash_option(option):
             rows.append(
@@ -150,13 +173,26 @@ def _price_rows_for_date(options: list, price_date: str, api_key: str, fetch: Ti
         symbol = option.tiingo_symbol or option.symbol or option.asset_symbol
         if not symbol:
             raise ValueError(f"non-cash option has no Tiingo symbol: {option.option_id}")
-        tiingo_rows = fetch(symbol, price_date, price_date, api_key)
-        price_row = _select_tiingo_row(option.option_id, symbol, price_date, tiingo_rows)
+        tiingo_rows = fetch(symbol, start_date, price_date, api_key)
+        price_row = _select_tiingo_row(
+            option.option_id,
+            symbol,
+            price_date,
+            tiingo_rows,
+            allow_previous_trading_day=allow_previous_trading_day,
+        )
         rows.append(price_row)
     return rows
 
 
-def _select_tiingo_row(option_id: str, symbol: str, price_date: str, rows: list[dict[str, Any]]) -> dict[str, Any]:
+def _select_tiingo_row(
+    option_id: str,
+    symbol: str,
+    price_date: str,
+    rows: list[dict[str, Any]],
+    *,
+    allow_previous_trading_day: bool = False,
+) -> dict[str, Any]:
     if not rows:
         raise ValueError(f"Tiingo returned no price rows for {option_id} ({symbol}) on {price_date}")
     matching_rows = [
@@ -172,22 +208,40 @@ def _select_tiingo_row(option_id: str, symbol: str, price_date: str, rows: list[
                 if (normalized := _normalize_tiingo_date(row.get("date"))) is not None
             }
         )
-        available = ", ".join(available_dates) if available_dates else "none"
-        raise ValueError(
-            f"Tiingo returned no row exactly matching requested date {price_date} "
-            f"for {option_id} ({symbol}); available dates: {available}"
-        )
+        if allow_previous_trading_day:
+            previous_rows = [
+                row
+                for row in rows
+                if (normalized := _normalize_tiingo_date(row.get("date"))) is not None
+                and normalized <= price_date
+            ]
+            if previous_rows:
+                matching_rows = [
+                    max(previous_rows, key=lambda row: str(_normalize_tiingo_date(row.get("date")) or ""))
+                ]
+        if not matching_rows:
+            available = ", ".join(available_dates) if available_dates else "none"
+            if allow_previous_trading_day:
+                raise ValueError(
+                    f"Tiingo returned no row on or before requested date {price_date} "
+                    f"for {option_id} ({symbol}); available dates: {available}"
+                )
+            raise ValueError(
+                f"Tiingo returned no row exactly matching requested date {price_date} "
+                f"for {option_id} ({symbol}); available dates: {available}"
+            )
     row = matching_rows[0]
+    row_date = _normalize_tiingo_date(row.get("date")) or price_date
     close = row.get("close")
     adj_close = row.get("adjClose", row.get("adj_close"))
     if close is None:
-        raise ValueError(f"Tiingo row missing close for {option_id} ({symbol}) on {price_date}")
+        raise ValueError(f"Tiingo row missing close for {option_id} ({symbol}) on {row_date}")
     if adj_close is None:
-        raise ValueError(f"Tiingo row missing adjClose for {option_id} ({symbol}) on {price_date}")
+        raise ValueError(f"Tiingo row missing adjClose for {option_id} ({symbol}) on {row_date}")
     return {
         "option_id": option_id,
         "symbol": symbol,
-        "date": price_date,
+        "date": row_date,
         "close": close,
         "adj_close": adj_close,
         "source": "tiingo_eod",
@@ -201,6 +255,11 @@ def _normalize_tiingo_date(raw_date: Any) -> str | None:
     if len(text) < 10:
         return None
     return text[:10]
+
+
+def _fallback_start_date(price_date: str, fallback_lookback_days: int) -> str:
+    lookback = max(1, fallback_lookback_days)
+    return (date.fromisoformat(price_date) - timedelta(days=lookback)).isoformat()
 
 
 def _write_price_csv(path: Path, rows: list[dict[str, Any]]) -> None:

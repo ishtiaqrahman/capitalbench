@@ -72,6 +72,64 @@ function readYaml(path, fallback = null) {
   }
 }
 
+function parseCsvRecords(text) {
+  const records = [];
+  let row = [];
+  let field = "";
+  let quoted = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    if (quoted) {
+      if (char === '"' && text[index + 1] === '"') {
+        field += '"';
+        index += 1;
+      } else if (char === '"') {
+        quoted = false;
+      } else {
+        field += char;
+      }
+    } else if (char === '"') {
+      quoted = true;
+    } else if (char === ",") {
+      row.push(field);
+      field = "";
+    } else if (char === "\n") {
+      row.push(field);
+      records.push(row);
+      row = [];
+      field = "";
+    } else if (char !== "\r") {
+      field += char;
+    }
+  }
+  if (field || row.length > 0) {
+    row.push(field);
+    records.push(row);
+  }
+  return records;
+}
+
+function readCsv(path) {
+  if (!existsSync(path)) return [];
+  const records = parseCsvRecords(readFileSync(path, "utf8"));
+  if (records.length === 0) return [];
+  const [header, ...rows] = records;
+  return rows
+    .filter((row) => row.length > 1 || row[0])
+    .map((row) => Object.fromEntries(header.map((column, index) => [column, row[index] ?? ""])));
+}
+
+const leaderboardCache = new Map();
+
+function leaderboardRows(roundId, runId) {
+  const key = `${roundId}:${runId}`;
+  if (!leaderboardCache.has(key)) {
+    const path = join(repoRoot, "rounds", roundId, "runs", runId, "results", "leaderboard.csv");
+    leaderboardCache.set(key, readCsv(path));
+  }
+  return leaderboardCache.get(key);
+}
+
 function assertEqual(actual, expected, context) {
   if (actual !== expected) fail(`${context}: expected ${expected}, got ${actual}`);
 }
@@ -158,9 +216,13 @@ function cumulativeLogAlpha(modelReturns, benchmarkReturns) {
   }, 0);
 }
 
-async function select(table, params = {}) {
+const PAGE_SIZE = 1000;
+
+async function selectPage(table, params = {}, offset = 0) {
   const url = new URL(`/rest/v1/${table}`, supabaseUrl);
   for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
+  url.searchParams.set("limit", String(PAGE_SIZE));
+  url.searchParams.set("offset", String(offset));
   const response = await fetch(url, {
     headers: {
       apikey: supabaseKey,
@@ -171,7 +233,21 @@ async function select(table, params = {}) {
   if (!response.ok) {
     throw new Error(`Supabase select failed for ${table}: HTTP ${response.status}`);
   }
-  return response.json();
+  const rows = await response.json();
+  if (!Array.isArray(rows)) {
+    throw new Error(`Supabase select failed for ${table}: expected array response`);
+  }
+  return rows;
+}
+
+async function select(table, params = {}) {
+  const rows = [];
+  for (let offset = 0; ; offset += PAGE_SIZE) {
+    const page = await selectPage(table, params, offset);
+    rows.push(...page);
+    if (page.length < PAGE_SIZE) break;
+  }
+  return rows;
 }
 
 function compareRounds(rows) {
@@ -295,12 +371,16 @@ function expectedCumulativeOfficialRows() {
         benchmarkReturns: [],
         alphas: [],
         regrets: [],
+        costs: [],
         roundIds: []
       };
     existing.returns.push((row.portfolio_return_pct ?? row.selected_asset_return_pct) / 100);
     existing.benchmarkReturns.push(row.benchmark_return_pct / 100);
     existing.alphas.push(row.alpha_pp / 100);
     existing.regrets.push(row.regret_vs_best_option_pct / 100);
+    const leaderboardRow = leaderboardRows(row.round_id, row.run_id).find((candidate) => candidate.model_id === row.model_id);
+    const cost = finiteNumber(leaderboardRow?.cost_usd);
+    if (cost !== null) existing.costs.push(cost);
     existing.roundIds.push(row.round_id);
     bySlotModel.set(key, existing);
   }
@@ -322,8 +402,8 @@ function expectedCumulativeOfficialRows() {
     average_regret_vs_best_option: average(row.regrets),
     best_round_alpha: Math.max(...row.alphas),
     worst_round_alpha: Math.min(...row.alphas),
-    total_cost_usd: null,
-    average_cost_usd: null,
+    total_cost_usd: row.costs.length > 0 ? row.costs.reduce((total, value) => total + value, 0) : null,
+    average_cost_usd: average(row.costs),
     rounds_included: [...row.roundIds].sort().join(",")
   }));
 }
@@ -356,8 +436,8 @@ function compareCumulativeOfficial(rows) {
     assertNear(actual.average_regret_vs_best_option, expected.average_regret_vs_best_option, `Supabase cumulative official ${key} average_regret_vs_best_option`);
     assertNear(actual.best_round_alpha, expected.best_round_alpha, `Supabase cumulative official ${key} best_round_alpha`);
     assertNear(actual.worst_round_alpha, expected.worst_round_alpha, `Supabase cumulative official ${key} worst_round_alpha`);
-    assertEqual(actual.total_cost_usd ?? null, expected.total_cost_usd, `Supabase cumulative official ${key} total_cost_usd`);
-    assertEqual(actual.average_cost_usd ?? null, expected.average_cost_usd, `Supabase cumulative official ${key} average_cost_usd`);
+    assertNullableNear(actual.total_cost_usd, expected.total_cost_usd, `Supabase cumulative official ${key} total_cost_usd`);
+    assertNullableNear(actual.average_cost_usd, expected.average_cost_usd, `Supabase cumulative official ${key} average_cost_usd`);
     assertEqual(actual.rounds_included, expected.rounds_included, `Supabase cumulative official ${key} rounds_included`);
     assertEqual(Boolean(actual.published), true, `Supabase cumulative official ${key} published`);
   }

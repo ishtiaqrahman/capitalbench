@@ -241,6 +241,39 @@ def test_fetch_prices_fails_when_tiingo_date_does_not_match_request(tmp_path: Pa
         )
 
 
+def test_fetch_prices_can_use_previous_trading_day_for_exit_only(tmp_path: Path, monkeypatch) -> None:
+    round_path = _create_round_with_submission(tmp_path)
+    monkeypatch.setenv("TIINGO_API_KEY", "test-key")
+    calls: list[tuple[str, str, str]] = []
+
+    def fake_fetch(symbol: str, start_date: str, end_date: str, api_key: str) -> list[dict[str, object]]:
+        calls.append((symbol, start_date, end_date))
+        if end_date == "2026-06-19":
+            return [
+                {"date": "2026-06-17T00:00:00.000Z", "close": 98.0, "adjClose": 98.0},
+                {"date": "2026-06-18T00:00:00.000Z", "close": 101.0, "adjClose": 101.0},
+            ]
+        return [{"date": f"{start_date}T00:00:00.000Z", "close": 100.0, "adjClose": 100.0}]
+
+    output = fetch_selected_prices(
+        round_path=round_path,
+        run_id=None,
+        entry_date="2026-06-12",
+        exit_date="2026-06-19",
+        allow_previous_trading_day_exit=True,
+        fetcher=fake_fetch,
+    )
+
+    assert ("AAA", "2026-06-12", "2026-06-12") in calls
+    assert ("AAA", "2026-06-12", "2026-06-19") in calls
+    with output.exit_prices_path.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    non_cash_rows = [row for row in rows if row["source"] == "tiingo_eod"]
+    assert non_cash_rows
+    assert all(row["date"] == "2026-06-18" for row in non_cash_rows)
+    assert all(row["close"] == "101.0" for row in non_cash_rows)
+
+
 def test_fetch_selected_prices_requires_tiingo_key(tmp_path: Path, monkeypatch) -> None:
     round_path = _create_round_with_submission(tmp_path)
     monkeypatch.delenv("TIINGO_API_KEY", raising=False)

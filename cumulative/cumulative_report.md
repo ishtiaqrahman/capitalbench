@@ -8,10 +8,12 @@ Each round is a separate market decision with its own declared scoring window. O
 
 | Rank | Model | Provider | Resolved Rounds | Avg Return | Avg S&P Return | Avg Alpha | Hit Rate vs S&P | Avg Regret | Cumulative Return | Cumulative S&P Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | xai-grok-4-3 | xai | 2 | -0.48% | -0.71% | 0.22% | 50.00% | 11.32% | -0.98% | -1.41% |
-| 2 | anthropic-claude-opus-4-7 | anthropic | 2 | -0.82% | -0.71% | -0.12% | 50.00% | 11.66% | -1.66% | -1.41% |
-| 3 | google-gemini-3-1-pro | google | 2 | -2.11% | -0.71% | -1.40% | 50.00% | 12.94% | -4.25% | -1.41% |
-| 4 | openai-gpt-5-5 | openai | 2 | -3.92% | -0.71% | -3.21% | 50.00% | 14.75% | -7.90% | -1.41% |
+| 1 | anthropic-claude-fable-5 | anthropic | 3 | 2.13% | 1.23% | 0.90% | 66.67% | 8.90% | 6.47% | 3.73% |
+| 2 | anthropic-claude-opus-4-7 | anthropic | 12 | -0.56% | -0.10% | -0.47% | 41.67% | 9.20% | -7.49% | -1.36% |
+| 3 | xai-grok-4-3 | xai | 12 | -0.68% | -0.10% | -0.59% | 41.67% | 9.32% | -8.81% | -1.36% |
+| 4 | anthropic-claude-opus-4-8 | anthropic | 10 | -1.12% | -0.38% | -0.74% | 30.00% | 9.04% | -11.20% | -3.93% |
+| 5 | openai-gpt-5-5 | openai | 12 | -1.21% | -0.10% | -1.12% | 41.67% | 9.85% | -15.36% | -1.36% |
+| 6 | google-gemini-3-1-pro | google | 12 | -1.77% | -0.10% | -1.68% | 41.67% | 10.41% | -20.80% | -1.36% |
 
 ## Cumulative Stability Leaderboard
 
@@ -21,12 +23,22 @@ _No rows._
 
 | Round | Official Run | Stability Run | Official Included | Stability Included | Warnings |
 | --- | --- | --- | --- | --- | --- |
-| CB-2026-05-10-1M | official-round-1-clean |  | yes | no |  |
-| CB-2026-05-17-1M | official-20260517 |  | yes | no |  |
+| CB-2026-05-24-1W | official-20260524-1W |  | yes | no |  |
+| CB-2026-05-27-1W | official-20260527-1W |  | yes | no |  |
+| CB-2026-05-28-1W | official-20260528-1W |  | yes | no |  |
+| CB-2026-05-29-1W | official-20260529-1W |  | yes | no |  |
+| CB-2026-06-01-1W | official-20260601 |  | yes | no |  |
+| CB-2026-06-02-1W | official-20260602-clean |  | yes | no |  |
+| CB-2026-06-03-1W | official-20260603 |  | yes | no |  |
+| CB-2026-06-05-1W | official-20260605 |  | yes | no |  |
+| CB-2026-06-08-1W | official-20260608 |  | yes | no |  |
+| CB-2026-06-09-1W | official-20260609 |  | yes | no |  |
+| CB-2026-06-12-1W | official-20260612-clean |  | yes | no |  |
+| CB-2026-06-13-1W | official-20260613 |  | yes | no |  |
 
 ## Methodology
 
-Official cumulative score: the public website divides summed model returns by summed oracle returns across all completed rounds in the selected track. Models that did not participate in every resolved round are shown as short history until they build a full track history. A score of 100 matches the hindsight oracle, 0 means no net return, and negative values preserve losses.
+Official cumulative score: the public website averages CapitalBench Score across all completed rounds in the selected track. Models that did not participate in every resolved round are shown as short history until they build a full track history. CapitalBench Score compares the model return with the maximum possible return from the scored universe in that window.
 
 Stability cumulative score: For each model, we average its repeated-run alpha and consistency across the rounds where each model participated.
 
@@ -47,20 +59,7 @@ The official leaderboard measures the saved public model decision. The stability
 
 ## Warnings
 
-- Round CB-2026-05-24-1M has no scored official or stability runs.
-- Round CB-2026-05-28-1M has no scored official or stability runs.
-- Round CB-2026-05-29-1M has no scored official or stability runs.
-- Round CB-2026-06-01-1M has no scored official or stability runs.
-- Round CB-2026-06-02-1M has no scored official or stability runs.
-- Round CB-2026-06-03-1M has no scored official or stability runs.
-- Round CB-2026-06-05-1M has no scored official or stability runs.
-- Round CB-2026-06-08-1M has no scored official or stability runs.
-- Round CB-2026-06-09-1M has no scored official or stability runs.
-- Round CB-2026-06-12-1M has no scored official or stability runs.
-- Round CB-2026-06-13-1M has no scored official or stability runs.
-- Round CB-2026-06-15-1M has no scored official or stability runs.
-- Round CB-2026-06-16-1M has no scored official or stability runs.
-- Round CB-2026-06-17-1M has no scored official or stability runs.
-- Round CB-2026-06-18-1M has no scored official or stability runs.
-- Round example-round has no scored official or stability runs.
-- Round example-round-2 has no scored official or stability runs.
+- Round CB-2026-06-15-1W has no scored official or stability runs.
+- Round CB-2026-06-16-1W has no scored official or stability runs.
+- Round CB-2026-06-17-1W has no scored official or stability runs.
+- Round CB-2026-06-18-1W has no scored official or stability runs.

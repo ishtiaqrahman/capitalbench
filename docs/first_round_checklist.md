@@ -107,7 +107,7 @@ does not replace the official leaderboard.
 - Confirm every selected non-cash option and the S&P 500 benchmark have entry and exit prices.
 - To populate `regret_vs_best_option` and `rank_among_options`, run the same fetch command with `--full-universe` so every option in the frozen universe is priced.
 - If the entry date has resolved but the exit date has not, use `--side entry --full-universe` to write only full-universe entry prices as the model-facing starting snapshot. After the exit date resolves, fetch both entry and exit prices together before official scoring.
-- Confirm the requested entry and exit dates are the round's intended pricing dates. CapitalBench requires Tiingo rows to exactly match those dates and does not silently use the nearest available trading day.
+- Confirm the requested entry and exit dates are the round's intended pricing dates. Manual price fetching requires Tiingo rows to exactly match those dates; scheduled resolution can fall back to the most recent prior Tiingo exit row, but manifests should still use the intended trading close.
 - Run `capitalbench score-round --round rounds/<id> --run-id <run_id>`.
 - Run `capitalbench publish-report --round rounds/<id> --run-id <run_id>`.
 - If both official and stability runs exist, run

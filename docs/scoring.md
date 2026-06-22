@@ -60,6 +60,12 @@ the requested date is a market holiday, weekend, or otherwise absent from
 Tiingo EOD data, the command fails clearly and the operator must choose the
 correct date according to the round manifest.
 
+The scheduled resolver keeps entry pricing strict, but allows an exit-price
+fallback to the most recent Tiingo row on or before the manifest exit date. This
+prevents an accepted round from stalling when an exit date lands on a market
+holiday; the generated `prices/exit_prices.csv` records the actual Tiingo date
+used for every non-cash option.
+
 Full-universe trailing returns for prompt context use a separate command:
 
 ```bash

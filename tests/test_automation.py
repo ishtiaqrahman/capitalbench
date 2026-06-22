@@ -183,6 +183,7 @@ def test_resolve_accepted_round_refreshes_entry_and_exit_prices(tmp_path: Path, 
     assert calls[0]["price_side"] == "both"
     assert calls[0]["overwrite_prices"] is True
     assert calls[0]["full_universe"] is True
+    assert calls[0]["allow_previous_trading_day_exit"] is True
 
 
 def test_automation_run_falls_back_to_due_local_jobs_when_supabase_has_none(

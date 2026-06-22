@@ -277,6 +277,7 @@ def resolve_accepted_round(
             overwrite_prices=True,
             full_universe=full_universe_prices,
             price_side="both",
+            allow_previous_trading_day_exit=True,
         )
     elif not (round_path / "prices" / "exit_prices.csv").exists():
         raise FileNotFoundError("missing exit prices and fetch_exit_prices is false")
