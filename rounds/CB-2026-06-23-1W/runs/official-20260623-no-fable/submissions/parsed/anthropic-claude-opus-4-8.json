@@ -1,0 +1,53 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Tech rebound could cause cap-weight leaders (QQQ/SMH) to outperform the chosen breadth tilt and SPY benchmark.",
+    "Biotech's sharp recent rally could mean-revert sharply within the week.",
+    "Hot PCE on June 25 could lift rates and pressure small caps and regional banks.",
+    "Risk-off escalation from Korea/semiconductor weakness could spill into high-beta small caps and biotech."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "option_id": "BIOTECH",
+      "rationale": "Strong recent momentum (+8.7% 7d) with M&A and clinical catalysts; relatively insulated from mega-cap tech weakness dragging the index."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "SMALL_CAP",
+      "rationale": "Positive breadth, +1.1% 7d while index fell; better domestic insulation from semiconductor/tech rout, strong YTD momentum."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "Strong relative strength (+1.5% 7d, +6% 30d), benefits from breadth rotation and steeper curve dynamics."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Stable carry buffer amid tech-led volatility and CPI re-acceleration risk."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "MOMENTUM",
+      "rationale": "Momentum factor holding up (+1.1% 7d, +8.7% 30d) and diversifies away from concentrated mega-cap drawdown."
+    }
+  ],
+  "portfolio_rationale": "Tech/semiconductor mega-caps are dragging the cap-weighted index while breadth is positive; tilt toward small caps, biotech, regional banks, and momentum that have shown relative strength, with short Treasury as ballast.",
+  "provider": "anthropic",
+  "rationale_summary": "Lean into the breadth-positive, non-mega-cap segments showing recent relative strength while holding a cash-like buffer against renewed tech volatility and sticky inflation.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-23-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 20507,
+    "latency_seconds": 11.643737613019766,
+    "output_tokens": 771,
+    "total_tokens": 21278
+  }
+}
