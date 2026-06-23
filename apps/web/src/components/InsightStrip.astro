@@ -7,6 +7,7 @@ import {
   insightDefinition,
   insightHref,
   insightTimeframeLabel,
+  roundReferenceTokens,
   sourcePills
 } from "../lib/insights.js";
 
@@ -69,10 +70,20 @@ const visibleInsights = insights.filter(Boolean).slice(0, compact ? 2 : 3);
               <strong title="Timeframe for this insight">{insightTimeframeLabel(insight)}</strong>
             </header>
             <div class="insight-context-strip" aria-label={`${insight.title} context`}>
-              {contextPills(insight).map((pill) => <span>{pill}</span>)}
+              {contextPills(insight).map((pill) => (
+                <span>
+                  {roundReferenceTokens(pill).map((token) =>
+                    token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+                  )}
+                </span>
+              ))}
             </div>
             <h3><a href={insightHref(insight)}>{insight.title}</a></h3>
-            <p>{insight.summary}</p>
+            <p>
+              {roundReferenceTokens(insight.summary).map((token) =>
+                token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+              )}
+            </p>
             <p class="insight-definition">{insightDefinition(insight)}</p>
             <div class="insight-card-meta">
               {sourcePills(insight).map((pill) => <span>{pill}</span>)}
@@ -89,7 +100,11 @@ const visibleInsights = insights.filter(Boolean).slice(0, compact ? 2 : 3);
             )}
             <footer class="insight-card-footer">
               <span>Why it matters</span>
-              <p>{insight.why_it_matters}</p>
+              <p>
+                {roundReferenceTokens(insight.why_it_matters).map((token) =>
+                  token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+                )}
+              </p>
               <div>
                 <a href={insightHref(insight)}>Open insight</a>
                 {evidence.map((item) => item.href ? <a href={item.href}>{item.label}</a> : <em>{item.label}</em>)}

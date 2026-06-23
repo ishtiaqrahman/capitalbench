@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import apiReadModel from "../generated/apiReadModel.js";
+import { publishedInsightRows, roundReferenceTokens } from "../lib/insights.js";
 
 type InsightCalculation = {
   name?: string;
@@ -73,16 +74,7 @@ const snapshot = apiReadModel.insights ?? {
   insights: []
 };
 const insights = Array.isArray(snapshot.insights)
-  ? (snapshot.insights as InsightRecord[])
-      .map((insight, index) => ({ insight, index }))
-      .filter((row) => row.insight.status !== "draft")
-      .sort(
-        (left, right) =>
-          Number(right.insight.importance_score ?? 0) - Number(left.insight.importance_score ?? 0) ||
-          String(right.insight.generated_at ?? "").localeCompare(String(left.insight.generated_at ?? "")) ||
-          left.index - right.index
-      )
-      .map((row) => row.insight)
+  ? (publishedInsightRows(snapshot.insights) as InsightRecord[])
   : [];
 const leadInsight = insights[0];
 const highConfidenceCount = insights.filter((insight) => insight.confidence === "high").length;
@@ -317,17 +309,35 @@ function categoryDescription(category: string) {
             <strong title="Timeframe for this insight">{insightTimeframeLabel(leadInsight)}</strong>
           </div>
           <div class="insight-context-strip" aria-label="Lead insight context">
-            {contextPills(leadInsight).map((pill) => <span>{pill}</span>)}
+            {contextPills(leadInsight).map((pill) => (
+              <span>
+                {roundReferenceTokens(pill).map((token) =>
+                  token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+                )}
+              </span>
+            ))}
           </div>
-          <h2>{leadInsight.title}</h2>
-          <p>{leadInsight.summary}</p>
+          <h2>
+            {roundReferenceTokens(leadInsight.title).map((token) =>
+              token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+            )}
+          </h2>
+          <p>
+            {roundReferenceTokens(leadInsight.summary).map((token) =>
+              token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+            )}
+          </p>
           <p class="insight-definition">{insightDefinition(leadInsight)}</p>
           <div class="insight-card-meta">
             {sourcePills(leadInsight).map((pill) => <span>{pill}</span>)}
           </div>
           <div class="insights-lead-why">
             <span>Why it matters</span>
-            <strong>{leadInsight.why_it_matters}</strong>
+            <strong>
+              {roundReferenceTokens(leadInsight.why_it_matters).map((token) =>
+                token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+              )}
+            </strong>
           </div>
           <div class="insights-evidence-links">
             {leadInsight.evidence?.slice(0, 2).map((item) =>
@@ -385,10 +395,24 @@ function categoryDescription(category: string) {
             <strong title="Timeframe for this insight">{insightTimeframeLabel(insight)}</strong>
           </header>
           <div class="insight-context-strip" aria-label={`${insight.title} context`}>
-            {contextPills(insight).map((pill) => <span>{pill}</span>)}
+            {contextPills(insight).map((pill) => (
+              <span>
+                {roundReferenceTokens(pill).map((token) =>
+                  token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+                )}
+              </span>
+            ))}
           </div>
-          <h3>{insight.title}</h3>
-          <p>{insight.summary}</p>
+          <h3>
+            {roundReferenceTokens(insight.title).map((token) =>
+              token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+            )}
+          </h3>
+          <p>
+            {roundReferenceTokens(insight.summary).map((token) =>
+              token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+            )}
+          </p>
           <p class="insight-definition">{insightDefinition(insight)}</p>
           <div class="insight-card-meta">
             {sourcePills(insight).map((pill) => <span>{pill}</span>)}
@@ -405,7 +429,11 @@ function categoryDescription(category: string) {
           )}
           <div class="insight-card-footer">
             <span>Why it matters</span>
-            <p>{insight.why_it_matters}</p>
+            <p>
+              {roundReferenceTokens(insight.why_it_matters).map((token) =>
+                token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+              )}
+            </p>
             <div>
               {insight.evidence?.slice(0, 2).map((item) =>
                 item.href ? <a href={item.href}>{item.label}</a> : <span>{item.label}</span>

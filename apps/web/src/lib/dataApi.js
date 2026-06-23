@@ -1,6 +1,7 @@
 import apiReadModel from "../generated/apiReadModel.js";
 import { benchmarkSetById, buildBenchmarkSetsData } from "./benchmarkSets.js";
 import { cumulativeCapitalBenchScore } from "./capitalBenchScore.js";
+import { publishedInsightRows } from "./insights.js";
 
 const API_VERSION = "v1";
 const DEFAULT_MINUTE_LIMIT = 120;
@@ -1000,20 +1001,9 @@ function riskAppetite() {
 
 function listInsights(url) {
   const payload = apiReadModel.insights ?? { insights: [] };
-  let rows = Array.isArray(payload.insights)
-    ? payload.insights.map((insight, index) => ({ insight, index }))
-    : [];
   const category = url.searchParams.get("category");
-  if (category) rows = rows.filter((row) => row.insight.category === category);
-  rows = rows
-    .filter((row) => row.insight.status !== "draft")
-    .sort(
-      (left, right) =>
-        Number(right.insight.importance_score ?? 0) - Number(left.insight.importance_score ?? 0) ||
-        String(right.insight.generated_at ?? "").localeCompare(String(left.insight.generated_at ?? "")) ||
-        left.index - right.index
-    )
-    .map((row) => row.insight);
+  let rows = publishedInsightRows(payload.insights);
+  if (category) rows = rows.filter((row) => row.category === category);
   const categories = Array.from(new Set((payload.insights ?? []).map((row) => row.category).filter(Boolean))).sort();
   return jsonApiResult(200, {
     engine_version: payload.engine_version ?? null,

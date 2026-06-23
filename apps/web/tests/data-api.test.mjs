@@ -9,6 +9,7 @@ import {
   hashApiKey
 } from "../src/lib/dataApi.js";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
+import { insightContextRecencyValue, insightRecencyValue } from "../src/lib/insights.js";
 import apiReadModel from "../src/generated/apiReadModel.js";
 
 function getRequest(path, token) {
@@ -463,7 +464,19 @@ test("insights endpoint returns ranked public insights with detail lookups", asy
   assert.ok(list.body.categories.length > 0);
   assert.ok(list.body.data.every((insight) => insight.status === "published"));
   for (let index = 1; index < list.body.data.length; index += 1) {
-    assert.ok(list.body.data[index - 1].importance_score >= list.body.data[index].importance_score);
+    const previous = list.body.data[index - 1];
+    const current = list.body.data[index];
+    const previousRecency = insightRecencyValue(previous);
+    const currentRecency = insightRecencyValue(current);
+    assert.ok(previousRecency >= currentRecency);
+    const previousContextRecency = insightContextRecencyValue(previous);
+    const currentContextRecency = insightContextRecencyValue(current);
+    if (previousRecency === currentRecency) {
+      assert.ok(previousContextRecency >= currentContextRecency);
+    }
+    if (previousRecency === currentRecency && previousContextRecency === currentContextRecency) {
+      assert.ok(previous.importance_score >= current.importance_score);
+    }
   }
 
   const first = list.body.data[0];

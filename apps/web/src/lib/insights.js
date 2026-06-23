@@ -20,6 +20,10 @@ export function insightHref(insight) {
   return insight?.id ? `/insights#${encodeURIComponent(insight.id)}` : "/insights";
 }
 
+export function roundHref(roundId) {
+  return `/rounds/${encodeURIComponent(String(roundId ?? ""))}`;
+}
+
 export function dateLabel(value) {
   if (!value) return "n/a";
   const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(value));
@@ -87,6 +91,25 @@ function uniqueStrings(values) {
   return Array.from(new Set(values.filter(Boolean)));
 }
 
+const ROUND_ID_PATTERN = /\bCB-\d{4}-\d{2}-\d{2}-(?:1W|1M)\b/g;
+
+export function roundReferenceTokens(value) {
+  const text = String(value ?? "");
+  if (!text) return [];
+
+  const tokens = [];
+  let lastIndex = 0;
+  for (const match of text.matchAll(ROUND_ID_PATTERN)) {
+    const roundId = match[0];
+    const index = match.index ?? 0;
+    if (index > lastIndex) tokens.push({ type: "text", text: text.slice(lastIndex, index) });
+    tokens.push({ type: "round", text: roundId, href: roundHref(roundId) });
+    lastIndex = index + roundId.length;
+  }
+  if (lastIndex < text.length) tokens.push({ type: "text", text: text.slice(lastIndex) });
+  return tokens.length > 0 ? tokens : [{ type: "text", text }];
+}
+
 export function contextPills(insight) {
   const context = insight?.context ?? {};
   const pills = [];
@@ -146,18 +169,75 @@ export function insightDefinition(insight) {
   }
 }
 
-export function publishedInsights(readModel) {
-  const rows = Array.isArray(readModel?.insights?.insights) ? readModel.insights.insights : [];
-  return rows
+function dateValue(value) {
+  if (!value) return null;
+  const text = String(value);
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(text);
+  const date = new Date(match ? `${match[1]}-${match[2]}-${match[3]}T00:00:00Z` : text);
+  const time = date.getTime();
+  return Number.isNaN(time) ? null : time;
+}
+
+function roundIdDateValue(roundId) {
+  const match = /\bCB-(\d{4})-(\d{2})-(\d{2})-(?:1W|1M)\b/.exec(String(roundId ?? ""));
+  return match ? dateValue(`${match[1]}-${match[2]}-${match[3]}`) : null;
+}
+
+function maxDateValue(values) {
+  const dates = values
+    .flatMap((value) => (Array.isArray(value) ? value : [value]))
+    .map((value) => dateValue(value) ?? roundIdDateValue(value))
+    .filter((value) => typeof value === "number" && Number.isFinite(value));
+  return dates.length > 0 ? Math.max(...dates) : 0;
+}
+
+export function insightRecencyValue(insight) {
+  const context = insight?.context ?? {};
+  const dataDate = maxDateValue([insight?.data_as_of, context.data_as_of]);
+  if (dataDate > 0) return dataDate;
+  const contextDate = insightContextRecencyValue(insight);
+  if (contextDate > 0) return contextDate;
+  return maxDateValue([insight?.generated_at, insight?.date]);
+}
+
+export function insightContextRecencyValue(insight) {
+  const context = insight?.context ?? {};
+  return maxDateValue([
+    context.decision_date,
+    context.entry_date,
+    context.decision_dates,
+    context.round_id,
+    context.round_ids,
+    context.best?.round_id,
+    context.worst?.round_id
+  ]);
+}
+
+function generatedAtValue(insight) {
+  return maxDateValue([insight?.generated_at, insight?.date]);
+}
+
+export function compareInsightsNewestFirst(left, right) {
+  return (
+    insightRecencyValue(right.insight) - insightRecencyValue(left.insight) ||
+    insightContextRecencyValue(right.insight) - insightContextRecencyValue(left.insight) ||
+    generatedAtValue(right.insight) - generatedAtValue(left.insight) ||
+    Number(right.insight.importance_score ?? 0) - Number(left.insight.importance_score ?? 0) ||
+    left.index - right.index
+  );
+}
+
+export function publishedInsightRows(rows) {
+  return (Array.isArray(rows) ? rows : [])
     .map((insight, index) => ({ insight, index }))
     .filter((row) => row.insight?.status !== "draft")
-    .sort(
-      (left, right) =>
-        Number(right.insight.importance_score ?? 0) - Number(left.insight.importance_score ?? 0) ||
-        String(right.insight.generated_at ?? "").localeCompare(String(left.insight.generated_at ?? "")) ||
-        left.index - right.index
-    )
+    .sort(compareInsightsNewestFirst)
     .map((row) => row.insight);
+}
+
+export function publishedInsights(readModel) {
+  const rows = Array.isArray(readModel?.insights?.insights) ? readModel.insights.insights : [];
+  return publishedInsightRows(rows);
 }
 
 export function topInsightsByCategory(readModel, categories, limit = 3) {
