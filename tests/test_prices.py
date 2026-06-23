@@ -274,6 +274,42 @@ def test_fetch_prices_can_use_previous_trading_day_for_exit_only(tmp_path: Path,
     assert all(row["close"] == "101.0" for row in non_cash_rows)
 
 
+def test_fetch_prices_falls_back_to_yahoo_when_tiingo_rate_limited(tmp_path: Path, monkeypatch) -> None:
+    round_path = _create_round_with_submission(tmp_path)
+    monkeypatch.setenv("TIINGO_API_KEY", "test-key")
+    tiingo_calls: list[str] = []
+    yahoo_calls: list[str] = []
+
+    def fake_tiingo(symbol: str, start_date: str, end_date: str, api_key: str) -> list[dict[str, object]]:
+        tiingo_calls.append(symbol)
+        raise RuntimeError("HTTP Error 429: Too Many Requests")
+
+    def fake_yahoo(symbol: str, start_date, end_date) -> list[dict[str, object]]:
+        yahoo_calls.append(symbol)
+        return [{"date": end_date.isoformat(), "close": 101.0, "adjClose": 101.0}]
+
+    monkeypatch.setattr("capitalbench.prices.fetch_tiingo_eod_prices", fake_tiingo)
+    monkeypatch.setattr("capitalbench.prices._fetch_yahoo_chart_adjclose", fake_yahoo)
+
+    output = fetch_selected_prices(
+        round_path=round_path,
+        run_id=None,
+        entry_date="2026-01-02",
+        exit_date=None,
+        full_universe=True,
+        price_side="entry",
+    )
+
+    assert tiingo_calls == ["AAA", "BBB", "SPY"]
+    assert yahoo_calls == ["AAA", "BBB", "SPY"]
+    with output.entry_prices_path.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    non_cash_rows = [row for row in rows if row["option_id"] != "cash"]
+    assert non_cash_rows
+    assert all(row["source"] == "yahoo_chart_adjclose" for row in non_cash_rows)
+    assert all(row["date"] == "2026-01-02" for row in non_cash_rows)
+
+
 def test_fetch_selected_prices_requires_tiingo_key(tmp_path: Path, monkeypatch) -> None:
     round_path = _create_round_with_submission(tmp_path)
     monkeypatch.delenv("TIINGO_API_KEY", raising=False)

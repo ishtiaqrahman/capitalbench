@@ -13,6 +13,7 @@ from .portfolio import (
     selected_option_ids as submission_selected_option_ids,
     submission_format_from_manifest,
 )
+from .performance import _fetch_yahoo_chart_adjclose
 from .run_store import get_selected_run_paths, read_run_manifest
 from .scoring import _find_sp500_option, _is_cash_option
 from .universe import TIINGO_API_KEY_ENV, TiingoFetcher, fetch_tiingo_eod_prices
@@ -106,11 +107,12 @@ def fetch_selected_prices(
 
     options = load_options(round_path) if full_universe else selected_price_options(round_path, run_id)
     fetch = fetcher or fetch_tiingo_eod_prices
+    allow_yahoo_fallback = fetcher is None
     entry_rows: list[dict[str, Any]] = []
     exit_rows: list[dict[str, Any]] = []
     if price_side in {"entry", "both"}:
         assert entry_date is not None
-        entry_rows = _price_rows_for_date(options, entry_date, api_key, fetch)
+        entry_rows = _price_rows_for_date(options, entry_date, api_key, fetch, allow_yahoo_fallback=allow_yahoo_fallback)
         _write_price_csv(entry_path, entry_rows)
     if price_side in {"exit", "both"}:
         assert exit_date is not None
@@ -121,6 +123,7 @@ def fetch_selected_prices(
             fetch,
             allow_previous_trading_day=allow_previous_trading_day_exit,
             fallback_lookback_days=fallback_lookback_days,
+            allow_yahoo_fallback=allow_yahoo_fallback,
         )
         _write_price_csv(exit_path, exit_rows)
     fetched_symbols = sorted(
@@ -150,6 +153,7 @@ def _price_rows_for_date(
     *,
     allow_previous_trading_day: bool = False,
     fallback_lookback_days: int = 7,
+    allow_yahoo_fallback: bool = False,
 ) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     start_date = (
@@ -173,16 +177,56 @@ def _price_rows_for_date(
         symbol = option.tiingo_symbol or option.symbol or option.asset_symbol
         if not symbol:
             raise ValueError(f"non-cash option has no Tiingo symbol: {option.option_id}")
-        tiingo_rows = fetch(symbol, start_date, price_date, api_key)
-        price_row = _select_tiingo_row(
-            option.option_id,
-            symbol,
-            price_date,
-            tiingo_rows,
-            allow_previous_trading_day=allow_previous_trading_day,
-        )
+        try:
+            tiingo_rows = fetch(symbol, start_date, price_date, api_key)
+            price_row = _select_tiingo_row(
+                option.option_id,
+                symbol,
+                price_date,
+                tiingo_rows,
+                allow_previous_trading_day=allow_previous_trading_day,
+            )
+        except Exception as exc:
+            if not allow_yahoo_fallback:
+                raise
+            price_row = _price_row_from_yahoo(
+                option.option_id,
+                symbol,
+                price_date,
+                allow_previous_trading_day=allow_previous_trading_day,
+                fallback_lookback_days=fallback_lookback_days,
+                original_error=exc,
+            )
         rows.append(price_row)
     return rows
+
+
+def _price_row_from_yahoo(
+    option_id: str,
+    symbol: str,
+    price_date: str,
+    *,
+    allow_previous_trading_day: bool,
+    fallback_lookback_days: int,
+    original_error: Exception,
+) -> dict[str, Any]:
+    start = date.fromisoformat(_fallback_start_date(price_date, fallback_lookback_days))
+    end = date.fromisoformat(price_date)
+    try:
+        yahoo_rows = _fetch_yahoo_chart_adjclose(symbol, start, end)
+        return _select_tiingo_row(
+            option_id,
+            symbol,
+            price_date,
+            yahoo_rows,
+            allow_previous_trading_day=allow_previous_trading_day,
+            source="yahoo_chart_adjclose",
+        )
+    except Exception as yahoo_exc:
+        raise ValueError(
+            f"Tiingo price fetch failed for {option_id} ({symbol}) on {price_date}: {original_error}; "
+            f"Yahoo fallback failed: {yahoo_exc}"
+        ) from yahoo_exc
 
 
 def _select_tiingo_row(
@@ -192,6 +236,7 @@ def _select_tiingo_row(
     rows: list[dict[str, Any]],
     *,
     allow_previous_trading_day: bool = False,
+    source: str = "tiingo_eod",
 ) -> dict[str, Any]:
     if not rows:
         raise ValueError(f"Tiingo returned no price rows for {option_id} ({symbol}) on {price_date}")
@@ -244,7 +289,7 @@ def _select_tiingo_row(
         "date": row_date,
         "close": close,
         "adj_close": adj_close,
-        "source": "tiingo_eod",
+        "source": source,
     }
 
 

@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-06-15-1W / official-20260615-no-fable
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-06-15-1W
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-20260615-no-fable
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench CB-2026-06-15-1W
+- Description: One-week market allocation evaluation round.
+- Decision date: 2026-06-15
 - Decision deadline: 2026-06-16T02:30:00Z
 - Horizon: one week
-- Official run ID: official-20260615-no-fable
-- Mock: no
+- Entry date: 2026-06-15
+- Exit date: 2026-06-22
+- Entry rule: Use adjusted close prices on Monday, June 15, 2026 as the post-close entry snapshot.
+- Exit rule: Use adjusted close prices on Monday, June 22, 2026 as the one-week exit snapshot, calculated after regular trading ends.
+- Options: 70
 
 ## Model Decisions
 
@@ -93,26 +108,87 @@
 | OIL | Crude Oil | 121.21 | 112.69 | -0.07029123009652671 | 69 |
 | SILVER | Silver | 63.47 | 58.91 | -0.07184496612572877 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| openai-gpt-5-5 | portfolio | SEMICONDUCTORS | 5 | 0.58 | 0.03370421882243857 | 0.040906133495304364 | 0.052223217326624494 | 0.029461124568845976 |  | True | True |
-| anthropic-claude-opus-4-7 | portfolio | SEMICONDUCTORS | 5 | 0.58 | 0.03370421882243857 | 0.027654548598548635 | 0.038971632429868765 | 0.042712709465601705 |  | True | True |
-| xai-grok-4-3 | portfolio | SEMICONDUCTORS | 5 | 0.62 | 0.03370421882243857 | 0.0227960417823255 | 0.03411312561364563 | 0.04757121628182484 |  | True | True |
-| google-gemini-3-1-pro | portfolio | SEMICONDUCTORS | 4 | 0.65 | 0.03370421882243857 | 0.022004184909416122 | 0.03332126874073625 | 0.04836307315473422 |  | True | True |
-| anthropic-claude-opus-4-8 | portfolio | SEMICONDUCTORS | 5 | 0.55 | 0.03370421882243857 | 0.021175440834116384 | 0.03249252466543651 | 0.049191817230033956 |  | True | True |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-opus-4-7 | SEMICONDUCTORS | 35.0 | 0.03370421882243857 | 0.011796476587853499 | Strong momentum, AI capex tailwind, geopolitical de-escalation supports risk-on tech. |
+| anthropic-claude-opus-4-7 | NASDAQ100 | 25.0 | -0.007038319892498257 | -0.0017595799731245643 | FOMC dovish potential plus oil drop benefits growth/tech mega-caps. |
+| anthropic-claude-opus-4-7 | SOUTH_KOREA | 15.0 | 0.03580042563253727 | 0.00537006384488059 | Powerful momentum tied to semis cycle, leveraged to global tech rally. |
+| anthropic-claude-opus-4-7 | MOMENTUM | 15.0 | 0.0347390822168272 | 0.00521086233252408 | Factor riding the tech/AI trend with broader diversification. |
+| anthropic-claude-opus-4-7 | BIOTECH | 10.0 | 0.07036725806415034 | 0.007036725806415034 | Rate-sensitive small-cap healthcare, benefits from dovish FOMC and improving risk appetite. |
+| anthropic-claude-opus-4-8 | SEMICONDUCTORS | 35.0 | 0.03370421882243857 | 0.011796476587853499 | Strongest momentum proxy with broad AI-driven leadership; relief rally on Iran de-escalation and falling VIX favors high-beta tech into FOMC. |
+| anthropic-claude-opus-4-8 | NASDAQ100 | 25.0 | -0.007038319892498257 | -0.0017595799731245643 | Mega-cap growth leadership confirmed by +3.06% Nasdaq move; benefits from easing geopolitical risk and stable rates. |
+| anthropic-claude-opus-4-8 | MOMENTUM | 20.0 | 0.0347390822168272 | 0.006947816443365441 | Momentum factor leading all factors; trend persistence likely into a risk-on, de-escalation week. |
+| anthropic-claude-opus-4-8 | SOUTH_KOREA | 10.0 | 0.03580042563253727 | 0.003580042563253727 | Semiconductor-heavy with explosive recent momentum; geopolitical relief supports export/chip cyclicals. |
+| anthropic-claude-opus-4-8 | FINANCIALS | 10.0 | 0.006106852127682805 | 0.0006106852127682806 | Cyclical risk-on participation with steady curve; broad rally breadth supports financials into FOMC hold. |
+| google-gemini-3-1-pro | SEMICONDUCTORS | 40.0 | 0.03370421882243857 | 0.013481687528975429 | Strong recent momentum and high beta to the broader tech rally, positioning it well for a short-term continuation. |
+| google-gemini-3-1-pro | NASDAQ100 | 30.0 | -0.007038319892498257 | -0.002111495967749477 | Broad exposure to the leading tech and growth names driving the current market advance. |
+| google-gemini-3-1-pro | SOUTH_KOREA | 20.0 | 0.03580042563253727 | 0.007160085126507454 | High sensitivity to the semiconductor cycle and global trade, showing strong recent performance. |
+| google-gemini-3-1-pro | MOMENTUM | 10.0 | 0.0347390822168272 | 0.0034739082216827203 | Captures the prevailing trend in the market, which is currently favoring high-growth and tech-oriented equities. |
+| openai-gpt-5-5 | SEMICONDUCTORS | 35.0 | 0.03370421882243857 | 0.011796476587853499 | Strongest liquid AI-related U.S. equity expression with exceptional 7-day and 30-day momentum; likely to benefit if risk appetite persists after the reported geopolitical de-escalation. |
+| openai-gpt-5-5 | TAIWAN | 20.0 | 0.048509918210021485 | 0.009701983642004298 | Semiconductor-heavy country exposure with very strong recent momentum and direct linkage to global AI hardware demand. |
+| openai-gpt-5-5 | SOUTH_KOREA | 20.0 | 0.03580042563253727 | 0.007160085126507454 | Highest recent trailing return in the universe and leveraged to semiconductors, exports, and global risk-on flows, offering potential short-window continuation. |
+| openai-gpt-5-5 | MOMENTUM | 15.0 | 0.0347390822168272 | 0.00521086233252408 | Broad U.S. momentum exposure captures trend persistence while diversifying beyond a single technology subsector or country. |
+| openai-gpt-5-5 | BIOTECH | 10.0 | 0.07036725806415034 | 0.007036725806415034 | High-beta risk-on exposure with strong recent weekly performance and potential support if rates do not spike after the FOMC meeting. |
+| xai-grok-4-3 | SEMICONDUCTORS | 30.0 | 0.03370421882243857 | 0.01011126564673157 | Strong recent momentum and semiconductor supply-chain exposure likely to benefit from risk-on sentiment post-Iran deal. |
+| xai-grok-4-3 | NASDAQ100 | 25.0 | -0.007038319892498257 | -0.0017595799731245643 | Heavy tech weighting aligns with observed 3.06% daily gain and continued AI-driven flows into the week. |
+| xai-grok-4-3 | MOMENTUM | 20.0 | 0.0347390822168272 | 0.006947816443365441 | Factor has led recent performance and should capture short-term trend continuation ahead of FOMC. |
+| xai-grok-4-3 | TECHNOLOGY | 15.0 | 0.0030654257262534568 | 0.00045981385893801847 | Sector breadth supports outperformance in low-volatility, growth-favorable environment. |
+| xai-grok-4-3 | BIOTECH | 10.0 | 0.07036725806415034 | 0.007036725806415034 | Recent 6.21% 7-day return and event-driven upside potential over the compressed trading week. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| openai-gpt-5-5 | SEMICONDUCTORS | 5 | 0.58 | 0.03370421882243857 | 0.040906133495304364 | 0.052223217326624494 | 0.029461124568845976 |  | True | True |
+| anthropic-claude-opus-4-7 | SEMICONDUCTORS | 5 | 0.58 | 0.03370421882243857 | 0.027654548598548635 | 0.038971632429868765 | 0.042712709465601705 |  | True | True |
+| xai-grok-4-3 | SEMICONDUCTORS | 5 | 0.62 | 0.03370421882243857 | 0.0227960417823255 | 0.03411312561364563 | 0.04757121628182484 |  | True | True |
+| google-gemini-3-1-pro | SEMICONDUCTORS | 4 | 0.65 | 0.03370421882243857 | 0.022004184909416122 | 0.03332126874073625 | 0.04836307315473422 |  | True | True |
+| anthropic-claude-opus-4-8 | SEMICONDUCTORS | 5 | 0.55 | 0.03370421882243857 | 0.021175440834116384 | 0.03249252466543651 | 0.049191817230033956 |  | True | True |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | 93a5aa93d8d62b80d6a0d1855ed79696cc721ae43680478ba28dbe7e6049efe8 |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | 03b5e9792d4c6bade89526a62f43cbdf51184fe03753997a0637de246e708b81 |
+| manifest.yaml | 325f85f2b7da5e7765a144e4f644c000edaeeafb32bde248cc8716cd73c2a142 |
+| market_data/universe_trailing_returns.csv | 9f5bc80a6d083acdb4b8194e97a8cc112d4a29748ad9bce8d78b338e2ea8a623 |
+| market_data/universe_trailing_returns.md | e129c1d066abf520b5d93ef0ac0f83fe0e0d639aed716e712e951831896ab93b |
+| market_data/universe_trailing_returns.json | 15066110c298292a21d98555c3bde2f451b852617667598f8a6c895f91712fce |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | 57818ce9fe8994ce0a1da380125449530c6bbb7b17179982bd2e5b796557831f | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | d277a43be79df78637f5ad94136cec3a0e8a67b62ca86f33bb3b5b29fa43b8c8 | yes |
+| Final briefing | research/final_briefing.md | model-facing | 93a5aa93d8d62b80d6a0d1855ed79696cc721ae43680478ba28dbe7e6049efe8 | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-06-16-1W has no scored official run.
-- Round CB-2026-06-17-1W has no scored official run.
-- Round CB-2026-06-18-1W has no scored official run.
-- Round CB-2026-06-22-1W has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.
