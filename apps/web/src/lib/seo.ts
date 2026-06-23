@@ -176,6 +176,15 @@ export const routeMeta: RouteMeta[] = [
     lastmod: defaultLastmod
   },
   {
+    path: "/api/use-cases",
+    title: "CapitalBench API Use Cases",
+    description:
+      "Visual CapitalBench Data API use cases for financial websites, trading platforms, algorithmic traders, research desks, wealthtech products, and AI model teams.",
+    priority: 0.82,
+    changefreq: "monthly",
+    lastmod: defaultLastmod
+  },
+  {
     path: "/private-evals",
     title: "Private AI Capital Allocation Evaluation | CapitalBench",
     description:
@@ -354,6 +363,7 @@ const labelOverrides: Record<string, string> = {
   rounds: "Rounds",
   models: "Models",
   api: "API",
+  "use-cases": "Use Cases",
   "private-evals": "Private Evals",
   "private-eval-sample-report": "Sample Private Eval Report",
   insights: "Insights",

@@ -1,0 +1,615 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import apiReadModel from "../../generated/apiReadModel.js";
+
+const description =
+  "Visual CapitalBench Data API use cases for financial websites, trading platforms, algorithmic traders, research desks, wealthtech products, and AI model teams.";
+
+const rounds = apiReadModel.rounds ?? [];
+const models = apiReadModel.models ?? [];
+const activeRounds = rounds.filter((round: any) => round.status === "active");
+const activeAllocations = (apiReadModel.allocations ?? []).filter((row: any) => row.status === "active");
+const activePortfolioKeys = new Set(activeAllocations.map((row: any) => `${row.round_id}:${row.run_id}:${row.model_id}`));
+const activePortfolioCount = Math.max(1, activePortfolioKeys.size);
+const assetById = new Map<string, any>((apiReadModel.assets ?? []).map((asset: any) => [asset.option_id, asset]));
+const modelById = new Map<string, any>(models.map((model: any) => [model.model_id, model]));
+const allocationByAsset = new Map<string, any>();
+
+for (const row of activeAllocations) {
+  const asset = assetById.get(row.option_id) ?? row;
+  const existing =
+    allocationByAsset.get(row.option_id) ??
+    {
+      option_id: row.option_id,
+      label: asset.label ?? row.label ?? row.option_id,
+      ticker: asset.ticker ?? row.ticker ?? null,
+      category: asset.category ?? row.category ?? "unknown",
+      allocation_pct: 0,
+      models: new Set<string>()
+    };
+  existing.allocation_pct += row.allocation_pct / activePortfolioCount;
+  existing.models.add(row.model_id);
+  allocationByAsset.set(row.option_id, existing);
+}
+
+const topAssets = Array.from(allocationByAsset.values())
+  .map((row: any) => ({ ...row, model_count: row.models.size }))
+  .sort((left: any, right: any) => right.allocation_pct - left.allocation_pct)
+  .slice(0, 5);
+const topAsset = topAssets[0] ?? {
+  option_id: "SEMICONDUCTORS",
+  label: "Semiconductors",
+  ticker: "SMH",
+  allocation_pct: 18.4,
+  model_count: 4
+};
+
+const riskPulse = apiReadModel.risk_appetite?.current_decision_pulse;
+const riskScore = typeof riskPulse?.score === "number" ? riskPulse.score : 62;
+const riskLabel = riskPulse?.label ?? "Risk-on";
+const riskRegime = riskPulse?.regime ?? "Growth tilt";
+const latestInsight = apiReadModel.insights?.insights?.find((insight: any) => insight.status === "published");
+const latestResolvedRound =
+  rounds.find((round: any) => round.track === "weekly" && round.status === "resolved") ??
+  rounds.find((round: any) => round.status === "resolved");
+const latestResults = (apiReadModel.results ?? [])
+  .filter((row: any) => row.round_id === latestResolvedRound?.round_id)
+  .sort((left: any, right: any) => (left.rank ?? 999) - (right.rank ?? 999));
+const topResult = latestResults[0];
+const topModelLabel = topResult ? (modelById.get(topResult.model_id)?.label ?? topResult.model_id) : "Top model";
+const publishedInsightCount = (apiReadModel.insights?.insights ?? []).filter((insight: any) => insight.status === "published").length;
+
+const formatPct = (value: number | null | undefined, digits = 1) =>
+  typeof value === "number" && Number.isFinite(value) ? `${value >= 0 ? "+" : ""}${value.toFixed(digits)}%` : "n/a";
+const formatUnsignedPct = (value: number | null | undefined, digits = 1) =>
+  typeof value === "number" && Number.isFinite(value) ? `${value.toFixed(digits)}%` : "n/a";
+const formatScore = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? value.toFixed(0) : "62";
+const categoryLabel = (value: string) =>
+  value
+    .split("_")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+
+const surfaceCards = [
+  {
+    label: "Financial sites",
+    value: `${topAsset.model_count} models`,
+    text: `showing active exposure to ${topAsset.ticker || topAsset.label}`
+  },
+  {
+    label: "Trading desks",
+    value: `${formatScore(riskScore)}/100`,
+    text: `current AI risk appetite, ${riskLabel.toLowerCase()}`
+  },
+  {
+    label: "Quant feeds",
+    value: String(apiReadModel.allocations?.length ?? 0),
+    text: "allocation rows for feature engineering"
+  },
+  {
+    label: "Research terminals",
+    value: String(apiReadModel.results?.length ?? 0),
+    text: "official result rows with benchmark context"
+  },
+  {
+    label: "Model teams",
+    value: String(models.length),
+    text: "public model profiles with behavior metrics"
+  }
+];
+
+const quantFeatures = [
+  ["AI allocation momentum", "/v1/allocations"],
+  ["Consensus concentration", "/v1/positioning/consensus"],
+  ["Risk appetite regime", "/v1/risk-appetite"],
+  ["Live performance drift", "/v1/live/performance/history"],
+  ["Benchmark-relative alpha", "/v1/returns"]
+];
+
+const labRows = [
+  ["Risk appetite", `${formatScore(riskScore)}/100`, "Current live pulse"],
+  ["Top public model", topModelLabel, latestResolvedRound?.round_id ?? "Latest round"],
+  ["Behavior profiles", String(apiReadModel.model_behavior?.profiles?.length ?? models.length), "Model-level metrics"],
+  ["Proof records", String(apiReadModel.proof?.length ?? rounds.length), "Round audit links"]
+];
+---
+
+<BaseLayout
+  title="CapitalBench API Use Cases"
+  description={description}
+  ogTitle="CapitalBench API Use Cases | Visual AI Market Intelligence"
+  ogDescription={description}
+>
+  <section class="api-use-hero" aria-labelledby="api-use-title">
+    <div class="api-use-hero-scene" aria-hidden="true">
+      <div class="api-use-terminal">
+        <div class="api-use-terminal-top">
+          <span></span>
+          <span></span>
+          <span></span>
+          <strong>AI positioning layer</strong>
+        </div>
+        <div class="api-use-terminal-grid">
+          <div class="api-use-market-panel">
+            <small>Asset page add-on</small>
+            <strong>{topAsset.ticker || topAsset.option_id}</strong>
+            <svg viewBox="0 0 260 92" role="img" aria-label="Example market chart">
+              <path d="M4 72 C34 64 45 44 72 50 C101 57 112 24 142 31 C174 39 182 20 210 26 C232 31 242 18 256 12" />
+              <path d="M4 82 H256" />
+            </svg>
+          </div>
+          <div class="api-use-signal-panel">
+            <small>AI Risk Appetite</small>
+            <strong>{formatScore(riskScore)} / 100</strong>
+            <span style={`--fill: ${Math.min(100, Math.max(0, riskScore))}%`}></span>
+          </div>
+          <div class="api-use-feed-panel">
+            <small>Consensus</small>
+            {topAssets.slice(0, 3).map((asset: any) => (
+              <div>
+                <span>{asset.ticker || asset.option_id}</span>
+                <b>{formatUnsignedPct(asset.allocation_pct)}</b>
+              </div>
+            ))}
+          </div>
+          <div class="api-use-proof-panel">
+            <small>Audit trail</small>
+            <strong>{apiReadModel.proof?.length ?? rounds.length} proof records</strong>
+            <p>Frozen inputs, official runs, returns, and hashes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-use-hero-copy">
+      <span class="panel-kicker">API use cases</span>
+      <h1 id="api-use-title">AI market intelligence for financial products</h1>
+      <p>
+        Use CapitalBench data to add AI model positioning, risk appetite, portfolio behavior, live benchmark context,
+        and audit evidence to investor dashboards, trading workflows, research terminals, and quantitative pipelines.
+      </p>
+      <div class="api-use-actions">
+        <a class="action-link action-primary" href="/api#request-access">Request API access</a>
+        <a class="action-link" href="/api">View API reference</a>
+        <a class="action-link" href="/api/openapi.json">OpenAPI JSON</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="api-use-surface-strip" aria-label="Product surfaces powered by the API">
+    {surfaceCards.map((card) => (
+      <article>
+        <span>{card.label}</span>
+        <strong>{card.value}</strong>
+        <p>{card.text}</p>
+      </article>
+    ))}
+  </section>
+
+  <nav class="api-use-nav" aria-label="Use case sections">
+    <a href="#financial-sites">Financial sites</a>
+    <a href="#trading-platforms">Trading workflows</a>
+    <a href="#quant-feeds">Quant feeds</a>
+    <a href="#research-terminals">Research terminals</a>
+    <a href="#wealthtech">Wealthtech</a>
+    <a href="#model-labs">Model teams</a>
+  </nav>
+
+  <section id="financial-sites" class="api-use-section api-use-section-feature" aria-labelledby="financial-sites-title">
+    <div class="api-use-section-copy">
+      <span class="panel-kicker">Financial websites and market data platforms</span>
+      <h2 id="financial-sites-title">Add an AI positioning panel to asset pages</h2>
+      <p>
+        Market data sites can show what AI models currently hold beside ETF, sector, theme, or macro pages. The panel
+        works as a context layer next to price, volume, fundamentals, news, and analyst data.
+      </p>
+      <ul class="api-use-points">
+        <li>Models currently holding the asset</li>
+        <li>Average active allocation and model count</li>
+        <li>Recent allocation changes and related insights</li>
+        <li>Live benchmark performance context</li>
+      </ul>
+      <div class="api-use-endpoints" aria-label="Financial site endpoints">
+        <code>/v1/assets/{`{option_id}`}/model-holders</code>
+        <code>/v1/positioning/by-asset/{`{option_id}`}</code>
+        <code>/v1/insights</code>
+      </div>
+    </div>
+
+    <div class="api-use-asset-mock" aria-label="Example financial website asset page panel">
+      <header>
+        <div>
+          <span>ETF PAGE</span>
+          <strong>{topAsset.ticker || topAsset.option_id} - {topAsset.label}</strong>
+        </div>
+        <b>{formatPct(2.4)}</b>
+      </header>
+      <div class="api-use-asset-body">
+        <div class="api-use-price-chart">
+          <svg viewBox="0 0 500 230" role="img" aria-label="Example asset price and allocation chart">
+            <defs>
+              <linearGradient id="assetChartFill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#1f9d8a" stop-opacity="0.3" />
+                <stop offset="100%" stop-color="#1f9d8a" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <path class="area" d="M10 188 C68 164 88 114 138 126 C196 140 211 70 268 84 C326 98 348 55 404 63 C452 70 466 37 490 28 L490 220 L10 220 Z" />
+            <path class="line" d="M10 188 C68 164 88 114 138 126 C196 140 211 70 268 84 C326 98 348 55 404 63 C452 70 466 37 490 28" />
+            <line x1="10" y1="190" x2="490" y2="190" />
+            <line x1="10" y1="130" x2="490" y2="130" />
+            <line x1="10" y1="70" x2="490" y2="70" />
+          </svg>
+        </div>
+        <aside>
+          <span>AI Positioning</span>
+          <strong>{topAsset.model_count} of {models.length} models hold {topAsset.ticker || topAsset.option_id}</strong>
+          <dl>
+            <div>
+              <dt>Avg allocation</dt>
+              <dd>{formatUnsignedPct(topAsset.allocation_pct)}</dd>
+            </div>
+            <div>
+              <dt>Category</dt>
+              <dd>{categoryLabel(topAsset.category)}</dd>
+            </div>
+            <div>
+              <dt>Related insight</dt>
+              <dd>{latestInsight?.title ?? "AI portfolios remain concentrated in growth themes"}</dd>
+            </div>
+          </dl>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="trading-platforms" class="api-use-section api-use-section-terminal" aria-labelledby="trading-platforms-title">
+    <div class="api-use-trading-mock" aria-label="Example trading terminal with CapitalBench panel">
+      <div class="api-use-terminal-window">
+        <header>
+          <span>TRADING WORKSPACE</span>
+          <strong>Watchlist + AI consensus</strong>
+        </header>
+        <div class="api-use-terminal-layout">
+          <div class="api-use-watchlist">
+            {topAssets.slice(0, 5).map((asset: any, index: number) => (
+              <div class={index === 0 ? "is-active" : ""}>
+                <span>{asset.ticker || asset.option_id}</span>
+                <b>{formatUnsignedPct(asset.allocation_pct)}</b>
+              </div>
+            ))}
+          </div>
+          <div class="api-use-terminal-chart">
+            <svg viewBox="0 0 420 220" role="img" aria-label="Example terminal chart">
+              <path d="M20 176 H400 M20 126 H400 M20 76 H400" />
+              <path class="terminal-line-one" d="M20 154 C60 140 82 164 118 128 C154 92 180 108 212 78 C246 47 280 62 314 42 C350 22 372 45 400 30" />
+              <path class="terminal-line-two" d="M20 172 C60 166 92 152 126 158 C174 166 206 124 248 130 C296 137 330 104 400 112" />
+            </svg>
+          </div>
+          <aside>
+            <span>AI Consensus Signal</span>
+            <strong>{riskLabel}</strong>
+            <p>{riskRegime}. Track model agreement before converting it into an internal signal.</p>
+            <div>
+              <small>Risk pulse</small>
+              <b>{formatScore(riskScore)} / 100</b>
+            </div>
+            <div>
+              <small>Open tests</small>
+              <b>{activeRounds.length}</b>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-use-section-copy">
+      <span class="panel-kicker">Brokerage and trading platforms</span>
+      <h2 id="trading-platforms-title">Place AI context next to the trader's existing workflow</h2>
+      <p>
+        Use CapitalBench as a market-context feed, not an execution instruction. Traders can see consensus,
+        disagreement, risk appetite, and live benchmark movement alongside their own price, volume, macro, and news
+        stack.
+      </p>
+      <ul class="api-use-points">
+        <li>Top consensus assets and categories</li>
+        <li>Biggest allocation changes since the prior round</li>
+        <li>Live mark-to-market model performance</li>
+        <li>Risk appetite split by weekly and monthly tests</li>
+      </ul>
+      <div class="api-use-endpoints" aria-label="Trading platform endpoints">
+        <code>/v1/risk-appetite</code>
+        <code>/v1/positioning/active</code>
+        <code>/v1/positioning/changes</code>
+        <code>/v1/live/performance</code>
+      </div>
+    </div>
+  </section>
+
+  <section id="quant-feeds" class="api-use-section api-use-section-quant" aria-labelledby="quant-feeds-title">
+    <div class="api-use-section-copy">
+      <span class="panel-kicker">Algorithmic traders and quant teams</span>
+      <h2 id="quant-feeds-title">Convert AI allocation behavior into research features</h2>
+      <p>
+        Quant teams can ingest raw official-run allocations, return rows, and interim performance history as an
+        alternative data source. CapitalBench does not provide a buy/sell signal; it provides auditable model behavior
+        that can be tested inside your own research process.
+      </p>
+      <div class="api-use-feature-list">
+        {quantFeatures.map(([feature, endpoint]) => (
+          <div>
+            <strong>{feature}</strong>
+            <code>{endpoint}</code>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="api-use-pipeline" aria-label="Quant workflow diagram">
+      <svg viewBox="0 0 920 430" role="img" aria-labelledby="pipeline-title pipeline-desc">
+        <title id="pipeline-title">CapitalBench quant workflow</title>
+        <desc id="pipeline-desc">CapitalBench API data flows through a data lake, feature engineering, backtesting, signal scoring, and risk controls.</desc>
+        <defs>
+          <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L9,3 z" />
+          </marker>
+        </defs>
+        <g class="pipeline-node source">
+          <rect x="36" y="116" width="176" height="112" rx="8" />
+          <text x="124" y="156">CapitalBench API</text>
+          <text x="124" y="186">allocations, returns, live rows</text>
+        </g>
+        <g class="pipeline-node">
+          <rect x="286" y="58" width="176" height="92" rx="8" />
+          <text x="374" y="95">Feature store</text>
+          <text x="374" y="122">clean, join, version</text>
+        </g>
+        <g class="pipeline-node">
+          <rect x="286" y="222" width="176" height="92" rx="8" />
+          <text x="374" y="259">Backtest</text>
+          <text x="374" y="286">market replay</text>
+        </g>
+        <g class="pipeline-node">
+          <rect x="536" y="58" width="176" height="92" rx="8" />
+          <text x="624" y="95">Signal ranking</text>
+          <text x="624" y="122">weight by evidence</text>
+        </g>
+        <g class="pipeline-node risk">
+          <rect x="536" y="222" width="176" height="92" rx="8" />
+          <text x="624" y="259">Risk controls</text>
+          <text x="624" y="286">turnover, crowding, limits</text>
+        </g>
+        <g class="pipeline-node output">
+          <rect x="764" y="140" width="128" height="92" rx="8" />
+          <text x="828" y="177">Trader UI</text>
+          <text x="828" y="204">or strategy input</text>
+        </g>
+        <path d="M212 172 C244 172 250 104 286 104" />
+        <path d="M212 172 C244 172 250 268 286 268" />
+        <path d="M462 104 H536" />
+        <path d="M462 268 H536" />
+        <path d="M712 104 C740 104 738 186 764 186" />
+        <path d="M712 268 C740 268 738 186 764 186" />
+      </svg>
+      <ol class="api-use-mobile-flow" aria-label="Quant workflow steps">
+        <li>
+          <strong>CapitalBench API</strong>
+          <span>Allocations, returns, live rows</span>
+        </li>
+        <li>
+          <strong>Feature store</strong>
+          <span>Clean, join, version</span>
+        </li>
+        <li>
+          <strong>Backtest</strong>
+          <span>Replay against market data</span>
+        </li>
+        <li>
+          <strong>Signal ranking</strong>
+          <span>Weight by evidence</span>
+        </li>
+        <li>
+          <strong>Risk controls</strong>
+          <span>Turnover, crowding, limits</span>
+        </li>
+        <li>
+          <strong>Trader UI or strategy input</strong>
+          <span>Render or test inside your workflow</span>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="research-terminals" class="api-use-section api-use-section-research" aria-labelledby="research-terminals-title">
+    <div class="api-use-research-mock" aria-label="Example research terminal">
+      <header>
+        <span>RESEARCH TERMINAL</span>
+        <strong>Model behavior and benchmark evidence</strong>
+      </header>
+      <div class="api-use-research-grid">
+        <article>
+          <span>Latest winner</span>
+          <strong>{topModelLabel}</strong>
+          <p>{latestResolvedRound?.round_id ?? "Latest resolved round"}</p>
+        </article>
+        <article>
+          <span>CapitalBench Score</span>
+          <strong>{formatScore(topResult?.capitalbench_score)}</strong>
+          <p>Oracle-relative result</p>
+        </article>
+        <article>
+          <span>Published insights</span>
+          <strong>{publishedInsightCount}</strong>
+          <p>Generated from benchmark math</p>
+        </article>
+        <article>
+          <span>Evidence tracks</span>
+          <strong>{Object.keys(apiReadModel.benchmark_evidence?.tracks ?? {}).length}</strong>
+          <p>Weekly and monthly context</p>
+        </article>
+      </div>
+      <div class="api-use-proof-row">
+        <code>/v1/models/behavior</code>
+        <code>/v1/benchmark-evidence</code>
+        <code>/v1/rounds/{`{round_id}`}/proof</code>
+      </div>
+    </div>
+
+    <div class="api-use-section-copy">
+      <span class="panel-kicker">Investment research desks</span>
+      <h2 id="research-terminals-title">Track model behavior across market regimes</h2>
+      <p>
+        Research teams can compare frontier model records, concentration, risk style, turnover, peer similarity, and
+        audit evidence without rebuilding CapitalBench's public read model.
+      </p>
+      <ul class="api-use-points">
+        <li>Which models are consistently risk-seeking or defensive</li>
+        <li>Which models over-concentrate or crowd into peers</li>
+        <li>Which decisions were frozen before prices resolved</li>
+        <li>Which benchmark comparisons are equal-run and qualified</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="wealthtech" class="api-use-section api-use-section-advisor" aria-labelledby="wealthtech-title">
+    <div class="api-use-section-copy">
+      <span class="panel-kicker">Wealthtech and advisor platforms</span>
+      <h2 id="wealthtech-title">Explain how AI models are reading the market</h2>
+      <p>
+        Advisor and wealthtech products can use CapitalBench as educational market context: model agreement, current
+        themes, risk appetite, and benchmark evidence. Keep the framing explicit: this is not portfolio advice.
+      </p>
+      <div class="api-use-endpoints" aria-label="Wealthtech endpoints">
+        <code>/v1/risk-appetite</code>
+        <code>/v1/positioning/consensus</code>
+        <code>/v1/insights</code>
+      </div>
+    </div>
+
+    <div class="api-use-advisor-mock" aria-label="Example advisor dashboard">
+      <header>
+        <span>CLIENT EDUCATION</span>
+        <strong>How AI models are reading the market</strong>
+      </header>
+      <div class="api-use-advisor-main">
+        <div class="api-use-risk-dial" style={`--score: ${Math.min(100, Math.max(0, riskScore))}`}>
+          <span>{formatScore(riskScore)}</span>
+          <small>Risk appetite</small>
+        </div>
+        <div class="api-use-theme-list">
+          {topAssets.slice(0, 4).map((asset: any) => (
+            <div>
+              <span>{asset.label}</span>
+              <b>{formatUnsignedPct(asset.allocation_pct)}</b>
+            </div>
+          ))}
+        </div>
+      </div>
+      <p>Educational context from public benchmark records. Not investment advice.</p>
+    </div>
+  </section>
+
+  <section id="model-labs" class="api-use-section api-use-section-labs" aria-labelledby="model-labs-title">
+    <div class="api-use-lab-mock" aria-label="Example model benchmarking grid">
+      <header>
+        <span>MODEL BENCHMARKING</span>
+        <strong>Behavior, performance, and proof</strong>
+      </header>
+      <div class="api-use-lab-grid">
+        {labRows.map(([label, value, note]) => (
+          <article>
+            <span>{label}</span>
+            <strong>{value}</strong>
+            <p>{note}</p>
+          </article>
+        ))}
+      </div>
+      <div class="api-use-lab-bars">
+        {models.slice(0, 5).map((model: any, index: number) => (
+          <div>
+            <span>{model.label}</span>
+            <i style={`--bar: ${78 - index * 8}%`}></i>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="api-use-section-copy">
+      <span class="panel-kicker">LLM labs and model providers</span>
+      <h2 id="model-labs-title">Benchmark market behavior, not just market language</h2>
+      <p>
+        Model teams can inspect portfolio decisions, style metrics, risk appetite, turnover, concentration, peer
+        similarity, and resolved performance. The API gives them the public evidence needed to compare model behavior
+        over time.
+      </p>
+      <div class="api-use-endpoints" aria-label="Model lab endpoints">
+        <code>/v1/models/{`{model_id}`}/style</code>
+        <code>/v1/models/{`{model_id}`}/behavior</code>
+        <code>/v1/models/{`{model_id}`}/portfolios</code>
+        <code>/v1/leaderboards/benchmark-sets</code>
+      </div>
+    </div>
+  </section>
+
+  <section class="api-use-integration" aria-labelledby="integration-title">
+    <div>
+      <span class="panel-kicker">Integration pattern</span>
+      <h2 id="integration-title">A clean data layer for product teams</h2>
+      <p>
+        CapitalBench works best as an additional intelligence layer: ingest structured API rows, cache them in your data
+        layer, and render them as context in the product surfaces your users already trust.
+      </p>
+    </div>
+    <ol>
+      <li>
+        <span>01</span>
+        <strong>Ingest</strong>
+        <p>Pull allocations, returns, risk appetite, model behavior, and proof records.</p>
+      </li>
+      <li>
+        <span>02</span>
+        <strong>Join</strong>
+        <p>Map CapitalBench assets to your ETF, sector, and watchlist identifiers.</p>
+      </li>
+      <li>
+        <span>03</span>
+        <strong>Render</strong>
+        <p>Show AI positioning, consensus, disagreement, and audit links inside your workflow.</p>
+      </li>
+      <li>
+        <span>04</span>
+        <strong>Test</strong>
+        <p>Validate whether model behavior adds value inside your own process.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="api-use-trust" aria-label="Trust and compliance notes">
+    <article>
+      <span>Research data</span>
+      <p>CapitalBench is benchmark and research infrastructure, not investment advice or a trading recommendation.</p>
+    </article>
+    <article>
+      <span>Auditable records</span>
+      <p>Rounds connect frozen prompts, model portfolios, prices, results, and proof metadata.</p>
+    </article>
+    <article>
+      <span>Official-run boundary</span>
+      <p>Public API views filter to official records so retries do not contaminate benchmark data.</p>
+    </article>
+  </section>
+
+  <section class="api-use-final-cta" aria-labelledby="api-use-final-title">
+    <span class="panel-kicker">Build with CapitalBench data</span>
+    <h2 id="api-use-final-title">Add AI market positioning to your product</h2>
+    <p>
+      Use the CapitalBench API to power investor panels, trading context, quant features, research terminals, and model
+      evaluation dashboards.
+    </p>
+    <div class="api-use-actions">
+      <a class="action-link action-primary" href="/api#request-access">Request API access</a>
+      <a class="action-link" href="/api/openapi.json">OpenAPI JSON</a>
+    </div>
+  </section>
+</BaseLayout>
