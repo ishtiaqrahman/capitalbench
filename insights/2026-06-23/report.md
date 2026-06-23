@@ -1,6 +1,6 @@
 # CapitalBench Insights
 
-Generated at: `2026-06-23T22:04:45Z`
+Generated at: `2026-06-23T23:31:36Z`
 Data as of: `2026-06-23`
 Engine: `deterministic_insights_v1`
 
@@ -14,11 +14,11 @@ Why it matters: The consensus portfolio tests whether the combined AI view is mo
 
 Category: `consensus_performance`
 
-## AI consensus portfolio scored 38.2 versus the oracle
+## AI consensus portfolio scored -18.9 versus the oracle
 
-Context: Weekly result · CB-2026-06-15-1W · Resolved result · Oracle: Biotechnology (XBI)
+Context: Weekly result · CB-2026-06-16-1W · Resolved result · Oracle: Biotechnology (XBI)
 
-If the weekly model allocations were averaged into one consensus portfolio, it returned +2.69% versus -1.13% for the S&P 500 and +7.04% for the hindsight best asset.
+If the weekly model allocations were averaged into one consensus portfolio, it returned -1.65% versus -1.98% for the S&P 500 and +8.74% for the hindsight best asset.
 
 Why it matters: The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark.
 
@@ -34,11 +34,11 @@ Why it matters: Benchmark difficulty matters because model scores should be inte
 
 Category: `benchmark_difficulty`
 
-## Weekly round had +14.22% asset dispersion
+## Weekly round had +20.82% asset dispersion
 
-Context: Weekly result · CB-2026-06-15-1W · Resolved result · Oracle: Biotechnology (XBI)
+Context: Weekly result · CB-2026-06-16-1W · Resolved result · Oracle: Biotechnology (XBI)
 
-The best scored asset returned +7.04%, the worst returned -7.18%, and +31.43% of the universe was positive. The S&P 500 ranked 43 out of 70 options.
+The best scored asset returned +8.74%, the worst returned -12.08%, and +18.57% of the universe was positive. The S&P 500 ranked 45 out of 70 options.
 
 Why it matters: Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced.
 
@@ -54,11 +54,11 @@ Why it matters: This shows whether models identified the eventual best asset bef
 
 Category: `oracle_comparison`
 
-## Models found the weekly oracle asset
+## Models missed the weekly oracle asset
 
-Context: Weekly result · CB-2026-06-15-1W · Resolved result · Oracle: Biotechnology (XBI)
+Context: Weekly result · CB-2026-06-16-1W · Resolved result · Oracle: Biotechnology (XBI)
 
-The hindsight best asset was Biotechnology (XBI) at +7.04%. 3 of 5 models held it, with +6.00% average allocation. The largest allocation came from Claude Opus 4.7 at +10.00%.
+The hindsight best asset was Biotechnology (XBI) at +8.74%. 0 of 5 models held it, with +0.00% average allocation.
 
 Why it matters: This shows whether models identified the eventual best asset before scoring, even when portfolio weights were too small to fully capture the oracle return.
 
@@ -78,7 +78,7 @@ Category: `risk_regime`
 
 Context: All resolved official results · Resolved history
 
-Across resolved official results, submissions at or above the median confidence of 0.56 averaged -0.72%, while lower-confidence submissions averaged -0.82%.
+Across resolved official results, submissions at or above the median confidence of 0.55 averaged -0.74%, while lower-confidence submissions averaged -1.50%.
 
 Why it matters: Confidence calibration helps readers judge whether model self-reported confidence carries useful information about realized benchmark performance.
 
@@ -114,11 +114,11 @@ Why it matters: Attribution turns a model score into an explanation of which hol
 
 Category: `performance_attribution`
 
-## GPT-5.5's result was driven by Semiconductors
+## Grok 4.3's result was driven by Semiconductors
 
-Context: Weekly result · CB-2026-06-15-1W · Resolved result
+Context: Weekly result · CB-2026-06-16-1W · Resolved result
 
-In the latest weekly result, Semiconductors contributed +1.18% to GPT-5.5's portfolio. No holding detracted; the smallest positive contribution came from US Momentum Equities at +0.52%.
+In the latest weekly result, Semiconductors contributed +0.34% to Grok 4.3's portfolio. The largest drag came from Nasdaq 100 at -0.85%.
 
 Why it matters: Attribution turns a model score into an explanation of which holdings actually helped or hurt the frozen portfolio.
 
