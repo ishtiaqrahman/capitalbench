@@ -7,6 +7,7 @@ from .hashing import HASHED_ROUND_FILES, compute_round_hashes
 from .io import load_manifest, load_options, read_json
 from .prices import selected_price_options
 from .portfolio import constraints_from_manifest, submission_format_from_manifest
+from .prompting import build_prompt
 from .research import (
     BRIEFING_AUDIT_REPORT,
     FINAL_BRIEFING,
@@ -244,6 +245,23 @@ def _audit_prompt_horizon(round_path: Path) -> tuple[list[AuditCheck], list[str]
     return checks, lines
 
 
+def _audit_model_input_guardrails(round_path: Path) -> tuple[list[AuditCheck], list[str]]:
+    checks: list[AuditCheck] = []
+    lines: list[str] = []
+    try:
+        build_prompt(round_path)
+    except ValueError as exc:
+        checks.append(AuditCheck("model input guardrails pass", False, str(exc)))
+        lines.append(f"Model input guardrails pass: no ({exc})")
+    except Exception as exc:
+        checks.append(AuditCheck("model input guardrails readable", False, str(exc)))
+        lines.append(f"Model input guardrails readable: no ({exc})")
+    else:
+        checks.append(AuditCheck("model input guardrails pass", True))
+        lines.append("Model input guardrails pass: yes")
+    return checks, lines
+
+
 def audit_round(round_path: Path, run_id: str | None = None) -> RoundAudit:
     checks: list[AuditCheck] = []
     lines: list[str] = [f"CapitalBench audit: {round_path}"]
@@ -286,6 +304,10 @@ def audit_round(round_path: Path, run_id: str | None = None) -> RoundAudit:
     prompt_checks, prompt_lines = _audit_prompt_horizon(round_path)
     checks.extend(prompt_checks)
     lines.extend(prompt_lines)
+
+    guardrail_checks, guardrail_lines = _audit_model_input_guardrails(round_path)
+    checks.extend(guardrail_checks)
+    lines.extend(guardrail_lines)
 
     available_runs = list_runs(round_path)
     if available_runs:

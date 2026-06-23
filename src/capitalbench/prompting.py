@@ -7,6 +7,24 @@ from .performance import MARKET_DATA_DIRNAME, UNIVERSE_TRAILING_RETURNS_MD
 from .portfolio import constraints_from_manifest, submission_format_from_manifest
 from .schemas import MarketOption
 
+DISALLOWED_MODEL_INPUT_SNIPPETS = (
+    (
+        "The S&P 500 benchmark asset is an allowed holding. Allocate to it when expected active edge is weak "
+        "or when the benchmark case is more robust than available active alternatives. Do not add active risk "
+        "only because this is a benchmark contest."
+    ),
+)
+
+
+def validate_model_input_guardrails(text: str) -> None:
+    normalized = " ".join(text.split()).lower()
+    for snippet in DISALLOWED_MODEL_INPUT_SNIPPETS:
+        if " ".join(snippet.split()).lower() in normalized:
+            raise ValueError(
+                "model input contains prohibited benchmark-allocation instruction: "
+                f"{snippet}"
+            )
+
 
 def build_prompt(round_path: Path) -> str:
     prompt = (round_path / "prompt.md").read_text(encoding="utf-8").strip()
@@ -23,7 +41,9 @@ def build_prompt(round_path: Path) -> str:
     if universe_performance:
         parts.append(f"## Full-Universe Trailing Returns\n\n{universe_performance}")
     parts.append(f"## Options\n\n{options}\n")
-    return "\n\n".join(parts)
+    model_input = "\n\n".join(parts)
+    validate_model_input_guardrails(model_input)
+    return model_input
 
 
 def render_round_metadata(round_path: Path, manifest) -> str:

@@ -89,6 +89,19 @@ def test_prompt_builder_excludes_audit_only_reports(tmp_path: Path) -> None:
     assert "research_hashes.json" not in prompt
 
 
+def test_prompt_builder_rejects_prohibited_benchmark_allocation_instruction(tmp_path: Path) -> None:
+    round_path = _copy_example_round(tmp_path)
+    prohibited = (
+        "The S&P 500 benchmark asset is an allowed holding. Allocate to it when expected active edge is weak "
+        "or when the benchmark case is more robust than available active alternatives. Do not add active risk "
+        "only because this is a benchmark contest."
+    )
+    (round_path / "prompt.md").write_text(prohibited, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="prohibited benchmark-allocation instruction"):
+        build_prompt(round_path)
+
+
 def test_import_research_fails_on_empty_final_briefing(tmp_path: Path) -> None:
     round_path = _copy_example_round(tmp_path)
     market, audit, final = _write_research_files(tmp_path, final_text="")

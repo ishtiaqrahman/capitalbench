@@ -87,3 +87,19 @@ def test_audit_flags_weekly_prompt_with_one_month_wording(tmp_path: Path) -> Non
 
     assert audit.ok is False
     assert any("Weekly prompt has no one-month wording: no" in line for line in audit.lines)
+
+
+def test_audit_flags_prohibited_benchmark_allocation_instruction(tmp_path: Path) -> None:
+    round_path = _copy_example_round(tmp_path)
+    prohibited = (
+        "The S&P 500 benchmark asset is an allowed holding. Allocate to it when expected active edge is weak "
+        "or when the benchmark case is more robust than available active alternatives. Do not add active risk "
+        "only because this is a benchmark contest."
+    )
+    (round_path / "prompt.md").write_text(prohibited, encoding="utf-8")
+    assert main(["hash-round", "--round", str(round_path)]) == 0
+
+    audit = audit_round(round_path)
+
+    assert audit.ok is False
+    assert any("Model input guardrails pass: no" in line for line in audit.lines)
