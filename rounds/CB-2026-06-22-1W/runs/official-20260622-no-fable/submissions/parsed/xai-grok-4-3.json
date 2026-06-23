@@ -1,0 +1,43 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Reversal in momentum factor after recent gains",
+    "Sector-specific pullback in semiconductors on profit-taking",
+    "Broader equity weakness if upcoming GDP data disappoints"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure for stability over the one-week window with limited catalysts."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "MOMENTUM",
+      "rationale": "Recent 7-day outperformance suggests potential trend continuation into exit close."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Strong recent performance and sector momentum likely to persist short-term."
+    }
+  ],
+  "portfolio_rationale": "Balanced allocation favoring benchmark with tilt to recent momentum leaders for one-week alpha capture.",
+  "provider": "xai",
+  "rationale_summary": "SP500 provides baseline; momentum and semiconductors add edge from observed short-term strength without over-concentration.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-22-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 13904,
+    "latency_seconds": 8.345154194015777,
+    "output_tokens": 288,
+    "reasoning_tokens": 730,
+    "total_tokens": 14922
+  }
+}
