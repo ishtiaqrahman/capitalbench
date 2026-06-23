@@ -6,15 +6,60 @@ import { publishedInsightRows } from "./insights.js";
 const API_VERSION = "v1";
 const DEFAULT_MINUTE_LIMIT = 120;
 const DEFAULT_DAY_LIMIT = 10_000;
+const READ_V1_SCOPE = "read:v1";
 const VALID_TRACKS = new Set(["weekly", "monthly", "all"]);
 const VALID_SCOPES = new Set(["active", "cumulative"]);
 const VALID_GROUPS = new Set(["asset", "category", "model"]);
+const VALID_BOOLEAN_FILTERS = new Set(["true", "false"]);
 const CORS_HEADERS = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, OPTIONS",
   "access-control-allow-headers": "authorization, content-type",
   "access-control-max-age": "86400"
 };
+const DATA_API_ENDPOINTS = [
+  "/v1/metadata",
+  "/v1/positioning/active",
+  "/v1/positioning/cumulative",
+  "/v1/positioning/consensus",
+  "/v1/positioning/by-model/{model_id}",
+  "/v1/positioning/by-asset/{option_id}",
+  "/v1/positioning/by-category",
+  "/v1/positioning/changes",
+  "/v1/risk-appetite",
+  "/v1/live/performance",
+  "/v1/live/performance/history",
+  "/v1/returns",
+  "/v1/allocations",
+  "/v1/proof",
+  "/v1/rounds",
+  "/v1/rounds/{round_id}",
+  "/v1/rounds/{round_id}/proof",
+  "/v1/rounds/{round_id}/portfolios",
+  "/v1/rounds/{round_id}/concentration",
+  "/v1/rounds/{round_id}/live-performance",
+  "/v1/rounds/{round_id}/results",
+  "/v1/leaderboards/latest",
+  "/v1/leaderboards/cumulative",
+  "/v1/leaderboards/benchmark-sets",
+  "/v1/leaderboards/benchmark-sets/{set_id}",
+  "/v1/benchmark-evidence",
+  "/v1/insights",
+  "/v1/insights/{insight_id}",
+  "/v1/models",
+  "/v1/models/{model_id}",
+  "/v1/models/{model_id}/holdings",
+  "/v1/models/{model_id}/portfolios",
+  "/v1/models/{model_id}/live-performance",
+  "/v1/models/{model_id}/style",
+  "/v1/models/{model_id}/behavior",
+  "/v1/models/behavior",
+  "/v1/models/patterns",
+  "/v1/universe/current",
+  "/v1/assets",
+  "/v1/assets/{option_id}",
+  "/v1/assets/{option_id}/model-holders"
+];
 
 let apiAuthSchemaReady = false;
 
@@ -188,7 +233,7 @@ function dayWindow(now) {
 
 async function authenticateRequest({ request, env, authRepo, now }) {
   if (String(env.API_AUTH_REQUIRED ?? "true").toLowerCase() === "false") {
-    return { ok: true, key: { id: "anonymous", key_hash: "anonymous", name: "Anonymous" } };
+    return { ok: true, key: { id: "anonymous", key_hash: "anonymous", name: "Anonymous", scopes: READ_V1_SCOPE } };
   }
 
   const token = bearerToken(request);
@@ -235,6 +280,35 @@ async function authenticateRequest({ request, env, authRepo, now }) {
   return { ok: true, key };
 }
 
+function parseKeyScopes(scopes) {
+  if (Array.isArray(scopes)) return new Set(scopes.map(String).filter(Boolean));
+  if (typeof scopes !== "string") return new Set();
+  const trimmed = scopes.trim();
+  if (!trimmed) return new Set();
+  if (trimmed.startsWith("[")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) return new Set(parsed.map(String).filter(Boolean));
+    } catch {
+      // Fall through to delimiter parsing for legacy scope strings.
+    }
+  }
+  return new Set(trimmed.split(/[\s,]+/).filter(Boolean));
+}
+
+function authorizeScopes(key, requiredScopes = [READ_V1_SCOPE]) {
+  const scopes = parseKeyScopes(key?.scopes);
+  if (scopes.has("*")) return { ok: true };
+  const missing = requiredScopes.filter((scope) => !scopes.has(scope));
+  if (missing.length === 0) return { ok: true };
+  return {
+    ok: false,
+    result: errorResult(403, "forbidden", "API key does not have the required scope.", {
+      required_scope: missing[0]
+    })
+  };
+}
+
 function parsePath(request) {
   const pathname = new URL(request.url).pathname.replace(/\/+$/g, "");
   const cleaned = pathname || "/";
@@ -260,6 +334,12 @@ function normalizedGroupBy(url) {
   return VALID_GROUPS.has(value) ? value : null;
 }
 
+function optionalBooleanFilter(url, name) {
+  if (!url.searchParams.has(name)) return null;
+  const value = String(url.searchParams.get(name)).toLowerCase();
+  return VALID_BOOLEAN_FILTERS.has(value) ? value === "true" : undefined;
+}
+
 function limitAndCursor(url) {
   const limit = Math.min(250, Math.max(1, numericLimit(url.searchParams.get("limit"), 100)));
   const cursor = Math.max(0, Number.parseInt(url.searchParams.get("cursor") || "0", 10) || 0);
@@ -275,6 +355,7 @@ function pageRows(rows, url) {
 
 const assetById = new Map(apiReadModel.assets.map((asset) => [asset.option_id, asset]));
 const modelById = new Map(apiReadModel.models.map((model) => [model.model_id, model]));
+const roundById = new Map(apiReadModel.rounds.map((round) => [round.round_id, round]));
 const styleByModelId = new Map(apiReadModel.model_styles.map((style) => [style.model_id, style]));
 const behaviorByModelId = new Map((apiReadModel.model_behavior?.profiles ?? []).map((profile) => [profile.model_id, profile]));
 const CATEGORY_LABEL_OVERRIDES = new Map([
@@ -314,6 +395,22 @@ function enrichedAsset(asset) {
 
 function portfolioKey(row) {
   return `${row.round_id}:${row.run_id}:${row.model_id}`;
+}
+
+function isOfficialRunRow(row, round) {
+  if (!round) return false;
+  return !round.official_run_id || !row.run_id || row.run_id === round.official_run_id;
+}
+
+export function officialRowsForRound(readModel, rows, roundOrId) {
+  const round = typeof roundOrId === "string" ? readModel.rounds.find((item) => item.round_id === roundOrId) : roundOrId;
+  if (!round) return [];
+  return rows.filter((row) => row.round_id === round.round_id && isOfficialRunRow(row, round));
+}
+
+export function officialRowsForReadModel(readModel, rows) {
+  const localRoundById = new Map(readModel.rounds.map((round) => [round.round_id, round]));
+  return rows.filter((row) => isOfficialRunRow(row, localRoundById.get(row.round_id)));
 }
 
 function filterByTrack(rows, track) {
@@ -427,7 +524,7 @@ function positioningResponse(url, options = {}) {
   const optionId = options.optionId ?? null;
   if (modelId && !modelById.has(modelId)) return errorResult(404, "not_found", "Model not found.");
   if (optionId && !assetById.has(optionId)) return errorResult(404, "not_found", "Asset not found.");
-  let rows = filterByScope(filterByTrack(apiReadModel.allocations, track), scope);
+  let rows = filterByScope(filterByTrack(officialRowsForReadModel(apiReadModel, apiReadModel.allocations), track), scope);
   if (modelId) rows = rows.filter((row) => row.model_id === modelId);
   if (optionId) rows = rows.filter((row) => row.option_id === optionId);
   if (options.category) rows = rows.filter((row) => (assetById.get(row.option_id)?.category ?? row.category) === options.category);
@@ -440,8 +537,9 @@ function positioningChanges(url) {
   const window = String(url.searchParams.get("window") || "latest").toLowerCase();
   if (window !== "latest") return errorResult(400, "invalid_window", "window must be latest.");
   const groupBy = normalizedGroupBy(url) ?? "asset";
+  const allocationRows = officialRowsForReadModel(apiReadModel, apiReadModel.allocations);
   const rounds = filterByTrack(apiReadModel.rounds, track)
-    .filter((round) => apiReadModel.allocations.some((allocation) => allocation.round_id === round.round_id))
+    .filter((round) => allocationRows.some((allocation) => allocation.round_id === round.round_id))
     .sort((a, b) => b.decision_deadline_utc.localeCompare(a.decision_deadline_utc));
   const [currentRound, priorRound] = rounds;
   if (!currentRound || !priorRound) {
@@ -452,13 +550,13 @@ function positioningChanges(url) {
     });
   }
   const current = aggregatePositioning(
-    apiReadModel.allocations.filter((row) => row.round_id === currentRound.round_id),
+    officialRowsForRound(apiReadModel, allocationRows, currentRound),
     groupBy,
     "cumulative",
     track
   );
   const prior = aggregatePositioning(
-    apiReadModel.allocations.filter((row) => row.round_id === priorRound.round_id),
+    officialRowsForRound(apiReadModel, allocationRows, priorRound),
     groupBy,
     "cumulative",
     track
@@ -494,8 +592,7 @@ function latestResolvedRound(track) {
 
 function leaderboardRowsForRound(round) {
   if (!round) return [];
-  return apiReadModel.results
-    .filter((row) => row.round_id === round.round_id)
+  return officialRowsForRound(apiReadModel, apiReadModel.results, round)
     .sort((a, b) => a.rank - b.rank)
     .map((row) => ({
       ...row,
@@ -521,7 +618,7 @@ function resultRoundSortValue(round) {
 }
 
 function resolvedResultSet(readModel, track) {
-  const rows = track === "all" ? readModel.results : readModel.results.filter((row) => row.track === track);
+  const rows = filterByTrack(officialRowsForReadModel(readModel, readModel.results), track);
   const roundById = new Map(readModel.rounds.map((round) => [round.round_id, round]));
   const byRound = new Map();
   for (const row of rows) {
@@ -636,7 +733,7 @@ function isUsableLiveRow(row) {
 
 function latestLiveSnapshots({ track = "all", roundId = null, modelId = null } = {}) {
   const latestByKey = new Map();
-  for (const row of apiReadModel.interim_performance ?? []) {
+  for (const row of officialRowsForReadModel(apiReadModel, apiReadModel.interim_performance ?? [])) {
     if (track !== "all" && row.track !== track) continue;
     if (roundId && row.round_id !== roundId) continue;
     if (modelId && row.model_id !== modelId) continue;
@@ -773,8 +870,7 @@ function roundLivePerformance(roundId) {
   const round = apiReadModel.rounds.find((item) => item.round_id === roundId);
   if (!round) return errorResult(404, "not_found", "Round not found.");
   const rows = latestLiveSnapshots({ track: "all", roundId });
-  const history = (apiReadModel.interim_performance ?? [])
-    .filter((row) => row.round_id === roundId)
+  const history = officialRowsForRound(apiReadModel, apiReadModel.interim_performance ?? [], round)
     .sort((a, b) => a.target_date.localeCompare(b.target_date) || a.model_id.localeCompare(b.model_id));
   return jsonApiResult(200, {
     round_id: roundId,
@@ -839,7 +935,21 @@ function roundPortfolios(roundId) {
   if (!round) return errorResult(404, "not_found", "Round not found.");
   return jsonApiResult(200, {
     round_id: roundId,
-    data: apiReadModel.portfolios.filter((row) => row.round_id === roundId)
+    run_id: round.official_run_id ?? null,
+    data: officialRowsForRound(apiReadModel, apiReadModel.portfolios, round)
+  });
+}
+
+function roundProof(roundId) {
+  const round = apiReadModel.rounds.find((item) => item.round_id === roundId);
+  if (!round) return errorResult(404, "not_found", "Round not found.");
+  const proof =
+    officialRowsForRound(apiReadModel, apiReadModel.proof ?? [], round)[0] ??
+    (round.proof ? { round_id: roundId, run_id: round.official_run_id ?? null, ...round.proof } : null);
+  return jsonApiResult(200, {
+    round_id: roundId,
+    run_id: round.official_run_id ?? null,
+    proof
   });
 }
 
@@ -847,9 +957,7 @@ function roundConcentration(roundId) {
   const round = apiReadModel.rounds.find((item) => item.round_id === roundId);
   if (!round) return errorResult(404, "not_found", "Round not found.");
 
-  const rows = apiReadModel.allocations.filter(
-    (row) => row.round_id === roundId && (!round.official_run_id || row.run_id === round.official_run_id)
-  );
+  const rows = officialRowsForRound(apiReadModel, apiReadModel.allocations, round);
   const portfolioKeys = new Set(rows.map(portfolioKey));
   const denominator = Math.max(1, portfolioKeys.size);
   const byAsset = new Map();
@@ -933,13 +1041,15 @@ function roundResults(roundId) {
   const round = apiReadModel.rounds.find((item) => item.round_id === roundId);
   if (!round) return errorResult(404, "not_found", "Round not found.");
   const data = leaderboardRowsForRound(round);
-  const benchmarkReturn = apiReadModel.returns.find((row) => row.round_id === roundId && row.is_benchmark)?.return_pct ?? null;
+  const returnRows = officialRowsForRound(apiReadModel, apiReadModel.returns, round);
+  const benchmarkReturn = returnRows.find((row) => row.is_benchmark)?.return_pct ?? null;
   return jsonApiResult(200, {
     round_id: roundId,
+    run_id: round.official_run_id ?? null,
     benchmark_option_id: round.benchmark_option_id,
     benchmark_return_pct: benchmarkReturn,
     data,
-    asset_returns: apiReadModel.returns.filter((row) => row.round_id === roundId).sort((a, b) => Number(a.rank ?? 9999) - Number(b.rank ?? 9999))
+    asset_returns: returnRows.sort((a, b) => Number(a.rank ?? 9999) - Number(b.rank ?? 9999))
   });
 }
 
@@ -959,7 +1069,24 @@ function modelHoldings(modelId, url) {
   const scope = normalizedScope(url);
   if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
   if (!scope) return errorResult(400, "invalid_scope", "scope must be active or cumulative.");
-  const rows = filterByScope(filterByTrack(apiReadModel.allocations, track), scope).filter((row) => row.model_id === modelId);
+  const rows = filterByScope(filterByTrack(officialRowsForReadModel(apiReadModel, apiReadModel.allocations), track), scope).filter((row) => row.model_id === modelId);
+  return jsonApiResult(200, {
+    model_id: modelId,
+    track,
+    scope,
+    data: rows
+  });
+}
+
+function modelPortfolios(modelId, url) {
+  if (!modelById.has(modelId)) return errorResult(404, "not_found", "Model not found.");
+  const track = normalizedTrack(url);
+  const scope = normalizedScope(url);
+  if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  if (!scope) return errorResult(400, "invalid_scope", "scope must be active or cumulative.");
+  const rows = filterByScope(filterByTrack(officialRowsForReadModel(apiReadModel, apiReadModel.portfolios), track), scope)
+    .filter((row) => row.model_id === modelId)
+    .sort((a, b) => b.exit_date.localeCompare(a.exit_date) || b.round_id.localeCompare(a.round_id));
   return jsonApiResult(200, {
     model_id: modelId,
     track,
@@ -995,6 +1122,23 @@ function currentUniverse() {
   });
 }
 
+function listAssets(url) {
+  const current = String(url.searchParams.get("current") || "all").toLowerCase();
+  if (!["true", "false", "all"].includes(current)) {
+    return errorResult(400, "invalid_current", "current must be true, false, or all.");
+  }
+  let rows = apiReadModel.assets;
+  if (current === "true") rows = rows.filter((asset) => asset.in_current_universe);
+  if (current === "false") rows = rows.filter((asset) => !asset.in_current_universe);
+  return jsonApiResult(200, {
+    as_of: apiReadModel.generated_at,
+    current_universe_round_id: apiReadModel.current_universe_round_id,
+    current_filter: current,
+    row_count: rows.length,
+    ...pageRows(rows, url)
+  });
+}
+
 function riskAppetite() {
   return jsonApiResult(200, apiReadModel.risk_appetite);
 }
@@ -1002,9 +1146,10 @@ function riskAppetite() {
 function listInsights(url) {
   const payload = apiReadModel.insights ?? { insights: [] };
   const category = url.searchParams.get("category");
-  let rows = publishedInsightRows(payload.insights);
+  const publishedRows = publishedInsightRows(payload.insights);
+  let rows = publishedRows;
   if (category) rows = rows.filter((row) => row.category === category);
-  const categories = Array.from(new Set((payload.insights ?? []).map((row) => row.category).filter(Boolean))).sort();
+  const categories = Array.from(new Set(publishedRows.map((row) => row.category).filter(Boolean))).sort();
   return jsonApiResult(200, {
     engine_version: payload.engine_version ?? null,
     generated_at: payload.generated_at ?? null,
@@ -1028,45 +1173,175 @@ function assetDetails(optionId) {
   return jsonApiResult(200, asset);
 }
 
+function metadata() {
+  const insights = apiReadModel.insights?.insights ?? [];
+  return jsonApiResult(200, {
+    name: "CapitalBench Data API",
+    version: API_VERSION,
+    generated_at: apiReadModel.generated_at,
+    api_version: apiReadModel.api_version ?? API_VERSION,
+    source: apiReadModel.source ?? null,
+    current_universe_round_id: apiReadModel.current_universe_round_id,
+    data_counts: {
+      benchmark_set_definitions: apiReadModel.benchmark_set_definitions.length,
+      rounds: apiReadModel.rounds.length,
+      models: apiReadModel.models.length,
+      assets: apiReadModel.assets.length,
+      current_assets: apiReadModel.assets.filter((asset) => asset.in_current_universe).length,
+      portfolios: apiReadModel.portfolios.length,
+      allocations: apiReadModel.allocations.length,
+      results: apiReadModel.results.length,
+      returns: apiReadModel.returns.length,
+      interim_performance: (apiReadModel.interim_performance ?? []).length,
+      model_styles: apiReadModel.model_styles.length,
+      model_behavior_profiles: apiReadModel.model_behavior?.profiles?.length ?? 0,
+      risk_appetite_snapshots: apiReadModel.risk_appetite?.history?.decision_pulse?.length ?? 0,
+      insights: insights.length,
+      published_insights: publishedInsightRows(insights).length,
+      proof: (apiReadModel.proof ?? []).length,
+      benchmark_evidence_tracks: Object.keys(apiReadModel.benchmark_evidence?.tracks ?? {}).length
+    },
+    datasets: Object.keys(apiReadModel).sort(),
+    openapi_url: "/api/openapi.json"
+  });
+}
+
+function benchmarkEvidence() {
+  return jsonApiResult(200, apiReadModel.benchmark_evidence ?? { version: "benchmark_evidence_v1", tracks: {} });
+}
+
+function sortRoundRowsDescending(rows) {
+  return rows.sort((a, b) => {
+    const leftRound = roundById.get(a.round_id);
+    const rightRound = roundById.get(b.round_id);
+    return (
+      String(rightRound?.exit_date ?? b.exit_date ?? "").localeCompare(String(leftRound?.exit_date ?? a.exit_date ?? "")) ||
+      String(b.round_id ?? "").localeCompare(String(a.round_id ?? "")) ||
+      String(a.model_id ?? "").localeCompare(String(b.model_id ?? "")) ||
+      Number(a.rank ?? a.allocation_rank ?? 9999) - Number(b.rank ?? b.allocation_rank ?? 9999)
+    );
+  });
+}
+
+function listAllocations(url) {
+  const track = normalizedTrack(url);
+  const scope = normalizedScope(url);
+  if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  if (!scope) return errorResult(400, "invalid_scope", "scope must be active or cumulative.");
+  const roundId = url.searchParams.get("round_id");
+  const modelId = url.searchParams.get("model_id");
+  const optionId = url.searchParams.get("option_id");
+  if (roundId && !roundById.has(roundId)) return errorResult(404, "not_found", "Round not found.");
+  if (modelId && !modelById.has(modelId)) return errorResult(404, "not_found", "Model not found.");
+  if (optionId && !assetById.has(optionId)) return errorResult(404, "not_found", "Asset not found.");
+
+  let rows = filterByScope(filterByTrack(officialRowsForReadModel(apiReadModel, apiReadModel.allocations), track), scope);
+  if (roundId) rows = rows.filter((row) => row.round_id === roundId);
+  if (modelId) rows = rows.filter((row) => row.model_id === modelId);
+  if (optionId) rows = rows.filter((row) => row.option_id === optionId);
+  rows = sortRoundRowsDescending(rows);
+  return jsonApiResult(200, {
+    as_of: apiReadModel.generated_at,
+    track,
+    scope,
+    row_count: rows.length,
+    ...pageRows(rows, url)
+  });
+}
+
+function listReturns(url) {
+  const track = normalizedTrack(url);
+  if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  const roundId = url.searchParams.get("round_id");
+  const optionId = url.searchParams.get("option_id");
+  const isBenchmark = optionalBooleanFilter(url, "is_benchmark");
+  if (isBenchmark === undefined) return errorResult(400, "invalid_is_benchmark", "is_benchmark must be true or false.");
+  if (roundId && !roundById.has(roundId)) return errorResult(404, "not_found", "Round not found.");
+  if (optionId && !assetById.has(optionId)) return errorResult(404, "not_found", "Asset not found.");
+
+  let rows = filterByTrack(officialRowsForReadModel(apiReadModel, apiReadModel.returns), track);
+  if (roundId) rows = rows.filter((row) => row.round_id === roundId);
+  if (optionId) rows = rows.filter((row) => row.option_id === optionId);
+  if (isBenchmark !== null) rows = rows.filter((row) => Boolean(row.is_benchmark) === isBenchmark);
+  rows = sortRoundRowsDescending(rows);
+  return jsonApiResult(200, {
+    as_of: apiReadModel.generated_at,
+    track,
+    row_count: rows.length,
+    ...pageRows(rows, url)
+  });
+}
+
+function listLivePerformanceHistory(url) {
+  const track = normalizedTrack(url);
+  if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  const roundId = url.searchParams.get("round_id");
+  const modelId = url.searchParams.get("model_id");
+  const priceStatus = url.searchParams.get("price_status");
+  const published = optionalBooleanFilter(url, "published");
+  const usableOnly = optionalBooleanFilter(url, "usable_only");
+  if (published === undefined) return errorResult(400, "invalid_published", "published must be true or false.");
+  if (usableOnly === undefined) return errorResult(400, "invalid_usable_only", "usable_only must be true or false.");
+  if (roundId && !roundById.has(roundId)) return errorResult(404, "not_found", "Round not found.");
+  if (modelId && !modelById.has(modelId)) return errorResult(404, "not_found", "Model not found.");
+
+  let rows = filterByTrack(officialRowsForReadModel(apiReadModel, apiReadModel.interim_performance ?? []), track);
+  if (roundId) rows = rows.filter((row) => row.round_id === roundId);
+  if (modelId) rows = rows.filter((row) => row.model_id === modelId);
+  if (published !== null) rows = rows.filter((row) => Boolean(row.published) === published);
+  if (usableOnly === true) rows = rows.filter(isUsableLiveRow);
+  if (priceStatus) rows = rows.filter((row) => row.price_status === priceStatus);
+  rows = rows.sort(
+    (a, b) =>
+      String(b.target_date ?? "").localeCompare(String(a.target_date ?? "")) ||
+      String(b.price_date ?? "").localeCompare(String(a.price_date ?? "")) ||
+      String(b.round_id ?? "").localeCompare(String(a.round_id ?? "")) ||
+      String(a.model_id ?? "").localeCompare(String(b.model_id ?? ""))
+  );
+  return jsonApiResult(200, {
+    as_of: apiReadModel.generated_at,
+    track,
+    row_count: rows.length,
+    ...pageRows(rows, url)
+  });
+}
+
+function listProof(url) {
+  const track = normalizedTrack(url);
+  if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  const status = String(url.searchParams.get("status") || "all").toLowerCase();
+  if (!["active", "resolved", "overdue", "all"].includes(status)) {
+    return errorResult(400, "invalid_status", "status must be active, resolved, overdue, or all.");
+  }
+  let rows = officialRowsForReadModel(apiReadModel, apiReadModel.proof ?? []).map((row) => {
+    const round = roundById.get(row.round_id);
+    return {
+      ...row,
+      track: round?.track ?? null,
+      status: round?.status ?? null
+    };
+  });
+  if (track !== "all") rows = rows.filter((row) => row.track === track);
+  if (status !== "all") rows = rows.filter((row) => row.status === status);
+  rows = sortRoundRowsDescending(rows);
+  return jsonApiResult(200, {
+    as_of: apiReadModel.generated_at,
+    track,
+    status,
+    row_count: rows.length,
+    ...pageRows(rows, url)
+  });
+}
+
 function indexResponse() {
   return jsonApiResult(200, {
     name: "CapitalBench Data API",
     version: API_VERSION,
     generated_at: apiReadModel.generated_at,
-    endpoints: [
-      "/v1/positioning/active",
-      "/v1/positioning/cumulative",
-      "/v1/positioning/consensus",
-      "/v1/positioning/by-model/{model_id}",
-      "/v1/positioning/by-asset/{option_id}",
-      "/v1/positioning/by-category",
-      "/v1/positioning/changes",
-      "/v1/risk-appetite",
-      "/v1/live/performance",
-      "/v1/rounds",
-      "/v1/rounds/{round_id}",
-      "/v1/rounds/{round_id}/portfolios",
-      "/v1/rounds/{round_id}/concentration",
-      "/v1/rounds/{round_id}/live-performance",
-      "/v1/rounds/{round_id}/results",
-      "/v1/leaderboards/latest",
-      "/v1/leaderboards/cumulative",
-      "/v1/leaderboards/benchmark-sets",
-      "/v1/leaderboards/benchmark-sets/{set_id}",
-      "/v1/insights",
-      "/v1/insights/{insight_id}",
-      "/v1/models",
-      "/v1/models/{model_id}",
-      "/v1/models/{model_id}/holdings",
-      "/v1/models/{model_id}/live-performance",
-      "/v1/models/{model_id}/style",
-      "/v1/models/{model_id}/behavior",
-      "/v1/models/behavior",
-      "/v1/models/patterns",
-      "/v1/universe/current",
-      "/v1/assets/{option_id}",
-      "/v1/assets/{option_id}/model-holders"
-    ]
+    source: apiReadModel.source ?? null,
+    current_universe_round_id: apiReadModel.current_universe_round_id,
+    openapi_url: "/api/openapi.json",
+    endpoints: DATA_API_ENDPOINTS
   });
 }
 
@@ -1074,6 +1349,7 @@ function routeGet(request) {
   const url = new URL(request.url);
   const parts = parsePath(request).map(decodeURIComponent);
   if (parts.length === 0) return indexResponse();
+  if (parts[0] === "metadata" && parts.length === 1) return metadata();
 
   if (parts[0] === "positioning") {
     if (parts[1] === "active") return positioningResponse(url, { scope: "active" });
@@ -1085,14 +1361,20 @@ function routeGet(request) {
     if (parts[1] === "by-category") return positioningResponse(url, { groupBy: "category" });
   }
 
-  if (parts[0] === "live" && parts[1] === "performance") return livePerformance(url);
+  if (parts[0] === "live" && parts[1] === "performance" && parts.length === 2) return livePerformance(url);
+  if (parts[0] === "live" && parts[1] === "performance" && parts.length === 3 && parts[2] === "history") return listLivePerformanceHistory(url);
   if (parts[0] === "risk-appetite" && parts.length === 1) return riskAppetite();
+  if (parts[0] === "returns" && parts.length === 1) return listReturns(url);
+  if (parts[0] === "allocations" && parts.length === 1) return listAllocations(url);
+  if (parts[0] === "proof" && parts.length === 1) return listProof(url);
+  if (parts[0] === "benchmark-evidence" && parts.length === 1) return benchmarkEvidence();
   if (parts[0] === "insights" && parts.length === 1) return listInsights(url);
   if (parts[0] === "insights" && parts.length === 2) return insightDetails(parts[1]);
 
   if (parts[0] === "rounds") {
     if (parts.length === 1) return listRounds(url);
     if (parts.length === 2) return roundDetails(parts[1]);
+    if (parts.length === 3 && parts[2] === "proof") return roundProof(parts[1]);
     if (parts.length === 3 && parts[2] === "portfolios") return roundPortfolios(parts[1]);
     if (parts.length === 3 && parts[2] === "concentration") return roundConcentration(parts[1]);
     if (parts.length === 3 && parts[2] === "live-performance") return roundLivePerformance(parts[1]);
@@ -1112,6 +1394,7 @@ function routeGet(request) {
     if (parts.length === 1) return listModels();
     if (parts.length === 2) return modelDetails(parts[1]);
     if (parts.length === 3 && parts[2] === "holdings") return modelHoldings(parts[1], url);
+    if (parts.length === 3 && parts[2] === "portfolios") return modelPortfolios(parts[1], url);
     if (parts.length === 3 && parts[2] === "live-performance") return modelLivePerformance(parts[1], url);
     if (parts.length === 3 && parts[2] === "style") return modelStyle(parts[1]);
     if (parts.length === 3 && parts[2] === "behavior") return modelBehavior(parts[1]);
@@ -1120,11 +1403,49 @@ function routeGet(request) {
   if (parts[0] === "universe" && parts[1] === "current") return currentUniverse();
 
   if (parts[0] === "assets") {
+    if (parts.length === 1) return listAssets(url);
     if (parts.length === 2) return assetDetails(parts[1]);
     if (parts.length === 3 && parts[2] === "model-holders") return positioningResponse(url, { optionId: parts[1], groupBy: "model" });
   }
 
   return errorResult(404, "not_found", "API endpoint not found.");
+}
+
+function responseEtag(request) {
+  const url = new URL(request.url);
+  const value = `${API_VERSION}:${apiReadModel.generated_at}:${url.pathname}:${url.search}`;
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `W/"cb-${(hash >>> 0).toString(16)}"`;
+}
+
+function requestHasEtag(request, etag) {
+  const header = request.headers.get("if-none-match") ?? "";
+  return header
+    .split(",")
+    .map((value) => value.trim())
+    .includes(etag);
+}
+
+function withCacheHeaders(request, result) {
+  if (request.method !== "GET" || result.status !== 200) return result;
+  const etag = responseEtag(request);
+  const headers = {
+    etag,
+    "cache-control": "private, max-age=60, stale-while-revalidate=300",
+    vary: "authorization"
+  };
+  if (requestHasEtag(request, etag)) return jsonApiResult(304, null, headers);
+  return {
+    ...result,
+    headers: {
+      ...result.headers,
+      ...headers
+    }
+  };
 }
 
 export async function handleDataApiRequest({ request, env, authRepo, now = new Date() }) {
@@ -1135,5 +1456,7 @@ export async function handleDataApiRequest({ request, env, authRepo, now = new D
 
   const auth = await authenticateRequest({ request, env, authRepo, now });
   if (!auth.ok) return auth.result;
-  return routeGet(request);
+  const authorization = authorizeScopes(auth.key, [READ_V1_SCOPE]);
+  if (!authorization.ok) return authorization.result;
+  return withCacheHeaders(request, routeGet(request));
 }

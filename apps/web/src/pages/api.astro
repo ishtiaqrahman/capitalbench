@@ -237,18 +237,29 @@ const roundConcentrationExample = exampleBlock(concentrationPath, {
 
 const endpointGroups = [
   {
+    title: "Metadata And Evidence",
+    description: "Generated-data coverage, benchmark evidence, and audit records.",
+    endpoints: [
+      ["GET", "/v1/metadata", "Generated read-model timestamp, source, dataset counts, and endpoint discovery."],
+      ["GET", "/v1/benchmark-evidence", "Benchmark qualification thresholds, maturity, baselines, and score-scale caveats."],
+      ["GET", "/v1/proof", "Official proof records across rounds, with hashes and public audit URLs."]
+    ]
+  },
+  {
     title: "Positioning",
     description: "Where model capital is allocated now and how that has accumulated over time.",
     endpoints: [
       ["GET", "/v1/positioning/active", "Live exposure across unresolved weekly and monthly rounds."],
       ["GET", "/v1/risk-appetite", "Current and historical AI Risk Appetite, model agreement, regime mix, and outstanding live-book risk."],
       ["GET", "/v1/live/performance", "Live rounds marked to the latest available close; not official final scores."],
+      ["GET", "/v1/live/performance/history", "Raw interim mark-to-market rows with round, model, published, and pricing filters."],
       ["GET", "/v1/positioning/cumulative", "Historical allocation behavior across all available rounds."],
       ["GET", "/v1/positioning/consensus", "Assets and categories where model allocations cluster."],
       ["GET", "/v1/positioning/by-model/{model_id}", "One model's active or cumulative allocation pattern."],
       ["GET", "/v1/positioning/by-asset/{option_id}", "Models allocating to a selected asset."],
       ["GET", "/v1/positioning/by-category", "Exposure grouped by sector, region, asset class, or theme."],
-      ["GET", "/v1/positioning/changes", "Allocation changes between recent rounds."]
+      ["GET", "/v1/positioning/changes", "Allocation changes between recent rounds."],
+      ["GET", "/v1/allocations", "Raw official-run allocation rows with track, scope, round, model, and asset filters."]
     ]
   },
   {
@@ -265,10 +276,12 @@ const endpointGroups = [
     endpoints: [
       ["GET", "/v1/rounds", "Round index with track, status, dates, universe version, and audit links."],
       ["GET", "/v1/rounds/{round_id}", "One round's metadata and input hashes."],
+      ["GET", "/v1/rounds/{round_id}/proof", "One round's official proof record, hashes, and audit URL."],
       ["GET", "/v1/rounds/{round_id}/portfolios", "Saved model allocations for a round."],
       ["GET", "/v1/rounds/{round_id}/concentration", "Run-level allocation consensus and concentration summary."],
       ["GET", "/v1/rounds/{round_id}/live-performance", "Interim mark-to-market rows for an unresolved round."],
       ["GET", "/v1/rounds/{round_id}/results", "Resolved portfolio returns, S&P 500 returns, Portfolio Minus S&P 500, regret, and max-possible context."],
+      ["GET", "/v1/returns", "Raw official-run asset return rows, including benchmark and cash rows where available."],
       ["GET", "/v1/leaderboards/latest", "Most recent scored weekly or monthly leaderboard."],
       ["GET", "/v1/leaderboards/benchmark-sets", "Living equal-run comparison sets, including the current weekly and monthly benchmarks."],
       ["GET", "/v1/leaderboards/benchmark-sets/{set_id}", "One comparison set with model roster, included rounds, excluded rounds, and CapitalBench Scores."],
@@ -282,12 +295,14 @@ const endpointGroups = [
       ["GET", "/v1/models", "Model list with provider metadata and active status."],
       ["GET", "/v1/models/{model_id}", "Model profile and audit links."],
       ["GET", "/v1/models/{model_id}/holdings", "Active and historical holdings for one model."],
+      ["GET", "/v1/models/{model_id}/portfolios", "Portfolio-level model records with rationales, key risks, proof paths, and allocations."],
       ["GET", "/v1/models/{model_id}/live-performance", "One model's live return across live rounds."],
       ["GET", "/v1/models/{model_id}/style", "Risk appetite and allocation fingerprint metrics."],
       ["GET", "/v1/models/behavior", "Canonical model behavior profiles plus the dynamic pattern report, peer comparisons, turnover, concentration, and archetype labels."],
       ["GET", "/v1/models/patterns", "Direct access to the dynamic model behavior pattern report used by the comparison page."],
       ["GET", "/v1/models/{model_id}/behavior", "One model's behavior profile with methodology and peer-context fields."],
       ["GET", "/v1/universe/current", "Current list of valid model choices."],
+      ["GET", "/v1/assets", "All generated asset metadata, optionally filtered to current or inactive assets."],
       ["GET", "/v1/assets/{option_id}", "Asset metadata and ticker mapping."],
       ["GET", "/v1/assets/{option_id}/model-holders", "Models holding a selected asset."]
     ]
@@ -326,6 +341,7 @@ const fields = [
   ["option_id", "Stable asset identifier from the saved universe."],
   ["pattern_report", "Dynamic model behavior comparison report with one row per model, deterministic traits, key numbers, comparative findings, freshness metadata, and NVIDIA prompt provenance."],
   ["portfolio_count", "Number of model portfolios included in an aggregate calculation."],
+  ["row_count", "Total number of records matching a list endpoint before pagination."],
   ["risk_on_loading", "Versioned asset loading from -1 defensive to +1 risk seeking, used by AI Risk Appetite."],
   ["risk_score_1_5", "Standalone asset-risk rating used by the existing historical model profile."],
   ["round_id", "Stable test identifier for one weekly or monthly round."],
@@ -339,6 +355,7 @@ const statusCodes = [
   ["200", "Request succeeded."],
   ["400", "Invalid parameter, invalid cursor, or malformed request."],
   ["401", "Missing, expired, or invalid API key."],
+  ["403", "The API key is valid but lacks the required scope."],
   ["404", "Requested model, round, or asset was not found."],
   ["429", "Rate limit exceeded."],
   ["500", "Temporary service error."]

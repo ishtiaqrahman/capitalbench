@@ -6,22 +6,24 @@ import {
   createMemoryApiAuthRepository,
   dataResultToResponse,
   handleDataApiRequest,
-  hashApiKey
+  hashApiKey,
+  officialRowsForReadModel,
+  officialRowsForRound
 } from "../src/lib/dataApi.js";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { insightContextRecencyValue, insightRecencyValue } from "../src/lib/insights.js";
 import apiReadModel from "../src/generated/apiReadModel.js";
 
-function getRequest(path, token) {
+function getRequest(path, token, headers = {}) {
   return new Request(`https://www.capitalbench.org${path}`, {
     method: "GET",
-    headers: token ? { authorization: `Bearer ${token}` } : {}
+    headers: token ? { ...headers, authorization: `Bearer ${token}` } : headers
   });
 }
 
-async function apiGet(path, { token, env = {}, repo, now } = {}) {
+async function apiGet(path, { token, env = {}, repo, now, headers } = {}) {
   return await handleDataApiRequest({
-    request: getRequest(path, token),
+    request: getRequest(path, token, headers),
     env: { API_AUTH_REQUIRED: "false", ...env },
     authRepo: repo ?? createMemoryApiAuthRepository(),
     now: now ?? new Date("2026-06-01T21:00:00Z")
@@ -62,16 +64,22 @@ function modelLabel(modelId) {
 }
 
 function canonicalLeaderboardRows(roundId) {
-  return apiReadModel.results
-    .filter((row) => row.round_id === roundId)
+  return officialRowsForRound(apiReadModel, apiReadModel.results, roundId)
     .sort((left, right) => left.rank - right.rank)
     .map((row) => ({ ...row, label: modelLabel(row.model_id) }));
 }
 
 function canonicalRoundReturns(roundId) {
-  return apiReadModel.returns
-    .filter((row) => row.round_id === roundId)
+  return officialRowsForRound(apiReadModel, apiReadModel.returns, roundId)
     .sort((left, right) => Number(left.rank ?? 9999) - Number(right.rank ?? 9999));
+}
+
+function canonicalRoundAllocations(roundId) {
+  return officialRowsForRound(apiReadModel, apiReadModel.allocations, roundId).sort(
+    (left, right) =>
+      String(left.model_id).localeCompare(String(right.model_id)) ||
+      Number(left.allocation_rank ?? 9999) - Number(right.allocation_rank ?? 9999)
+  );
 }
 
 function assertApproxEqual(actual, expected, tolerance = 1e-9) {
@@ -115,6 +123,34 @@ test("API accepts an active bearer key", async () => {
   assert.ok(result.body.data.some((model) => model.model_id === "openai-gpt-5-5"));
 });
 
+test("API rejects bearer keys without read:v1 scope", async () => {
+  const token = "cb_live_scope_test";
+  const repo = await authRepoForToken(token, { scopes: "read:live" });
+
+  const result = await apiGet("/api/v1/models", {
+    token,
+    env: { API_AUTH_REQUIRED: "true" },
+    repo
+  });
+
+  assert.equal(result.status, 403);
+  assert.equal(result.body.error, "forbidden");
+  assert.equal(result.body.required_scope, "read:v1");
+});
+
+test("API returns cache validators for successful read responses", async () => {
+  const first = await apiGet("/api/v1/models");
+  const etag = first.headers.etag;
+  const second = await apiGet("/api/v1/models", { headers: { "if-none-match": etag } });
+
+  assert.equal(first.status, 200);
+  assert.ok(etag);
+  assert.match(first.headers["cache-control"], /private/);
+  assert.equal(first.headers.vary, "authorization");
+  assert.equal(second.status, 304);
+  assert.equal(second.body, null);
+});
+
 test("API applies per-minute key rate limit", async () => {
   const token = "cb_live_rate_limit_test";
   const repo = await authRepoForToken(token, { rate_limit_per_minute: 1, rate_limit_per_day: 100 });
@@ -138,7 +174,7 @@ test("API applies per-minute key rate limit", async () => {
 test("active positioning returns live model allocation data", async () => {
   const result = await apiGet("/api/v1/positioning/active?track=all&group_by=asset");
   const activePortfolioCount = new Set(
-    apiReadModel.portfolios
+    officialRowsForReadModel(apiReadModel, apiReadModel.portfolios)
       .filter((row) => row.status === "active")
       .map((row) => `${row.round_id}:${row.run_id}:${row.model_id}`)
   ).size;
@@ -166,7 +202,7 @@ test("active positioning returns live model allocation data", async () => {
 });
 
 test("live performance returns interim mark-to-market data for open tests", async () => {
-  const generatedLiveRows = apiReadModel.interim_performance.filter(
+  const generatedLiveRows = officialRowsForReadModel(apiReadModel, apiReadModel.interim_performance).filter(
     (row) => row.status === "active" && row.days_elapsed > 0
   );
   assert.ok(generatedLiveRows.length > 0);
@@ -280,7 +316,7 @@ test("cumulative weekly leaderboard ranks eligible all-resolved rows by CapitalB
   const latestWeeklyRoundId = result.body.comparison.comparison_round_ids.at(-1);
   let foundNonLatestOnlyAverage = false;
   for (const row of result.body.data.filter((item) => item.is_rank_eligible)) {
-    const rawRows = apiReadModel.results.filter((item) => item.track === "weekly" && item.model_id === row.model_id);
+    const rawRows = officialRowsForReadModel(apiReadModel, apiReadModel.results).filter((item) => item.track === "weekly" && item.model_id === row.model_id);
     const expectedScore = cumulativeCapitalBenchScore(
       rawRows.map((item) => item.portfolio_return_pct),
       rawRows.map((item) => item.max_possible_return_pct)
@@ -351,16 +387,38 @@ test("cumulative leaderboard includes all resolved tests and marks late model hi
   assert.equal(result.data[2].sample_status, "provisional");
 });
 
+test("official row helpers preserve official rows and exclude retry runs", () => {
+  const fixture = {
+    rounds: [{ round_id: "r1", official_run_id: "official-run" }],
+    results: [
+      { round_id: "r1", run_id: "official-run", model_id: "m1" },
+      { round_id: "r1", run_id: "retry-run", model_id: "m1" },
+      { round_id: "r1", model_id: "legacy-no-run-id" }
+    ]
+  };
+
+  assert.deepEqual(officialRowsForRound(fixture, fixture.results, "r1"), [
+    { round_id: "r1", run_id: "official-run", model_id: "m1" },
+    { round_id: "r1", model_id: "legacy-no-run-id" }
+  ]);
+  assert.deepEqual(officialRowsForReadModel(fixture, fixture.results), [
+    { round_id: "r1", run_id: "official-run", model_id: "m1" },
+    { round_id: "r1", model_id: "legacy-no-run-id" }
+  ]);
+});
+
 test("round portfolios and current universe endpoints return real data", async () => {
   const latestWeeklyRoundId = latestRoundId("weekly");
   const portfolios = await apiGet(`/api/v1/rounds/${latestWeeklyRoundId}/portfolios`);
   const universe = await apiGet("/api/v1/universe/current");
+  const round = apiReadModel.rounds.find((item) => item.round_id === latestWeeklyRoundId);
   const currentUniverseRound = apiReadModel.rounds.find((round) => round.round_id === apiReadModel.current_universe_round_id);
-  const expectedPortfolios = apiReadModel.portfolios.filter((row) => row.round_id === latestWeeklyRoundId);
+  const expectedPortfolios = officialRowsForRound(apiReadModel, apiReadModel.portfolios, latestWeeklyRoundId);
   const expectedUniverse = apiReadModel.assets.filter((asset) => asset.in_current_universe);
 
   assert.equal(portfolios.status, 200);
   assert.equal(portfolios.body.round_id, latestWeeklyRoundId);
+  assert.equal(portfolios.body.run_id, round.official_run_id);
   assert.deepEqual(portfolios.body.data, expectedPortfolios);
   assert.ok(portfolios.body.data.length >= 5);
   assert.ok(portfolios.body.data[0].allocations.length > 0);
@@ -382,6 +440,7 @@ test("round results endpoint mirrors canonical scored rows and universe returns"
 
   assert.equal(result.status, 200);
   assert.equal(result.body.round_id, latestWeeklyRoundId);
+  assert.equal(result.body.run_id, round.official_run_id);
   assert.equal(result.body.benchmark_option_id, round.benchmark_option_id);
   assert.equal(result.body.benchmark_return_pct, expectedBenchmarkReturn);
   assert.deepEqual(result.body.data, expectedRows);
@@ -394,6 +453,70 @@ test("round results endpoint mirrors canonical scored rows and universe returns"
     assertApproxEqual(row.capitalbench_score, capitalBenchScore(row.portfolio_return_pct, row.max_possible_return_pct));
     assert.ok(row.capitalbench_score <= 100);
   }
+});
+
+test("metadata and raw dataset endpoints expose generated read model data", async () => {
+  const modelId = apiReadModel.models[0].model_id;
+  const activeRoundId = latestRoundId("weekly", { status: "active" });
+  const resolvedRoundId = latestRoundId("weekly", { status: "resolved" });
+
+  const metadata = await apiGet("/api/v1/metadata");
+  assert.equal(metadata.status, 200);
+  assert.equal(metadata.body.generated_at, apiReadModel.generated_at);
+  assert.equal(metadata.body.source, apiReadModel.source);
+  assert.equal(metadata.body.data_counts.interim_performance, apiReadModel.interim_performance.length);
+  assert.equal(metadata.body.data_counts.returns, apiReadModel.returns.length);
+  assert.ok(metadata.body.datasets.includes("benchmark_evidence"));
+
+  const assets = await apiGet("/api/v1/assets?current=all&limit=250");
+  assert.equal(assets.status, 200);
+  assert.equal(assets.body.row_count, apiReadModel.assets.length);
+  assert.deepEqual(assets.body.data, apiReadModel.assets);
+
+  const evidence = await apiGet("/api/v1/benchmark-evidence");
+  assert.equal(evidence.status, 200);
+  assert.deepEqual(evidence.body, apiReadModel.benchmark_evidence);
+
+  const returns = await apiGet(`/api/v1/returns?track=weekly&round_id=${resolvedRoundId}&limit=250`);
+  assert.equal(returns.status, 200);
+  assert.equal(returns.body.row_count, canonicalRoundReturns(resolvedRoundId).length);
+  assert.deepEqual(returns.body.data, canonicalRoundReturns(resolvedRoundId));
+
+  const allocations = await apiGet(`/api/v1/allocations?track=weekly&scope=cumulative&round_id=${activeRoundId}&limit=250`);
+  assert.equal(allocations.status, 200);
+  assert.equal(allocations.body.row_count, canonicalRoundAllocations(activeRoundId).length);
+  assert.deepEqual(
+    allocations.body.data.sort(
+      (left, right) =>
+        String(left.model_id).localeCompare(String(right.model_id)) ||
+        Number(left.allocation_rank ?? 9999) - Number(right.allocation_rank ?? 9999)
+    ),
+    canonicalRoundAllocations(activeRoundId)
+  );
+
+  const history = await apiGet("/api/v1/live/performance/history?track=all&limit=5");
+  assert.equal(history.status, 200);
+  assert.equal(history.body.row_count, officialRowsForReadModel(apiReadModel, apiReadModel.interim_performance).length);
+  assert.equal(history.body.data.length, 5);
+  assert.ok(history.body.data.every((row) => row.round_id && row.model_id && row.target_date));
+
+  const modelPortfolios = await apiGet(`/api/v1/models/${modelId}/portfolios?track=all&scope=cumulative`);
+  const expectedModelPortfolios = officialRowsForReadModel(apiReadModel, apiReadModel.portfolios).filter(
+    (row) => row.model_id === modelId
+  );
+  assert.equal(modelPortfolios.status, 200);
+  assert.equal(modelPortfolios.body.model_id, modelId);
+  assert.equal(modelPortfolios.body.data.length, expectedModelPortfolios.length);
+  assert.ok(modelPortfolios.body.data.some((row) => row.rationale_summary && row.allocations?.length > 0));
+
+  const proof = await apiGet(`/api/v1/rounds/${activeRoundId}/proof`);
+  const proofList = await apiGet("/api/v1/proof?track=all&status=all&limit=250");
+  assert.equal(proof.status, 200);
+  assert.equal(proof.body.round_id, activeRoundId);
+  assert.ok(proof.body.proof.hashes);
+  assert.equal(proofList.status, 200);
+  assert.equal(proofList.body.row_count, officialRowsForReadModel(apiReadModel, apiReadModel.proof).length);
+  assert.ok(proofList.body.data.some((row) => row.round_id === activeRoundId));
 });
 
 test("round concentration endpoint returns consensus and concentration data", async () => {
@@ -463,6 +586,10 @@ test("insights endpoint returns ranked public insights with detail lookups", asy
   assert.equal(list.body.data.length, Math.min(3, list.body.insight_count));
   assert.ok(list.body.categories.length > 0);
   assert.ok(list.body.data.every((insight) => insight.status === "published"));
+  assert.deepEqual(
+    list.body.categories,
+    Array.from(new Set(apiReadModel.insights.insights.filter((row) => row.status === "published").map((row) => row.category))).sort()
+  );
   for (let index = 1; index < list.body.data.length; index += 1) {
     const previous = list.body.data[index - 1];
     const current = list.body.data[index];
@@ -510,6 +637,7 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
   const benchmarkSetId = apiReadModel.benchmark_set_definitions.find((set) => set.track === "weekly")?.set_id ?? "weekly-set-2026-05-28";
   const insightId = apiReadModel.insights.insights[0]?.id ?? "no-insight";
   const sampleByOpenApiPath = new Map([
+    ["/v1/metadata", "/api/v1/metadata"],
     ["/v1/positioning/active", "/api/v1/positioning/active?track=all&group_by=asset"],
     ["/v1/positioning/cumulative", `/api/v1/positioning/cumulative?track=weekly&model_id=${modelId}&group_by=asset`],
     ["/v1/positioning/consensus", "/api/v1/positioning/consensus?track=all&scope=active"],
@@ -519,8 +647,13 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
     ["/v1/positioning/changes", "/api/v1/positioning/changes?track=weekly&window=latest"],
     ["/v1/risk-appetite", "/api/v1/risk-appetite"],
     ["/v1/live/performance", "/api/v1/live/performance?track=all"],
+    ["/v1/live/performance/history", "/api/v1/live/performance/history?track=all&limit=5"],
+    ["/v1/returns", `/api/v1/returns?track=weekly&round_id=${resolvedRoundId}&limit=5`],
+    ["/v1/allocations", "/api/v1/allocations?track=all&scope=active&limit=5"],
+    ["/v1/proof", "/api/v1/proof?track=all&status=all&limit=5"],
     ["/v1/rounds", "/api/v1/rounds?track=all&status=all&limit=5"],
     ["/v1/rounds/{round_id}", `/api/v1/rounds/${activeRoundId}`],
+    ["/v1/rounds/{round_id}/proof", `/api/v1/rounds/${activeRoundId}/proof`],
     ["/v1/rounds/{round_id}/portfolios", `/api/v1/rounds/${activeRoundId}/portfolios`],
     ["/v1/rounds/{round_id}/concentration", `/api/v1/rounds/${activeRoundId}/concentration`],
     ["/v1/rounds/{round_id}/live-performance", `/api/v1/rounds/${activeRoundId}/live-performance`],
@@ -529,17 +662,20 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
     ["/v1/leaderboards/cumulative", "/api/v1/leaderboards/cumulative?track=weekly"],
     ["/v1/leaderboards/benchmark-sets", "/api/v1/leaderboards/benchmark-sets?track=weekly"],
     ["/v1/leaderboards/benchmark-sets/{set_id}", `/api/v1/leaderboards/benchmark-sets/${benchmarkSetId}`],
+    ["/v1/benchmark-evidence", "/api/v1/benchmark-evidence"],
     ["/v1/insights", "/api/v1/insights?limit=5"],
     ["/v1/insights/{insight_id}", `/api/v1/insights/${insightId}`],
     ["/v1/models", "/api/v1/models"],
     ["/v1/models/{model_id}", `/api/v1/models/${modelId}`],
     ["/v1/models/{model_id}/holdings", `/api/v1/models/${modelId}/holdings?track=all&scope=active`],
+    ["/v1/models/{model_id}/portfolios", `/api/v1/models/${modelId}/portfolios?track=all&scope=cumulative`],
     ["/v1/models/{model_id}/live-performance", `/api/v1/models/${modelId}/live-performance?track=all`],
     ["/v1/models/{model_id}/style", `/api/v1/models/${modelId}/style`],
     ["/v1/models/behavior", "/api/v1/models/behavior"],
     ["/v1/models/patterns", "/api/v1/models/patterns"],
     ["/v1/models/{model_id}/behavior", `/api/v1/models/${modelId}/behavior`],
     ["/v1/universe/current", "/api/v1/universe/current"],
+    ["/v1/assets", "/api/v1/assets?current=all&limit=5"],
     ["/v1/assets/{option_id}", `/api/v1/assets/${optionId}`],
     ["/v1/assets/{option_id}/model-holders", `/api/v1/assets/${optionId}/model-holders?scope=active&track=all`]
   ]);
@@ -555,6 +691,40 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
     const result = await apiGet(samplePath);
     assert.equal(result.status, 200, `${openApiPath} sample ${samplePath} returned ${result.status}`);
     assert.ok(result.body && typeof result.body === "object", `${openApiPath} did not return a JSON object`);
+  }
+});
+
+test("every top-level generated read model dataset has an API exposure path", async () => {
+  const modelId = apiReadModel.models[0].model_id;
+  const activeRoundId = latestRoundId("weekly", { status: "active" });
+  const resolvedRoundId = latestRoundId("weekly", { status: "resolved" });
+  const coverage = {
+    generated_at: "/api/v1/metadata",
+    api_version: "/api/v1/metadata",
+    source: "/api/v1/metadata",
+    current_universe_round_id: "/api/v1/metadata",
+    benchmark_set_policy: "/api/v1/leaderboards/benchmark-sets",
+    benchmark_set_definitions: "/api/v1/metadata",
+    rounds: "/api/v1/rounds?track=all&status=all&limit=5",
+    models: "/api/v1/models",
+    assets: "/api/v1/assets?current=all&limit=5",
+    portfolios: `/api/v1/models/${modelId}/portfolios?track=all&scope=cumulative`,
+    allocations: "/api/v1/allocations?track=all&scope=active&limit=5",
+    results: `/api/v1/rounds/${resolvedRoundId}/results`,
+    returns: `/api/v1/returns?track=weekly&round_id=${resolvedRoundId}&limit=5`,
+    interim_performance: `/api/v1/live/performance/history?track=weekly&round_id=${activeRoundId}&limit=5`,
+    model_styles: `/api/v1/models/${modelId}/style`,
+    model_behavior: "/api/v1/models/behavior",
+    risk_appetite: "/api/v1/risk-appetite",
+    insights: "/api/v1/insights?limit=5",
+    proof: `/api/v1/rounds/${activeRoundId}/proof`,
+    benchmark_evidence: "/api/v1/benchmark-evidence"
+  };
+
+  assert.deepEqual(Object.keys(coverage).sort(), Object.keys(apiReadModel).sort());
+  for (const [dataset, path] of Object.entries(coverage)) {
+    const result = await apiGet(path);
+    assert.equal(result.status, 200, `${dataset} coverage path ${path} returned ${result.status}`);
   }
 });
 
