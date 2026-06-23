@@ -1,0 +1,431 @@
+---
+const { demo } = Astro.props;
+const assets = demo.assets ?? [];
+const initial = assets[0] ?? {
+  optionId: "SEMICONDUCTORS",
+  ticker: "SMH",
+  label: "Semiconductors",
+  categoryLabel: "AI And Technology",
+  assetClass: "Equity",
+  allocationPct: "0.0",
+  modelCount: 0,
+  activeModelCount: 0,
+  holderSharePct: "0",
+  portfolioHoldingCount: 0,
+  activePortfolioCount: 0,
+  agreementLabel: "No active model data",
+  dispersionLabel: "No active model data",
+  crowdingLabel: "No active positioning signal",
+  interpretation: "No active model positioning is available for this asset yet.",
+  allocationRangePct: "0.0",
+  allocationStdDevPct: "0.0",
+  mostBullishModel: null,
+  leastBullishHolder: null,
+  topHolders: [],
+  nonHolders: [],
+  relatedAssets: [],
+  apiPaths: [],
+  integrationSnippet: '<CapitalBenchPanel asset="SMH" view="model-positioning" />',
+  sampleJson: {}
+};
+const safeJson = JSON.stringify(assets).replace(/</g, "\\u003c");
+
+const holderLine = (holder: any) =>
+  holder
+    ? `${holder.model_name ?? holder.label}${holder.provider ? ` (${holder.provider})` : ""} ${Number(holder.average_allocation_pct || 0).toFixed(1)}%`
+    : "No active holder";
+const nonHolderLine = (asset: any) =>
+  asset.nonHolders?.length
+    ? `${asset.nonHolders.map((model: any) => model.model_name ?? model.label).slice(0, 3).join(", ")} do not hold ${asset.ticker}`
+    : `Every active model holds ${asset.ticker}`;
+const relatedLine = (asset: any) =>
+  asset.relatedAssets?.length
+    ? asset.relatedAssets.map((related: any) => related.ticker || related.option_id).slice(0, 3).join(", ")
+    : "No related active exposures";
+---
+
+<section id="widget-demo" class="api-widget-demo" aria-labelledby="api-widget-title" data-api-widget-demo>
+  <div class="api-widget-header">
+    <div>
+      <span class="panel-kicker">Interactive widget demo</span>
+      <h2 id="api-widget-title">See CapitalBench inside a market data platform</h2>
+      <p>
+        This is a real-data panel a financial website, brokerage dashboard, or data terminal could place beside an
+        asset page. It focuses on which named AI models hold the asset, which models avoid it, and where allocation
+        sizing disagrees.
+      </p>
+    </div>
+    <a class="table-action-link" href="/api/use-cases">View broader use cases</a>
+  </div>
+
+  <div class="api-widget-controls" aria-label="API widget controls">
+    <div class="api-widget-asset-tabs" aria-label="Choose example asset">
+      {
+        assets.map((asset: any, index: number) => (
+          <button
+            type="button"
+            data-asset-index={index}
+            aria-pressed={index === 0 ? "true" : "false"}
+            aria-label={`${asset.ticker}: ${asset.label}, ${asset.modelCount} of ${asset.activeModelCount} active models hold it`}
+          >
+            <strong>{asset.ticker}</strong>
+            <span>{asset.label}</span>
+            <em>{asset.modelCount}/{asset.activeModelCount} models hold</em>
+          </button>
+        ))
+      }
+    </div>
+    <div class="api-widget-mode" aria-label="Choose panel mode">
+      <button type="button" data-mode-button="investor" aria-pressed="true">Investor View</button>
+      <button type="button" data-mode-button="developer" aria-pressed="false">Developer View</button>
+    </div>
+  </div>
+
+  <div class="api-widget-stage">
+    <div class="api-widget-platform-stack">
+      <article class="api-widget-platform" aria-label="Example market data platform page">
+        <header>
+          <div>
+            <span>Market Data Platform</span>
+            <strong data-field="hostTitle">{initial.ticker} - {initial.label}</strong>
+          </div>
+          <b data-field="hostBadge">{initial.modelCount}/{initial.activeModelCount} models hold</b>
+        </header>
+        <div class="api-widget-platform-body">
+          <div class="api-widget-positioning-card">
+            <div class="api-widget-positioning-topline">
+              <span>CapitalBench data panel</span>
+              <strong data-field="positioningTitle">{initial.ticker} active model holdings</strong>
+            </div>
+            <div class="api-widget-positioning-metrics">
+              <div>
+                <span>Average active allocation</span>
+                <strong><span data-field="hostAllocationPct">{initial.allocationPct}</span>%</strong>
+              </div>
+              <div>
+                <span>Model holders</span>
+                <strong data-field="hostCoverage">{initial.modelCount}/{initial.activeModelCount}</strong>
+              </div>
+            </div>
+            <div class="api-widget-holder-bars" data-platform-holder-bars aria-label="Top named model holder allocations">
+              {
+                initial.topHolders.map((holder: any) => (
+                  <div>
+                    <span>{holder.model_name ?? holder.label}</span>
+                    <i style={`--bar: ${Math.max(4, Math.min(100, holder.average_allocation_pct))}%`}></i>
+                    <b>{holder.average_allocation_pct.toFixed(1)}%</b>
+                  </div>
+                ))
+              }
+            </div>
+            <p>
+              Source endpoint:
+              <code data-field="sourcePath">{initial.apiPaths[0]}</code>
+            </p>
+          </div>
+          <div class="api-widget-platform-stats">
+            <div>
+              <span>Agreement</span>
+              <strong data-field="platformAgreement">{initial.agreementLabel}</strong>
+            </div>
+            <div>
+              <span>Most bullish model</span>
+              <strong data-field="platformMostBullish">{holderLine(initial.mostBullishModel)}</strong>
+            </div>
+            <div>
+              <span>Sizing spread</span>
+              <strong><span data-field="platformRange">{initial.allocationRangePct}</span> pp</strong>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <aside class="api-widget-platform-context" aria-label="Investor workflow context">
+        <div>
+          <span>Why it helps</span>
+          <strong>Model-aware asset page</strong>
+          <p>Show named AI-model ownership beside the asset before a reader opens a trade ticket or watchlist item.</p>
+        </div>
+        <div>
+          <span>Disagreement flag</span>
+          <strong data-field="platformNonHolders">{nonHolderLine(initial)}</strong>
+          <p>Separates real consensus from split positioning so users know when models are avoiding the same asset.</p>
+        </div>
+        <div>
+          <span>Related watchlist</span>
+          <strong data-field="platformRelated">{relatedLine(initial)}</strong>
+          <p>Points to adjacent exposures that active models are also holding.</p>
+        </div>
+      </aside>
+    </div>
+
+    <article class="api-widget-panel" aria-label="CapitalBench API panel example">
+      <header>
+        <div>
+          <span>Powered by CapitalBench API</span>
+          <strong data-field="panelTitle">{initial.ticker} AI model holdings</strong>
+        </div>
+        <a href="/api/openapi.json">OpenAPI</a>
+      </header>
+
+      <div class="api-widget-asset-identity">
+        <b data-field="identityTicker">{initial.ticker}</b>
+        <div>
+          <strong data-field="identityName">{initial.label}</strong>
+          <span data-field="identityMeta">{initial.categoryLabel} - {initial.assetClass}</span>
+        </div>
+      </div>
+
+      <div data-widget-view="investor">
+        <div class="api-widget-kpis">
+          <div>
+            <span>Avg active allocation</span>
+            <strong><span data-field="allocationPct">{initial.allocationPct}</span>%</strong>
+            <p>Across official active portfolios</p>
+          </div>
+          <div>
+            <span>Model agreement</span>
+            <strong class="api-widget-kpi-label" data-field="agreementLabel">{initial.agreementLabel}</strong>
+            <p data-field="agreementSubcopy">{initial.modelCount}/{initial.activeModelCount} named models hold {initial.ticker}</p>
+          </div>
+        </div>
+
+        <div class="api-widget-interpretation">
+          <span>What this tells an investor</span>
+          <strong data-field="crowdingLabel">{initial.crowdingLabel}</strong>
+          <p data-field="interpretation">{initial.interpretation}</p>
+        </div>
+
+        <div class="api-widget-holders">
+          <div class="api-widget-subhead">
+            <span>Named model holders</span>
+            <strong data-field="holderSummary">{initial.modelCount} models hold {initial.ticker}</strong>
+          </div>
+          <ul data-holder-list>
+            {
+              initial.topHolders.map((holder: any) => (
+                <li>
+                  <span>
+                    <strong>{holder.model_name ?? holder.label}</strong>
+                    <em>{holder.provider ? `${holder.provider} - ${holder.stance}` : holder.stance}</em>
+                  </span>
+                  <b>{holder.average_allocation_pct.toFixed(1)}%</b>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="api-widget-agreement">
+          <span>Agreement and disagreement</span>
+          <div class="api-widget-agreement-grid">
+            <div>
+              <span>Most bullish</span>
+              <strong data-field="mostBullishModel">{holderLine(initial.mostBullishModel)}</strong>
+            </div>
+            <div>
+              <span>Smallest holder</span>
+              <strong data-field="leastBullishHolder">{holderLine(initial.leastBullishHolder)}</strong>
+            </div>
+            <div>
+              <span>Sizing spread</span>
+              <strong><span data-field="allocationRange">{initial.allocationRangePct}</span> pp - <span data-field="dispersionLabel">{initial.dispersionLabel}</span></strong>
+            </div>
+            <div>
+              <span>Non-holders</span>
+              <strong data-field="nonHolderSummary">{nonHolderLine(initial)}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="api-widget-related">
+          <span>Related active exposures</span>
+          <div data-related-assets>
+            {
+              initial.relatedAssets.map((asset: any) => (
+                <div>
+                  <strong>{asset.ticker}</strong>
+                  <span>{asset.label}</span>
+                  <em>{asset.holder_count}/{initial.activeModelCount} holders - {Number(asset.average_allocation_pct || 0).toFixed(1)}% avg</em>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <div data-widget-view="developer" hidden>
+        <div class="api-widget-code-head">
+          <span>Embeddable panel concept</span>
+          <code data-field="snippet">{initial.integrationSnippet}</code>
+        </div>
+        <div class="api-widget-endpoint-list" data-endpoint-list>
+          {
+            initial.apiPaths.map((path: string) => (
+              <code>{path}</code>
+            ))
+          }
+        </div>
+        <pre><code data-json-sample>{JSON.stringify(initial.sampleJson, null, 2)}</code></pre>
+      </div>
+    </article>
+  </div>
+
+  <div class="api-widget-footnote">
+    <span>Updated from generated read model: <time datetime={demo.generatedAt}>{demo.generatedAtDisplay ?? demo.generatedAt}</time></span>
+    <span>{demo.activePortfolioCount} active portfolios - {demo.activeModelCount} active models - research data, not investment advice</span>
+  </div>
+
+  <script is:inline type="application/json" data-widget-demo-json set:html={safeJson}></script>
+  <script is:inline>
+    document.querySelectorAll("[data-api-widget-demo]").forEach((root) => {
+      const dataScript = root.querySelector("[data-widget-demo-json]");
+      const assets = JSON.parse(dataScript?.textContent || "[]");
+      const listNames = (models, limit = 3) => {
+        const names = (models || []).map((model) => model.model_name || model.label).filter(Boolean).slice(0, limit);
+        if (names.length === 0) return "";
+        if (names.length === 1) return names[0];
+        if (names.length === 2) return `${names[0]} and ${names[1]}`;
+        return `${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
+      };
+      const holderLine = (holder) =>
+        holder
+          ? `${holder.model_name || holder.label}${holder.provider ? ` (${holder.provider})` : ""} ${Number(holder.average_allocation_pct || 0).toFixed(1)}%`
+          : "No active holder";
+      const nonHolderLine = (asset) =>
+        asset.nonHolders?.length
+          ? `${listNames(asset.nonHolders)} do not hold ${asset.ticker}`
+          : `Every active model holds ${asset.ticker}`;
+      const relatedLine = (asset) =>
+        asset.relatedAssets?.length
+          ? asset.relatedAssets.map((related) => related.ticker || related.option_id).filter(Boolean).slice(0, 3).join(", ")
+          : "No related active exposures";
+      const setText = (name, value) => {
+        root.querySelectorAll(`[data-field="${name}"]`).forEach((node) => {
+          node.textContent = value;
+        });
+      };
+      const renderHolders = (asset) => {
+        const list = root.querySelector("[data-holder-list]");
+        if (!list) return;
+        list.replaceChildren(
+          ...(asset.topHolders || []).map((holder) => {
+            const item = document.createElement("li");
+            const text = document.createElement("span");
+            const name = document.createElement("strong");
+            const meta = document.createElement("em");
+            const value = document.createElement("b");
+            name.textContent = holder.model_name || holder.label;
+            meta.textContent = [holder.provider, holder.stance].filter(Boolean).join(" - ");
+            value.textContent = `${Number(holder.average_allocation_pct || 0).toFixed(1)}%`;
+            text.append(name, meta);
+            item.append(text, value);
+            return item;
+          })
+        );
+      };
+      const renderRelatedAssets = (asset) => {
+        const list = root.querySelector("[data-related-assets]");
+        if (!list) return;
+        list.replaceChildren(
+          ...(asset.relatedAssets || []).map((related) => {
+            const item = document.createElement("div");
+            const ticker = document.createElement("strong");
+            const label = document.createElement("span");
+            const meta = document.createElement("em");
+            ticker.textContent = related.ticker || related.option_id;
+            label.textContent = related.label;
+            meta.textContent = `${related.holder_count}/${asset.activeModelCount} holders - ${Number(related.average_allocation_pct || 0).toFixed(1)}% avg`;
+            item.append(ticker, label, meta);
+            return item;
+          })
+        );
+      };
+      const renderPlatformBars = (asset) => {
+        const list = root.querySelector("[data-platform-holder-bars]");
+        if (!list) return;
+        list.replaceChildren(
+          ...(asset.topHolders || []).map((holder) => {
+            const item = document.createElement("div");
+            const label = document.createElement("span");
+            const bar = document.createElement("i");
+            const value = document.createElement("b");
+            const allocation = Number(holder.average_allocation_pct || 0);
+            label.textContent = holder.model_name || holder.label;
+            bar.style.setProperty("--bar", `${Math.max(4, Math.min(100, allocation))}%`);
+            value.textContent = `${allocation.toFixed(1)}%`;
+            item.append(label, bar, value);
+            return item;
+          })
+        );
+      };
+      const renderEndpoints = (asset) => {
+        const list = root.querySelector("[data-endpoint-list]");
+        if (!list) return;
+        list.replaceChildren(
+          ...(asset.apiPaths || []).map((path) => {
+            const code = document.createElement("code");
+            code.textContent = path;
+            return code;
+          })
+        );
+      };
+      const renderAsset = (index) => {
+        const asset = assets[index] || assets[0];
+        if (!asset) return;
+        setText("hostTitle", `${asset.ticker} - ${asset.label}`);
+        setText("hostBadge", `${asset.modelCount}/${asset.activeModelCount} models hold`);
+        setText("positioningTitle", `${asset.ticker} active model holdings`);
+        setText("hostAllocationPct", asset.allocationPct);
+        setText("hostCoverage", `${asset.modelCount}/${asset.activeModelCount}`);
+        setText("sourcePath", asset.apiPaths?.[0] || "");
+        setText("platformAgreement", asset.agreementLabel);
+        setText("platformMostBullish", holderLine(asset.mostBullishModel));
+        setText("platformRange", asset.allocationRangePct);
+        setText("platformNonHolders", nonHolderLine(asset));
+        setText("platformRelated", relatedLine(asset));
+        setText("identityTicker", asset.ticker);
+        setText("identityName", asset.label);
+        setText("identityMeta", `${asset.categoryLabel} - ${asset.assetClass}`);
+        setText("panelTitle", `${asset.ticker} AI model holdings`);
+        setText("allocationPct", asset.allocationPct);
+        setText("agreementLabel", asset.agreementLabel);
+        setText("agreementSubcopy", `${asset.modelCount}/${asset.activeModelCount} named models hold ${asset.ticker}`);
+        setText("crowdingLabel", asset.crowdingLabel);
+        setText("interpretation", asset.interpretation);
+        setText("holderSummary", `${asset.modelCount} models hold ${asset.ticker}`);
+        setText("mostBullishModel", holderLine(asset.mostBullishModel));
+        setText("leastBullishHolder", holderLine(asset.leastBullishHolder));
+        setText("allocationRange", asset.allocationRangePct);
+        setText("dispersionLabel", asset.dispersionLabel);
+        setText("nonHolderSummary", nonHolderLine(asset));
+        setText("snippet", asset.integrationSnippet);
+        const json = root.querySelector("[data-json-sample]");
+        if (json) json.textContent = JSON.stringify(asset.sampleJson || {}, null, 2);
+        renderHolders(asset);
+        renderRelatedAssets(asset);
+        renderPlatformBars(asset);
+        renderEndpoints(asset);
+        root.querySelectorAll("[data-asset-index]").forEach((button) => {
+          const selected = Number(button.getAttribute("data-asset-index")) === index;
+          button.setAttribute("aria-pressed", selected ? "true" : "false");
+        });
+      };
+      const setMode = (mode) => {
+        root.querySelectorAll("[data-widget-view]").forEach((view) => {
+          view.hidden = view.getAttribute("data-widget-view") !== mode;
+        });
+        root.querySelectorAll("[data-mode-button]").forEach((button) => {
+          const selected = button.getAttribute("data-mode-button") === mode;
+          button.setAttribute("aria-pressed", selected ? "true" : "false");
+        });
+      };
+      root.querySelectorAll("[data-asset-index]").forEach((button) => {
+        button.addEventListener("click", () => renderAsset(Number(button.getAttribute("data-asset-index") || 0)));
+      });
+      root.querySelectorAll("[data-mode-button]").forEach((button) => {
+        button.addEventListener("click", () => setMode(button.getAttribute("data-mode-button") || "investor"));
+      });
+    });
+  </script>
+</section>

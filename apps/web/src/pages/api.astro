@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ApiExampleWidget from "../components/api/ApiExampleWidget.astro";
 import apiReadModel from "../generated/apiReadModel.js";
+import { buildApiWidgetDemo } from "../lib/apiWidgetExample";
 import { createMemoryApiAuthRepository, handleDataApiRequest } from "../lib/dataApi.js";
 
 async function apiBody(path: string) {
@@ -235,6 +237,8 @@ const roundConcentrationExample = exampleBlock(concentrationPath, {
   assets: concentrationTop ? [{ ...concentrationTop, models: concentrationTop.models?.slice(0, 2) }] : []
 });
 
+const apiWidgetDemo = buildApiWidgetDemo(apiReadModel);
+
 const endpointGroups = [
   {
     title: "Metadata And Evidence",
@@ -415,9 +419,12 @@ const curlExample = `curl "https://www.capitalbench.org/api/v1/positioning/activ
     </article>
   </section>
 
+  <ApiExampleWidget demo={apiWidgetDemo} />
+
   <section class="api-shell" aria-label="API documentation">
     <aside class="api-toc" aria-label="API page sections">
       <span class="panel-kicker">Docs</span>
+      <a href="#widget-demo">Widget Demo</a>
       <a href="#use-cases">Use Cases</a>
       <a href="#concepts">Core Concepts</a>
       <a href="#auth">Auth</a>
