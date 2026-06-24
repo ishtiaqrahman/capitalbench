@@ -42,36 +42,22 @@ const sitemapLastmodByUrl = new Map(
   [...sitemap.matchAll(/<url>\s*<loc>(.*?)<\/loc>\s*<lastmod>(.*?)<\/lastmod>/g)].map((match) => [match[1], match[2]])
 );
 const latestChangelogDate = matchOne(changelogSource, /date:\s*"(\d{4}-\d{2}-\d{2})"/, "latest changelog date", "src/data/changelog.ts");
-const coreDataPaths = [
-  "/",
-  "/leaderboards/",
-  "/leaderboards/latest/",
-  "/leaderboards/latest-weekly/",
-  "/leaderboards/latest-monthly/",
-  "/leaderboards/benchmark-sets/",
-  "/leaderboards/cumulative-official/",
-  "/leaderboards/cumulative-weekly/",
-  "/leaderboards/cumulative-monthly/",
-  "/rounds/",
-  "/models/",
-  "/api/",
-  "/methodology/",
-  "/risk-appetite/",
-  "/universe/",
-  "/scoring/",
-  "/changelog/"
-];
+const today = new Date().toISOString().slice(0, 10);
 
 if (!robots.includes(`${siteUrl}/sitemap.xml`)) {
   throw new Error("robots.txt does not reference the canonical sitemap URL.");
 }
 
-for (const path of coreDataPaths) {
-  const url = `${siteUrl}${path}`;
+for (const url of sitemapUrls) {
   const lastmod = sitemapLastmodByUrl.get(url);
-  if (lastmod !== latestChangelogDate) {
-    throw new Error(`stale sitemap lastmod for ${url}: ${lastmod} !== ${latestChangelogDate}`);
-  }
+  if (!lastmod) throw new Error(`sitemap lastmod missing for ${url}`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(lastmod)) throw new Error(`invalid sitemap lastmod for ${url}: ${lastmod}`);
+  if (lastmod > today) throw new Error(`future sitemap lastmod for ${url}: ${lastmod} > ${today}`);
+}
+
+const changelogLastmod = sitemapLastmodByUrl.get(`${siteUrl}/changelog/`);
+if (changelogLastmod !== latestChangelogDate) {
+  throw new Error(`stale changelog sitemap lastmod: ${changelogLastmod} !== ${latestChangelogDate}`);
 }
 
 for (const file of htmlFiles) {

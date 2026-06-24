@@ -508,10 +508,10 @@ const roundStateTitle = isResolvedRound ? "Final Score Published" : isOverdueRou
 const pageTitle = isResolvedRound ? `${round.round_id} Result And Audit Packet` : `${round.round_id} Audit Packet`;
 const pageDescription =
   isResolvedRound
-    ? `${round.title}: final model portfolio scores, S&P 500 return, Portfolio Minus S&P 500, entry and exit prices, prompt packet, and audit hashes for the ${round.horizon} market round.`
+    ? `${round.round_id} ${round.horizon} result with model portfolio scores, S&P 500 comparison, scoring prices, and audit hashes.`
     : isOverdueRound
-      ? `${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, overdue resolution status, and published audit hashes for the ${round.horizon} market round.`
-    : `${round.title}: model portfolios, model-facing inputs, prompt packet, starting prices, pending status, and published audit hashes for the ${round.horizon} market round.`;
+      ? `${round.round_id} ${round.horizon} audit packet with frozen model portfolios, starting prices, overdue status, and audit hashes.`
+    : `${round.round_id} ${round.horizon} audit packet with frozen model portfolios, starting prices, pending status, and audit hashes.`;
 const roundPublishedDate = round.decision_date || round.entry_date;
 const roundModifiedDate = latestDate([
   roundPublishedDate,

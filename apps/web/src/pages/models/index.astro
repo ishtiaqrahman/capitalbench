@@ -2,8 +2,20 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import { staticModelProfiles } from "../../lib/modelProfiles";
+import { itemListSchema } from "../../lib/seo";
 
 const profiles = staticModelProfiles();
+const modelsItemList = itemListSchema({
+  name: "CapitalBench AI model portfolio profiles",
+  description: "Public model profile pages with live holdings, scored results, behavior patterns, and audit packets.",
+  path: "/models",
+  items: profiles.map((profile, index) => ({
+    position: index + 1,
+    name: `${profile.label} AI portfolio profile`,
+    url: `/models/${profile.modelId}`,
+    description: `${profile.label} live holdings and CapitalBench weekly and monthly benchmark records.`
+  }))
+});
 
 function pctValue(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
@@ -33,8 +45,9 @@ function scoreValue(value: number | null | undefined): string {
 ---
 
 <BaseLayout
-  title="CapitalBench Model Profiles"
-  description="CapitalBench model profiles showing each AI model's live holdings, weekly and monthly records, portfolio patterns, and audit packet links."
+  title="AI Model Portfolio Profiles"
+  description="CapitalBench model profiles with live holdings, weekly and monthly records, allocation patterns, and audit packet links."
+  structuredData={modelsItemList}
 >
   <PageHeader
     eyebrow="Model profiles"

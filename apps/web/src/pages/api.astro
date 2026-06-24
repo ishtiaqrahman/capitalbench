@@ -4,6 +4,7 @@ import ApiExampleWidget from "../components/api/ApiExampleWidget.astro";
 import apiReadModel from "../generated/apiReadModel.js";
 import { buildApiWidgetDemo } from "../lib/apiWidgetExample";
 import { createMemoryApiAuthRepository, handleDataApiRequest } from "../lib/dataApi.js";
+import { datasetSchema } from "../lib/seo";
 
 async function apiBody(path: string) {
   const result = await handleDataApiRequest({
@@ -367,11 +368,27 @@ const statusCodes = [
 
 const curlExample = `curl "https://www.capitalbench.org/api/v1/positioning/active?track=all&group_by=asset" \\
   -H "Authorization: Bearer $CAPITALBENCH_API_KEY"`;
+const apiDataset = datasetSchema({
+  name: "CapitalBench AI model portfolio data API",
+  description:
+    "Structured API data for AI model portfolios, active holdings, benchmark scores, risk appetite, and audit metadata.",
+  path: "/api",
+  dateModified: String(apiReadModel.generated_at ?? "").slice(0, 10),
+  keywords: ["AI model portfolios", "portfolio data API", "benchmark scores", "model holdings", "CapitalBench"],
+  variableMeasured: [
+    "model portfolio allocation",
+    "active positioning",
+    "benchmark score",
+    "risk appetite",
+    "audit metadata"
+  ]
+});
 ---
 
 <BaseLayout
-  title="CapitalBench Data API"
-  description="CapitalBench Data API documentation for AI model portfolios, active positioning, cumulative allocation behavior, benchmark scores, asset universes, and proof metadata."
+  title="AI Model Portfolio Data API"
+  description="API documentation for AI model portfolios, active positioning, benchmark scores, asset universes, and audit metadata."
+  structuredData={apiDataset}
 >
   <section class="api-hero" aria-labelledby="api-title">
     <div class="api-hero-copy">

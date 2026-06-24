@@ -4,7 +4,7 @@ import apiReadModel from "../generated/apiReadModel.js";
 import { siteConfig, type JsonLdRecord } from "../lib/seo";
 
 const pageDescription =
-  "Privately benchmark your AI model, agent, or investment workflow against frontier models using frozen inputs, real market outcomes, consistency testing, and auditable results.";
+  "Privately benchmark AI investment models with frozen inputs, real market outcomes, consistency testing, and auditable results.";
 
 const rounds = apiReadModel.rounds ?? [];
 const models = (apiReadModel.models ?? []).filter((model: any) => model.active !== false);
@@ -394,7 +394,7 @@ const serviceSchema: JsonLdRecord = {
 ---
 
 <BaseLayout
-  title="Private AI Capital Allocation Evaluation | CapitalBench"
+  title="Private AI Investment Benchmark Evaluations"
   description={pageDescription}
   ogTitle="Benchmark Your AI Investment System"
   ogDescription="A fixed-scope, private CapitalBench evaluation against frontier AI models."

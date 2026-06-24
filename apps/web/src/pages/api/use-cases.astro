@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import apiReadModel from "../../generated/apiReadModel.js";
 
 const description =
-  "Visual CapitalBench Data API use cases for financial websites, trading platforms, algorithmic traders, research desks, wealthtech products, and AI model teams.";
+  "Visual API use cases for financial websites, trading platforms, quant workflows, research desks, and AI model teams.";
 
 const rounds = apiReadModel.rounds ?? [];
 const models = apiReadModel.models ?? [];
@@ -117,9 +117,9 @@ const labRows = [
 ---
 
 <BaseLayout
-  title="CapitalBench API Use Cases"
+  title="AI Portfolio Data API Use Cases"
   description={description}
-  ogTitle="CapitalBench API Use Cases | Visual AI Market Intelligence"
+  ogTitle="AI Portfolio Data API Use Cases | Visual AI Market Intelligence"
   ogDescription={description}
 >
   <section class="api-use-hero" aria-labelledby="api-use-title">

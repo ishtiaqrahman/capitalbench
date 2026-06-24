@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import apiReadModel from "../generated/apiReadModel.js";
 import { publishedInsightRows, roundReferenceTokens } from "../lib/insights.js";
+import { itemListSchema } from "../lib/seo";
 
 type InsightCalculation = {
   name?: string;
@@ -102,6 +103,17 @@ const metricCards = [
   ["High confidence", String(highConfidenceCount), "Findings backed by deterministic calculations and direct evidence."],
   ["Deterministic math", String(deterministicCount), "Insights generated without LLM interpretation."]
 ];
+const insightsItemList = itemListSchema({
+  name: "CapitalBench AI investment model insights",
+  description: "Published CapitalBench insights generated from model positioning, scored results, and benchmark evidence.",
+  path: "/insights",
+  items: insights.slice(0, 30).map((insight, index) => ({
+    position: index + 1,
+    name: insight.title,
+    url: `/insights/#${insight.id}`,
+    description: insight.summary
+  }))
+});
 
 function categoryLabel(value: string | null | undefined) {
   return String(value ?? "unknown")
@@ -284,8 +296,9 @@ function categoryDescription(category: string) {
 ---
 
 <BaseLayout
-  title="CapitalBench Insights"
-  description="CapitalBench insights generated from AI model positioning, benchmark results, risk appetite, model behavior, and market-window math."
+  title="AI Investment Model Insights"
+  description="Insights from AI model positioning, benchmark results, risk appetite, model behavior, and market-window math."
+  structuredData={insightsItemList}
 >
   <section class="insights-hero" aria-labelledby="insights-title">
     <div class="insights-hero-copy">

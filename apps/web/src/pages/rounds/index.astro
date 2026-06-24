@@ -4,7 +4,7 @@ import PageHeader from "../../components/PageHeader.astro";
 import RoundsKpiPanel, { type LatestScoredSummary } from "../../components/RoundsKpiPanel";
 import RoundsTable from "../../components/RoundsTable";
 import { staticAllOfficialSubmissions, staticRoundLeaderboard, staticRoundRecords } from "../../lib/localRoundRecords";
-import { datasetSchema } from "../../lib/seo";
+import { datasetSchema, itemListSchema } from "../../lib/seo";
 import { roundTrack } from "../../lib/tracks";
 
 const roundRows = staticRoundRecords();
@@ -39,12 +39,23 @@ const roundsDataset = datasetSchema({
   keywords: ["LLM benchmark rounds", "market benchmark", "AI evaluation", "CapitalBench"],
   variableMeasured: ["round status", "decision deadline", "entry date", "exit date", "official run id"]
 });
+const roundsItemList = itemListSchema({
+  name: "CapitalBench AI portfolio benchmark rounds",
+  description: "Public CapitalBench round pages with frozen model portfolios, scoring status, and audit evidence.",
+  path: "/rounds",
+  items: roundRows.slice(0, 30).map((round, index) => ({
+    position: index + 1,
+    name: round.status === "resolved" ? `${round.round_id} scored result` : `${round.round_id} audit packet`,
+    url: `/rounds/${round.round_id}`,
+    description: `${roundTrack(round)} round ${round.status}; decision date ${round.decision_date}.`
+  }))
+});
 ---
 
 <BaseLayout
-  title="CapitalBench Benchmark Rounds"
-  description="Index of CapitalBench market rounds with dates, model portfolios, scoring status, and audit packet links."
-  structuredData={roundsDataset}
+  title="AI Portfolio Benchmark Rounds"
+  description="CapitalBench round index with AI model portfolios, scoring status, market windows, and audit packet links."
+  structuredData={[roundsDataset, roundsItemList]}
 >
   <PageHeader
     eyebrow="Round index"

@@ -24,7 +24,7 @@ export type JsonLdRecord = Record<string, unknown>;
 
 export const siteConfig = {
   name: "CapitalBench",
-  defaultTitle: "CapitalBench - AI Capital Allocation Benchmark",
+  defaultTitle: "AI Capital Allocation Benchmark | CapitalBench",
   description:
     "CapitalBench tracks live AI model portfolios, current AI positioning, risk appetite, and benchmark results scored against real market returns.",
   url: "https://www.capitalbench.org",
@@ -37,11 +37,39 @@ export const siteConfig = {
   themeColor: "#f4f6f5"
 };
 
+function dateOnly(value: string | null | undefined): string | undefined {
+  if (!value) return undefined;
+  return String(value).slice(0, 10);
+}
+
+function latestDate(values: Array<string | null | undefined>, maxDate?: string): string | undefined {
+  return values
+    .map(dateOnly)
+    .filter((value): value is string => Boolean(value))
+    .filter((value) => !maxDate || value <= maxDate)
+    .sort()
+    .at(-1);
+}
+
 const latestPublicChangeDate = changelogEntries[0]?.date ?? "2026-05-26";
-const defaultLastmod = latestPublicChangeDate;
 const publicRounds = staticRoundRecords();
 const publicModels = staticModelProfiles();
 const benchmarkSets = buildBenchmarkSetsData(apiReadModel).sets as any[];
+const latestDataDate = dateOnly((apiReadModel as any).generated_at) ?? latestPublicChangeDate;
+const latestRoundDate =
+  latestDate(publicRounds.flatMap((round) => [round.exit_date, round.entry_date, round.decision_date]), latestDataDate) ??
+  latestDataDate;
+const latestResolvedRoundDate =
+  latestDate(
+    publicRounds
+      .filter((round) => round.status === "resolved")
+      .flatMap((round) => [round.exit_date, round.entry_date, round.decision_date]),
+    latestDataDate
+  ) ?? latestRoundDate;
+const latestInsightDate =
+  latestDate([(apiReadModel as any).insights?.data_as_of, (apiReadModel as any).insights?.generated_at]) ??
+  latestDataDate;
+const defaultLastmod = latestPublicChangeDate;
 
 export const routeMeta: RouteMeta[] = [
   {
@@ -50,145 +78,145 @@ export const routeMeta: RouteMeta[] = [
     description: siteConfig.description,
     priority: 1,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestDataDate
   },
   {
     path: "/leaderboards",
-    title: "CapitalBench Results",
+    title: "AI Portfolio Benchmark Results",
     description:
-      "CapitalBench results showing which AI model portfolios are winning in weekly and monthly market tests.",
+      "Weekly and monthly AI model portfolio results, rankings, market returns, and public audit packets from CapitalBench.",
     priority: 0.82,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestResolvedRoundDate
   },
   {
     path: "/leaderboards/latest",
-    title: "Latest CapitalBench Results",
+    title: "Latest AI Portfolio Benchmark Results",
     description:
-      "Latest CapitalBench results split into one-week and one-month market tests.",
+      "Latest scored AI model portfolio results from CapitalBench, split into one-week and one-month market tests.",
     priority: 0.9,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestResolvedRoundDate
   },
   {
     path: "/leaderboards/latest-weekly",
-    title: "Latest Weekly CapitalBench Results",
+    title: "Latest Weekly AI Portfolio Results",
     description:
-      "Latest one-week CapitalBench results with model portfolios and market returns kept separate from monthly tests.",
+      "Latest one-week CapitalBench rankings with AI model portfolios, S&P 500 comparison, and audit evidence.",
     priority: 0.9,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestResolvedRoundDate
   },
   {
     path: "/leaderboards/latest-monthly",
-    title: "Latest Monthly CapitalBench Results",
+    title: "Latest Monthly AI Portfolio Results",
     description:
-      "Latest one-month CapitalBench results with model portfolios and market returns kept separate from weekly tests.",
+      "Latest one-month CapitalBench rankings with AI model portfolios, S&P 500 comparison, and audit evidence.",
     priority: 0.9,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestResolvedRoundDate
   },
   {
     path: "/leaderboards/benchmark-sets",
-    title: "Benchmark Sets",
+    title: "Equal-Run AI Benchmark Sets",
     description:
       "CapitalBench equal-run comparison sets for fair weekly and monthly AI model benchmark rankings.",
     priority: 0.88,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestResolvedRoundDate
   },
   ...benchmarkSets.map((set) => ({
     path: `/leaderboards/benchmark-sets/${set.set_id}`,
-    title: `${set.label} CapitalBench Comparison Set`,
+    title: `${set.label} AI Benchmark Comparison Set`,
     description: `${set.label} ranks AI models only on ${set.track} rounds every set model completed.`,
     priority: set.is_current ? 0.86 : 0.78,
     changefreq: "weekly" as const,
-    lastmod: defaultLastmod
+    lastmod: latestResolvedRoundDate
   })),
   {
     path: "/leaderboards/cumulative-official",
-    title: "Overall CapitalBench Results",
+    title: "Overall AI Portfolio Benchmark Results",
     description:
-      "Overall CapitalBench scorecards split into weekly and monthly market tests.",
+      "Overall CapitalBench scorecards across completed weekly and monthly AI portfolio market tests.",
     priority: 0.86,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestResolvedRoundDate
   },
   {
     path: "/leaderboards/cumulative-stability",
-    title: "CapitalBench Consistency Results",
+    title: "AI Model Consistency Results",
     description:
-      "CapitalBench consistency results split into weekly and monthly market tests.",
+      "CapitalBench consistency results for AI model portfolios across completed weekly and monthly tests.",
     priority: 0.82,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestResolvedRoundDate
   },
   {
     path: "/leaderboards/cumulative-weekly",
-    title: "Overall Weekly CapitalBench Results",
-    description: "Overall CapitalBench Score results for completed one-week market tests only.",
+    title: "Overall Weekly AI Portfolio Results",
+    description: "Overall CapitalBench Score results for completed one-week AI portfolio market tests.",
     priority: 0.86,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestResolvedRoundDate
   },
   {
     path: "/leaderboards/cumulative-monthly",
-    title: "Overall Monthly CapitalBench Results",
-    description: "Overall CapitalBench Score results for completed one-month market tests only.",
+    title: "Overall Monthly AI Portfolio Results",
+    description: "Overall CapitalBench Score results for completed one-month AI portfolio market tests.",
     priority: 0.86,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestResolvedRoundDate
   },
   {
     path: "/rounds",
-    title: "CapitalBench Test Rounds",
+    title: "AI Portfolio Benchmark Rounds",
     description:
-      "Index of CapitalBench market rounds with dates, model portfolios, scoring status, and audit packet links.",
+      "CapitalBench round index with AI model portfolios, scoring status, market windows, and audit packet links.",
     priority: 0.84,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestRoundDate
   },
   {
     path: "/models",
-    title: "CapitalBench Model Profiles",
+    title: "AI Model Portfolio Profiles",
     description:
-      "CapitalBench model profiles showing each AI model's live holdings, weekly and monthly records, portfolio patterns, and audit packet links.",
+      "CapitalBench model profiles with live holdings, weekly and monthly records, allocation patterns, and audit packet links.",
     priority: 0.86,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestDataDate
   },
   {
     path: "/models/patterns",
-    title: "CapitalBench Model Behavior Patterns",
+    title: "AI Model Behavior Patterns",
     description:
-      "CapitalBench model behavior patterns compare how AI models differ by risk appetite, concentration, defensive ballast, peer overlap, turnover, and resolved performance profile.",
+      "Compare AI models by risk appetite, concentration, defensive ballast, overlap, turnover, and resolved performance profile.",
     priority: 0.84,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestDataDate
   },
   {
     path: "/api",
-    title: "CapitalBench Data API",
+    title: "AI Model Portfolio Data API",
     description:
-      "CapitalBench Data API documentation for AI model portfolios, active positioning, cumulative allocation behavior, benchmark scores, asset universes, and audit metadata.",
+      "API documentation for AI model portfolios, active positioning, benchmark scores, asset universes, and audit metadata.",
     priority: 0.84,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestDataDate
   },
   {
     path: "/api/use-cases",
-    title: "CapitalBench API Use Cases",
+    title: "AI Portfolio Data API Use Cases",
     description:
-      "Visual CapitalBench Data API use cases for financial websites, trading platforms, algorithmic traders, research desks, wealthtech products, and AI model teams.",
+      "Visual API use cases for financial websites, trading platforms, quant workflows, research desks, and AI model teams.",
     priority: 0.82,
     changefreq: "monthly",
-    lastmod: defaultLastmod
+    lastmod: latestDataDate
   },
   {
     path: "/private-evals",
-    title: "Private AI Capital Allocation Evaluation | CapitalBench",
+    title: "Private AI Investment Benchmark Evaluations",
     description:
-      "Privately benchmark your AI model, agent, or investment workflow against frontier models using frozen inputs, real market outcomes, consistency testing, and auditable results.",
+      "Privately benchmark AI investment models with frozen inputs, real market outcomes, consistency testing, and auditable results.",
     priority: 0.86,
     changefreq: "monthly",
     lastmod: defaultLastmod
@@ -204,44 +232,49 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: "/insights",
-    title: "CapitalBench Insights",
+    title: "AI Investment Model Insights",
     description:
-      "CapitalBench insights generated from AI model positioning, benchmark results, risk appetite, model behavior, and market-window math.",
+      "Insights from AI model positioning, benchmark results, risk appetite, model behavior, and market-window math.",
     priority: 0.86,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestInsightDate
   },
   {
     path: "/manifesto",
-    title: "CapitalBench Manifesto",
+    title: "AI Capital Allocation Benchmark Manifesto",
     description:
-      "AI is entering investment decision-making before the world has a trusted way to measure it. CapitalBench benchmarks leading AI models on real public-market portfolio decisions using frozen, auditable records and live market outcomes.",
+      "Why CapitalBench measures AI investment decisions with frozen public-market portfolios, auditable records, and real outcomes.",
     priority: 0.84,
     changefreq: "monthly",
     lastmod: defaultLastmod
   },
   ...publicModels.map((profile) => ({
     path: `/models/${profile.modelId}`,
-    title: `${profile.label} CapitalBench Model Profile`,
-    description: `${profile.label} live holdings, weekly and monthly CapitalBench results, historical portfolio pattern, and public audit packets.`,
+    title: `${profile.label} AI Portfolio Profile`,
+    description: `${profile.label} live holdings, weekly and monthly CapitalBench results, allocation patterns, and public audit packets.`,
     priority: 0.78,
     changefreq: "weekly" as const,
-    lastmod: defaultLastmod
+    lastmod: latestDataDate
   })),
   ...publicRounds.map((round) => ({
     path: `/rounds/${round.round_id}`,
     title: round.status === "resolved" ? `${round.round_id} Result And Audit Packet` : `${round.round_id} Audit Packet`,
     description:
       round.status === "resolved"
-        ? `${round.title}: final model portfolio scores, S&P 500 return, Portfolio Minus S&P 500, maximum possible return context, scoring prices, and audit hashes for the ${round.horizon} market round.`
-        : `${round.title}: model portfolios, starting prices, pending status, and published audit hashes for the ${round.horizon} market round.`,
+        ? `${round.round_id} ${round.horizon} result with model portfolio scores, S&P 500 comparison, scoring prices, and audit hashes.`
+        : round.status === "overdue"
+          ? `${round.round_id} ${round.horizon} audit packet with frozen model portfolios, starting prices, overdue status, and audit hashes.`
+        : `${round.round_id} ${round.horizon} audit packet with frozen model portfolios, starting prices, pending status, and audit hashes.`,
     priority: 0.8,
     changefreq: "weekly" as const,
-    lastmod: defaultLastmod
+    lastmod:
+      round.status === "pending" || round.status === "overdue"
+        ? latestDataDate
+        : latestDate([round.exit_date, round.entry_date, round.decision_date]) ?? latestRoundDate
   })),
   {
     path: "/methodology",
-    title: "How CapitalBench Works",
+    title: "AI Investment Benchmark Methodology",
     description:
       "How CapitalBench gives AI models the same market information, freezes their portfolios, and scores them with real market prices.",
     priority: 0.88,
@@ -250,27 +283,27 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: "/risk-appetite",
-    title: "AI Risk Appetite",
+    title: "AI Portfolio Risk Appetite",
     description:
-      "CapitalBench AI Risk Appetite methodology, current weekly and monthly readings, AI model agreement, open-book risk, and versioned asset ratings.",
+      "CapitalBench AI Risk Appetite methodology, current readings, model agreement, open-book risk, and versioned asset ratings.",
     priority: 0.82,
     changefreq: "weekly",
-    lastmod: defaultLastmod
+    lastmod: latestDataDate
   },
   {
     path: "/universe",
-    title: "CapitalBench Asset List",
+    title: "AI Benchmark Asset Universe",
     description:
-      "Versioned CapitalBench asset lists for public market tests, including cash, ETFs, sectors, factors, bonds, commodities, country equity, currencies, and crypto proxies.",
+      "Versioned CapitalBench asset universe for public market tests, including cash, ETFs, sectors, factors, bonds, commodities, and crypto proxies.",
     priority: 0.76,
     changefreq: "monthly",
     lastmod: defaultLastmod
   },
   {
     path: "/scoring",
-    title: "CapitalBench Scoring",
+    title: "AI Portfolio Benchmark Scoring",
     description:
-      "How CapitalBench scores AI model portfolio returns, S&P 500 returns, Portfolio Minus S&P 500, and maximum possible return context in weekly and monthly tests.",
+      "How CapitalBench scores AI model portfolio returns against S&P 500 returns and maximum possible return context.",
     priority: 0.72,
     changefreq: "monthly",
     lastmod: defaultLastmod
@@ -295,7 +328,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: "/docs",
-    title: "CapitalBench Audit And Data",
+    title: "CapitalBench Audit And Data Docs",
     description:
       "CapitalBench audit and data pages for scoring, fairness, limits, asset lists, and round source files.",
     priority: 0.74,
@@ -511,6 +544,42 @@ export function datasetSchema(input: {
     temporalCoverage: input.temporalCoverage,
     keywords: input.keywords,
     variableMeasured: input.variableMeasured
+  };
+}
+
+export function itemListSchema(input: {
+  name: string;
+  description: string;
+  path: string;
+  items: Array<{
+    name: string;
+    url: string;
+    description?: string;
+    position?: number;
+  }>;
+}): JsonLdRecord {
+  return {
+    "@type": "ItemList",
+    "@id": `${canonicalUrl(input.path)}#item-list`,
+    name: input.name,
+    description: input.description,
+    url: canonicalUrl(input.path),
+    itemListOrder: "https://schema.org/ItemListOrderDescending",
+    numberOfItems: input.items.length,
+    itemListElement: input.items.map((item, index) => {
+      const url = item.url.startsWith("http") ? item.url : canonicalUrl(item.url);
+      return {
+        "@type": "ListItem",
+        position: item.position ?? index + 1,
+        item: {
+          "@type": "WebPage",
+          "@id": `${url}#webpage`,
+          url,
+          name: item.name,
+          description: item.description
+        }
+      };
+    })
   };
 }
 
