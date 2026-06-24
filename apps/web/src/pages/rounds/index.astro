@@ -1,11 +1,33 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/PageHeader.astro";
+import RoundsKpiPanel, { type LatestScoredSummary } from "../../components/RoundsKpiPanel";
 import RoundsTable from "../../components/RoundsTable";
-import { staticRoundRecords } from "../../lib/localRoundRecords";
+import { staticAllOfficialSubmissions, staticRoundLeaderboard, staticRoundRecords } from "../../lib/localRoundRecords";
 import { datasetSchema } from "../../lib/seo";
+import { roundTrack } from "../../lib/tracks";
 
 const roundRows = staticRoundRecords();
+const officialSubmissions = staticAllOfficialSubmissions(roundRows);
+const latestScored: LatestScoredSummary | undefined = roundRows
+  .filter((round) => round.status === "resolved")
+  .sort((left, right) => {
+    const leftDate = left.exit_date || left.decision_date || "";
+    const rightDate = right.exit_date || right.decision_date || "";
+    return rightDate.localeCompare(leftDate);
+  })
+  .map((round): LatestScoredSummary | null => {
+    const leaderboard = staticRoundLeaderboard(round.round_id, round.official_run_id);
+    if (leaderboard.length === 0) return null;
+    return {
+      roundId: round.round_id,
+      track: roundTrack(round),
+      winnerModelId: leaderboard[0]?.model_id,
+      modelCount: leaderboard.length,
+      exitDate: round.exit_date
+    };
+  })
+  .filter((summary): summary is LatestScoredSummary => summary !== null)[0];
 const roundDecisionDates = roundRows.map((round) => round.decision_date).filter(Boolean).sort();
 const roundsDataset = datasetSchema({
   name: "CapitalBench public round index",
@@ -29,6 +51,14 @@ const roundsDataset = datasetSchema({
     title="Benchmark Rounds"
     summary="Each round saves the market brief, asset list, prompt, model portfolios, and audit hashes before scoring."
   />
+  <section class="section compact">
+    <RoundsKpiPanel
+      client:visible
+      fallbackRows={roundRows}
+      fallbackSubmissions={officialSubmissions}
+      latestScoredFallback={latestScored}
+    />
+  </section>
   <section class="section">
     <RoundsTable client:visible fallbackRows={roundRows} />
   </section>
