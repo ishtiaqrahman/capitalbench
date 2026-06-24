@@ -10,8 +10,6 @@ const { track } = Astro.props;
 const tape = buildBenchmarkTickerTape(apiReadModel, { track });
 const tickerItems = tape.items;
 const tickerCopies = [0, 1];
-const mobileSignal = tape.items.find((item) => item.label === "AI Positioning") ?? tickerItems[0];
-const mobileAgreement = tape.items.find((item) => item.label === "Model Agreement") ?? tickerItems[1] ?? mobileSignal;
 ---
 
 <div class="freshness-status-bar benchmark-ticker-bar" aria-label="CapitalBench live benchmark ticker" data-nosnippet>
@@ -27,15 +25,6 @@ const mobileAgreement = tape.items.find((item) => item.label === "Model Agreemen
     </a>
 
     <div class="benchmark-ticker-viewport">
-      <a
-        class:list={["benchmark-ticker-mobile-summary", `is-${mobileSignal.tone}`]}
-        href={mobileSignal.href}
-        title={`${mobileSignal.label}: ${mobileSignal.value}. ${mobileSignal.detail}`}
-      >
-        <span>{mobileSignal.label}</span>
-        <strong>{mobileSignal.value}</strong>
-        <em>{mobileAgreement.label}: {mobileAgreement.value}</em>
-      </a>
       <div class="benchmark-ticker-track" aria-label="Live benchmark signals">
         {tickerCopies.map((copyIndex) => (
           <div class="benchmark-ticker-segment" aria-hidden={copyIndex === 1 ? "true" : "false"}>
