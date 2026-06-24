@@ -29,7 +29,7 @@ The public inputs are:
 - `options.yaml`: the only choices models may select
 - `prompt.md`: the exact task instruction
 - `submission_schema.json`, if present: the exact machine-readable response schema
-- `market_data/universe_trailing_returns.md`, if present: a mechanical full-universe trailing-return table
+- `market_data/universe_trailing_returns.md`, if present: mechanical full-universe price, risk, and benchmark-relative context
 
 Before collecting submissions, run `capitalbench hash-round`. This freezes the
 input files by writing SHA256 hashes to `hashes.json`.
@@ -53,6 +53,12 @@ command copies it to round-level `briefing.md`, and the prompt builder reads
 only `prompt.md`, `briefing.md`, and `options.yaml`. The market fact report and
 audit report are audit-only reproducibility artifacts.
 
+Use [`docs/research_prompt_workflow.md`](research_prompt_workflow.md) as the
+source of truth for Prompt 1, Prompt 2, and Prompt 3. Those prompts should not
+manually paste selected return rows into the final briefing; the full-universe
+price-context appendix is generated separately and appended by the prompt
+builder.
+
 ```bash
 capitalbench import-research \
   --round rounds/<id> \
@@ -65,18 +71,19 @@ capitalbench import-research \
 The final briefing should contain facts, dates, values, forecasts labeled as
 forecasts, scheduled catalysts, and source-reported uncertainties. It should not
 contain interpretation, opinion, scenario analysis, "why it matters" commentary,
-affected-market mapping, recommendations, or option rankings. Source links and
-source ledgers should stay out of the model-facing briefing. All research
-artifacts are hashed, and `briefing.md` must match `research/final_briefing.md`.
+affected-market mapping, recommendations, option rankings, or selected
+mechanical return context. Source links and source ledgers should stay out of
+the model-facing briefing. All research artifacts are hashed, and `briefing.md`
+must match `research/final_briefing.md`.
 
 Before importing the final briefing, audit it for input salience bias. Asset-area
 context should use broad groups rather than direct option recommendations, cap
 rows per area, preserve counterbalancing source-reported facts or uncertainties
 when available, and avoid making any theme look important merely because it has
-more rows. The mechanical trailing-return table should remain complete and
-sorted by option order, not by performance.
+more rows. The mechanical price-context table should remain complete and sorted
+by option order, not by performance.
 
-## Full-Universe Trailing Returns
+## Full-Universe Price And Risk Context
 
 CapitalBench can add one mechanical market-data artifact to the model prompt:
 
@@ -90,8 +97,11 @@ This command requires `TIINGO_API_KEY`, fetches every non-CASH option in
 `options.yaml`, and writes `market_data/universe_trailing_returns.csv`,
 `market_data/universe_trailing_returns.md`, and
 `market_data/universe_trailing_returns.json`. The table shows 7-day, 30-day,
-6-month, and 1-year trailing returns from adjusted close data. It is sorted in
-option order, not by performance. CASH is shown as 0.00%.
+6-month, and 1-year trailing returns from adjusted close data, plus selected
+price-path and benchmark-relative diagnostics: 30-day return versus SPY,
+30-day annualized volatility, 30-day max drawdown, 30-day up-day share, distance
+from 52-week high and low, and one-year beta/correlation to SPY. It is sorted
+in option order, not by performance. CASH is shown as 0.00%.
 
 This artifact is factual prompt context. It is not used for scoring, it is not a
 leaderboard, and it should not include commentary. Re-run `hash-round` after

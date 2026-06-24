@@ -591,7 +591,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     fetch_performance_parser = subparsers.add_parser(
         "fetch-universe-performance",
-        help="fetch Tiingo trailing returns for every option for prompt context",
+        help="fetch Tiingo price, risk, and benchmark-relative context for every option for prompt context",
     )
     fetch_performance_parser.add_argument("--round", type=Path, required=True)
     fetch_performance_parser.add_argument("--as-of-date", required=True)

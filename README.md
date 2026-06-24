@@ -80,7 +80,7 @@ Each CapitalBench round is one standalone benchmark event.
 2. Import the research artifacts.
 3. Freeze the model-facing briefing.
 4. Freeze the option universe.
-5. Optionally generate a mechanical trailing-return table.
+5. Optionally generate a mechanical price-context table.
 6. Hash all round inputs.
 7. Run the official model calls.
 8. Optionally run a separate multi-shot stability analysis.
@@ -358,7 +358,7 @@ capitalbench import-research \
   --research-cutoff-utc "2026-06-01T21:00:00Z"
 ```
 
-3. Optionally fetch mechanical trailing returns for the full universe:
+3. Optionally fetch mechanical price, risk, and benchmark-relative context for the full universe:
 
 ```bash
 capitalbench fetch-universe-performance \
@@ -455,11 +455,17 @@ Only `briefing.md`, `options.yaml`, `prompt.md`, and approved mechanical
 market-data artifacts are included in the model prompt. Source links, source
 ledgers, URLs, and audit material should remain outside `briefing.md`.
 
+Use [`docs/research_prompt_workflow.md`](docs/research_prompt_workflow.md) for
+the Prompt 1, Prompt 2, and Prompt 3 research workflow. Prompt 3 must not paste
+selected mechanical return rows into `final_briefing.md`; the complete
+full-universe price-context appendix is generated separately and appended by the
+prompt builder.
+
 The final briefing should contain facts, dates, values, forecasts labeled as
 forecasts, scheduled catalysts, and explicit uncertainties from the source
 reports. It should not contain recommendations, rankings, interpretation,
-scenario-to-asset mapping, or language like "best pick", "top option", "should
-buy", or "will outperform".
+scenario-to-asset mapping, selected mechanical return context, or language like
+"best pick", "top option", "should buy", or "will outperform".
 
 ## Model Configuration
 
@@ -802,7 +808,7 @@ rounds:
 | `init-round` | Create a new round directory |
 | `import-research` | Import and hash research artifacts |
 | `hash-round` | Hash frozen round inputs |
-| `fetch-universe-performance` | Fetch mechanical trailing returns for prompt context |
+| `fetch-universe-performance` | Fetch mechanical price, risk, and benchmark-relative context for prompt input |
 | `validate-universe` | Validate option tickers through Tiingo |
 | `run-round` | Run mock or real provider calls |
 | `list-runs` | List isolated runs for a round |

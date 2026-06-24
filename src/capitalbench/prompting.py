@@ -3,16 +3,24 @@ from __future__ import annotations
 from pathlib import Path
 
 from .io import load_manifest, load_options, read_yaml
-from .performance import MARKET_DATA_DIRNAME, UNIVERSE_TRAILING_RETURNS_MD
+from .performance import MARKET_DATA_DIRNAME, UNIVERSE_PRICE_CONTEXT_TITLE, UNIVERSE_TRAILING_RETURNS_MD
 from .portfolio import constraints_from_manifest, submission_format_from_manifest
 from .schemas import MarketOption
 
 DISALLOWED_MODEL_INPUT_SNIPPETS = (
-    (
-        "The S&P 500 benchmark asset is an allowed holding. Allocate to it when expected active edge is weak "
-        "or when the benchmark case is more robust than available active alternatives. Do not add active risk "
-        "only because this is a benchmark contest."
+    " ".join(
+        [
+            "The S&P 500 benchmark asset is an allowed holding.",
+            "Allocate to it when expected active edge is weak",
+            "or when the benchmark case is more robust than available active alternatives.",
+            "Do not add active risk only because this is a benchmark contest.",
+        ]
     ),
+)
+
+UNIVERSE_CONTEXT_TITLE_ALIASES = (
+    UNIVERSE_PRICE_CONTEXT_TITLE,
+    "Full-Universe Trailing Returns",
 )
 
 
@@ -39,7 +47,7 @@ def build_prompt(round_path: Path) -> str:
         f"## Briefing\n\n{briefing}"
     ]
     if universe_performance:
-        parts.append(f"## Full-Universe Trailing Returns\n\n{universe_performance}")
+        parts.append(f"## {UNIVERSE_PRICE_CONTEXT_TITLE}\n\n{universe_performance}")
     parts.append(f"## Options\n\n{options}\n")
     model_input = "\n\n".join(parts)
     validate_model_input_guardrails(model_input)
@@ -67,8 +75,17 @@ def render_round_metadata(round_path: Path, manifest) -> str:
         ),
         "Timeline focus: prioritize facts, catalysts, and risks that can plausibly affect prices before the exit close.",
         (
-            "Input-bias control: treat fact inclusion, section order, grouping, and trailing-return table order "
+            "Input-bias control: treat fact inclusion, section order, grouping, and price-context table order "
             "as context, not recommendations; do not infer expected return from mention count or placement."
+        ),
+        (
+            "Price-history discipline: trailing returns are descriptive data, not forecasts. Use price history "
+            "as one input, not as a standalone reason to select or allocate to an option."
+        ),
+        (
+            "Continuation evidence: when a holding or selection relies on recent price strength, compare it with "
+            "the briefing's catalysts, macro context, valuation or fundamental facts if supplied, volatility, "
+            "drawdown, and reversal risk before the exit close. Do not invent support that is not in the input."
         ),
         f"Entry rule: {manifest.entry_rule or 'TBD'}",
         f"Exit rule: {manifest.exit_rule or 'TBD'}",
@@ -108,13 +125,16 @@ def _universe_performance_section(round_path: Path) -> str | None:
     if not path.exists():
         return None
     text = path.read_text(encoding="utf-8").strip()
-    if text.startswith("# Full-Universe Trailing Returns"):
-        text = text.removeprefix("# Full-Universe Trailing Returns").strip()
+    for title in UNIVERSE_CONTEXT_TITLE_ALIASES:
+        heading = f"# {title}"
+        if text.startswith(heading):
+            text = text.removeprefix(heading).strip()
+            break
     return text or None
 
 
 def _briefing_contains_universe_performance(briefing: str) -> bool:
-    return "Full-Universe Trailing Returns" in briefing
+    return any(title in briefing for title in UNIVERSE_CONTEXT_TITLE_ALIASES)
 
 
 def render_options_for_prompt(options: list[MarketOption]) -> str:

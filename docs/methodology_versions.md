@@ -18,7 +18,7 @@ Key properties:
 - One selected option per model.
 - CapitalBench Universe v1.5.
 - Model-facing final briefing imported from `research/final_briefing.md`.
-- Full-universe trailing returns included as a mechanical prompt artifact.
+- Full-universe price, risk, and benchmark-relative context included as a mechanical prompt artifact.
 - Real provider calls used OpenAI, Anthropic, Google, and xAI adapters.
 - Tools, browsing, web search, code execution, and external retrieval were
   disabled through provider payloads where supported.

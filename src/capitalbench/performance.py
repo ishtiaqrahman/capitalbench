@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 import os
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
@@ -18,6 +19,7 @@ MARKET_DATA_DIRNAME = "market_data"
 UNIVERSE_TRAILING_RETURNS_CSV = "universe_trailing_returns.csv"
 UNIVERSE_TRAILING_RETURNS_MD = "universe_trailing_returns.md"
 UNIVERSE_TRAILING_RETURNS_JSON = "universe_trailing_returns.json"
+UNIVERSE_PRICE_CONTEXT_TITLE = "Full-Universe Price, Risk, And Benchmark Context"
 
 
 @dataclass(frozen=True)
@@ -90,6 +92,8 @@ def fetch_universe_performance(
         if row["status"] != "pass":
             failed_options.append(option.option_id)
 
+    rows = _enrich_performance_rows(rows)
+    rows = _strip_internal_performance_fields(rows)
     report = {
         "generated_at_utc": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
         "source": _performance_source(rows),
@@ -154,6 +158,14 @@ def _cash_performance_row(option: Any, as_of: date) -> dict[str, Any]:
             "return_6m": 0.0,
             "price_date_1y": as_of.isoformat(),
             "return_1y": 0.0,
+            "volatility_30d": 0.0,
+            "max_drawdown_30d": 0.0,
+            "path_observations_30d": 1,
+            "up_day_share_30d": "",
+            "distance_from_52w_high": "",
+            "distance_from_52w_low": "",
+            "corr_to_sp500_1y": "",
+            "beta_to_sp500_1y": 0.0,
             "message": "Cash return is treated as 0.0 for trailing performance.",
         }
     )
@@ -184,6 +196,15 @@ def _performance_row_from_tiingo(
         output[f"return_{label}"] = (as_of_point[1] / point[1] - 1.0) if point else ""
         if point is None:
             messages.append(f"missing baseline for {label}")
+    path_30d = _prices_between(prices, lookbacks["30d"], as_of_point[0])
+    path_1y = _prices_between(prices, lookbacks["1y"], as_of_point[0])
+    output["volatility_30d"] = _annualized_volatility(path_30d)
+    output["max_drawdown_30d"] = _max_drawdown(path_30d)
+    output["path_observations_30d"] = len(path_30d)
+    output["up_day_share_30d"] = _up_day_share(path_30d)
+    output["distance_from_52w_high"] = _distance_from_high(path_1y)
+    output["distance_from_52w_low"] = _distance_from_low(path_1y)
+    output["_path_1y"] = [(price_date.isoformat(), price) for price_date, price in path_1y]
     if messages:
         output["status"] = "fail"
         output["message"] = "; ".join(messages)
@@ -206,6 +227,18 @@ def _failed_performance_row(option: Any, as_of: date, message: str, symbol: str 
             "return_6m": "",
             "price_date_1y": "",
             "return_1y": "",
+            "rank_7d": "",
+            "rank_30d": "",
+            "rank_6m": "",
+            "rank_1y": "",
+            "volatility_30d": "",
+            "max_drawdown_30d": "",
+            "path_observations_30d": "",
+            "up_day_share_30d": "",
+            "distance_from_52w_high": "",
+            "distance_from_52w_low": "",
+            "corr_to_sp500_1y": "",
+            "beta_to_sp500_1y": "",
             "message": message,
         }
     )
@@ -303,6 +336,198 @@ def _nearest_on_or_before(prices: list[tuple[date, float]], target: date) -> tup
     return candidates[-1] if candidates else None
 
 
+def _prices_between(prices: list[tuple[date, float]], start: date, end: date) -> list[tuple[date, float]]:
+    return [point for point in prices if start <= point[0] <= end]
+
+
+def _annualized_volatility(prices: list[tuple[date, float]]) -> float | str:
+    returns = [
+        prices[index][1] / prices[index - 1][1] - 1.0
+        for index in range(1, len(prices))
+        if prices[index - 1][1] > 0
+    ]
+    if len(returns) < 2:
+        return ""
+    mean_return = sum(returns) / len(returns)
+    variance = sum((item - mean_return) ** 2 for item in returns) / (len(returns) - 1)
+    return math.sqrt(variance) * math.sqrt(252)
+
+
+def _max_drawdown(prices: list[tuple[date, float]]) -> float | str:
+    if not prices:
+        return ""
+    peak = prices[0][1]
+    worst = 0.0
+    for _price_date, price in prices:
+        if price <= 0:
+            continue
+        peak = max(peak, price)
+        if peak > 0:
+            worst = min(worst, price / peak - 1.0)
+    return worst
+
+
+def _up_day_share(prices: list[tuple[date, float]]) -> float | str:
+    returns = [
+        prices[index][1] / prices[index - 1][1] - 1.0
+        for index in range(1, len(prices))
+        if prices[index - 1][1] > 0
+    ]
+    if not returns:
+        return ""
+    up_days = sum(1 for item in returns if item > 0)
+    return up_days / len(returns)
+
+
+def _distance_from_high(prices: list[tuple[date, float]]) -> float | str:
+    positive_prices = [price for _price_date, price in prices if price > 0]
+    if not positive_prices:
+        return ""
+    high = max(positive_prices)
+    if high <= 0:
+        return ""
+    return positive_prices[-1] / high - 1.0
+
+
+def _distance_from_low(prices: list[tuple[date, float]]) -> float | str:
+    positive_prices = [price for _price_date, price in prices if price > 0]
+    if not positive_prices:
+        return ""
+    low = min(positive_prices)
+    if low <= 0:
+        return ""
+    return positive_prices[-1] / low - 1.0
+
+
+def _numeric_value(value: Any) -> float | None:
+    if value is None or value == "":
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _enrich_performance_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    ranked_rows = [row for row in rows if row.get("status") in {"pass", "cash"}]
+    for label in ["7d", "30d", "6m", "1y"]:
+        numeric_rows = [
+            (row, _numeric_value(row.get(f"return_{label}")))
+            for row in ranked_rows
+            if _numeric_value(row.get(f"return_{label}")) is not None
+        ]
+        numeric_rows.sort(key=lambda item: (-item[1], str(item[0].get("option_id") or "")))
+        for rank, (row, _value) in enumerate(numeric_rows, start=1):
+            row[f"rank_{label}"] = rank
+    _add_benchmark_relative_returns(ranked_rows)
+    _add_benchmark_risk_exposures(ranked_rows)
+    return rows
+
+
+def _add_benchmark_relative_returns(rows: list[dict[str, Any]]) -> None:
+    benchmark = _benchmark_row(rows)
+    if benchmark is None:
+        return
+    for label in ["7d", "30d", "6m", "1y"]:
+        benchmark_return = _numeric_value(benchmark.get(f"return_{label}"))
+        if benchmark_return is None:
+            continue
+        for row in rows:
+            row_return = _numeric_value(row.get(f"return_{label}"))
+            row[f"return_vs_sp500_{label}"] = "" if row_return is None else row_return - benchmark_return
+
+
+def _add_benchmark_risk_exposures(rows: list[dict[str, Any]]) -> None:
+    benchmark = _benchmark_row(rows)
+    if benchmark is None:
+        return
+    benchmark_returns = _returns_by_date(_internal_price_path(benchmark))
+    if not benchmark_returns:
+        return
+    for row in rows:
+        if str(row.get("status")) == "cash":
+            row["corr_to_sp500_1y"] = ""
+            row["beta_to_sp500_1y"] = 0.0
+            continue
+        row_returns = _returns_by_date(_internal_price_path(row))
+        pairs = [
+            (row_returns[price_date], benchmark_returns[price_date])
+            for price_date in sorted(set(row_returns) & set(benchmark_returns))
+        ]
+        row["corr_to_sp500_1y"] = _correlation(pairs)
+        row["beta_to_sp500_1y"] = _beta(pairs)
+
+
+def _benchmark_row(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
+    for row in rows:
+        if str(row.get("option_id", "")).upper() == "SP500":
+            return row
+    for row in rows:
+        if str(row.get("symbol", "")).upper() == "SPY":
+            return row
+    return None
+
+
+def _internal_price_path(row: dict[str, Any]) -> list[tuple[date, float]]:
+    path = row.get("_path_1y")
+    if not isinstance(path, list):
+        return []
+    parsed: list[tuple[date, float]] = []
+    for item in path:
+        if not isinstance(item, (list, tuple)) or len(item) != 2:
+            continue
+        try:
+            parsed.append((_parse_date(str(item[0])), float(item[1])))
+        except (TypeError, ValueError):
+            continue
+    return sorted(parsed, key=lambda item: item[0])
+
+
+def _returns_by_date(prices: list[tuple[date, float]]) -> dict[date, float]:
+    returns: dict[date, float] = {}
+    for index in range(1, len(prices)):
+        previous = prices[index - 1][1]
+        if previous <= 0:
+            continue
+        returns[prices[index][0]] = prices[index][1] / previous - 1.0
+    return returns
+
+
+def _correlation(pairs: list[tuple[float, float]]) -> float | str:
+    if len(pairs) < 2:
+        return ""
+    row_values = [pair[0] for pair in pairs]
+    benchmark_values = [pair[1] for pair in pairs]
+    row_mean = sum(row_values) / len(row_values)
+    benchmark_mean = sum(benchmark_values) / len(benchmark_values)
+    row_variance = sum((item - row_mean) ** 2 for item in row_values)
+    benchmark_variance = sum((item - benchmark_mean) ** 2 for item in benchmark_values)
+    if row_variance <= 0 or benchmark_variance <= 0:
+        return ""
+    covariance = sum((row - row_mean) * (benchmark - benchmark_mean) for row, benchmark in pairs)
+    return covariance / math.sqrt(row_variance * benchmark_variance)
+
+
+def _beta(pairs: list[tuple[float, float]]) -> float | str:
+    if len(pairs) < 2:
+        return ""
+    benchmark_values = [pair[1] for pair in pairs]
+    benchmark_mean = sum(benchmark_values) / len(benchmark_values)
+    benchmark_variance = sum((item - benchmark_mean) ** 2 for item in benchmark_values)
+    if benchmark_variance <= 0:
+        return ""
+    row_values = [pair[0] for pair in pairs]
+    row_mean = sum(row_values) / len(row_values)
+    covariance = sum((row - row_mean) * (benchmark - benchmark_mean) for row, benchmark in pairs)
+    return covariance / benchmark_variance
+
+
+def _strip_internal_performance_fields(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    for row in rows:
+        row.pop("_path_1y", None)
+    return rows
+
+
 def _write_performance_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     fieldnames = [
         "option_id",
@@ -317,12 +542,28 @@ def _write_performance_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         "as_of_adj_close",
         "price_date_7d",
         "return_7d",
+        "rank_7d",
+        "return_vs_sp500_7d",
         "price_date_30d",
         "return_30d",
+        "rank_30d",
+        "return_vs_sp500_30d",
         "price_date_6m",
         "return_6m",
+        "rank_6m",
+        "return_vs_sp500_6m",
         "price_date_1y",
         "return_1y",
+        "rank_1y",
+        "return_vs_sp500_1y",
+        "volatility_30d",
+        "max_drawdown_30d",
+        "path_observations_30d",
+        "up_day_share_30d",
+        "distance_from_52w_high",
+        "distance_from_52w_low",
+        "corr_to_sp500_1y",
+        "beta_to_sp500_1y",
         "status",
         "message",
     ]
@@ -335,9 +576,13 @@ def _write_performance_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 def _render_performance_markdown(report: dict[str, Any]) -> str:
     rows = report["rows"]
     header = [
-        "# Full-Universe Trailing Returns",
+        f"# {UNIVERSE_PRICE_CONTEXT_TITLE}",
         "",
-        "This table is mechanically calculated from Tiingo EOD adjusted close data. It is sorted in the option order from `options.yaml`, not by performance. CASH is shown as 0.00%.",
+        "This table is mechanically calculated from adjusted close data. It is sorted in the option order from `options.yaml`, not by performance. CASH is shown as 0.00%.",
+        "",
+        "Price-history note: trailing returns are descriptive context, not forecasts. Treat recent gains or losses as one input alongside catalysts, macro context, volatility, drawdown, benchmark-relative risk, and any valuation or fundamental facts supplied in the briefing.",
+        "",
+        "Benchmark-relative values are asset return minus SPY return over the same window. Beta and correlation use available one-year daily adjusted-close returns.",
         "",
         f"- Source: {report['source']}",
         f"- As-of date requested: {report['as_of_date_requested']}",
@@ -353,6 +598,12 @@ def _render_performance_markdown(report: dict[str, Any]) -> str:
         "return_30d",
         "return_6m",
         "return_1y",
+        "return_vs_sp500_30d",
+        "volatility_30d",
+        "max_drawdown_30d",
+        "up_day_share_30d",
+        "distance_from_52w_high",
+        "beta_to_sp500_1y",
         "status",
     ]
     table = [
@@ -367,6 +618,8 @@ def _render_performance_markdown(report: dict[str, Any]) -> str:
 def _format_markdown_cell(value: Any, column: str) -> str:
     if value is None or value == "":
         return ""
-    if column.startswith("return_"):
+    if column.startswith("return_") or column in {"volatility_30d", "max_drawdown_30d", "up_day_share_30d", "distance_from_52w_high", "distance_from_52w_low"}:
         return f"{float(value) * 100:.2f}%"
+    if column in {"corr_to_sp500_1y", "beta_to_sp500_1y"}:
+        return f"{float(value):.2f}"
     return str(value)

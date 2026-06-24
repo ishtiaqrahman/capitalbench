@@ -165,6 +165,11 @@ def validate_final_briefing(path: Path) -> list[str]:
         warnings.append("Markdown citations found in final_briefing.md; source citations should usually stay in audit artifacts.")
     if re.search(r"\b(source ledger|sources?:|references?:|bibliography|citations?)\b", text, flags=re.IGNORECASE):
         warnings.append("Source ledger language found in final_briefing.md; source ledgers should stay in audit artifacts.")
+    if re.search(r"\bselected mechanical return context\b", text, flags=re.IGNORECASE):
+        raise ValueError(
+            "final_briefing.md contains selected mechanical return context; keep mechanical price context "
+            "in market_data/universe_trailing_returns.md so every option gets the same price-history interpretation."
+        )
     if len(text.split()) > 8000:
         warnings.append("final_briefing.md is very long; confirm the model-facing briefing is concise enough for the target models.")
     return warnings

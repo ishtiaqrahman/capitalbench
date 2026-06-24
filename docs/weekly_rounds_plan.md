@@ -47,7 +47,7 @@ Start with a weekly round dated Sunday, May 24, 2026:
 - Portfolio constraints: same as current monthly portfolio rounds
 
 Because May 24, 2026 is the same decision date as the current monthly round,
-the first weekly round can reuse the same research artifacts and trailing-return
+the first weekly round can reuse the same research artifacts and price-context
 table. The prompt and manifest must be different because the scoring horizon is
 one week, not one month.
 
@@ -101,7 +101,7 @@ For weeks with only a weekly run:
    asset-specific headlines.
 3. Avoid long monthly-style macro tables unless the value and recent change are
    both directly relevant.
-4. Always include the full-universe trailing-return table as of the latest
+4. Always include the full-universe price-context table as of the latest
    available trading close.
 
 The weekly model-facing briefing should stay factual. It should not rank

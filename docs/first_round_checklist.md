@@ -11,7 +11,7 @@ Use this checklist before running a public CapitalBench round.
 - Define the complete option list in `options.yaml`. `capitalbench init-round` defaults to the latest future-round universe, currently `configs/universes/capitalbench_universe_v2_1.yaml`; pass `--universe` only when intentionally using an older or custom universe.
 - Confirm one option is the S&P 500 benchmark.
 - Confirm cash is present if you want a cash comparison.
-- Run `capitalbench validate-universe --round rounds/<id> --start-date <date> --end-date <date>` with `TIINGO_API_KEY` set. When the prompt includes 7-day, 30-day, six-month, and one-year trailing returns, validate a window long enough to prove all required lookbacks are available.
+- Run `capitalbench validate-universe --round rounds/<id> --start-date <date> --end-date <date>` with `TIINGO_API_KEY` set. When the prompt includes one-year price context, validate a window long enough to prove all required lookbacks are available.
 - Remove or replace any non-cash ticker that fails Tiingo validation before freezing the round.
 - Import research artifacts with `capitalbench import-research`.
 - Confirm `research/final_briefing.md` is copied to `briefing.md`.
@@ -19,8 +19,8 @@ Use this checklist before running a public CapitalBench round.
 - Keep source links and source ledgers in audit artifacts, not in `final_briefing.md`.
 - Confirm `briefing.md` is facts-only: no interpretation, scenario analysis, "why it matters" commentary, affected-market mapping, recommendations, or rankings.
 - Confirm the final briefing passes a salience-bias check: no performance-sorted return table, no one theme dominating row count, no direct option recommendations, and counterbalancing source-reported facts preserved where available.
-- Optionally run `capitalbench fetch-universe-performance --round rounds/<id> --as-of-date <cutoff-date>` to add a mechanical full-universe trailing-return table.
-- If generated, confirm `market_data/universe_trailing_returns.md` is sorted by option order, covers all options, and contains no commentary.
+- Optionally run `capitalbench fetch-universe-performance --round rounds/<id> --as-of-date <cutoff-date>` to add mechanical full-universe price, risk, and benchmark-relative context.
+- If generated, confirm `market_data/universe_trailing_returns.md` is sorted by option order, covers all options, and contains no recommendations, rankings, or interpretive commentary.
 - Write the exact model prompt in `prompt.md`.
 - Confirm the prompt allows internal learned knowledge and general market priors, while forbidding browsing, tools, live data retrieval, and intentional use of post-cutoff facts.
 - Run `capitalbench hash-round --round rounds/<id>`.

@@ -66,7 +66,8 @@ prevents an accepted round from stalling when an exit date lands on a market
 holiday; the generated `prices/exit_prices.csv` records the actual Tiingo date
 used for every non-cash option.
 
-Full-universe trailing returns for prompt context use a separate command:
+Full-universe price, risk, and benchmark-relative context for prompt input uses
+a separate command:
 
 ```bash
 capitalbench fetch-universe-performance \
@@ -78,7 +79,8 @@ That command writes `market_data/universe_trailing_returns.csv`,
 `market_data/universe_trailing_returns.md`, and
 `market_data/universe_trailing_returns.json`. It fetches every non-CASH option
 and calculates 7-day, 30-day, 6-month, and 1-year returns from Tiingo adjusted
-close data. It does not create scoring prices and does not affect leaderboards.
+close data, plus selected price-path and benchmark-relative diagnostics. It
+does not create scoring prices and does not affect leaderboards.
 
 For each option:
 

@@ -157,7 +157,9 @@ The scoring timeline is central to the task: the portfolio is measured from the 
 
 Optimize only for the portfolio you expect to perform best over this close-to-close one-month scoring window. Use longer-horizon facts only when they are likely to affect prices before the exit close.
 
-Briefing-bias discipline: the briefing may group facts by broad asset area and include a mechanical return table. Treat inclusion, section order, grouping, row count, and trailing-return table order as context, not recommendation signals.
+Briefing-bias discipline: the briefing may group facts by broad asset area and include a mechanical price-context table. Treat inclusion, section order, grouping, row count, and price-context table order as context, not recommendation signals.
+
+Price-history discipline: trailing returns are descriptive data, not forecasts. Use price history as one input, not as a standalone reason to allocate to an option. When recent performance matters to a holding, compare it with the briefing's catalysts, macro context, valuation or fundamental facts if supplied, volatility, drawdown, and reversal risk before the exit close.
 
 Your objective is to allocate 100% across the allowed options to maximize expected one-month realized portfolio return, measured from the entry date to the exit date, relative to the S&P 500 benchmark. Use the briefing, option list, and any included market-data table as the common information set. The official leaderboard ranks each model by realized weighted portfolio return relative to the S&P 500 benchmark. Multi-shot stability analysis, if run, is reported separately and does not change the official leaderboard.
 
@@ -199,6 +201,7 @@ Rules:
 - confidence must be between 0 and 1.
 - confidence should reflect your confidence that this is the best portfolio decision under the round constraints.
 - portfolio_rationale and rationale_summary are required and should be concise.
+- If a holding rationale cites momentum, recent returns, or trailing performance, do not present price history alone as independent evidence. Mention any independent support present in the briefing, or state that support is limited, and include the relevant reversal or positioning risk in key_risks.
 - key_risks must be a list of 2-5 concrete risks that could cause the portfolio to underperform; do not only list generic market risk.
 - Do not provide a ranked list, backup portfolio, second-best portfolio, or alternative recommendation.
 - Do not include financial-advice disclaimers. This is a benchmark response, not advice to a person.
@@ -214,7 +217,9 @@ The scoring timeline is central to the task: the selected option is measured fro
 
 Optimize only for the option you expect to perform best over this close-to-close one-month scoring window. Use longer-horizon facts only when they are likely to affect prices before the exit close.
 
-Briefing-bias discipline: the briefing may group facts by broad asset area and include a mechanical return table. Treat inclusion, section order, grouping, row count, and trailing-return table order as context, not recommendation signals.
+Briefing-bias discipline: the briefing may group facts by broad asset area and include a mechanical price-context table. Treat inclusion, section order, grouping, row count, and price-context table order as context, not recommendation signals.
+
+Price-history discipline: trailing returns are descriptive data, not forecasts. Use price history as one input, not as a standalone reason to choose an option. When recent performance matters to the selection, compare it with the briefing's catalysts, macro context, valuation or fundamental facts if supplied, volatility, drawdown, and reversal risk before the exit close.
 
 Your objective is to choose the single allowed option you expect to produce the strongest expected one-month realized return, measured from the entry date to the exit date, relative to the S&P 500 benchmark. Use the briefing, option list, and any included market-data table as the common information set. The official leaderboard ranks each model by the realized return of its selected option relative to the S&P 500 benchmark. Multi-shot stability analysis, if run, is reported separately and does not change the official leaderboard.
 
@@ -247,6 +252,7 @@ Rules:
 - confidence must be between 0 and 1.
 - confidence should reflect your confidence that this is the best single choice among the allowed options for this round.
 - rationale_summary is required and should be 1-3 concise sentences.
+- If the rationale cites momentum, recent returns, or trailing performance, do not present price history alone as independent evidence. Mention any independent support present in the briefing, or state that support is limited, and include the relevant reversal or positioning risk in key_risks.
 - key_risks must be a list of 2-5 concrete risks that could cause the selected option to underperform; do not only list generic market risk.
 - Do not provide a ranked list, backup choice, second-best option, or alternative recommendation.
 - Do not include financial-advice disclaimers. This is a benchmark response, not advice to a person.

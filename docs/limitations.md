@@ -15,7 +15,7 @@ CapitalBench is intentionally narrow in this version.
 - It allows models to use internal learned knowledge and general market priors, so rationales may include model-internal associations that were not explicitly stated in the briefing.
 - It relies on the operator to keep audit-only research material out of the final model-facing briefing.
 - The import command catches obvious recommendation, ranking, and subjective-analysis language but cannot prove a briefing is fully neutral.
-- Full-universe trailing returns are historical price facts, not forecasts. They may still influence model behavior through momentum or reversal patterns.
+- Full-universe price, risk, and benchmark-relative diagnostics are historical facts, not forecasts. They may still influence model behavior through momentum, reversal, volatility, or benchmark-risk patterns.
 - A one-month result can be dominated by noise.
 - Newer models may have fewer resolved rounds in cumulative leaderboards.
 - Old rounds are not rerun for new models because outcomes may already be knowable.

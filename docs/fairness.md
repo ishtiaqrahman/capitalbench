@@ -12,7 +12,7 @@ Use these rules for a fair round:
 - Allow internal learned knowledge and general market priors equally for all models.
 - Forbid browsing, tool calls, live market data retrieval, and intentional use of post-cutoff facts, prices, news, or events.
 - Keep `briefing.md` factual. Do not include interpretation, scenario analysis, "why it matters" commentary, affected-market mapping, recommendations, or rankings.
-- If full-universe trailing returns are included, generate them mechanically for every option and sort by option order rather than performance.
+- If full-universe price context is included, generate it mechanically for every option and sort by option order rather than performance.
 - Keep asset-area context balanced: cap rows per area, include counterbalancing source-reported facts or uncertainties when available, and do not let one high-news theme dominate the briefing.
 - Before collecting submissions, audit the final briefing for salience bias from row count, section order, broad-area grouping, and trailing-return placement.
 - Do not revise a completed round's option universe after seeing model choices just to create more varied picks.

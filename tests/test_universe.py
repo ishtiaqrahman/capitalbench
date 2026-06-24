@@ -202,7 +202,10 @@ def test_prompt_rendering_includes_descriptions_and_hides_internal_fields(tmp_pa
     assert "## Round Metadata" in prompt
     assert "Round ID: test-round" in prompt
     assert "Scoring window: 2026-01-02 to 2026-02-02; optimize for this one month window only." in prompt
-    assert "Input-bias control: treat fact inclusion, section order, grouping, and trailing-return table order" in prompt
+    assert "Input-bias control: treat fact inclusion, section order, grouping, and price-context table order" in prompt
+    assert "Price-history discipline: trailing returns are descriptive data, not forecasts." in prompt
+    assert "Continuation evidence: when a holding or selection relies on recent price strength" in prompt
+    assert "Do not invent support that is not in the input." in prompt
     assert "Scoring benchmark: S&P 500 / SPY" in prompt
     assert "Symbol: N/A" in prompt
     assert "Description: Broad US large-cap equity exposure." in prompt
@@ -243,7 +246,7 @@ def test_prompt_rendering_includes_frozen_universe_performance_when_present(tmp_
 
     prompt = build_prompt(round_path)
 
-    assert "## Full-Universe Trailing Returns" in prompt
+    assert "## Full-Universe Price, Risk, And Benchmark Context" in prompt
     assert "| SP500 | 1.00% |" in prompt
 
 
@@ -283,6 +286,46 @@ def test_prompt_rendering_does_not_duplicate_embedded_universe_performance(tmp_p
     prompt = build_prompt(round_path)
 
     assert prompt.count("# Full-Universe Trailing Returns") == 1
+    assert "| SP500 | 1.00% |" in prompt
+    assert "| SP500 | 2.00% |" not in prompt
+
+
+def test_prompt_rendering_does_not_duplicate_embedded_price_context_section(tmp_path: Path) -> None:
+    round_path = tmp_path / "round"
+    round_path.mkdir()
+    (round_path / "prompt.md").write_text("Choose one option.", encoding="utf-8")
+    (round_path / "briefing.md").write_text(
+        "Briefing.\n\n## 2. Full-Universe Price, Risk, And Benchmark Context\n\n| option_id | return_7d |\n| --- | --- |\n| SP500 | 1.00% |\n",
+        encoding="utf-8",
+    )
+    (round_path / "manifest.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "round_id": "test-round",
+                "title": "Test Round",
+                "decision_date": "2026-01-01",
+                "decision_deadline": "2026-01-01T20:00:00Z",
+                "horizon": "one month",
+                "entry_rule": "Use entry prices.",
+                "exit_rule": "Use exit prices.",
+                "entry_date": "2026-01-02",
+                "exit_date": "2026-02-02",
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    _write_small_universe(round_path / "options.yaml")
+    market_data_dir = round_path / "market_data"
+    market_data_dir.mkdir()
+    (market_data_dir / "universe_trailing_returns.md").write_text(
+        "# Full-Universe Price, Risk, And Benchmark Context\n\n| option_id | return_7d |\n| --- | --- |\n| SP500 | 2.00% |\n",
+        encoding="utf-8",
+    )
+
+    prompt = build_prompt(round_path)
+
+    assert prompt.count("Full-Universe Price, Risk, And Benchmark Context") == 1
     assert "| SP500 | 1.00% |" in prompt
     assert "| SP500 | 2.00% |" not in prompt
 
@@ -501,7 +544,10 @@ def test_init_round_prompt_allows_internal_knowledge_but_blocks_live_retrieval(t
     assert "calculated after regular trading ends on the exit date" in prompt
     assert "Use longer-horizon facts only when they are likely to affect prices before the exit close." in prompt
     assert "Briefing-bias discipline" in prompt
-    assert "row count, and trailing-return table order as context, not recommendation signals" in prompt
+    assert "row count, and price-context table order as context, not recommendation signals" in prompt
+    assert "Price-history discipline: trailing returns are descriptive data, not forecasts." in prompt
+    assert "Use price history as one input, not as a standalone reason to choose an option." in prompt
+    assert "state that support is limited" in prompt
     assert "strongest expected one-month realized return" in prompt
     assert "Use only the information in this prompt" not in prompt
 
@@ -556,5 +602,8 @@ def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
     assert "calculated after regular trading ends on the exit date" in prompt
     assert "Use longer-horizon facts only when they are likely to affect prices before the exit close." in prompt
     assert "Briefing-bias discipline" in prompt
-    assert "row count, and trailing-return table order as context, not recommendation signals" in prompt
+    assert "row count, and price-context table order as context, not recommendation signals" in prompt
+    assert "Price-history discipline: trailing returns are descriptive data, not forecasts." in prompt
+    assert "Use price history as one input, not as a standalone reason to allocate to an option." in prompt
+    assert "state that support is limited" in prompt
     assert "allocation_pct values must sum to exactly 100" in prompt

@@ -360,7 +360,23 @@ def test_fetch_universe_performance_fetches_all_non_cash_options(tmp_path: Path,
     assert by_id["cash"]["return_7d"] == "0.0"
     assert float(by_id["opt_b"]["return_7d"]) == pytest.approx(0.10)
     assert float(by_id["opt_b"]["return_30d"]) == pytest.approx(110.0 / 95.0 - 1.0)
-    assert "# Full-Universe Trailing Returns" in output.markdown_path.read_text(encoding="utf-8")
+    assert by_id["opt_b"]["rank_7d"]
+    assert "volatility_30d" in by_id["opt_b"]
+    assert float(by_id["opt_b"]["return_vs_sp500_30d"]) == pytest.approx(0.0)
+    assert float(by_id["opt_b"]["up_day_share_30d"]) == pytest.approx(1.0)
+    assert float(by_id["opt_b"]["distance_from_52w_high"]) == pytest.approx(0.0)
+    assert float(by_id["opt_b"]["distance_from_52w_low"]) == pytest.approx(110.0 / 80.0 - 1.0)
+    assert float(by_id["sp500"]["corr_to_sp500_1y"]) == pytest.approx(1.0)
+    assert float(by_id["sp500"]["beta_to_sp500_1y"]) == pytest.approx(1.0)
+    markdown = output.markdown_path.read_text(encoding="utf-8")
+    assert "# Full-Universe Price, Risk, And Benchmark Context" in markdown
+    assert "Price-history note: trailing returns are descriptive context, not forecasts." in markdown
+    assert "Benchmark-relative values are asset return minus SPY return over the same window." in markdown
+    assert "return_vs_sp500_30d" in markdown
+    assert "distance_from_52w_high" in markdown
+    assert "beta_to_sp500_1y" in markdown
+    assert "rank_7d" not in markdown
+    assert "recent_leader_flag" not in markdown
 
 
 def test_fetch_universe_performance_requires_tiingo_key(tmp_path: Path, monkeypatch) -> None:
