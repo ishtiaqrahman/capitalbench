@@ -109,8 +109,9 @@ export default function TableIsland<T extends object>({
             aria-label={`Search ${tableLabel}`}
           />
         </label>
-        <button className="icon-button" type="button" onClick={exportCsv} aria-label="Export CSV" title="Export CSV">
+        <button className="icon-button table-export-button" type="button" onClick={exportCsv} aria-label="Export CSV" title="Export CSV">
           <Download size={17} aria-hidden="true" />
+          <span>CSV</span>
         </button>
       </div>
       <div className="table-scroll">
