@@ -1,0 +1,1227 @@
+{
+  "data_as_of": "2026-06-24",
+  "engine_version": "deterministic_insights_v1",
+  "generated_at": "2026-06-25T00:31:34Z",
+  "insight_count": 17,
+  "insights": [
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "sum(average_model_allocation * asset_return)",
+          "name": "consensus_portfolio_return",
+          "unit": "percent",
+          "value": 5.202
+        },
+        {
+          "formula": "average resolved model portfolio return",
+          "name": "average_model_return",
+          "unit": "percent",
+          "value": 5.202
+        },
+        {
+          "formula": "100 * consensus_return / oracle_return",
+          "name": "consensus_capitalbench_score",
+          "unit": "points",
+          "value": 37.6484
+        }
+      ],
+      "category": "consensus_performance",
+      "confidence": "high",
+      "context": {
+        "asset_count": 65,
+        "data_as_of": "2026-06-24",
+        "decision_date": "2026-05-24",
+        "entry_date": "2026-05-22",
+        "exit_date": "2026-06-24",
+        "model_count": 4,
+        "oracle_asset": {
+          "display": "Biotechnology (XBI)",
+          "name": "Biotechnology",
+          "option_id": "BIOTECH",
+          "return_pct": 13.8172,
+          "ticker": "XBI"
+        },
+        "primary_label": "Monthly result",
+        "result_count": 4,
+        "round_id": "CB-2026-05-24-1M",
+        "run_id": "official-20260524",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "monthly",
+        "track_label": "Monthly"
+      },
+      "data_as_of": "2026-06-24",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-05-24-1M",
+          "label": "Monthly result",
+          "source": "rounds/CB-2026-05-24-1M/runs/official-20260524/results"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "consensus-performance-CB-2026-05-24-1M",
+      "importance_score": 92.0,
+      "related": [
+        {
+          "href": "/leaderboards/latest-monthly",
+          "label": "Latest monthly results"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "If the monthly model allocations were averaged into one consensus portfolio, it returned +5.20% versus -1.41% for the S&P 500 and +13.82% for the hindsight best asset.",
+      "title": "AI consensus portfolio scored 37.6 versus the oracle",
+      "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "sum(average_model_allocation * asset_return)",
+          "name": "consensus_portfolio_return",
+          "unit": "percent",
+          "value": -0.9788
+        },
+        {
+          "formula": "average resolved model portfolio return",
+          "name": "average_model_return",
+          "unit": "percent",
+          "value": -0.9788
+        },
+        {
+          "formula": "100 * consensus_return / oracle_return",
+          "name": "consensus_capitalbench_score",
+          "unit": "points",
+          "value": -13.0407
+        }
+      ],
+      "category": "consensus_performance",
+      "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-24",
+        "decision_date": "2026-06-17",
+        "entry_date": "2026-06-17",
+        "exit_date": "2026-06-24",
+        "model_count": 5,
+        "oracle_asset": {
+          "display": "Biotechnology (XBI)",
+          "name": "Biotechnology",
+          "option_id": "BIOTECH",
+          "return_pct": 7.5054,
+          "ticker": "XBI"
+        },
+        "primary_label": "Weekly result",
+        "result_count": 5,
+        "round_id": "CB-2026-06-17-1W",
+        "run_id": "official-20260617-no-fable",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "weekly",
+        "track_label": "Weekly"
+      },
+      "data_as_of": "2026-06-24",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-17-1W",
+          "label": "Weekly result",
+          "source": "rounds/CB-2026-06-17-1W/runs/official-20260617-no-fable/results"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "consensus-performance-CB-2026-06-17-1W",
+      "importance_score": 92.0,
+      "related": [
+        {
+          "href": "/leaderboards/latest-weekly",
+          "label": "Latest weekly results"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "If the weekly model allocations were averaged into one consensus portfolio, it returned -0.98% versus -0.79% for the S&P 500 and +7.51% for the hindsight best asset.",
+      "title": "AI consensus portfolio scored -13.0 versus the oracle",
+      "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "max(scored asset returns)",
+          "name": "oracle_return",
+          "unit": "percent",
+          "value": 13.8172
+        },
+        {
+          "formula": "min(scored asset returns)",
+          "name": "worst_asset_return",
+          "unit": "percent",
+          "value": -24.5742
+        },
+        {
+          "formula": "positive asset count / scored asset count",
+          "name": "positive_universe_share",
+          "unit": "percent",
+          "value": 56.9231
+        }
+      ],
+      "category": "benchmark_difficulty",
+      "confidence": "high",
+      "context": {
+        "asset_count": 65,
+        "data_as_of": "2026-06-24",
+        "decision_date": "2026-05-24",
+        "entry_date": "2026-05-22",
+        "exit_date": "2026-06-24",
+        "model_count": 4,
+        "oracle_asset": {
+          "display": "Biotechnology (XBI)",
+          "name": "Biotechnology",
+          "option_id": "BIOTECH",
+          "return_pct": 13.8172,
+          "ticker": "XBI"
+        },
+        "primary_label": "Monthly result",
+        "result_count": 4,
+        "round_id": "CB-2026-05-24-1M",
+        "run_id": "official-20260524",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "monthly",
+        "track_label": "Monthly"
+      },
+      "data_as_of": "2026-06-24",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-05-24-1M",
+          "label": "Monthly result",
+          "source": "rounds/CB-2026-05-24-1M/runs/official-20260524/results/returns.csv"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "benchmark-difficulty-CB-2026-05-24-1M",
+      "importance_score": 90.0,
+      "related": [
+        {
+          "href": "/scoring",
+          "label": "Scoring"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The best scored asset returned +13.82%, the worst returned -24.57%, and +56.92% of the universe was positive. The S&P 500 ranked 42 out of 65 options.",
+      "title": "Monthly round had +38.39% asset dispersion",
+      "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "max(scored asset returns)",
+          "name": "oracle_return",
+          "unit": "percent",
+          "value": 7.5054
+        },
+        {
+          "formula": "min(scored asset returns)",
+          "name": "worst_asset_return",
+          "unit": "percent",
+          "value": -14.5686
+        },
+        {
+          "formula": "positive asset count / scored asset count",
+          "name": "positive_universe_share",
+          "unit": "percent",
+          "value": 38.5714
+        }
+      ],
+      "category": "benchmark_difficulty",
+      "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-24",
+        "decision_date": "2026-06-17",
+        "entry_date": "2026-06-17",
+        "exit_date": "2026-06-24",
+        "model_count": 5,
+        "oracle_asset": {
+          "display": "Biotechnology (XBI)",
+          "name": "Biotechnology",
+          "option_id": "BIOTECH",
+          "return_pct": 7.5054,
+          "ticker": "XBI"
+        },
+        "primary_label": "Weekly result",
+        "result_count": 5,
+        "round_id": "CB-2026-06-17-1W",
+        "run_id": "official-20260617-no-fable",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "weekly",
+        "track_label": "Weekly"
+      },
+      "data_as_of": "2026-06-24",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-17-1W",
+          "label": "Weekly result",
+          "source": "rounds/CB-2026-06-17-1W/runs/official-20260617-no-fable/results/returns.csv"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "benchmark-difficulty-CB-2026-06-17-1W",
+      "importance_score": 90.0,
+      "related": [
+        {
+          "href": "/scoring",
+          "label": "Scoring"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The best scored asset returned +7.51%, the worst returned -14.57%, and +38.57% of the universe was positive. The S&P 500 ranked 38 out of 70 options.",
+      "title": "Weekly round had +22.07% asset dispersion",
+      "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "count models with positive allocation to oracle asset",
+          "name": "oracle_asset_holder_count",
+          "unit": "models",
+          "value": 0
+        },
+        {
+          "formula": "average allocation to oracle asset across model portfolios",
+          "name": "average_oracle_asset_allocation",
+          "unit": "percentage_points",
+          "value": 0.0
+        }
+      ],
+      "category": "oracle_comparison",
+      "confidence": "high",
+      "context": {
+        "asset_count": 65,
+        "data_as_of": "2026-06-24",
+        "decision_date": "2026-05-24",
+        "entry_date": "2026-05-22",
+        "exit_date": "2026-06-24",
+        "model_count": 4,
+        "oracle_asset": {
+          "display": "Biotechnology (XBI)",
+          "name": "Biotechnology",
+          "option_id": "BIOTECH",
+          "return_pct": 13.8172,
+          "ticker": "XBI"
+        },
+        "primary_label": "Monthly result",
+        "result_count": 4,
+        "round_id": "CB-2026-05-24-1M",
+        "run_id": "official-20260524",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "monthly",
+        "track_label": "Monthly"
+      },
+      "data_as_of": "2026-06-24",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-05-24-1M",
+          "label": "Monthly result",
+          "source": "rounds/CB-2026-05-24-1M/runs/official-20260524/results"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "missed-oracle-CB-2026-05-24-1M",
+      "importance_score": 89.0,
+      "related": [
+        {
+          "href": "/scoring#capitalbench-score",
+          "label": "Scoring"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The hindsight best asset was Biotechnology (XBI) at +13.82%. 0 of 4 models held it, with +0.00% average allocation.",
+      "title": "Models missed the monthly oracle asset",
+      "why_it_matters": "This shows whether models identified the eventual best asset before scoring, even when portfolio weights were too small to fully capture the oracle return."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "count models with positive allocation to oracle asset",
+          "name": "oracle_asset_holder_count",
+          "unit": "models",
+          "value": 2
+        },
+        {
+          "formula": "average allocation to oracle asset across model portfolios",
+          "name": "average_oracle_asset_allocation",
+          "unit": "percentage_points",
+          "value": 6.0
+        }
+      ],
+      "category": "oracle_comparison",
+      "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-24",
+        "decision_date": "2026-06-17",
+        "entry_date": "2026-06-17",
+        "exit_date": "2026-06-24",
+        "model_count": 5,
+        "oracle_asset": {
+          "display": "Biotechnology (XBI)",
+          "name": "Biotechnology",
+          "option_id": "BIOTECH",
+          "return_pct": 7.5054,
+          "ticker": "XBI"
+        },
+        "primary_label": "Weekly result",
+        "result_count": 5,
+        "round_id": "CB-2026-06-17-1W",
+        "run_id": "official-20260617-no-fable",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "weekly",
+        "track_label": "Weekly"
+      },
+      "data_as_of": "2026-06-24",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-17-1W",
+          "label": "Weekly result",
+          "source": "rounds/CB-2026-06-17-1W/runs/official-20260617-no-fable/results"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "missed-oracle-CB-2026-06-17-1W",
+      "importance_score": 89.0,
+      "related": [
+        {
+          "href": "/scoring#capitalbench-score",
+          "label": "Scoring"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The hindsight best asset was Biotechnology (XBI) at +7.51%. 2 of 5 models held it, with +6.00% average allocation. The largest allocation came from Grok 4.3 at +20.00%.",
+      "title": "Models found the weekly oracle asset",
+      "why_it_matters": "This shows whether models identified the eventual best asset before scoring, even when portfolio weights were too small to fully capture the oracle return."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders"
+      ],
+      "calculations": [
+        {
+          "formula": "50 + 50 * weighted average asset risk-on loading",
+          "name": "live_risk_taking_score",
+          "unit": "points",
+          "value": 79.725
+        }
+      ],
+      "category": "risk_regime",
+      "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-23",
+        "decision_dates": [
+          "2026-06-23",
+          "2026-06-23"
+        ],
+        "model_count": 10,
+        "primary_label": "Latest live portfolios",
+        "round_count": 2,
+        "round_ids": [
+          "CB-2026-06-23-1W",
+          "CB-2026-06-23-1M"
+        ],
+        "scope": "live_rounds",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly_monthly",
+        "track_label": "Weekly + Monthly"
+      },
+      "data_as_of": "2026-06-23",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-23-1W",
+          "label": "Weekly live round",
+          "source": "rounds/CB-2026-06-23-1W"
+        },
+        {
+          "href": "/rounds/CB-2026-06-23-1M",
+          "label": "Monthly live round",
+          "source": "rounds/CB-2026-06-23-1M"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "active-risk-2026-06-23",
+      "importance_score": 86.0,
+      "related": [
+        {
+          "href": "/risk-appetite",
+          "label": "AI Risk Appetite"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The newest live portfolios have a deterministic risk-taking score of 79.7 out of 100.",
+      "title": "Live AI risk posture is risk-seeking",
+      "why_it_matters": "The score translates allocations into a common risk scale, so readers can see whether models are collectively leaning defensive, balanced, or aggressive."
+    },
+    {
+      "audiences": [
+        "ai_researchers",
+        "capital_allocators",
+        "investors"
+      ],
+      "calculations": [
+        {
+          "formula": "average return for confidence >= median confidence",
+          "name": "high_confidence_average_return",
+          "unit": "percent",
+          "value": -0.4539
+        },
+        {
+          "formula": "average return for confidence < median confidence",
+          "name": "low_confidence_average_return",
+          "unit": "percent",
+          "value": -0.663
+        },
+        {
+          "formula": "average CapitalBench Score for confidence >= median confidence",
+          "name": "high_confidence_average_capitalbench_score",
+          "unit": "points",
+          "value": -28.2323
+        },
+        {
+          "formula": "average CapitalBench Score for confidence < median confidence",
+          "name": "low_confidence_average_capitalbench_score",
+          "unit": "points",
+          "value": -32.938
+        }
+      ],
+      "category": "confidence_calibration",
+      "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-24",
+        "median_confidence": 0.56,
+        "primary_label": "All resolved official results",
+        "result_count": 88,
+        "round_count": 18,
+        "scope": "resolved_history",
+        "status": "resolved",
+        "status_label": "Resolved history",
+        "track": "all",
+        "track_label": "Weekly + Monthly"
+      },
+      "data_as_of": "2026-06-24",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/leaderboards/latest",
+          "label": "Results",
+          "source": "resolved official leaderboard rows"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "confidence-calibration-2026-06-24",
+      "importance_score": 85.0,
+      "related": [
+        {
+          "href": "/scoring",
+          "label": "Scoring"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "Across resolved official results, submissions at or above the median confidence of 0.56 averaged -0.45%, while lower-confidence submissions averaged -0.66%.",
+      "title": "High-confidence model calls have outperformed lower-confidence calls",
+      "why_it_matters": "Confidence calibration helps readers judge whether model self-reported confidence carries useful information about realized benchmark performance."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "average weekly allocation by asset-risk regime",
+          "name": "weekly_top_regime_allocation",
+          "unit": "percentage_points",
+          "value": 48.0
+        },
+        {
+          "formula": "average monthly allocation by asset-risk regime",
+          "name": "monthly_top_regime_allocation",
+          "unit": "percentage_points",
+          "value": 42.0
+        }
+      ],
+      "category": "horizon_agreement",
+      "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-23",
+        "decision_dates": [
+          "2026-06-23",
+          "2026-06-23"
+        ],
+        "model_count": 10,
+        "primary_label": "Latest live portfolios",
+        "round_count": 2,
+        "round_ids": [
+          "CB-2026-06-23-1W",
+          "CB-2026-06-23-1M"
+        ],
+        "scope": "live_rounds",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly_monthly",
+        "track_label": "Weekly + Monthly"
+      },
+      "data_as_of": "2026-06-23",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-23-1W",
+          "label": "Weekly live round",
+          "source": "rounds/CB-2026-06-23-1W"
+        },
+        {
+          "href": "/rounds/CB-2026-06-23-1M",
+          "label": "Monthly live round",
+          "source": "rounds/CB-2026-06-23-1M"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "horizon-agreement-2026-06-23",
+      "importance_score": 84.0,
+      "related": [
+        {
+          "href": "/risk-appetite",
+          "label": "AI Risk Appetite"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The newest weekly portfolios allocate +48.00% to broad and cyclical equity, while the newest monthly portfolios allocate +42.00%.",
+      "title": "Weekly and monthly AI portfolios both favor broad and cyclical equity",
+      "why_it_matters": "Agreement across horizons signals that the current model posture is not just a short-term tactical move."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "average portfolio risk-taking score across official saved portfolios",
+          "name": "highest_average_risk_taking_score",
+          "unit": "points",
+          "value": 86.1791
+        },
+        {
+          "formula": "average largest single holding across official saved portfolios",
+          "name": "largest_average_top_holding",
+          "unit": "percentage_points",
+          "value": 38.7838
+        },
+        {
+          "formula": "one-half of summed absolute allocation changes between consecutive same-track portfolios",
+          "name": "lowest_average_turnover",
+          "unit": "percentage_points",
+          "value": 41.0
+        }
+      ],
+      "category": "model_behavior",
+      "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-24",
+        "highest_risk_model_id": "openai-gpt-5-5",
+        "model_count": 6,
+        "most_concentrated_model_id": "google-gemini-3-1-pro",
+        "most_stable_model_id": "openai-gpt-5-5",
+        "portfolio_count": 185,
+        "primary_label": "Model behavior profiles",
+        "scope": "all official portfolios"
+      },
+      "data_as_of": "2026-06-24",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/models/patterns",
+          "label": "Model behavior patterns",
+          "source": "official parsed submissions"
+        },
+        {
+          "href": "/models/patterns/#methodology",
+          "label": "Behavior methodology",
+          "source": "asset risk model and behavior formulas"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "model-behavior-profiles-2026-06-24",
+      "importance_score": 83.0,
+      "related": [
+        {
+          "href": "/models/patterns",
+          "label": "Pattern report"
+        },
+        {
+          "href": "/risk-appetite",
+          "label": "AI Risk Appetite"
+        },
+        {
+          "href": "/insights?category=model_behavior",
+          "label": "Insights"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "GPT-5.5 has the highest average risk-taking score at 86.2/100. Gemini 3.1 Pro has the largest average top holding at +38.78%. GPT-5.5 has the lowest measured turnover at +41.00%.",
+      "title": "Model allocation styles are separating into clear behavior profiles",
+      "why_it_matters": "Behavior profiles help readers separate model style from short-term score noise: some models seek more risk, some concentrate harder, and some change portfolios less between rounds."
+    },
+    {
+      "audiences": [
+        "traders",
+        "capital_allocators",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "allocation weight * asset return",
+          "name": "largest_positive_contribution",
+          "unit": "percent",
+          "value": 3.6959
+        },
+        {
+          "formula": "allocation weight * asset return",
+          "name": "smallest_positive_contribution",
+          "unit": "percent",
+          "value": 0.4785
+        }
+      ],
+      "category": "performance_attribution",
+      "confidence": "high",
+      "context": {
+        "asset_count": 65,
+        "data_as_of": "2026-06-24",
+        "decision_date": "2026-05-24",
+        "entry_date": "2026-05-22",
+        "exit_date": "2026-06-24",
+        "model": {
+          "label": "Grok 4.3",
+          "model_id": "xai-grok-4-3"
+        },
+        "model_count": 4,
+        "primary_label": "Monthly result",
+        "result_count": 4,
+        "round_id": "CB-2026-05-24-1M",
+        "run_id": "official-20260524",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "monthly",
+        "track_label": "Monthly"
+      },
+      "data_as_of": "2026-06-24",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-05-24-1M",
+          "label": "Monthly result",
+          "source": "rounds/CB-2026-05-24-1M/runs/official-20260524/results/allocations.csv"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "attribution-CB-2026-05-24-1M-xai-grok-4-3",
+      "importance_score": 83.0,
+      "related": [
+        {
+          "href": "/leaderboards/latest-monthly",
+          "label": "Latest monthly results"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "In the latest monthly result, Semiconductors contributed +3.70% to Grok 4.3's portfolio. No holding detracted; the smallest positive contribution came from Technology Sector at +0.48%.",
+      "title": "Grok 4.3's result was driven by Semiconductors",
+      "why_it_matters": "Attribution turns a model score into an explanation of which holdings actually helped or hurt the frozen portfolio."
+    },
+    {
+      "audiences": [
+        "traders",
+        "capital_allocators",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "allocation weight * asset return",
+          "name": "largest_positive_contribution",
+          "unit": "percent",
+          "value": 1.5011
+        },
+        {
+          "formula": "allocation weight * asset return",
+          "name": "largest_negative_contribution",
+          "unit": "percent",
+          "value": -0.6796
+        }
+      ],
+      "category": "performance_attribution",
+      "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-24",
+        "decision_date": "2026-06-17",
+        "entry_date": "2026-06-17",
+        "exit_date": "2026-06-24",
+        "model": {
+          "label": "Grok 4.3",
+          "model_id": "xai-grok-4-3"
+        },
+        "model_count": 5,
+        "primary_label": "Weekly result",
+        "result_count": 5,
+        "round_id": "CB-2026-06-17-1W",
+        "run_id": "official-20260617-no-fable",
+        "scope": "round",
+        "status": "resolved",
+        "status_label": "Resolved result",
+        "track": "weekly",
+        "track_label": "Weekly"
+      },
+      "data_as_of": "2026-06-24",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-17-1W",
+          "label": "Weekly result",
+          "source": "rounds/CB-2026-06-17-1W/runs/official-20260617-no-fable/results/allocations.csv"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "attribution-CB-2026-06-17-1W-xai-grok-4-3",
+      "importance_score": 83.0,
+      "related": [
+        {
+          "href": "/leaderboards/latest-weekly",
+          "label": "Latest weekly results"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "In the latest weekly result, Biotechnology contributed +1.50% to Grok 4.3's portfolio. The largest drag came from Aerospace and Defense at -0.68%.",
+      "title": "Grok 4.3's result was driven by Biotechnology",
+      "why_it_matters": "Attribution turns a model score into an explanation of which holdings actually helped or hurt the frozen portfolio."
+    },
+    {
+      "audiences": [
+        "traders",
+        "ai_researchers",
+        "capital_allocators"
+      ],
+      "calculations": [
+        {
+          "formula": "average allocation to assets in the top 20% by pre-run 30-day trailing return",
+          "name": "allocation_to_top_30d_momentum_quintile",
+          "unit": "percentage_points",
+          "value": 78.0
+        },
+        {
+          "formula": "average allocation to assets in the bottom 20% by pre-run 30-day trailing return",
+          "name": "allocation_to_bottom_30d_momentum_quintile",
+          "unit": "percentage_points",
+          "value": 2.0
+        }
+      ],
+      "category": "model_behavior",
+      "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-23",
+        "decision_date": "2026-06-23",
+        "entry_date": "2026-06-23",
+        "exit_date": "2026-07-23",
+        "model_count": 5,
+        "primary_label": "Monthly live round",
+        "result_count": 0,
+        "round_id": "CB-2026-06-23-1M",
+        "run_id": "official-20260623-no-fable",
+        "scope": "round",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "monthly",
+        "track_label": "Monthly"
+      },
+      "data_as_of": "2026-06-23",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-23-1M",
+          "label": "Monthly round",
+          "source": "rounds/CB-2026-06-23-1M/market_data/universe_trailing_returns.json"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "momentum-exposure-CB-2026-06-23-1M",
+      "importance_score": 80.0,
+      "related": [
+        {
+          "href": "/rounds",
+          "label": "Round list"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The newest monthly portfolios allocate +78.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).",
+      "title": "Monthly models are leaning into recent winners",
+      "why_it_matters": "This measures whether models are chasing recent momentum or allocating away from it before outcomes are known."
+    },
+    {
+      "audiences": [
+        "traders",
+        "ai_researchers",
+        "capital_allocators"
+      ],
+      "calculations": [
+        {
+          "formula": "average allocation to assets in the top 20% by pre-run 30-day trailing return",
+          "name": "allocation_to_top_30d_momentum_quintile",
+          "unit": "percentage_points",
+          "value": 95.0
+        },
+        {
+          "formula": "average allocation to assets in the bottom 20% by pre-run 30-day trailing return",
+          "name": "allocation_to_bottom_30d_momentum_quintile",
+          "unit": "percentage_points",
+          "value": 0.0
+        }
+      ],
+      "category": "model_behavior",
+      "confidence": "high",
+      "context": {
+        "asset_count": 70,
+        "data_as_of": "2026-06-23",
+        "decision_date": "2026-06-23",
+        "entry_date": "2026-06-23",
+        "exit_date": "2026-06-30",
+        "model_count": 5,
+        "primary_label": "Weekly live round",
+        "result_count": 0,
+        "round_id": "CB-2026-06-23-1W",
+        "run_id": "official-20260623-no-fable",
+        "scope": "round",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly",
+        "track_label": "Weekly"
+      },
+      "data_as_of": "2026-06-23",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-23-1W",
+          "label": "Weekly round",
+          "source": "rounds/CB-2026-06-23-1W/market_data/universe_trailing_returns.json"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "momentum-exposure-CB-2026-06-23-1W",
+      "importance_score": 80.0,
+      "related": [
+        {
+          "href": "/rounds",
+          "label": "Round list"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The newest weekly portfolios allocate +95.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).",
+      "title": "Weekly models are leaning into recent winners",
+      "why_it_matters": "This measures whether models are chasing recent momentum or allocating away from it before outcomes are known."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders"
+      ],
+      "calculations": [
+        {
+          "formula": "average allocation across newest live model portfolios",
+          "name": "aggregate_live_allocation",
+          "unit": "percentage_points",
+          "value": 25.0
+        }
+      ],
+      "category": "current_positioning",
+      "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-23",
+        "decision_dates": [
+          "2026-06-23",
+          "2026-06-23"
+        ],
+        "model_count": 10,
+        "primary_label": "Latest live portfolios",
+        "round_count": 2,
+        "round_ids": [
+          "CB-2026-06-23-1W",
+          "CB-2026-06-23-1M"
+        ],
+        "scope": "live_rounds",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly_monthly",
+        "track_label": "Weekly + Monthly"
+      },
+      "data_as_of": "2026-06-23",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-23-1W",
+          "label": "Weekly live round",
+          "source": "rounds/CB-2026-06-23-1W"
+        },
+        {
+          "href": "/rounds/CB-2026-06-23-1M",
+          "label": "Monthly live round",
+          "source": "rounds/CB-2026-06-23-1M"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "active-positioning-2026-06-23",
+      "importance_score": 78.0,
+      "related": [
+        {
+          "href": "/risk-appetite",
+          "label": "AI Risk Appetite"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "Across the newest live weekly and monthly portfolios, Biotechnology (XBI) is the largest aggregate allocation at +25.00%.",
+      "title": "Live AI portfolios are concentrated in Biotechnology (XBI)",
+      "why_it_matters": "This shows the current crowding point in model capital allocation, before the open rounds receive their final market scores."
+    },
+    {
+      "audiences": [
+        "traders",
+        "investors",
+        "capital_allocators"
+      ],
+      "calculations": [
+        {
+          "formula": "interim model return - interim S&P 500 return",
+          "name": "best_live_alpha",
+          "unit": "percentage_points",
+          "value": 2.7812
+        },
+        {
+          "formula": "interim model return - interim S&P 500 return",
+          "name": "worst_live_alpha",
+          "unit": "percentage_points",
+          "value": -6.2817
+        }
+      ],
+      "category": "live_performance",
+      "confidence": "high",
+      "context": {
+        "best": {
+          "model_id": "xai-grok-4-3",
+          "model_label": "Grok 4.3",
+          "round_id": "CB-2026-06-16-1M"
+        },
+        "data_as_of": "2026-06-23",
+        "model_count": 6,
+        "primary_label": "Open-round interim performance",
+        "round_count": 17,
+        "round_ids": [
+          "CB-2026-05-28-1M",
+          "CB-2026-05-29-1M",
+          "CB-2026-06-01-1M",
+          "CB-2026-06-02-1M",
+          "CB-2026-06-03-1M",
+          "CB-2026-06-05-1M",
+          "CB-2026-06-08-1M",
+          "CB-2026-06-09-1M",
+          "CB-2026-06-12-1M",
+          "CB-2026-06-13-1M",
+          "CB-2026-06-15-1M",
+          "CB-2026-06-16-1M",
+          "CB-2026-06-17-1M",
+          "CB-2026-06-18-1M",
+          "CB-2026-06-18-1W",
+          "CB-2026-06-22-1M",
+          "CB-2026-06-22-1W"
+        ],
+        "scope": "live_interim",
+        "status": "active",
+        "status_label": "Interim, not final",
+        "track": "all_live",
+        "track_label": "Open weekly + monthly",
+        "worst": {
+          "model_id": "openai-gpt-5-5",
+          "model_label": "GPT-5.5",
+          "round_id": "CB-2026-06-02-1M"
+        }
+      },
+      "data_as_of": "2026-06-23",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/",
+          "label": "Live performance",
+          "source": "weekly_performance.csv"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "live-path-2026-06-23",
+      "importance_score": 77.0,
+      "related": [
+        {
+          "href": "/rounds",
+          "label": "Rounds"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "Using the latest available interim close, Grok 4.3 in CB-2026-06-16-1M is ahead of the S&P 500 by +2.78 percentage points, while GPT-5.5 in CB-2026-06-02-1M is at -6.28 percentage points.",
+      "title": "Grok 4.3 has the strongest live alpha",
+      "why_it_matters": "Live alpha is provisional, but it shows how open model portfolios are moving before the final official score."
+    },
+    {
+      "audiences": [
+        "ai_researchers",
+        "capital_allocators"
+      ],
+      "calculations": [
+        {
+          "formula": "cosine similarity between live allocation vectors",
+          "name": "closest_pair_cosine_similarity",
+          "unit": "ratio",
+          "value": 0.9315
+        },
+        {
+          "formula": "1 - average cosine similarity versus other live model allocation vectors",
+          "name": "outlier_average_distance",
+          "unit": "ratio",
+          "value": 0.3728
+        }
+      ],
+      "category": "model_similarity",
+      "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-23",
+        "decision_dates": [
+          "2026-06-23",
+          "2026-06-23"
+        ],
+        "model_count": 10,
+        "primary_label": "Latest live portfolios",
+        "round_count": 2,
+        "round_ids": [
+          "CB-2026-06-23-1W",
+          "CB-2026-06-23-1M"
+        ],
+        "scope": "live_rounds",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly_monthly",
+        "track_label": "Weekly + Monthly"
+      },
+      "data_as_of": "2026-06-23",
+      "date": "2026-06-25",
+      "evidence": [
+        {
+          "href": "/models",
+          "label": "Models",
+          "source": "live parsed submissions"
+        }
+      ],
+      "generated_at": "2026-06-25T00:31:34Z",
+      "id": "model-similarity-2026-06-23",
+      "importance_score": 76.0,
+      "related": [
+        {
+          "href": "/risk-appetite",
+          "label": "AI Risk Appetite"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The closest live allocation pair is Claude Opus 4.7 and Claude Opus 4.8 with +93.15% cosine similarity. The current allocation outlier is Gemini 3.1 Pro.",
+      "title": "Live model portfolios are tightly clustered",
+      "why_it_matters": "Similarity analysis shows whether models are independently converging on the same portfolio or expressing meaningfully different capital-allocation behavior."
+    }
+  ],
+  "run_date": "2026-06-25",
+  "source": {
+    "capitalbench_generated_at": "2026-06-25T00:31:34Z",
+    "data_fingerprint": "cac379e759de42e121073b5775fa363e737b83a0c162e756822c94ad4e7b6940",
+    "data_fingerprint_version": "capitalbench_insights_data_fingerprint_v1",
+    "input_version": "capitalbench_insights_input_v1",
+    "llm": {
+      "model": "meta/llama-3.1-8b-instruct",
+      "prompt_version": null,
+      "provider": null,
+      "selected_candidate_ids": [],
+      "status": "not_configured"
+    },
+    "type": "deterministic"
+  },
+  "version": "capitalbench_insights_v1"
+}
