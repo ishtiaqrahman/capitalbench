@@ -1,0 +1,52 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Sticky inflation (CPI +4.2% YoY, energy surging) could force hawkish Fed repricing, hurting rate-sensitive financials and cyclicals.",
+    "Semiconductor allocation carries very high beta (2.21) and 65% volatility; a tech-led selloff or 'sell the news' on Micron could cause sharp drawdown.",
+    "Slowing housing (new-home sales -7.3%) and soft Q1 GDP (+1.6%) signal cyclical weakness that could undercut industrials and financials.",
+    "Mega-cap tech weakness spreading could pull down broad equity exposure including equal-weight and semiconductors."
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "option_id": "INDUSTRIALS",
+      "rationale": "Strong manufacturing PMI (55.7) and output index (57.7) support cyclical industrials; +6.58% benchmark-relative 30d with moderate drawdown and broad participation."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "FINANCIALS",
+      "rationale": "Steepening yield curve, resilient retail sales, and broad-market breadth favor financials; outperformed SPY by 5.2% over 30d with low drawdown."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth note shows more stocks rising while mega-cap tech weighs on cap-weighted index; equal-weight captures broad participation with lower volatility."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with low beta (0.40) and positive momentum amid sticky inflation; supports downside protection while sticky CPI keeps Fed on hold."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Micron's blowout Q3 ($41.5B rev, 84.6% gross margin) and Q4 guidance to $50B with HBM4 ramp is a concrete near-term catalyst for chip demand strength."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward cyclical breadth (industrials, financials, equal-weight) supported by strong PMI, retail sales, and yield-curve steepening, balanced by defensive healthcare and a semiconductor catalyst from Micron's strong print and guidance.",
+  "provider": "anthropic",
+  "rationale_summary": "Favor broadening participation and concrete fundamental catalysts over concentrated mega-cap tech, which is dragging the cap-weighted index, while holding a defensive healthcare anchor.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-24-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 24418,
+    "latency_seconds": 13.866953735006973,
+    "output_tokens": 929,
+    "total_tokens": 25347
+  }
+}

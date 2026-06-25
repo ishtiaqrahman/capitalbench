@@ -1,0 +1,53 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot May PCE print on 6/25 could reverse the duration and small-cap rally",
+    "Mega-cap tech rebound would lift SPY benchmark and hurt relative performance of equal-weight tilt",
+    "Sticky CPI (4.2% YoY headline) limits Fed easing optionality",
+    "Small/mid-cap reversal risk after strong recent run into 52w highs",
+    "Holiday-shortened week with July 3 closure may amplify volatility around exit"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "option_id": "MID_CAP",
+      "rationale": "Strong breadth participation with positive 30d benchmark-relative return; supported by Russell 2000 and equal-weight strength signaling rotation away from mega-cap tech."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "SMALL_VALUE",
+      "rationale": "Housing-related strength (KB Home +16.7%, DRH +6.7%) and falling 10Y yield (4.40%) support small value; at 52w high with positive catalysts."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "INDUSTRIALS",
+      "rationale": "Manufacturing PMI at 55.7 and output at 57.7 (strong expansion); benefits from cyclical rotation visible in Dow outperformance."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with positive momentum; biotech strength (XBI +7.5% 7d) and low beta provide ballast against tech weakness."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "LONG_TREASURY",
+      "rationale": "10Y yield dropped to 4.40% from 4.50%; falling oil/gold suggests disinflation impulse benefiting duration into PCE data on 6/25."
+    }
+  ],
+  "portfolio_rationale": "Tilts toward broadening market rotation away from mega-cap tech (Microsoft -2.3%, Oracle -4.6%) into mid/small caps, industrials, and rate-sensitive housing-linked names, with healthcare defense and duration hedge as yields decline ahead of PCE.",
+  "provider": "anthropic",
+  "rationale_summary": "Cyclical broadening trade with defensive healthcare and duration hedge, capitalizing on falling yields, strong manufacturing PMI, and visible rotation under the index surface.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-24-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 24425,
+    "latency_seconds": 15.909303074993659,
+    "output_tokens": 912,
+    "total_tokens": 25337
+  }
+}
