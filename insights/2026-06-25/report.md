@@ -1,7 +1,7 @@
 # CapitalBench Insights
 
-Generated at: `2026-06-25T08:04:41Z`
-Data as of: `2026-06-24`
+Generated at: `2026-06-25T23:38:29Z`
+Data as of: `2026-06-25`
 Engine: `deterministic_insights_v1`
 
 ## AI consensus portfolio scored 37.6 versus the oracle
@@ -64,11 +64,11 @@ Why it matters: This shows whether models identified the eventual best asset bef
 
 Category: `oracle_comparison`
 
-## Live AI risk posture is aggressive
+## Live AI risk posture is risk-seeking
 
 Context: Latest live portfolios · Live portfolios
 
-The newest live portfolios have a deterministic risk-taking score of 80.7 out of 100.
+The newest live portfolios have a deterministic risk-taking score of 78.2 out of 100.
 
 Why it matters: The score translates allocations into a common risk scale, so readers can see whether models are collectively leaning defensive, balanced, or aggressive.
 
@@ -84,11 +84,11 @@ Why it matters: Confidence calibration helps readers judge whether model self-re
 
 Category: `confidence_calibration`
 
-## Weekly and monthly AI portfolios both favor broad and cyclical equity
+## Weekly and monthly AI portfolios both favor growth and technology
 
 Context: Latest live portfolios · Live portfolios
 
-The newest weekly portfolios allocate +59.00% to broad and cyclical equity, while the newest monthly portfolios allocate +50.00%.
+The newest weekly portfolios allocate +38.00% to growth and technology, while the newest monthly portfolios allocate +45.00%.
 
 Why it matters: Agreement across horizons signals that the current model posture is not just a short-term tactical move.
 
@@ -98,7 +98,7 @@ Category: `horizon_agreement`
 
 Context: Model behavior profiles
 
-GPT-5.5 has the highest average risk-taking score at 86.5/100. Gemini 3.1 Pro has the largest average top holding at +38.85%. GPT-5.5 has the lowest measured turnover at +42.03%.
+GPT-5.5 has the highest average risk-taking score at 86.7/100. Gemini 3.1 Pro has the largest average top holding at +39.39%. GPT-5.5 has the lowest measured turnover at +40.26%.
 
 Why it matters: Behavior profiles help readers separate model style from short-term score noise: some models seek more risk, some concentrate harder, and some change portfolios less between rounds.
 
@@ -126,9 +126,9 @@ Category: `performance_attribution`
 
 ## Monthly models are leaning into recent winners
 
-Context: Monthly live round · CB-2026-06-24-1M · Live portfolios
+Context: Monthly live round · CB-2026-06-25-1M · Live portfolios
 
-The newest monthly portfolios allocate +94.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).
+The newest monthly portfolios allocate +88.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).
 
 Why it matters: This measures whether models are chasing recent momentum or allocating away from it before outcomes are known.
 
@@ -136,9 +136,9 @@ Category: `model_behavior`
 
 ## Weekly models are leaning into recent winners
 
-Context: Weekly live round · CB-2026-06-24-1W · Live portfolios
+Context: Weekly live round · CB-2026-06-25-1W · Live portfolios
 
-The newest weekly portfolios allocate +95.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).
+The newest weekly portfolios allocate +86.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).
 
 Why it matters: This measures whether models are chasing recent momentum or allocating away from it before outcomes are known.
 
@@ -168,7 +168,7 @@ Category: `live_performance`
 
 Context: Latest live portfolios · Live portfolios
 
-The closest live allocation pair is Gemini 3.1 Pro and GPT-5.5 with +69.23% cosine similarity. The current allocation outlier is Grok 4.3.
+The closest live allocation pair is Claude Opus 4.7 and Claude Opus 4.8 with +83.32% cosine similarity. The current allocation outlier is Gemini 3.1 Pro.
 
 Why it matters: Similarity analysis shows whether models are independently converging on the same portfolio or expressing meaningfully different capital-allocation behavior.
 
