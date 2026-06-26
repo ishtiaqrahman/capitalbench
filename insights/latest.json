@@ -1,7 +1,7 @@
 {
   "data_as_of": "2026-06-25",
   "engine_version": "deterministic_insights_v1",
-  "generated_at": "2026-06-25T23:38:29Z",
+  "generated_at": "2026-06-26T04:41:06Z",
   "insight_count": 17,
   "insights": [
     {
@@ -58,7 +58,7 @@
         "track_label": "Monthly"
       },
       "data_as_of": "2026-06-24",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/rounds/CB-2026-05-24-1M",
@@ -66,7 +66,7 @@
           "source": "rounds/CB-2026-05-24-1M/runs/official-20260524/results"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "consensus-performance-CB-2026-05-24-1M",
       "importance_score": 92.0,
       "related": [
@@ -93,58 +93,58 @@
           "formula": "sum(average_model_allocation * asset_return)",
           "name": "consensus_portfolio_return",
           "unit": "percent",
-          "value": -0.9788
+          "value": -2.7296
         },
         {
           "formula": "average resolved model portfolio return",
           "name": "average_model_return",
           "unit": "percent",
-          "value": -0.9788
+          "value": -2.7296
         },
         {
           "formula": "100 * consensus_return / oracle_return",
           "name": "consensus_capitalbench_score",
           "unit": "points",
-          "value": -13.0407
+          "value": -34.8757
         }
       ],
       "category": "consensus_performance",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-06-24",
-        "decision_date": "2026-06-17",
-        "entry_date": "2026-06-17",
-        "exit_date": "2026-06-24",
+        "data_as_of": "2026-06-25",
+        "decision_date": "2026-06-18",
+        "entry_date": "2026-06-18",
+        "exit_date": "2026-06-25",
         "model_count": 5,
         "oracle_asset": {
           "display": "Biotechnology (XBI)",
           "name": "Biotechnology",
           "option_id": "BIOTECH",
-          "return_pct": 7.5054,
+          "return_pct": 7.8265,
           "ticker": "XBI"
         },
         "primary_label": "Weekly result",
         "result_count": 5,
-        "round_id": "CB-2026-06-17-1W",
-        "run_id": "official-20260617-no-fable",
+        "round_id": "CB-2026-06-18-1W",
+        "run_id": "official-20260618-no-fable",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-06-24",
-      "date": "2026-06-25",
+      "data_as_of": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-17-1W",
+          "href": "/rounds/CB-2026-06-18-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-06-17-1W/runs/official-20260617-no-fable/results"
+          "source": "rounds/CB-2026-06-18-1W/runs/official-20260618-no-fable/results"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
-      "id": "consensus-performance-CB-2026-06-17-1W",
+      "generated_at": "2026-06-26T04:41:06Z",
+      "id": "consensus-performance-CB-2026-06-18-1W",
       "importance_score": 92.0,
       "related": [
         {
@@ -154,8 +154,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "If the weekly model allocations were averaged into one consensus portfolio, it returned -0.98% versus -0.79% for the S&P 500 and +7.51% for the hindsight best asset.",
-      "title": "AI consensus portfolio scored -13.0 versus the oracle",
+      "summary": "If the weekly model allocations were averaged into one consensus portfolio, it returned -2.73% versus -1.67% for the S&P 500 and +7.83% for the hindsight best asset.",
+      "title": "AI consensus portfolio scored -34.9 versus the oracle",
       "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
     },
     {
@@ -211,7 +211,7 @@
         "track_label": "Monthly"
       },
       "data_as_of": "2026-06-24",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/rounds/CB-2026-05-24-1M",
@@ -219,7 +219,7 @@
           "source": "rounds/CB-2026-05-24-1M/runs/official-20260524/results/returns.csv"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "benchmark-difficulty-CB-2026-05-24-1M",
       "importance_score": 90.0,
       "related": [
@@ -245,58 +245,58 @@
           "formula": "max(scored asset returns)",
           "name": "oracle_return",
           "unit": "percent",
-          "value": 7.5054
+          "value": 7.8265
         },
         {
           "formula": "min(scored asset returns)",
           "name": "worst_asset_return",
           "unit": "percent",
-          "value": -14.5686
+          "value": -12.0148
         },
         {
           "formula": "positive asset count / scored asset count",
           "name": "positive_universe_share",
           "unit": "percent",
-          "value": 38.5714
+          "value": 44.2857
         }
       ],
       "category": "benchmark_difficulty",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-06-24",
-        "decision_date": "2026-06-17",
-        "entry_date": "2026-06-17",
-        "exit_date": "2026-06-24",
+        "data_as_of": "2026-06-25",
+        "decision_date": "2026-06-18",
+        "entry_date": "2026-06-18",
+        "exit_date": "2026-06-25",
         "model_count": 5,
         "oracle_asset": {
           "display": "Biotechnology (XBI)",
           "name": "Biotechnology",
           "option_id": "BIOTECH",
-          "return_pct": 7.5054,
+          "return_pct": 7.8265,
           "ticker": "XBI"
         },
         "primary_label": "Weekly result",
         "result_count": 5,
-        "round_id": "CB-2026-06-17-1W",
-        "run_id": "official-20260617-no-fable",
+        "round_id": "CB-2026-06-18-1W",
+        "run_id": "official-20260618-no-fable",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-06-24",
-      "date": "2026-06-25",
+      "data_as_of": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-17-1W",
+          "href": "/rounds/CB-2026-06-18-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-06-17-1W/runs/official-20260617-no-fable/results/returns.csv"
+          "source": "rounds/CB-2026-06-18-1W/runs/official-20260618-no-fable/results/returns.csv"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
-      "id": "benchmark-difficulty-CB-2026-06-17-1W",
+      "generated_at": "2026-06-26T04:41:06Z",
+      "id": "benchmark-difficulty-CB-2026-06-18-1W",
       "importance_score": 90.0,
       "related": [
         {
@@ -306,8 +306,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The best scored asset returned +7.51%, the worst returned -14.57%, and +38.57% of the universe was positive. The S&P 500 ranked 38 out of 70 options.",
-      "title": "Weekly round had +22.07% asset dispersion",
+      "summary": "The best scored asset returned +7.83%, the worst returned -12.01%, and +44.29% of the universe was positive. The S&P 500 ranked 44 out of 70 options.",
+      "title": "Weekly round had +19.84% asset dispersion",
       "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
     },
     {
@@ -358,7 +358,7 @@
         "track_label": "Monthly"
       },
       "data_as_of": "2026-06-24",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/rounds/CB-2026-05-24-1M",
@@ -366,7 +366,7 @@
           "source": "rounds/CB-2026-05-24-1M/runs/official-20260524/results"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "missed-oracle-CB-2026-05-24-1M",
       "importance_score": 89.0,
       "related": [
@@ -393,52 +393,52 @@
           "formula": "count models with positive allocation to oracle asset",
           "name": "oracle_asset_holder_count",
           "unit": "models",
-          "value": 2
+          "value": 1
         },
         {
           "formula": "average allocation to oracle asset across model portfolios",
           "name": "average_oracle_asset_allocation",
           "unit": "percentage_points",
-          "value": 6.0
+          "value": 2.0
         }
       ],
       "category": "oracle_comparison",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-06-24",
-        "decision_date": "2026-06-17",
-        "entry_date": "2026-06-17",
-        "exit_date": "2026-06-24",
+        "data_as_of": "2026-06-25",
+        "decision_date": "2026-06-18",
+        "entry_date": "2026-06-18",
+        "exit_date": "2026-06-25",
         "model_count": 5,
         "oracle_asset": {
           "display": "Biotechnology (XBI)",
           "name": "Biotechnology",
           "option_id": "BIOTECH",
-          "return_pct": 7.5054,
+          "return_pct": 7.8265,
           "ticker": "XBI"
         },
         "primary_label": "Weekly result",
         "result_count": 5,
-        "round_id": "CB-2026-06-17-1W",
-        "run_id": "official-20260617-no-fable",
+        "round_id": "CB-2026-06-18-1W",
+        "run_id": "official-20260618-no-fable",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-06-24",
-      "date": "2026-06-25",
+      "data_as_of": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-17-1W",
+          "href": "/rounds/CB-2026-06-18-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-06-17-1W/runs/official-20260617-no-fable/results"
+          "source": "rounds/CB-2026-06-18-1W/runs/official-20260618-no-fable/results"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
-      "id": "missed-oracle-CB-2026-06-17-1W",
+      "generated_at": "2026-06-26T04:41:06Z",
+      "id": "missed-oracle-CB-2026-06-18-1W",
       "importance_score": 89.0,
       "related": [
         {
@@ -448,7 +448,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The hindsight best asset was Biotechnology (XBI) at +7.51%. 2 of 5 models held it, with +6.00% average allocation. The largest allocation came from Grok 4.3 at +20.00%.",
+      "summary": "The hindsight best asset was Biotechnology (XBI) at +7.83%. 1 of 5 models held it, with +2.00% average allocation. The largest allocation came from GPT-5.5 at +10.00%.",
       "title": "Models found the weekly oracle asset",
       "why_it_matters": "This shows whether models identified the eventual best asset before scoring, even when portfolio weights were too small to fully capture the oracle return."
     },
@@ -488,7 +488,7 @@
         "track_label": "Weekly + Monthly"
       },
       "data_as_of": "2026-06-25",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/rounds/CB-2026-06-25-1W",
@@ -501,7 +501,7 @@
           "source": "rounds/CB-2026-06-25-1M"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "active-risk-2026-06-25",
       "importance_score": 86.0,
       "related": [
@@ -527,35 +527,35 @@
           "formula": "average return for confidence >= median confidence",
           "name": "high_confidence_average_return",
           "unit": "percent",
-          "value": -0.4539
+          "value": -0.5997
         },
         {
           "formula": "average return for confidence < median confidence",
           "name": "low_confidence_average_return",
           "unit": "percent",
-          "value": -0.663
+          "value": -0.7523
         },
         {
           "formula": "average CapitalBench Score for confidence >= median confidence",
           "name": "high_confidence_average_capitalbench_score",
           "unit": "points",
-          "value": -28.2323
+          "value": -28.663
         },
         {
           "formula": "average CapitalBench Score for confidence < median confidence",
           "name": "low_confidence_average_capitalbench_score",
           "unit": "points",
-          "value": -32.938
+          "value": -33.0155
         }
       ],
       "category": "confidence_calibration",
       "confidence": "high",
       "context": {
         "data_as_of": "2026-06-25",
-        "median_confidence": 0.56,
+        "median_confidence": 0.57,
         "primary_label": "All resolved official results",
-        "result_count": 88,
-        "round_count": 18,
+        "result_count": 93,
+        "round_count": 19,
         "scope": "resolved_history",
         "status": "resolved",
         "status_label": "Resolved history",
@@ -563,7 +563,7 @@
         "track_label": "Weekly + Monthly"
       },
       "data_as_of": "2026-06-25",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/leaderboards/latest",
@@ -571,7 +571,7 @@
           "source": "resolved official leaderboard rows"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "confidence-calibration-2026-06-25",
       "importance_score": 85.0,
       "related": [
@@ -582,7 +582,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Across resolved official results, submissions at or above the median confidence of 0.56 averaged -0.45%, while lower-confidence submissions averaged -0.66%.",
+      "summary": "Across resolved official results, submissions at or above the median confidence of 0.57 averaged -0.60%, while lower-confidence submissions averaged -0.75%.",
       "title": "High-confidence model calls have outperformed lower-confidence calls",
       "why_it_matters": "Confidence calibration helps readers judge whether model self-reported confidence carries useful information about realized benchmark performance."
     },
@@ -629,7 +629,7 @@
         "track_label": "Weekly + Monthly"
       },
       "data_as_of": "2026-06-25",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/rounds/CB-2026-06-25-1W",
@@ -642,7 +642,7 @@
           "source": "rounds/CB-2026-06-25-1M"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "horizon-agreement-2026-06-25",
       "importance_score": 84.0,
       "related": [
@@ -697,7 +697,7 @@
         "scope": "all official portfolios"
       },
       "data_as_of": "2026-06-25",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/models/patterns",
@@ -710,7 +710,7 @@
           "source": "asset risk model and behavior formulas"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "model-behavior-profiles-2026-06-25",
       "importance_score": 83.0,
       "related": [
@@ -777,7 +777,7 @@
         "track_label": "Monthly"
       },
       "data_as_of": "2026-06-24",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/rounds/CB-2026-05-24-1M",
@@ -785,7 +785,7 @@
           "source": "rounds/CB-2026-05-24-1M/runs/official-20260524/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "attribution-CB-2026-05-24-1M-xai-grok-4-3",
       "importance_score": 83.0,
       "related": [
@@ -811,49 +811,49 @@
           "formula": "allocation weight * asset return",
           "name": "largest_positive_contribution",
           "unit": "percent",
-          "value": 1.5011
+          "value": 0.0049
         },
         {
           "formula": "allocation weight * asset return",
           "name": "largest_negative_contribution",
           "unit": "percent",
-          "value": -0.6796
+          "value": -0.8714
         }
       ],
       "category": "performance_attribution",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-06-24",
-        "decision_date": "2026-06-17",
-        "entry_date": "2026-06-17",
-        "exit_date": "2026-06-24",
+        "data_as_of": "2026-06-25",
+        "decision_date": "2026-06-18",
+        "entry_date": "2026-06-18",
+        "exit_date": "2026-06-25",
         "model": {
-          "label": "Grok 4.3",
-          "model_id": "xai-grok-4-3"
+          "label": "Claude Opus 4.8",
+          "model_id": "anthropic-claude-opus-4-8"
         },
         "model_count": 5,
         "primary_label": "Weekly result",
         "result_count": 5,
-        "round_id": "CB-2026-06-17-1W",
-        "run_id": "official-20260617-no-fable",
+        "round_id": "CB-2026-06-18-1W",
+        "run_id": "official-20260618-no-fable",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-06-24",
-      "date": "2026-06-25",
+      "data_as_of": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-17-1W",
+          "href": "/rounds/CB-2026-06-18-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-06-17-1W/runs/official-20260617-no-fable/results/allocations.csv"
+          "source": "rounds/CB-2026-06-18-1W/runs/official-20260618-no-fable/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
-      "id": "attribution-CB-2026-06-17-1W-xai-grok-4-3",
+      "generated_at": "2026-06-26T04:41:06Z",
+      "id": "attribution-CB-2026-06-18-1W-anthropic-claude-opus-4-8",
       "importance_score": 83.0,
       "related": [
         {
@@ -863,8 +863,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "In the latest weekly result, Biotechnology contributed +1.50% to Grok 4.3's portfolio. The largest drag came from Aerospace and Defense at -0.68%.",
-      "title": "Grok 4.3's result was driven by Biotechnology",
+      "summary": "In the latest weekly result, Short-Term Treasury Bills contributed +0.00% to Claude Opus 4.8's portfolio. The largest drag came from Semiconductors at -0.87%.",
+      "title": "Claude Opus 4.8's result was driven by Short-Term Treasury Bills",
       "why_it_matters": "Attribution turns a model score into an explanation of which holdings actually helped or hurt the frozen portfolio."
     },
     {
@@ -907,7 +907,7 @@
         "track_label": "Monthly"
       },
       "data_as_of": "2026-06-25",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/rounds/CB-2026-06-25-1M",
@@ -915,7 +915,7 @@
           "source": "rounds/CB-2026-06-25-1M/market_data/universe_trailing_returns.json"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "momentum-exposure-CB-2026-06-25-1M",
       "importance_score": 80.0,
       "related": [
@@ -970,7 +970,7 @@
         "track_label": "Weekly"
       },
       "data_as_of": "2026-06-25",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/rounds/CB-2026-06-25-1W",
@@ -978,7 +978,7 @@
           "source": "rounds/CB-2026-06-25-1W/market_data/universe_trailing_returns.json"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "momentum-exposure-CB-2026-06-25-1W",
       "importance_score": 80.0,
       "related": [
@@ -1029,7 +1029,7 @@
         "track_label": "Weekly + Monthly"
       },
       "data_as_of": "2026-06-25",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/rounds/CB-2026-06-25-1W",
@@ -1042,7 +1042,7 @@
           "source": "rounds/CB-2026-06-25-1M"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "active-positioning-2026-06-25",
       "importance_score": 78.0,
       "related": [
@@ -1088,7 +1088,7 @@
         "data_as_of": "2026-06-24",
         "model_count": 6,
         "primary_label": "Open-round interim performance",
-        "round_count": 19,
+        "round_count": 18,
         "round_ids": [
           "CB-2026-05-28-1M",
           "CB-2026-05-29-1M",
@@ -1104,7 +1104,6 @@
           "CB-2026-06-16-1M",
           "CB-2026-06-17-1M",
           "CB-2026-06-18-1M",
-          "CB-2026-06-18-1W",
           "CB-2026-06-22-1M",
           "CB-2026-06-22-1W",
           "CB-2026-06-23-1M",
@@ -1122,7 +1121,7 @@
         }
       },
       "data_as_of": "2026-06-24",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/",
@@ -1130,7 +1129,7 @@
           "source": "weekly_performance.csv"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "live-path-2026-06-24",
       "importance_score": 77.0,
       "related": [
@@ -1186,7 +1185,7 @@
         "track_label": "Weekly + Monthly"
       },
       "data_as_of": "2026-06-25",
-      "date": "2026-06-25",
+      "date": "2026-06-26",
       "evidence": [
         {
           "href": "/models",
@@ -1194,7 +1193,7 @@
           "source": "live parsed submissions"
         }
       ],
-      "generated_at": "2026-06-25T23:38:29Z",
+      "generated_at": "2026-06-26T04:41:06Z",
       "id": "model-similarity-2026-06-25",
       "importance_score": 76.0,
       "related": [
@@ -1210,10 +1209,10 @@
       "why_it_matters": "Similarity analysis shows whether models are independently converging on the same portfolio or expressing meaningfully different capital-allocation behavior."
     }
   ],
-  "run_date": "2026-06-25",
+  "run_date": "2026-06-26",
   "source": {
-    "capitalbench_generated_at": "2026-06-25T23:38:29Z",
-    "data_fingerprint": "5282784baf2bb78a721dc09713d06b039a54fc0d475c7d388124d4aaa6da54e2",
+    "capitalbench_generated_at": "2026-06-26T04:41:06Z",
+    "data_fingerprint": "782b7f2cecc1475b3a6e3c1f94dd2c33847e2df6810f266073f3e6caeb4fc71c",
     "data_fingerprint_version": "capitalbench_insights_data_fingerprint_v1",
     "input_version": "capitalbench_insights_input_v1",
     "llm": {
@@ -1221,7 +1220,7 @@
       "prompt_version": null,
       "provider": null,
       "selected_candidate_ids": [],
-      "status": "disabled"
+      "status": "not_configured"
     },
     "type": "deterministic"
   },

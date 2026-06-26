@@ -9,11 +9,11 @@ Each round is a separate market decision with its own declared scoring window. O
 | Rank | Model | Provider | Resolved Rounds | Avg Return | Avg S&P Return | Avg Alpha | Hit Rate vs S&P | Avg Regret | Cumulative Return | Cumulative S&P Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | anthropic-claude-fable-5 | anthropic | 3 | 2.13% | 1.23% | 0.90% | 66.67% | 8.90% | 6.47% | 3.73% |
-| 2 | xai-grok-4-3 | xai | 18 | -0.04% | -0.44% | 0.40% | 55.56% | 9.06% | -1.92% | -7.83% |
-| 3 | anthropic-claude-opus-4-7 | anthropic | 18 | -0.23% | -0.44% | 0.21% | 50.00% | 9.25% | -5.13% | -7.83% |
-| 4 | anthropic-claude-opus-4-8 | anthropic | 13 | -0.86% | -0.59% | -0.27% | 38.46% | 8.75% | -11.28% | -7.63% |
-| 5 | openai-gpt-5-5 | openai | 18 | -0.96% | -0.44% | -0.53% | 44.44% | 9.99% | -18.26% | -7.83% |
-| 6 | google-gemini-3-1-pro | google | 18 | -1.23% | -0.44% | -0.79% | 44.44% | 10.26% | -21.75% | -7.83% |
+| 2 | xai-grok-4-3 | xai | 16 | -0.55% | -0.42% | -0.13% | 50.00% | 8.97% | -9.44% | -6.75% |
+| 3 | anthropic-claude-opus-4-7 | anthropic | 16 | -0.60% | -0.42% | -0.18% | 43.75% | 9.02% | -10.12% | -6.75% |
+| 4 | anthropic-claude-opus-4-8 | anthropic | 14 | -0.96% | -0.67% | -0.29% | 35.71% | 8.84% | -13.20% | -9.17% |
+| 5 | openai-gpt-5-5 | openai | 16 | -1.11% | -0.42% | -0.69% | 37.50% | 9.54% | -18.23% | -6.75% |
+| 6 | google-gemini-3-1-pro | google | 16 | -1.61% | -0.42% | -1.19% | 37.50% | 10.03% | -24.32% | -6.75% |
 
 ## Cumulative Stability Leaderboard
 
@@ -23,9 +23,6 @@ _No rows._
 
 | Round | Official Run | Stability Run | Official Included | Stability Included | Warnings |
 | --- | --- | --- | --- | --- | --- |
-| CB-2026-05-10-1M | official-round-1-clean |  | yes | no |  |
-| CB-2026-05-17-1M | official-20260517 |  | yes | no |  |
-| CB-2026-05-24-1M | official-20260524 |  | yes | no |  |
 | CB-2026-05-24-1W | official-20260524-1W |  | yes | no |  |
 | CB-2026-05-27-1W | official-20260527-1W |  | yes | no |  |
 | CB-2026-05-28-1W | official-20260528-1W |  | yes | no |  |
@@ -41,6 +38,7 @@ _No rows._
 | CB-2026-06-15-1W | official-20260615-no-fable |  | yes | no |  |
 | CB-2026-06-16-1W | official-20260616-no-fable |  | yes | no |  |
 | CB-2026-06-17-1W | official-20260617-no-fable |  | yes | no |  |
+| CB-2026-06-18-1W | official-20260618-no-fable |  | yes | no |  |
 
 ## Methodology
 
@@ -65,28 +63,7 @@ The official leaderboard measures the saved public model decision. The stability
 
 ## Warnings
 
-- Round CB-2026-05-28-1M has no scored official or stability runs.
-- Round CB-2026-05-29-1M has no scored official or stability runs.
-- Round CB-2026-06-01-1M has no scored official or stability runs.
-- Round CB-2026-06-02-1M has no scored official or stability runs.
-- Round CB-2026-06-03-1M has no scored official or stability runs.
-- Round CB-2026-06-05-1M has no scored official or stability runs.
-- Round CB-2026-06-08-1M has no scored official or stability runs.
-- Round CB-2026-06-09-1M has no scored official or stability runs.
-- Round CB-2026-06-12-1M has no scored official or stability runs.
-- Round CB-2026-06-13-1M has no scored official or stability runs.
-- Round CB-2026-06-15-1M has no scored official or stability runs.
-- Round CB-2026-06-16-1M has no scored official or stability runs.
-- Round CB-2026-06-17-1M has no scored official or stability runs.
-- Round CB-2026-06-18-1M has no scored official or stability runs.
-- Round CB-2026-06-18-1W has no scored official or stability runs.
-- Round CB-2026-06-22-1M has no scored official or stability runs.
 - Round CB-2026-06-22-1W has no scored official or stability runs.
-- Round CB-2026-06-23-1M has no scored official or stability runs.
 - Round CB-2026-06-23-1W has no scored official or stability runs.
-- Round CB-2026-06-24-1M has no scored official or stability runs.
 - Round CB-2026-06-24-1W has no scored official or stability runs.
-- Round CB-2026-06-25-1M has no scored official or stability runs.
 - Round CB-2026-06-25-1W has no scored official or stability runs.
-- Round example-round has no scored official or stability runs.
-- Round example-round-2 has no scored official or stability runs.
