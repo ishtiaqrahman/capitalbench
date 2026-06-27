@@ -1,6 +1,6 @@
 # CapitalBench Insights
 
-Generated at: `2026-06-27T02:55:03Z`
+Generated at: `2026-06-27T08:18:21Z`
 Data as of: `2026-06-26`
 Engine: `deterministic_insights_v1`
 
@@ -154,11 +154,11 @@ Why it matters: This shows the current crowding point in model capital allocatio
 
 Category: `current_positioning`
 
-## Grok 4.3 has the strongest live alpha
+## Gemini 3.1 Pro has the strongest live alpha
 
 Context: Open-round interim performance · Interim, not final
 
-Using the latest available interim close, Grok 4.3 in CB-2026-06-16-1M is ahead of the S&P 500 by +4.54 percentage points, while GPT-5.5 in CB-2026-06-02-1M is at -6.28 percentage points.
+Using the latest available interim close, Gemini 3.1 Pro in CB-2026-06-23-1W is ahead of the S&P 500 by +4.20 percentage points, while GPT-5.5 in CB-2026-06-02-1M is at -6.28 percentage points.
 
 Why it matters: Live alpha is provisional, but it shows how open model portfolios are moving before the final official score.
 
