@@ -559,14 +559,17 @@ const priceTableRows = scoringPriceRows.map((row) => ({
   return: row.return === undefined ? "" : pct(row.return),
   source: publicPriceSource(row.source)
 }));
-const resultReturnRows = resultReturns.slice(0, 12).map((row) => ({
-  rank: row.rank,
-  option_label: optionDisplayName(row.option_id, roundOptionsById),
-  symbol: row.asset_symbol,
-  return: pct(row.return),
-  entry_price: publicPrice(row.entry_price),
-  exit_price: publicPrice(row.exit_price)
-}));
+const resultReturnRows = [...resultReturns]
+  .sort((left, right) => (left.rank ?? Number.POSITIVE_INFINITY) - (right.rank ?? Number.POSITIVE_INFINITY))
+  .slice(0, 12)
+  .map((row) => ({
+    rank: row.rank,
+    option_label: optionDisplayName(row.option_id, roundOptionsById),
+    symbol: row.asset_symbol,
+    return: pct(row.return),
+    entry_price: publicPrice(row.entry_price),
+    exit_price: publicPrice(row.exit_price)
+  }));
 const assetReturnColumns = [
   { key: "rank", label: "Rank", align: "right" as const },
   { key: "option_label", label: "Asset" },

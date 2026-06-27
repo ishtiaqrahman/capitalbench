@@ -62,7 +62,7 @@
           "source": "rounds/CB-2026-05-28-1M/runs/official-20260528-1M/results"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
+      "generated_at": "2026-06-27T02:55:03Z",
       "id": "consensus-performance-CB-2026-05-28-1M",
       "importance_score": 92.0,
       "related": [
@@ -139,7 +139,7 @@
           "source": "rounds/CB-2026-06-18-1W/runs/official-20260618-no-fable/results"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
+      "generated_at": "2026-06-27T02:55:03Z",
       "id": "consensus-performance-CB-2026-06-18-1W",
       "importance_score": 92.0,
       "related": [
@@ -215,7 +215,7 @@
           "source": "rounds/CB-2026-05-28-1M/runs/official-20260528-1M/results/returns.csv"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
+      "generated_at": "2026-06-27T02:55:03Z",
       "id": "benchmark-difficulty-CB-2026-05-28-1M",
       "importance_score": 90.0,
       "related": [
@@ -291,7 +291,7 @@
           "source": "rounds/CB-2026-06-18-1W/runs/official-20260618-no-fable/results/returns.csv"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
+      "generated_at": "2026-06-27T02:55:03Z",
       "id": "benchmark-difficulty-CB-2026-06-18-1W",
       "importance_score": 90.0,
       "related": [
@@ -362,7 +362,7 @@
           "source": "rounds/CB-2026-05-28-1M/runs/official-20260528-1M/results"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
+      "generated_at": "2026-06-27T02:55:03Z",
       "id": "missed-oracle-CB-2026-05-28-1M",
       "importance_score": 89.0,
       "related": [
@@ -433,7 +433,7 @@
           "source": "rounds/CB-2026-06-18-1W/runs/official-20260618-no-fable/results"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
+      "generated_at": "2026-06-27T02:55:03Z",
       "id": "missed-oracle-CB-2026-06-18-1W",
       "importance_score": 89.0,
       "related": [
@@ -459,23 +459,23 @@
           "formula": "50 + 50 * weighted average asset risk-on loading",
           "name": "live_risk_taking_score",
           "unit": "points",
-          "value": 78.25
+          "value": 69.575
         }
       ],
       "category": "risk_regime",
       "confidence": "high",
       "context": {
-        "data_as_of": "2026-06-25",
+        "data_as_of": "2026-06-26",
         "decision_dates": [
-          "2026-06-25",
-          "2026-06-25"
+          "2026-06-26",
+          "2026-06-26"
         ],
         "model_count": 10,
         "primary_label": "Latest live portfolios",
         "round_count": 2,
         "round_ids": [
-          "CB-2026-06-25-1W",
-          "CB-2026-06-25-1M"
+          "CB-2026-06-26-1W",
+          "CB-2026-06-26-1M"
         ],
         "scope": "live_rounds",
         "status": "active",
@@ -483,22 +483,22 @@
         "track": "weekly_monthly",
         "track_label": "Weekly + Monthly"
       },
-      "data_as_of": "2026-06-25",
+      "data_as_of": "2026-06-26",
       "date": "2026-06-27",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-25-1W",
+          "href": "/rounds/CB-2026-06-26-1W",
           "label": "Weekly live round",
-          "source": "rounds/CB-2026-06-25-1W"
+          "source": "rounds/CB-2026-06-26-1W"
         },
         {
-          "href": "/rounds/CB-2026-06-25-1M",
+          "href": "/rounds/CB-2026-06-26-1M",
           "label": "Monthly live round",
-          "source": "rounds/CB-2026-06-25-1M"
+          "source": "rounds/CB-2026-06-26-1M"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
-      "id": "active-risk-2026-06-25",
+      "generated_at": "2026-06-27T02:55:03Z",
+      "id": "active-risk-2026-06-26",
       "importance_score": 86.0,
       "related": [
         {
@@ -508,7 +508,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The newest live portfolios have a deterministic risk-taking score of 78.2 out of 100.",
+      "summary": "The newest live portfolios have a deterministic risk-taking score of 69.6 out of 100.",
       "title": "Live AI risk posture is risk-seeking",
       "why_it_matters": "The score translates allocations into a common risk scale, so readers can see whether models are collectively leaning defensive, balanced, or aggressive."
     },
@@ -567,7 +567,7 @@
           "source": "resolved official leaderboard rows"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
+      "generated_at": "2026-06-27T02:55:03Z",
       "id": "confidence-calibration-2026-06-26",
       "importance_score": 85.0,
       "related": [
@@ -591,93 +591,22 @@
       ],
       "calculations": [
         {
-          "formula": "average weekly allocation by asset-risk regime",
-          "name": "weekly_top_regime_allocation",
-          "unit": "percentage_points",
-          "value": 38.0
-        },
-        {
-          "formula": "average monthly allocation by asset-risk regime",
-          "name": "monthly_top_regime_allocation",
-          "unit": "percentage_points",
-          "value": 45.0
-        }
-      ],
-      "category": "horizon_agreement",
-      "confidence": "high",
-      "context": {
-        "data_as_of": "2026-06-25",
-        "decision_dates": [
-          "2026-06-25",
-          "2026-06-25"
-        ],
-        "model_count": 10,
-        "primary_label": "Latest live portfolios",
-        "round_count": 2,
-        "round_ids": [
-          "CB-2026-06-25-1W",
-          "CB-2026-06-25-1M"
-        ],
-        "scope": "live_rounds",
-        "status": "active",
-        "status_label": "Live portfolios",
-        "track": "weekly_monthly",
-        "track_label": "Weekly + Monthly"
-      },
-      "data_as_of": "2026-06-25",
-      "date": "2026-06-27",
-      "evidence": [
-        {
-          "href": "/rounds/CB-2026-06-25-1W",
-          "label": "Weekly live round",
-          "source": "rounds/CB-2026-06-25-1W"
-        },
-        {
-          "href": "/rounds/CB-2026-06-25-1M",
-          "label": "Monthly live round",
-          "source": "rounds/CB-2026-06-25-1M"
-        }
-      ],
-      "generated_at": "2026-06-27T02:00:26Z",
-      "id": "horizon-agreement-2026-06-25",
-      "importance_score": 84.0,
-      "related": [
-        {
-          "href": "/risk-appetite",
-          "label": "AI Risk Appetite"
-        }
-      ],
-      "source_type": "deterministic",
-      "status": "published",
-      "summary": "The newest weekly portfolios allocate +38.00% to growth and technology, while the newest monthly portfolios allocate +45.00%.",
-      "title": "Weekly and monthly AI portfolios both favor growth and technology",
-      "why_it_matters": "Agreement across horizons signals that the current model posture is not just a short-term tactical move."
-    },
-    {
-      "audiences": [
-        "investors",
-        "capital_allocators",
-        "traders",
-        "ai_researchers"
-      ],
-      "calculations": [
-        {
           "formula": "average portfolio risk-taking score across official saved portfolios",
           "name": "highest_average_risk_taking_score",
           "unit": "points",
-          "value": 86.7043
+          "value": 86.4826
         },
         {
           "formula": "average largest single holding across official saved portfolios",
           "name": "largest_average_top_holding",
           "unit": "percentage_points",
-          "value": 39.3902
+          "value": 39.4186
         },
         {
           "formula": "one-half of summed absolute allocation changes between consecutive same-track portfolios",
           "name": "lowest_average_turnover",
           "unit": "percentage_points",
-          "value": 40.2564
+          "value": 40.4878
         }
       ],
       "category": "model_behavior",
@@ -688,7 +617,7 @@
         "model_count": 6,
         "most_concentrated_model_id": "google-gemini-3-1-pro",
         "most_stable_model_id": "openai-gpt-5-5",
-        "portfolio_count": 205,
+        "portfolio_count": 215,
         "primary_label": "Model behavior profiles",
         "scope": "all official portfolios"
       },
@@ -706,7 +635,7 @@
           "source": "asset risk model and behavior formulas"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
+      "generated_at": "2026-06-27T02:55:03Z",
       "id": "model-behavior-profiles-2026-06-26",
       "importance_score": 83.0,
       "related": [
@@ -725,7 +654,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "GPT-5.5 has the highest average risk-taking score at 86.7/100. Gemini 3.1 Pro has the largest average top holding at +39.39%. GPT-5.5 has the lowest measured turnover at +40.26%.",
+      "summary": "GPT-5.5 has the highest average risk-taking score at 86.5/100. Gemini 3.1 Pro has the largest average top holding at +39.42%. GPT-5.5 has the lowest measured turnover at +40.49%.",
       "title": "Model allocation styles are separating into clear behavior profiles",
       "why_it_matters": "Behavior profiles help readers separate model style from short-term score noise: some models seek more risk, some concentrate harder, and some change portfolios less between rounds."
     },
@@ -781,7 +710,7 @@
           "source": "rounds/CB-2026-05-28-1M/runs/official-20260528-1M/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
+      "generated_at": "2026-06-27T02:55:03Z",
       "id": "attribution-CB-2026-05-28-1M-xai-grok-4-3",
       "importance_score": 83.0,
       "related": [
@@ -848,7 +777,7 @@
           "source": "rounds/CB-2026-06-18-1W/runs/official-20260618-no-fable/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
+      "generated_at": "2026-06-27T02:55:03Z",
       "id": "attribution-CB-2026-06-18-1W-anthropic-claude-opus-4-8",
       "importance_score": 83.0,
       "related": [
@@ -865,6 +794,77 @@
     },
     {
       "audiences": [
+        "investors",
+        "capital_allocators",
+        "traders",
+        "ai_researchers"
+      ],
+      "calculations": [
+        {
+          "formula": "average weekly allocation by asset-risk regime",
+          "name": "weekly_top_regime_allocation",
+          "unit": "percentage_points",
+          "value": 43.0
+        },
+        {
+          "formula": "average monthly allocation by asset-risk regime",
+          "name": "monthly_top_regime_allocation",
+          "unit": "percentage_points",
+          "value": 43.0
+        }
+      ],
+      "category": "horizon_agreement",
+      "confidence": "high",
+      "context": {
+        "data_as_of": "2026-06-26",
+        "decision_dates": [
+          "2026-06-26",
+          "2026-06-26"
+        ],
+        "model_count": 10,
+        "primary_label": "Latest live portfolios",
+        "round_count": 2,
+        "round_ids": [
+          "CB-2026-06-26-1W",
+          "CB-2026-06-26-1M"
+        ],
+        "scope": "live_rounds",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly_monthly",
+        "track_label": "Weekly + Monthly"
+      },
+      "data_as_of": "2026-06-26",
+      "date": "2026-06-27",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-06-26-1W",
+          "label": "Weekly live round",
+          "source": "rounds/CB-2026-06-26-1W"
+        },
+        {
+          "href": "/rounds/CB-2026-06-26-1M",
+          "label": "Monthly live round",
+          "source": "rounds/CB-2026-06-26-1M"
+        }
+      ],
+      "generated_at": "2026-06-27T02:55:03Z",
+      "id": "horizon-agreement-2026-06-26",
+      "importance_score": 82.0,
+      "related": [
+        {
+          "href": "/risk-appetite",
+          "label": "AI Risk Appetite"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "The newest weekly portfolios lean toward defensive equity, while the newest monthly portfolios lean toward broad and cyclical equity.",
+      "title": "Weekly and monthly AI portfolios point to different regimes",
+      "why_it_matters": "A horizon split helps readers separate short-window positioning from the longer one-month model view."
+    },
+    {
+      "audiences": [
         "traders",
         "ai_researchers",
         "capital_allocators"
@@ -874,7 +874,7 @@
           "formula": "average allocation to assets in the top 20% by pre-run 30-day trailing return",
           "name": "allocation_to_top_30d_momentum_quintile",
           "unit": "percentage_points",
-          "value": 88.0
+          "value": 87.0
         },
         {
           "formula": "average allocation to assets in the bottom 20% by pre-run 30-day trailing return",
@@ -887,32 +887,32 @@
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-06-25",
-        "decision_date": "2026-06-25",
-        "entry_date": "2026-06-25",
+        "data_as_of": "2026-06-26",
+        "decision_date": "2026-06-26",
+        "entry_date": "2026-06-26",
         "exit_date": "2026-07-24",
         "model_count": 5,
         "primary_label": "Monthly live round",
         "result_count": 0,
-        "round_id": "CB-2026-06-25-1M",
-        "run_id": "official-20260625-no-fable",
+        "round_id": "CB-2026-06-26-1M",
+        "run_id": "official-20260626-no-fable",
         "scope": "round",
         "status": "active",
         "status_label": "Live portfolios",
         "track": "monthly",
         "track_label": "Monthly"
       },
-      "data_as_of": "2026-06-25",
+      "data_as_of": "2026-06-26",
       "date": "2026-06-27",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-25-1M",
+          "href": "/rounds/CB-2026-06-26-1M",
           "label": "Monthly round",
-          "source": "rounds/CB-2026-06-25-1M/market_data/universe_trailing_returns.json"
+          "source": "rounds/CB-2026-06-26-1M/market_data/universe_trailing_returns.json"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
-      "id": "momentum-exposure-CB-2026-06-25-1M",
+      "generated_at": "2026-06-27T02:55:03Z",
+      "id": "momentum-exposure-CB-2026-06-26-1M",
       "importance_score": 80.0,
       "related": [
         {
@@ -922,7 +922,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The newest monthly portfolios allocate +88.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).",
+      "summary": "The newest monthly portfolios allocate +87.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).",
       "title": "Monthly models are leaning into recent winners",
       "why_it_matters": "This measures whether models are chasing recent momentum or allocating away from it before outcomes are known."
     },
@@ -937,45 +937,45 @@
           "formula": "average allocation to assets in the top 20% by pre-run 30-day trailing return",
           "name": "allocation_to_top_30d_momentum_quintile",
           "unit": "percentage_points",
-          "value": 86.0
+          "value": 95.0
         },
         {
           "formula": "average allocation to assets in the bottom 20% by pre-run 30-day trailing return",
           "name": "allocation_to_bottom_30d_momentum_quintile",
           "unit": "percentage_points",
-          "value": 0.0
+          "value": 2.0
         }
       ],
       "category": "model_behavior",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-06-25",
-        "decision_date": "2026-06-25",
-        "entry_date": "2026-06-25",
+        "data_as_of": "2026-06-26",
+        "decision_date": "2026-06-26",
+        "entry_date": "2026-06-26",
         "exit_date": "2026-07-02",
         "model_count": 5,
         "primary_label": "Weekly live round",
         "result_count": 0,
-        "round_id": "CB-2026-06-25-1W",
-        "run_id": "official-20260625-no-fable",
+        "round_id": "CB-2026-06-26-1W",
+        "run_id": "official-20260626-no-fable",
         "scope": "round",
         "status": "active",
         "status_label": "Live portfolios",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-06-25",
+      "data_as_of": "2026-06-26",
       "date": "2026-06-27",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-25-1W",
+          "href": "/rounds/CB-2026-06-26-1W",
           "label": "Weekly round",
-          "source": "rounds/CB-2026-06-25-1W/market_data/universe_trailing_returns.json"
+          "source": "rounds/CB-2026-06-26-1W/market_data/universe_trailing_returns.json"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
-      "id": "momentum-exposure-CB-2026-06-25-1W",
+      "generated_at": "2026-06-27T02:55:03Z",
+      "id": "momentum-exposure-CB-2026-06-26-1W",
       "importance_score": 80.0,
       "related": [
         {
@@ -985,7 +985,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The newest weekly portfolios allocate +86.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).",
+      "summary": "The newest weekly portfolios allocate +95.00% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).",
       "title": "Weekly models are leaning into recent winners",
       "why_it_matters": "This measures whether models are chasing recent momentum or allocating away from it before outcomes are known."
     },
@@ -1000,23 +1000,23 @@
           "formula": "average allocation across newest live model portfolios",
           "name": "aggregate_live_allocation",
           "unit": "percentage_points",
-          "value": 22.0
+          "value": 29.0
         }
       ],
       "category": "current_positioning",
       "confidence": "high",
       "context": {
-        "data_as_of": "2026-06-25",
+        "data_as_of": "2026-06-26",
         "decision_dates": [
-          "2026-06-25",
-          "2026-06-25"
+          "2026-06-26",
+          "2026-06-26"
         ],
         "model_count": 10,
         "primary_label": "Latest live portfolios",
         "round_count": 2,
         "round_ids": [
-          "CB-2026-06-25-1W",
-          "CB-2026-06-25-1M"
+          "CB-2026-06-26-1W",
+          "CB-2026-06-26-1M"
         ],
         "scope": "live_rounds",
         "status": "active",
@@ -1024,22 +1024,22 @@
         "track": "weekly_monthly",
         "track_label": "Weekly + Monthly"
       },
-      "data_as_of": "2026-06-25",
+      "data_as_of": "2026-06-26",
       "date": "2026-06-27",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-25-1W",
+          "href": "/rounds/CB-2026-06-26-1W",
           "label": "Weekly live round",
-          "source": "rounds/CB-2026-06-25-1W"
+          "source": "rounds/CB-2026-06-26-1W"
         },
         {
-          "href": "/rounds/CB-2026-06-25-1M",
+          "href": "/rounds/CB-2026-06-26-1M",
           "label": "Monthly live round",
-          "source": "rounds/CB-2026-06-25-1M"
+          "source": "rounds/CB-2026-06-26-1M"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
-      "id": "active-positioning-2026-06-25",
+      "generated_at": "2026-06-27T02:55:03Z",
+      "id": "active-positioning-2026-06-26",
       "importance_score": 78.0,
       "related": [
         {
@@ -1049,8 +1049,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Across the newest live weekly and monthly portfolios, Semiconductors (SMH) is the largest aggregate allocation at +22.00%.",
-      "title": "Live AI portfolios are concentrated in Semiconductors (SMH)",
+      "summary": "Across the newest live weekly and monthly portfolios, Healthcare Sector (XLV) is the largest aggregate allocation at +29.00%.",
+      "title": "Live AI portfolios are concentrated in Healthcare Sector (XLV)",
       "why_it_matters": "This shows the current crowding point in model capital allocation, before the open rounds receive their final market scores."
     },
     {
@@ -1126,7 +1126,7 @@
           "source": "weekly_performance.csv"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
+      "generated_at": "2026-06-27T02:55:03Z",
       "id": "live-path-2026-06-25",
       "importance_score": 77.0,
       "related": [
@@ -1151,29 +1151,29 @@
           "formula": "cosine similarity between live allocation vectors",
           "name": "closest_pair_cosine_similarity",
           "unit": "ratio",
-          "value": 0.8332
+          "value": 0.8838
         },
         {
           "formula": "1 - average cosine similarity versus other live model allocation vectors",
           "name": "outlier_average_distance",
           "unit": "ratio",
-          "value": 0.5375
+          "value": 0.4057
         }
       ],
       "category": "model_similarity",
       "confidence": "high",
       "context": {
-        "data_as_of": "2026-06-25",
+        "data_as_of": "2026-06-26",
         "decision_dates": [
-          "2026-06-25",
-          "2026-06-25"
+          "2026-06-26",
+          "2026-06-26"
         ],
         "model_count": 10,
         "primary_label": "Latest live portfolios",
         "round_count": 2,
         "round_ids": [
-          "CB-2026-06-25-1W",
-          "CB-2026-06-25-1M"
+          "CB-2026-06-26-1W",
+          "CB-2026-06-26-1M"
         ],
         "scope": "live_rounds",
         "status": "active",
@@ -1181,7 +1181,7 @@
         "track": "weekly_monthly",
         "track_label": "Weekly + Monthly"
       },
-      "data_as_of": "2026-06-25",
+      "data_as_of": "2026-06-26",
       "date": "2026-06-27",
       "evidence": [
         {
@@ -1190,8 +1190,8 @@
           "source": "live parsed submissions"
         }
       ],
-      "generated_at": "2026-06-27T02:00:26Z",
-      "id": "model-similarity-2026-06-25",
+      "generated_at": "2026-06-27T02:55:03Z",
+      "id": "model-similarity-2026-06-26",
       "importance_score": 76.0,
       "related": [
         {
@@ -1201,7 +1201,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The closest live allocation pair is Claude Opus 4.7 and Claude Opus 4.8 with +83.32% cosine similarity. The current allocation outlier is Gemini 3.1 Pro.",
+      "summary": "The closest live allocation pair is Claude Opus 4.7 and Gemini 3.1 Pro with +88.38% cosine similarity. The current allocation outlier is Claude Opus 4.8.",
       "title": "Live model portfolios are tightly clustered",
       "why_it_matters": "Similarity analysis shows whether models are independently converging on the same portfolio or expressing meaningfully different capital-allocation behavior."
     }

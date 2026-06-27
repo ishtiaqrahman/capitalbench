@@ -1,0 +1,52 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "A sharp rebound in semiconductors/AI mega-caps could cause the S&P 500 benchmark to outrun this defensively tilted portfolio.",
+    "July 2 jobs report surprise could whipsaw regional banks and mid-caps on rate repricing.",
+    "Healthcare rally could mean-revert after sharp 7d/30d gains if EMA optimism fades.",
+    "Strait of Hormuz escalation could spike volatility and pressure cyclical holdings."
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare led the market on June 26 (+7.8% 7d) on EMA approval news; defensive low-beta with positive catalyst momentum and at 52w high, supported by the briefing's EMA committee recommendation fact."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "KRE strong (+5.4% 7d, at 52w high) amid steepening curve and benign claims; positioning supported by improving macro and rate context, not price alone."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive low-beta factor (+3.85% 7d) cushions against AI/tech-led index drawdown into the July 2 jobs report week."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "MID_CAP",
+      "rationale": "Mid caps showed broad-based strength (+0.58% 7d, near 52w high) with healthier breadth than mega-cap indexes; benefits from solid macro data."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like buffer ahead of July 2 jobs report and holiday-shortened week to limit volatility exposure."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward defensive and broadening-breadth segments (healthcare catalyst, regional banks, low-vol, mid-caps) while avoiding the AI/semiconductor weakness dragging cap-weighted indexes, with a short-duration buffer into a jobs-report and holiday week.",
+  "provider": "anthropic",
+  "rationale_summary": "Favor catalyst-supported healthcare and breadth-positive non-mega-cap exposure over AI-heavy indexes, with defensive cushioning.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-26-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 23418,
+    "latency_seconds": 13.431589236017317,
+    "output_tokens": 841,
+    "total_tokens": 24259
+  }
+}

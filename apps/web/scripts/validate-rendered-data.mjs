@@ -3055,7 +3055,7 @@ for (const round of apiReadModel.rounds) {
     for (const row of [...returns].sort((left, right) => left.rank - right.rank).slice(0, 12)) {
       const returnContext = `${context} realized return ${row.option_id}`;
       includes(html, row.option_id, returnContext);
-      includes(html, row.label, `${returnContext} label`);
+      includesAny(html, htmlTextVariants(row.label), `${returnContext} label`);
       if (row.ticker) includes(html, row.ticker, `${returnContext} ticker`);
       includes(html, percentPointLabel(row.return_pct), `${returnContext} return`);
       if (row.entry_price !== null && row.entry_price !== undefined) {

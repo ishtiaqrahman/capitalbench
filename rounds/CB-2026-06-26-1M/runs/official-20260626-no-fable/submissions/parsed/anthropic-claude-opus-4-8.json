@@ -1,0 +1,53 @@
+{
+  "confidence": 0.58,
+  "is_official_score": true,
+  "key_risks": [
+    "AI/semiconductor rebound could cause cap-weighted indexes to outperform this defensive tilt, generating negative alpha vs SPY",
+    "Hot June CPI (July 14) or weak jobs report could pressure rate-sensitive financials and broad equities",
+    "Healthcare leadership may reverse if EMA catalyst fades or drug-pricing policy headlines emerge",
+    "Geopolitical escalation after US strike on Iran could spike volatility and hit cyclicals like industrials and financials"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare led the market on positive EMA regulatory catalysts, has low beta (0.38) and is near 52w highs; defensive with fundamental support amid AI-stock weakness."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "FINANCIALS",
+      "rationale": "Financials and regional banks show broadening leadership with strong benchmark-relative returns; firming yields and steepening curve plus solid GDP/claims data support."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "INDUSTRIALS",
+      "rationale": "Strong flash manufacturing PMI (59-month high output) and cyclical broadening support industrials; positive 30d alpha and near highs."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Two-thirds of S&P stocks rose while cap-weighted indexes were dragged by AI names; equal-weight captures the broadening and avoids mega-cap semis concentration risk."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "LOW_VOL",
+      "rationale": "Low-vol factor (beta 0.08) is near highs with positive alpha; defensive ballast against AI/tech drawdown risk and a heavy macro data calendar."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward defensive and broadening leadership (healthcare, financials, industrials, equal-weight, low-vol) given AI/semiconductor weakness dragging cap-weighted indexes while two-thirds of S&P stocks rose, with low-beta ballast ahead of CPI/jobs/FOMC-minutes catalysts.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight sectors with current leadership and fundamental catalysts (healthcare regulatory, financials/curve, industrials PMI) plus equal-weight and low-vol to capture market breadth while limiting mega-cap AI drawdown exposure.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-26-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 23418,
+    "latency_seconds": 13.986910325009376,
+    "output_tokens": 907,
+    "total_tokens": 24325
+  }
+}
