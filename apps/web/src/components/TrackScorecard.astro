@@ -118,7 +118,6 @@ function scoreColumnClass(row: TrackScorecardNormalizedRow): string {
 const provisionalScoreRows = scorecard.normalizedRows.filter((row) => row.kind === "model" && !row.isRankEligible);
 const scoreRows = scorecard.normalizedRows.filter((row) => row.kind !== "model" || row.isRankEligible);
 const rankedModelCount = scoreRows.filter((row) => row.kind === "model").length;
-const hasNegativeScoreRows = scoreRows.some((row) => row.averageScore < 0);
 const rankedModelLabel = isComparisonSet
   ? `${rankedModelCount} equal-run model${rankedModelCount === 1 ? "" : "s"} ranked`
   : `${rankedModelCount} full-history model${rankedModelCount === 1 ? "" : "s"} ranked`;
@@ -129,6 +128,13 @@ const scoreDomainMax = Math.max(100, ...scoreValues);
 const scoreZero = valueCoordinate(0, scoreDomainMin, scoreDomainMax);
 const scoreTicks = scoreDomainMin < 0 ? [scoreDomainMin, 0, 50, 100] : [0, 25, 50, 75, 100];
 const scoreMobileBenchmarkNote = "Higher benchmark score is better.";
+const scoreMobileComparableScores = scoreRows
+  .filter((row) => row.kind !== "reference")
+  .map((row) => row.averageScore)
+  .filter(finiteNumber);
+const scoreMobileComparableMin = scoreMobileComparableScores.length ? Math.min(...scoreMobileComparableScores) : 0;
+const scoreMobileComparableMax = scoreMobileComparableScores.length ? Math.max(...scoreMobileComparableScores) : 0;
+const scoreMobileComparableRange = scoreMobileComparableMax - scoreMobileComparableMin;
 
 function scoreVerticalBarStyle(value: number): string {
   const endpoint = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
@@ -143,30 +149,18 @@ function scoreValueStyle(value: number): string {
   return `bottom: calc(${coordinate.toFixed(2)}% + 8px);`;
 }
 
-function scoreMobilePositionStyle(value: number): string {
-  const endpoint = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
-  return `--mobile-zero: ${scoreZero.toFixed(2)}%; --mobile-score-position: ${endpoint.toFixed(2)}%;`;
-}
+function scoreMobileBarStyle(row: TrackScorecardNormalizedRow): string {
+  if (row.kind === "reference") return "width: 100%;";
+  if (scoreMobileComparableRange <= 0.0001) {
+    const fallbackWidth = row.averageScore > 0 ? 64 : row.averageScore < 0 ? 30 : 38;
+    return `width: ${fallbackWidth.toFixed(2)}%;`;
+  }
 
-function scoreMobileScaleStyle(): string {
-  return `--mobile-zero: ${scoreZero.toFixed(2)}%;`;
-}
-
-function scoreMobileStateClass(value: number): string {
-  if (value < -0.00001) return "score-mobile-rank-row-negative";
-  if (value > 0.00001) return "score-mobile-rank-row-positive";
-  return "score-mobile-rank-row-zero";
-}
-
-function scoreMobileScoreLabel(): string {
-  return "Benchmark score";
-}
-
-function scoreMobileRankLabel(row: TrackScorecardNormalizedRow, index: number): string {
-  if (row.kind === "reference") return "REF";
-  if (row.kind === "benchmark") return "IDX";
-  const modelRank = scoreRows.slice(0, index + 1).filter((item) => item.kind === "model").length;
-  return `#${modelRank}`;
+  const normalized = valueCoordinate(row.averageScore, scoreMobileComparableMin, scoreMobileComparableMax);
+  const minimumWidth = 10;
+  const maximumWidth = scoreMobileComparableMax <= 0 ? 48 : scoreMobileComparableMin >= 0 ? 88 : 78;
+  const width = minimumWidth + (normalized / 100) * (maximumWidth - minimumWidth);
+  return `width: ${width.toFixed(2)}%;`;
 }
 
 function scoreLabelTitle(row: TrackScorecardNormalizedRow): string {
@@ -284,19 +278,10 @@ const scorecardBadgeItems = [
           </div>
 
           <div class="score-mobile-rank-chart" aria-label={`${scorecard.label} CapitalBench Score mobile chart`}>
-            {hasNegativeScoreRows && (
-              <p class="score-mobile-rank-note">
-                <strong>Benchmark score</strong>
-                <span>{scoreMobileBenchmarkNote}</span>
-              </p>
-            )}
-            {hasNegativeScoreRows && (
-              <div class="score-mobile-rank-scale" style={scoreMobileScaleStyle()} aria-hidden="true">
-                <span>Below 0</span>
-                <span>0</span>
-                <span>100</span>
-              </div>
-            )}
+            <p class="score-mobile-rank-note">
+              <strong>Benchmark score</strong>
+              <span>{scoreMobileBenchmarkNote}</span>
+            </p>
             {scoreRows.map((row, index) => (
               <article
                 class={`score-mobile-rank-row score-mobile-rank-row-${row.kind} ${
@@ -305,11 +290,10 @@ const scorecardBadgeItems = [
                   row.kind === "model" && focusModelId === row.key ? "score-mobile-rank-row-focused" : ""
                 } ${
                   row.kind === "model" && !row.isRankEligible ? "score-mobile-rank-row-provisional" : ""
-                } ${scoreMobileStateClass(row.averageScore)}`}
+                }`}
               >
                 <div class="score-mobile-rank-head">
                   <div>
-                    <span class="score-mobile-rank-badge">{scoreMobileRankLabel(row, index)}</span>
                     {row.kind === "model" && row.logoSrc ? (
                       <span class="score-chart-logo-shell">
                         <img class="score-chart-logo" src={row.logoSrc} alt={row.providerLabel ?? row.label} width="40" height="40" loading="eager" />
@@ -324,14 +308,10 @@ const scorecardBadgeItems = [
                       <em>{rowMeta(row)}</em>
                     </span>
                   </div>
-                  <span class="score-mobile-rank-score">
-                    <small>{scoreMobileScoreLabel()}</small>
-                    <strong>{scoreLabel(row.averageScore)}</strong>
-                  </span>
+                  <strong>{scoreLabel(row.averageScore)}</strong>
                 </div>
-                <div class="score-mobile-rank-track" style={scoreMobilePositionStyle(row.averageScore)} aria-hidden="true">
-                  <span class="score-mobile-rank-zero"></span>
-                  <span class={`score-mobile-rank-marker ${scoreBarClass(row, index)}`}></span>
+                <div class="score-mobile-rank-track" aria-hidden="true">
+                  <span class={`score-mobile-rank-fill ${scoreBarClass(row, index)}`} style={scoreMobileBarStyle(row)}></span>
                 </div>
               </article>
             ))}
