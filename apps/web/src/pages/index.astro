@@ -154,6 +154,8 @@ const riskPulseTopAssets = currentRiskPulse.top_assets.slice(0, 6);
 const riskPulseRegimes = currentRiskPulse.regime_exposure.slice(0, 5);
 const riskChangeValue = Number(currentRiskPulse.change_from_previous);
 const riskCurrentDateLabel = pairedPulseDateLabel(currentRiskPulse.weekly?.decision_date, currentRiskPulse.monthly?.decision_date);
+const riskCurrentFullDateLabel = pairedPulseFullDateLabel(currentRiskPulse.weekly?.decision_date, currentRiskPulse.monthly?.decision_date);
+const riskPositioningDateLabel = riskCurrentFullDateLabel ? `As of ${riskCurrentFullDateLabel}` : "Latest live portfolios";
 const riskPreviousDateLabel = pairedPulseDateLabel(
   dateFromRoundId(currentRiskPulse.previous_round_ids?.weekly),
   dateFromRoundId(currentRiskPulse.previous_round_ids?.monthly)
@@ -384,6 +386,15 @@ function shortMonthDay(value?: string): string {
   );
 }
 
+function longMonthDayYear(value?: string): string {
+  if (!value) return "";
+  const [year, month, day] = value.slice(0, 10).split("-").map(Number);
+  if (!year || !month || !day) return dateOnly(value);
+  return new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(
+    new Date(Date.UTC(year, month - 1, day))
+  );
+}
+
 function dateFromRoundId(roundId?: string | null): string {
   const match = roundId?.match(/^CB-(\d{4}-\d{2}-\d{2})-/);
   return match?.[1] ?? "";
@@ -392,6 +403,14 @@ function dateFromRoundId(roundId?: string | null): string {
 function pairedPulseDateLabel(weeklyDate?: string, monthlyDate?: string): string {
   const weekly = shortMonthDay(weeklyDate);
   const monthly = shortMonthDay(monthlyDate);
+  if (weekly && monthly && weekly === monthly) return weekly;
+  if (weekly && monthly) return `${weekly} weekly + ${monthly} monthly`;
+  return weekly || monthly || "";
+}
+
+function pairedPulseFullDateLabel(weeklyDate?: string, monthlyDate?: string): string {
+  const weekly = longMonthDayYear(weeklyDate);
+  const monthly = longMonthDayYear(monthlyDate);
   if (weekly && monthly && weekly === monthly) return weekly;
   if (weekly && monthly) return `${weekly} weekly + ${monthly} monthly`;
   return weekly || monthly || "";
@@ -746,16 +765,19 @@ const trackLaneCards = trackStates.map((track) => {
   <section class="ai-positioning-summary" aria-label="Current AI positioning highlights">
     <article>
       <span>AI risk appetite</span>
+      <span class="ai-positioning-date">{riskPositioningDateLabel}</span>
       <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
       <em>{currentRiskPulse.label} / {currentRiskPulse.regime}</em>
     </article>
     <article>
       <span>Consensus allocation</span>
+      <span class="ai-positioning-date">{riskPositioningDateLabel}</span>
       <strong>{assetLabelWithTicker(riskPulseTopAssets[0])}</strong>
       <em>{riskPulseTopAssets[0] ? `${pctValue(riskPulseTopAssets[0].allocation_pct)} average live weight` : "No live allocation"}</em>
     </article>
     <article>
       <span>Risk shift</span>
+      <span class="ai-positioning-date">{riskPositioningDateLabel}</span>
       <strong class:list={{ "is-negative": Number(currentRiskPulse.change_from_previous) < 0 }}>
         {signedPulseChange(currentRiskPulse.change_from_previous)}
       </strong>
@@ -763,6 +785,7 @@ const trackLaneCards = trackStates.map((track) => {
     </article>
     <article>
       <span>Model agreement</span>
+      <span class="ai-positioning-date">{riskPositioningDateLabel}</span>
       <strong>{currentRiskPulse.agreement.label}</strong>
       <em>{pulseScore(currentRiskPulse.agreement.standard_deviation)} point dispersion</em>
     </article>

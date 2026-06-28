@@ -118,16 +118,17 @@ function scoreColumnClass(row: TrackScorecardNormalizedRow): string {
 const provisionalScoreRows = scorecard.normalizedRows.filter((row) => row.kind === "model" && !row.isRankEligible);
 const scoreRows = scorecard.normalizedRows.filter((row) => row.kind !== "model" || row.isRankEligible);
 const rankedModelCount = scoreRows.filter((row) => row.kind === "model").length;
+const hasNegativeScoreRows = scoreRows.some((row) => row.averageScore < 0);
 const rankedModelLabel = isComparisonSet
   ? `${rankedModelCount} equal-run model${rankedModelCount === 1 ? "" : "s"} ranked`
   : `${rankedModelCount} full-history model${rankedModelCount === 1 ? "" : "s"} ranked`;
 const shortHistoryLabel = `${provisionalScoreRows.length} short-history model${provisionalScoreRows.length === 1 ? "" : "s"} separated`;
 const scoreValues = scoreRows.map((row) => row.averageScore).filter(finiteNumber);
-const scoreMobileMagnitudeMax = Math.max(100, ...scoreValues.map((value) => Math.abs(value)));
 const scoreDomainMin = Math.min(0, ...scoreValues);
 const scoreDomainMax = Math.max(100, ...scoreValues);
 const scoreZero = valueCoordinate(0, scoreDomainMin, scoreDomainMax);
 const scoreTicks = scoreDomainMin < 0 ? [scoreDomainMin, 0, 50, 100] : [0, 25, 50, 75, 100];
+const scoreMobileBenchmarkNote = "Higher benchmark score is better.";
 
 function scoreVerticalBarStyle(value: number): string {
   const endpoint = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
@@ -142,9 +143,30 @@ function scoreValueStyle(value: number): string {
   return `bottom: calc(${coordinate.toFixed(2)}% + 8px);`;
 }
 
-function scoreMobileBarStyle(value: number): string {
-  const width = Math.min(100, Math.max(2, (Math.abs(value) / scoreMobileMagnitudeMax) * 100));
-  return `width: ${width.toFixed(2)}%;`;
+function scoreMobilePositionStyle(value: number): string {
+  const endpoint = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
+  return `--mobile-zero: ${scoreZero.toFixed(2)}%; --mobile-score-position: ${endpoint.toFixed(2)}%;`;
+}
+
+function scoreMobileScaleStyle(): string {
+  return `--mobile-zero: ${scoreZero.toFixed(2)}%;`;
+}
+
+function scoreMobileStateClass(value: number): string {
+  if (value < -0.00001) return "score-mobile-rank-row-negative";
+  if (value > 0.00001) return "score-mobile-rank-row-positive";
+  return "score-mobile-rank-row-zero";
+}
+
+function scoreMobileScoreLabel(): string {
+  return "Benchmark score";
+}
+
+function scoreMobileRankLabel(row: TrackScorecardNormalizedRow, index: number): string {
+  if (row.kind === "reference") return "REF";
+  if (row.kind === "benchmark") return "IDX";
+  const modelRank = scoreRows.slice(0, index + 1).filter((item) => item.kind === "model").length;
+  return `#${modelRank}`;
 }
 
 function scoreLabelTitle(row: TrackScorecardNormalizedRow): string {
@@ -262,6 +284,19 @@ const scorecardBadgeItems = [
           </div>
 
           <div class="score-mobile-rank-chart" aria-label={`${scorecard.label} CapitalBench Score mobile chart`}>
+            {hasNegativeScoreRows && (
+              <p class="score-mobile-rank-note">
+                <strong>Benchmark score</strong>
+                <span>{scoreMobileBenchmarkNote}</span>
+              </p>
+            )}
+            {hasNegativeScoreRows && (
+              <div class="score-mobile-rank-scale" style={scoreMobileScaleStyle()} aria-hidden="true">
+                <span>Below 0</span>
+                <span>0</span>
+                <span>100</span>
+              </div>
+            )}
             {scoreRows.map((row, index) => (
               <article
                 class={`score-mobile-rank-row score-mobile-rank-row-${row.kind} ${
@@ -270,10 +305,11 @@ const scorecardBadgeItems = [
                   row.kind === "model" && focusModelId === row.key ? "score-mobile-rank-row-focused" : ""
                 } ${
                   row.kind === "model" && !row.isRankEligible ? "score-mobile-rank-row-provisional" : ""
-                }`}
+                } ${scoreMobileStateClass(row.averageScore)}`}
               >
                 <div class="score-mobile-rank-head">
                   <div>
+                    <span class="score-mobile-rank-badge">{scoreMobileRankLabel(row, index)}</span>
                     {row.kind === "model" && row.logoSrc ? (
                       <span class="score-chart-logo-shell">
                         <img class="score-chart-logo" src={row.logoSrc} alt={row.providerLabel ?? row.label} width="40" height="40" loading="eager" />
@@ -288,10 +324,14 @@ const scorecardBadgeItems = [
                       <em>{rowMeta(row)}</em>
                     </span>
                   </div>
-                  <strong>{scoreLabel(row.averageScore)}</strong>
+                  <span class="score-mobile-rank-score">
+                    <small>{scoreMobileScoreLabel()}</small>
+                    <strong>{scoreLabel(row.averageScore)}</strong>
+                  </span>
                 </div>
-                <div class="score-mobile-rank-track" aria-hidden="true">
-                  <span class={`score-mobile-rank-fill ${scoreBarClass(row, index)}`} style={scoreMobileBarStyle(row.averageScore)}></span>
+                <div class="score-mobile-rank-track" style={scoreMobilePositionStyle(row.averageScore)} aria-hidden="true">
+                  <span class="score-mobile-rank-zero"></span>
+                  <span class={`score-mobile-rank-marker ${scoreBarClass(row, index)}`}></span>
                 </div>
               </article>
             ))}
