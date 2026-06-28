@@ -1,4 +1,13 @@
 ---
+import {
+  CalendarDays,
+  ClipboardCheck,
+  Gauge,
+  GitCompareArrows,
+  ShieldCheck,
+  Target
+} from "lucide-react";
+
 type BenchmarkTrack = "weekly" | "monthly";
 
 interface Props {
@@ -55,6 +64,15 @@ function availableBaselineLabels(trackSummary: any): string {
   return labels.length ? labels.join(", ") : "Not enough completed data";
 }
 
+const factIcons = {
+  evidence: ShieldCheck,
+  trackEvidence: CalendarDays,
+  equalRun: GitCompareArrows,
+  protocol: ClipboardCheck,
+  scoreScale: Gauge,
+  baselines: Target
+};
+
 function evidenceFacts(trackSummary: any, set: any) {
   const trackName = trackLabel(trackSummary.track);
   const maturity = maturityForSet(trackSummary, set);
@@ -78,31 +96,43 @@ function evidenceFacts(trackSummary: any, set: any) {
 
   return [
     {
+      key: "evidence",
+      icon: factIcons.evidence,
       label: "Evidence level",
       value: maturity?.label ?? "Not available",
       detail: maturity?.description ?? "Evidence level appears after completed results exist."
     },
     {
+      key: "track-evidence",
+      icon: factIcons.trackEvidence,
       label: set ? "Set evidence" : `${trackName} evidence`,
       value: evidenceCount,
       detail: qualificationLabel
     },
     {
+      key: "equal-run",
+      icon: factIcons.equalRun,
       label: "Equal-run comparison",
       value: equalRunLabel,
       detail: "Ranked models are compared only on rounds every model in the roster completed."
     },
     {
+      key: "protocol",
+      icon: factIcons.protocol,
       label: "Protocol",
       value: trackSummary.protocol_mix?.label ?? "Not available",
       detail: trackSummary.protocol_mix?.description ?? "Round protocol appears after scoring."
     },
     {
+      key: "score-scale",
+      icon: factIcons.scoreScale,
       label: "Score scale",
       value: "Oracle-relative",
       detail: "100 means matching the hindsight best asset in the same scored window."
     },
     {
+      key: "baselines",
+      icon: factIcons.baselines,
       label: "Baselines shown",
       value: availableBaselineLabels(trackSummary),
       detail: "Practical references are shown beside the impossible hindsight ceiling when available."
@@ -144,13 +174,17 @@ const panelDescription =
               <strong>{maturity?.label ?? "Not available"}</strong>
             </div>
             <div class="benchmark-evidence-facts">
-              {facts.map((fact) => (
-                <div>
-                  <span>{fact.label}</span>
+              {facts.map((fact) => {
+                const Icon = fact.icon;
+                return (
+                <div class={`benchmark-evidence-fact benchmark-evidence-fact-${fact.key}`}>
+                  <span class="benchmark-evidence-icon" aria-hidden="true"><Icon size={24} strokeWidth={2.1} /></span>
+                  <span class="benchmark-evidence-label">{fact.label}</span>
                   <strong>{fact.value}</strong>
                   <em>{fact.detail}</em>
                 </div>
-              ))}
+                );
+              })}
             </div>
             <p class="benchmark-evidence-caveat">{trackSummary.caveat}</p>
           </article>

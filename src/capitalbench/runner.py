@@ -137,7 +137,7 @@ def run_round(
                 raw_file = run_paths.raw_dir / f"{filename_stem}.json"
                 parsed_file = run_paths.parsed_dir / f"{filename_stem}.json"
                 raw_response_file = run_paths.raw_responses_dir / f"{filename_stem}.txt"
-                raw_response_file.write_text(result.raw_text, encoding="utf-8")
+                raw_response_file.write_text(result.raw_text, encoding="utf-8", newline="")
                 write_json(raw_file, raw_payload)
 
                 validation_status = "invalid"
@@ -172,7 +172,7 @@ def run_round(
                             completed_at_utc=completed_at,
                             usage=result.usage,
                             raw_response_sha256=raw_response_sha256,
-                            raw_response_path=str(raw_response_file.relative_to(run_paths.run_path)),
+                            raw_response_path=raw_response_file.relative_to(run_paths.run_path).as_posix(),
                             validation_status=validation_status,
                             error=validation_error,
                             run_type=selected_run_type,

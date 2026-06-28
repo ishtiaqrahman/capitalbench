@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import test from "node:test";
 import {
@@ -638,7 +639,7 @@ test("campaign CLI dry-run renders a local campaign file", async () => {
       "CapitalBench update",
       "--dry-run"
     ],
-    { cwd: new URL("..", import.meta.url).pathname }
+    { cwd: fileURLToPath(new URL("..", import.meta.url)) }
   );
   const result = JSON.parse(stdout);
   assert.equal(result.ok, true);

@@ -2489,7 +2489,7 @@ if (
 }
 
 includes(indexHtml, "The live benchmark for AI capital allocation", "homepage hero title");
-includes(indexHtml, "See what AI is buying, what it avoids, and which models actually perform.", "homepage hero positioning copy");
+includes(indexHtml, "Study how AI models behave in live capital-allocation rounds, and which ones actually perform.", "homepage hero positioning copy");
 includes(indexHtml, "View latest AI positioning", "homepage hero positioning CTA");
 includes(indexHtml, "Get score alerts", "homepage hero score alert CTA");
 includes(indexHtml, "Request API access", "homepage hero API CTA");

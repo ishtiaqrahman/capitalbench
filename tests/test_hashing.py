@@ -26,6 +26,6 @@ def test_hashing_determinism(tmp_path: Path) -> None:
 
     assert first == second == written
     assert read_json(round_path / "hashes.json") == first
-    expected_briefing_hash = hashlib.sha256(files["briefing.md"].encode("utf-8")).hexdigest()
+    expected_briefing_hash = hashlib.sha256((round_path / "briefing.md").read_bytes()).hexdigest()
     assert first["files"]["briefing.md"] == expected_briefing_hash
     assert "market_data/universe_trailing_returns.md" in first["files"]
