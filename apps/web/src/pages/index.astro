@@ -118,14 +118,14 @@ function buildTrackState(
 }
 
 const trackStates = [
-  buildTrackState("weekly", "Weekly", "One-week test", latestWeeklyRound, weeklyRounds.length),
-  buildTrackState("monthly", "Monthly", "One-month test", latestMonthlyRound, monthlyRounds.length)
+  buildTrackState("monthly", "Monthly", "One-month test", latestMonthlyRound, monthlyRounds.length),
+  buildTrackState("weekly", "Weekly", "One-week test", latestWeeklyRound, weeklyRounds.length)
 ];
 const weeklyScorecard = benchmarkSetToScorecard(featuredBenchmarkSet(apiReadModel, "weekly")) as TrackScorecardData | null;
 const monthlyScorecard = benchmarkSetToScorecard(featuredBenchmarkSet(apiReadModel, "monthly")) as TrackScorecardData | null;
 const aggregateScorecards = [
-  weeklyScorecard,
-  monthlyScorecard
+  monthlyScorecard,
+  weeklyScorecard
 ].filter((scorecard): scorecard is NonNullable<typeof scorecard> => scorecard !== null);
 
 const latestOfficialResultTracks = buildLatestOfficialResultTracks(roundRows);
@@ -175,7 +175,7 @@ const riskChangeDirection =
   riskCurrentDateLabel &&
   riskPreviousDateLabel
     ? `${riskCurrentDateLabel} portfolios scored ${pulseScore(currentRiskPulse.score)}/100 for risk-taking, ${riskChangeVerb} from ${pulseScore(riskPreviousScore)}/100 on ${riskPreviousDateLabel}.`
-    : "No earlier weekly + monthly portfolio set is available for comparison yet.";
+    : "No earlier monthly + weekly portfolio set is available for comparison yet.";
 const riskCalculationHref = "/risk-appetite/#risk-calculation-title";
 const riskChangeClass =
   Number.isFinite(riskChangeValue) && riskChangeValue > 0
@@ -294,20 +294,20 @@ const heroTestSteps = [
   {
     icon: LockKeyhole,
     label: "3",
-    title: "Portfolios freeze",
-    description: "Each model saves one portfolio."
+    title: "First portfolio locks",
+    description: "Each model's saved portfolio is frozen before results are known."
   },
   {
     icon: TimerReset,
     label: "4",
-    title: "We wait",
-    description: "The round runs for 7 days or 1 month."
+    title: "Fixed wait window",
+    description: "The frozen portfolio sits untouched for 7 days or 1 month."
   },
   {
     icon: LineChart,
     label: "5",
     title: "Prices score it",
-    description: "Real market prices show which model did best."
+    description: "Real ending prices decide which model did best."
   }
 ];
 const howItWorks = [
@@ -404,16 +404,16 @@ function pairedPulseDateLabel(weeklyDate?: string, monthlyDate?: string): string
   const weekly = shortMonthDay(weeklyDate);
   const monthly = shortMonthDay(monthlyDate);
   if (weekly && monthly && weekly === monthly) return weekly;
-  if (weekly && monthly) return `${weekly} weekly + ${monthly} monthly`;
-  return weekly || monthly || "";
+  if (weekly && monthly) return `${monthly} monthly + ${weekly} weekly`;
+  return monthly || weekly || "";
 }
 
 function pairedPulseFullDateLabel(weeklyDate?: string, monthlyDate?: string): string {
   const weekly = longMonthDayYear(weeklyDate);
   const monthly = longMonthDayYear(monthlyDate);
   if (weekly && monthly && weekly === monthly) return weekly;
-  if (weekly && monthly) return `${weekly} weekly + ${monthly} monthly`;
-  return weekly || monthly || "";
+  if (weekly && monthly) return `${monthly} monthly + ${weekly} weekly`;
+  return monthly || weekly || "";
 }
 
 function lockDateLabel(round?: RoundRecord): string {
@@ -575,14 +575,13 @@ const trackLaneCards = trackStates.map((track) => {
   <section class="home-hero" aria-labelledby="home-title">
     <div class="home-hero-copy">
       <p class="eyebrow">CapitalBench</p>
-      <h1 id="home-title">The live benchmark for AI capital allocation</h1>
+      <h1 id="home-title">The benchmark for AI capital allocation</h1>
       <p class="home-hero-lede">
         We give frontier AI models the same market brief, freeze their portfolios, and score them against real market returns.
       </p>
       <p class="home-hero-sublede">
-        Study how AI models behave in live capital-allocation rounds, and which ones actually perform.
+        Study how AI models behave in capital-allocation rounds, and which ones actually perform.
       </p>
-      <p class="hero-disclaimer">Research benchmark. Not financial advice.</p>
       <a class="hero-manifesto-link" href="/manifesto">Read the CapitalBench Manifesto</a>
 
       <div class="home-hero-actions" aria-label="Project resources">
@@ -630,7 +629,7 @@ const trackLaneCards = trackStates.map((track) => {
 
       <div class="hero-positioning-source" aria-label="Risk-taking score source">
         <span>Source</span>
-        <strong>Latest weekly + monthly live portfolios</strong>
+        <strong>Latest monthly + weekly live portfolios</strong>
         <em>{outstandingBookRisk.portfolio_count} model portfolios across {outstandingBookRisk.round_count} live rounds</em>
       </div>
 
@@ -655,7 +654,7 @@ const trackLaneCards = trackStates.map((track) => {
 
   <BenchmarkEvidencePanel
     evidence={apiReadModel.benchmark_evidence}
-    tracks={["weekly", "monthly"]}
+    tracks={["monthly", "weekly"]}
     title="How Much Evidence Is Behind These Scores?"
   />
 
@@ -676,23 +675,18 @@ const trackLaneCards = trackStates.map((track) => {
         const Icon = step.icon;
         return (
         <li>
-          <span class="benchmark-process-index">{step.label}</span>
-          <div>
-            <strong>
-              <Icon size={15} aria-hidden="true" />
-              {step.title}
-            </strong>
+          <span class="benchmark-process-node">
+            <Icon size={20} aria-hidden="true" />
+          </span>
+          <div class="benchmark-process-copy">
+            <span class="benchmark-process-index">Step {step.label}</span>
+            <strong>{step.title}</strong>
             <p>{step.description}</p>
           </div>
         </li>
         );
       })}
     </ol>
-
-    <div class="benchmark-process-note">
-      <strong>No after-the-fact edits.</strong>
-      <span>Portfolios are frozen first. Results appear only after the scoring window ends.</span>
-    </div>
   </section>
 
   <div class="home-hero-console hero-positioning-card hero-positioning-card-mobile" aria-label="Current AI positioning snapshot">
@@ -730,7 +724,7 @@ const trackLaneCards = trackStates.map((track) => {
 
     <div class="hero-positioning-source" aria-label="Risk-taking score source">
       <span>Source</span>
-      <strong>Latest weekly + monthly live portfolios</strong>
+      <strong>Latest monthly + weekly live portfolios</strong>
       <em>{outstandingBookRisk.portfolio_count} model portfolios across {outstandingBookRisk.round_count} live rounds</em>
     </div>
 
@@ -842,7 +836,7 @@ const trackLaneCards = trackStates.map((track) => {
         <span class="panel-kicker">Current allocation signal</span>
         <h3 id="live-risk-pulse-title">AI Risk Appetite</h3>
         <p>
-          Latest weekly and monthly portfolios, equal-weighted by track. This measures current model positioning, not
+          Latest monthly and weekly portfolios, equal-weighted by track. This measures current model positioning, not
           market returns or a trading recommendation.
         </p>
       </div>
@@ -860,7 +854,7 @@ const trackLaneCards = trackStates.map((track) => {
           <span>Current regime</span>
           <strong>{currentRiskPulse.regime}</strong>
           <small>
-            {currentRiskPulse.weekly?.round_id} and {currentRiskPulse.monthly?.round_id}
+            {currentRiskPulse.monthly?.round_id} and {currentRiskPulse.weekly?.round_id}
           </small>
         </div>
         <div class="live-risk-pulse-meter" aria-label={`Current AI Risk Appetite ${pulseScore(currentRiskPulse.score)} out of 100`}>
@@ -880,14 +874,14 @@ const trackLaneCards = trackStates.map((track) => {
 
       <div class="live-risk-pulse-stats">
         <article>
-          <span>Weekly tactical</span>
-          <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.weekly?.score)}<small>/100</small></strong>
-          <small>{currentRiskPulse.weekly?.label}</small>
-        </article>
-        <article>
           <span>Monthly strategic</span>
           <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.monthly?.score)}<small>/100</small></strong>
           <small>{currentRiskPulse.monthly?.label}</small>
+        </article>
+        <article>
+          <span>Weekly tactical</span>
+          <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.weekly?.score)}<small>/100</small></strong>
+          <small>{currentRiskPulse.weekly?.label}</small>
         </article>
         <article>
           <span>Change</span>
@@ -934,7 +928,7 @@ const trackLaneCards = trackStates.map((track) => {
         <em>{outstandingBookRisk.label}</em>
         <p>
           All {outstandingBookRisk.portfolio_count} unresolved portfolios across {outstandingBookRisk.round_count}
-          rounds. This slower exposure measure can differ from the newest weekly and monthly decisions.
+          rounds. This slower exposure measure can differ from the newest monthly and weekly decisions.
         </p>
       </aside>
     </div>
@@ -1002,7 +996,7 @@ const trackLaneCards = trackStates.map((track) => {
         <div class="current-setup-detail-head">
           <div>
             <span class="panel-kicker">Live rounds waiting for results</span>
-            <strong>Latest weekly and monthly rounds</strong>
+            <strong>Latest monthly and weekly rounds</strong>
           </div>
           <span class="current-setup-count-badge">{pendingRoundCount} live total</span>
         </div>
@@ -1206,11 +1200,11 @@ const trackLaneCards = trackStates.map((track) => {
     <span class="panel-kicker">Model portfolios</span>
     <h2 id="latest-decisions-title">Current Frozen Model Portfolios</h2>
     <p>
-      These are the saved model portfolios for the newest weekly and monthly rounds. They are waiting for final prices.
+      These are the saved model portfolios for the newest monthly and weekly rounds. They are waiting for final prices.
     </p>
   </section>
 
-  <section class="decision-track-grid" aria-label="Latest weekly and monthly model portfolios">
+  <section class="decision-track-grid" aria-label="Latest monthly and weekly model portfolios">
     {trackStates.map((track) => (
       <article class={`decision-track decision-track-${track.key}`}>
         <div class="decision-track-header">
@@ -1332,25 +1326,25 @@ const trackLaneCards = trackStates.map((track) => {
   <section class="leaderboard-lanes" aria-labelledby="leaderboard-lanes-title">
     <div class="leaderboard-lanes-copy">
       <span class="panel-kicker">Results</span>
-      <h2 id="leaderboard-lanes-title">Weekly And Monthly Are Separate</h2>
+      <h2 id="leaderboard-lanes-title">Monthly And Weekly Are Separate</h2>
       <p>
-        A 7-day round and a 1-month round are different contests. They get separate scores and separate overall results.
+        A 1-month round and a 7-day round are different contests. They get separate scores and separate overall results.
       </p>
       <ul class="leaderboard-lanes-principles" aria-label="Track separation rules">
         <li>
-          <strong>Weekly</strong>
-          <span>7-day round</span>
-        </li>
-        <li>
           <strong>Monthly</strong>
           <span>1-month round</span>
+        </li>
+        <li>
+          <strong>Weekly</strong>
+          <span>7-day round</span>
         </li>
         <li>
           <strong>No mixing</strong>
           <span>Scores stay separate</span>
         </li>
       </ul>
-      <div class="leaderboard-lanes-status" aria-label="Current weekly and monthly score state">
+      <div class="leaderboard-lanes-status" aria-label="Current monthly and weekly score state">
         <span class="metric-label">Current score state</span>
         <div class="leaderboard-lanes-status-grid">
           {trackLaneCards.map((track) => (
@@ -1363,7 +1357,7 @@ const trackLaneCards = trackStates.map((track) => {
         </div>
       </div>
     </div>
-    <div class="leaderboard-lane-cards" aria-label="Weekly and monthly result lanes">
+    <div class="leaderboard-lane-cards" aria-label="Monthly and weekly result lanes">
       {trackLaneCards.map((track) => (
         <article class={`leaderboard-lane-card lane-${track.key}`}>
           <div class="leaderboard-lane-card-head">
@@ -1436,7 +1430,7 @@ const trackLaneCards = trackStates.map((track) => {
     </p>
   </section>
 
-  <section class="track-summary live-test-summary" aria-label="Live weekly and monthly benchmark tests">
+  <section class="track-summary live-test-summary" aria-label="Live monthly and weekly benchmark tests">
     {trackStates.map((track) => (
       <article class={`track-card track-card-${track.key} live-test-card`}>
         <div class="track-card-head">
@@ -1559,8 +1553,8 @@ const trackLaneCards = trackStates.map((track) => {
       </p>
     </div>
     <div class="audit-preview-actions">
-      {latestWeeklyRound && <a class="action-link action-primary" href={`/rounds/${latestWeeklyRound.round_id}/`}>Open weekly audit packet</a>}
-      {latestMonthlyRound && <a class="action-link" href={`/rounds/${latestMonthlyRound.round_id}/`}>Open monthly audit packet</a>}
+      {latestMonthlyRound && <a class="action-link action-primary" href={`/rounds/${latestMonthlyRound.round_id}/`}>Open monthly audit packet</a>}
+      {latestWeeklyRound && <a class="action-link" href={`/rounds/${latestWeeklyRound.round_id}/`}>Open weekly audit packet</a>}
       <a class="action-link" href="/rounds">View all rounds</a>
       <a class="action-link" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
         <GitHubLogo size={15} />

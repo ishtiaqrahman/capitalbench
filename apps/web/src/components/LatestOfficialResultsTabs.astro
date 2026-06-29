@@ -16,13 +16,16 @@ const {
   tracks,
   headingKicker = "Latest official results",
   headingTitle = "Finished Benchmark Results",
-  headingDescription = "Switch between weekly and monthly results, then move backward or forward through completed rounds in that track.",
+  headingDescription = "Switch between monthly and weekly results, then move backward or forward through completed rounds in that track.",
   sectionLinkHref = "/leaderboards",
   sectionLinkLabel = "All benchmark results",
   showHeading = true
 } = Astro.props;
-const visibleTracks = tracks.filter((track) => track.results.length > 0);
-const defaultTrack = visibleTracks.find((track) => track.track === "weekly")?.track ?? visibleTracks[0]?.track;
+const trackOrder = { monthly: 0, weekly: 1 };
+const visibleTracks = tracks
+  .filter((track) => track.results.length > 0)
+  .sort((left, right) => trackOrder[left.track] - trackOrder[right.track]);
+const defaultTrack = visibleTracks.find((track) => track.track === "monthly")?.track ?? visibleTracks[0]?.track;
 const showTabs = visibleTracks.length > 1;
 ---
 
@@ -43,7 +46,7 @@ const showTabs = visibleTracks.length > 1;
       class:list={["latest-official-shell", !showTabs && "latest-official-shell-single"]}
       data-latest-official-results
       data-active-track={defaultTrack}
-      aria-label="Latest official weekly and monthly results"
+      aria-label="Latest official monthly and weekly results"
     >
       {showTabs && (
         <div class="latest-official-tabs" role="tablist" aria-label="Choose official result track">

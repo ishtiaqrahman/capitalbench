@@ -212,8 +212,8 @@ function PulseChart({
   const selected = points[selectedIndex];
   const lines = [
     { key: "combined", label: "Combined", color: "#0b1413", value: (point: DecisionHistoryPoint) => point.combined_score },
-    { key: "weekly", label: "Weekly", color: "#087b69", value: (point: DecisionHistoryPoint) => point.weekly_score },
-    { key: "monthly", label: "Monthly", color: "#b47413", value: (point: DecisionHistoryPoint) => point.monthly_score }
+    { key: "monthly", label: "Monthly", color: "#b47413", value: (point: DecisionHistoryPoint) => point.monthly_score },
+    { key: "weekly", label: "Weekly", color: "#087b69", value: (point: DecisionHistoryPoint) => point.weekly_score }
   ];
 
   return (
@@ -223,7 +223,7 @@ function PulseChart({
           <span key={line.key} style={{ "--legend-color": line.color } as CSSProperties}>{line.label}</span>
         ))}
       </div>
-      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Historical combined, weekly, and monthly AI Risk Appetite">
+      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Historical combined, monthly, and weekly AI Risk Appetite">
         {scale.bands.map((band, index) => (
           <rect
             key={band.label}
@@ -449,8 +449,8 @@ function OutstandingChart({
   const selected = points[selectedIndex];
   const lines = [
     { key: "combined", label: "Combined live book", color: "#0b1413", value: (point: OutstandingHistoryPoint) => point.score },
-    { key: "weekly", label: "Weekly exposure", color: "#087b69", value: (point: OutstandingHistoryPoint) => point.weekly_score },
-    { key: "monthly", label: "Monthly exposure", color: "#b47413", value: (point: OutstandingHistoryPoint) => point.monthly_score }
+    { key: "monthly", label: "Monthly exposure", color: "#b47413", value: (point: OutstandingHistoryPoint) => point.monthly_score },
+    { key: "weekly", label: "Weekly exposure", color: "#087b69", value: (point: OutstandingHistoryPoint) => point.weekly_score }
   ];
 
   return (
@@ -531,7 +531,7 @@ export default function RiskAppetiteHistoryChart({ decisionHistory, outstandingH
     if (mode === "agreement") return "Lower dispersion means models are taking similar levels of risk. Higher dispersion means their allocations disagree.";
     if (mode === "regime") return "The same headline score can come from different exposures. This view shows what kind of risk dominates.";
     if (mode === "outstanding") return "All portfolios that had been published and had not reached their scheduled exit date on each decision date.";
-    return "The latest Weekly and Monthly decisions are calculated separately and then receive equal weight in the Combined line.";
+    return "The latest Monthly and Weekly decisions are calculated separately and then receive equal weight in the Combined line.";
   }, [mode]);
 
   if (!decisionHistory.length || !outstandingHistory.length) return null;
@@ -593,8 +593,8 @@ export default function RiskAppetiteHistoryChart({ decisionHistory, outstandingH
                 <span>{decisionPoint.label}</span>
               </div>
               <dl className="risk-history-metrics">
-                <div><dt>Weekly</dt><dd>{score(decisionPoint.weekly_score)}</dd></div>
                 <div><dt>Monthly</dt><dd>{score(decisionPoint.monthly_score)}</dd></div>
+                <div><dt>Weekly</dt><dd>{score(decisionPoint.weekly_score)}</dd></div>
                 <div><dt>Agreement</dt><dd>{decisionPoint.agreement_label}</dd></div>
                 <div><dt>Models</dt><dd>{decisionPoint.model_count}</dd></div>
               </dl>
@@ -608,8 +608,8 @@ export default function RiskAppetiteHistoryChart({ decisionHistory, outstandingH
                 ))}
               </div>
               <div className="risk-history-rounds">
-                <span>{decisionPoint.weekly_round_id ?? "No weekly round yet"}</span>
                 <span>{decisionPoint.monthly_round_id ?? "No monthly round yet"}</span>
+                <span>{decisionPoint.weekly_round_id ?? "No weekly round yet"}</span>
               </div>
             </>
           ) : null}
@@ -627,7 +627,7 @@ export default function RiskAppetiteHistoryChart({ decisionHistory, outstandingH
                 <div><dt>Models</dt><dd>{decisionPoint.model_count}</dd></div>
               </dl>
               <p className="risk-history-inspector-note">
-                Standard deviation is calculated across each model's combined latest Weekly and Monthly score.
+                Standard deviation is calculated across each model's combined latest Monthly and Weekly score.
               </p>
             </>
           ) : null}
@@ -657,15 +657,15 @@ export default function RiskAppetiteHistoryChart({ decisionHistory, outstandingH
                 <span>{outstandingPoint.label}</span>
               </div>
               <dl className="risk-history-metrics">
-                <div><dt>Weekly</dt><dd>{score(outstandingPoint.weekly_score)}</dd></div>
                 <div><dt>Monthly</dt><dd>{score(outstandingPoint.monthly_score)}</dd></div>
+                <div><dt>Weekly</dt><dd>{score(outstandingPoint.weekly_score)}</dd></div>
                 <div><dt>Portfolios</dt><dd>{outstandingPoint.portfolio_count}</dd></div>
                 <div><dt>Live rounds</dt><dd>{outstandingPoint.round_count}</dd></div>
               </dl>
               <div className="risk-history-detail-list">
                 <span>Portfolio mix</span>
-                <div><strong>Weekly portfolios</strong><em>{outstandingPoint.weekly_portfolio_count}</em></div>
                 <div><strong>Monthly portfolios</strong><em>{outstandingPoint.monthly_portfolio_count}</em></div>
+                <div><strong>Weekly portfolios</strong><em>{outstandingPoint.weekly_portfolio_count}</em></div>
               </div>
             </>
           ) : null}

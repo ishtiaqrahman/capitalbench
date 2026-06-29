@@ -106,7 +106,7 @@ export function buildLatestOfficialResultTrack(track: BenchmarkTrack, rounds: Ro
 
 export function buildLatestOfficialResultTracks(
   rounds: RoundRecord[],
-  tracks: BenchmarkTrack[] = ["weekly", "monthly"]
+  tracks: BenchmarkTrack[] = ["monthly", "weekly"]
 ): LatestOfficialResultTrack[] {
   return tracks.map((track) => buildLatestOfficialResultTrack(track, roundsForTrack(rounds, track)));
 }

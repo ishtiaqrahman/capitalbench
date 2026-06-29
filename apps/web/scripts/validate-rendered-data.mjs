@@ -2008,7 +2008,7 @@ for (const track of ["weekly", "monthly"]) {
       `homepage ${track} comparison set scorecard`
     );
     const setLeader = featuredSet.leader;
-    includes(indexHtml, "Current benchmarks rank models only inside equal-run comparison sets. Switch weekly/monthly.", "homepage scorecard comparison-set explanation");
+    includes(indexHtml, "Current benchmarks rank models only inside equal-run comparison sets. Switch monthly/weekly.", "homepage scorecard comparison-set explanation");
     includes(homepageScorecardHtml, featuredSet.is_current ? `Current ${trackLabel(track)} Benchmark` : `${trackLabel(track)} Benchmark Forming`, `homepage ${track} comparison title`);
     includes(homepageScorecardHtml, "CapitalBench Score", `homepage ${track} comparison chart title`);
     includes(homepageScorecardHtml, "Max possible = best eligible asset in each included round.", `homepage ${track} max possible explanation`);
@@ -2488,8 +2488,8 @@ if (
   );
 }
 
-includes(indexHtml, "The live benchmark for AI capital allocation", "homepage hero title");
-includes(indexHtml, "Study how AI models behave in live capital-allocation rounds, and which ones actually perform.", "homepage hero positioning copy");
+includes(indexHtml, "The benchmark for AI capital allocation", "homepage hero title");
+includes(indexHtml, "Study how AI models behave in capital-allocation rounds, and which ones actually perform.", "homepage hero positioning copy");
 includes(indexHtml, "View latest AI positioning", "homepage hero positioning CTA");
 includes(indexHtml, "Get score alerts", "homepage hero score alert CTA");
 includes(indexHtml, "Request API access", "homepage hero API CTA");
@@ -2500,6 +2500,11 @@ includes(indexHtml, 'data-track-scorecard-tab="weekly"', "homepage weekly scorec
 includes(indexHtml, 'data-track-scorecard-tab="monthly"', "homepage monthly scorecard tab");
 includes(indexHtml, 'data-track-scorecard-panel="weekly"', "homepage weekly scorecard panel");
 includes(indexHtml, 'data-track-scorecard-panel="monthly"', "homepage monthly scorecard panel");
+const monthlyScorecardTabIndex = indexHtml.indexOf('data-track-scorecard-tab="monthly"');
+const weeklyScorecardTabIndex = indexHtml.indexOf('data-track-scorecard-tab="weekly"');
+if (monthlyScorecardTabIndex !== -1 && weeklyScorecardTabIndex !== -1 && monthlyScorecardTabIndex > weeklyScorecardTabIndex) {
+  failures.push("homepage model performance scorecard tabs show weekly before monthly");
+}
 const aiPositioningIndex = indexHtml.indexOf('id="ai-positioning"');
 const methodologyIndex = indexHtml.indexOf('id="how-it-works"');
 const modelPerformanceIndex = indexHtml.indexOf('id="track-scorecards"');
@@ -2521,11 +2526,20 @@ if (aiPositioningIndex !== -1 && methodologyIndex !== -1 && methodologyIndex > a
 }
 
 includes(indexHtml, "Finished Benchmark Results", "homepage latest official results heading");
-includes(indexHtml, "Switch between weekly and monthly results", "homepage latest official results purpose");
+includes(indexHtml, "Switch between monthly and weekly results", "homepage latest official results purpose");
 includes(indexHtml, 'data-latest-official-results', "homepage latest official results controller");
 includes(indexHtml, 'data-latest-official-prev', "homepage latest official previous control");
 includes(indexHtml, 'data-latest-official-next', "homepage latest official next control");
 excludes(indexHtml, "Most Recent Finished Round", "homepage latest official old heading");
+const latestMonthlyOfficialTabIndex = indexHtml.indexOf('data-latest-official-tab="monthly"');
+const latestWeeklyOfficialTabIndex = indexHtml.indexOf('data-latest-official-tab="weekly"');
+if (
+  latestMonthlyOfficialTabIndex !== -1 &&
+  latestWeeklyOfficialTabIndex !== -1 &&
+  latestMonthlyOfficialTabIndex > latestWeeklyOfficialTabIndex
+) {
+  failures.push("homepage latest official result tabs show weekly before monthly");
+}
 
 for (const track of ["weekly", "monthly"]) {
   const label = trackLabel(track);

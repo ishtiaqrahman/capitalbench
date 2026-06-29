@@ -42,8 +42,8 @@ interface Props {
 
 const TRACKS: Array<{ key: TrackFilter; label: string }> = [
   { key: "all", label: "All Live" },
-  { key: "weekly", label: "Weekly" },
-  { key: "monthly", label: "Monthly" }
+  { key: "monthly", label: "Monthly" },
+  { key: "weekly", label: "Weekly" }
 ];
 
 function finite(value: number | null | undefined): value is number {

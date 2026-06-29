@@ -21,7 +21,7 @@ interface Props {
 }
 
 const { evidence, track, tracks, benchmarkSet, compact = false, title, description } = Astro.props;
-const selectedTracks: BenchmarkTrack[] = tracks ?? (track ? [track] : ["weekly", "monthly"]);
+const selectedTracks: BenchmarkTrack[] = tracks ?? (track ? [track] : ["monthly", "weekly"]);
 
 function trackLabel(value: BenchmarkTrack): string {
   return value === "weekly" ? "Weekly" : "Monthly";

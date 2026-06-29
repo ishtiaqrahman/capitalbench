@@ -7,8 +7,11 @@ interface Props {
 }
 
 const { scorecards } = Astro.props;
-const visibleScorecards = scorecards.filter(Boolean);
-const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "weekly")?.track ?? visibleScorecards[0]?.track;
+const trackOrder = { monthly: 0, weekly: 1 };
+const visibleScorecards = scorecards
+  .filter(Boolean)
+  .sort((left, right) => trackOrder[left.track] - trackOrder[right.track]);
+const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "monthly")?.track ?? visibleScorecards[0]?.track;
 ---
 
 {visibleScorecards.length > 0 && (
@@ -17,7 +20,7 @@ const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "
       <div>
         <span class="panel-kicker">Benchmark results</span>
         <h2 id="track-scorecards-title">Model Performance</h2>
-        <p>Current benchmarks rank models only inside equal-run comparison sets. Switch weekly/monthly.</p>
+        <p>Current benchmarks rank models only inside equal-run comparison sets. Switch monthly/weekly.</p>
       </div>
       <a class="section-profile-link" href="/leaderboards/benchmark-sets">All comparison sets</a>
     </section>
@@ -26,7 +29,7 @@ const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "
       class="track-scorecard-tab-shell"
       data-track-scorecard-tabs
       data-active-track={defaultTrack}
-      aria-label="Weekly and monthly model scores"
+      aria-label="Monthly and weekly model scores"
     >
       <div class="track-scorecard-tabs" role="tablist" aria-label="Choose benchmark score horizon">
         {visibleScorecards.map((scorecard) => {

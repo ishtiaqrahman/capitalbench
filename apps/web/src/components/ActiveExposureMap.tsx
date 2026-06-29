@@ -80,8 +80,8 @@ const GROUP_ORDER: ExposureGroup[] = [
 ];
 const TRACK_OPTIONS: Array<{ key: ActiveTrack; label: string }> = [
   { key: "all", label: "All Open" },
-  { key: "weekly", label: "Weekly" },
-  { key: "monthly", label: "Monthly" }
+  { key: "monthly", label: "Monthly" },
+  { key: "weekly", label: "Weekly" }
 ];
 const VIEW_OPTIONS: Array<{ key: ActiveView; label: string }> = [
   { key: "asset", label: "By Asset" },
@@ -384,7 +384,7 @@ export default function ActiveExposureMap({ rounds }: Props) {
   const remainingExposure = remainingAssets.reduce((total, asset) => total + asset.exposurePct, 0);
   const holderRows = selectedAsset ? [...selectedAsset.contributions].sort((a, b) => b.allocationBps - a.allocationBps) : [];
   const visibleHolderRows = showAllHolders ? holderRows : holderRows.slice(0, HOLDER_PREVIEW_LIMIT);
-  const modelPortfolioScope = track === "all" ? "open weekly and monthly" : `open ${track}`;
+  const modelPortfolioScope = track === "all" ? "open monthly and weekly" : `open ${track}`;
 
   useEffect(() => {
     if (summary.assets.length === 0) {
@@ -631,21 +631,21 @@ export default function ActiveExposureMap({ rounds }: Props) {
                       </strong>
                     </div>
                     <div>
-                      <span>Weekly share</span>
-                      <strong>
-                        {formatPct(
-                          summary.trackPortfolioCounts.weekly > 0
-                            ? (selectedAsset.trackBps.weekly / (summary.trackPortfolioCounts.weekly * 10_000)) * 100
-                            : 0
-                        )}
-                      </strong>
-                    </div>
-                    <div>
                       <span>Monthly share</span>
                       <strong>
                         {formatPct(
                           summary.trackPortfolioCounts.monthly > 0
                             ? (selectedAsset.trackBps.monthly / (summary.trackPortfolioCounts.monthly * 10_000)) * 100
+                            : 0
+                        )}
+                      </strong>
+                    </div>
+                    <div>
+                      <span>Weekly share</span>
+                      <strong>
+                        {formatPct(
+                          summary.trackPortfolioCounts.weekly > 0
+                            ? (selectedAsset.trackBps.weekly / (summary.trackPortfolioCounts.weekly * 10_000)) * 100
                             : 0
                         )}
                       </strong>
@@ -804,12 +804,12 @@ export default function ActiveExposureMap({ rounds }: Props) {
                         <div className="active-model-details">
                           <div className="active-model-track-split">
                             <div>
-                              <span>Weekly portfolios</span>
-                              <strong>{model.trackCounts.weekly}</strong>
-                            </div>
-                            <div>
                               <span>Monthly portfolios</span>
                               <strong>{model.trackCounts.monthly}</strong>
+                            </div>
+                            <div>
+                              <span>Weekly portfolios</span>
+                              <strong>{model.trackCounts.weekly}</strong>
                             </div>
                           </div>
 

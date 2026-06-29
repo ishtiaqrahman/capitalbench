@@ -7,8 +7,8 @@ type Props = {
 
 const SCOPE_OPTIONS: Array<{ key: ModelScopeKey; label: string }> = [
   { key: "all", label: "All live" },
-  { key: "weekly", label: "Weekly" },
-  { key: "monthly", label: "Monthly" }
+  { key: "monthly", label: "Monthly" },
+  { key: "weekly", label: "Weekly" }
 ];
 
 function formatPct(value: number | null | undefined): string {
@@ -128,13 +128,13 @@ export default function ModelLiveHoldings({ scopes }: Props) {
                   <small>of live exposure</small>
                 </div>
                 <div>
-                  <span>Weekly</span>
-                  <strong>{scope.weeklyPortfolioCount}</strong>
+                  <span>Monthly</span>
+                  <strong>{scope.monthlyPortfolioCount}</strong>
                   <small>open portfolios</small>
                 </div>
                 <div>
-                  <span>Monthly</span>
-                  <strong>{scope.monthlyPortfolioCount}</strong>
+                  <span>Weekly</span>
+                  <strong>{scope.weeklyPortfolioCount}</strong>
                   <small>open portfolios</small>
                 </div>
               </div>

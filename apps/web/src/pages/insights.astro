@@ -314,7 +314,7 @@ function categoryDescription(category: string) {
       </div>
     </div>
 
-    <aside class="insights-lead-panel" aria-label="Lead insight">
+    <aside class="insights-lead-panel" data-insight-category={leadInsight?.category} aria-label="Lead insight">
       {leadInsight ? (
         <>
           <div class="insights-lead-topline">
@@ -369,8 +369,8 @@ function categoryDescription(category: string) {
   </section>
 
   <section class="insights-metrics" aria-label="Insight feed freshness">
-    {metricCards.map(([label, value, description]) => (
-      <article>
+    {metricCards.map(([label, value, description], index) => (
+      <article data-metric-index={String(index + 1)}>
         <span>{label}</span>
         <strong>{value}</strong>
         <p>{description}</p>

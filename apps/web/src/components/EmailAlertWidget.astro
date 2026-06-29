@@ -11,7 +11,7 @@ const copy = {
   home: {
     label: "Score alerts",
     title: "Get new scores when they publish.",
-    description: "New weekly and monthly results, no spam."
+    description: "New monthly and weekly results, no spam."
   },
   round: {
     label: "Round alerts",
@@ -20,7 +20,7 @@ const copy = {
   },
   leaderboard: {
     label: "Score alerts",
-    title: "Get weekly and monthly score updates.",
+    title: "Get monthly and weekly score updates.",
     description: "Occasional benchmark results, no spam."
   }
 }[context];
@@ -49,7 +49,11 @@ const copy = {
     class="score-alert-panel"
     id={`score-alert-panel-${context}`}
     data-score-alert-panel
+    role="dialog"
+    aria-modal="false"
     aria-labelledby={`score-alert-title-${context}`}
+    aria-describedby={`score-alert-description-${context}`}
+    tabindex="-1"
     hidden
   >
     <div class="score-alert-copy">
@@ -58,7 +62,7 @@ const copy = {
         <span class="score-alert-title-full">{copy.title}</span>
         <span class="score-alert-title-short">Get score alerts</span>
       </h2>
-      <p>{copy.description}</p>
+      <p id={`score-alert-description-${context}`}>{copy.description}</p>
     </div>
 
     <button class="score-alert-close" type="button" data-score-alert-close aria-label="Dismiss score alerts">
@@ -173,6 +177,7 @@ const copy = {
       let expanded = false;
       let seenMetricSent = false;
       let activeStart = Date.now();
+      let priorFocus = null;
 
       function shouldSuppress(options = {}) {
         if (options.manual === true) return false;
@@ -202,6 +207,27 @@ const copy = {
         return true;
       }
 
+      function setModalOpen(open) {
+        document.documentElement.classList.toggle("score-alert-modal-open", open);
+        panel?.setAttribute("aria-modal", open ? "true" : "false");
+      }
+
+      function restoreFocus() {
+        if (!(priorFocus instanceof HTMLElement) || !priorFocus.isConnected) return;
+        try {
+          priorFocus.focus({ preventScroll: true });
+        } catch {
+          priorFocus.focus();
+        }
+        priorFocus = null;
+      }
+
+      function focusEmailField() {
+        const emailInput = panel?.querySelector("input[type='email']");
+        const target = emailInput instanceof HTMLElement ? emailInput : panel;
+        target?.focus();
+      }
+
       function expand(reason) {
         const isManual = reason === "chip_click";
         if (isMobileViewport() && !isManual) return;
@@ -224,11 +250,46 @@ const copy = {
         emitMetric("score_alert_expanded", { context, reason });
       }
 
+      function openOverlay(reason, trigger) {
+        priorFocus = trigger instanceof HTMLElement
+          ? trigger
+          : document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
+        if (!show(reason, { manual: true })) return;
+        panel.hidden = false;
+        chip.setAttribute("aria-expanded", "true");
+        widget.dataset.state = "modal";
+        visible = true;
+        expanded = true;
+        setModalOpen(true);
+        safeStorage.set(window.sessionStorage, EXPANDED_SESSION_KEY, "true");
+        emitMetric("score_alert_expanded", { context, reason, mode: "overlay" });
+        window.requestAnimationFrame(focusEmailField);
+      }
+
       function collapse() {
+        const wasModal = widget.dataset.state === "modal";
         panel.hidden = true;
         chip.setAttribute("aria-expanded", "false");
         widget.dataset.state = "collapsed";
         expanded = false;
+        if (wasModal) {
+          setModalOpen(false);
+          restoreFocus();
+        }
+      }
+
+      function closeOverlay(reason) {
+        panel.hidden = true;
+        chip.setAttribute("aria-expanded", "false");
+        widget.dataset.state = "collapsed";
+        widget.hidden = true;
+        visible = false;
+        expanded = false;
+        setModalOpen(false);
+        emitMetric("score_alert_closed", { context, reason, mode: "overlay" });
+        restoreFocus();
       }
 
       function hideNearFooter() {
@@ -246,11 +307,17 @@ const copy = {
       }
 
       function complete(source) {
+        const wasModal = widget.dataset.state === "modal";
         safeStorage.set(window.localStorage, SUBSCRIBED_KEY, "true");
-        widget.dataset.state = "subscribed";
+        if (!wasModal) widget.dataset.state = "subscribed";
         setTimeout(() => {
           widget.hidden = true;
           visible = false;
+          expanded = false;
+          panel.hidden = true;
+          chip.setAttribute("aria-expanded", "false");
+          setModalOpen(false);
+          if (wasModal) restoreFocus();
         }, 1600);
         emitMetric("score_alert_submitted", { context, source });
       }
@@ -264,10 +331,26 @@ const copy = {
         const trigger = event.target instanceof Element ? event.target.closest("[data-score-alert-trigger]") : null;
         if (!trigger) return;
         event.preventDefault();
-        expand("chip_click");
+        openOverlay("cta_click", trigger);
       });
 
-      close?.addEventListener("click", () => dismiss("close_button"));
+      widget.addEventListener("click", (event) => {
+        if (widget.dataset.state === "modal" && event.target === widget) {
+          closeOverlay("backdrop");
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && widget.dataset.state === "modal") {
+          event.preventDefault();
+          closeOverlay("escape_key");
+        }
+      });
+
+      close?.addEventListener("click", () => {
+        if (widget.dataset.state === "modal") closeOverlay("close_button");
+        else dismiss("close_button");
+      });
 
       form?.addEventListener("submit", () => {
         activeStart = Date.now();

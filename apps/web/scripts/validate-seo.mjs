@@ -1,8 +1,9 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const distDir = new URL("../dist/", import.meta.url).pathname;
-const changelogSourcePath = new URL("../src/data/changelog.ts", import.meta.url).pathname;
+const distDir = fileURLToPath(new URL("../dist/", import.meta.url));
+const changelogSourcePath = fileURLToPath(new URL("../src/data/changelog.ts", import.meta.url));
 const siteUrl = "https://www.capitalbench.org";
 
 function walk(dir) {
