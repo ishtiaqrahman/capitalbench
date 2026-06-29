@@ -29955,11 +29955,16 @@ html.score-alert-modal-open body {
 }
 
 #latest-insights .insight-calculation-list {
+  width: min(100%, 530px);
   gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 170px));
   align-items: stretch;
+  justify-content: center;
+  justify-self: center;
 }
 
 #latest-insights .insight-calculation-list div {
+  width: 100%;
   min-height: 116px;
   grid-template-rows: minmax(2.6rem, auto) auto;
   justify-items: center;
