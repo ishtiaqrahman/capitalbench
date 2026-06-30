@@ -1,0 +1,57 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Semiconductor volatility (SMH 70% annualized vol, beta 2.23) could sharply reverse if AI sentiment turns or Micron strength is already priced in",
+    "July CPI/PPI and FOMC (Jul 28-29) could trigger rate-driven equity drawdown given still-elevated 3.4% core PCE",
+    "Biotech and semis are at/near 52w highs implying reversal/profit-taking risk",
+    "Cyclicals (industrials/financials) vulnerable if July jobs report or ISM disappoints"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Micron's blowout Q3 (revenue $41.5B vs $9.3B yr-ago) and guide to $50B Q4 with ~86% margins confirm a memory supercycle with demand ahead of supply through 2027; HBM4 in high-volume shipment. Strong sector tailwind into July; positive 30d benchmark-relative."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong recent breadth (up_day_share 63%), low beta (0.38), at 52w highs, strongest 7d/30d among defensives. Offers diversification with positive momentum and limited macro sensitivity into CPI/FOMC."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "INDUSTRIALS",
+      "rationale": "Manufacturing PMI at 59-month high (55.7) and durable goods ex-transport up 1.3% support cyclical industrials; +7.6% benchmark-relative 30d with moderate beta."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "FINANCIALS",
+      "rationale": "Solid GDP revision (2.1%), strong regional bank breadth, steady yield curve. Financials show +6.3% relative 30d at high up-day share; benefits from resilient growth and stable rates."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "BIOTECH",
+      "rationale": "Strongest 30d benchmark-relative (+17.7%) with broad participation (up_day_share 74%) at 52w highs; M&A and financing conditions supportive, though volatile. Limited briefing support beyond price action so sized modestly."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like ballast given elevated VIX risk, heavy July data calendar (CPI, jobs, FOMC) and stretched semis volatility; preserves capital with positive carry."
+    }
+  ],
+  "portfolio_rationale": "Barbell of a high-conviction memory/semiconductor catalyst (Micron earnings confirming supercycle) with defensive and cyclical diversifiers benefiting from solid PMI and GDP, plus T-bill ballast ahead of a heavy July macro calendar.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight semiconductors on fundamental earnings catalyst, balanced by healthcare/industrials/financials breadth and short-duration cash for downside protection.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-29-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 23426,
+    "latency_seconds": 26.64654675096972,
+    "output_tokens": 1093,
+    "total_tokens": 24519
+  }
+}

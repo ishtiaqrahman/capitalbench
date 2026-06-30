@@ -130,5 +130,7 @@
 - Round CB-2026-06-25-1W has no scored official run.
 - Round CB-2026-06-26-1M has no scored official run.
 - Round CB-2026-06-26-1W has no scored official run.
+- Round CB-2026-06-29-1M has no scored official run.
+- Round CB-2026-06-29-1W has no scored official run.
 - Round example-round has no scored official run.
 - Round example-round-2 has no scored official run.

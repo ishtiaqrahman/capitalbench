@@ -1,0 +1,14 @@
+models:
+  - model_id: "anthropic-claude-opus-4-8"
+    provider: "anthropic"
+    api_model_name: "claude-opus-4-8"
+    enabled: true
+    mode: "closed_capability"
+    temperature: 0
+    max_completion_tokens: 3000
+    max_wall_clock_seconds: 120
+    reasoning_effort: low
+    first_eligible_round: "CB-2026-05-28-1M"
+    first_eligible_date_utc: "2026-05-28T22:00:00Z"
+    model_release_date: "2026-05-28"
+    notes: "Retry config for the June 29, 2026 monthly round after the first official Claude Opus 4.8 response exceeded the five-holding portfolio constraint."

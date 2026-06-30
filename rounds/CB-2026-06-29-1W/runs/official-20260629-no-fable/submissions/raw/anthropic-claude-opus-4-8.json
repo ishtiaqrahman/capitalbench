@@ -1,0 +1,52 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "July 2 jobs report or ISM/JOLTS surprises could trigger a broad risk-off move hurting cyclicals and semis before exit close",
+    "Semiconductor and biotech high volatility and recent SMH 7d pullback (-5.5%) raise reversal risk if AI sentiment fades",
+    "Healthcare/biotech at 52-week highs are vulnerable to mean reversion after sharp run-up",
+    "Holiday-shortened week (July 3 closed) thins liquidity and can amplify gaps"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong recent breadth and leadership (+7.1% 7d, +9.8% vs SPX 30d), low beta defensive sector at 52w high with positive momentum into a busy macro data week."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "BIOTECH",
+      "rationale": "Best recent performer (+8.5% 7d, +17.7% vs SPX 30d) with high up-day share; healthcare/biotech rotation supported by independent sector strength, not price alone."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "INDUSTRIALS",
+      "rationale": "Solid breadth (+5.8% 30d), supported by improving flash PMI manufacturing output at 59-month high; cyclical participation with moderate beta."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Micron blowout guidance ($50B revenue, ~86% GM) signals memory demand exceeding supply; near-term AI chip catalyst despite high volatility."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive ballast (+3.2% 7d, beta 0.07) ahead of JOLTS, ISM, and the July 2 jobs report which fall inside the scoring window."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward sectors showing genuine breadth and catalyst support (healthcare/biotech leadership, industrials backed by PMI, semis backed by Micron guidance) while holding low-vol ballast against jobs-week event risk inside the window.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight healthcare/biotech momentum with fundamental sector breadth, add semis on Micron catalyst and industrials on PMI strength, balanced by low-vol defensiveness ahead of key labor data.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-06-29-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 23426,
+    "latency_seconds": 13.241448345012031,
+    "output_tokens": 879,
+    "total_tokens": 24305
+  }
+}
