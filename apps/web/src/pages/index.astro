@@ -50,7 +50,7 @@ import { buildRunConcentration, type ConcentrationAsset, type RunConcentration }
 import { siteConfig } from "../lib/seo";
 import { staticModelProfiles } from "../lib/modelProfiles";
 import { buildLatestOfficialResultTracks } from "../lib/latestOfficialResults";
-import { insightHref, leadInsightsByCategory } from "../lib/insights.js";
+import { leadInsightsByCategory } from "../lib/insights.js";
 import {
   latestResolvedRoundForTrack,
   latestRoundForTrack,
@@ -152,50 +152,15 @@ const currentRiskPulse = liveRiskSnapshot.current_decision_pulse;
 const outstandingBookRisk = liveRiskSnapshot.outstanding_live_book;
 const riskPulseTopAssets = currentRiskPulse.top_assets.slice(0, 6);
 const riskPulseRegimes = currentRiskPulse.regime_exposure.slice(0, 5);
-const riskChangeValue = Number(currentRiskPulse.change_from_previous);
-const riskCurrentDateLabel = pairedPulseDateLabel(currentRiskPulse.weekly?.decision_date, currentRiskPulse.monthly?.decision_date);
 const riskCurrentFullDateLabel = pairedPulseFullDateLabel(currentRiskPulse.weekly?.decision_date, currentRiskPulse.monthly?.decision_date);
 const riskPositioningDateLabel = riskCurrentFullDateLabel ? `As of ${riskCurrentFullDateLabel}` : "Latest live portfolios";
 const riskPreviousDateLabel = pairedPulseDateLabel(
   dateFromRoundId(currentRiskPulse.previous_round_ids?.weekly),
   dateFromRoundId(currentRiskPulse.previous_round_ids?.monthly)
 );
-const riskPreviousScore = Number(currentRiskPulse.previous_score);
 const riskChangeLabel = riskPreviousDateLabel ? `Change vs ${riskPreviousDateLabel} portfolios` : "Change vs earlier portfolios";
-const riskChangeVerb =
-  Number.isFinite(riskChangeValue) && riskChangeValue > 0
-    ? "up"
-    : Number.isFinite(riskChangeValue) && riskChangeValue < 0
-      ? "down"
-      : "unchanged";
-const riskChangeDirection =
-  Number.isFinite(riskChangeValue) &&
-  Number.isFinite(Number(currentRiskPulse.score)) &&
-  Number.isFinite(riskPreviousScore) &&
-  riskCurrentDateLabel &&
-  riskPreviousDateLabel
-    ? `${riskCurrentDateLabel} portfolios scored ${pulseScore(currentRiskPulse.score)}/100 for risk-taking, ${riskChangeVerb} from ${pulseScore(riskPreviousScore)}/100 on ${riskPreviousDateLabel}.`
-    : "No earlier monthly + weekly portfolio set is available for comparison yet.";
-const riskCalculationHref = "/risk-appetite/#risk-calculation-title";
-const riskChangeClass =
-  Number.isFinite(riskChangeValue) && riskChangeValue > 0
-    ? "is-risk-on"
-    : Number.isFinite(riskChangeValue) && riskChangeValue < 0
-      ? "is-defensive"
-      : "is-neutral";
-const riskScaleExplainer =
-  "Higher means more allocation to growth, momentum, and cyclical assets. Lower means more cash, bonds, and defensive sectors.";
 const homeInsightCategories = ["current_positioning", "risk_regime", "horizon_agreement", "live_performance", "oracle_comparison"];
 const homeInsights = leadInsightsByCategory(apiReadModel, homeInsightCategories, 3);
-const heroInsight = leadInsightsByCategory(apiReadModel, ["current_positioning", "risk_regime"], 1)[0];
-const topRiskAssetNames = riskPulseTopAssets
-  .slice(0, 3)
-  .map((asset) => asset.label.toLowerCase())
-  .filter(Boolean);
-const heroRiskExplanation =
-  currentRiskPulse.regime === "Selective risk taking" && topRiskAssetNames.length > 0
-    ? `Models are taking risk, but concentrated in ${humanList(topRiskAssetNames)} rather than spreading allocations broadly.`
-    : "Models are expressing their current market stance through the newest live portfolios.";
 const riskAppetiteProfiles = [...modelProfiles]
   .filter((profile) => profile.fingerprint.riskAppetite.score !== null)
   .sort(
@@ -229,6 +194,7 @@ const riskPortfolioCount = riskAppetiteProfiles.reduce((total, profile) => total
 const modelBehavior: any = apiReadModel.model_behavior ?? { summary: {}, profiles: [], methodology_href: "/risk-appetite/#model-behavior-methodology" };
 const modelPatternReport = modelBehavior.pattern_report ?? { rows: [], comparative_findings: [], summary: {} };
 const modelPatternRows = Array.isArray(modelPatternReport.rows) ? modelPatternReport.rows : [];
+const heroModelBehaviorRows = modelPatternRows.slice(0, 6);
 const modelPatternRowById = new Map(modelPatternRows.map((row: any) => [row.model_id, row]));
 const modelPatternLeaderSpecs = [
   { key: "highest_risk_model_id", label: "Most risk-seeking", metric: "Risk-taking score", value: (row: any) => pulseScoreWithUnitText(row.key_numbers?.risk_taking_score) },
@@ -481,12 +447,6 @@ function assetLabelWithTicker(asset: { label?: string; ticker?: string; option_i
   return asset.ticker ? `${label} (${asset.ticker})` : label;
 }
 
-function humanList(values: string[]): string {
-  if (values.length <= 1) return values[0] ?? "";
-  if (values.length === 2) return `${values[0]} and ${values[1]}`;
-  return `${values.slice(0, -1).join(", ")}, and ${values.at(-1)}`;
-}
-
 function riskScoreValue(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
   return `${value.toFixed(2)} / 5`;
@@ -505,6 +465,65 @@ function pulseScore(value: number | null | undefined): string {
 function pulseScoreWithUnitText(value: number | null | undefined): string {
   const score = pulseScore(value);
   return score === "n/a" ? score : `${score}/100`;
+}
+
+function heroBehaviorEvidenceTone(label: string): string {
+  const normalized = label.toLowerCase();
+  if (normalized.includes("risk")) return "risk";
+  if (normalized.includes("turnover") || normalized.includes("consensus") || normalized.includes("balanced")) return "stability";
+  if (normalized.includes("tech")) return "technology";
+  if (normalized.includes("international") || normalized.includes("defensive") || normalized.includes("real-asset")) return "diversifier";
+  if (normalized.includes("concentrated") || normalized.includes("top holding")) return "conviction";
+  if (normalized.includes("binary") || normalized.includes("different") || normalized.includes("distinctive")) return "distinctive";
+  if (normalized.includes("early") || normalized.includes("sample")) return "sample";
+  return "neutral";
+}
+
+function heroBehaviorEvidence(row: any): { label: string; evidence?: string; tone: string }[] {
+  const traits = Array.isArray(row.traits) ? row.traits : [];
+  const pills = traits
+    .slice(0, 4)
+    .map((trait: any) => {
+      const label = String(trait.label ?? "").trim();
+      return {
+        label,
+        evidence: trait.evidence,
+        tone: heroBehaviorEvidenceTone(label)
+      };
+    })
+    .filter((pill: { label: string }) => pill.label.length > 0);
+  const keyNumbers = row.key_numbers ?? {};
+  const fallbackPills = [
+    {
+      label: `Risk ${pulseScoreWithUnitText(keyNumbers.risk_taking_score)}`,
+      evidence: "Average risk-taking score across official saved portfolios.",
+      tone: "risk"
+    },
+    {
+      label: `Top holding ${pctValue(keyNumbers.average_top_allocation_pct)}`,
+      evidence: "Average largest holding in the model's saved portfolios.",
+      tone: "conviction"
+    },
+    {
+      label: `Tech tilt ${pctValue(keyNumbers.tech_pct)}`,
+      evidence: "Average technology-linked allocation.",
+      tone: "technology"
+    },
+    {
+      label: `Turnover ${pctValue(keyNumbers.average_turnover_pct)}`,
+      evidence: "Average portfolio turnover between comparable rounds.",
+      tone: "stability"
+    }
+  ].filter((pill) => !pill.label.includes("n/a"));
+
+  for (const pill of fallbackPills) {
+    if (pills.length >= 4) break;
+    if (!pills.some((existing: { label: string }) => existing.label.toLowerCase() === pill.label.toLowerCase())) {
+      pills.push(pill);
+    }
+  }
+
+  return pills.slice(0, 4);
 }
 
 function signedPulseChange(value: number | null | undefined): string {
@@ -594,60 +613,56 @@ const trackLaneCards = trackStates.map((track) => {
       </div>
     </div>
 
-    <div class="home-hero-console hero-positioning-card hero-positioning-card-desktop" aria-label="Current AI positioning snapshot">
-      <div class="console-header">
-        <div class="console-title">
-          <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="eager" />
-          <div>
-            <span>What AI models are doing now</span>
-            <strong>{currentRiskPulse.regime}</strong>
+    {heroModelBehaviorRows.length > 0 && (
+      <div class="home-hero-console hero-behavior-card hero-positioning-card-desktop" aria-label="Model behavior pattern snapshot">
+        <div class="console-header">
+          <div class="console-title">
+            <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="eager" />
+            <div>
+              <span>Model behavior patterns</span>
+              <strong>Distinct allocation personalities</strong>
+            </div>
           </div>
+          <span class="hero-behavior-count">{heroModelBehaviorRows.length} models</span>
         </div>
-        <span class="hero-positioning-regime">{currentRiskPulse.label}</span>
-      </div>
 
-      <p class="hero-positioning-explainer">{heroRiskExplanation}</p>
-      {heroInsight && (
-        <a class="hero-current-read" href={insightHref(heroInsight)}>
-          <span>Current read</span>
-          <strong>{heroInsight.title}</strong>
+        <div class="hero-behavior-list" aria-label="Model behavior summaries">
+          {heroModelBehaviorRows.map((row: any) => {
+            const logoSrc = providerLogoSrc(row.provider);
+            return (
+              <a class="hero-behavior-row" href={`/models/${row.model_id}/#model-behavior`}>
+                <span class="hero-behavior-model">
+                  <span class="hero-behavior-logo">
+                    {logoSrc ? (
+                      <img src={logoSrc} alt="" width="30" height="30" loading="lazy" />
+                    ) : (
+                      <span>{row.provider_label?.charAt(0) ?? row.label?.charAt(0) ?? "M"}</span>
+                    )}
+                  </span>
+                  <span>
+                    <strong>{row.label}</strong>
+                    <small>{row.provider_label}</small>
+                  </span>
+                </span>
+                <span class="hero-behavior-copy">
+                  <strong>{row.archetype?.label ?? "Behavior profile"}</strong>
+                  <span class="hero-behavior-pills">
+                    {heroBehaviorEvidence(row).map((pill) => (
+                      <em class:list={[`is-${pill.tone}`]} title={pill.evidence}>{pill.label}</em>
+                    ))}
+                  </span>
+                </span>
+              </a>
+            );
+          })}
+        </div>
+
+        <a class="hero-behavior-cta" href="/models/patterns/">
+          See full behavior
+          <ArrowRight size={15} aria-hidden="true" />
         </a>
-      )}
-
-      <div class="hero-positioning-score">
-        <div class="hero-positioning-risk-score">
-          <span>Risk-Taking Score</span>
-          <strong>{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
-          <em>{riskScaleExplainer}</em>
-        </div>
-        <div>
-          <span>{riskChangeLabel}</span>
-          <strong class:list={[riskChangeClass]}>{signedPulseChange(currentRiskPulse.change_from_previous)}<small>pts</small></strong>
-          <em>{riskChangeDirection} <a href={riskCalculationHref}>How it is calculated</a>.</em>
-        </div>
       </div>
-
-      <div class="hero-positioning-source" aria-label="Risk-taking score source">
-        <span>Source</span>
-        <strong>Latest monthly + weekly live portfolios</strong>
-        <em>{outstandingBookRisk.portfolio_count} model portfolios across {outstandingBookRisk.round_count} live rounds</em>
-      </div>
-
-      <div class="hero-positioning-assets" aria-label="Top current allocations">
-        {riskPulseTopAssets.slice(0, 4).map((asset) => (
-          <span>
-            <strong>{asset.label}</strong>
-            <small>{asset.ticker || asset.option_id}</small>
-            <em>{pctValue(asset.allocation_pct)}</em>
-          </span>
-        ))}
-      </div>
-
-      <div class="benchmark-process-note hero-positioning-note">
-        <strong>Allocation signal only.</strong>
-        <span>This does not use returns and is not a trading recommendation. <a href={riskCalculationHref}>How it is calculated</a>.</span>
-      </div>
-    </div>
+    )}
   </section>
 
   <TrackScorecardTabs scorecards={aggregateScorecards} />
@@ -689,60 +704,56 @@ const trackLaneCards = trackStates.map((track) => {
     </ol>
   </section>
 
-  <div class="home-hero-console hero-positioning-card hero-positioning-card-mobile" aria-label="Current AI positioning snapshot">
-    <div class="console-header">
-      <div class="console-title">
-        <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="lazy" />
-        <div>
-          <span>What AI models are doing now</span>
-          <strong>{currentRiskPulse.regime}</strong>
+  {heroModelBehaviorRows.length > 0 && (
+    <div class="home-hero-console hero-behavior-card hero-positioning-card-mobile" aria-label="Model behavior pattern snapshot">
+      <div class="console-header">
+        <div class="console-title">
+          <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="lazy" />
+          <div>
+            <span>Model behavior patterns</span>
+            <strong>Distinct allocation personalities</strong>
+          </div>
         </div>
+        <span class="hero-behavior-count">{heroModelBehaviorRows.length} models</span>
       </div>
-      <span class="hero-positioning-regime">{currentRiskPulse.label}</span>
-    </div>
 
-    <p class="hero-positioning-explainer">{heroRiskExplanation}</p>
-    {heroInsight && (
-      <a class="hero-current-read" href={insightHref(heroInsight)}>
-        <span>Current read</span>
-        <strong>{heroInsight.title}</strong>
+      <div class="hero-behavior-list" aria-label="Model behavior summaries">
+        {heroModelBehaviorRows.map((row: any) => {
+          const logoSrc = providerLogoSrc(row.provider);
+          return (
+            <a class="hero-behavior-row" href={`/models/${row.model_id}/#model-behavior`}>
+              <span class="hero-behavior-model">
+                <span class="hero-behavior-logo">
+                  {logoSrc ? (
+                    <img src={logoSrc} alt="" width="30" height="30" loading="lazy" />
+                  ) : (
+                    <span>{row.provider_label?.charAt(0) ?? row.label?.charAt(0) ?? "M"}</span>
+                  )}
+                </span>
+                <span>
+                  <strong>{row.label}</strong>
+                  <small>{row.provider_label}</small>
+                </span>
+              </span>
+              <span class="hero-behavior-copy">
+                <strong>{row.archetype?.label ?? "Behavior profile"}</strong>
+                <span class="hero-behavior-pills">
+                  {heroBehaviorEvidence(row).map((pill) => (
+                    <em class:list={[`is-${pill.tone}`]} title={pill.evidence}>{pill.label}</em>
+                  ))}
+                </span>
+              </span>
+            </a>
+          );
+        })}
+      </div>
+
+      <a class="hero-behavior-cta" href="/models/patterns/">
+        See full behavior
+        <ArrowRight size={15} aria-hidden="true" />
       </a>
-    )}
-
-    <div class="hero-positioning-score">
-      <div class="hero-positioning-risk-score">
-        <span>Risk-Taking Score</span>
-        <strong>{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
-        <em>{riskScaleExplainer}</em>
-      </div>
-      <div>
-        <span>{riskChangeLabel}</span>
-        <strong class:list={[riskChangeClass]}>{signedPulseChange(currentRiskPulse.change_from_previous)}<small>pts</small></strong>
-        <em>{riskChangeDirection} <a href={riskCalculationHref}>How it is calculated</a>.</em>
-      </div>
     </div>
-
-    <div class="hero-positioning-source" aria-label="Risk-taking score source">
-      <span>Source</span>
-      <strong>Latest monthly + weekly live portfolios</strong>
-      <em>{outstandingBookRisk.portfolio_count} model portfolios across {outstandingBookRisk.round_count} live rounds</em>
-    </div>
-
-    <div class="hero-positioning-assets" aria-label="Top current allocations">
-      {riskPulseTopAssets.slice(0, 4).map((asset) => (
-        <span>
-          <strong>{asset.label}</strong>
-          <small>{asset.ticker || asset.option_id}</small>
-          <em>{pctValue(asset.allocation_pct)}</em>
-        </span>
-      ))}
-    </div>
-
-    <div class="benchmark-process-note hero-positioning-note">
-      <strong>Allocation signal only.</strong>
-      <span>This does not use returns and is not a trading recommendation. <a href={riskCalculationHref}>How it is calculated</a>.</span>
-    </div>
-  </div>
+  )}
 
   <section class="home-section-heading home-section-heading-with-action" id="ai-positioning" aria-labelledby="ai-positioning-title">
     <div>
