@@ -1,6 +1,6 @@
 # CapitalBench Insights
 
-Generated at: `2026-07-02T01:50:54Z`
+Generated at: `2026-07-02T09:33:14Z`
 Data as of: `2026-07-01`
 Engine: `deterministic_insights_v1`
 
@@ -158,7 +158,7 @@ Category: `current_positioning`
 
 Context: Open-round interim performance · Interim, not final
 
-Using the latest available interim close, Grok 4.3 in CB-2026-06-16-1M is ahead of the S&P 500 by +4.73 percentage points, while GPT-5.5 in CB-2026-06-03-1M is at -4.50 percentage points.
+Using the latest available interim close, Grok 4.3 in CB-2026-06-16-1M is ahead of the S&P 500 by +1.97 percentage points, while Claude Opus 4.7 in CB-2026-06-18-1M is at -5.85 percentage points.
 
 Why it matters: Live alpha is provisional, but it shows how open model portfolios are moving before the final official score.
 
