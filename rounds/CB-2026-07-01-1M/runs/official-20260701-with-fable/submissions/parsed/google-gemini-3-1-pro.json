@@ -1,0 +1,47 @@
+{
+  "confidence": 0.65,
+  "is_official_score": true,
+  "key_risks": [
+    "A broader market downturn could negatively impact the equity allocations.",
+    "Unexpected changes in interest rates or inflation could affect the performance of financials and the broader market.",
+    "Sector-specific risks in healthcare or financials could lead to underperformance relative to the benchmark."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "option_id": "SP500",
+      "rationale": "Broad US equity exposure provides a baseline for market returns, balancing growth and value."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare offers defensive characteristics and has shown recent relative strength, providing a buffer against potential volatility."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "FINANCIALS",
+      "rationale": "Financials may benefit from stable interest rates and upcoming earnings reports from major banks."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "A cash-like allocation reduces overall portfolio risk and provides liquidity amid uncertain market conditions."
+    }
+  ],
+  "portfolio_rationale": "This portfolio balances broad market exposure with defensive sectors and cash-like instruments. The allocation to healthcare and financials aims to capture potential upside while mitigating downside risk. The short-term treasury allocation provides a buffer against market volatility.",
+  "provider": "google",
+  "rationale_summary": "A balanced approach favoring broad US equities, defensive sectors like healthcare, and financials, with a cash-like buffer.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-01-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16002,
+    "latency_seconds": 6.098253194009885,
+    "output_tokens": 450,
+    "total_tokens": 16452
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "A hot or very weak June payrolls print on July 2 could sharply rotate sector leadership against defensives/financials.",
+    "Holiday-shortened, thin-liquidity week amplifies single-day gap risk around the jobs data and FOMC minutes.",
+    "Recent sector strength (healthcare, financials, industrials) could mean-revert given elevated positioning and limited independent catalysts in-window."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "HEALTHCARE",
+      "rationale": "Strongest broad-sector momentum with defensive character; +8.4% 30d, +4% 7d, low beta (0.37), near 52w high with limited drawdown, resilient to a soft payrolls print on July 2."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "FINANCIALS",
+      "rationale": "Steady uptrend (+6.9% 30d, 61.9% up-day share) with Q2 bank earnings approaching mid-July; low drawdown and moderate beta support continuation into the window."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "INDUSTRIALS",
+      "rationale": "Broad cyclical strength (+6.6% 30d, +1.75% 7d) supported by ISM manufacturing still expansionary at 53.3 and firm new orders; consistent up-day share."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive ballast; +5.7% 30d, +7.1% vs SPY, very low beta (0.07) and smallest drawdown cushion the portfolio against a weak jobs report and holiday-thinned liquidity."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure to limit tracking error against the SPY scoring benchmark while the sleaders carry relative alpha."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward defensive-but-trending sectors (healthcare, financials, industrials) with a low-vol cushion, keeping benchmark exposure to control downside from a soft July 2 payrolls print and a holiday-shortened, thin-liquidity week.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight healthcare/financials/industrials for continued relative strength backed by macro data, buffered by low-vol and core SPX to limit tracking error.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-01-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 22365,
+    "latency_seconds": 12.328712232992984,
+    "output_tokens": 842,
+    "total_tokens": 23207
+  }
+}

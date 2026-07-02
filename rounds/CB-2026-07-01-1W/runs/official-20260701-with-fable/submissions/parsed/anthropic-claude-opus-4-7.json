@@ -1,0 +1,53 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Weak June payrolls or hot wage print could trigger rate/risk repricing across cyclicals",
+    "Reversal in healthcare/biotech after strong 30d run (momentum reversal risk)",
+    "Mega-cap tech rebound would cause equal-weight and non-tech tilt to lag SPY benchmark",
+    "FOMC minutes July 8 could surprise hawkish given sticky 3.4% core PCE"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong recent leadership (+8.4% 30d, +9.8% vs SPY) with defensive characteristics ahead of jobs data and holiday-shortened week; low beta cushions downside."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "FINANCIALS",
+      "rationale": "Broadening rally beneficiary with steady momentum (+6.9% 30d); benefits from firm rates and upcoming bank earnings positioning."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "INDUSTRIALS",
+      "rationale": "ISM manufacturing still expansionary at 53.3 with new orders 56.0; industrials showing consistent breadth (+6.6% 30d)."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "BIOTECH",
+      "rationale": "Strongest 30d momentum (+17.3%) with catalyst-rich window; supported by broader healthcare leadership."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Diversified market breadth exposure that has outperformed cap-weighted SPY, hedging against mega-cap tech weakness noted in briefing."
+    }
+  ],
+  "portfolio_rationale": "Tilted toward defensive/broadening leaders (healthcare, financials, industrials) given softening tech (Micron, AI names weak), sticky core PCE at 3.4%, and jobs report risk on July 2. Equal-weight SPX captures breadth without mega-cap tech concentration risk.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight sectors showing durable breadth and defensive tilt into a holiday-shortened week with payrolls catalyst; underweight mega-cap tech given recent AI-name weakness and elevated volatility.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-01-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 22370,
+    "latency_seconds": 15.46167502499884,
+    "output_tokens": 828,
+    "total_tokens": 23198
+  }
+}
