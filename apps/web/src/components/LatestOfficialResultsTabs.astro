@@ -1,6 +1,8 @@
 ---
+import { ArrowRight, ChevronLeft, ChevronRight, Info } from "lucide-react";
 import ScoreReturnChart from "./ScoreReturnChart.astro";
 import type { LatestOfficialResultTrack } from "../lib/latestOfficialResults";
+import { noOrphanTextParts } from "../lib/typography";
 
 interface Props {
   tracks: LatestOfficialResultTrack[];
@@ -15,10 +17,10 @@ interface Props {
 const {
   tracks,
   headingKicker = "Latest official results",
-  headingTitle = "Finished Benchmark Results",
-  headingDescription = "Switch between monthly and weekly results, then move backward or forward through completed rounds in that track.",
+  headingTitle = "What happened in the latest scored rounds?",
+  headingDescription = "Finished monthly and weekly rounds scored against real market returns.",
   sectionLinkHref = "/leaderboards",
-  sectionLinkLabel = "All benchmark results",
+  sectionLinkLabel = "View all benchmark results",
   showHeading = true
 } = Astro.props;
 const trackOrder = { monthly: 0, weekly: 1 };
@@ -27,18 +29,26 @@ const visibleTracks = tracks
   .sort((left, right) => trackOrder[left.track] - trackOrder[right.track]);
 const defaultTrack = visibleTracks.find((track) => track.track === "monthly")?.track ?? visibleTracks[0]?.track;
 const showTabs = visibleTracks.length > 1;
+const headingTitleParts = noOrphanTextParts(headingTitle);
 ---
 
 {visibleTracks.length > 0 && (
   <>
     {showHeading && (
-      <section class="home-section-heading home-section-heading-with-action latest-official-heading" aria-labelledby="latest-official-results-title">
+      <section class="home-question-heading latest-official-heading" aria-labelledby="latest-official-results-title">
         <div>
           <span class="panel-kicker">{headingKicker}</span>
-          <h2 id="latest-official-results-title">{headingTitle}</h2>
+          <div class="home-question-title">
+            <h2 id="latest-official-results-title">
+              {headingTitleParts.lead && <>{headingTitleParts.lead}{" "}</>}
+              <span class="no-orphan">{headingTitleParts.tail}</span>
+            </h2>
+            <span class="home-info-tip" tabindex="0" aria-label="Official result sections show completed rounds after ending prices are available.">
+              <Info size={15} aria-hidden="true" />
+            </span>
+          </div>
           <p>{headingDescription}</p>
         </div>
-        <a class="section-profile-link" href={sectionLinkHref}>{sectionLinkLabel}</a>
       </section>
     )}
 
@@ -89,11 +99,7 @@ const showTabs = visibleTracks.length > 1;
               data-active-index="0"
               hidden={!active}
             >
-              <div class="latest-official-track-head">
-                <div>
-                  <span class="panel-kicker">{track.label} official results</span>
-                  <h3>{track.description}</h3>
-                </div>
+              <div class="latest-official-track-head latest-official-track-head-compact">
                 <div class="latest-official-round-nav" aria-label={`${track.label} result navigation`}>
                   <button
                     type="button"
@@ -102,7 +108,8 @@ const showTabs = visibleTracks.length > 1;
                     aria-label={`Previous ${track.label.toLowerCase()} result`}
                     disabled={track.results.length <= 1}
                   >
-                    Previous
+                    <ChevronLeft size={15} aria-hidden="true" />
+                    <span>Previous</span>
                   </button>
                   <span class="latest-official-position" aria-live="polite">
                     <strong>{track.label} result</strong>
@@ -115,7 +122,8 @@ const showTabs = visibleTracks.length > 1;
                     aria-label={`Next ${track.label.toLowerCase()} result`}
                     disabled
                   >
-                    Next
+                    <span>Next</span>
+                    <ChevronRight size={15} aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -166,6 +174,15 @@ const showTabs = visibleTracks.length > 1;
         })}
       </div>
     </div>
+
+    {showHeading && (
+      <div class="home-section-cta" aria-label="Official benchmark result links">
+        <a class="home-primary-cta" href={sectionLinkHref}>
+          {sectionLinkLabel}
+          <ArrowRight size={16} aria-hidden="true" />
+        </a>
+      </div>
+    )}
 
     <script is:inline>
       if (!window.__capitalbenchLatestOfficialResults) {

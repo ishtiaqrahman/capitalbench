@@ -72,6 +72,7 @@ const jsonLd = jsonLdGraph([
 
 const navItems = [
   { href: "/leaderboards/latest", label: "Results", active: currentPath.startsWith("/leaderboards") },
+  { href: "/live", label: "Live", active: currentPath.startsWith("/live") },
   { href: "/insights", label: "Insights", active: currentPath.startsWith("/insights") },
   { href: "/manifesto", label: "Manifesto", shortLabel: "Why", active: currentPath.startsWith("/manifesto") },
   { href: "/models", label: "Models", active: currentPath.startsWith("/models") },
@@ -108,6 +109,48 @@ const navItems = [
     active: currentPath.startsWith("/contribute"),
     cta: true,
     analyticsEvent: "contribute_click"
+  }
+];
+const footerGroups = [
+  {
+    title: "Explore",
+    links: [
+      { href: "/live", label: "Live dashboard" },
+      { href: "/insights", label: "Insights" },
+      { href: "/models", label: "Models" },
+      { href: "/models/patterns", label: "Behavior patterns" },
+      { href: "/api", label: "API" }
+    ]
+  },
+  {
+    title: "Results",
+    links: [
+      { href: "/leaderboards/latest", label: "Latest results" },
+      { href: "/leaderboards/latest-monthly", label: "Monthly results" },
+      { href: "/leaderboards/latest-weekly", label: "Weekly results" },
+      { href: "/leaderboards/benchmark-sets", label: "Comparison sets" },
+      { href: "/rounds", label: "Round audit packets" }
+    ]
+  },
+  {
+    title: "Method",
+    links: [
+      { href: "/methodology", label: "Methodology" },
+      { href: "/scoring", label: "Scoring" },
+      { href: "/universe", label: "Asset universe" },
+      { href: "/fairness", label: "Fairness" },
+      { href: "/limitations", label: "Limitations" }
+    ]
+  },
+  {
+    title: "Project",
+    links: [
+      { href: "/manifesto", label: "Manifesto" },
+      { href: "/docs", label: "Docs and audit" },
+      { href: "/changelog", label: "Changelog" },
+      { href: "/contribute", label: "Contribute", analyticsEvent: "contribute_click" },
+      { href: "/privacy", label: "Privacy" }
+    ]
   }
 ];
 const emailWidgetContext = hideEmailAlertWidget
@@ -232,14 +275,15 @@ const emailWidgetContext = hideEmailAlertWidget
       <footer class="site-footer">
         {!hideFooterSignup && <EmailSignup source="footer" variant="footer" />}
         <div class="footer-inner">
-          <span>CapitalBench is a benchmark and research project, not financial advice.</span>
-          <span class="footer-links">
-            <a href="/manifesto">Manifesto</a>
-            <a href="/changelog">Changelog</a>
-            <a href="/privacy">Privacy</a>
-            <a href="/contribute" data-analytics-event="contribute_click" data-analytics-param-location="footer">Contribute</a>
+          <section class="footer-brand-panel" aria-label="CapitalBench project summary">
+            <a class="footer-brand" href="/">
+              <span class="brand-mark" aria-hidden="true"></span>
+              <span>CapitalBench</span>
+            </a>
+            <p>AI capital-allocation benchmark with frozen portfolios, public audit packets, and real market scoring.</p>
+            <span>Benchmark and research project, not financial advice.</span>
             <a
-              class="repository-link"
+              class="footer-repository-link"
               href={siteConfig.githubUrl}
               target="_blank"
               rel="noreferrer"
@@ -247,9 +291,27 @@ const emailWidgetContext = hideEmailAlertWidget
               data-analytics-param-location="footer"
             >
               <GitHubLogo size={15} />
-              Repository
+              GitHub repository
             </a>
-          </span>
+          </section>
+          <nav class="footer-nav" aria-label="Footer">
+            {footerGroups.map((group) => (
+              <section class="footer-link-group" aria-labelledby={`footer-${group.title.toLowerCase()}-title`}>
+                <h2 id={`footer-${group.title.toLowerCase()}-title`}>{group.title}</h2>
+                <div>
+                  {group.links.map((link) => (
+                    <a
+                      href={link.href}
+                      data-analytics-event={link.analyticsEvent}
+                      data-analytics-param-location={link.analyticsEvent ? "footer" : undefined}
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </nav>
         </div>
       </footer>
     </div>

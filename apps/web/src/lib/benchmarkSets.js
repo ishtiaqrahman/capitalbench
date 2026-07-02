@@ -521,8 +521,7 @@ export function benchmarkSetToScorecard(set, options = {}) {
       `Every ranked model in this set completed the same ${set.comparison.comparison_round_count} ${label.toLowerCase()} rounds.`,
     scoreChartKicker: "Shared resolved rounds",
     scoreChartTitle: "CapitalBench Score",
-    scoreChartDescription:
-      "Max possible = best eligible asset in each included round. Every ranked model has the same included rounds.",
+    scoreChartDescription: "Every ranked model has the same included rounds.",
     completedRoundCount: set.comparison.completed_round_count,
     completedRoundIds: set.comparison.completed_round_ids,
     comparisonRoundCount: set.comparison.comparison_round_count,

@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   Target
 } from "lucide-react";
+import { noOrphanTextParts } from "../lib/typography";
 
 type BenchmarkTrack = "weekly" | "monthly";
 
@@ -18,9 +19,10 @@ interface Props {
   compact?: boolean;
   title?: string;
   description?: string;
+  showMethodologyLink?: boolean;
 }
 
-const { evidence, track, tracks, benchmarkSet, compact = false, title, description } = Astro.props;
+const { evidence, track, tracks, benchmarkSet, compact = false, title, description, showMethodologyLink = true } = Astro.props;
 const selectedTracks: BenchmarkTrack[] = tracks ?? (track ? [track] : ["monthly", "weekly"]);
 
 function trackLabel(value: BenchmarkTrack): string {
@@ -149,6 +151,7 @@ const panelDescription =
   (benchmarkSet
     ? `This ${trackLabel(benchmarkSet.track).toLowerCase()} set is generated from completed shared rounds, not manually curated copy.`
     : "Generated from completed rounds, benchmark-set rules, protocols, and available baselines so every score carries its own context.");
+const panelTitleParts = noOrphanTextParts(panelTitle);
 ---
 
 {trackSummaries.length > 0 && (
@@ -156,10 +159,13 @@ const panelDescription =
     <div class="benchmark-evidence-head">
       <div>
         <span class="panel-kicker">Evidence context</span>
-        <h2>{panelTitle}</h2>
+        <h2>
+          {panelTitleParts.lead && <>{panelTitleParts.lead}{" "}</>}
+          <span class="no-orphan">{panelTitleParts.tail}</span>
+        </h2>
         <p>{panelDescription}</p>
       </div>
-      <a class="section-profile-link" href="/scoring/#capitalbench-score">Score methodology</a>
+      {showMethodologyLink && <a class="section-profile-link" href="/scoring/#capitalbench-score">Score methodology</a>}
     </div>
 
     <div class:list={["benchmark-evidence-grid", trackSummaries.length === 1 && "benchmark-evidence-grid-single"]}>

@@ -11,6 +11,29 @@ import { signedPulseChangeLabel } from "../src/lib/riskFormatting.js";
 const failures = [];
 const distRoot = join(process.cwd(), "dist");
 const repoRoot = join(process.cwd(), "..", "..");
+const validationBuildDate = new Date().toISOString().slice(0, 10);
+const apiRoundById = new Map(apiReadModel.rounds.map((round) => [round.round_id, round]));
+
+function renderedRoundStatus(round) {
+  if (!round) return "";
+  if (round.status === "active") {
+    return round.exit_date && round.exit_date < validationBuildDate ? "overdue" : "pending";
+  }
+  return round.status;
+}
+
+function renderedStatusForRoundId(roundId, fallbackStatus = "") {
+  const round = apiRoundById.get(roundId);
+  return round ? renderedRoundStatus(round) : fallbackStatus === "active" ? "pending" : fallbackStatus;
+}
+
+function isRenderedPendingRound(round) {
+  return renderedRoundStatus(round) === "pending";
+}
+
+function isRenderedPendingRow(row) {
+  return renderedStatusForRoundId(row.round_id, row.status) === "pending";
+}
 
 function readHtml(path) {
   return readFileSync(join(distRoot, path), "utf8");
@@ -342,11 +365,13 @@ function publicPriceSource(value) {
   return String(value).replaceAll("_", " ");
 }
 
-function publicRoundStatus(status) {
-  return status === "active" ? "pending" : status;
+function publicRoundStatus(statusOrRound) {
+  if (statusOrRound && typeof statusOrRound === "object") return renderedRoundStatus(statusOrRound);
+  return statusOrRound === "active" ? "pending" : statusOrRound;
 }
 
-function publicRoundStatusLabel(status) {
+function publicRoundStatusLabel(statusOrRound) {
+  const status = publicRoundStatus(statusOrRound);
   if (status === "resolved") return "scored";
   if (status === "active") return "pending";
   if (status === "overdue") return "resolution due";
@@ -508,7 +533,7 @@ function shortDate(value) {
 
 function buildActiveExposureSummary() {
   const activeAllocations = apiReadModel.allocations.filter(
-    (row) => row.status === "active" && ["weekly", "monthly"].includes(row.track)
+    (row) => isRenderedPendingRow(row) && ["weekly", "monthly"].includes(row.track)
   );
   const portfolioKeys = new Set(activeAllocations.map(uniquePortfolioKey));
   const trackPortfolioKeys = {
@@ -556,7 +581,7 @@ function buildActiveExposureSummary() {
 function latestLiveRows() {
   const latestByPortfolio = new Map();
   for (const row of apiReadModel.interim_performance ?? []) {
-    if (row.status !== "active") continue;
+    if (!isRenderedPendingRow(row)) continue;
     if (row.published === false) continue;
     if (typeof row.model_return_pct !== "number" || typeof row.sp500_return_pct !== "number" || typeof row.alpha_pp !== "number") continue;
     if (row.days_elapsed <= 0 || row.target_date <= row.entry_date || row.target_date >= row.exit_date) continue;
@@ -636,17 +661,17 @@ function validateLivePerformanceIsland(html) {
   const props = astroIslandProps(html, "LivePerformanceChart");
   const pageRows = Array.isArray(props.rows) ? props.rows : [];
   const pageOpenRoundCounts = props.openRoundCounts ?? {};
-  const expectedRows = (apiReadModel.interim_performance ?? []).filter((row) => row.status === "active");
-  const activeRounds = apiReadModel.rounds.filter((round) => round.status === "active");
+  const expectedRows = (apiReadModel.interim_performance ?? []).filter((row) => isRenderedPendingRow(row));
+  const activeRounds = apiReadModel.rounds.filter((round) => isRenderedPendingRound(round));
   const expectedOpenRoundCounts = {
     all: activeRounds.length,
     weekly: activeRounds.filter((round) => round.track === "weekly").length,
     monthly: activeRounds.filter((round) => round.track === "monthly").length
   };
-  expectEqual(pageRows.length, expectedRows.length, "homepage live performance island row count");
-  expectEqual(pageOpenRoundCounts.all, expectedOpenRoundCounts.all, "homepage live performance all open round count");
-  expectEqual(pageOpenRoundCounts.weekly, expectedOpenRoundCounts.weekly, "homepage live performance weekly open round count");
-  expectEqual(pageOpenRoundCounts.monthly, expectedOpenRoundCounts.monthly, "homepage live performance monthly open round count");
+  expectEqual(pageRows.length, expectedRows.length, "live dashboard live performance island row count");
+  expectEqual(pageOpenRoundCounts.all, expectedOpenRoundCounts.all, "live dashboard live performance all open round count");
+  expectEqual(pageOpenRoundCounts.weekly, expectedOpenRoundCounts.weekly, "live dashboard live performance weekly open round count");
+  expectEqual(pageOpenRoundCounts.monthly, expectedOpenRoundCounts.monthly, "live dashboard live performance monthly open round count");
 
   const pageByKey = new Map(
     pageRows.map((row) => [`${row.round_id}:${row.run_id}:${row.model_id}:${row.target_date}:${row.price_date}`, row])
@@ -681,7 +706,7 @@ function validateLivePerformanceIsland(html) {
   for (const actual of pageRows) {
     const key = `${actual.round_id}:${actual.run_id}:${actual.model_id}:${actual.target_date}:${actual.price_date}`;
     if (!expectedRows.some((row) => `${row.round_id}:${row.run_id}:${row.model_id}:${row.target_date}:${row.price_date}` === key)) {
-      failures.push(`homepage live performance island has unexpected row ${key}`);
+      failures.push(`live dashboard live performance island has unexpected row ${key}`);
     }
   }
 }
@@ -713,15 +738,15 @@ function validateActiveExposureIsland(html) {
   const props = astroIslandProps(html, "ActiveExposureMap");
   const pageRounds = Array.isArray(props.rounds) ? props.rounds : [];
   const expectedRounds = apiReadModel.rounds.filter(
-    (round) => round.status === "active" && ["weekly", "monthly"].includes(round.track) && round.official_run_id
+    (round) => isRenderedPendingRound(round) && ["weekly", "monthly"].includes(round.track) && round.official_run_id
   );
-  expectEqual(pageRounds.length, expectedRounds.length, "homepage active exposure island round count");
+  expectEqual(pageRounds.length, expectedRounds.length, "live dashboard active exposure island round count");
 
   const pageByRoundId = new Map(pageRounds.map((item) => [item.round?.round_id, item]));
   for (const expectedRound of expectedRounds) {
     const actualRound = pageByRoundId.get(expectedRound.round_id);
     if (!actualRound) {
-      failures.push(`homepage active exposure island missing round ${expectedRound.round_id}`);
+      failures.push(`live dashboard active exposure island missing round ${expectedRound.round_id}`);
       continue;
     }
     expectEqual(actualRound.track, expectedRound.track, `homepage active exposure ${expectedRound.round_id} track`);
@@ -794,7 +819,7 @@ function validateActiveExposureIsland(html) {
 
   for (const actualRound of pageRounds) {
     if (!expectedRounds.some((round) => round.round_id === actualRound.round?.round_id)) {
-      failures.push(`homepage active exposure island has unexpected round ${actualRound.round?.round_id}`);
+      failures.push(`live dashboard active exposure island has unexpected round ${actualRound.round?.round_id}`);
     }
   }
 }
@@ -1086,7 +1111,7 @@ function validateRoundsIndexIsland(html) {
     horizon_days: round.horizon_days,
     entry_date: round.entry_date,
     exit_date: round.exit_date,
-    status: publicRoundStatus(round.status),
+    status: publicRoundStatus(round),
     methodology_version: round.methodology_version,
     universe_version: round.universe_version,
     submission_format: round.submission_format,
@@ -1130,7 +1155,7 @@ function dateOnly(value) {
 
 function latestRound(track, status) {
   return apiReadModel.rounds
-    .filter((round) => round.track === track && round.status === status)
+    .filter((round) => round.track === track && (status === "active" ? isRenderedPendingRound(round) : round.status === status))
     .sort((left, right) => roundSortKey(right).localeCompare(roundSortKey(left)))[0];
 }
 
@@ -1206,16 +1231,6 @@ function pctValue(value) {
 function numberLabel(value, digits = 1) {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric.toFixed(digits) : "n/a";
-}
-
-function riskScoreValue(value) {
-  const numeric = Number(value);
-  return Number.isFinite(numeric) ? `${numeric.toFixed(2)} / 5` : "n/a";
-}
-
-function riskScoreShort(value) {
-  const numeric = Number(value);
-  return Number.isFinite(numeric) ? numeric.toFixed(2) : "n/a";
 }
 
 function pulseScore(value) {
@@ -1462,7 +1477,7 @@ function primaryPickCounts(portfolios) {
 }
 
 function modelLiveExposure(modelId) {
-  const allocations = apiReadModel.allocations.filter((row) => row.model_id === modelId && row.status === "active");
+  const allocations = apiReadModel.allocations.filter((row) => row.model_id === modelId && isRenderedPendingRow(row));
   const portfolioKeys = new Set(allocations.map(uniquePortfolioKey));
   const byAsset = new Map();
   for (const row of allocations) {
@@ -1550,7 +1565,7 @@ function roundScoreEtaUtc(roundId, exitDate) {
 
 function expectedModelLiveScope(modelId, scope) {
   const allocations = apiReadModel.allocations.filter(
-    (row) => row.model_id === modelId && row.status === "active" && (scope === "all" || row.track === scope)
+    (row) => row.model_id === modelId && isRenderedPendingRow(row) && (scope === "all" || row.track === scope)
   );
   const portfolioKeys = new Set(allocations.map(uniquePortfolioKey));
   const weeklyPortfolioKeys = new Set(allocations.filter((row) => row.track === "weekly").map(uniquePortfolioKey));
@@ -1795,15 +1810,6 @@ function buildHomepageTrackState(track) {
   };
 }
 
-function homepageRiskProfiles() {
-  return [...apiReadModel.model_styles]
-    .filter((row) => typeof row.risk_appetite_score === "number")
-    .sort(
-      (left, right) =>
-        left.risk_appetite_score - right.risk_appetite_score || modelLabel(left.model_id).localeCompare(modelLabel(right.model_id))
-    );
-}
-
 function latestResultForTrack(track) {
   const round = latestRound(track, "resolved");
   const leaderboard = round
@@ -1858,7 +1864,6 @@ function validateLatestOfficialResultsBrowser(html, track, context) {
   const returnRows = apiReadModel.returns.filter((row) => row.round_id === latestRound.round_id && row.run_id === latestRound.official_run_id);
 
   includes(html, "data-latest-official-results", `${context} controller`);
-  includes(html, `${label} results, newest official score first`, `${context} panel heading`);
   includes(html, `aria-label="Previous ${track} result"`, `${context} previous button`);
   includes(html, `aria-label="Next ${track} result"`, `${context} next button`);
   includes(html, `<b data-latest-official-position>1</b> of ${resolvedRounds.length}`, `${context} position`);
@@ -1880,6 +1885,7 @@ function validateLatestOfficialResultsBrowser(html, track, context) {
 }
 
 const indexHtml = readHtml("index.html");
+const liveHtml = readHtml("live/index.html");
 const leaderboardsHtml = readHtml("leaderboards/index.html");
 const benchmarkSetsHtml = readHtml("leaderboards/benchmark-sets/index.html");
 const latestMonthlyHtml = readHtml("leaderboards/latest-monthly/index.html");
@@ -1947,12 +1953,14 @@ for (const track of ["weekly", "monthly"]) {
   includes(cumulativeHtml, `${cumulative.comparison.comparison_round_count} resolved`, context);
   includes(cumulativeScorecardHtml, score, context);
   includes(cumulativeScorecardHtml, `Resolved ${track} rounds only.`, context);
-  includes(cumulativeScorecardHtml, "Max possible = best asset in each completed round.", `${context} max possible explanation`);
+  includes(
+    cumulativeScorecardHtml,
+    "Max possible is the best eligible asset after scoring for the same rounds.",
+    `${context} max possible explanation`
+  );
   includes(cumulativeScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, context);
   includes(cumulativeScorecardHtml, "full-history models ranked", context);
   includes(cumulativeScorecardHtml, `Newest included round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
-  includes(cumulativeScorecardHtml, "Leader audit", `${context} score calculation audit`);
-  includes(cumulativeScorecardHtml, cumulativeLeaderScoreAuditText(track, leader), `${context} score calculation audit`);
   includes(cumulativeScorecardHtml, "Rounds included:", context);
   for (const roundId of cumulative.comparison.comparison_round_ids) {
     includes(cumulativeScorecardHtml, roundId, context);
@@ -1982,12 +1990,6 @@ for (const track of ["weekly", "monthly"]) {
     includes(cumulativeScorecardHtml, scoreLabel(maxPossibleScore.value), `${context} max possible CapitalBench Score`);
     includes(cumulativeScorecardHtml, "hindsight best asset", `${context} max possible short explanation`);
   }
-  if (scorecard.topReturnModel && typeof scorecard.topReturnModel.portfolio_return_pct === "number") {
-    includes(cumulativeScorecardHtml, "Return leader", `${context} return leader label`);
-    includes(cumulativeScorecardHtml, scorecard.topReturnModel.label, `${context} return leader model`);
-    includes(cumulativeScorecardHtml, percentPointLabel(scorecard.topReturnModel.portfolio_return_pct), `${context} return leader value`);
-  }
-
   const provisionalRows = cumulative.data.filter((row) => !row.is_rank_eligible);
   if (provisionalRows.length > 0) {
     includes(cumulativeScorecardHtml, "Not ranked yet", `${context} provisional section`);
@@ -2008,10 +2010,14 @@ for (const track of ["weekly", "monthly"]) {
       `homepage ${track} comparison set scorecard`
     );
     const setLeader = featuredSet.leader;
-    includes(indexHtml, "Current benchmarks rank models only inside equal-run comparison sets. Switch monthly/weekly.", "homepage scorecard comparison-set explanation");
+    includes(indexHtml, "Monthly and weekly tracks stay separate. Higher benchmark score is better.", "homepage scorecard comparison-set explanation");
     includes(homepageScorecardHtml, featuredSet.is_current ? `Current ${trackLabel(track)} Benchmark` : `${trackLabel(track)} Benchmark Forming`, `homepage ${track} comparison title`);
     includes(homepageScorecardHtml, "CapitalBench Score", `homepage ${track} comparison chart title`);
-    includes(homepageScorecardHtml, "Max possible = best eligible asset in each included round.", `homepage ${track} max possible explanation`);
+    includes(
+      homepageScorecardHtml,
+      "Max possible is the best eligible asset after scoring for the same rounds.",
+      `homepage ${track} max possible explanation`
+    );
     includes(homepageScorecardHtml, `${featuredSet.comparison.comparison_round_count} shared resolved rounds`, `homepage ${track} shared round count`);
     includes(homepageScorecardHtml, "equal-run models ranked", `homepage ${track} equal-run ranked model count`);
     includes(homepageScorecardHtml, `Newest included round: ${featuredSet.latest_included_round_id}`, `homepage ${track} newest included`);
@@ -2025,8 +2031,6 @@ for (const track of ["weekly", "monthly"]) {
     if (setLeader) {
       includes(homepageScorecardHtml, setLeader.label, `homepage ${track} comparison leader`);
       includes(homepageScorecardHtml, scoreLabel(setLeader.capitalbench_score), `homepage ${track} comparison leader score`);
-      includes(homepageScorecardHtml, "Leader audit", `homepage ${track} score calculation audit`);
-      includes(homepageScorecardHtml, benchmarkSetLeaderScoreAuditText(featuredSet), `homepage ${track} score calculation audit`);
     }
     for (const row of featuredSet.data) {
       includes(homepageScorecardHtml, row.label, `homepage ${track} comparison ${row.model_id}`);
@@ -2071,7 +2075,7 @@ for (const [context, html] of [
 }
 
 const resolvedRoundCount = apiReadModel.rounds.filter((round) => round.status === "resolved").length;
-const activeRoundCount = apiReadModel.rounds.filter((round) => round.status === "active").length;
+const activeRoundCount = apiReadModel.rounds.filter((round) => isRenderedPendingRound(round)).length;
 const currentUniverseOptionCount = apiReadModel.assets.filter((asset) => asset.in_current_universe).length;
 const latestResolvedRound = apiReadModel.rounds
   .filter((round) => round.status === "resolved")
@@ -2091,33 +2095,31 @@ if (latestActiveMonthly) includes(leaderboardsHtml, latestActiveMonthly.round_id
 
 includes(indexHtml, `${apiReadModel.rounds.length} rounds`, "homepage all-rounds link count");
 includes(indexHtml, `same ${currentUniverseOptionCount} assets`, "homepage process asset count");
-includes(indexHtml, `${currentUniverseOptionCount} current assets`, "homepage safeguard current asset count");
-includes(indexHtml, `${activeRoundCount} live rounds waiting for results`, "homepage safeguard live round count");
-includes(indexHtml, "Current Scoring Calendar", "homepage scoring calendar heading");
-includes(indexHtml, `${apiReadModel.rounds.length} official rounds recorded`, "homepage scoring calendar total round count");
+includes(liveHtml, "Current Scoring Calendar", "live dashboard scoring calendar heading");
+includes(liveHtml, `${apiReadModel.rounds.length} official rounds recorded`, "live dashboard scoring calendar total round count");
 excludes(indexHtml, `${apiReadModel.rounds.length}-round record`, "homepage scoring calendar old total-round label");
 excludes(indexHtml, "When Each Round Gets Scored", "homepage scoring calendar old heading");
+excludes(indexHtml, "Current Scoring Calendar", "homepage scoring calendar moved to live dashboard");
 includes(indexHtml, `<strong>${apiReadModel.models.length}</strong>`, "homepage current setup model count");
 includes(indexHtml, `<strong>${currentUniverseOptionCount}</strong>`, "homepage current setup asset count");
 includes(indexHtml, `<strong>${activeRoundCount}</strong>`, "homepage current setup open test count");
-includes(indexHtml, `${activeRoundCount} live total`, "homepage current setup live total");
-includes(indexHtml, "<strong>Weekly</strong>", "homepage current setup weekly label");
-includes(indexHtml, "7 days", "homepage current setup weekly duration");
-includes(indexHtml, "<strong>Monthly</strong>", "homepage current setup monthly label");
-includes(indexHtml, "1 month", "homepage current setup monthly duration");
-const homepageLiveTestsHeadingHtml = htmlSection(
-  indexHtml,
-  'class="home-section-heading track-summary-heading"',
-  "homepage live benchmark tests heading"
+includes(indexHtml, "Explore models", "homepage current setup models CTA");
+includes(indexHtml, "View asset universe", "homepage current setup assets CTA");
+includes(indexHtml, "Open live dashboard", "homepage current setup live CTA");
+const liveTestsHeadingHtml = htmlSection(
+  liveHtml,
+  'id="open-tests"',
+  "live dashboard live benchmark tests heading"
 );
-const homepageLiveTestsHtml = htmlSection(indexHtml, 'class="track-summary live-test-summary"', "homepage live benchmark tests");
-includes(homepageLiveTestsHeadingHtml, "Live benchmark tests", "homepage live tests kicker");
-includes(homepageLiveTestsHeadingHtml, "These are the open tests you can inspect now.", "homepage live tests purpose");
-includes(homepageLiveTestsHtml, "Internal IDs and full reproducibility files are inside each audit packet.", "homepage live tests audit note");
-excludes(homepageLiveTestsHeadingHtml + homepageLiveTestsHtml, "Latest Weekly And Monthly Rounds", "homepage live tests old heading");
-excludes(homepageLiveTestsHtml, "Run id", "homepage live tests run-id label");
+const liveTestsHtml = htmlSection(liveHtml, 'class="track-summary live-test-summary"', "live dashboard live benchmark tests");
+includes(liveTestsHeadingHtml, "Live Monthly And Weekly Tests", "live dashboard live tests heading");
+includes(liveTestsHeadingHtml, "These are the open tests you can inspect now.", "live dashboard live tests purpose");
+includes(liveTestsHtml, "Internal IDs and full reproducibility files are inside each audit packet.", "live dashboard live tests audit note");
+excludes(liveTestsHeadingHtml + liveTestsHtml, "Latest Weekly And Monthly Rounds", "live dashboard live tests old heading");
+excludes(liveTestsHtml, "Run id", "live dashboard live tests run-id label");
+excludes(indexHtml, "Internal IDs and full reproducibility files are inside each audit packet.", "homepage live tests moved to live dashboard");
 for (const round of homepageTrackRounds) {
-  includes(indexHtml, round.round_id, `homepage current setup latest ${round.track} round`);
+  includes(liveHtml, round.round_id, `live dashboard latest ${round.track} round`);
   const concentration = buildRoundConcentration(round);
   const topAsset = concentration.assets[0];
   const portfolioCount = calendarPortfolioCount(round);
@@ -2125,31 +2127,31 @@ for (const round of homepageTrackRounds) {
     round.track === "weekly"
       ? "Short-term test of AI positioning over one market week."
       : "Longer test of AI allocation over one month.";
-  includes(homepageLiveTestsHtml, liveTestDescription, `homepage live tests ${round.track} description`);
-  includes(homepageLiveTestsHtml, `Model portfolios <strong>${portfolioCount}</strong>`, `homepage live tests ${round.track} portfolio count`);
-  includes(homepageLiveTestsHtml, `Eligible assets <strong>${currentUniverseOptionCount}</strong>`, `homepage live tests ${round.track} eligible assets`);
+  includes(liveTestsHtml, liveTestDescription, `live dashboard live tests ${round.track} description`);
+  includes(liveTestsHtml, `Model portfolios <strong>${portfolioCount}</strong>`, `live dashboard live tests ${round.track} portfolio count`);
+  includes(liveTestsHtml, `Eligible assets <strong>${currentUniverseOptionCount}</strong>`, `live dashboard live tests ${round.track} eligible assets`);
   includes(
-    homepageLiveTestsHtml,
+    liveTestsHtml,
     `Risk-taking score <strong>${liveTrackRiskScore(round.track)}<small>/100</small></strong>`,
-    `homepage live tests ${round.track} risk score`
+    `live dashboard live tests ${round.track} risk score`
   );
   if (topAsset) {
     includesAny(
-      homepageLiveTestsHtml,
+      liveTestsHtml,
       htmlTextVariants(optionDisplay(topAsset)),
-      `homepage live tests ${round.track} top consensus asset`
+      `live dashboard live tests ${round.track} top consensus asset`
     );
-    includes(homepageLiveTestsHtml, `${allocationPctLabel(topAsset.average_pct)} average weight`, `homepage live tests ${round.track} top consensus weight`);
+    includes(liveTestsHtml, `${allocationPctLabel(topAsset.average_pct)} average weight`, `live dashboard live tests ${round.track} top consensus weight`);
   } else {
-    failures.push(`homepage live tests ${round.track} missing top consensus asset`);
+    failures.push(`live dashboard live tests ${round.track} missing top consensus asset`);
   }
-  includes(indexHtml, dateLabel(round.decision_deadline_utc), `homepage scoring calendar ${round.round_id} lock date`);
-  includes(indexHtml, calendarMarketWindowLabel(round), `homepage scoring calendar ${round.round_id} window`);
-  includes(indexHtml, calendarScoreDateLabel(round), `homepage scoring calendar ${round.round_id} score date`);
+  includes(liveHtml, dateLabel(round.decision_deadline_utc), `live dashboard scoring calendar ${round.round_id} lock date`);
+  includes(liveHtml, calendarMarketWindowLabel(round), `live dashboard scoring calendar ${round.round_id} window`);
+  includes(liveHtml, calendarScoreDateLabel(round), `live dashboard scoring calendar ${round.round_id} score date`);
   includes(
-    indexHtml,
+    liveHtml,
     `${portfolioCount} model portfolio${portfolioCount === 1 ? "" : "s"} locked and waiting for official scoring.`,
-    `homepage scoring calendar ${round.round_id} portfolio count`
+    `live dashboard scoring calendar ${round.round_id} portfolio count`
   );
 }
 
@@ -2248,11 +2250,15 @@ const latestMonthlyDisplayRound = latestResolvedMonthlyRound ?? latestActiveMont
 if (latestResolvedMonthlyRound) {
   validateLeaderboardTableIsland(latestMonthlyHtml, latestResolvedMonthlyRound, "latest monthly page");
   validateLatestOfficialResultsBrowser(latestMonthlyHtml, "monthly", "latest monthly page official result browser");
-  includes(latestMonthlyHtml, "Browse Monthly Official Results", "latest monthly page official result browser heading");
+  includes(
+    latestMonthlyHtml,
+    'Browse Monthly <span class="no-orphan">Official Results</span>',
+    "latest monthly page official result browser heading"
+  );
   includes(latestMonthlyHtml, "Full monthly history", "latest monthly page official result browser cumulative link");
 
   const monthlyHeroIndex = latestMonthlyHtml.indexOf("Latest published monthly result");
-  const monthlyBrowserIndex = latestMonthlyHtml.indexOf("Browse Monthly Official Results");
+  const monthlyBrowserIndex = latestMonthlyHtml.indexOf('Browse Monthly <span class="no-orphan">Official Results</span>');
   const monthlyLeaderboardIndex = latestMonthlyHtml.indexOf("Official monthly leaderboard");
   if (monthlyHeroIndex === -1) failures.push("latest monthly page missing latest result hero");
   if (monthlyBrowserIndex === -1) failures.push("latest monthly page missing official result browser");
@@ -2278,7 +2284,7 @@ for (const round of apiReadModel.rounds) {
   includes(roundsIndexHtml, round.round_id, context);
   includes(roundsIndexHtml, `/rounds/${round.round_id}/`, `${context} proof link`);
   includes(roundsIndexHtml, roundTrackLabel(round), `${context} track`);
-  includes(roundsIndexHtml, publicRoundStatusLabel(round.status), `${context} status`);
+  includes(roundsIndexHtml, publicRoundStatusLabel(round), `${context} status`);
   includes(roundsIndexHtml, dateOnly(round.decision_deadline_utc), `${context} decision deadline`);
   includes(roundsIndexHtml, round.horizon, `${context} horizon`);
   includes(roundsIndexHtml, dateOnly(round.exit_date), `${context} exit date`);
@@ -2488,13 +2494,13 @@ if (
   );
 }
 
-includes(indexHtml, "The benchmark for AI capital allocation", "homepage hero title");
+includes(indexHtml, 'The benchmark for <span class="no-orphan">AI capital allocation</span>', "homepage hero title");
 includes(indexHtml, "Study how AI models behave in capital-allocation rounds, and which ones actually perform.", "homepage hero positioning copy");
-includes(indexHtml, "View latest AI positioning", "homepage hero positioning CTA");
+includesAny(indexHtml, htmlTextVariants("Open Live Positions & Returns"), "homepage hero live dashboard CTA");
 includes(indexHtml, "Get score alerts", "homepage hero score alert CTA");
 includes(indexHtml, "Request API access", "homepage hero API CTA");
-includes(indexHtml, "What AI Models Are Allocating To Now", "homepage AI positioning heading");
-includes(indexHtml, "Model Performance", "homepage model performance heading");
+includes(indexHtml, 'What are AI models doing <span class="no-orphan">right now?</span>', "homepage AI positioning heading");
+includes(indexHtml, 'Which models are <span class="no-orphan">performing best?</span>', "homepage model performance heading");
 includes(indexHtml, "Choose benchmark score horizon", "homepage scorecard tablist");
 includes(indexHtml, 'data-track-scorecard-tab="weekly"', "homepage weekly scorecard tab");
 includes(indexHtml, 'data-track-scorecard-tab="monthly"', "homepage monthly scorecard tab");
@@ -2508,10 +2514,12 @@ if (monthlyScorecardTabIndex !== -1 && weeklyScorecardTabIndex !== -1 && monthly
 const aiPositioningIndex = indexHtml.indexOf('id="ai-positioning"');
 const methodologyIndex = indexHtml.indexOf('id="how-it-works"');
 const modelPerformanceIndex = indexHtml.indexOf('id="track-scorecards"');
+const latestOfficialIndex = indexHtml.indexOf("data-latest-official-results");
 const weeklyScorecardIndex = indexHtml.indexOf("Full-History Weekly Scores");
 if (aiPositioningIndex === -1) failures.push("homepage AI positioning anchor missing");
 if (methodologyIndex === -1) failures.push("homepage methodology anchor missing");
 if (modelPerformanceIndex === -1) failures.push("homepage model performance section missing");
+if (latestOfficialIndex === -1) failures.push("homepage latest official results controller missing");
 if (methodologyIndex !== -1 && modelPerformanceIndex !== -1 && methodologyIndex < modelPerformanceIndex) {
   failures.push("homepage methodology section appears before benchmark results");
 }
@@ -2521,12 +2529,18 @@ if (methodologyIndex !== -1 && weeklyScorecardIndex !== -1 && methodologyIndex <
 if (aiPositioningIndex !== -1 && modelPerformanceIndex !== -1 && modelPerformanceIndex > aiPositioningIndex) {
   failures.push("homepage model performance section appears after AI positioning");
 }
-if (aiPositioningIndex !== -1 && methodologyIndex !== -1 && methodologyIndex > aiPositioningIndex) {
-  failures.push("homepage methodology section appears after AI positioning");
+if (latestOfficialIndex !== -1 && modelPerformanceIndex !== -1 && latestOfficialIndex < modelPerformanceIndex) {
+  failures.push("homepage latest official results appear before model performance");
+}
+if (latestOfficialIndex !== -1 && aiPositioningIndex !== -1 && latestOfficialIndex > aiPositioningIndex) {
+  failures.push("homepage latest official results appear after AI positioning");
+}
+if (aiPositioningIndex !== -1 && methodologyIndex !== -1 && methodologyIndex < aiPositioningIndex) {
+  failures.push("homepage methodology section appears before AI positioning");
 }
 
-includes(indexHtml, "Finished Benchmark Results", "homepage latest official results heading");
-includes(indexHtml, "Switch between monthly and weekly results", "homepage latest official results purpose");
+includes(indexHtml, 'What happened in the latest <span class="no-orphan">scored rounds?</span>', "homepage latest official results heading");
+includes(indexHtml, "Finished monthly and weekly rounds scored against real market returns.", "homepage latest official results purpose");
 includes(indexHtml, 'data-latest-official-results', "homepage latest official results controller");
 includes(indexHtml, 'data-latest-official-prev', "homepage latest official previous control");
 includes(indexHtml, 'data-latest-official-next', "homepage latest official next control");
@@ -2540,6 +2554,10 @@ if (
 ) {
   failures.push("homepage latest official result tabs show weekly before monthly");
 }
+includes(indexHtml, "Monthly and weekly are separate comparison tracks.", "homepage short horizon note");
+includes(indexHtml, "Read scoring rules", "homepage scoring rules CTA");
+includes(indexHtml, 'How does CapitalBench keep <span class="no-orphan">scores comparable?</span>', "homepage trust proof heading");
+includes(indexHtml, 'What evidence supports <span class="no-orphan">each score?</span>', "homepage evidence panel heading");
 
 for (const track of ["weekly", "monthly"]) {
   const label = trackLabel(track);
@@ -2556,7 +2574,6 @@ for (const track of ["weekly", "monthly"]) {
 
   includes(indexHtml, `data-latest-official-tab="${track}"`, `${context} tab`);
   includes(indexHtml, `<strong>${label}</strong><span>${resolvedRounds.length} completed`, `${context} tab count`);
-  includes(indexHtml, `${label} results, newest official score first`, `${context} panel heading`);
   includes(indexHtml, `aria-label="Previous ${track} result"`, `${context} previous button`);
   includes(indexHtml, `aria-label="Next ${track} result"`, `${context} next button`);
   includes(indexHtml, `<b data-latest-official-position>1</b> of ${resolvedRounds.length}`, `${context} position`);
@@ -2634,53 +2651,51 @@ for (const track of ["weekly", "monthly"]) {
   const state = buildHomepageTrackState(track);
   if (!state) continue;
   const label = track === "weekly" ? "Weekly" : "Monthly";
-  const context = `homepage latest ${track} model portfolios`;
+  const context = `live dashboard latest ${track} model portfolios`;
   const { round, portfolios, assets, top_asset: topAsset } = state;
 
-  includes(indexHtml, `${label} model portfolios`, context);
-  includes(indexHtml, round.round_id, `${context} round id`);
-  includes(indexHtml, `${round.entry_date} to ${round.exit_date}`, `${context} score window`);
-  includes(indexHtml, trackStatusLabel(round), `${context} status`);
+  includes(liveHtml, `${label} model portfolios`, context);
+  includes(liveHtml, round.round_id, `${context} round id`);
+  includes(liveHtml, `${round.entry_date} to ${round.exit_date}`, `${context} score window`);
+  includes(liveHtml, trackStatusLabel(round), `${context} status`);
 
   if (portfolios.length > 0) {
     for (const portfolio of portfolios) {
       const portfolioContext = `${context} ${portfolio.model_id}`;
-      includes(indexHtml, modelLabel(portfolio.model_id), portfolioContext);
+      includes(liveHtml, modelLabel(portfolio.model_id), portfolioContext);
       for (const allocation of portfolio.allocations ?? []) {
-        includesAny(indexHtml, htmlTextVariants(optionShortDisplay(allocation)), `${portfolioContext} allocation ${allocation.option_id} label`);
-        includes(indexHtml, allocationPctLabel(allocation.allocation_pct), `${portfolioContext} allocation ${allocation.option_id}`);
+        includesAny(liveHtml, htmlTextVariants(optionShortDisplay(allocation)), `${portfolioContext} allocation ${allocation.option_id} label`);
+        includes(liveHtml, allocationPctLabel(allocation.allocation_pct), `${portfolioContext} allocation ${allocation.option_id}`);
       }
     }
 
     if (topAsset) {
-      includesAny(indexHtml, [optionDisplay(topAsset), htmlText(optionDisplay(topAsset))], `${context} shared top allocation`);
-      includes(indexHtml, `Average across ${portfolios.length} frozen model portfolios.`, `${context} model count`);
+      includesAny(liveHtml, [optionDisplay(topAsset), htmlText(optionDisplay(topAsset))], `${context} shared top allocation`);
+      includes(liveHtml, `Average across ${portfolios.length} frozen model portfolios.`, `${context} model count`);
     } else {
       failures.push(`${context} has portfolios but no concentration top asset`);
     }
-    includes(indexHtml, `Top 3 <strong>${allocationPctLabel(state.top_three_share_pct)}</strong>`, `${context} top-three concentration`);
-    includes(indexHtml, `Spread <strong>${state.effective_asset_count.toFixed(1)} assets</strong>`, `${context} effective asset count`);
+    includes(liveHtml, `Top 3 <strong>${allocationPctLabel(state.top_three_share_pct)}</strong>`, `${context} top-three concentration`);
+    includes(liveHtml, `Spread <strong>${state.effective_asset_count.toFixed(1)} assets</strong>`, `${context} effective asset count`);
 
     for (const asset of assets.slice(0, 4)) {
-      includesAny(indexHtml, [optionDisplay(asset), htmlText(optionDisplay(asset))], `${context} exposure ${asset.option_id}`);
-      includes(indexHtml, allocationPctLabel(asset.average_pct), `${context} exposure ${asset.option_id} average allocation`);
+      includesAny(liveHtml, [optionDisplay(asset), htmlText(optionDisplay(asset))], `${context} exposure ${asset.option_id}`);
+      includes(liveHtml, allocationPctLabel(asset.average_pct), `${context} exposure ${asset.option_id} average allocation`);
     }
   } else {
-    includes(indexHtml, `No model portfolios yet.`, context);
+    includes(liveHtml, `No model portfolios yet.`, context);
   }
 }
 
 const activeExposure = buildActiveExposureSummary();
-validateLivePerformanceIsland(indexHtml);
-validateActiveExposureIsland(indexHtml);
+validateLivePerformanceIsland(liveHtml);
+validateActiveExposureIsland(liveHtml);
 const liveRisk = apiReadModel.risk_appetite;
 const livePulse = liveRisk.current_decision_pulse;
-includes(indexHtml, "AI Risk Appetite", "homepage AI risk appetite");
+includes(indexHtml, "AI risk appetite", "homepage AI risk appetite");
 includes(indexHtml, "/risk-appetite", "homepage model risk methodology link");
-includes(indexHtml, "Historical trend and methodology", "homepage model risk history link");
+includes(indexHtml, "View historical risk trend", "homepage model risk history link");
 includes(indexHtml, pulseScore(livePulse.score), "homepage model risk combined score");
-includes(indexHtml, pulseScore(livePulse.weekly?.score), "homepage model risk weekly score");
-includes(indexHtml, pulseScore(livePulse.monthly?.score), "homepage model risk monthly score");
 includes(indexHtml, signedPulseChangeLabel(livePulse.change_from_previous), "homepage model risk change");
 includes(indexHtml, livePulse.agreement.label, "homepage model risk agreement");
 includes(indexHtml, livePulse.regime, "homepage model risk regime");
@@ -2786,87 +2801,44 @@ for (const [optionId, definition] of Object.entries(riskConfig.assets ?? {})) {
 }
 const largestActiveExposure = activeExposure.rows[0];
 if (largestActiveExposure) {
-  includes(indexHtml, "Live AI positioning", "homepage active exposure");
-  includes(indexHtml, `${assetDisplay(largestActiveExposure)} is the largest live allocation.`, "homepage active exposure top asset");
-  includes(indexHtml, compactExposurePct(largestActiveExposure.exposure_pct), "homepage active exposure top percentage");
+  includes(liveHtml, "Live AI positioning", "live dashboard active exposure");
+  includes(liveHtml, `${assetDisplay(largestActiveExposure)} is the largest live allocation.`, "live dashboard active exposure top asset");
+  includes(liveHtml, compactExposurePct(largestActiveExposure.exposure_pct), "live dashboard active exposure top percentage");
   includesAny(
-    indexHtml,
+    liveHtml,
     [
       `${largestActiveExposure.portfolios.size} of ${activeExposure.portfolio_count}`,
       `${largestActiveExposure.portfolios.size}<!-- --> of <!-- -->${activeExposure.portfolio_count}`
     ],
-    "homepage active exposure holder count"
+    "live dashboard active exposure holder count"
   );
-  includes(indexHtml, compactExposurePct(largestActiveExposure.weekly_share_pct), "homepage active exposure weekly share");
-  includes(indexHtml, compactExposurePct(largestActiveExposure.monthly_share_pct), "homepage active exposure monthly share");
-  includes(indexHtml, "Top allocations", "homepage active exposure scope");
+  includes(liveHtml, compactExposurePct(largestActiveExposure.weekly_share_pct), "live dashboard active exposure weekly share");
+  includes(liveHtml, compactExposurePct(largestActiveExposure.monthly_share_pct), "live dashboard active exposure monthly share");
+  includes(liveHtml, "Top allocations", "live dashboard active exposure scope");
 }
 
 const livePerformance = buildLivePerformanceSummary();
 if (livePerformance.modelRows.length > 0) {
   const liveLeader = livePerformance.modelRows[0];
-  includes(indexHtml, "Live Portfolio Returns", "homepage live performance");
-  includes(indexHtml, String(livePerformance.open_round_count), "homepage live performance open round count");
-  includes(indexHtml, shortDate(livePerformance.latest_price_date), "homepage live performance latest close");
-  includes(indexHtml, shortDate(livePerformance.next_final_date), "homepage live performance next final date");
+  includes(liveHtml, "Current Frozen Model Portfolios", "live dashboard frozen portfolios heading");
+  includes(liveHtml, "Current Scoring Calendar", "live dashboard scoring calendar heading");
+  includes(liveHtml, "Live Portfolio Returns", "live dashboard live performance");
+  includes(liveHtml, String(livePerformance.open_round_count), "live dashboard live performance open round count");
+  includes(liveHtml, shortDate(livePerformance.latest_price_date), "live dashboard live performance latest close");
+  includes(liveHtml, shortDate(livePerformance.next_final_date), "live dashboard live performance next final date");
   if (livePerformance.next_final_date && livePerformance.latest_price_date && livePerformance.next_final_date <= livePerformance.latest_price_date) {
     failures.push(
-      `homepage live performance next final date ${livePerformance.next_final_date} is not after latest close ${livePerformance.latest_price_date}`
+      `live dashboard live performance next final date ${livePerformance.next_final_date} is not after latest close ${livePerformance.latest_price_date}`
     );
   }
-  includes(indexHtml, liveLeader.label, "homepage live performance leader");
-  includes(indexHtml, signedPercentPointLabel(liveLeader.return_pct), "homepage live performance leader return");
-  includes(indexHtml, signedPercentPointLabel(liveLeader.benchmark_return_pct), "homepage live performance leader benchmark return");
-  includes(indexHtml, signedPercentPointLabel(liveLeader.alpha_pp), "homepage live performance leader alpha");
-  includes(indexHtml, signedPercentPointLabel(livePerformance.benchmark_return_pct), "homepage live performance S&P 500 return");
-  includes(indexHtml, "Interim returns use live rounds only", "homepage live performance scope");
-}
-
-const riskProfiles = homepageRiskProfiles();
-if (riskProfiles.length > 0) {
-  const context = "homepage risk appetite";
-  const riskScores = riskProfiles.map((row) => row.risk_appetite_score);
-  const riskMinScore = Math.min(...riskScores);
-  const riskMaxScore = Math.max(...riskScores);
-  const rawRiskRange = riskMaxScore - riskMinScore;
-  const riskFocusPadding = Math.max(0.06, Math.min(0.18, rawRiskRange * 0.18));
-  let riskFocusMin = Math.max(1, riskMinScore - riskFocusPadding);
-  let riskFocusMax = Math.min(5, riskMaxScore + riskFocusPadding);
-  if (riskFocusMax - riskFocusMin < 0.36) {
-    const center = (riskMinScore + riskMaxScore) / 2;
-    riskFocusMin = Math.max(1, center - 0.18);
-    riskFocusMax = Math.min(5, center + 0.18);
-    if (riskFocusMax - riskFocusMin < 0.36) {
-      if (riskFocusMin <= 1) riskFocusMax = Math.min(5, riskFocusMin + 0.36);
-      if (riskFocusMax >= 5) riskFocusMin = Math.max(1, riskFocusMax - 0.36);
-    }
-  }
-  const riskLabelSet = Array.from(new Set(riskProfiles.map((row) => row.risk_appetite_label)));
-  const riskClusterLabel = riskLabelSet.length === 1 ? `All ${riskLabelSet[0]}` : riskLabelSet.join(" / ");
-  const riskPortfolioCount = riskProfiles.reduce((total, row) => total + row.portfolio_count, 0);
-  const lowestRisk = riskProfiles[0];
-  const highestRisk = riskProfiles[riskProfiles.length - 1];
-
-  includes(indexHtml, "Historical Risk Style By Model", context);
-  includes(indexHtml, `${riskPortfolioCount} saved portfolios`, `${context} saved portfolio count`);
-  includes(indexHtml, riskClusterLabel, `${context} cluster label`);
-  includes(indexHtml, `<b>${riskScoreShort(riskMinScore)}-${riskScoreShort(riskMaxScore)}</b>`, `${context} score range`);
-  includes(indexHtml, modelLabel(highestRisk.model_id), `${context} highest risk model`);
-  includes(indexHtml, modelLabel(lowestRisk.model_id), `${context} lowest risk model`);
-  includes(indexHtml, `<strong>${riskScoreShort(riskFocusMin)}-${riskScoreShort(riskFocusMax)}</strong>`, `${context} focused range`);
-
-  for (const row of riskProfiles) {
-    const modelContext = `${context} ${row.model_id}`;
-    includes(indexHtml, `/models/${row.model_id}/#model-fingerprint`, `${modelContext} fingerprint link`);
-    includes(indexHtml, modelLabel(row.model_id), `${modelContext} model label`);
-    includes(indexHtml, providerLabelForModel(row.model_id), `${modelContext} provider label`);
-    includes(indexHtml, riskScoreValue(row.risk_appetite_score), `${modelContext} score`);
-    includes(indexHtml, riskScoreShort(row.risk_appetite_score), `${modelContext} short score`);
-    includes(indexHtml, row.risk_appetite_label, `${modelContext} risk label`);
-    includes(indexHtml, pctValue(row.high_risk_pct), `${modelContext} high-risk exposure`);
-    includes(indexHtml, pctValue(row.tech_pct), `${modelContext} technology exposure`);
-    includes(indexHtml, pctValue(row.defensive_pct), `${modelContext} defensive exposure`);
-  }
+  includes(liveHtml, liveLeader.label, "live dashboard live performance leader");
+  includes(liveHtml, signedPercentPointLabel(liveLeader.return_pct), "live dashboard live performance leader return");
+  includes(liveHtml, signedPercentPointLabel(liveLeader.benchmark_return_pct), "live dashboard live performance leader benchmark return");
+  includes(liveHtml, signedPercentPointLabel(liveLeader.alpha_pp), "live dashboard live performance leader alpha");
+  includes(liveHtml, signedPercentPointLabel(livePerformance.benchmark_return_pct), "live dashboard live performance S&P 500 return");
+  includes(liveHtml, "Interim returns use live rounds only", "live dashboard live performance scope");
+  includes(indexHtml, 'What is still <span class="no-orphan">in progress?</span>', "homepage live dashboard teaser heading");
+  includesAny(indexHtml, htmlTextVariants("Open Live Positions & Returns"), "homepage live dashboard teaser CTA");
 }
 
 const latestResolvedWeeklyRound = latestRound("weekly", "resolved");
@@ -2874,10 +2846,14 @@ if (latestResolvedWeeklyRound) {
   const latestWeeklyHtml = readHtml("leaderboards/latest-weekly/index.html");
   validateLeaderboardTableIsland(latestWeeklyHtml, latestResolvedWeeklyRound, "latest weekly page");
   validateLatestOfficialResultsBrowser(latestWeeklyHtml, "weekly", "latest weekly page official result browser");
-  includes(latestWeeklyHtml, "Browse Weekly Official Results", "latest weekly page official result browser heading");
+  includes(
+    latestWeeklyHtml,
+    'Browse Weekly <span class="no-orphan">Official Results</span>',
+    "latest weekly page official result browser heading"
+  );
   includes(latestWeeklyHtml, "Full weekly history", "latest weekly page official result browser cumulative link");
   const weeklyReadoutIndex = latestWeeklyHtml.indexOf("Investor readout");
-  const weeklyBrowserIndex = latestWeeklyHtml.indexOf("Browse Weekly Official Results");
+  const weeklyBrowserIndex = latestWeeklyHtml.indexOf('Browse Weekly <span class="no-orphan">Official Results</span>');
   const weeklyProofIndex = latestWeeklyHtml.indexOf("Audit and data links");
   if (weeklyReadoutIndex === -1) failures.push("latest weekly page missing investor readout");
   if (weeklyBrowserIndex === -1) failures.push("latest weekly page missing official result browser");
@@ -2976,7 +2952,7 @@ for (const round of apiReadModel.rounds) {
   includes(html, round.official_run_id, context);
   includes(html, round.entry_date, context);
   includes(html, round.exit_date, context);
-  includes(html, publicRoundStatusLabel(round.status), context);
+  includes(html, publicRoundStatusLabel(round), context);
   const roundDataset = datasetJsonLd(html, `${context} JSON-LD`);
   const roundPublishedDate = round.decision_date || round.entry_date;
   const roundPerformanceDates = (apiReadModel.interim_performance ?? [])
@@ -3218,7 +3194,7 @@ for (const model of apiReadModel.models) {
   includes(html, model.provider_label, context);
 
   const portfolios = apiReadModel.portfolios.filter((row) => row.model_id === model.model_id);
-  const activePortfolios = portfolios.filter((row) => row.status === "active");
+  const activePortfolios = portfolios.filter((row) => isRenderedPendingRow(row));
   const resolvedResults = apiReadModel.results.filter((row) => row.model_id === model.model_id);
   const activePortfolioCount = new Set(activePortfolios.map(uniquePortfolioKey)).size;
   const completedCount = new Set(resolvedResults.map((row) => row.round_id)).size;

@@ -4,7 +4,7 @@ import {
   type LeaderboardRecord,
   type UniverseOption
 } from "../data/fallback";
-import { allocationThemeClass, formatAllocationPct, optionDisplayName, optionShortDisplayName } from "./allocations";
+import { allocationThemeClass, formatAllocationPct, optionDisplayName } from "./allocations";
 import { pct } from "./format";
 import type { ResultAllocationRecord, ResultReturnRecord } from "./localRoundRecords";
 
@@ -57,8 +57,73 @@ type BuildScoreReturnChartDataArgs = {
   allocations?: ResultAllocationRecord[];
 };
 
+const compactOptionLabels: Record<string, string> = {
+  AGGREGATE_BONDS: "Aggregate Bonds",
+  AEROSPACE_DEFENSE: "Defense",
+  AUTONOMOUS_ROBOTICS: "Robotics",
+  BROAD_AI_TECH: "AI Tech",
+  BROAD_COMMODITIES: "Commodities",
+  CHINA: "China",
+  COMMUNICATIONS: "Comms",
+  CONSUMER_DISCRETIONARY: "Discretionary",
+  CONSUMER_STAPLES: "Staples",
+  CYBERSECURITY: "Cybersecurity",
+  DEVELOPED_EX_US: "Developed ex-US",
+  DIVIDEND: "Dividend",
+  EMERGING_MARKETS: "Emerging",
+  ENERGY: "Energy",
+  EUROPE: "Europe",
+  FINANCIALS: "Financials",
+  GOLD: "Gold",
+  HEALTHCARE: "Healthcare",
+  HIGH_YIELD_CREDIT: "High Yield",
+  INDIA: "India",
+  INDUSTRIALS: "Industrials",
+  INTERMEDIATE_TREASURY: "Treasury",
+  INVESTMENT_GRADE_CREDIT: "IG Credit",
+  JAPAN: "Japan",
+  LARGE_GROWTH: "Growth",
+  LARGE_VALUE: "Value",
+  LONG_TREASURY: "Long Treasury",
+  LOW_VOL: "Low Vol",
+  MATERIALS: "Materials",
+  MID_CAP: "Mid Cap",
+  MOMENTUM: "Momentum",
+  NASDAQ100: "Nasdaq 100",
+  REAL_ESTATE: "Real Estate",
+  SEMICONDUCTORS: "Semiconductors",
+  SHORT_TREASURY: "T-Bills",
+  SMALL_CAP: "Small Cap",
+  SMALL_VALUE: "Small Value",
+  SOLAR: "Solar",
+  SOFTWARE: "Software",
+  SP500: "S&P 500",
+  TAIWAN: "Taiwan",
+  TECHNOLOGY: "Technology",
+  TIPS: "TIPS",
+  TOTAL_US_MARKET: "Total Market",
+  UTILITIES: "Utilities"
+};
+
 function finiteNumber(value: number | null | undefined): value is number {
   return typeof value === "number" && Number.isFinite(value);
+}
+
+function compactHoldingLabel(optionId: string, optionsById: Record<string, UniverseOption | undefined>): string {
+  const option = optionsById[optionId];
+  if (!option) return optionId;
+  if (option.is_cash) return option.name || optionId;
+
+  const baseLabel =
+    compactOptionLabels[optionId] ??
+    (option.name || optionId)
+      .replace(/\s+Sector$/i, "")
+      .replace(/\s+Equities$/i, "")
+      .replace(/\s+Stocks$/i, "")
+      .replace(/\s+Stock Market$/i, "")
+      .trim();
+
+  return option.symbol ? `${baseLabel} (${option.symbol})` : baseLabel;
 }
 
 function leaderboardReturn(row: LeaderboardRecord): number | undefined {
@@ -147,6 +212,8 @@ export function buildScoreReturnChartData({
     const endpoint = coordinate(value);
     return `bottom: ${Math.min(zero, endpoint).toFixed(2)}%; height: ${Math.max(1.5, Math.abs(endpoint - zero)).toFixed(2)}%;`;
   };
+  const valueLabelStyle = (value: number | null | undefined) =>
+    `bottom: min(calc(${yPosition(value)} + 8px), calc(100% - 22px));`;
   const mobileBarStyle = (value: number | null | undefined) => {
     if (!finiteNumber(value)) return "width: 0%;";
     const zero = coordinate(0);
@@ -178,7 +245,7 @@ export function buildScoreReturnChartData({
           : 0;
       return {
         optionId: allocation.option_id,
-        label: optionShortDisplayName(allocation.option_id, optionsById),
+        label: compactHoldingLabel(allocation.option_id, optionsById),
         fullLabel: optionDisplayName(allocation.option_id, optionsById),
         allocationPct,
         allocationLabel: formatAllocationPct(allocationPct),
@@ -206,7 +273,7 @@ export function buildScoreReturnChartData({
       returnLabel: pct(returnValue) || "n/a",
       vsBenchmarkLabel: signedPercentagePoints(row.alpha_vs_sp500),
       barStyle: verticalBarStyle(returnValue),
-      valueStyle: `bottom: calc(${yPosition(returnValue)} + 8px);`,
+      valueStyle: valueLabelStyle(returnValue),
       mobileBarStyle: mobileBarStyle(returnValue),
       barClass: scoreChartModelColorClass(row.model_id, index),
       columnClass: index === 0 ? "score-vertical-column-winner" : "",
@@ -226,7 +293,7 @@ export function buildScoreReturnChartData({
         returnLabel: pct(benchmarkReturn) || "n/a",
         vsBenchmarkLabel: "0.00 pp",
         barStyle: verticalBarStyle(benchmarkReturn),
-        valueStyle: `bottom: calc(${yPosition(benchmarkReturn)} + 8px);`,
+        valueStyle: valueLabelStyle(benchmarkReturn),
         mobileBarStyle: mobileBarStyle(benchmarkReturn),
         barClass: "score-bar-benchmark",
         columnClass: "score-vertical-column-benchmark",
@@ -249,7 +316,7 @@ export function buildScoreReturnChartData({
             ? signedPercentagePoints(bestResultAsset.return - benchmarkReturn)
             : "n/a",
         barStyle: verticalBarStyle(bestResultAsset.return),
-        valueStyle: `bottom: calc(${yPosition(bestResultAsset.return)} + 8px);`,
+        valueStyle: valueLabelStyle(bestResultAsset.return),
         mobileBarStyle: mobileBarStyle(bestResultAsset.return),
         barClass: "score-bar-best-asset",
         columnClass: "score-vertical-column-best-asset",

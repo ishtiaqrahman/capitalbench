@@ -99,6 +99,15 @@ export const routeMeta: RouteMeta[] = [
     lastmod: latestResolvedRoundDate
   },
   {
+    path: "/live",
+    title: "Live AI Portfolio Positions And Returns",
+    description:
+      "CapitalBench live dashboard for open AI model portfolio rounds, live positions, mark-to-market returns, current risk appetite, and audit packet links.",
+    priority: 0.9,
+    changefreq: "weekly",
+    lastmod: latestDataDate
+  },
+  {
     path: "/leaderboards/latest-weekly",
     title: "Latest Weekly AI Portfolio Results",
     description:

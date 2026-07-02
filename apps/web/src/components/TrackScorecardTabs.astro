@@ -1,4 +1,5 @@
 ---
+import { ArrowRight, Info } from "lucide-react";
 import TrackScorecard from "./TrackScorecard.astro";
 import type { TrackScorecardData } from "../lib/trackScorecard";
 
@@ -16,13 +17,17 @@ const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "
 
 {visibleScorecards.length > 0 && (
   <>
-    <section class="home-section-heading home-section-heading-with-action" id="track-scorecards" aria-labelledby="track-scorecards-title">
+    <section class="home-question-heading" id="track-scorecards" aria-labelledby="track-scorecards-title">
       <div>
         <span class="panel-kicker">Benchmark results</span>
-        <h2 id="track-scorecards-title">Model Performance</h2>
-        <p>Current benchmarks rank models only inside equal-run comparison sets. Switch monthly/weekly.</p>
+        <div class="home-question-title">
+          <h2 id="track-scorecards-title">Which models are <span class="no-orphan">performing best?</span></h2>
+          <span class="home-info-tip" tabindex="0" aria-label="Models are ranked only against other models that completed the same shared rounds.">
+            <Info size={15} aria-hidden="true" />
+          </span>
+        </div>
+        <p>Monthly and weekly tracks stay separate. Higher benchmark score is better.</p>
       </div>
-      <a class="section-profile-link" href="/leaderboards/benchmark-sets">All comparison sets</a>
     </section>
 
     <div
@@ -75,6 +80,19 @@ const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "
           );
         })}
       </div>
+    </div>
+
+    <p class="track-horizon-note">
+      Monthly and weekly are separate comparison tracks. Scores are never mixed across horizons.
+      <a href="/scoring/#capitalbench-score">Read scoring rules</a>
+    </p>
+
+    <div class="home-section-cta" aria-label="Model performance links">
+      <a class="home-primary-cta" href="/leaderboards/benchmark-sets">
+        View all comparison sets
+        <ArrowRight size={16} aria-hidden="true" />
+      </a>
+      <a class="home-secondary-cta" href="/scoring/#capitalbench-score">Read scoring rules</a>
     </div>
 
     <script is:inline>

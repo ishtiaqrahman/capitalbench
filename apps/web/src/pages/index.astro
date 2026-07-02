@@ -1,38 +1,28 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import ActiveExposureMap from "../components/ActiveExposureMap";
 import BenchmarkEvidencePanel from "../components/BenchmarkEvidencePanel.astro";
 import GitHubLogo from "../components/GitHubLogo.astro";
 import InsightStrip from "../components/InsightStrip.astro";
 import LatestOfficialResultsTabs from "../components/LatestOfficialResultsTabs.astro";
-import LivePerformanceChart from "../components/LivePerformanceChart";
 import TrackScorecardTabs from "../components/TrackScorecardTabs.astro";
 import {
   ArrowRight,
   BarChart3,
   ClipboardCheck,
   Database,
-  FileCheck2,
+  Info,
   Layers3,
   LineChart,
   LockKeyhole,
-  ShieldCheck,
   TimerReset
 } from "lucide-react";
 import {
-  modelLabel,
   providerLabel,
-  rounds as fallbackRounds,
-  type RoundRecord,
-  type SubmissionRecord,
-  type UniverseOption
+  rounds as fallbackRounds
 } from "../data/fallback";
 import apiReadModel from "../generated/apiReadModel.js";
 import {
-  allocationThemeClass,
-  decisionAllocations,
-  formatAllocationPct,
-  optionDisplayName
+  decisionAllocations
 } from "../lib/allocations";
 import { signedPulseChangeLabel } from "../lib/riskFormatting.js";
 import { dateOnly } from "../lib/format";
@@ -46,81 +36,19 @@ import {
 import { providerLogoSrc } from "../lib/scoreReturnChart";
 import { benchmarkSetToScorecard, featuredBenchmarkSet } from "../lib/benchmarkSets";
 import type { TrackScorecardData } from "../lib/trackScorecard";
-import { buildRunConcentration, type ConcentrationAsset, type RunConcentration } from "../lib/runConcentration";
 import { siteConfig } from "../lib/seo";
-import { staticModelProfiles } from "../lib/modelProfiles";
 import { buildLatestOfficialResultTracks } from "../lib/latestOfficialResults";
 import { leadInsightsByCategory } from "../lib/insights.js";
 import {
-  latestResolvedRoundForTrack,
   latestRoundForTrack,
-  roundTrack,
-  roundsForTrack,
-  type BenchmarkTrack
+  roundTrack
 } from "../lib/tracks";
 
-type TrackHomeState = {
-  key: BenchmarkTrack;
-  label: string;
-  horizonLabel: string;
-  round?: RoundRecord;
-  submissions: SubmissionRecord[];
-  options: UniverseOption[];
-  optionsById: Record<string, UniverseOption | undefined>;
-  concentration: RunConcentration;
-  exposures: ConcentrationAsset[];
-  topExposure?: ConcentrationAsset;
-  latestHref: string;
-  benchmarkHref: string;
-  roundHref?: string;
-  roundCount: number;
-};
-
 const roundRows = staticRoundRecords();
-const weeklyRounds = roundsForTrack(roundRows, "weekly");
-const monthlyRounds = roundsForTrack(roundRows, "monthly");
 const latestWeeklyRound = latestRoundForTrack(roundRows, "weekly");
 const latestMonthlyRound = latestRoundForTrack(roundRows, "monthly");
-const latestResolvedWeeklyRound = latestResolvedRoundForTrack(roundRows, "weekly");
-const latestResolvedMonthlyRound = latestResolvedRoundForTrack(roundRows, "monthly");
-const modelProfiles = staticModelProfiles();
 const allOfficialSubmissions = staticAllOfficialSubmissions(roundRows);
 const pendingRoundCount = roundRows.filter((round) => round.status === "pending").length;
-
-function buildTrackState(
-  key: BenchmarkTrack,
-  label: string,
-  horizonLabel: string,
-  round: RoundRecord | undefined,
-  roundCount: number
-): TrackHomeState {
-  const submissions = round ? staticOfficialSubmissions(round.round_id, round.official_run_id) : [];
-  const options = round ? staticUniverseOptions(round.round_id) : [];
-  const optionsById = Object.fromEntries(options.map((option) => [option.option_id, option]));
-  const concentration = buildRunConcentration(submissions, optionsById);
-  const exposures = concentration.assets.slice(0, 6);
-  return {
-    key,
-    label,
-    horizonLabel,
-    round,
-    submissions,
-    options,
-    optionsById,
-    concentration,
-    exposures,
-    topExposure: concentration.topAsset,
-    latestHref: `/leaderboards/latest-${key}`,
-    benchmarkHref: "/leaderboards/benchmark-sets",
-    roundHref: round ? `/rounds/${round.round_id}/` : undefined,
-    roundCount
-  };
-}
-
-const trackStates = [
-  buildTrackState("monthly", "Monthly", "One-month test", latestMonthlyRound, monthlyRounds.length),
-  buildTrackState("weekly", "Weekly", "One-week test", latestWeeklyRound, weeklyRounds.length)
-];
 const weeklyScorecard = benchmarkSetToScorecard(featuredBenchmarkSet(apiReadModel, "weekly")) as TrackScorecardData | null;
 const monthlyScorecard = benchmarkSetToScorecard(featuredBenchmarkSet(apiReadModel, "monthly")) as TrackScorecardData | null;
 const aggregateScorecards = [
@@ -147,6 +75,21 @@ const openRoundCounts = {
   weekly: activeExposureRounds.filter((item) => item.track === "weekly").length,
   monthly: activeExposureRounds.filter((item) => item.track === "monthly").length
 };
+const livePortfolioCount = activeExposureRounds.reduce((total, item) => total + item.submissions.length, 0);
+const liveHeldAssetCount = new Set(
+  activeExposureRounds.flatMap((item) =>
+    item.submissions.flatMap((submission) => decisionAllocations(submission).map((allocation) => allocation.option_id))
+  )
+).size;
+const latestLiveCloseDate = livePerformanceRows
+  .map((row) => row.price_date)
+  .filter(Boolean)
+  .sort()
+  .at(-1);
+const nextLiveScoreDate = activeExposureRounds
+  .map((item) => item.round.score_eta_utc || item.round.exit_date)
+  .filter(Boolean)
+  .sort()[0];
 const liveRiskSnapshot = apiReadModel.risk_appetite;
 const currentRiskPulse = liveRiskSnapshot.current_decision_pulse;
 const outstandingBookRisk = liveRiskSnapshot.outstanding_live_book;
@@ -161,66 +104,18 @@ const riskPreviousDateLabel = pairedPulseDateLabel(
 const riskChangeLabel = riskPreviousDateLabel ? `Change vs ${riskPreviousDateLabel} portfolios` : "Change vs earlier portfolios";
 const homeInsightCategories = ["current_positioning", "risk_regime", "horizon_agreement", "live_performance", "oracle_comparison"];
 const homeInsights = leadInsightsByCategory(apiReadModel, homeInsightCategories, 3);
-const riskAppetiteProfiles = [...modelProfiles]
-  .filter((profile) => profile.fingerprint.riskAppetite.score !== null)
-  .sort(
-    (a, b) =>
-      (a.fingerprint.riskAppetite.score ?? 0) - (b.fingerprint.riskAppetite.score ?? 0) ||
-      a.label.localeCompare(b.label)
-  );
-const riskScores = riskAppetiteProfiles
-  .map((profile) => profile.fingerprint.riskAppetite.score)
-  .filter((score): score is number => score !== null && Number.isFinite(score));
-const riskMinScore = riskScores.length > 0 ? Math.min(...riskScores) : null;
-const riskMaxScore = riskScores.length > 0 ? Math.max(...riskScores) : null;
-const rawRiskRange = riskMinScore !== null && riskMaxScore !== null ? riskMaxScore - riskMinScore : 0;
-const riskFocusPadding = Math.max(0.06, Math.min(0.18, rawRiskRange * 0.18));
-let riskFocusMin = riskMinScore !== null ? Math.max(1, riskMinScore - riskFocusPadding) : 1;
-let riskFocusMax = riskMaxScore !== null ? Math.min(5, riskMaxScore + riskFocusPadding) : 5;
-if (riskFocusMax - riskFocusMin < 0.36) {
-  const center = riskMinScore !== null && riskMaxScore !== null ? (riskMinScore + riskMaxScore) / 2 : 3;
-  riskFocusMin = Math.max(1, center - 0.18);
-  riskFocusMax = Math.min(5, center + 0.18);
-  if (riskFocusMax - riskFocusMin < 0.36) {
-    if (riskFocusMin <= 1) riskFocusMax = Math.min(5, riskFocusMin + 0.36);
-    if (riskFocusMax >= 5) riskFocusMin = Math.max(1, riskFocusMax - 0.36);
-  }
-}
-const lowestRiskProfile = riskAppetiteProfiles[0];
-const highestRiskProfile = riskAppetiteProfiles[riskAppetiteProfiles.length - 1];
-const riskLabelSet = Array.from(new Set(riskAppetiteProfiles.map((profile) => profile.fingerprint.riskAppetite.label)));
-const riskClusterLabel = riskLabelSet.length === 1 ? `All ${riskLabelSet[0]}` : riskLabelSet.join(" / ");
-const riskPortfolioCount = riskAppetiteProfiles.reduce((total, profile) => total + profile.fingerprint.portfolioCount, 0);
 const modelBehavior: any = apiReadModel.model_behavior ?? { summary: {}, profiles: [], methodology_href: "/risk-appetite/#model-behavior-methodology" };
 const modelPatternReport = modelBehavior.pattern_report ?? { rows: [], comparative_findings: [], summary: {} };
 const modelPatternRows = Array.isArray(modelPatternReport.rows) ? modelPatternReport.rows : [];
 const heroModelBehaviorRows = modelPatternRows.slice(0, 6);
-const modelPatternRowById = new Map(modelPatternRows.map((row: any) => [row.model_id, row]));
-const modelPatternLeaderSpecs = [
-  { key: "highest_risk_model_id", label: "Most risk-seeking", metric: "Risk-taking score", value: (row: any) => pulseScoreWithUnitText(row.key_numbers?.risk_taking_score) },
-  { key: "most_concentrated_model_id", label: "Most concentrated", metric: "Avg top holding", value: (row: any) => pctValue(row.key_numbers?.average_top_allocation_pct) },
-  { key: "most_defensive_model_id", label: "Most defensive", metric: "Defensive exposure", value: (row: any) => pctValue(row.key_numbers?.defensive_pct) },
-  { key: "lowest_turnover_model_id", label: "Lowest turnover", metric: "Avg turnover", value: (row: any) => pctValue(row.key_numbers?.average_turnover_pct) }
-];
-const modelPatternLeaders = modelPatternLeaderSpecs
-  .map((item) => {
-    const row = modelPatternRowById.get(modelPatternReport.summary?.[item.key]);
-    return row ? { ...item, row } : null;
-  })
-  .filter(Boolean);
-const modelPatternPortfolioCount =
-  modelPatternReport.summary?.portfolio_count ??
-  modelPatternRows.reduce((total: number, row: any) => total + Number(row.sample?.portfolio_count ?? 0), 0);
-const modelPatternResolvedCount = modelPatternReport.summary?.resolved_result_count ?? 0;
-const latestUniverseOptionCount = Math.max(0, ...trackStates.map((track) => track.options.length));
+const latestUniverseOptionCount = Math.max(
+  latestMonthlyRound ? staticUniverseOptions(latestMonthlyRound.round_id).length : 0,
+  latestWeeklyRound ? staticUniverseOptions(latestWeeklyRound.round_id).length : 0
+);
 const currentRound = latestMonthlyRound ?? latestWeeklyRound ?? roundRows[0] ?? fallbackRounds[0];
 const currentUniverseOptionCount = latestUniverseOptionCount || staticUniverseOptions(currentRound.round_id).length;
 const modelRoster = Array.from(new Map(allOfficialSubmissions.map((submission) => [submission.model_id, submission])).values())
   .sort((a, b) => providerLabel(a.provider).localeCompare(providerLabel(b.provider)));
-const scoringWindows = [
-  { label: "Weekly", value: "7 days" },
-  { label: "Monthly", value: "1 month" }
-];
 const exploreLinks = [
   {
     href: "/leaderboards/latest",
@@ -276,73 +171,6 @@ const heroTestSteps = [
     description: "Real ending prices decide which model did best."
   }
 ];
-const howItWorks = [
-  {
-    label: "1",
-    title: "Same report",
-    description: "Every model gets the same market report."
-  },
-  {
-    label: "2",
-    title: "Same choices",
-    description: "Every model allocates from the same asset list."
-  },
-  {
-    label: "3",
-    title: "Frozen portfolios",
-    description: "Model portfolios are locked before results are known."
-  },
-  {
-    label: "4",
-    title: "Real prices score",
-    description: "After 7 days or 1 month, real prices decide the result."
-  }
-];
-const safeguards = [
-  {
-    icon: ShieldCheck,
-    label: "Same rules",
-    title: "One frozen portfolio per model",
-    description: "The public score uses the saved portfolio, not private retries or experiments."
-  },
-  {
-    icon: Database,
-    label: "Same choices",
-    title: `${latestUniverseOptionCount} current assets`,
-    description: "Each round keeps the exact asset list, report, model output, starting prices, and audit hashes."
-  },
-  {
-    icon: FileCheck2,
-    label: "No early winner",
-    title: `${pendingRoundCount} live rounds waiting for results`,
-    description: "Final results appear only after ending prices are available."
-  }
-];
-
-function statusLabel(round?: RoundRecord): string {
-  if (!round) return "Not started";
-  if (round.status === "resolved") return "Scored";
-  if (round.status === "overdue") return "Resolution due";
-  if (round.status === "archived") return "Archived";
-  return "Waiting for result";
-}
-
-function statusClass(round?: RoundRecord): string {
-  return round ? `status-${round.status}` : "status-archived";
-}
-
-function windowLabel(round?: RoundRecord): string {
-  if (!round) return "Awaiting first round";
-  return `${dateOnly(round.entry_date)} to ${dateOnly(round.exit_date)}`;
-}
-
-function calendarStatusLabel(round?: RoundRecord): string {
-  if (!round) return "Awaiting next test";
-  if (round.status === "resolved") return "Scores published";
-  if (round.status === "overdue") return "Score due";
-  return "Live now";
-}
-
 function shortMonthDay(value?: string): string {
   if (!value) return "";
   const [year, month, day] = value.slice(0, 10).split("-").map(Number);
@@ -382,58 +210,6 @@ function pairedPulseFullDateLabel(weeklyDate?: string, monthlyDate?: string): st
   return monthly || weekly || "";
 }
 
-function lockDateLabel(round?: RoundRecord): string {
-  return round ? shortMonthDay(round.decision_deadline_utc || round.decision_date) : "Pending";
-}
-
-function marketWindowCalendarLabel(round?: RoundRecord): string {
-  if (!round) return "No window declared";
-  return `${shortMonthDay(round.entry_date)} close to ${shortMonthDay(round.exit_date)} close`;
-}
-
-function calendarScoreDateLabel(round?: RoundRecord): string {
-  if (!round) return "Not scheduled";
-  if (round.status === "resolved") return `Published after ${shortMonthDay(round.exit_date)} close`;
-  if (round.status === "overdue") return `Due after ${shortMonthDay(round.exit_date)} close`;
-  return `After ${shortMonthDay(round.exit_date)} close`;
-}
-
-function liveTestDescription(track: BenchmarkTrack): string {
-  if (track === "weekly") return "Short-term test of AI positioning over one market week.";
-  return "Longer test of AI allocation over one month.";
-}
-
-function liveTestStateLabel(round?: RoundRecord): string {
-  if (!round) return "Awaiting next test.";
-  if (round.status === "resolved") return "Official scores are published.";
-  if (round.status === "overdue") return "Portfolios are locked and the official score is due.";
-  return "Portfolios locked; scoring pending.";
-}
-
-function liveTrackRiskScore(track: BenchmarkTrack): string {
-  const pulse = track === "weekly" ? currentRiskPulse.weekly : currentRiskPulse.monthly;
-  return pulseScore(pulse?.score);
-}
-
-function topConsensusLabel(track: TrackHomeState): string {
-  return track.topExposure ? optionDisplayName(track.topExposure.optionId, track.optionsById) : "No consensus yet";
-}
-
-function scoreShortLine(round?: RoundRecord): string {
-  if (!round) return "No score date";
-  if (round.status === "resolved") return "Scored";
-  if (round.status === "overdue") return `Resolution due since ${shortMonthDay(round.exit_date)}`;
-  return `Results after ${shortMonthDay(round.exit_date)} close`;
-}
-
-function modelProfileHref(modelId: string): string {
-  return `/models/${modelId}/#live-holdings`;
-}
-
-function modelFingerprintHref(modelId: string): string {
-  return `/models/${modelId}/#model-fingerprint`;
-}
-
 function pctValue(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
   if (Math.abs(value) >= 10) return `${value.toFixed(1)}%`;
@@ -445,16 +221,6 @@ function assetLabelWithTicker(asset: { label?: string; ticker?: string; option_i
   if (!asset) return "n/a";
   const label = asset.label || asset.option_id || "n/a";
   return asset.ticker ? `${label} (${asset.ticker})` : label;
-}
-
-function riskScoreValue(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
-  return `${value.toFixed(2)} / 5`;
-}
-
-function riskScoreShort(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
-  return value.toFixed(2);
 }
 
 function pulseScore(value: number | null | undefined): string {
@@ -534,57 +300,6 @@ function riskWidth(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "0%";
   return `${Math.min(100, Math.max(0, value)).toFixed(2)}%`;
 }
-
-function riskFocusWidth(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "0%";
-  const denominator = riskFocusMax - riskFocusMin;
-  if (denominator <= 0) return "50%";
-  return riskWidth(((value - riskFocusMin) / denominator) * 100);
-}
-
-const trackLaneCards = trackStates.map((track) => {
-  const trackRounds = track.key === "weekly" ? weeklyRounds : monthlyRounds;
-  const scorecard = track.key === "weekly" ? weeklyScorecard : monthlyScorecard;
-  const resolvedRounds = trackRounds.filter((round) => round.status === "resolved");
-  const liveRounds = trackRounds
-    .filter((round) => round.status === "pending")
-    .sort((left, right) => right.decision_deadline_utc.localeCompare(left.decision_deadline_utc));
-  const latestResolvedRound = track.key === "weekly" ? latestResolvedWeeklyRound : latestResolvedMonthlyRound;
-  const latestLiveRound = liveRounds[0];
-  const leader = scorecard?.topNormalizedRow;
-  const score = leader?.averageScore;
-  const resolvedScoreCount = scorecard?.comparisonRoundCount ?? 0;
-  const leaderLabel = scorecard?.comparisonMode === "comparison_set"
-    ? scorecard.isCurrent
-      ? "Current benchmark leader"
-      : scorecard.isQualified
-        ? "Qualified set leader"
-        : "Forming benchmark leader"
-    : "All-history leader";
-  const scoreCountLabel = scorecard?.comparisonMode === "comparison_set" ? "shared" : "resolved";
-  return {
-    ...track,
-    scorecard,
-    leader,
-    leaderScore: typeof score === "number" && Number.isFinite(score) ? score.toFixed(1) : null,
-    leaderLabel,
-    resolvedScoreCount,
-    scoreCountLabel,
-    leaderLogo: leader?.logoSrc,
-    benchmarkHref: scorecard?.setId ? `/leaderboards/benchmark-sets/${scorecard.setId}/` : track.benchmarkHref,
-    completedCount: resolvedRounds.length,
-    liveCount: liveRounds.length,
-    latestResolvedRound,
-    latestLiveRound,
-    latestScoredLabel: latestResolvedRound?.round_id ?? "No completed score yet",
-    latestLiveLabel: latestLiveRound?.round_id ?? "No live round",
-    nextScoreLabel: latestLiveRound
-      ? `After ${shortMonthDay(latestLiveRound.exit_date)} close`
-      : latestResolvedRound
-        ? "No open round"
-        : "Waiting for first score"
-  };
-});
 ---
 
 <BaseLayout
@@ -594,7 +309,7 @@ const trackLaneCards = trackStates.map((track) => {
   <section class="home-hero" aria-labelledby="home-title">
     <div class="home-hero-copy">
       <p class="eyebrow">CapitalBench</p>
-      <h1 id="home-title">The benchmark for AI capital allocation</h1>
+      <h1 id="home-title">The benchmark for <span class="no-orphan">AI capital allocation</span></h1>
       <p class="home-hero-lede">
         We give frontier AI models the same market brief, freeze their portfolios, and score them against real market returns.
       </p>
@@ -604,8 +319,8 @@ const trackLaneCards = trackStates.map((track) => {
       <a class="hero-manifesto-link" href="/manifesto">Read the CapitalBench Manifesto</a>
 
       <div class="home-hero-actions" aria-label="Project resources">
-        <a class="action-link action-primary" href="#ai-positioning">
-          View latest AI positioning
+        <a class="action-link action-primary" href="/live/">
+          Open Live Positions & Returns
           <ArrowRight size={15} aria-hidden="true" />
         </a>
         <a class="action-link" href="#score-alert-panel-home" data-score-alert-trigger>Get score alerts</a>
@@ -620,7 +335,7 @@ const trackLaneCards = trackStates.map((track) => {
             <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="eager" />
             <div>
               <span>Model behavior patterns</span>
-              <strong>Distinct allocation personalities</strong>
+              <strong>How do AI models allocate differently?</strong>
             </div>
           </div>
           <span class="hero-behavior-count">{heroModelBehaviorRows.length} models</span>
@@ -667,42 +382,7 @@ const trackLaneCards = trackStates.map((track) => {
 
   <TrackScorecardTabs scorecards={aggregateScorecards} />
 
-  <BenchmarkEvidencePanel
-    evidence={apiReadModel.benchmark_evidence}
-    tracks={["monthly", "weekly"]}
-    title="How Much Evidence Is Behind These Scores?"
-  />
-
-  <section class="benchmark-process-card benchmark-process-section" id="how-it-works" aria-label="CapitalBench methodology summary">
-    <div class="console-header">
-      <div class="console-title">
-        <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="lazy" />
-        <div>
-          <span>Methodology</span>
-          <strong>Same report, same choices, real prices</strong>
-        </div>
-      </div>
-      <a class="small-button" href="/methodology">Full methodology</a>
-    </div>
-
-    <ol class="benchmark-process-list">
-      {heroTestSteps.map((step) => {
-        const Icon = step.icon;
-        return (
-        <li>
-          <span class="benchmark-process-node">
-            <Icon size={20} aria-hidden="true" />
-          </span>
-          <div class="benchmark-process-copy">
-            <span class="benchmark-process-index">Step {step.label}</span>
-            <strong>{step.title}</strong>
-            <p>{step.description}</p>
-          </div>
-        </li>
-        );
-      })}
-    </ol>
-  </section>
+  <LatestOfficialResultsTabs tracks={latestOfficialResultTracks} />
 
   {heroModelBehaviorRows.length > 0 && (
     <div class="home-hero-console hero-behavior-card hero-positioning-card-mobile" aria-label="Model behavior pattern snapshot">
@@ -711,7 +391,7 @@ const trackLaneCards = trackStates.map((track) => {
           <img src="/benchmark-panel.svg" alt="" width="42" height="42" loading="lazy" />
           <div>
             <span>Model behavior patterns</span>
-            <strong>Distinct allocation personalities</strong>
+            <strong>How do AI models allocate differently?</strong>
           </div>
         </div>
         <span class="hero-behavior-count">{heroModelBehaviorRows.length} models</span>
@@ -755,16 +435,17 @@ const trackLaneCards = trackStates.map((track) => {
     </div>
   )}
 
-  <section class="home-section-heading home-section-heading-with-action" id="ai-positioning" aria-labelledby="ai-positioning-title">
+  <section class="home-question-heading" id="ai-positioning" aria-labelledby="ai-positioning-title">
     <div>
       <span class="panel-kicker">AI positioning</span>
-      <h2 id="ai-positioning-title">What AI Models Are Allocating To Now</h2>
-      <p>
-        Live rounds only. This is the current market condition as expressed by frozen model portfolios, before final
-        scores are known.
-      </p>
+      <div class="home-question-title">
+        <h2 id="ai-positioning-title">What are AI models doing <span class="no-orphan">right now?</span></h2>
+        <span class="home-info-tip" tabindex="0" aria-label="Live positioning uses frozen portfolios that have not reached final scoring yet.">
+          <Info size={15} aria-hidden="true" />
+        </span>
+      </div>
+      <p>Live allocations before the next official score.</p>
     </div>
-    <a class="section-profile-link" href="/risk-appetite">Historical risk trend</a>
   </section>
 
   <section class="ai-positioning-summary" aria-label="Current AI positioning highlights">
@@ -796,168 +477,160 @@ const trackLaneCards = trackStates.map((track) => {
     </article>
   </section>
 
-  <InsightStrip
-    id="benchmark-insights"
-    kicker="Benchmark insights"
-    title="What The Latest AI Decisions Suggest"
-    description="A compact readout from the insight engine, focused on current positioning, live marks, model agreement, and latest official results."
-    insights={homeInsights}
-    viewAllHref="/insights"
-    viewAllLabel="Full insight feed"
-    featured
-  />
-
-  {modelPatternLeaders.length > 0 && (
-    <section class="model-pattern-promo" aria-labelledby="model-pattern-promo-title">
-      <div class="model-pattern-promo-copy">
-        <span class="panel-kicker">Model behavior patterns</span>
-        <h2 id="model-pattern-promo-title">See Each AI Model's Allocation Personality</h2>
-        <p>
-          CapitalBench tracks whether each model behaves like a risk-seeker, concentrator, defensive allocator,
-          consensus follower, or distinctive outlier across official frozen portfolios.
-        </p>
-        <div class="model-pattern-promo-proof" aria-label="Model behavior report source">
-          <span>{modelPatternPortfolioCount} saved portfolios</span>
-          <span>{modelPatternResolvedCount} resolved results</span>
-          <span>Peer overlap, concentration, turnover, and risk appetite</span>
-        </div>
-      </div>
-
-      <div class="model-pattern-promo-side">
-        <div class="model-pattern-promo-badges" aria-label="Model behavior highlights">
-          {modelPatternLeaders.slice(0, 4).map((item: any) => (
-            <a href={`/models/${item.row.model_id}/#model-behavior`}>
-              <span>{item.label}</span>
-              <strong>{item.row.label}</strong>
-              <em>{item.metric}: {item.value(item.row)}</em>
-            </a>
-          ))}
-        </div>
-        <a class="model-pattern-promo-cta" href="/models/patterns/">
-          Explore model behavior patterns
-          <ArrowRight size={15} aria-hidden="true" />
-        </a>
-      </div>
-    </section>
-  )}
-
-  <section class="live-risk-pulse" aria-labelledby="live-risk-pulse-title">
-    <div class="live-risk-pulse-head">
-      <div>
-        <span class="panel-kicker">Current allocation signal</span>
-        <h3 id="live-risk-pulse-title">AI Risk Appetite</h3>
-        <p>
-          Latest monthly and weekly portfolios, equal-weighted by track. This measures current model positioning, not
-          market returns or a trading recommendation.
-        </p>
-      </div>
-      <a class="section-profile-link" href="/risk-appetite">Historical trend and methodology</a>
-    </div>
-
+  <section class="live-risk-pulse live-risk-pulse-compact" aria-label="Current AI risk appetite detail">
     <div class="live-risk-pulse-grid">
       <article class="live-risk-pulse-primary">
         <div class="live-risk-pulse-score">
-          <span>Combined pulse</span>
+          <span>Live risk appetite</span>
           <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
           <em>{currentRiskPulse.label}</em>
         </div>
-        <div class="live-risk-pulse-regime">
-          <span>Current regime</span>
-          <strong>{currentRiskPulse.regime}</strong>
-          <small>
-            {currentRiskPulse.monthly?.round_id} and {currentRiskPulse.weekly?.round_id}
-          </small>
-        </div>
-        <div class="live-risk-pulse-meter" aria-label={`Current AI Risk Appetite ${pulseScore(currentRiskPulse.score)} out of 100`}>
-          <span class="risk-pulse-band is-defensive"></span>
-          <span class="risk-pulse-band is-cautious"></span>
-          <span class="risk-pulse-band is-balanced"></span>
-          <span class="risk-pulse-band is-seeking"></span>
-          <span class="risk-pulse-band is-aggressive"></span>
-          <i style={`--pulse-position: ${riskWidth(currentRiskPulse.score)}`}></i>
-        </div>
-        <div class="live-risk-pulse-ticks" aria-hidden="true">
-          <span>0 Defensive</span>
-          <span>50 Balanced</span>
-          <span>100 Aggressive</span>
+
+        <div class="live-risk-pulse-body">
+          <div class="live-risk-pulse-regime">
+            <span>{riskPositioningDateLabel}</span>
+            <strong>{currentRiskPulse.regime}</strong>
+            <small>
+              Combined monthly + weekly pulse from {currentRiskPulse.monthly?.round_id} and {currentRiskPulse.weekly?.round_id}.
+            </small>
+          </div>
+
+          <div class="live-risk-scale" aria-label={`Current AI Risk Appetite ${pulseScore(currentRiskPulse.score)} out of 100`}>
+            <div class="live-risk-scale-labels" aria-hidden="true">
+              <span>Defensive</span>
+              <span>Balanced</span>
+              <span>Aggressive</span>
+            </div>
+            <div class="live-risk-pulse-meter">
+              <span class="risk-pulse-band is-defensive"></span>
+              <span class="risk-pulse-band is-cautious"></span>
+              <span class="risk-pulse-band is-balanced"></span>
+              <span class="risk-pulse-band is-seeking"></span>
+              <span class="risk-pulse-band is-aggressive"></span>
+              <i style={`--pulse-position: ${riskWidth(currentRiskPulse.score)}`}></i>
+            </div>
+            <div class="live-risk-pulse-ticks" aria-hidden="true">
+              <span>0</span>
+              <span>50</span>
+              <span>100</span>
+            </div>
+          </div>
+
+          <div class="live-risk-pulse-compare">
+            <span>Unscored portfolios</span>
+            <strong class="risk-score-with-unit">{pulseScore(outstandingBookRisk.score)}<small>/100</small></strong>
+            <em>Separate read across every open portfolio before official scoring.</em>
+          </div>
         </div>
       </article>
 
-      <div class="live-risk-pulse-stats">
-        <article>
-          <span>Monthly strategic</span>
-          <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.monthly?.score)}<small>/100</small></strong>
-          <small>{currentRiskPulse.monthly?.label}</small>
-        </article>
-        <article>
-          <span>Weekly tactical</span>
-          <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.weekly?.score)}<small>/100</small></strong>
-          <small>{currentRiskPulse.weekly?.label}</small>
-        </article>
-        <article>
-          <span>Change</span>
-          <strong class:list={{ "is-negative": Number(currentRiskPulse.change_from_previous) < 0 }}>
-            {signedPulseChange(currentRiskPulse.change_from_previous)}
-          </strong>
-          <small>{riskChangeLabel}</small>
-        </article>
-        <article>
-          <span>Model agreement</span>
-          <strong>{currentRiskPulse.agreement.label}</strong>
-          <small>{pulseScore(currentRiskPulse.agreement.standard_deviation)} point dispersion</small>
-        </article>
-      </div>
-    </div>
-
-    <div class="live-risk-pulse-detail">
-      <div>
-        <span class="metric-label">Largest current allocations</span>
-        <div class="live-risk-driver-list">
-          {riskPulseTopAssets.map((asset) => (
-            <span>
-              <strong>{assetLabelWithTicker(asset)}</strong>
-              <em>{pctValue(asset.allocation_pct)}</em>
-            </span>
-          ))}
+      <div class="live-risk-pulse-detail">
+        <div>
+          <span class="metric-label">Largest current allocations</span>
+          <div class="live-risk-driver-list">
+            {riskPulseTopAssets.map((asset) => (
+              <span>
+                <strong>{assetLabelWithTicker(asset)}</strong>
+                <em>{pctValue(asset.allocation_pct)}</em>
+              </span>
+            ))}
+          </div>
+        </div>
+        <div>
+          <span class="metric-label">Regime mix</span>
+          <div class="live-risk-regime-list">
+            {riskPulseRegimes.map((regime) => (
+              <span>
+                <strong>{regime.label}</strong>
+                <i><b style={`width: ${riskWidth(regime.allocation_pct)}`}></b></i>
+                <em>{pctValue(regime.allocation_pct)}</em>
+              </span>
+            ))}
+          </div>
         </div>
       </div>
-      <div>
-        <span class="metric-label">Regime mix</span>
-        <div class="live-risk-regime-list">
-          {riskPulseRegimes.map((regime) => (
-            <span>
-              <strong>{regime.label}</strong>
-              <i><b style={`width: ${riskWidth(regime.allocation_pct)}`}></b></i>
-              <em>{pctValue(regime.allocation_pct)}</em>
-            </span>
-          ))}
-        </div>
-      </div>
-      <aside>
-        <span>Outstanding live book</span>
-        <strong class="risk-score-with-unit">{pulseScore(outstandingBookRisk.score)}<small>/100</small></strong>
-        <em>{outstandingBookRisk.label}</em>
-        <p>
-          All {outstandingBookRisk.portfolio_count} unresolved portfolios across {outstandingBookRisk.round_count}
-          rounds. This slower exposure measure can differ from the newest monthly and weekly decisions.
-        </p>
-      </aside>
     </div>
   </section>
 
-  <ActiveExposureMap client:visible rounds={activeExposureRounds} />
+  <div class="home-section-cta" aria-label="Current AI positioning links">
+    <a class="home-primary-cta" href="/live/#live-positions">
+      Inspect current frozen portfolios
+      <ArrowRight size={16} aria-hidden="true" />
+    </a>
+    <a class="home-secondary-cta" href="/risk-appetite">View historical risk trend</a>
+  </div>
 
-  <LivePerformanceChart client:visible rows={livePerformanceRows} openRoundCounts={openRoundCounts} />
+  <InsightStrip
+    id="benchmark-insights"
+    kicker="Benchmark insights"
+    title="What do the latest AI decisions suggest?"
+    description="Fresh signals from positioning, risk, and scored results."
+    insights={homeInsights}
+    viewAllHref="/insights"
+    viewAllLabel="Open full insight feed"
+    featured
+  />
 
-  <LatestOfficialResultsTabs tracks={latestOfficialResultTracks} />
+  <section class="benchmark-process-card benchmark-process-section benchmark-trust-section" id="how-it-works" aria-label="CapitalBench methodology and evidence summary">
+    <div class="home-question-heading home-question-heading-in-panel">
+      <div>
+        <span class="panel-kicker">Trust and proof</span>
+        <div class="home-question-title">
+          <h2>How does CapitalBench keep <span class="no-orphan">scores comparable?</span></h2>
+          <span class="home-info-tip" tabindex="0" aria-label="The benchmark controls the brief, asset menu, portfolio freeze, scoring window, and audit trail.">
+            <Info size={15} aria-hidden="true" />
+          </span>
+        </div>
+        <p>Same brief, same choices, frozen portfolios, real prices.</p>
+      </div>
+    </div>
+
+    <ol class="benchmark-process-list">
+      {heroTestSteps.map((step) => {
+        const Icon = step.icon;
+        return (
+        <li>
+          <span class="benchmark-process-node">
+            <Icon size={20} aria-hidden="true" />
+          </span>
+          <div class="benchmark-process-copy">
+            <span class="benchmark-process-index">Step {step.label}</span>
+            <strong>{step.title}</strong>
+            <p>{step.description}</p>
+          </div>
+        </li>
+        );
+      })}
+    </ol>
+
+    <BenchmarkEvidencePanel
+      evidence={apiReadModel.benchmark_evidence}
+      tracks={["monthly", "weekly"]}
+      title="What evidence supports each score?"
+      description="Equal-run rules, score scale, and audit context for monthly and weekly tracks."
+      compact
+      showMethodologyLink={false}
+    />
+
+    <div class="home-section-cta" aria-label="Benchmark methodology links">
+      <a class="home-primary-cta" href="/methodology">
+        Read full methodology
+        <ArrowRight size={16} aria-hidden="true" />
+      </a>
+      <a class="home-secondary-cta" href="/scoring/#capitalbench-score">See score methodology</a>
+    </div>
+  </section>
 
   <section class="current-setup-panel" aria-labelledby="current-setup-title">
-    <div class="current-setup-head">
+    <div class="current-setup-head home-question-heading home-question-heading-in-panel">
       <span class="panel-kicker">Benchmark universe</span>
-      <h2 id="current-setup-title">What Models Allocate From</h2>
-      <p>
-        Models get the same report, choose from the same assets, and wait for weekly or monthly scoring.
-      </p>
+      <div class="home-question-title">
+        <h2 id="current-setup-title">What can models <span class="no-orphan">choose from?</span></h2>
+        <span class="home-info-tip" tabindex="0" aria-label="The universe summary shows the current model roster, asset menu, horizons, and open rounds.">
+          <Info size={15} aria-hidden="true" />
+        </span>
+      </div>
+      <p>The active roster, asset menu, horizons, and open rounds.</p>
     </div>
 
     <div class="current-setup-stat-row" aria-label="Current CapitalBench setup summary">
@@ -974,567 +647,82 @@ const trackLaneCards = trackStates.map((track) => {
         <strong>2</strong>
       </div>
       <div>
-        <span>Live rounds</span>
+        <span>Open rounds</span>
         <strong>{pendingRoundCount}</strong>
       </div>
     </div>
 
-    <div class="current-setup-detail-grid" aria-label="Current CapitalBench benchmark details">
-      <article class="current-setup-detail-card current-setup-model-card">
-        <div class="current-setup-detail-head">
-          <div>
-            <span class="panel-kicker">Models in the benchmark</span>
-            <strong>{modelRoster.length} AI models</strong>
-          </div>
-          <a href="/models">Model pages</a>
-        </div>
-        <div class="current-setup-model-list" aria-label="Models currently compared">
-          {modelRoster.map((submission) => (
-            <a href={modelProfileHref(submission.model_id)} aria-label={`${providerLabel(submission.provider)}: ${modelLabel(submission.model_id)}`}>
-              {providerLogoSrc(submission.provider) && (
-                <img src={providerLogoSrc(submission.provider)} alt={providerLabel(submission.provider)} width="34" height="34" loading="lazy" />
-              )}
-              <span>
-                <strong>{modelLabel(submission.model_id)}</strong>
-                <em>{providerLabel(submission.provider)}</em>
-              </span>
-            </a>
-          ))}
-        </div>
-      </article>
-
-      <article class="current-setup-detail-card current-setup-live-card">
-        <div class="current-setup-detail-head">
-          <div>
-            <span class="panel-kicker">Live rounds waiting for results</span>
-            <strong>Latest monthly and weekly rounds</strong>
-          </div>
-          <span class="current-setup-count-badge">{pendingRoundCount} live total</span>
-        </div>
-        <div class="current-setup-rule-strip" aria-label="Shared setup rules">
-          <span>
-            <strong>{currentUniverseOptionCount}</strong>
-            asset choices
-          </span>
-          {scoringWindows.map((window) => (
-            <span>
-              <strong>{window.label}</strong>
-              {window.value}
-            </span>
-          ))}
-        </div>
-        <div class="current-setup-round-list">
-          {trackStates.map((track) => (
-            <a href={track.roundHref ?? "/rounds"}>
-              <span>{track.label}</span>
-              <strong>{track.round?.round_id ?? "Not started"}</strong>
-              <em>{scoreShortLine(track.round)}</em>
-            </a>
-          ))}
-        </div>
-      </article>
+    <div class="home-section-cta current-setup-actions" aria-label="Benchmark universe links">
+      <a class="home-primary-cta" href="/models">
+        Explore models
+        <ArrowRight size={16} aria-hidden="true" />
+      </a>
+      <a class="home-secondary-cta" href="/universe">View asset universe</a>
+      <a class="home-secondary-cta" href="/live/">Open live dashboard</a>
     </div>
   </section>
 
-  {riskAppetiteProfiles.length > 0 && (
-    <section class="risk-appetite-panel" aria-labelledby="risk-appetite-title">
-      <div class="risk-appetite-head">
-        <div>
-          <span class="panel-kicker">Historical model style</span>
-          <h3 id="risk-appetite-title">Historical Risk Style By Model</h3>
-          <p>
-            Allocation-weighted from every official frozen portfolio, including live and completed rounds. It does not use
-            future returns and is separate from the current AI Risk Appetite signal.
-          </p>
-        </div>
-        <span class="risk-appetite-count">{riskPortfolioCount} saved portfolios</span>
+  <section class="live-dashboard-promo" aria-labelledby="live-dashboard-promo-title">
+    <div class="live-dashboard-promo-copy home-question-heading home-question-heading-in-panel">
+      <span class="panel-kicker">Live dashboard</span>
+      <div class="home-question-title">
+        <h2 id="live-dashboard-promo-title">What is still <span class="no-orphan">in progress?</span></h2>
+        <span class="home-info-tip" tabindex="0" aria-label="The live dashboard holds open portfolios, interim returns, and upcoming score dates.">
+          <Info size={15} aria-hidden="true" />
+        </span>
       </div>
-
-      <div class="risk-scale-stage" aria-label="Cumulative model risk appetite scale">
-        <aside class="risk-focus-summary" aria-label="Risk appetite summary">
-          <span class="panel-kicker">Current pattern</span>
-          <strong>{riskClusterLabel}</strong>
-          <p>
-            Current model scores cluster near the high-risk end, so the main chart zooms into the active range instead
-            of spending most of the canvas on unused defensive space.
-          </p>
-          <div class="risk-focus-summary-grid">
-            <div>
-              <span>Range</span>
-              <b>{riskScoreShort(riskMinScore)}-{riskScoreShort(riskMaxScore)}</b>
-            </div>
-            <div>
-              <span>Highest</span>
-              <b>{highestRiskProfile?.label ?? "n/a"}</b>
-            </div>
-            <div>
-              <span>Lowest</span>
-              <b>{lowestRiskProfile?.label ?? "n/a"}</b>
-            </div>
-          </div>
-        </aside>
-
-        <div class="risk-focus-chart" aria-label="Focused cumulative model risk appetite comparison">
-          <div class="risk-focus-chart-head">
-            <span>Focused current range</span>
-            <strong>{riskScoreShort(riskFocusMin)}-{riskScoreShort(riskFocusMax)}</strong>
-          </div>
-          <div class="risk-focus-list">
-            {riskAppetiteProfiles.map((profile) => {
-              const risk = profile.fingerprint.riskAppetite;
-              return (
-                <a
-                  class={`risk-focus-row risk-axis-marker-${profile.provider}`}
-                  href={modelFingerprintHref(profile.modelId)}
-                  aria-label={`${profile.label}: ${riskScoreValue(risk.score)}, ${risk.label}`}
-                  style={`--risk-focus-position: ${riskFocusWidth(risk.score)}; --risk-full-position: ${riskWidth(risk.percentile)};`}
-                >
-                  <span class="risk-focus-model">
-                    <span class="risk-axis-logo">
-                      {(profile.iconSrc ?? profile.logoSrc) && <img src={profile.iconSrc ?? profile.logoSrc} alt="" loading="lazy" />}
-                    </span>
-                    <span>
-                      <strong>{profile.label}</strong>
-                      <small>{profile.providerLabel}</small>
-                    </span>
-                  </span>
-                  <span class="risk-focus-track" aria-hidden="true">
-                    <span class="risk-focus-fill"></span>
-                    <span class="risk-focus-dot"></span>
-                  </span>
-                  <span class="risk-focus-score">
-                    <strong>{riskScoreShort(risk.score)}</strong>
-                    <small>{risk.label}</small>
-                  </span>
-                </a>
-              );
-            })}
-          </div>
-          <div class="risk-focus-axis" aria-hidden="true">
-            <span>{riskScoreShort(riskFocusMin)}</span>
-            <span>zoomed comparison</span>
-            <span>{riskScoreShort(riskFocusMax)}</span>
-          </div>
-
-          <div class="risk-full-context" aria-label="Full 1 to 5 risk appetite reference">
-            <div class="risk-full-context-head">
-              <span>Full scale reference</span>
-              <strong>1-5</strong>
-            </div>
-            <div class="risk-full-rail" aria-hidden="true">
-              {riskAppetiteProfiles.map((profile) => {
-                const risk = profile.fingerprint.riskAppetite;
-                return (
-                  <span
-                    class={`risk-full-dot risk-full-dot-${profile.provider}`}
-                    style={`--risk-full-position: ${riskWidth(risk.percentile)};`}
-                  ></span>
-                );
-              })}
-            </div>
-            <div class="risk-full-ticks" aria-hidden="true">
-              <span>1 Defensive</span>
-              <span>3 Balanced</span>
-              <span>5 Aggressive</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="risk-mobile-scale" aria-label="Cumulative model risk appetite scale by model">
-        <div class="risk-mobile-scale-axis" aria-hidden="true">
-          <span>1 Defensive</span>
-          <span>3 Balanced</span>
-          <span>5 Aggressive</span>
-        </div>
-        <div class="risk-mobile-scale-list">
-          {riskAppetiteProfiles.map((profile) => {
-            const risk = profile.fingerprint.riskAppetite;
-            return (
-              <a
-                class={`risk-mobile-scale-card risk-axis-marker-${profile.provider}`}
-                href={modelFingerprintHref(profile.modelId)}
-                aria-label={`${profile.label}: ${riskScoreValue(risk.score)}, ${risk.label}`}
-                style={`--risk-position: ${riskWidth(risk.percentile)};`}
-              >
-                <span class="risk-axis-logo">
-                  {(profile.iconSrc ?? profile.logoSrc) && <img src={profile.iconSrc ?? profile.logoSrc} alt="" loading="lazy" />}
-                </span>
-                <span class="risk-mobile-scale-copy">
-                  <strong>{profile.label}</strong>
-                  <small>{profile.providerLabel}</small>
-                </span>
-                <span class="risk-mobile-scale-score">
-                  <strong>{riskScoreShort(risk.score)}</strong>
-                  <small>{risk.label}</small>
-                </span>
-                <span class="risk-mobile-scale-meter" aria-hidden="true"></span>
-              </a>
-            );
-          })}
-        </div>
-      </div>
-
-      <div class="risk-scale-table" aria-label="Cumulative risk appetite detail by model">
-        <div class="risk-scale-row risk-scale-row-head" aria-hidden="true">
-          <span>Model</span>
-          <span>Score</span>
-          <span>High risk</span>
-          <span>Tech</span>
-          <span>Defensive</span>
-        </div>
-        {riskAppetiteProfiles.map((profile) => {
-          const risk = profile.fingerprint.riskAppetite;
-          return (
-            <a class="risk-scale-row" href={modelFingerprintHref(profile.modelId)}>
-              <span class="risk-scale-model">
-                <span class="risk-axis-logo">
-                  {(profile.iconSrc ?? profile.logoSrc) && <img src={profile.iconSrc ?? profile.logoSrc} alt="" loading="lazy" />}
-                </span>
-                <span>
-                  <strong>{profile.label}</strong>
-                  <small>{profile.providerLabel}</small>
-                </span>
-              </span>
-              <span><strong>{riskScoreValue(risk.score)}</strong><small>{risk.label}</small></span>
-              <span data-label="High risk">{pctValue(risk.highRiskPct)}</span>
-              <span data-label="Tech">{pctValue(risk.techPct)}</span>
-              <span data-label="Defensive">{pctValue(risk.defensivePct)}</span>
-            </a>
-          );
-        })}
-      </div>
-    </section>
-  )}
-
-  <section class="home-section-heading" id="current-picks" aria-labelledby="latest-decisions-title">
-    <span class="panel-kicker">Model portfolios</span>
-    <h2 id="latest-decisions-title">Current Frozen Model Portfolios</h2>
-    <p>
-      These are the saved model portfolios for the newest monthly and weekly rounds. They are waiting for final prices.
-    </p>
-  </section>
-
-  <section class="decision-track-grid" aria-label="Latest monthly and weekly model portfolios">
-    {trackStates.map((track) => (
-      <article class={`decision-track decision-track-${track.key}`}>
-        <div class="decision-track-header">
-          <div>
-            <span class="panel-kicker">{track.label} model portfolios</span>
-            <h3>{track.round?.round_id ?? "Awaiting round"}</h3>
-            <p>{track.round ? windowLabel(track.round) : "No portfolios are locked yet."}</p>
-          </div>
-          <span class={`status-badge ${statusClass(track.round)}`}>{statusLabel(track.round)}</span>
-        </div>
-
-        {track.submissions.length > 0 ? (
-          <>
-            <div class="decision-row-list">
-              {track.submissions.map((submission) => {
-                const allocations = decisionAllocations(submission);
-                return (
-                  <div class="decision-row">
-                    <div class="decision-row-meta">
-                      <span class={`provider-badge provider-${submission.provider}`}>{providerLabel(submission.provider)}</span>
-                      <a class="decision-model-link" href={modelProfileHref(submission.model_id)}>
-                        {modelLabel(submission.model_id)}
-                      </a>
-                      <div class="decision-allocation-pills" aria-label={`${modelLabel(submission.model_id)} frozen allocations`}>
-                        {allocations.length > 0 ? (
-                          allocations.map((allocation) => (
-                            <span
-                              class="decision-allocation-pill"
-                              title={`${optionDisplayName(allocation.option_id, track.optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
-                            >
-                              <i class={allocationThemeClass(allocation.option_id)} aria-hidden="true"></i>
-                              <strong>{optionDisplayName(allocation.option_id, track.optionsById)}</strong>
-                              <em>{formatAllocationPct(allocation.allocation_pct)}</em>
-                            </span>
-                          ))
-                        ) : (
-                          <span class="decision-allocation-pill decision-allocation-pill-empty">No allocation</span>
-                        )}
-                      </div>
-                    </div>
-                    <div class="allocation-stack mini" aria-hidden="true">
-                      {allocations.map((allocation) => (
-                        <span
-                          class={allocationThemeClass(allocation.option_id)}
-                          style={`width: ${Math.max(3, allocation.allocation_pct)}%`}
-                          title={`${optionDisplayName(allocation.option_id, track.optionsById)} ${formatAllocationPct(allocation.allocation_pct)}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div class="track-exposure">
-              <div>
-                <span class="metric-label">Shared top pick</span>
-                <strong>{track.topExposure ? optionDisplayName(track.topExposure.optionId, track.optionsById) : "None"}</strong>
-                <small>Average across {track.concentration.modelCount} frozen model portfolios.</small>
-              </div>
-              <div>
-                <div class="allocation-stack track-consensus-stack" aria-label={`${track.label} shared pick stack`}>
-                  {track.concentration.assets.map((item) => (
-                    <span
-                      class={allocationThemeClass(item.optionId)}
-                      style={`width: ${item.averagePct}%`}
-                      title={`${optionDisplayName(item.optionId, track.optionsById)} ${formatAllocationPct(item.averagePct)}`}
-                    />
-                  ))}
-                </div>
-                <div class="track-consensus-stats" aria-label={`${track.label} concentration summary`}>
-                  <span>Top 3 <strong>{formatAllocationPct(track.concentration.topThreeSharePct)}</strong></span>
-                  <span>Spread <strong>{track.concentration.effectiveAssetCount.toFixed(1)} assets</strong></span>
-                </div>
-                <div class="exposure-bars compact">
-                  {track.exposures.slice(0, 4).map((item) => (
-                    <div class="exposure-bar-row">
-                      <span>{optionDisplayName(item.optionId, track.optionsById)}</span>
-                      <div class="exposure-bar-track" aria-hidden="true">
-                        <span
-                          class={allocationThemeClass(item.optionId)}
-                          style={`width: ${track.topExposure ? Math.max(4, (item.averagePct / track.topExposure.averagePct) * 100) : 0}%`}
-                        />
-                      </div>
-                      <strong>{formatAllocationPct(item.averagePct)}</strong>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div class="pending-state compact">
-            <strong>No model portfolios yet.</strong>
-            <span>The latest {track.label.toLowerCase()} portfolios will appear after the round is locked.</span>
-          </div>
-        )}
-
-        <div class="track-card-actions">
-          <a class="small-button" href={track.latestHref}>
-            {track.round?.status === "resolved" ? `Open ${track.label} Results` : `${track.label} Scores`}
-          </a>
-          {track.roundHref && <a class="small-button" href={track.roundHref}>Audit packet</a>}
-        </div>
-      </article>
-    ))}
-  </section>
-
-  <section class="trust-strip" aria-label="How CapitalBench works">
-    {howItWorks.map((item) => (
+      <p>Open portfolios, interim returns, and upcoming score dates.</p>
+    </div>
+    <div class="live-dashboard-promo-stats" aria-label="Live dashboard summary">
       <article>
-        <span>{item.label}</span>
-        <strong>{item.title}</strong>
-        <p>{item.description}</p>
+        <span>Open rounds</span>
+        <strong>{openRoundCounts.all}</strong>
+        <em>{openRoundCounts.monthly} monthly / {openRoundCounts.weekly} weekly</em>
       </article>
-    ))}
-  </section>
-
-  <section class="leaderboard-lanes" aria-labelledby="leaderboard-lanes-title">
-    <div class="leaderboard-lanes-copy">
-      <span class="panel-kicker">Results</span>
-      <h2 id="leaderboard-lanes-title">Monthly And Weekly Are Separate</h2>
-      <p>
-        A 1-month round and a 7-day round are different contests. They get separate scores and separate overall results.
-      </p>
-      <ul class="leaderboard-lanes-principles" aria-label="Track separation rules">
-        <li>
-          <strong>Monthly</strong>
-          <span>1-month round</span>
-        </li>
-        <li>
-          <strong>Weekly</strong>
-          <span>7-day round</span>
-        </li>
-        <li>
-          <strong>No mixing</strong>
-          <span>Scores stay separate</span>
-        </li>
-      </ul>
-      <div class="leaderboard-lanes-status" aria-label="Current monthly and weekly score state">
-        <span class="metric-label">Current score state</span>
-        <div class="leaderboard-lanes-status-grid">
-          {trackLaneCards.map((track) => (
-            <a href={track.latestHref}>
-              <strong>{track.label}</strong>
-              <span>{track.completedCount} completed / {track.liveCount} open</span>
-              <em>{track.latestResolvedRound ? `Latest: ${track.latestResolvedRound.round_id}` : "First result pending"}</em>
-            </a>
-          ))}
-        </div>
-      </div>
-    </div>
-    <div class="leaderboard-lane-cards" aria-label="Monthly and weekly result lanes">
-      {trackLaneCards.map((track) => (
-        <article class={`leaderboard-lane-card lane-${track.key}`}>
-          <div class="leaderboard-lane-card-head">
-            <div>
-              <span class="panel-kicker">{track.label} track</span>
-              <h3>{track.label} Results</h3>
-            </div>
-            <span class={`status-badge ${track.completedCount > 0 ? "status-resolved" : "status-pending"}`}>
-              {track.completedCount} completed / {track.liveCount} live
-            </span>
-          </div>
-
-          <div class="leaderboard-lane-card-body">
-            <div class={`leaderboard-lane-leader ${track.leader ? "" : "leaderboard-lane-leader-pending"}`}>
-              {track.leaderLogo ? (
-                <span class="leaderboard-lane-logo">
-                  <img src={track.leaderLogo} alt={track.leader?.providerLabel ?? track.label} width="42" height="42" loading="eager" />
-                </span>
-              ) : (
-                <span class="leaderboard-lane-logo leaderboard-lane-logo-empty">{track.label.slice(0, 1)}</span>
-              )}
-              <div>
-                <span>{track.leader ? track.leaderLabel : "Current state"}</span>
-                <strong>{track.leader?.label ?? "Waiting for first result"}</strong>
-                <em>
-                  {track.leaderScore
-                    ? `${track.leaderScore} score · ${track.resolvedScoreCount} ${track.scoreCountLabel} round${track.resolvedScoreCount === 1 ? "" : "s"}`
-                    : scoreShortLine(track.latestLiveRound)}
-                </em>
-              </div>
-            </div>
-
-            <div class={`leaderboard-lane-facts ${track.leader ? "" : "leaderboard-lane-facts-pending"}`}>
-              <span>
-                <em>Latest scored</em>
-                <strong>{track.latestScoredLabel}</strong>
-              </span>
-              <span>
-                <em>Live round</em>
-                <strong>{track.latestLiveLabel}</strong>
-              </span>
-              <span>
-                <em>Next score</em>
-                <strong>{track.nextScoreLabel}</strong>
-              </span>
-            </div>
-
-            <ol class="leaderboard-lane-flow" aria-label={`${track.label} scoring flow`}>
-              <li class={track.round ? "is-complete" : ""}><span></span>Locked</li>
-              <li class={track.latestLiveRound ? "is-current" : track.latestResolvedRound ? "is-complete" : ""}><span></span>Live</li>
-              <li class={track.latestResolvedRound ? "is-complete" : ""}><span></span>Scores</li>
-            </ol>
-          </div>
-
-          <div class="leaderboard-lane-actions">
-            <a class="small-button" href={track.latestHref}>Latest {track.label.toLowerCase()}</a>
-            <a class="small-button" href={track.benchmarkHref}>Equal-run benchmark</a>
-          </div>
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <section class="home-section-heading track-summary-heading" aria-labelledby="current-tests-title">
-    <span class="panel-kicker">Live benchmark tests</span>
-    <h2 id="current-tests-title">Live Benchmark Tests</h2>
-    <p>
-      These are the open tests you can inspect now. Models already submitted portfolios; official scores wait for final
-      closing prices.
-    </p>
-  </section>
-
-  <section class="track-summary live-test-summary" aria-label="Live monthly and weekly benchmark tests">
-    {trackStates.map((track) => (
-      <article class={`track-card track-card-${track.key} live-test-card`}>
-        <div class="track-card-head">
-          <div>
-            <span class="panel-kicker">{track.label} test</span>
-            <h3>{track.horizonLabel}</h3>
-          </div>
-          <span class={`status-badge ${statusClass(track.round)}`}>{calendarStatusLabel(track.round)}</span>
-        </div>
-        {track.round ? (
-          <>
-            <p class="live-test-description">{liveTestDescription(track.key)}</p>
-            <p class="live-test-state">{liveTestStateLabel(track.round)}</p>
-            <div class="track-card-grid live-test-grid">
-              <span>Model portfolios <strong>{track.submissions.length}</strong></span>
-              <span>Eligible assets <strong>{track.options.length}</strong></span>
-              <span>Risk-taking score <strong>{liveTrackRiskScore(track.key)}<small>/100</small></strong></span>
-              <span>
-                Top consensus
-                <strong>{topConsensusLabel(track)}</strong>
-                {track.topExposure && <small>{formatAllocationPct(track.topExposure.averagePct)} average weight</small>}
-              </span>
-            </div>
-          </>
-        ) : (
-          <p class="live-test-description">No {track.label.toLowerCase()} test is live yet.</p>
-        )}
-        <div class="track-card-actions live-test-actions">
-          <a class="small-button" href="#current-picks">View portfolios</a>
-          <a class="small-button" href="/universe">Asset universe</a>
-          {track.roundHref && <a class="small-button" href={track.roundHref}>Audit packet</a>}
-        </div>
+      <article>
+        <span>Frozen portfolios</span>
+        <strong>{livePortfolioCount}</strong>
+        <em>{liveHeldAssetCount} assets currently held</em>
       </article>
-    ))}
-    <p class="live-test-footnote">Internal IDs and full reproducibility files are inside each audit packet.</p>
+      <article>
+        <span>Latest close</span>
+        <strong>{shortMonthDay(latestLiveCloseDate)}</strong>
+        <em>Live returns update before final scoring</em>
+      </article>
+      <article>
+        <span>Next score</span>
+        <strong>{shortMonthDay(nextLiveScoreDate)}</strong>
+        <em>Official results publish after ending prices</em>
+      </article>
+    </div>
+    <div class="home-section-cta live-dashboard-promo-actions" aria-label="Live dashboard links">
+      <a class="home-primary-cta" href="/live/#live-positions">
+        Open live positions and returns
+        <ArrowRight size={16} aria-hidden="true" />
+      </a>
+      <a class="home-secondary-cta" href="/live/#open-tests">Review open tests</a>
+    </div>
   </section>
 
-  <section class="timeline-lanes scoring-calendar" aria-labelledby="track-timeline-title">
-    <div class="home-section-heading">
-      <span class="panel-kicker">Scoring calendar</span>
-      <h2 id="track-timeline-title">Current Scoring Calendar</h2>
-      <p>
-        Models have already picked portfolios. Official scores publish only after the market window ends and final closing
-        prices are available.
-      </p>
-    </div>
-    <div class="timeline-lane-grid scoring-calendar-grid">
-      {trackStates.map((track) => (
-        <article class={`timeline-lane scoring-calendar-card scoring-calendar-card-${track.key}`}>
-          <div class="timeline-lane-head scoring-calendar-head">
-            <div>
-              <span class="panel-kicker">{track.label} test</span>
-              <strong>{track.horizonLabel}</strong>
-            </div>
-            <span class={`status-badge ${statusClass(track.round)}`}>{calendarStatusLabel(track.round)}</span>
-          </div>
-          {track.round ? (
-            <>
-              <p class="scoring-calendar-summary">
-                {track.submissions.length} model portfolio{track.submissions.length === 1 ? "" : "s"} locked and waiting for official scoring.
-              </p>
-              <dl class="scoring-calendar-facts">
-                <div>
-                  <dt>Locked</dt>
-                  <dd>{lockDateLabel(track.round)}</dd>
-                </div>
-                <div>
-                  <dt>Market window</dt>
-                  <dd>{marketWindowCalendarLabel(track.round)}</dd>
-                </div>
-                <div>
-                  <dt>Official score</dt>
-                  <dd>{calendarScoreDateLabel(track.round)}</dd>
-                </div>
-              </dl>
-              <div class="track-card-actions scoring-calendar-actions">
-                <a class="small-button" href="#current-picks">View current portfolios</a>
-                <a class="small-button" href={track.latestHref}>See latest results</a>
-                <a class="small-button" href="#score-alert-panel-home" data-score-alert-trigger>Get score alert</a>
-              </div>
-            </>
-          ) : (
-            <p class="scoring-calendar-summary">No {track.label.toLowerCase()} test is live yet.</p>
-          )}
-        </article>
-      ))}
-    </div>
-    <div class="scoring-calendar-record">
-      <div>
-        <strong>{roundRows.length} official rounds recorded</strong>
-        <span>Internal round and run IDs stay in the public audit trail.</span>
+  <section class="audit-preview" id="proof-and-data" aria-labelledby="audit-preview-title">
+    <div>
+      <span class="panel-kicker">Audit packet</span>
+      <div class="home-question-title">
+        <h2 id="audit-preview-title">How can you verify <span class="no-orphan">the benchmark?</span></h2>
+        <span class="home-info-tip" tabindex="0" aria-label="Audit packets expose reports, prompts, portfolios, prices, source reports, hashes, and result status.">
+          <Info size={15} aria-hidden="true" />
+        </span>
       </div>
-      <a class="small-button" href="/rounds">View audit trail</a>
+      <p>Round packets expose the report, prompt, portfolios, prices, hashes, and result status.</p>
+    </div>
+    <div class="audit-preview-actions">
+      {latestMonthlyRound && <a class="action-link action-primary" href={`/rounds/${latestMonthlyRound.round_id}/`}>Open monthly audit packet</a>}
+      {latestWeeklyRound && <a class="action-link" href={`/rounds/${latestWeeklyRound.round_id}/`}>Open weekly audit packet</a>}
+      <a class="action-link" href="/rounds">View all rounds</a>
+      <a class="action-link" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
+        <GitHubLogo size={15} />
+        Repository
+      </a>
     </div>
   </section>
 
@@ -1554,48 +742,4 @@ const trackLaneCards = trackStates.map((track) => {
     })}
   </nav>
 
-  <section class="audit-preview" id="proof-and-data" aria-labelledby="audit-preview-title">
-    <div>
-      <span class="panel-kicker">Audit packet</span>
-      <h2 id="audit-preview-title">Check The Public Audit Trail</h2>
-      <p>
-        Round pages show the report, prompt, model portfolios, starting prices, source reports, hashes, and result status
-        behind each public benchmark round.
-      </p>
-    </div>
-    <div class="audit-preview-actions">
-      {latestMonthlyRound && <a class="action-link action-primary" href={`/rounds/${latestMonthlyRound.round_id}/`}>Open monthly audit packet</a>}
-      {latestWeeklyRound && <a class="action-link" href={`/rounds/${latestWeeklyRound.round_id}/`}>Open weekly audit packet</a>}
-      <a class="action-link" href="/rounds">View all rounds</a>
-      <a class="action-link" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
-        <GitHubLogo size={15} />
-        Repository
-      </a>
-    </div>
-  </section>
-
-  <section class="home-section-heading" aria-labelledby="safeguards-title">
-    <span class="panel-kicker">Why it is fair</span>
-    <h2 id="safeguards-title">Simple Rules, Public Audit Trail</h2>
-    <p>
-      CapitalBench keeps the comparison narrow: same report, same asset list, frozen portfolios, and no final result before
-      the round ends.
-    </p>
-  </section>
-
-  <section class="evidence-grid enhanced" aria-label="Benchmark safeguards">
-    {safeguards.map((item) => {
-      const Icon = item.icon;
-      return (
-        <article>
-          <div class="evidence-icon" aria-hidden="true">
-            <Icon size={19} />
-          </div>
-          <span class="metric-label">{item.label}</span>
-          <h3>{item.title}</h3>
-          <p>{item.description}</p>
-        </article>
-      );
-    })}
-  </section>
 </BaseLayout>

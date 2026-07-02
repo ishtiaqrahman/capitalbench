@@ -48,10 +48,6 @@ function trackLabel(track: BenchmarkTrack): string {
   return track === "weekly" ? "Weekly" : "Monthly";
 }
 
-function resultNoun(track: BenchmarkTrack): string {
-  return track === "weekly" ? "one-week" : "one-month";
-}
-
 export function buildLatestOfficialResultTrack(track: BenchmarkTrack, rounds: RoundRecord[]): LatestOfficialResultTrack {
   const label = trackLabel(track);
   const resolvedRounds = rounds
@@ -82,7 +78,7 @@ export function buildLatestOfficialResultTrack(track: BenchmarkTrack, rounds: Ro
           key: round.round_id,
           roundId: round.round_id,
           title: `${label} result scored ${scoreDateLabel}`,
-          subtitle: `Frozen model portfolios scored after the ${resultNoun(track)} window. Live rounds stay out until final prices are available.`,
+          subtitle: "Same-window returns, ranked after final prices.",
           chartLabel: `${label} official result`,
           dateRangeLabel: `${entryDateLabel} to ${scoreDateLabel}`,
           scoreDateLabel,

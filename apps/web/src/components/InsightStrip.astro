@@ -1,4 +1,5 @@
 ---
+import { ArrowRight, Info } from "lucide-react";
 import {
   calculationLabel,
   calculationValue,
@@ -10,6 +11,7 @@ import {
   roundReferenceTokens,
   sourcePills
 } from "../lib/insights.js";
+import { noOrphanTextParts } from "../lib/typography";
 
 interface Props {
   insights?: any[];
@@ -46,6 +48,7 @@ const {
   featured = false
 } = Astro.props;
 const visibleInsights = insights.filter(Boolean).slice(0, compact ? 2 : 3);
+const titleParts = noOrphanTextParts(title);
 ---
 
 {visibleInsights.length > 0 && (
@@ -53,10 +56,17 @@ const visibleInsights = insights.filter(Boolean).slice(0, compact ? 2 : 3);
     <div class="context-insights-head">
       <div>
         <span class="panel-kicker">{kicker}</span>
-        <h2 id={id ? `${id}-title` : undefined}>{title}</h2>
+        <div class="home-question-title">
+          <h2 id={id ? `${id}-title` : undefined}>
+            {titleParts.lead && <>{titleParts.lead}{" "}</>}
+            <span class="no-orphan">{titleParts.tail}</span>
+          </h2>
+          <span class="home-info-tip" tabindex="0" aria-label="Insights summarize live positioning, risk, agreement, and finished benchmark results.">
+            <Info size={15} aria-hidden="true" />
+          </span>
+        </div>
         {description && <p>{description}</p>}
       </div>
-      <a class="section-profile-link" href={viewAllHref}>{viewAllLabel}</a>
     </div>
 
     <div class:list={["insight-card-grid", compact && "insight-card-grid-compact"]}>
@@ -113,6 +123,13 @@ const visibleInsights = insights.filter(Boolean).slice(0, compact ? 2 : 3);
           </article>
         );
       })}
+    </div>
+
+    <div class="home-section-cta" aria-label={`${title} links`}>
+      <a class="home-primary-cta" href={viewAllHref}>
+        {viewAllLabel}
+        <ArrowRight size={16} aria-hidden="true" />
+      </a>
     </div>
   </section>
 )}
