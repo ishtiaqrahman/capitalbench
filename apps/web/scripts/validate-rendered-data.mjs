@@ -2495,7 +2495,15 @@ if (
 }
 
 includes(indexHtml, 'The benchmark for <span class="no-orphan">AI capital allocation</span>', "homepage hero title");
-includes(indexHtml, "Study how AI models behave in capital-allocation rounds, and which ones actually perform.", "homepage hero positioning copy");
+includes(
+  indexHtml,
+  "Study how AI models behave in capital-allocation rounds, actually perform in scored results, and change risk when markets move.",
+  "homepage hero positioning copy"
+);
+includes(indexHtml, "Study how AI models", "homepage hero rotating copy prefix");
+includes(indexHtml, "behave in capital-allocation rounds.", "homepage hero rotating behavior phrase");
+includes(indexHtml, "actually perform in scored results.", "homepage hero rotating performance phrase");
+includes(indexHtml, "change risk when markets move.", "homepage hero rotating risk phrase");
 includesAny(indexHtml, htmlTextVariants("Open Live Positions & Returns"), "homepage hero live dashboard CTA");
 includes(indexHtml, "Get score alerts", "homepage hero score alert CTA");
 includes(indexHtml, "Request API access", "homepage hero API CTA");

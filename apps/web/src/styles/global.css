@@ -986,6 +986,82 @@ h3 {
   text-wrap: balance;
 }
 
+.hero-rotating-sublede {
+  max-width: 700px;
+  font-size: clamp(1.42rem, 1.9vw, 1.82rem);
+  font-weight: 750;
+  line-height: 1.18;
+}
+
+.hero-rotating-copy {
+  display: grid;
+  gap: 7px;
+}
+
+.hero-rotating-prefix {
+  display: block;
+  color: var(--ink-strong);
+  white-space: nowrap;
+}
+
+.hero-rotating-window {
+  position: relative;
+  display: grid;
+  min-height: 1.28em;
+  color: var(--accent-strong);
+}
+
+.hero-rotating-phrase {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(0.35em);
+  animation: heroPhraseBlink 9s infinite;
+  will-change: opacity, transform;
+}
+
+.hero-rotating-phrase:nth-child(2) {
+  animation-delay: 3s;
+}
+
+.hero-rotating-phrase:nth-child(3) {
+  animation-delay: 6s;
+}
+
+@keyframes heroPhraseBlink {
+  0%,
+  6% {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+
+  10%,
+  29% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  34%,
+  100% {
+    opacity: 0;
+    transform: translateY(-0.35em);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-rotating-phrase {
+    animation: none;
+    transform: none;
+  }
+
+  .hero-rotating-phrase:first-child {
+    opacity: 1;
+  }
+
+  .hero-rotating-phrase:not(:first-child) {
+    display: none;
+  }
+}
+
 .hero-disclaimer {
   display: inline-flex;
   width: fit-content;
@@ -8617,6 +8693,45 @@ a.snapshot-model-chip:hover {
   transform: translateX(-50%) translateY(0);
 }
 
+@media (max-width: 760px) {
+  .home-question-title {
+    max-width: calc(100vw - 32px);
+    display: inline-flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .home-question-title h2 {
+    display: block;
+    min-width: 0;
+    max-width: calc(100vw - 76px);
+  }
+
+  .home-question-title .home-info-tip {
+    margin-top: 0.14rem;
+    margin-left: 0;
+    transform: none;
+  }
+
+  .home-info-tip::after {
+    position: fixed;
+    top: auto;
+    right: 16px;
+    bottom: 18px;
+    left: 16px;
+    width: auto;
+    max-width: none;
+    text-align: center;
+    transform: translateY(8px);
+  }
+
+  .home-info-tip:hover::after,
+  .home-info-tip:focus-visible::after {
+    transform: translateY(0);
+  }
+}
+
 .home-section-cta {
   display: flex;
   flex-wrap: wrap;
@@ -12821,10 +12936,11 @@ tbody tr:hover {
   }
 
   .home-hero-copy h1 .no-orphan {
-    display: block;
-    width: fit-content;
+    display: inline;
+    width: auto;
     max-width: 100%;
     margin-inline: auto;
+    white-space: normal;
   }
 
   .hero-disclaimer {
@@ -12838,6 +12954,7 @@ tbody tr:hover {
 
   .home-hero-lede {
     max-width: 100%;
+    margin-top: 32px;
     font-size: 0.94rem;
     line-height: 1.55;
   }
@@ -12846,6 +12963,25 @@ tbody tr:hover {
     max-width: 100%;
     font-size: 1rem;
     line-height: 1.48;
+  }
+
+  .hero-rotating-sublede {
+    font-size: clamp(1.22rem, 5.9vw, 1.48rem);
+    line-height: 1.2;
+  }
+
+  .hero-rotating-copy {
+    justify-items: center;
+  }
+
+  .hero-rotating-window {
+    min-height: 2.72em;
+    justify-items: center;
+  }
+
+  .hero-rotating-phrase {
+    max-width: 20rem;
+    text-wrap: balance;
   }
 
   .home-hero-actions {
@@ -14260,7 +14396,7 @@ tbody tr:hover {
   }
 
   .home-hero-lede {
-    margin-top: 10px;
+    margin-top: 24px;
     font-size: 0.9rem;
     line-height: 1.48;
   }
@@ -30342,15 +30478,16 @@ html {
 .benchmark-trust-section .benchmark-evidence-panel {
   width: auto;
   margin: 0 16px 16px;
-  border-color: rgb(167 234 220 / 18%);
-  background:
-    linear-gradient(145deg, rgb(244 251 248 / 96%), rgb(226 243 239 / 88%)),
-    var(--surface);
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .benchmark-trust-section .benchmark-evidence-head {
   display: grid;
   justify-items: center;
+  margin: 0 auto 18px;
   text-align: center;
 }
 
@@ -30363,6 +30500,17 @@ html {
   font-size: clamp(2rem, 4vw, 3.1rem);
   line-height: 1.02;
   letter-spacing: 0;
+  color: #f4fbf8;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 18%);
+}
+
+.benchmark-trust-section .benchmark-evidence-head .panel-kicker {
+  color: #dcfaf4;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 18%);
+}
+
+.benchmark-trust-section .benchmark-evidence-head p {
+  color: #d7ece6;
 }
 
 .context-insights .home-section-cta {
@@ -30481,7 +30629,10 @@ html {
 
 .home-question-heading .home-question-title,
 .audit-preview .home-question-title {
-  display: block;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 8px;
 }
 
 .audit-preview-actions {
@@ -30642,10 +30793,15 @@ html {
   }
 
   .home-info-tip::after {
-    right: 0;
-    left: auto;
-    width: min(260px, calc(100vw - 36px));
-    transform: translateY(4px);
+    position: fixed;
+    top: auto;
+    right: 16px;
+    bottom: 18px;
+    left: 16px;
+    width: auto;
+    max-width: none;
+    text-align: center;
+    transform: translateY(8px);
   }
 
   .home-info-tip:hover::after,
