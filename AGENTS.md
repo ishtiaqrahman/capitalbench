@@ -38,9 +38,24 @@ The expected appended section title is:
 Full-Universe Price, Risk, And Benchmark Context
 ```
 
+## API Use
+
+When preparing Prompt 1, Prompt 2, or Prompt 3 research, do not use model APIs,
+agent APIs, model search tools, or provider-hosted browsing/search features to
+collect or synthesize the report. The research report must be prepared from
+direct public-source browsing and source review.
+
+Mechanical pricing APIs are allowed for price data. Use the existing
+CapitalBench pricing pipeline, such as Tiingo-backed commands, to generate
+entry prices, exit prices, and full-universe trailing-return context when those
+artifacts are required. Pricing API output is mechanical market data, not model
+research.
+
 ## Hard Rules
 
 - Do not paste selected mechanical return rows into `final_briefing.md`.
+- Do not use model APIs or model search features to prepare research reports.
+- Do use the pricing pipeline/API when mechanical price context is required.
 - Do not manually rank, recommend, or map allowed options in model-facing briefing text.
 - Do not reintroduce the old S&P 500 allocation instruction.
 - Keep source URLs, citations, and source ledgers out of `final_briefing.md`.
