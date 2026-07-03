@@ -2499,8 +2499,9 @@ a.snapshot-model-chip:hover {
 .current-setup-stat-row strong {
   color: var(--ink-strong);
   font-family: var(--font-display);
-  font-size: clamp(1.9rem, 3.6vw, 2.75rem);
-  line-height: 1;
+  font-size: clamp(2.35rem, 4.5vw, 3.4rem);
+  font-weight: 900;
+  line-height: 0.92;
   overflow-wrap: anywhere;
 }
 
@@ -9151,10 +9152,15 @@ a.snapshot-model-chip:hover {
   min-width: 0;
   color: var(--ink-strong);
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3.2vw, 2.35rem);
-  line-height: 1;
+  font-size: clamp(1.85rem, 3.5vw, 2.65rem);
+  font-weight: 900;
+  line-height: 0.95;
   overflow-wrap: anywhere;
   font-variant-numeric: tabular-nums;
+}
+
+.live-dashboard-promo-stats article:nth-child(-n + 2) strong {
+  font-size: clamp(2.8rem, 5.2vw, 4.1rem);
 }
 
 .live-dashboard-promo-stats em {
@@ -29959,7 +29965,9 @@ html {
 }
 
 .current-setup-stat-row strong {
-  font-size: clamp(2.25rem, 4.1vw, 3.15rem);
+  font-size: clamp(2.85rem, 5.4vw, 4.25rem);
+  font-weight: 900;
+  line-height: 0.9;
 }
 
 .current-setup-live-card {
@@ -30242,9 +30250,11 @@ html {
 
 .ai-positioning-summary article {
   --positioning-accent: var(--accent);
-  min-height: 154px;
+  min-height: 174px;
   border: 1px solid color-mix(in srgb, var(--positioning-accent) 25%, transparent);
   border-radius: 8px;
+  gap: 7px;
+  padding: 18px 16px;
   background:
     linear-gradient(145deg, color-mix(in srgb, var(--positioning-accent) 14%, #ffffff), #ffffff 72%);
   box-shadow:
@@ -30292,6 +30302,27 @@ html {
   white-space: nowrap;
 }
 
+.ai-positioning-summary strong {
+  font-size: clamp(2.45rem, 4.9vw, 3.75rem);
+  font-weight: 900;
+  line-height: 0.9;
+}
+
+.ai-positioning-summary article:nth-child(2) strong {
+  font-size: clamp(2.2rem, 4.3vw, 3.35rem);
+}
+
+.ai-positioning-summary article:nth-child(4) strong {
+  font-size: clamp(1.45rem, 2.5vw, 2.05rem);
+  line-height: 1.02;
+}
+
+.ai-positioning-summary em {
+  max-width: 18rem;
+  font-size: 0.84rem;
+  font-weight: 750;
+}
+
 .ai-positioning-summary article:nth-child(2n),
 .ai-positioning-summary article:nth-child(-n + 2),
 .ai-positioning-summary article:last-child {
@@ -30306,7 +30337,7 @@ html {
 .risk-score-with-unit small {
   flex: 0 0 auto;
   color: var(--muted-2);
-  font-size: clamp(0.64rem, 0.24em, 0.88rem);
+  font-size: clamp(0.68rem, 0.2em, 0.88rem);
   font-weight: 800;
   letter-spacing: 0;
 }
@@ -30839,8 +30870,9 @@ html {
 }
 
 .benchmark-trust-section .benchmark-evidence-card-title span {
-  color: #0d3c36;
+  color: #f4fbf8;
   font-weight: 900;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 22%);
 }
 
 .benchmark-trust-section .benchmark-evidence-card-title strong {
@@ -31023,7 +31055,7 @@ html {
   }
 
   .current-setup-stat-row strong {
-    font-size: 2.25rem;
+    font-size: 2.85rem;
   }
 
   .live-test-grid strong {

@@ -468,8 +468,8 @@ function riskWidth(value: number | null | undefined): string {
     <article>
       <span>Consensus allocation</span>
       <span class="ai-positioning-date">{riskPositioningDateLabel}</span>
-      <strong>{assetLabelWithTicker(riskPulseTopAssets[0])}</strong>
-      <em>{riskPulseTopAssets[0] ? `${pctValue(riskPulseTopAssets[0].allocation_pct)} average live weight` : "No live allocation"}</em>
+      <strong>{riskPulseTopAssets[0] ? pctValue(riskPulseTopAssets[0].allocation_pct) : "No allocation"}</strong>
+      <em>{riskPulseTopAssets[0] ? `${assetLabelWithTicker(riskPulseTopAssets[0])} average live weight` : "No live allocation"}</em>
     </article>
     <article>
       <span>Risk shift</span>
