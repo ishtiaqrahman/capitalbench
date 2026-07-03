@@ -148,6 +148,10 @@
 }
 
 .benchmark-evidence-card-title strong {
+  min-height: 31px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 6px 11px;
@@ -2495,7 +2499,7 @@ a.snapshot-model-chip:hover {
 .current-setup-stat-row strong {
   color: var(--ink-strong);
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: clamp(1.9rem, 3.6vw, 2.75rem);
   line-height: 1;
   overflow-wrap: anywhere;
 }
@@ -25702,38 +25706,41 @@ tbody tr:hover {
 
 .live-risk-driver-list {
   min-width: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr));
+  gap: 7px 14px;
+  margin-top: 11px;
 }
 
 .live-risk-driver-list span {
-  min-width: 72px;
-  max-width: min(100%, 220px);
+  min-width: 0;
+  max-width: none;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 7px;
-  border: 1px solid #dce5e1;
-  border-radius: 7px;
-  padding: 7px 8px;
-  background: #f7faf8;
+  align-items: baseline;
+  gap: 10px;
+  border: 0;
+  border-radius: 0;
+  padding: 4px 0 7px;
+  background: transparent;
 }
 
 .live-risk-driver-list strong {
   min-width: 0;
   overflow: hidden;
   color: var(--ink-strong);
-  font-size: 0.76rem;
+  font-size: 0.82rem;
+  font-weight: 850;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .live-risk-driver-list em {
-  color: var(--muted);
-  font-size: 0.72rem;
+  color: var(--ink-strong);
+  font-size: 0.86rem;
   font-style: normal;
   font-variant-numeric: tabular-nums;
+  font-weight: 900;
 }
 
 .live-risk-regime-list {
@@ -29952,7 +29959,7 @@ html {
 }
 
 .current-setup-stat-row strong {
-  font-size: clamp(1.95rem, 3.5vw, 2.55rem);
+  font-size: clamp(2.25rem, 4.1vw, 3.15rem);
 }
 
 .current-setup-live-card {
@@ -30379,29 +30386,29 @@ html {
 
 .live-risk-pulse-compact .live-risk-pulse-grid {
   grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
-  align-items: stretch;
+  align-items: center;
 }
 
 .live-risk-pulse-compact .live-risk-pulse-primary {
   grid-template-columns: minmax(190px, 0.36fr) minmax(0, 1fr);
-  gap: 18px;
-  align-items: stretch;
-  padding: 18px;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 18px;
 }
 
 .live-risk-pulse-compact .live-risk-pulse-score {
   grid-row: auto;
   align-content: center;
-  min-height: 176px;
+  min-height: 132px;
   padding-right: 18px;
 }
 
 .live-risk-pulse-compact .live-risk-pulse-body {
   min-width: 0;
   display: grid;
-  grid-template-rows: auto auto auto;
-  align-content: center;
-  gap: 13px;
+  grid-template-rows: auto minmax(72px, 1fr) auto;
+  align-content: stretch;
+  gap: 10px;
 }
 
 .live-risk-pulse-compact .live-risk-pulse-regime {
@@ -30415,10 +30422,12 @@ html {
 .live-risk-scale {
   min-width: 0;
   display: grid;
-  gap: 7px;
+  align-content: center;
+  gap: 8px;
+  min-height: 76px;
   border: 1px solid rgb(255 255 255 / 14%);
   border-radius: 8px;
-  padding: 10px 12px 11px;
+  padding: 9px 12px 10px;
   background: rgb(255 255 255 / 5%);
 }
 
@@ -30470,9 +30479,10 @@ html {
     "note score";
   align-items: center;
   gap: 4px 14px;
+  min-height: 58px;
   border: 1px solid rgb(167 234 220 / 20%);
   border-radius: 8px;
-  padding: 11px 12px;
+  padding: 10px 12px;
   background:
     linear-gradient(135deg, rgb(15 54 48 / 86%), rgb(11 33 31 / 92%));
 }
@@ -30826,6 +30836,34 @@ html {
 
 .benchmark-evidence-fact em {
   max-width: 29ch;
+}
+
+.benchmark-trust-section .benchmark-evidence-card-title span {
+  color: #0d3c36;
+  font-weight: 900;
+}
+
+.benchmark-trust-section .benchmark-evidence-card-title strong {
+  min-height: 33px;
+  border-color: rgb(0 107 95 / 24%);
+  background: linear-gradient(135deg, #edf8f5, #ffffff);
+  color: #063d38;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.benchmark-trust-section .benchmark-evidence-card-more_established .benchmark-evidence-card-title strong {
+  border-color: rgb(0 107 95 / 34%);
+  background: linear-gradient(135deg, #cfefe6, #f5fffb);
+  color: #06463d;
+}
+
+.benchmark-trust-section .benchmark-evidence-caveat {
+  border-color: rgb(167 234 220 / 38%);
+  background: linear-gradient(135deg, #0d312d, #123f38);
+  color: #f4fbf8;
+  font-weight: 750;
+  box-shadow: 0 10px 20px rgb(7 16 13 / 18%);
 }
 
 @media (max-width: 760px) {

@@ -2103,9 +2103,21 @@ includes(liveHtml, `${apiReadModel.rounds.length} official rounds recorded`, "li
 excludes(indexHtml, `${apiReadModel.rounds.length}-round record`, "homepage scoring calendar old total-round label");
 excludes(indexHtml, "When Each Round Gets Scored", "homepage scoring calendar old heading");
 excludes(indexHtml, "Current Scoring Calendar", "homepage scoring calendar moved to live dashboard");
-includes(indexHtml, `<strong>${apiReadModel.models.length}</strong>`, "homepage current setup model count");
-includes(indexHtml, `<strong>${currentUniverseOptionCount}</strong>`, "homepage current setup asset count");
-includes(indexHtml, `<strong>${activeRoundCount}</strong>`, "homepage current setup open test count");
+includesAny(
+  indexHtml,
+  [`<strong>${apiReadModel.models.length}</strong>`, `<strong data-count-token>${apiReadModel.models.length}</strong>`],
+  "homepage current setup model count"
+);
+includesAny(
+  indexHtml,
+  [`<strong>${currentUniverseOptionCount}</strong>`, `<strong data-count-token>${currentUniverseOptionCount}</strong>`],
+  "homepage current setup asset count"
+);
+includesAny(
+  indexHtml,
+  [`<strong>${activeRoundCount}</strong>`, `<strong data-count-token>${activeRoundCount}</strong>`],
+  "homepage current setup open test count"
+);
 includes(indexHtml, "Explore models", "homepage current setup models CTA");
 includes(indexHtml, "View asset universe", "homepage current setup assets CTA");
 includes(indexHtml, "Open live dashboard", "homepage current setup live CTA");

@@ -646,19 +646,19 @@ function riskWidth(value: number | null | undefined): string {
     <div class="current-setup-stat-row" aria-label="Current CapitalBench setup summary">
       <div>
         <span>Models</span>
-        <strong>{modelRoster.length}</strong>
+        <strong data-count-token>{modelRoster.length}</strong>
       </div>
       <div>
         <span>Asset choices</span>
-        <strong>{currentUniverseOptionCount}</strong>
+        <strong data-count-token>{currentUniverseOptionCount}</strong>
       </div>
       <div>
         <span>Round lengths</span>
-        <strong>2</strong>
+        <strong data-count-token>2</strong>
       </div>
       <div>
         <span>Open rounds</span>
-        <strong>{pendingRoundCount}</strong>
+        <strong data-count-token>{pendingRoundCount}</strong>
       </div>
     </div>
 
