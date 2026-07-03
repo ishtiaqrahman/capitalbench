@@ -1,0 +1,54 @@
+{
+  "confidence": 0.5,
+  "cost_usd": 0.27189,
+  "is_official_score": true,
+  "key_risks": [
+    "Renewed mega-cap tech rally (e.g., strong TSMC June sales July 10 read-through) would leave this defensive tilt lagging SPY",
+    "Hot ISM Services or inflation-related surprise pushes yields up, hurting biotech and low-vol rate-sensitive holdings",
+    "Biotech and healthcare momentum reverses from 52-week highs with limited independent catalyst support in the window",
+    "Pre-earnings de-risking in banks before July 14 could stall financials"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong recent breadth (66.7% up days), at 52-week high with low beta; defensive tilt fits soft payrolls and slowing labor data, low reversal-drawdown profile."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "FINANCIALS",
+      "rationale": "Positive pre-positioning into JPMorgan/Wells Fargo Q2 earnings on July 14, steep 2s10s curve supports net interest margins; broad 30d strength with modest volatility."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "LOW_VOL",
+      "rationale": "Rotation toward defensives evidenced by Dow outperformance and weak payrolls; near-zero beta cushions any tech-led pullback while capturing equity upside."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "BIOTECH",
+      "rationale": "At 52-week high with 71% up-day share; benefits from falling rate expectations after +57k payrolls; momentum supported by improving financing conditions, though continuation evidence beyond price action is limited."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SP500",
+      "rationale": "Benchmark ballast to control tracking error in a quiet holiday-shortened week."
+    }
+  ],
+  "portfolio_rationale": "Weak June payrolls and dovish rate implications favor rate-sensitive defensives and financials over stretched tech; healthcare/biotech show fundamental and flow strength, while an SPY sleeve limits benchmark-relative downside.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt toward healthcare, low-vol, and financials on soft labor data and bank earnings positioning, with biotech for rate-cut beta and SPY as ballast; underweight extended semis/tech showing drawdown risk.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-02-1W",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.27189,
+    "input_tokens": 22414,
+    "latency_seconds": 17.813714747899212,
+    "output_tokens": 955,
+    "total_tokens": 23369
+  }
+}

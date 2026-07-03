@@ -1,0 +1,54 @@
+{
+  "confidence": 0.55,
+  "cost_usd": 0.27189,
+  "is_official_score": true,
+  "key_risks": [
+    "Sticky core PCE at 3.4% y/y keeps the Fed hawkish at the late-July FOMC, hurting rate-sensitive biotech and small caps",
+    "Mega-cap tech earnings rebound could make SPY outrun this low-beta, value-tilted portfolio",
+    "Bank Q2 results on July 14 disappoint on credit costs or net interest income",
+    "Healthcare/biotech recent strength reverses on drug-pricing policy headlines or profit-taking after outsized 30d gains"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong recent breadth (67% up days, at 52w high) and low beta; supported by rotation away from stretched tech amid soft June payrolls."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "BIOTECH",
+      "rationale": "Weak labor data (+57k payrolls, downward revisions) raises rate-cut expectations, supporting rate-sensitive biotech; strength backed by broad participation (71% up days) though continuation risk exists."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "FINANCIALS",
+      "rationale": "JPMorgan and Wells Fargo Q2 results July 14 as near-term catalysts; sector showing steady gains with low drawdown and modest beta."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value at 52w high with positive 30d relative return, low volatility; rotation from expensive growth amid slowing labor market favors value tilt."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SMALL_VALUE",
+      "rationale": "Small-cap value benefits if soft jobs data pulls forward Fed easing; positive 30d relative performance with contained drawdown."
+    }
+  ],
+  "portfolio_rationale": "Soft June payrolls and downward revisions increase the odds of Fed easing before the July 31 exit, favoring rate-sensitive value, small caps, biotech, and defensive healthcare over stretched mega-cap tech, with bank earnings on July 14 as a concrete catalyst.",
+  "provider": "anthropic",
+  "rationale_summary": "Rotation portfolio tilted to value, healthcare, biotech, financials, and small-cap value on weakening labor data and near-term bank earnings catalysts, avoiding recently drawn-down tech/momentum.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-02-1M",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.27189,
+    "input_tokens": 22414,
+    "latency_seconds": 16.877963138045743,
+    "output_tokens": 955,
+    "total_tokens": 23369
+  }
+}

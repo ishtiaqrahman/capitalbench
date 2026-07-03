@@ -1,0 +1,46 @@
+{
+  "confidence": 0.7,
+  "is_official_score": true,
+  "key_risks": [
+    "Unexpected changes in Federal Reserve policy or interest rates could negatively impact equities and financials.",
+    "A broader market downturn could drag down the performance of the S&P 500 and sector-specific allocations.",
+    "Disappointing earnings reports from major banks could negatively affect the financials sector."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "option_id": "SP500",
+      "rationale": "Broad US equity exposure provides a baseline for the portfolio, capturing general market growth while managing risk."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare offers defensive characteristics and has shown recent strength, providing stability in a potentially volatile market."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "FINANCIALS",
+      "rationale": "Financials benefit from the current interest rate environment and upcoming earnings reports from major banks could provide a catalyst."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Short-term treasuries provide a risk-free yield and act as a buffer against potential market downturns."
+    }
+  ],
+  "portfolio_rationale": "This portfolio balances broad market exposure with defensive sectors and cash-like instruments to manage risk while seeking growth. The allocation to healthcare and financials aims to capitalize on recent trends and upcoming catalysts.",
+  "provider": "google",
+  "rationale_summary": "A balanced approach combining broad US equities, defensive sectors (healthcare), interest-rate sensitive sectors (financials), and short-term treasuries for stability.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-02-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16163,
+    "latency_seconds": 5.416941046016291,
+    "output_tokens": 471,
+    "total_tokens": 16634
+  }
+}

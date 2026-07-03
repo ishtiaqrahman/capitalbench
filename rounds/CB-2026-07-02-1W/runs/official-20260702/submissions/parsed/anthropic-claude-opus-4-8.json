@@ -1,0 +1,53 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp tech/semiconductor rebound would drive SPY/QQQ up and cause defensive tilt to lag the benchmark",
+    "Healthcare and value recent strength could reverse (crowding/mean reversion) before exit close",
+    "Rate spike or hawkish data ahead of ISM Services (July 6) could pressure rate-sensitive financials and low-vol names",
+    "Bank pre-earnings de-risking or negative guidance chatter could weigh on financials before July 14 reports"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong recent leadership (+5.2% 7d, +12.3% 30d, +14% vs SPX) with low beta and defensive tilt; XLV at 52w high with broad participation supports near-term continuation while inflation stays elevated."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "FINANCIALS",
+      "rationale": "Positive momentum (+4% 7d, +8.5% 30d) with big-bank earnings (JPM, WFC) approaching July 14 driving constructive positioning into the window; steep yield curve supportive."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive factor outperforming (+2.4% 7d, +9% vs SPX 30d) with lowest volatility and small drawdown; ballast given weak payrolls and elevated core PCE."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value leadership (+5.15% vs SPX 30d) at 52w high, low beta, cyclical/financial tilt aligning with rotation away from stretched tech."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like ballast with positive carry to reduce drawdown risk in a holiday-shortened, catalyst-light week for defensive posture."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward defensive and value/financial leadership showing positive breadth and benchmark-relative strength while avoiding stretched, high-volatility mega-cap tech and semis that led the recent selloff; short-duration bills add ballast.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight healthcare, financials, low-vol and value leadership with a cash-like anchor to seek positive alpha versus SPY in a low-catalyst week.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-02-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 22418,
+    "latency_seconds": 14.048395512974821,
+    "output_tokens": 871,
+    "total_tokens": 23289
+  }
+}
