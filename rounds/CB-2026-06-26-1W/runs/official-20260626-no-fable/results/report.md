@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-06-26-1W / official-20260626-no-fable
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-06-26-1W
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-20260626-no-fable
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench CB-2026-06-26-1W
+- Description: One-week market allocation evaluation round.
+- Decision date: 2026-06-26
 - Decision deadline: 2026-06-27T03:30:00Z
 - Horizon: one week
-- Official run ID: official-20260626-no-fable
-- Mock: no
+- Entry date: 2026-06-26
+- Exit date: 2026-07-02
+- Entry rule: Use the official entry prices supplied in prices/entry_prices.csv.
+- Exit rule: Use the official exit prices supplied in prices/exit_prices.csv.
+- Options: 70
 
 ## Model Decisions
 
@@ -93,26 +108,85 @@
 | SEMICONDUCTORS | Semiconductors | 611.6099853515625 | 592.2899780273438 | -0.031588770273450195 | 69 |
 | SOUTH_KOREA | South Korea Equities | 197.27999877929688 | 180.14 | -0.08688158396874246 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| xai-grok-4-3 | portfolio | HEALTHCARE | 4 | 0.55 | 0.02120499708699297 | 0.018728427984396175 | -0.0029317309670640543 | 0.06285270142423177 |  | False | True |
-| google-gemini-3-1-pro | portfolio | HEALTHCARE | 3 | 0.65 | 0.02120499708699297 | 0.017691565007006714 | -0.003968593944453515 | 0.06388956440162122 |  | False | True |
-| anthropic-claude-opus-4-7 | portfolio | HEALTHCARE | 5 | 0.55 | 0.02120499708699297 | 0.012731312119264005 | -0.008928846832196224 | 0.06884981728936393 |  | False | True |
-| openai-gpt-5-5 | portfolio | BIOTECH | 5 | 0.57 | 0.03269405117399771 | 0.01155215589928486 | -0.010108003052175369 | 0.07002897350934308 |  | False | True |
-| anthropic-claude-opus-4-8 | portfolio | HEALTHCARE | 5 | 0.55 | 0.02120499708699297 | 0.008395302107773993 | -0.013264856843686236 | 0.07318582730085395 |  | False | True |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-opus-4-7 | HEALTHCARE | 35.0 | 0.02120499708699297 | 0.00742174898044754 | Strong recent catalyst with EMA approvals supporting sector; defensive with low beta and positive momentum into a week with payrolls risk. |
+| anthropic-claude-opus-4-7 | REGIONAL_BANKS | 20.0 | -0.0019954972666326176 | -0.00039909945332652355 | Steepening curve, falling 10y yield, strong breadth; at 52w highs with solid recent momentum supported by rate backdrop. |
+| anthropic-claude-opus-4-7 | LOW_VOL | 20.0 | 0.012803606036848825 | 0.002560721207369765 | Defensive tilt ahead of jobs report and holiday-shortened week with AI/tech weakness weighing on cap-weighted indexes. |
+| anthropic-claude-opus-4-7 | BIOTECH | 15.0 | 0.03269405117399771 | 0.004904107676099656 | EMA approval catalyst plus strong 30d momentum; biotech leadership in healthcare rally. |
+| anthropic-claude-opus-4-7 | LONG_TREASURY | 10.0 | -0.01756166291326433 | -0.0017561662913264332 | 10y yield declining, softening sentiment data and tech weakness support duration into payrolls. |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 30.0 | 0.02120499708699297 | 0.006361499126097891 | Healthcare led the market on June 26 (+7.8% 7d) on EMA approval news; defensive low-beta with positive catalyst momentum and at 52w high, supported by the briefing's EMA committee recommendation fact. |
+| anthropic-claude-opus-4-8 | REGIONAL_BANKS | 20.0 | -0.0019954972666326176 | -0.00039909945332652355 | KRE strong (+5.4% 7d, at 52w high) amid steepening curve and benign claims; positioning supported by improving macro and rate context, not price alone. |
+| anthropic-claude-opus-4-8 | LOW_VOL | 20.0 | 0.012803606036848825 | 0.002560721207369765 | Defensive low-beta factor (+3.85% 7d) cushions against AI/tech-led index drawdown into the July 2 jobs report week. |
+| anthropic-claude-opus-4-8 | MID_CAP | 15.0 | -0.0017056531190029478 | -0.00025584796785044217 | Mid caps showed broad-based strength (+0.58% 7d, near 52w high) with healthier breadth than mega-cap indexes; benefits from solid macro data. |
+| anthropic-claude-opus-4-8 | SHORT_TREASURY | 15.0 | 0.00085352796988869 | 0.0001280291954833035 | Cash-like buffer ahead of July 2 jobs report and holiday-shortened week to limit volatility exposure. |
+| google-gemini-3-1-pro | HEALTHCARE | 40.0 | 0.02120499708699297 | 0.008481998834797189 | Healthcare stocks were among the strongest upward forces on the market after a European Medicines Agency committee recommended several medicines for approval or indication extensions, providing a near-term catalyst. |
+| google-gemini-3-1-pro | BIOTECH | 30.0 | 0.03269405117399771 | 0.009808215352199312 | Biotech benefits from the same European Medicines Agency recommendations as the broader healthcare sector, and has shown strong recent momentum with a 10.53% 7-day return. |
+| google-gemini-3-1-pro | REGIONAL_BANKS | 30.0 | -0.0019954972666326176 | -0.0005986491799897853 | Regional banks have shown recent strength with a 5.42% 7-day return and 8.67% 30-day return, offering diversification away from tech and AI which are currently facing headwinds. |
+| openai-gpt-5-5 | BIOTECH | 35.0 | 0.03269405117399771 | 0.011442917910899197 | Healthcare and biotech had strong recent relative performance, with independent support from reported healthcare strength after European Medicines Agency committee recommendations; high volatility is accepted for the one-week alpha objective. |
+| openai-gpt-5-5 | REGIONAL_BANKS | 25.0 | -0.0019954972666326176 | -0.0004988743166581544 | Regional banks benefit from the current rotation toward smaller and value-oriented domestic equities, while firm claims, improved sentiment, and solid income/spending data support credit and growth expectations into the jobs release. |
+| openai-gpt-5-5 | SMALL_VALUE | 20.0 | -0.0004515686584199985 | -9.03137316839997e-05 | Small value captures the broadening market breadth noted on June 26 and has less direct exposure to AI-linked mega-cap weakness that weighed on cap-weighted indexes. |
+| openai-gpt-5-5 | HEALTHCARE | 10.0 | 0.02120499708699297 | 0.0021204997086992972 | Healthcare was among the strongest upward forces on the market with a near-term regulatory approval catalyst, offering defensive beta and sector-specific support. |
+| openai-gpt-5-5 | OIL | 10.0 | -0.0142207367197148 | -0.00142207367197148 | Crude has a near-term geopolitical catalyst from U.S. strikes on Iran after a Strait of Hormuz cargo-ship drone attack, alongside low U.S. crude inventories, though recent price action has been weak. |
+| xai-grok-4-3 | HEALTHCARE | 35.0 | 0.02120499708699297 | 0.00742174898044754 | Healthcare led market gains on June 26 with EMA approvals providing near-term catalyst support before exit close. |
+| xai-grok-4-3 | BIOTECH | 25.0 | 0.03269405117399771 | 0.008173512793499427 | Biotech posted the strongest 7-day return in the data set amid favorable regulatory news flow. |
+| xai-grok-4-3 | LOW_VOL | 25.0 | 0.012803606036848825 | 0.003200901509212206 | Low-volatility equities delivered positive recent performance with defensive characteristics ahead of employment data. |
+| xai-grok-4-3 | SMALL_VALUE | 15.0 | -0.0004515686584199985 | -6.773529876299977e-05 | Small-value equities showed recent outperformance versus broad market with domestic growth sensitivity. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| xai-grok-4-3 | HEALTHCARE | 4 | 0.55 | 0.02120499708699297 | 0.018728427984396175 | -0.0029317309670640543 | 0.06285270142423177 |  | False | True |
+| google-gemini-3-1-pro | HEALTHCARE | 3 | 0.65 | 0.02120499708699297 | 0.017691565007006714 | -0.003968593944453515 | 0.06388956440162122 |  | False | True |
+| anthropic-claude-opus-4-7 | HEALTHCARE | 5 | 0.55 | 0.02120499708699297 | 0.012731312119264005 | -0.008928846832196224 | 0.06884981728936393 |  | False | True |
+| openai-gpt-5-5 | BIOTECH | 5 | 0.57 | 0.03269405117399771 | 0.01155215589928486 | -0.010108003052175369 | 0.07002897350934308 |  | False | True |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 5 | 0.55 | 0.02120499708699297 | 0.008395302107773993 | -0.013264856843686236 | 0.07318582730085395 |  | False | True |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | 1c9ea285a309fc37909ee033f834dd0ec72df267f2f661e2a332c29432fe5bb5 |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | 66320ebc013af445c33450b3005ec684487d06b5bca45c52a3ff9e8e24373e4c |
+| manifest.yaml | b14f6fc43eb97f71ba08d7904eff2288e3ac1de3218ed335f702fc37394220eb |
+| market_data/universe_trailing_returns.csv | a2358b5038eabbc4632abf8ebfb758ea08dd3c6ee8321189d1eda3d73d4fdc95 |
+| market_data/universe_trailing_returns.md | 95fb16347d221c8413bcfc8147edae69c474ee549438610e0bbdb0ecbc3185c8 |
+| market_data/universe_trailing_returns.json | 18b95a3185c923fd10cd58f5cdd26a1a2a2762d4ab173f949fc23a6fae1e566b |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | 323cf0a0134355cc5a58a844e8473570cc2375f1c4bb7a894c5997f403a6de79 | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | d808f67f0f680bf0baec85b279dffa5d3884ddd51abea33252648f64f41c3a5a | yes |
+| Final briefing | research/final_briefing.md | model-facing | 1c9ea285a309fc37909ee033f834dd0ec72df267f2f661e2a332c29432fe5bb5 | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-06-29-1W has no scored official run.
-- Round CB-2026-06-30-1W has no scored official run.
-- Round CB-2026-07-01-1W has no scored official run.
-- Round CB-2026-07-02-1W has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.
