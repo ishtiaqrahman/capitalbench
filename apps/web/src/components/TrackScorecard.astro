@@ -153,6 +153,10 @@ function scoreVerticalBarStyle(value: number): string {
   return `bottom: ${bottom.toFixed(2)}%; height: ${height.toFixed(2)}%;`;
 }
 
+function revealOrigin(value: number): string {
+  return value < 0 ? "top" : "bottom";
+}
+
 function scoreValueStyle(value: number): string {
   const coordinate = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
   if (coordinate >= 92) return "top: 8px;";
@@ -246,7 +250,11 @@ const scorecardBadgeItems = [
                 {scoreRows.map((row, index) => (
                   <div class={scoreColumnClass(row)}>
                     <span class="score-vertical-value" style={scoreValueStyle(row.averageScore)}>{scoreLabel(row.averageScore)}</span>
-                    <span class={`score-vertical-bar ${scoreBarClass(row, index)}`} style={scoreVerticalBarStyle(row.averageScore)}></span>
+                    <span
+                      class={`score-vertical-bar ${scoreBarClass(row, index)}`}
+                      style={`${scoreVerticalBarStyle(row.averageScore)} --reveal-origin: ${revealOrigin(row.averageScore)};`}
+                      data-reveal-bar="vertical"
+                    ></span>
                   </div>
                 ))}
               </div>
@@ -330,7 +338,11 @@ const scorecardBadgeItems = [
                   <strong>{scoreLabel(row.averageScore)}</strong>
                 </div>
                 <div class="score-mobile-rank-track" aria-hidden="true">
-                  <span class={`score-mobile-rank-fill ${scoreBarClass(row, index)}`} style={scoreMobileBarStyle(row)}></span>
+                  <span
+                    class={`score-mobile-rank-fill ${scoreBarClass(row, index)}`}
+                    style={scoreMobileBarStyle(row)}
+                    data-reveal-bar="horizontal"
+                  ></span>
                 </div>
               </article>
             ))}
@@ -380,7 +392,11 @@ const scorecardBadgeItems = [
               </span>
             </div>
             <div class="track-scorecard-bar-cell">
-              <span class={`track-scorecard-bar ${scoreBarClass(row, index)}`} style={averageBarStyle(row)}></span>
+              <span
+                class={`track-scorecard-bar ${scoreBarClass(row, index)}`}
+                style={averageBarStyle(row)}
+                data-reveal-bar="horizontal"
+              ></span>
             </div>
             <strong class="track-scorecard-value">{pct(row.averageReturn)}</strong>
           </div>

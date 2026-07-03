@@ -517,7 +517,7 @@ function riskWidth(value: number | null | undefined): string {
               <span class="risk-pulse-band is-balanced"></span>
               <span class="risk-pulse-band is-seeking"></span>
               <span class="risk-pulse-band is-aggressive"></span>
-              <i style={`--pulse-position: ${riskWidth(currentRiskPulse.score)}`}></i>
+              <i style={`--pulse-position: ${riskWidth(currentRiskPulse.score)}`} data-reveal-meter="true"></i>
             </div>
             <div class="live-risk-pulse-ticks" aria-hidden="true">
               <span>0</span>
@@ -552,7 +552,7 @@ function riskWidth(value: number | null | undefined): string {
             {riskPulseRegimes.map((regime) => (
               <span>
                 <strong>{regime.label}</strong>
-                <i><b style={`width: ${riskWidth(regime.allocation_pct)}`}></b></i>
+                <i><b style={`width: ${riskWidth(regime.allocation_pct)}`} data-reveal-bar="horizontal"></b></i>
                 <em>{pctValue(regime.allocation_pct)}</em>
               </span>
             ))}
@@ -751,5 +751,9 @@ function riskWidth(value: number | null | undefined): string {
       );
     })}
   </nav>
+
+  <script>
+    import "../scripts/homepageRevealAnimations";
+  </script>
 
 </BaseLayout>

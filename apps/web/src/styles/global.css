@@ -5582,6 +5582,42 @@ a.snapshot-model-chip:hover {
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 28%);
 }
 
+[data-count-token] {
+  font-variant-numeric: tabular-nums;
+}
+
+[data-reveal-bar] {
+  --reveal-scale: 1;
+}
+
+[data-reveal-bar="horizontal"] {
+  transform: scaleX(var(--reveal-scale));
+  transform-origin: left center;
+  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.score-vertical-bar[data-reveal-bar="vertical"] {
+  transform: translateX(-50%) scaleY(var(--reveal-scale));
+  transform-origin: center var(--reveal-origin, bottom);
+  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+[data-reveal-meter] {
+  transition: left 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal-bar="horizontal"],
+  .score-vertical-bar[data-reveal-bar="vertical"],
+  [data-reveal-meter] {
+    transition: none;
+    will-change: auto;
+  }
+}
+
 .score-vertical-value {
   position: absolute;
   left: 50%;

@@ -23,6 +23,10 @@ const modelRows = chart.rows.filter((item) => item.kind === "model");
 const referenceRows = chart.rows.filter((item) => item.kind !== "model");
 const zeroPosition = chart.ticks.find((tick) => Math.abs(tick.value) < 0.00001)?.position ?? "0%";
 const columnCount = Math.max(chart.rows.length, 1);
+
+function revealOrigin(value?: number): string {
+  return typeof value === "number" && Number.isFinite(value) && value < 0 ? "top" : "bottom";
+}
 ---
 
 <div class="published-score-chart">
@@ -55,7 +59,11 @@ const columnCount = Math.max(chart.rows.length, 1);
             {chart.rows.map((item) => (
               <div class={`score-vertical-column ${item.columnClass}`}>
                 <span class="score-vertical-value" style={item.valueStyle}>{item.returnLabel}</span>
-                <span class={`score-vertical-bar ${item.barClass}`} style={item.barStyle}></span>
+                <span
+                  class={`score-vertical-bar ${item.barClass}`}
+                  style={`${item.barStyle} --reveal-origin: ${revealOrigin(item.returnValue)};`}
+                  data-reveal-bar="vertical"
+                ></span>
               </div>
             ))}
           </div>
@@ -113,7 +121,11 @@ const columnCount = Math.max(chart.rows.length, 1);
               <strong>{item.returnLabel}</strong>
             </div>
             <div class="score-mobile-rank-track" aria-hidden="true">
-              <span class={`score-mobile-rank-fill ${item.barClass}`} style={item.mobileBarStyle}></span>
+              <span
+                class={`score-mobile-rank-fill ${item.barClass}`}
+                style={item.mobileBarStyle}
+                data-reveal-bar="horizontal"
+              ></span>
             </div>
           </article>
         ))}
