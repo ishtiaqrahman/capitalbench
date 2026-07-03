@@ -2494,7 +2494,11 @@ if (
   );
 }
 
-includes(indexHtml, 'The benchmark for <span class="no-orphan">AI capital allocation</span>', "homepage hero title");
+includes(
+  indexHtml,
+  'The benchmark <span class="hero-title-bridge">for AI capital</span> <span class="hero-title-tail">allocation</span>',
+  "homepage hero title"
+);
 includes(
   indexHtml,
   "See how AI models perform against each other, how they invest and take risk, and how they perform in the real market.",

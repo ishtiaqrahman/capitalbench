@@ -964,7 +964,14 @@ h3 {
 .home-hero-copy h1 {
   max-width: 700px;
   font-size: clamp(4.2rem, 5.45vw, 4.85rem);
-  line-height: 0.99;
+  line-height: 1.03;
+  overflow: visible;
+}
+
+.hero-title-bridge,
+.hero-title-tail {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .home-hero-lede {
@@ -1013,6 +1020,8 @@ h3 {
 
 .hero-rotating-phrase {
   grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
   opacity: 0;
   transform: translateY(0.35em);
   animation: heroPhraseBlink 9s infinite;
@@ -1104,6 +1113,10 @@ h3 {
 }
 
 @media (min-width: 981px) {
+  .home-hero-copy h1 {
+    max-width: 760px;
+  }
+
   .home-hero-lede {
     max-width: 640px;
     margin-top: 40px;
@@ -1116,6 +1129,28 @@ h3 {
     margin-top: 32px;
     font-size: clamp(1.36rem, 1.2vw, 1.48rem);
     line-height: 1.58;
+  }
+
+  .hero-rotating-sublede {
+    max-width: 760px;
+    margin-top: 42px;
+    font-size: clamp(1.65rem, 1.7vw, 1.95rem);
+    line-height: 1.08;
+  }
+
+  .hero-rotating-copy {
+    gap: 12px;
+  }
+
+  .hero-rotating-window {
+    min-height: 3.3em;
+    font-size: clamp(3.75rem, 5vw, 5.25rem);
+    line-height: 0.96;
+  }
+
+  .hero-rotating-phrase {
+    max-width: 760px;
+    text-wrap: balance;
   }
 
   .hero-disclaimer {
