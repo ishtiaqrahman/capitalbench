@@ -243,7 +243,13 @@ function expectedRoundMetadata(round) {
   const selectedRun = publicOfficialRuns(round)[0];
   const entryDate = String(manifest.entry_date ?? "");
   const exitDate = String(manifest.exit_date ?? "");
-  const status = existsSync(resultPath(round, "leaderboard.csv")) ? "resolved" : exitDate && exitDate < buildDate ? "overdue" : "active";
+  const status = selectedRun
+    ? existsSync(resultPath(round, "leaderboard.csv"))
+      ? "resolved"
+      : exitDate && exitDate < buildDate
+        ? "overdue"
+        : "active"
+    : "draft";
   return {
     manifest,
     selectedRun,
@@ -677,7 +683,7 @@ for (const round of apiReadModel.rounds) {
   const metadata = expectedRoundMetadata(round);
   const roundContext = `${round.round_id} round metadata`;
   if (!metadata.manifest.round_id) failures.push(`${roundContext} missing manifest.yaml round_id`);
-  if (!metadata.selectedRun) failures.push(`${roundContext} has no selected public official run`);
+  if (!metadata.selectedRun && round.status !== "draft") failures.push(`${roundContext} has no selected public official run`);
   for (const [field, expectedValue] of Object.entries(metadata.values)) {
     if (round[field] !== expectedValue) {
       failures.push(`${roundContext} ${field} ${round[field]} does not match manifest/run source ${expectedValue}`);

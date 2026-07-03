@@ -28,7 +28,6 @@ import { staticModelProfiles } from "../lib/modelProfiles";
 import { signedPulseChangeLabel } from "../lib/riskFormatting.js";
 import { providerLogoSrc } from "../lib/scoreReturnChart";
 import {
-  latestRoundForTrack,
   roundTrack,
   roundsForTrack,
   type BenchmarkTrack
@@ -51,11 +50,19 @@ type TrackLiveState = {
 };
 
 const roundRows = staticRoundRecords();
-const latestWeeklyRound = latestRoundForTrack(roundRows, "weekly");
-const latestMonthlyRound = latestRoundForTrack(roundRows, "monthly");
 const weeklyRounds = roundsForTrack(roundRows, "weekly");
 const monthlyRounds = roundsForTrack(roundRows, "monthly");
 const modelProfiles = staticModelProfiles();
+
+function latestOpenPortfolioRoundForTrack(track: BenchmarkTrack): RoundRecord | undefined {
+  return roundRows.find((round) => {
+    if (roundTrack(round) !== track || round.status !== "pending" || !round.official_run_id) return false;
+    return staticOfficialSubmissions(round.round_id, round.official_run_id).length > 0;
+  });
+}
+
+const latestWeeklyRound = latestOpenPortfolioRoundForTrack("weekly");
+const latestMonthlyRound = latestOpenPortfolioRoundForTrack("monthly");
 
 function buildTrackState(
   key: BenchmarkTrack,

@@ -1510,11 +1510,10 @@ function loadRound(row) {
   const manifest = readYaml(join(roundPath, "manifest.yaml"), {});
   if (!manifest.round_id) return null;
   const selectedRun = publicOfficialRuns(roundPath)[0];
-  if (!selectedRun) return null;
-  const resultsPath = join(roundPath, "runs", selectedRun.run_id, "results", "leaderboard.csv");
+  const resultsPath = selectedRun ? join(roundPath, "runs", selectedRun.run_id, "results", "leaderboard.csv") : "";
   const entryDate = String(manifest.entry_date ?? "");
   const exitDate = String(manifest.exit_date ?? "");
-  const status = roundStatus({ hasResults: existsSync(resultsPath), exitDate });
+  const status = selectedRun ? roundStatus({ hasResults: existsSync(resultsPath), exitDate }) : "draft";
   const round = {
     round_id: String(manifest.round_id),
     title: String(manifest.title ?? manifest.round_id),
@@ -1529,10 +1528,10 @@ function loadRound(row) {
     exit_date: exitDate,
     horizon: String(manifest.horizon ?? ""),
     horizon_days: horizonDays(entryDate, exitDate),
-    methodology_version: selectedRun.manifest.methodology_version ?? manifest.methodology_version ?? "",
+    methodology_version: selectedRun?.manifest.methodology_version ?? manifest.methodology_version ?? "",
     universe_version: inferUniverseVersion(roundPath, manifest.universe_version),
     submission_format: manifest.submission_format ?? "single_pick",
-    official_run_id: selectedRun.run_id,
+    official_run_id: selectedRun?.run_id ?? "",
     benchmark_option_id: "SP500",
     model_count: 0,
     proof: {
@@ -1790,11 +1789,20 @@ function buildReadModel() {
   const proof = [];
 
   for (const item of roundRows) {
-    const loaded = loadSubmissions({ ...item, assetsById });
+    const loaded = item.selectedRun ? loadSubmissions({ ...item, assetsById }) : { portfolios: [], allocations: [] };
     item.round.model_count = new Set(loaded.portfolios.map((portfolio) => portfolio.model_id)).size;
     rounds.push(item.round);
     portfolios.push(...loaded.portfolios);
     allocations.push(...loaded.allocations);
+    if (!item.selectedRun) {
+      proof.push({
+        round_id: item.round.round_id,
+        run_id: "",
+        hashes: item.round.proof.hashes,
+        round_page_url: item.round.proof.round_page_url
+      });
+      continue;
+    }
     results.push(...loadResults(item));
     returns.push(...loadReturns(item));
     interimPerformance.push(...loadInterimPerformance(item));

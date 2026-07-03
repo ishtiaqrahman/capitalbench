@@ -501,17 +501,28 @@ const allocationDisplayNote =
     : "This round used the portfolio format. The weights below are the submitted model portfolios.";
 const isResolvedRound = round.status === "resolved";
 const isOverdueRound = round.status === "overdue";
-const statusLabel = isResolvedRound ? "Scored" : isOverdueRound ? "Resolution due" : round.status === "archived" ? "Archived" : "Pending";
+const isDraftRound = round.status === "draft";
+const statusLabel = isDraftRound
+  ? "Input prepared"
+  : isResolvedRound
+    ? "Scored"
+    : isOverdueRound
+      ? "Resolution due"
+      : round.status === "archived"
+        ? "Archived"
+        : "Pending";
 const track = roundTrack(round);
 const benchmarkTrackLabel = trackLabel(track);
-const roundStateTitle = isResolvedRound ? "Final Score Published" : isOverdueRound ? "Resolution Due" : "Score Pending";
+const roundStateTitle = isDraftRound ? "Input Packet Prepared" : isResolvedRound ? "Final Score Published" : isOverdueRound ? "Resolution Due" : "Score Pending";
 const pageTitle = isResolvedRound ? `${round.round_id} Result And Audit Packet` : `${round.round_id} Audit Packet`;
 const pageDescription =
   isResolvedRound
     ? `${round.round_id} ${round.horizon} result with model portfolio scores, S&P 500 comparison, scoring prices, and audit hashes.`
     : isOverdueRound
       ? `${round.round_id} ${round.horizon} audit packet with frozen model portfolios, starting prices, overdue status, and audit hashes.`
-    : `${round.round_id} ${round.horizon} audit packet with frozen model portfolios, starting prices, pending status, and audit hashes.`;
+    : isDraftRound
+      ? `${round.round_id} ${round.horizon} input packet with briefing, option universe, prompt, and audit hashes.`
+      : `${round.round_id} ${round.horizon} audit packet with frozen model portfolios, starting prices, pending status, and audit hashes.`;
 const roundPublishedDate = round.decision_date || round.entry_date;
 const roundModifiedDate = latestDate([
   roundPublishedDate,
@@ -720,8 +731,8 @@ const attributionColumns = [
       </li>
       <li class="phase-complete">
         <span>2</span>
-        <strong>Portfolios collected</strong>
-        <p>{roundSubmissions.length} valid model {decisionNoun}.</p>
+        <strong>{isDraftRound ? "Portfolios pending" : "Portfolios collected"}</strong>
+        <p>{isDraftRound ? "Official provider submissions have not been collected yet." : `${roundSubmissions.length} valid model ${decisionNoun}.`}</p>
       </li>
       <li class="phase-complete">
         <span>3</span>

@@ -1,10 +1,11 @@
 ---
 import Badge from "./Badge.astro";
 import { dateOnly } from "../lib/format";
+import type { RoundStatus } from "../data/fallback";
 
 interface Props {
   roundId: string;
-  status: "pending" | "resolved" | "overdue" | "archived";
+  status: RoundStatus;
   decisionDeadline: string;
   entryDate?: string;
   exitDate: string;
@@ -13,7 +14,7 @@ interface Props {
 
 const { roundId, status, decisionDeadline, entryDate, exitDate, officialRunId } = Astro.props;
 const tone = status === "resolved" ? "green" : status === "pending" ? "amber" : status === "overdue" ? "red" : "neutral";
-const publicStatus = status === "resolved" ? "scored" : status === "overdue" ? "resolution due" : status;
+const publicStatus = status === "draft" ? "input prepared" : status === "resolved" ? "scored" : status === "overdue" ? "resolution due" : status;
 ---
 
 <section class="status-strip" aria-label="Current benchmark status">
@@ -36,6 +37,6 @@ const publicStatus = status === "resolved" ? "scored" : status === "overdue" ? "
   </div>
   <div class="status-item">
     <span>Run ID</span>
-    <strong>{officialRunId}</strong>
+    <strong>{officialRunId || "Not collected"}</strong>
   </div>
 </section>

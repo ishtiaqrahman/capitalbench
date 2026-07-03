@@ -78,6 +78,7 @@ function remainingText(
 }
 
 function ariaText(parts: NonNullable<ReturnType<typeof partsUntil>> | null, status: RoundStatus): string {
+  if (status === "draft") return "Input packet prepared. Model submissions are not collected yet.";
   if (status === "resolved") return "Scores published.";
   if (status === "overdue") return "Scoring window passed. Waiting for score publication.";
   if (!parts) return "Scoring target unavailable.";
@@ -90,6 +91,7 @@ function ariaText(parts: NonNullable<ReturnType<typeof partsUntil>> | null, stat
 }
 
 function statusTarget(status: RoundStatus, parts: NonNullable<ReturnType<typeof partsUntil>> | null, target: string): string {
+  if (status === "draft") return "Input prepared";
   if (status === "resolved") return "Scores published";
   if (status === "overdue") return "Resolution due";
   if (parts?.reached) return "Scoring window reached";
@@ -127,10 +129,17 @@ export default function ScoreCountdown({
   const target = formatTarget(scoreEtaUtc, targetMode, exitDate);
   const isResolved = status === "resolved";
   const isOverdue = status === "overdue";
+  const isDraft = status === "draft";
   const isReached = !isResolved && parts?.reached;
-  const statusClass = isResolved ? "resolved" : isOverdue ? "overdue" : isReached ? "reached" : "pending";
+  const statusClass = isResolved ? "resolved" : isOverdue ? "overdue" : isDraft ? "pending" : isReached ? "reached" : "pending";
   const targetText = statusTarget(status, parts, target);
-  const remaining = isOverdue ? "Waiting for score publication" : isReached ? "Waiting for score publication" : remainingText(parts, precision, resolvedVariant === "chip");
+  const remaining = isDraft
+    ? "Waiting for official submissions"
+    : isOverdue
+      ? "Waiting for score publication"
+      : isReached
+        ? "Waiting for score publication"
+        : remainingText(parts, precision, resolvedVariant === "chip");
   const shouldShowIcon = showIcon || resolvedVariant === "panel";
   const sourceLabel = source === "automation" ? "Automation target" : source === "derived" ? "Estimated from exit date" : "Scoring target";
   const displayedMeta = isResolved ? "Leaderboard is live" : metaText ?? (showRemaining ? remaining : sourceLabel);

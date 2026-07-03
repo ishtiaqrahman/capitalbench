@@ -11,12 +11,13 @@ export function roundAuditPath(roundId: string): string {
 }
 
 export function normalizeRoundStatus(status: RuntimeRoundStatus): RoundRecord["status"] {
-  if (status === "resolved" || status === "overdue" || status === "archived") return status;
+  if (status === "draft" || status === "resolved" || status === "overdue" || status === "archived") return status;
   return "pending";
 }
 
 export function publicRoundStatusLabel(status: RuntimeRoundStatus): string {
   const normalized = normalizeRoundStatus(status);
+  if (normalized === "draft") return "input prepared";
   if (normalized === "resolved") return "scored";
   if (normalized === "overdue") return "resolution due";
   return normalized;

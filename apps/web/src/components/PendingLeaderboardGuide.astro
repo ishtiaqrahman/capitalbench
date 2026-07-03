@@ -1,5 +1,6 @@
 ---
 import ScoreCountdown from "./ScoreCountdown";
+import type { RoundStatus } from "../data/fallback";
 
 interface Props {
   kind: "latest" | "official" | "stability";
@@ -7,7 +8,7 @@ interface Props {
   exitDate?: string;
   scoreEtaUtc?: string;
   scoreEtaSource?: "automation" | "derived";
-  status?: "pending" | "resolved" | "overdue" | "archived";
+  status?: RoundStatus;
   initialNowIso?: string;
   ctaHref?: string;
 }

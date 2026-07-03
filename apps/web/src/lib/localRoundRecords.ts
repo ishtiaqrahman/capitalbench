@@ -275,7 +275,7 @@ function discoverRoundRecord(roundPath: string): RoundRecord | null {
   const hasScoredResults =
     selectedRun !== undefined &&
     existsSync(join(roundPath, "runs", selectedRun.runId, "results", "leaderboard.csv"));
-  const status = localRoundStatus(hasScoredResults, exitDate, fallback?.status);
+  const status = selectedRun === undefined ? "draft" : localRoundStatus(hasScoredResults, exitDate, fallback?.status);
   const scoreEtaFields = scoreEta(roundPath, manifest);
   return {
     round_id: manifest.round_id,

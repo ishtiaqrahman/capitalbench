@@ -267,17 +267,24 @@ export const routeMeta: RouteMeta[] = [
   })),
   ...publicRounds.map((round) => ({
     path: `/rounds/${round.round_id}`,
-    title: round.status === "resolved" ? `${round.round_id} Result And Audit Packet` : `${round.round_id} Audit Packet`,
+    title:
+      round.status === "resolved"
+        ? `${round.round_id} Result And Audit Packet`
+        : round.status === "draft"
+          ? `${round.round_id} Input Packet`
+          : `${round.round_id} Audit Packet`,
     description:
       round.status === "resolved"
         ? `${round.round_id} ${round.horizon} result with model portfolio scores, S&P 500 comparison, scoring prices, and audit hashes.`
+        : round.status === "draft"
+          ? `${round.round_id} ${round.horizon} input packet with frozen research briefing, source audit, and provider submissions still pending.`
         : round.status === "overdue"
           ? `${round.round_id} ${round.horizon} audit packet with frozen model portfolios, starting prices, overdue status, and audit hashes.`
         : `${round.round_id} ${round.horizon} audit packet with frozen model portfolios, starting prices, pending status, and audit hashes.`,
     priority: 0.8,
     changefreq: "weekly" as const,
     lastmod:
-      round.status === "pending" || round.status === "overdue"
+      round.status === "pending" || round.status === "overdue" || round.status === "draft"
         ? latestDataDate
         : latestDate([round.exit_date, round.entry_date, round.decision_date]) ?? latestRoundDate
   })),

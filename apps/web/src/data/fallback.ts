@@ -1,4 +1,4 @@
-export type RoundStatus = "pending" | "resolved" | "overdue" | "archived";
+export type RoundStatus = "draft" | "pending" | "resolved" | "overdue" | "archived";
 export type SubmissionFormat = "single_pick" | "portfolio";
 export type ScoreEtaSource = "automation" | "derived";
 

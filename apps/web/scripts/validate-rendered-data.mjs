@@ -1159,8 +1159,11 @@ function latestRound(track, status) {
     .sort((left, right) => roundSortKey(right).localeCompare(roundSortKey(left)))[0];
 }
 
-function latestRoundByTrack(track) {
-  return apiReadModel.rounds.find((round) => round.track === track);
+function latestOpenPortfolioRoundByTrack(track) {
+  return apiReadModel.rounds.find((round) => {
+    if (round.track !== track || round.status !== "pending" || !round.official_run_id) return false;
+    return apiReadModel.portfolios.some((portfolio) => portfolio.round_id === round.round_id && portfolio.run_id === round.official_run_id);
+  });
 }
 
 function roundsForTrack(track) {
@@ -1774,7 +1777,7 @@ function modelTrackSummary(modelId, track) {
 }
 
 function buildHomepageTrackState(track) {
-  const round = latestRoundByTrack(track);
+  const round = latestOpenPortfolioRoundByTrack(track);
   if (!round) return null;
   const portfolios = apiReadModel.portfolios.filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id);
   const allocations = apiReadModel.allocations.filter((row) => row.round_id === round.round_id && row.run_id === round.official_run_id);
@@ -2083,7 +2086,7 @@ const latestResolvedRound = apiReadModel.rounds
 const latestActiveWeekly = latestRound("weekly", "active");
 const latestActiveMonthly = latestRound("monthly", "active");
 const homepageTrackRounds = ["weekly", "monthly"]
-  .map((track) => latestRoundByTrack(track))
+  .map((track) => latestRound(track, "active"))
   .filter(Boolean);
 includes(leaderboardsHtml, `<strong>${resolvedRoundCount}</strong>`, "leaderboards index completed count");
 includes(leaderboardsHtml, `<strong>${activeRoundCount}</strong>`, "leaderboards index live count");
@@ -2997,7 +3000,11 @@ for (const round of apiReadModel.rounds) {
     includes(html, `${proofFileCount} public audit hashes`, `${context} audit hash count`);
     includes(html, `${proofFileCount} artifacts published`, `${context} audit artifact count`);
   }
-  includes(html, `${portfolios.length} valid model ${decisionNoun}`, `${context} valid model portfolio count`);
+  if (round.status === "draft") {
+    includes(html, "Official provider submissions have not been collected yet.", `${context} draft portfolio state`);
+  } else {
+    includes(html, `${portfolios.length} valid model ${decisionNoun}`, `${context} valid model portfolio count`);
+  }
   if (entryPriceRows.length > 0) includes(html, `${entryPriceRows.length} starting-price rows published`, `${context} entry price count`);
   if (optionCount !== null) {
     includes(html, `${optionCount} saved choices`, `${context} saved choice count`);
