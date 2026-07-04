@@ -9,7 +9,6 @@ const countSelectors = [
   ".live-dashboard-promo-stats strong",
   ".live-dashboard-promo-stats em",
   "#benchmark-insights .insight-calculation-list dd",
-  ".benchmark-evidence-facts strong",
   ".score-vertical-value",
   ".score-mobile-rank-head > strong",
   ".track-scorecard-value",

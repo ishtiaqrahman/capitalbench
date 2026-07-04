@@ -30924,28 +30924,32 @@ html {
 }
 
 .benchmark-trust-section .benchmark-evidence-card-title {
-  min-height: 42px;
-  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 0;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-items: start;
-  gap: 12px;
-  margin-bottom: 14px;
+  justify-content: space-between;
+  gap: 10px 14px;
+  margin-bottom: 16px;
   text-align: left;
 }
 
 .benchmark-trust-section .benchmark-evidence-card-title span {
   color: #f4fbf8;
   font-weight: 900;
+  white-space: nowrap;
   text-shadow: 0 1px 0 rgb(0 0 0 / 22%);
 }
 
 .benchmark-trust-section .benchmark-evidence-card-title strong {
   min-height: 33px;
+  flex: 0 0 auto;
   border-color: color-mix(in srgb, var(--track-accent) 44%, rgb(255 255 255 / 28%));
   background: color-mix(in srgb, var(--track-accent) 24%, rgb(255 255 255 / 12%));
   color: #f3fffc;
   font-weight: 900;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .benchmark-trust-section .benchmark-evidence-card-more_established .benchmark-evidence-card-title strong {
@@ -30956,15 +30960,16 @@ html {
 
 .benchmark-trust-section .benchmark-evidence-facts {
   gap: 10px;
+  grid-template-columns: repeat(2, minmax(min(100%, 220px), 1fr));
 }
 
 .benchmark-trust-section .benchmark-evidence-facts .benchmark-evidence-fact {
-  min-height: 224px;
-  grid-template-rows: 52px 1.05rem minmax(3.15rem, auto) minmax(4.1rem, 1fr);
+  min-height: 216px;
+  grid-template-rows: 52px minmax(1rem, auto) minmax(2.8rem, auto) minmax(4rem, 1fr);
   align-content: start;
   justify-items: center;
   border-color: color-mix(in srgb, var(--evidence-accent) 30%, rgb(255 255 255 / 18%));
-  padding: 16px 13px 15px;
+  padding: 16px 15px 15px;
   background:
     radial-gradient(circle at 50% 24px, color-mix(in srgb, var(--evidence-accent) 16%, transparent), transparent 72px),
     linear-gradient(145deg, color-mix(in srgb, var(--evidence-accent) 18%, #f5fbf8), #edf5f2 76%);
@@ -30982,22 +30987,29 @@ html {
 .benchmark-trust-section .benchmark-evidence-label {
   align-self: center;
   color: color-mix(in srgb, var(--evidence-accent) 54%, #233a35);
-  font-size: 0.7rem;
+  font-size: clamp(0.62rem, 0.7vw, 0.68rem);
   font-weight: 900;
-  letter-spacing: 0.055em;
+  letter-spacing: 0.04em;
   line-height: 1;
+  overflow-wrap: normal;
+  text-wrap: nowrap;
+  white-space: nowrap;
+  word-break: keep-all;
 }
 
 .benchmark-trust-section .benchmark-evidence-fact strong {
-  min-height: 3.15rem;
+  min-height: 2.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #071815;
-  font-size: clamp(1.03rem, 1.25vw, 1.22rem);
+  font-size: clamp(1rem, 1.12vw, 1.16rem);
   font-weight: 900;
   line-height: 1.12;
   text-align: center;
+  overflow-wrap: normal;
+  text-wrap: balance;
+  word-break: keep-all;
 }
 
 .benchmark-trust-section .benchmark-evidence-fact em {
@@ -31026,15 +31038,19 @@ html {
   }
 
   .benchmark-trust-section .benchmark-evidence-card-title {
-    grid-template-columns: 1fr;
     justify-items: center;
+    justify-content: center;
     gap: 8px;
     text-align: center;
   }
 
+  .benchmark-trust-section .benchmark-evidence-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .benchmark-trust-section .benchmark-evidence-facts .benchmark-evidence-fact {
-    min-height: 210px;
-    grid-template-rows: 50px 1.05rem minmax(2.7rem, auto) minmax(3.7rem, 1fr);
+    min-height: 190px;
+    grid-template-rows: 50px minmax(1rem, auto) minmax(2.35rem, auto) minmax(3.4rem, 1fr);
   }
 }
 
