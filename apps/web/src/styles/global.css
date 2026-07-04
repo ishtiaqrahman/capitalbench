@@ -5593,9 +5593,23 @@ a.snapshot-model-chip:hover {
   font-variant-numeric: tabular-nums;
 }
 
+.ai-positioning-summary strong > [data-count-token],
+.ai-positioning-summary em > [data-count-token],
+.live-risk-pulse-score strong > [data-count-token],
+.live-risk-pulse-stats strong > [data-count-token],
+.live-risk-pulse-compare strong > [data-count-token],
+.live-risk-driver-list em > [data-count-token],
+.live-risk-regime-list em > [data-count-token],
 .current-setup-stat-row strong > [data-count-token],
 .live-dashboard-promo-stats strong > [data-count-token],
-.live-dashboard-promo-stats em > [data-count-token] {
+.live-dashboard-promo-stats em > [data-count-token],
+#benchmark-insights .insight-calculation-list dd > [data-count-token],
+.score-vertical-value > [data-count-token],
+.score-mobile-rank-head > strong > [data-count-token],
+.track-scorecard-value > [data-count-token],
+.published-score-context span > [data-count-token] {
+  display: inline;
+  grid-area: auto;
   color: inherit;
   font: inherit;
   letter-spacing: inherit;

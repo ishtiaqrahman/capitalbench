@@ -1964,10 +1964,7 @@ for (const track of ["weekly", "monthly"]) {
   includes(cumulativeScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, context);
   includes(cumulativeScorecardHtml, "full-history models ranked", context);
   includes(cumulativeScorecardHtml, `Newest included round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
-  includes(cumulativeScorecardHtml, "Rounds included:", context);
-  for (const roundId of cumulative.comparison.comparison_round_ids) {
-    includes(cumulativeScorecardHtml, roundId, context);
-  }
+  excludes(cumulativeScorecardHtml, "Rounds included:", context);
   for (const row of cumulative.data) {
     includes(cumulativeScorecardHtml, row.label, `${context} ${row.model_id}`);
     if (typeof row.capitalbench_score === "number") {
@@ -2025,7 +2022,7 @@ for (const track of ["weekly", "monthly"]) {
     includes(homepageScorecardHtml, "equal-run models ranked", `homepage ${track} equal-run ranked model count`);
     includes(homepageScorecardHtml, `Newest included round: ${featuredSet.latest_included_round_id}`, `homepage ${track} newest included`);
     includes(homepageScorecardHtml, "Fairness rule:", `homepage ${track} fairness rule`);
-    includes(homepageScorecardHtml, "Rounds included:", `homepage ${track} included rounds`);
+    excludes(homepageScorecardHtml, "Rounds included:", `homepage ${track} included rounds`);
     if (featuredSet.is_qualified) {
       includes(homepageScorecardHtml, `Qualified at ${featuredSet.qualification_threshold}+ shared rounds`, `homepage ${track} qualification status`);
     } else {

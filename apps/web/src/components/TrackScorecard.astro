@@ -441,7 +441,6 @@ const scorecardBadgeItems = [
   )}
 
   <div class="track-scorecard-notes" aria-label={`${scorecard.label} scorecard notes`}>
-    <span><strong>Rounds included:</strong> {scorecard.comparisonRoundIds.join(", ")}</span>
     {scorecard.excludedRoundIds.length > 0 && (
       <span>
         <strong>Excluded for fairness:</strong>{" "}
