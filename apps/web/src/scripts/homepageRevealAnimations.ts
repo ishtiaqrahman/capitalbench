@@ -16,6 +16,8 @@ const countSelectors = [
 ].join(",");
 
 const groupSelectors = [
+  ".score-vertical-plot",
+  ".score-mobile-rank-chart",
   ".track-scorecard-panel",
   ".latest-official-result-panel",
   ".ai-positioning-summary",
@@ -70,15 +72,13 @@ function animateCount(token: CountToken, delay: number): void {
   }
 
   window.setTimeout(() => {
-    const start = performance.now();
+    const start = Date.now();
 
-    function tick(now: number): void {
-      const progress = Math.min(1, (now - start) / duration);
+    const interval = window.setInterval(() => {
+      const progress = Math.min(1, (Date.now() - start) / duration);
       token.textContent = formatCount(finalValue * easing(progress), decimals, suffix, showPlus);
-      if (progress < 1) requestAnimationFrame(tick);
-    }
-
-    requestAnimationFrame(tick);
+      if (progress >= 1) window.clearInterval(interval);
+    }, 16);
   }, delay);
 }
 
@@ -220,8 +220,7 @@ function setupHomepageReveals(): void {
     (entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting || !isVisible(entry.target)) return;
-        revealGroup(entry.target, groupedElements);
-        observer.unobserve(entry.target);
+        revealObservedGroup(entry.target);
       });
     },
     { rootMargin: "0px 0px -12% 0px", threshold: 0.2 }
@@ -229,15 +228,40 @@ function setupHomepageReveals(): void {
 
   groupedElements.forEach((_elements, group) => observer.observe(group));
 
-  const mutationObserver = new MutationObserver(() => {
+  function revealObservedGroup(group: Element): void {
+    revealGroup(group, groupedElements);
+    observer.unobserve(group);
+    groupedElements.delete(group);
+  }
+
+  function revealVisibleGroups(): void {
     groupedElements.forEach((_elements, group) => {
       if (!isVisible(group)) return;
       const rect = group.getBoundingClientRect();
       if (rect.top < window.innerHeight * 0.88 && rect.bottom > 0) {
-        revealGroup(group, groupedElements);
-        observer.unobserve(group);
+        revealObservedGroup(group);
       }
     });
+  }
+
+  let visibilityCheckQueued = false;
+  function queueRevealVisibleGroups(): void {
+    if (visibilityCheckQueued) return;
+    visibilityCheckQueued = true;
+    requestAnimationFrame(() => {
+      visibilityCheckQueued = false;
+      revealVisibleGroups();
+    });
+  }
+
+  window.addEventListener("scroll", queueRevealVisibleGroups, { passive: true });
+  window.addEventListener("resize", queueRevealVisibleGroups);
+  queueRevealVisibleGroups();
+  const visibilityPoll = window.setInterval(revealVisibleGroups, 250);
+  window.setTimeout(() => window.clearInterval(visibilityPoll), 90000);
+
+  const mutationObserver = new MutationObserver(() => {
+    queueRevealVisibleGroups();
   });
 
   mutationObserver.observe(document.body, {
