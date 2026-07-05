@@ -32849,13 +32849,14 @@ html.score-alert-modal-open body {
 
   .track-scorecard-return-chart .track-scorecard-row-reference {
     width: 100%;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      "label value"
-      "bar bar";
+      "label"
+      "value"
+      "bar";
     align-items: center;
-    justify-items: stretch;
-    gap: 8px 12px;
+    justify-items: center;
+    gap: 10px;
     border: 1px solid rgb(197 139 28 / 24%);
     border-radius: 8px;
     padding: 12px 10px;
@@ -32866,29 +32867,37 @@ html.score-alert-modal-open body {
 
   .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-row-label {
     grid-area: label;
-    width: 100%;
+    width: auto;
+    max-width: 100%;
     display: grid;
-    grid-template-columns: 34px minmax(0, 1fr);
-    justify-content: start;
+    grid-template-columns: 34px max-content;
+    align-items: center;
+    justify-content: center;
     justify-items: start;
     gap: 8px;
     text-align: left;
   }
 
   .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-row-label > span:last-child {
-    width: 100%;
+    width: auto;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: max-content auto;
     align-items: center;
+    justify-content: center;
     justify-items: start;
     gap: 8px;
   }
 
+  .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-row-label strong {
+    white-space: nowrap;
+  }
+
   .track-scorecard-return-chart .track-scorecard-row-reference .max-possible-info-inline {
-    justify-self: end;
+    justify-self: start;
     margin-top: 0;
     padding: 4px 7px;
     font-size: 0.56rem;
+    white-space: nowrap;
   }
 
   .track-scorecard-return-chart .track-scorecard-row-reference .max-possible-info-inline > em {
@@ -32906,8 +32915,8 @@ html.score-alert-modal-open body {
 
   .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-value {
     grid-area: value;
-    justify-self: end;
-    text-align: right;
+    justify-self: center;
+    text-align: center;
   }
 
   .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-bar-cell {
@@ -32984,6 +32993,7 @@ html.score-alert-modal-open body {
     background:
       linear-gradient(135deg, var(--accent-strong), #07100d 86%),
       var(--dark);
+    color: #ffffff;
   }
 
   .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-return-value {
