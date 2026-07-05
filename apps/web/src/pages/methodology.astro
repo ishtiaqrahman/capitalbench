@@ -67,10 +67,15 @@ const earlierUniverseText = joinWithAnd(
   <PageHeader
     eyebrow="Methodology"
     title="Same Information. Frozen Portfolios. Real Scores."
-    summary="Every model gets the same market brief and asset list. Each model submits one portfolio. Market prices decide the score after one week or one month."
+    summary="Every model gets the same market brief and asset list in a single-turn, non-agentic call. Each model submits one portfolio. Market prices decide the score after one week or one month."
   />
 
   <section class="methodology-lede" aria-label="Methodology summary">
+    <div>
+      <span class="metric-label">Call protocol</span>
+      <strong>Single-turn, non-agentic</strong>
+      <p>One model call per public round. No agent loop, browsing, tool use, live retrieval, or follow-up prompts.</p>
+    </div>
     <div>
       <span class="metric-label">Model task</span>
       <strong>Submit one portfolio</strong>
@@ -90,6 +95,7 @@ const earlierUniverseText = joinWithAnd(
 
   <nav class="protocol-jump" aria-label="Methodology sections">
     <a href="#lifecycle">Steps</a>
+    <a href="#single-turn">Protocol</a>
     <a href="#artifacts">Artifacts</a>
     <a href="#execution">Execution</a>
     <a href="#pricing">Scoring</a>
@@ -138,6 +144,19 @@ const earlierUniverseText = joinWithAnd(
           <strong>No combined weekly-monthly score.</strong>
           One-week and one-month tests stay separate because they measure different time periods.
         </div>
+      </section>
+
+      <section id="single-turn">
+        <h2>Single-Turn, Non-Agentic Evaluation</h2>
+        <p>
+          CapitalBench evaluates models through a single model call per public round. The model receives the same
+          market brief and asset choices, then submits one portfolio. It does not operate as an agent, use tools,
+          browse, retrieve live data, or iterate through follow-up prompts.
+        </p>
+        <p>
+          This separates model allocation behavior from workflow engineering. The result reflects the model's
+          response to the controlled brief, not an autonomous research loop, toolchain, or multi-step trading agent.
+        </p>
       </section>
 
       <section id="lifecycle">

@@ -578,6 +578,20 @@ function riskWidth(value: number | null | undefined): string {
       })}
     </ol>
 
+    <aside class="benchmark-protocol-callout" aria-label="Single-turn non-agentic protocol">
+      <div>
+        <span class="panel-kicker">Protocol</span>
+        <strong>Single-turn, non-agentic benchmark</strong>
+        <p>Models do not run as agents. Each model receives the brief once, returns one portfolio, and does not browse, call tools, or revise its answer.</p>
+      </div>
+      <div class="benchmark-protocol-pills" aria-label="Protocol controls">
+        <span>One model call</span>
+        <span>No tools</span>
+        <span>No follow-up</span>
+        <span>One portfolio</span>
+      </div>
+    </aside>
+
     <BenchmarkEvidencePanel
       evidence={apiReadModel.benchmark_evidence}
       tracks={["monthly", "weekly"]}
@@ -624,6 +638,11 @@ function riskWidth(value: number | null | undefined): string {
       <div>
         <span>Open rounds</span>
         <strong data-count-token>{pendingRoundCount}</strong>
+      </div>
+      <div class="current-setup-protocol-stat">
+        <span>Protocol</span>
+        <strong>Single-turn</strong>
+        <em>Non-agentic calls</em>
       </div>
     </div>
 

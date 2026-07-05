@@ -44,6 +44,12 @@ import PageHeader from "../components/PageHeader.astro";
         provider run fails, the failed raw attempt can remain in the audit trail, but it does not become a public result.
       </p>
 
+      <h2>No Agent Loop</h2>
+      <p>
+        Public results come from single-turn, non-agentic model calls. Models do not plan across multiple steps,
+        call tools, browse, use memory, or iterate through follow-up prompts before submitting the scored portfolio.
+      </p>
+
       <h2>Invalid Submission Handling</h2>
       <p>
         A public result requires a schema-valid submission for the round's declared format. Missing option identifiers,
