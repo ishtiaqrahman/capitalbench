@@ -32913,6 +32913,65 @@ html.score-alert-modal-open body {
   .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-bar-cell {
     grid-area: bar;
   }
+
+  .track-scorecard-score-chart .score-mobile-rank-head > .score-mobile-rank-score {
+    display: inline-grid;
+    min-width: 116px;
+    justify-items: center;
+    gap: 3px;
+    border: 1px solid rgb(255 255 255 / 14%);
+    border-radius: 999px;
+    padding: 7px 13px 8px;
+    background:
+      linear-gradient(135deg, rgb(7 16 13 / 98%), rgb(13 42 39 / 96%)),
+      var(--dark);
+    color: #ffffff;
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 4.6vw, 1.18rem);
+    font-weight: 900;
+    line-height: 1;
+    text-align: center;
+    box-shadow:
+      0 10px 22px rgb(7 16 13 / 18%),
+      inset 0 1px 0 rgb(255 255 255 / 14%);
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-row-winner .score-mobile-rank-score {
+    border-color: rgb(167 234 220 / 30%);
+    background:
+      linear-gradient(135deg, var(--accent-strong), #07100d 86%),
+      var(--dark);
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-row-reference .score-mobile-rank-score {
+    border-color: rgb(255 211 139 / 36%);
+    background:
+      linear-gradient(135deg, #6f4600, #07100d 88%),
+      var(--dark);
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-score span {
+    color: #a7eadc;
+    font-family: var(--font-sans);
+    font-size: 0.52rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-row-reference .score-mobile-rank-score span {
+    color: #ffd38b;
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-score > [data-count-token] {
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+    text-transform: inherit;
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 @media (max-width: 540px) {

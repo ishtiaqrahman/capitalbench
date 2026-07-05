@@ -335,7 +335,10 @@ const scorecardBadgeItems = [
                       <em role="tooltip">{maxPossibleInfoText}</em>
                     </span>
                   )}
-                  <strong>{scoreLabel(row.averageScore)}</strong>
+                  <strong class="score-mobile-rank-score" aria-label={`Benchmark score ${scoreLabel(row.averageScore)}`}>
+                    <span>Benchmark score</span>
+                    {scoreLabel(row.averageScore)}
+                  </strong>
                 </div>
                 <div class="score-mobile-rank-track" aria-hidden="true">
                   <span
