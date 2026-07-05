@@ -8,12 +8,20 @@ import apiReadModel from "../generated/apiReadModel.js";
 import { assetRiskModel } from "../lib/assetRisk";
 import { topInsightsByCategory } from "../lib/insights.js";
 import { RISK_REGIME_LABELS } from "../lib/riskAppetiteCore.js";
-import { signedPulseChangeLabel } from "../lib/riskFormatting.js";
+import {
+  currentRiskDateLabel,
+  pulseDateLabel,
+  signedPulseChangeLabel
+} from "../lib/riskFormatting.js";
 
 const riskModel = assetRiskModel();
 const snapshot = apiReadModel.risk_appetite;
 const pulse = snapshot.current_decision_pulse;
 const outstanding = snapshot.outstanding_live_book;
+const currentRiskAsOfLabel = currentRiskDateLabel(pulse, "Latest active portfolios");
+const currentRiskSummaryLabel = `${currentRiskAsOfLabel} / ${pulse.label}`;
+const weeklyRiskSummaryLabel = `${pulseDateLabel(pulse.weekly, "Latest weekly decision")} / ${pulse.weekly?.label ?? "n/a"}`;
+const monthlyRiskSummaryLabel = `${pulseDateLabel(pulse.monthly, "Latest monthly decision")} / ${pulse.monthly?.label ?? "n/a"}`;
 const modelBehavior = apiReadModel.model_behavior ?? { summary: {}, profiles: [] };
 const riskInsights = topInsightsByCategory(apiReadModel, ["risk_regime", "horizon_agreement", "model_similarity"], 3);
 const assetsById = new Map(apiReadModel.assets.map((asset) => [asset.option_id, asset]));
@@ -67,19 +75,19 @@ function width(value: number | null | undefined): string {
 
   <section class="risk-method-summary" aria-label="Current AI Risk Appetite">
     <div>
-      <span>Current decision pulse</span>
+      <span>Current risk appetite</span>
       <strong>{score(pulse.score)}</strong>
-      <em>{pulse.label}</em>
+      <em>{currentRiskSummaryLabel}</em>
     </div>
     <div>
       <span>Weekly tactical</span>
       <strong>{score(pulse.weekly?.score)}</strong>
-      <em>{pulse.weekly?.label}</em>
+      <em>{weeklyRiskSummaryLabel}</em>
     </div>
     <div>
       <span>Monthly strategic</span>
       <strong>{score(pulse.monthly?.score)}</strong>
-      <em>{pulse.monthly?.label}</em>
+      <em>{monthlyRiskSummaryLabel}</em>
     </div>
     <div>
       <span>Outstanding live book</span>
@@ -100,10 +108,10 @@ function width(value: number | null | undefined): string {
 
   <section class="section risk-method-signal" aria-labelledby="risk-current-title">
     <div class="risk-method-signal-copy">
-      <span class="panel-kicker">Latest saved decisions</span>
+      <span class="panel-kicker">Current saved decisions</span>
       <h2 id="risk-current-title">{pulse.regime}</h2>
       <p>
-        The current pulse combines <a href={`/rounds/${pulse.weekly?.round_id}/`}>{pulse.weekly?.round_id}</a> and
+        {currentRiskAsOfLabel}. The current pulse combines <a href={`/rounds/${pulse.weekly?.round_id}/`}>{pulse.weekly?.round_id}</a> and
         <a href={`/rounds/${pulse.monthly?.round_id}/`}>{pulse.monthly?.round_id}</a>. Weekly and monthly are calculated
         separately, then receive equal weight.
       </p>
@@ -120,7 +128,7 @@ function width(value: number | null | undefined): string {
     <div class="risk-method-meter">
       <div>
         <strong>{score(pulse.score)}</strong>
-        <span>{pulse.label}</span>
+        <span>{currentRiskSummaryLabel}</span>
       </div>
       <div class="live-risk-pulse-meter" aria-label={`Current AI Risk Appetite ${score(pulse.score)} out of 100`}>
         <span class="risk-pulse-band is-defensive"></span>
@@ -263,10 +271,11 @@ function width(value: number | null | undefined): string {
       <h2 id="risk-signal-difference">Current Opinion Versus Existing Exposure</h2>
     </div>
     <article>
-      <span>Current Decision Pulse</span>
+      <span>Current Risk Appetite</span>
       <strong>{score(pulse.score)}</strong>
       <p>
-        Uses only the newest weekly and monthly decisions. This is the primary reading for current model sentiment.
+        {currentRiskAsOfLabel}. Uses only the newest weekly and monthly decisions. This is the primary reading for
+        current model sentiment.
       </p>
     </article>
     <article>

@@ -25,7 +25,14 @@ import {
   staticUniverseOptions
 } from "../lib/localRoundRecords";
 import { staticModelProfiles } from "../lib/modelProfiles";
-import { signedPulseChangeLabel } from "../lib/riskFormatting.js";
+import {
+  currentRiskDateLabel,
+  dateFromRoundId,
+  pairedPulseDateLabel,
+  pulseDateLabel,
+  shortMonthDay,
+  signedPulseChangeLabel
+} from "../lib/riskFormatting.js";
 import { providerLogoSrc } from "../lib/scoreReturnChart";
 import {
   roundTrack,
@@ -133,11 +140,9 @@ const nextScoreDate = activeExposureRounds
   .map((item) => item.round.score_eta_utc || item.round.exit_date)
   .filter(Boolean)
   .sort()[0];
-const currentDecisionDateLabel = pairedPulseFullDateLabel(
-  currentRiskPulse.weekly?.decision_date,
-  currentRiskPulse.monthly?.decision_date
-);
-const currentDecisionSummary = currentDecisionDateLabel ? `As of ${currentDecisionDateLabel}` : "Latest open portfolios";
+const currentDecisionSummary = currentRiskDateLabel(currentRiskPulse, "Latest open portfolios");
+const monthlyRiskSummary = `${pulseDateLabel(currentRiskPulse.monthly, "Latest monthly decision")} / ${currentRiskPulse.monthly?.label ?? "n/a"}`;
+const weeklyRiskSummary = `${pulseDateLabel(currentRiskPulse.weekly, "Latest weekly decision")} / ${currentRiskPulse.weekly?.label ?? "n/a"}`;
 const riskPreviousDateLabel = pairedPulseDateLabel(
   dateFromRoundId(currentRiskPulse.previous_round_ids?.weekly),
   dateFromRoundId(currentRiskPulse.previous_round_ids?.monthly)
@@ -176,59 +181,20 @@ function windowLabel(round?: RoundRecord): string {
   return `${dateOnly(round.entry_date)} to ${dateOnly(round.exit_date)}`;
 }
 
-function shortMonthDay(value?: string): string {
-  if (!value) return "n/a";
-  const [year, month, day] = value.slice(0, 10).split("-").map(Number);
-  if (!year || !month || !day) return dateOnly(value);
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(
-    new Date(Date.UTC(year, month - 1, day))
-  );
-}
-
-function longMonthDayYear(value?: string): string {
-  if (!value) return "";
-  const [year, month, day] = value.slice(0, 10).split("-").map(Number);
-  if (!year || !month || !day) return dateOnly(value);
-  return new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(
-    new Date(Date.UTC(year, month - 1, day))
-  );
-}
-
-function dateFromRoundId(roundId?: string | null): string {
-  const match = roundId?.match(/^CB-(\d{4}-\d{2}-\d{2})-/);
-  return match?.[1] ?? "";
-}
-
-function pairedPulseDateLabel(weeklyDate?: string, monthlyDate?: string): string {
-  const weekly = shortMonthDay(weeklyDate);
-  const monthly = shortMonthDay(monthlyDate);
-  if (weekly !== "n/a" && monthly !== "n/a" && weekly === monthly) return weekly;
-  if (weekly !== "n/a" && monthly !== "n/a") return `${monthly} monthly + ${weekly} weekly`;
-  return monthly !== "n/a" ? monthly : weekly !== "n/a" ? weekly : "";
-}
-
-function pairedPulseFullDateLabel(weeklyDate?: string, monthlyDate?: string): string {
-  const weekly = longMonthDayYear(weeklyDate);
-  const monthly = longMonthDayYear(monthlyDate);
-  if (weekly && monthly && weekly === monthly) return weekly;
-  if (weekly && monthly) return `${monthly} monthly + ${weekly} weekly`;
-  return monthly || weekly || "";
-}
-
 function lockDateLabel(round?: RoundRecord): string {
-  return round ? shortMonthDay(round.decision_deadline_utc || round.decision_date) : "Pending";
+  return round ? shortMonthDay(round.decision_deadline_utc || round.decision_date, "Pending") : "Pending";
 }
 
 function marketWindowCalendarLabel(round?: RoundRecord): string {
   if (!round) return "No window declared";
-  return `${shortMonthDay(round.entry_date)} close to ${shortMonthDay(round.exit_date)} close`;
+  return `${shortMonthDay(round.entry_date, "n/a")} close to ${shortMonthDay(round.exit_date, "n/a")} close`;
 }
 
 function calendarScoreDateLabel(round?: RoundRecord): string {
   if (!round) return "Not scheduled";
-  if (round.status === "resolved") return `Published after ${shortMonthDay(round.exit_date)} close`;
-  if (round.status === "overdue") return `Due after ${shortMonthDay(round.exit_date)} close`;
-  return `After ${shortMonthDay(round.exit_date)} close`;
+  if (round.status === "resolved") return `Published after ${shortMonthDay(round.exit_date, "n/a")} close`;
+  if (round.status === "overdue") return `Due after ${shortMonthDay(round.exit_date, "n/a")} close`;
+  return `After ${shortMonthDay(round.exit_date, "n/a")} close`;
 }
 
 function pctValue(value: number | null | undefined): string {
@@ -354,7 +320,7 @@ function modelProfileHref(modelId: string): string {
       <span><Radar size={18} aria-hidden="true" /></span>
       <em>Current risk appetite</em>
       <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
-      <small>{currentRiskPulse.label}</small>
+      <small>{currentDecisionSummary} / {currentRiskPulse.label}</small>
     </article>
   </section>
 
@@ -510,9 +476,9 @@ function modelProfileHref(modelId: string): string {
     <div class="live-risk-pulse-grid">
       <article class="live-risk-pulse-primary">
         <div class="live-risk-pulse-score">
-          <span>Combined pulse</span>
+          <span>Current risk appetite</span>
           <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
-          <em>{currentRiskPulse.label}</em>
+          <em>{currentDecisionSummary} / {currentRiskPulse.label}</em>
         </div>
         <div class="live-risk-pulse-regime">
           <span>{currentDecisionSummary}</span>
@@ -540,12 +506,12 @@ function modelProfileHref(modelId: string): string {
         <article>
           <span>Monthly strategic</span>
           <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.monthly?.score)}<small>/100</small></strong>
-          <small>{currentRiskPulse.monthly?.label}</small>
+          <small>{monthlyRiskSummary}</small>
         </article>
         <article>
           <span>Weekly tactical</span>
           <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.weekly?.score)}<small>/100</small></strong>
-          <small>{currentRiskPulse.weekly?.label}</small>
+          <small>{weeklyRiskSummary}</small>
         </article>
         <article>
           <span>Change</span>

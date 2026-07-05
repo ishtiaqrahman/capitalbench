@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import apiReadModel from "../../generated/apiReadModel.js";
+import { currentRiskDateLabel } from "../../lib/riskFormatting.js";
 
 const description =
   "Visual API use cases for financial websites, trading platforms, quant workflows, research desks, and AI model teams.";
@@ -48,6 +49,7 @@ const riskPulse = apiReadModel.risk_appetite?.current_decision_pulse;
 const riskScore = typeof riskPulse?.score === "number" ? riskPulse.score : 62;
 const riskLabel = riskPulse?.label ?? "Risk-on";
 const riskRegime = riskPulse?.regime ?? "Growth tilt";
+const riskAsOfLabel = currentRiskDateLabel(riskPulse, "Latest live portfolios");
 const latestInsight = apiReadModel.insights?.insights?.find((insight: any) => insight.status === "published");
 const latestResolvedRound =
   rounds.find((round: any) => round.track === "weekly" && round.status === "resolved") ??
@@ -81,7 +83,7 @@ const surfaceCards = [
   {
     label: "Trading desks",
     value: `${formatScore(riskScore)}/100`,
-    text: `current AI risk appetite, ${riskLabel.toLowerCase()}`
+    text: `${riskAsOfLabel}, ${riskLabel.toLowerCase()}`
   },
   {
     label: "Quant feeds",
@@ -109,7 +111,7 @@ const quantFeatures = [
 ];
 
 const labRows = [
-  ["Risk appetite", `${formatScore(riskScore)}/100`, "Current live pulse"],
+  ["Risk appetite", `${formatScore(riskScore)}/100`, riskAsOfLabel],
   ["Top public model", topModelLabel, latestResolvedRound?.round_id ?? "Latest round"],
   ["Behavior profiles", String(apiReadModel.model_behavior?.profiles?.length ?? models.length), "Model-level metrics"],
   ["Proof records", String(apiReadModel.proof?.length ?? rounds.length), "Round audit links"]
@@ -144,6 +146,7 @@ const labRows = [
             <small>AI Risk Appetite</small>
             <strong>{formatScore(riskScore)} / 100</strong>
             <span style={`--fill: ${Math.min(100, Math.max(0, riskScore))}%`}></span>
+            <small>{riskAsOfLabel}</small>
           </div>
           <div class="api-use-feed-panel">
             <small>Consensus</small>
@@ -292,7 +295,7 @@ const labRows = [
             <strong>{riskLabel}</strong>
             <p>{riskRegime}. Track model agreement before converting it into an internal signal.</p>
             <div>
-              <small>Risk pulse</small>
+              <small>Risk pulse / {riskAsOfLabel}</small>
               <b>{formatScore(riskScore)} / 100</b>
             </div>
             <div>
@@ -495,7 +498,7 @@ const labRows = [
       <div class="api-use-advisor-main">
         <div class="api-use-risk-dial" style={`--score: ${Math.min(100, Math.max(0, riskScore))}`}>
           <span>{formatScore(riskScore)}</span>
-          <small>Risk appetite</small>
+          <small>{riskAsOfLabel}</small>
         </div>
         <div class="api-use-theme-list">
           {topAssets.slice(0, 4).map((asset: any) => (

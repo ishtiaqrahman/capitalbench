@@ -6,7 +6,11 @@ import { buildBenchmarkSetsData } from "../src/lib/benchmarkSets.js";
 import { buildBenchmarkStatus, buildBenchmarkTickerTape } from "../src/lib/benchmarkStatus.js";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { buildCumulativeLeaderboardData, createMemoryApiAuthRepository, handleDataApiRequest } from "../src/lib/dataApi.js";
-import { signedPulseChangeLabel } from "../src/lib/riskFormatting.js";
+import {
+  currentRiskDateLabel,
+  pulseDateLabel,
+  signedPulseChangeLabel
+} from "../src/lib/riskFormatting.js";
 
 const failures = [];
 const distRoot = join(process.cwd(), "dist");
@@ -2473,6 +2477,7 @@ if (latestActiveWeeklyRound) {
 
 const benchmarkStatus = buildBenchmarkStatus(apiReadModel);
 const benchmarkTicker = buildBenchmarkTickerTape(apiReadModel);
+const tickerCurrentRiskDateLabel = currentRiskDateLabel(apiReadModel.risk_appetite?.current_decision_pulse, "Latest live portfolios");
 for (const [html, context] of [
   [indexHtml, "homepage benchmark ticker"],
   [apiHtml, "API page benchmark ticker"]
@@ -2480,6 +2485,7 @@ for (const [html, context] of [
   includes(html, "CapitalBench Live", context);
   includes(html, "AI benchmark tape", `${context} brand value`);
   includes(html, "AI Positioning", `${context} risk item`);
+  includes(html, tickerCurrentRiskDateLabel, `${context} risk date`);
   includes(html, "Model Agreement", `${context} agreement item`);
   includes(html, "Crowded Position", `${context} crowded position item`);
   includes(html, "Biggest Shift", `${context} positioning shift item`);
@@ -2716,7 +2722,12 @@ validateLivePerformanceIsland(liveHtml);
 validateActiveExposureIsland(liveHtml);
 const liveRisk = apiReadModel.risk_appetite;
 const livePulse = liveRisk.current_decision_pulse;
-includes(indexHtml, "AI risk appetite", "homepage AI risk appetite");
+const homepageCurrentRiskDateLabel = currentRiskDateLabel(livePulse, "Latest live portfolios");
+const liveCurrentRiskDateLabel = currentRiskDateLabel(livePulse, "Latest open portfolios");
+const riskAppetiteCurrentRiskDateLabel = currentRiskDateLabel(livePulse, "Latest active portfolios");
+includes(indexHtml, "Current risk appetite", "homepage current risk appetite");
+includes(indexHtml, homepageCurrentRiskDateLabel, "homepage current risk date");
+includes(liveHtml, liveCurrentRiskDateLabel, "live dashboard current risk date");
 includes(indexHtml, "/risk-appetite", "homepage model risk methodology link");
 includes(indexHtml, "View historical risk trend", "homepage model risk history link");
 includes(indexHtml, pulseScore(livePulse.score), "homepage model risk combined score");
@@ -2736,6 +2747,10 @@ for (const regime of livePulse.regime_exposure.slice(0, 5)) {
 const riskConfig = parseYamlText(readRepoText("configs", "asset_risk_model.yaml")) ?? {};
 includes(riskAppetiteHtml, "AI Risk Appetite", "risk appetite page title");
 includes(riskAppetiteHtml, `methodology v${riskConfig.version}`, "risk appetite methodology version");
+includes(riskAppetiteHtml, "Current risk appetite", "risk appetite current risk label");
+includes(riskAppetiteHtml, riskAppetiteCurrentRiskDateLabel, "risk appetite current risk date");
+includes(riskAppetiteHtml, pulseDateLabel(livePulse.weekly, "Latest weekly decision"), "risk appetite weekly risk date");
+includes(riskAppetiteHtml, pulseDateLabel(livePulse.monthly, "Latest monthly decision"), "risk appetite monthly risk date");
 includes(riskAppetiteHtml, pulseScore(livePulse.score), "risk appetite current score");
 includes(riskAppetiteHtml, pulseScore(livePulse.weekly?.score), "risk appetite weekly score");
 includes(riskAppetiteHtml, pulseScore(livePulse.monthly?.score), "risk appetite monthly score");

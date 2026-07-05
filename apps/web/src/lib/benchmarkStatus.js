@@ -1,5 +1,5 @@
 import { insightHref, leadInsightsByCategory } from "./insights.js";
-import { signedPulseChangeLabel } from "./riskFormatting.js";
+import { currentRiskDateLabel, signedPulseChangeLabel } from "./riskFormatting.js";
 
 function shortDate(value) {
   if (!value) return "n/a";
@@ -456,6 +456,7 @@ export function buildBenchmarkPulseSlides(readModel, options = {}) {
   ];
 
   if (pulse) {
+    const pulseDateText = currentRiskDateLabel(pulse);
     const agreement = pulse.agreement?.label ? ` Model agreement: ${pulse.agreement.label}.` : "";
     const changeText = Number.isFinite(Number(pulse.change_from_previous))
       ? ` ${signedPulseChangeLabel(pulse.change_from_previous)} vs prior pulse.`
@@ -468,7 +469,7 @@ export function buildBenchmarkPulseSlides(readModel, options = {}) {
       tone: Number(pulse.score) >= 75 ? "hot" : Number(pulse.score) >= 55 ? "positive" : "caution",
       label: "Current AI Positioning",
       value: `${pulse.label ?? "Live positioning"} risk-taking · ${numberLabel(pulse.score)}/100`,
-      detail: `${pulse.regime ?? "Live portfolios are being scored for allocation risk."}.${changeText}${agreement}${outstandingText}`.replace(
+      detail: `${pulseDateText}. ${pulse.regime ?? "Live portfolios are being scored for allocation risk."}.${changeText}${agreement}${outstandingText}`.replace(
         /\s+/g,
         " "
       ),
@@ -612,12 +613,13 @@ export function buildBenchmarkTickerTape(readModel, options = {}) {
   ];
 
   if (pulse) {
+    const pulseDateText = currentRiskDateLabel(pulse);
     items.push({
       key: "risk-positioning",
       tone: Number(pulse.score) >= 75 ? "hot" : Number(pulse.score) >= 55 ? "positive" : "caution",
       label: "AI Positioning",
       value: `${pulse.label ?? "Live"} ${numberLabel(pulse.score)}/100`,
-      detail: pulse.regime ?? "live allocation signal",
+      detail: `${pulseDateText}. ${pulse.regime ?? "live allocation signal"}`,
       href: "/risk-appetite"
     });
 

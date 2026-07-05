@@ -24,8 +24,13 @@ import apiReadModel from "../generated/apiReadModel.js";
 import {
   decisionAllocations
 } from "../lib/allocations";
-import { signedPulseChangeLabel } from "../lib/riskFormatting.js";
-import { dateOnly } from "../lib/format";
+import {
+  currentRiskDateLabel,
+  dateFromRoundId,
+  pairedPulseDateLabel,
+  shortMonthDay,
+  signedPulseChangeLabel
+} from "../lib/riskFormatting.js";
 import {
   staticAllOfficialSubmissions,
   staticAllWeeklyPerformance,
@@ -95,8 +100,7 @@ const currentRiskPulse = liveRiskSnapshot.current_decision_pulse;
 const outstandingBookRisk = liveRiskSnapshot.outstanding_live_book;
 const riskPulseTopAssets = currentRiskPulse.top_assets.slice(0, 6);
 const riskPulseRegimes = currentRiskPulse.regime_exposure.slice(0, 5);
-const riskCurrentFullDateLabel = pairedPulseFullDateLabel(currentRiskPulse.weekly?.decision_date, currentRiskPulse.monthly?.decision_date);
-const riskPositioningDateLabel = riskCurrentFullDateLabel ? `As of ${riskCurrentFullDateLabel}` : "Latest live portfolios";
+const riskPositioningDateLabel = currentRiskDateLabel(currentRiskPulse, "Latest live portfolios");
 const riskPreviousDateLabel = pairedPulseDateLabel(
   dateFromRoundId(currentRiskPulse.previous_round_ids?.weekly),
   dateFromRoundId(currentRiskPulse.previous_round_ids?.monthly)
@@ -171,45 +175,6 @@ const heroTestSteps = [
     description: "Real ending prices decide which model did best."
   }
 ];
-function shortMonthDay(value?: string): string {
-  if (!value) return "";
-  const [year, month, day] = value.slice(0, 10).split("-").map(Number);
-  if (!year || !month || !day) return dateOnly(value);
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(
-    new Date(Date.UTC(year, month - 1, day))
-  );
-}
-
-function longMonthDayYear(value?: string): string {
-  if (!value) return "";
-  const [year, month, day] = value.slice(0, 10).split("-").map(Number);
-  if (!year || !month || !day) return dateOnly(value);
-  return new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(
-    new Date(Date.UTC(year, month - 1, day))
-  );
-}
-
-function dateFromRoundId(roundId?: string | null): string {
-  const match = roundId?.match(/^CB-(\d{4}-\d{2}-\d{2})-/);
-  return match?.[1] ?? "";
-}
-
-function pairedPulseDateLabel(weeklyDate?: string, monthlyDate?: string): string {
-  const weekly = shortMonthDay(weeklyDate);
-  const monthly = shortMonthDay(monthlyDate);
-  if (weekly && monthly && weekly === monthly) return weekly;
-  if (weekly && monthly) return `${monthly} monthly + ${weekly} weekly`;
-  return monthly || weekly || "";
-}
-
-function pairedPulseFullDateLabel(weeklyDate?: string, monthlyDate?: string): string {
-  const weekly = longMonthDayYear(weeklyDate);
-  const monthly = longMonthDayYear(monthlyDate);
-  if (weekly && monthly && weekly === monthly) return weekly;
-  if (weekly && monthly) return `${monthly} monthly + ${weekly} weekly`;
-  return monthly || weekly || "";
-}
-
 function pctValue(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
   if (Math.abs(value) >= 10) return `${value.toFixed(1)}%`;
@@ -460,7 +425,7 @@ function riskWidth(value: number | null | undefined): string {
 
   <section class="ai-positioning-summary" aria-label="Current AI positioning highlights">
     <article>
-      <span>AI risk appetite</span>
+      <span>Current risk appetite</span>
       <span class="ai-positioning-date">{riskPositioningDateLabel}</span>
       <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
       <em>{currentRiskPulse.label} / {currentRiskPulse.regime}</em>
@@ -491,9 +456,9 @@ function riskWidth(value: number | null | undefined): string {
     <div class="live-risk-pulse-grid">
       <article class="live-risk-pulse-primary">
         <div class="live-risk-pulse-score">
-          <span>Live risk appetite</span>
+          <span>Current risk appetite</span>
           <strong class="risk-score-with-unit">{pulseScore(currentRiskPulse.score)}<small>/100</small></strong>
-          <em>{currentRiskPulse.label}</em>
+          <em>{riskPositioningDateLabel} / {currentRiskPulse.label}</em>
         </div>
 
         <div class="live-risk-pulse-body">
