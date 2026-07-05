@@ -336,7 +336,6 @@ const scorecardBadgeItems = [
                     </span>
                   )}
                   <strong class="score-mobile-rank-score" aria-label={`Benchmark score ${scoreLabel(row.averageScore)}`}>
-                    <span>Benchmark score</span>
                     {scoreLabel(row.averageScore)}
                   </strong>
                 </div>
@@ -401,7 +400,10 @@ const scorecardBadgeItems = [
                 data-reveal-bar="horizontal"
               ></span>
             </div>
-            <strong class="track-scorecard-value">{pct(row.averageReturn)}</strong>
+            <strong class="track-scorecard-value track-scorecard-return-value" aria-label={`Average return ${pct(row.averageReturn)}`}>
+              <span class="track-scorecard-return-value-label">Average return</span>
+              {pct(row.averageReturn)}
+            </strong>
           </div>
         ))}
       </div>

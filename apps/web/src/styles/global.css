@@ -5245,6 +5245,10 @@ a.snapshot-model-chip:hover {
   white-space: nowrap;
 }
 
+.track-scorecard-return-value-label {
+  display: none;
+}
+
 .track-scorecard-row-model:first-child .track-scorecard-value {
   color: var(--accent-strong);
 }
@@ -32916,12 +32920,11 @@ html.score-alert-modal-open body {
 
   .track-scorecard-score-chart .score-mobile-rank-head > .score-mobile-rank-score {
     display: inline-grid;
-    min-width: 116px;
+    min-width: 84px;
     justify-items: center;
-    gap: 3px;
     border: 1px solid rgb(255 255 255 / 14%);
     border-radius: 999px;
-    padding: 7px 13px 8px;
+    padding: 8px 14px;
     background:
       linear-gradient(135deg, rgb(7 16 13 / 98%), rgb(13 42 39 / 96%)),
       var(--dark);
@@ -32950,7 +32953,54 @@ html.score-alert-modal-open body {
       var(--dark);
   }
 
-  .track-scorecard-score-chart .score-mobile-rank-score span {
+  .track-scorecard-score-chart .score-mobile-rank-score > [data-count-token] {
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+    text-transform: inherit;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .track-scorecard-return-chart .track-scorecard-return-value {
+    display: inline-grid;
+    min-width: 116px;
+    justify-items: center;
+    gap: 3px;
+    border: 1px solid rgb(255 255 255 / 14%);
+    border-radius: 999px;
+    padding: 7px 13px 8px;
+    background:
+      linear-gradient(135deg, rgb(7 16 13 / 98%), rgb(13 42 39 / 96%)),
+      var(--dark);
+    color: #ffffff;
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 4.6vw, 1.18rem);
+    font-weight: 900;
+    line-height: 1;
+    text-align: center;
+    box-shadow:
+      0 10px 22px rgb(7 16 13 / 18%),
+      inset 0 1px 0 rgb(255 255 255 / 14%);
+  }
+
+  .track-scorecard-return-chart .track-scorecard-row:first-child .track-scorecard-return-value {
+    border-color: rgb(167 234 220 / 30%);
+    background:
+      linear-gradient(135deg, var(--accent-strong), #07100d 86%),
+      var(--dark);
+  }
+
+  .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-return-value {
+    border-color: rgb(255 211 139 / 36%);
+    background:
+      linear-gradient(135deg, #6f4600, #07100d 88%),
+      var(--dark);
+    color: #ffffff;
+  }
+
+  .track-scorecard-return-chart .track-scorecard-return-value-label {
+    display: block;
     color: #a7eadc;
     font-family: var(--font-sans);
     font-size: 0.52rem;
@@ -32960,11 +33010,11 @@ html.score-alert-modal-open body {
     text-transform: uppercase;
   }
 
-  .track-scorecard-score-chart .score-mobile-rank-row-reference .score-mobile-rank-score span {
+  .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-return-value-label {
     color: #ffd38b;
   }
 
-  .track-scorecard-score-chart .score-mobile-rank-score > [data-count-token] {
+  .track-scorecard-return-chart .track-scorecard-return-value > [data-count-token] {
     color: inherit;
     font: inherit;
     letter-spacing: inherit;
