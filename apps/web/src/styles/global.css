@@ -32757,18 +32757,22 @@ html.score-alert-modal-open body {
   .latest-official-summary .published-score-context {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, max-content);
+    max-width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-content: center;
     align-items: center;
     gap: 8px;
   }
 
   .latest-official-summary .published-score-context span {
-    min-width: max-content;
-    max-width: calc(100vw - 32px);
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     justify-content: center;
     gap: 6px;
+    overflow: hidden;
     text-align: center;
+    text-overflow: ellipsis;
     white-space: nowrap;
     word-break: normal;
     overflow-wrap: normal;
