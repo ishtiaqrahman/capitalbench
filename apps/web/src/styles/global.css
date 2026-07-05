@@ -32754,10 +32754,60 @@ html.score-alert-modal-open body {
     text-align: center;
   }
 
+  .latest-official-summary .published-score-context {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+
   .latest-official-summary .published-score-context span {
+    min-width: max-content;
+    max-width: calc(100vw - 32px);
     justify-content: center;
     gap: 6px;
     text-align: center;
+    white-space: nowrap;
+    word-break: normal;
+    overflow-wrap: normal;
+  }
+
+  .latest-official-summary .published-score-context strong {
+    white-space: nowrap;
+    word-break: normal;
+    overflow-wrap: normal;
+  }
+
+  .latest-official-summary .published-score-context span:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .latest-official-summary .published-score-context span:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .latest-official-summary .published-score-context span:nth-child(3) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .latest-official-summary .published-score-context span:nth-child(5) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .latest-official-summary .published-score-context span:nth-child(4) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .latest-official-summary .published-score-context span:nth-child(6) {
+    grid-column: 2;
+    grid-row: 3;
   }
 }
 
