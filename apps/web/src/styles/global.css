@@ -5245,10 +5245,6 @@ a.snapshot-model-chip:hover {
   white-space: nowrap;
 }
 
-.track-scorecard-return-value-label {
-  display: none;
-}
-
 .track-scorecard-row-model:first-child .track-scorecard-value {
   color: var(--accent-strong);
 }
@@ -32964,12 +32960,11 @@ html.score-alert-modal-open body {
 
   .track-scorecard-return-chart .track-scorecard-return-value {
     display: inline-grid;
-    min-width: 116px;
+    min-width: 92px;
     justify-items: center;
-    gap: 3px;
     border: 1px solid rgb(255 255 255 / 14%);
     border-radius: 999px;
-    padding: 7px 13px 8px;
+    padding: 8px 14px;
     background:
       linear-gradient(135deg, rgb(7 16 13 / 98%), rgb(13 42 39 / 96%)),
       var(--dark);
@@ -32997,21 +32992,6 @@ html.score-alert-modal-open body {
       linear-gradient(135deg, #6f4600, #07100d 88%),
       var(--dark);
     color: #ffffff;
-  }
-
-  .track-scorecard-return-chart .track-scorecard-return-value-label {
-    display: block;
-    color: #a7eadc;
-    font-family: var(--font-sans);
-    font-size: 0.52rem;
-    font-weight: 900;
-    letter-spacing: 0.08em;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-
-  .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-return-value-label {
-    color: #ffd38b;
   }
 
   .track-scorecard-return-chart .track-scorecard-return-value > [data-count-token] {
