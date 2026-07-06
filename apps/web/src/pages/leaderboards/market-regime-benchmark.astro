@@ -112,6 +112,45 @@ type BalancedSampleTrack = {
   leaderboard: BalancedSampleLeaderboardRow[];
 };
 
+type DirectionModelRow = {
+  modelId: string;
+  provider: string;
+  label: string;
+  providerName: string;
+  logoSrc: string | undefined;
+  score: number | undefined;
+  averageAlpha: number | undefined;
+  hitRate: number | undefined;
+  tests: number;
+};
+
+type DirectionBucket = SampleCategoryDefinition & {
+  track: BenchmarkTrack;
+  rounds: RegimeRound[];
+  status: "Ready" | "Forming";
+  modelRows: DirectionModelRow[];
+};
+
+type MarketInsightCard = {
+  key: string;
+  eyebrow: string;
+  title: string;
+  tone: "down" | "flat" | "up" | "steady" | "split";
+  status: "Ready" | "Forming";
+  model?: {
+    label: string;
+    providerName: string;
+    logoSrc: string | undefined;
+  };
+  metricValue: string;
+  metricLabel: string;
+  detail: string;
+  stats: Array<{
+    label: string;
+    value: string;
+  }>;
+};
+
 type ChartValueFormat = "percent" | "score" | "count";
 
 type RawChartPoint = {
@@ -674,6 +713,305 @@ const balancedSamples = {
   monthly: buildBalancedSample("monthly")
 };
 
+function pluralizeRound(count: number): string {
+  return `${count} round${count === 1 ? "" : "s"}`;
+}
+
+function missingRoundText(count: number): string {
+  return count > 0 ? `Needs ${pluralizeRound(count)} more.` : "Ready for scoring.";
+}
+
+function buildDirectionBucket(track: BenchmarkTrack, direction: SampleCategoryKey): DirectionBucket {
+  const definition = sampleCategoryDefinitions[track].find((item) => item.key === direction) ?? sampleCategoryDefinitions[track][0];
+  const rounds = regimeRounds.filter(
+    (round) => round.track === track && classifySampleCategory(track, round.sp500Return).key === direction
+  );
+  const accumulators = new Map<
+    string,
+    {
+      modelId: string;
+      provider: string;
+      returns: number[];
+      maxReturns: number[];
+      alphas: number[];
+      hits: boolean[];
+    }
+  >();
+
+  for (const round of rounds) {
+    for (const row of round.leaderboard) {
+      const returnValue = leaderboardReturn(row);
+      if (!finiteNumber(returnValue)) continue;
+
+      const existing = accumulators.get(row.model_id) ?? {
+        modelId: row.model_id,
+        provider: row.provider,
+        returns: [],
+        maxReturns: [],
+        alphas: [],
+        hits: []
+      };
+
+      existing.returns.push(returnValue);
+      existing.maxReturns.push(round.maxPossibleReturn);
+      if (finiteNumber(row.alpha_vs_sp500)) existing.alphas.push(row.alpha_vs_sp500);
+      existing.hits.push(finiteNumber(row.alpha_vs_sp500) && row.alpha_vs_sp500 > 0);
+      accumulators.set(row.model_id, existing);
+    }
+  }
+
+  const modelRows = Array.from(accumulators.values())
+    .map((item) => ({
+      modelId: item.modelId,
+      provider: item.provider,
+      label: modelLabel(item.modelId),
+      providerName: providerLabel(item.provider),
+      logoSrc: providerLogoSrc(item.provider),
+      score: cumulativeCapitalBenchScore(item.returns, item.maxReturns) ?? undefined,
+      averageAlpha: average(item.alphas),
+      hitRate: item.hits.length ? item.hits.filter(Boolean).length / item.hits.length : undefined,
+      tests: item.returns.length
+    }))
+    .sort(
+      (left, right) =>
+        (right.score ?? Number.NEGATIVE_INFINITY) - (left.score ?? Number.NEGATIVE_INFINITY) ||
+        left.label.localeCompare(right.label)
+    );
+
+  return {
+    ...definition,
+    track,
+    rounds,
+    status: rounds.length >= READY_ROUND_THRESHOLD ? "Ready" : "Forming",
+    modelRows
+  };
+}
+
+const directionBuckets = {
+  weekly: {
+    down: buildDirectionBucket("weekly", "down"),
+    flat: buildDirectionBucket("weekly", "flat"),
+    up: buildDirectionBucket("weekly", "up")
+  },
+  monthly: {
+    down: buildDirectionBucket("monthly", "down"),
+    flat: buildDirectionBucket("monthly", "flat"),
+    up: buildDirectionBucket("monthly", "up")
+  }
+};
+
+const directionCopy: Record<SampleCategoryKey, { adjective: string; noun: string; tone: "down" | "flat" | "up" }> = {
+  down: { adjective: "negative", noun: "down markets", tone: "down" },
+  flat: { adjective: "flat", noun: "flat markets", tone: "flat" },
+  up: { adjective: "positive", noun: "up markets", tone: "up" }
+};
+
+function buildDirectionLeaderInsight(track: BenchmarkTrack, direction: SampleCategoryKey): MarketInsightCard {
+  const bucket = directionBuckets[track][direction];
+  const leader = bucket.modelRows.find((row) => finiteNumber(row.score));
+  const copy = directionCopy[direction];
+  const missing = Math.max(0, READY_ROUND_THRESHOLD - bucket.rounds.length);
+
+  if (!leader) {
+    return {
+      key: `${track}-${direction}-leader`,
+      eyebrow: `${trackLabel(track)} ${copy.noun}`,
+      title: `No ${trackLabel(track).toLowerCase()} ${copy.noun} leader yet.`,
+      tone: copy.tone,
+      status: "Forming",
+      metricValue: "n/a",
+      metricLabel: "benchmark score",
+      detail: `No resolved ${trackLabel(track).toLowerCase()} rounds have landed in this market type yet.`,
+      stats: [
+        { label: "Rounds", value: pluralizeRound(bucket.rounds.length) },
+        { label: "Range", value: bucket.rangeLabel }
+      ]
+    };
+  }
+
+  return {
+    key: `${track}-${direction}-leader`,
+    eyebrow: `${trackLabel(track)} ${copy.noun}`,
+    title: `${leader.label} leads when the S&P 500 is ${copy.adjective}.`,
+    tone: copy.tone,
+    status: bucket.status,
+    model: {
+      label: leader.label,
+      providerName: leader.providerName,
+      logoSrc: leader.logoSrc
+    },
+    metricValue: scoreText(leader.score),
+    metricLabel: "benchmark score",
+    detail:
+      bucket.status === "Ready"
+        ? `Based on ${pluralizeRound(bucket.rounds.length)} where the S&P 500 was ${copy.adjective}.`
+        : `Current signal only. ${missingRoundText(missing)}`,
+    stats: [
+      { label: "Avg alpha", value: signedPctText(leader.averageAlpha) },
+      { label: "Hit rate", value: finiteNumber(leader.hitRate) ? pct(leader.hitRate) : "n/a" },
+      { label: "Tests", value: `${leader.tests}/${bucket.rounds.length}` }
+    ]
+  };
+}
+
+function directionRowForModel(bucket: DirectionBucket, modelId: string): DirectionModelRow | undefined {
+  return bucket.modelRows.find((row) => row.modelId === modelId);
+}
+
+function buildConsistencyInsight(track: BenchmarkTrack): MarketInsightCard {
+  const buckets = sampleCategoryDefinitions[track]
+    .map((definition) => directionBuckets[track][definition.key])
+    .filter((bucket) => bucket.rounds.length > 0);
+  const modelIds = Array.from(new Set(buckets.flatMap((bucket) => bucket.modelRows.map((row) => row.modelId))));
+  const candidates = modelIds
+    .map((modelId) => {
+      const rows = buckets.map((bucket) => directionRowForModel(bucket, modelId)).filter((row): row is DirectionModelRow => !!row && finiteNumber(row.score));
+      if (rows.length < 2) return null;
+      const scores = rows.map((row) => row.score).filter(finiteNumber);
+      const first = rows[0];
+      return {
+        modelId,
+        label: first.label,
+        providerName: first.providerName,
+        logoSrc: first.logoSrc,
+        floorScore: Math.min(...scores),
+        averageScore: average(scores),
+        directionsCovered: rows.length,
+        averageAlpha: average(rows.map((row) => row.averageAlpha).filter(finiteNumber)),
+        hitRate: average(rows.map((row) => row.hitRate).filter(finiteNumber))
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null)
+    .sort(
+      (left, right) =>
+        right.floorScore - left.floorScore ||
+        right.directionsCovered - left.directionsCovered ||
+        left.label.localeCompare(right.label)
+    );
+  const leader = candidates[0];
+  const allReady = buckets.length >= 2 && buckets.every((bucket) => bucket.status === "Ready");
+
+  if (!leader) {
+    return {
+      key: `${track}-steady`,
+      eyebrow: `${trackLabel(track)} consistency`,
+      title: "Consistency insight is still forming.",
+      tone: "steady",
+      status: "Forming",
+      metricValue: "n/a",
+      metricLabel: "score floor",
+      detail: "At least two tested market types are needed before comparing model consistency.",
+      stats: [
+        { label: "Types tested", value: `${buckets.length}/3` },
+        { label: "Ready types", value: `${buckets.filter((bucket) => bucket.status === "Ready").length}/3` }
+      ]
+    };
+  }
+
+  return {
+    key: `${track}-steady`,
+    eyebrow: `${trackLabel(track)} consistency`,
+    title: `${leader.label} has the strongest score floor.`,
+    tone: "steady",
+    status: allReady ? "Ready" : "Forming",
+    model: {
+      label: leader.label,
+      providerName: leader.providerName,
+      logoSrc: leader.logoSrc
+    },
+    metricValue: scoreText(leader.floorScore),
+    metricLabel: "lowest tested score",
+    detail: `Lowest score across ${leader.directionsCovered} tested market types; average score ${scoreText(leader.averageScore)}.`,
+    stats: [
+      { label: "Avg alpha", value: signedPctText(leader.averageAlpha) },
+      { label: "Avg hit rate", value: finiteNumber(leader.hitRate) ? pct(leader.hitRate) : "n/a" },
+      { label: "Types", value: `${leader.directionsCovered}/3` }
+    ]
+  };
+}
+
+function buildSplitInsight(track: BenchmarkTrack): MarketInsightCard {
+  const downBucket = directionBuckets[track].down;
+  const upBucket = directionBuckets[track].up;
+  const modelIds = Array.from(
+    new Set([...downBucket.modelRows.map((row) => row.modelId), ...upBucket.modelRows.map((row) => row.modelId)])
+  );
+  const candidates = modelIds
+    .map((modelId) => {
+      const down = directionRowForModel(downBucket, modelId);
+      const up = directionRowForModel(upBucket, modelId);
+      if (!down || !up || !finiteNumber(down.score) || !finiteNumber(up.score)) return null;
+      const gap = up.score - down.score;
+      return {
+        modelId,
+        label: up.label,
+        providerName: up.providerName,
+        logoSrc: up.logoSrc,
+        downScore: down.score,
+        upScore: up.score,
+        gap,
+        absGap: Math.abs(gap)
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null)
+    .sort((left, right) => right.absGap - left.absGap || left.label.localeCompare(right.label));
+  const leader = candidates[0];
+  const allReady = downBucket.status === "Ready" && upBucket.status === "Ready";
+
+  if (!leader) {
+    return {
+      key: `${track}-split`,
+      eyebrow: `${trackLabel(track)} up/down split`,
+      title: "Up/down split is still forming.",
+      tone: "split",
+      status: "Forming",
+      metricValue: "n/a",
+      metricLabel: "score gap",
+      detail: "Both negative and positive S&P 500 samples are needed before measuring directional split.",
+      stats: [
+        { label: "Down rounds", value: pluralizeRound(downBucket.rounds.length) },
+        { label: "Up rounds", value: pluralizeRound(upBucket.rounds.length) }
+      ]
+    };
+  }
+
+  const stronger = leader.gap >= 0 ? "up markets" : "down markets";
+  const weaker = leader.gap >= 0 ? "down markets" : "up markets";
+
+  return {
+    key: `${track}-split`,
+    eyebrow: `${trackLabel(track)} up/down split`,
+    title: `${leader.label} changes most between up and down markets.`,
+    tone: "split",
+    status: allReady ? "Ready" : "Forming",
+    model: {
+      label: leader.label,
+      providerName: leader.providerName,
+      logoSrc: leader.logoSrc
+    },
+    metricValue: `${leader.absGap.toFixed(1)} pts`,
+    metricLabel: `${stronger} over ${weaker}`,
+    detail: `${scoreText(leader.upScore)} in up markets versus ${scoreText(leader.downScore)} in down markets.`,
+    stats: [
+      { label: "Down score", value: scoreText(leader.downScore) },
+      { label: "Up score", value: scoreText(leader.upScore) },
+      { label: "Samples", value: `${downBucket.rounds.length}/${upBucket.rounds.length}` }
+    ]
+  };
+}
+
+const marketInsightTracks = (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => ({
+  track,
+  label: trackLabel(track),
+  cards: [
+    buildDirectionLeaderInsight(track, "down"),
+    buildDirectionLeaderInsight(track, "flat"),
+    buildDirectionLeaderInsight(track, "up"),
+    buildConsistencyInsight(track),
+    buildSplitInsight(track)
+  ]
+}));
+
 const scorePathColors = ["#006b5f", "#1e476f", "#b45335", "#80520a"];
 const sampleCategoryColors: Record<SampleCategoryKey, string> = {
   down: "#b45335",
@@ -912,6 +1250,67 @@ const hiddenAuditRows = auditRows.slice(10);
         <em>{latestIncludedRound ? `${trackLabel(latestIncludedRound.track)} ${dateOnly(latestIncludedRound.round.exit_date)}` : "No scored rounds"}</em>
       </article>
     </div>
+
+    <section class="regime-section market-insights-section" aria-labelledby="market-insights-title">
+      <div class="regime-section-head">
+        <span class="panel-kicker">Calculated insights</span>
+        <h2 id="market-insights-title">What changes when the market moves differently?</h2>
+        <p>
+          These cards compare models inside weekly and monthly tracks separately. Ready means the market type has at
+          least {READY_ROUND_THRESHOLD} resolved rounds; forming cards are current signals with thinner samples.
+        </p>
+      </div>
+
+      <div class="market-insight-track-list">
+        {marketInsightTracks.map((insightTrack) => (
+          <article class="market-insight-track">
+            <div class="market-insight-track-head">
+              <div>
+                <span class="panel-kicker">{insightTrack.label} insights</span>
+                <h3>{insightTrack.label} model behavior</h3>
+              </div>
+              <span class:list={["regime-confidence", `regime-confidence-${trackConfidence(insightTrack.track).className}`]}>
+                {trackConfidence(insightTrack.track).label}
+              </span>
+            </div>
+
+            <div class="market-insight-grid">
+              {insightTrack.cards.map((card) => (
+                <article class:list={["market-insight-card", `market-insight-card-${card.tone}`, `market-insight-card-${statusClass(card.status)}`]}>
+                  <header>
+                    <span class="panel-kicker">{card.eyebrow}</span>
+                    <span class:list={["regime-status", `regime-status-${statusClass(card.status)}`]}>{card.status}</span>
+                  </header>
+                  <h4>{card.title}</h4>
+                  {card.model && (
+                    <div class="market-insight-model">
+                      {card.model.logoSrc && <img src={card.model.logoSrc} alt="" loading="lazy" />}
+                      <div>
+                        <strong>{card.model.label}</strong>
+                        <em>{card.model.providerName}</em>
+                      </div>
+                    </div>
+                  )}
+                  <div class="market-insight-metric">
+                    <strong>{card.metricValue}</strong>
+                    <span>{card.metricLabel}</span>
+                  </div>
+                  <p>{card.detail}</p>
+                  <dl>
+                    {card.stats.map((stat) => (
+                      <div>
+                        <dt>{stat.label}</dt>
+                        <dd>{stat.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </article>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
 
     <section class="regime-section" aria-labelledby="market-coverage-title">
       <div class="regime-section-head">
