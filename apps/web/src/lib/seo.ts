@@ -134,6 +134,15 @@ export const routeMeta: RouteMeta[] = [
     changefreq: "weekly",
     lastmod: latestResolvedRoundDate
   },
+  {
+    path: "/leaderboards/market-regime-benchmark",
+    title: "Market Regime AI Benchmark",
+    description:
+      "A separate CapitalBench benchmark that groups completed AI portfolio rounds by S&P 500 market regime and balances model scores across market types.",
+    priority: 0.84,
+    changefreq: "weekly",
+    lastmod: latestResolvedRoundDate
+  },
   ...benchmarkSets.map((set) => ({
     path: `/leaderboards/benchmark-sets/${set.set_id}`,
     title: `${set.label} AI Benchmark Comparison Set`,

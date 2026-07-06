@@ -1,0 +1,905 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import { modelLabel, providerLabel, type LeaderboardRecord, type RoundRecord } from "../../data/fallback";
+import { cumulativeCapitalBenchScore } from "../../lib/capitalBenchScore.js";
+import { dateOnly, pct } from "../../lib/format";
+import {
+  staticRoundLeaderboard,
+  staticRoundRecords,
+  staticRoundReturns,
+  type ResultReturnRecord
+} from "../../lib/localRoundRecords";
+import { providerLogoSrc } from "../../lib/scoreReturnChart";
+import { buildTrackScorecard } from "../../lib/trackScorecard";
+import { roundTrack, type BenchmarkTrack } from "../../lib/tracks";
+
+type RegimeKey = "sharp_down" | "down" | "flat" | "up" | "sharp_up";
+type RegimeDirection = "down" | "flat" | "up";
+type RegimeStatus = "Ready" | "Forming" | "No data yet";
+type SampleCategoryKey = "down" | "flat" | "up";
+
+type RegimeDefinition = {
+  key: RegimeKey;
+  label: string;
+  rangeLabel: string;
+  direction: RegimeDirection;
+};
+
+type RegimeRound = {
+  round: RoundRecord;
+  track: BenchmarkTrack;
+  regime: RegimeDefinition;
+  leaderboard: LeaderboardRecord[];
+  sp500Return: number;
+  maxPossibleReturn: number;
+  averageAlpha: number | undefined;
+  hitRate: number | undefined;
+  modelCount: number;
+};
+
+type RegimeCoverage = RegimeDefinition & {
+  count: number;
+  averageSp500Return: number | undefined;
+  status: RegimeStatus;
+  rounds: RegimeRound[];
+};
+
+type ModelRegimeStats = {
+  returns: number[];
+  maxReturns: number[];
+  alphas: number[];
+  hits: boolean[];
+  rounds: string[];
+};
+
+type SampleCategoryDefinition = {
+  key: SampleCategoryKey;
+  label: string;
+  rangeLabel: string;
+};
+
+type RegimeLeaderboardRow = {
+  modelId: string;
+  provider: string;
+  label: string;
+  providerName: string;
+  logoSrc: string | undefined;
+  regimeBalancedScore: number | undefined;
+  allRoundScore: number | undefined;
+  averageAlpha: number | undefined;
+  hitRate: number | undefined;
+  testsIncluded: number;
+  readyRegimesCovered: number;
+  readyRegimesRequired: number;
+  status: "Ready" | "Forming";
+  regimeScores: Array<{
+    key: RegimeKey;
+    label: string;
+    score: number | undefined;
+    tests: number;
+  }>;
+};
+
+type BalancedSampleCategory = SampleCategoryDefinition & {
+  count: number;
+  missing: number;
+  selectedCount: number;
+};
+
+type BalancedSampleLeaderboardRow = {
+  modelId: string;
+  provider: string;
+  label: string;
+  providerName: string;
+  logoSrc: string | undefined;
+  score: number | undefined;
+  averageAlpha: number | undefined;
+  hitRate: number | undefined;
+  testsIncluded: number;
+  testsRequired: number;
+  status: "Ready" | "Forming";
+};
+
+type BalancedSampleTrack = {
+  track: BenchmarkTrack;
+  status: "Ready" | "Forming";
+  categories: BalancedSampleCategory[];
+  sampleSize: number;
+  selectedRounds: RegimeRound[];
+  missingSummary: string;
+  leaderboard: BalancedSampleLeaderboardRow[];
+};
+
+const READY_ROUND_THRESHOLD = 3;
+const BALANCED_SAMPLE_THRESHOLD = 3;
+
+const regimeDefinitions: Record<BenchmarkTrack, RegimeDefinition[]> = {
+  weekly: [
+    { key: "sharp_down", label: "Sharp Down", rangeLabel: "S&P <= -2.0%", direction: "down" },
+    { key: "down", label: "Down", rangeLabel: "-2.0% to -0.5%", direction: "down" },
+    { key: "flat", label: "Flat", rangeLabel: "-0.5% to +0.5%", direction: "flat" },
+    { key: "up", label: "Up", rangeLabel: "+0.5% to +2.0%", direction: "up" },
+    { key: "sharp_up", label: "Sharp Up", rangeLabel: "S&P >= +2.0%", direction: "up" }
+  ],
+  monthly: [
+    { key: "sharp_down", label: "Sharp Down", rangeLabel: "S&P <= -3.0%", direction: "down" },
+    { key: "down", label: "Down", rangeLabel: "-3.0% to -1.0%", direction: "down" },
+    { key: "flat", label: "Flat", rangeLabel: "-1.0% to +1.0%", direction: "flat" },
+    { key: "up", label: "Up", rangeLabel: "+1.0% to +3.0%", direction: "up" },
+    { key: "sharp_up", label: "Sharp Up", rangeLabel: "S&P >= +3.0%", direction: "up" }
+  ]
+};
+
+const sampleCategoryDefinitions: Record<BenchmarkTrack, SampleCategoryDefinition[]> = {
+  weekly: [
+    { key: "down", label: "Down", rangeLabel: "S&P < -0.5%" },
+    { key: "flat", label: "Flat", rangeLabel: "-0.5% to +0.5%" },
+    { key: "up", label: "Up", rangeLabel: "S&P > +0.5%" }
+  ],
+  monthly: [
+    { key: "down", label: "Down", rangeLabel: "S&P < -1.0%" },
+    { key: "flat", label: "Flat", rangeLabel: "-1.0% to +1.0%" },
+    { key: "up", label: "Up", rangeLabel: "S&P > +1.0%" }
+  ]
+};
+
+function finiteNumber(value: number | null | undefined): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function average(values: number[]): number | undefined {
+  if (values.length === 0) return undefined;
+  return values.reduce((total, value) => total + value, 0) / values.length;
+}
+
+function leaderboardReturn(row: LeaderboardRecord): number | undefined {
+  return row.portfolio_return ?? row.selected_asset_return;
+}
+
+function bestUniverseReturn(rows: ResultReturnRecord[]): number | undefined {
+  return rows
+    .filter((row) => finiteNumber(row.return))
+    .sort((left, right) => right.return - left.return)[0]?.return;
+}
+
+function classifyRegime(track: BenchmarkTrack, sp500Return: number): RegimeDefinition {
+  const definitions = regimeDefinitions[track];
+  if (track === "weekly") {
+    if (sp500Return <= -0.02) return definitions[0];
+    if (sp500Return < -0.005) return definitions[1];
+    if (sp500Return <= 0.005) return definitions[2];
+    if (sp500Return < 0.02) return definitions[3];
+    return definitions[4];
+  }
+
+  if (sp500Return <= -0.03) return definitions[0];
+  if (sp500Return < -0.01) return definitions[1];
+  if (sp500Return <= 0.01) return definitions[2];
+  if (sp500Return < 0.03) return definitions[3];
+  return definitions[4];
+}
+
+function classifySampleCategory(track: BenchmarkTrack, sp500Return: number): SampleCategoryDefinition {
+  const definitions = sampleCategoryDefinitions[track];
+  if (track === "weekly") {
+    if (sp500Return < -0.005) return definitions[0];
+    if (sp500Return <= 0.005) return definitions[1];
+    return definitions[2];
+  }
+
+  if (sp500Return < -0.01) return definitions[0];
+  if (sp500Return <= 0.01) return definitions[1];
+  return definitions[2];
+}
+
+function regimeStatus(count: number): RegimeStatus {
+  if (count >= READY_ROUND_THRESHOLD) return "Ready";
+  if (count > 0) return "Forming";
+  return "No data yet";
+}
+
+function scoreText(value: number | undefined): string {
+  return finiteNumber(value) ? value.toFixed(1) : "n/a";
+}
+
+function pctText(value: number | undefined): string {
+  return finiteNumber(value) ? pct(value) : "n/a";
+}
+
+function signedPctText(value: number | undefined): string {
+  if (!finiteNumber(value)) return "n/a";
+  const formatted = pct(value);
+  return value > 0 ? `+${formatted}` : formatted;
+}
+
+function statusClass(status: string): string {
+  return status.toLowerCase().replaceAll(" ", "-");
+}
+
+function trackLabel(track: BenchmarkTrack): string {
+  return track === "weekly" ? "Weekly" : "Monthly";
+}
+
+function roundRecencySort(left: RegimeRound, right: RegimeRound): number {
+  return (
+    (right.round.exit_date ?? "").localeCompare(left.round.exit_date ?? "") ||
+    (right.round.decision_deadline_utc ?? "").localeCompare(left.round.decision_deadline_utc ?? "") ||
+    right.round.round_id.localeCompare(left.round.round_id)
+  );
+}
+
+const roundRows = staticRoundRecords().filter((round) => /^CB-\d{4}-\d{2}-\d{2}-(1W|1M)$/.test(round.round_id));
+const scorecards = {
+  weekly: buildTrackScorecard(roundRows, "weekly"),
+  monthly: buildTrackScorecard(roundRows, "monthly")
+};
+
+const regimeRounds = roundRows
+  .filter((round) => round.status === "resolved")
+  .map((round): RegimeRound | null => {
+    const track = roundTrack(round);
+    if (track !== "weekly" && track !== "monthly") return null;
+
+    const leaderboard = staticRoundLeaderboard(round.round_id, round.official_run_id);
+    const sp500Return = leaderboard.find((row) => finiteNumber(row.sp500_return))?.sp500_return;
+    const maxPossibleReturn = bestUniverseReturn(staticRoundReturns(round.round_id, round.official_run_id));
+    if (!finiteNumber(sp500Return) || !finiteNumber(maxPossibleReturn) || leaderboard.length === 0) return null;
+
+    const modelRows = leaderboard.filter((row) => finiteNumber(leaderboardReturn(row)));
+    const alphas = modelRows.map((row) => row.alpha_vs_sp500).filter(finiteNumber);
+    const hits = modelRows.filter((row) => finiteNumber(row.alpha_vs_sp500) && row.alpha_vs_sp500 > 0).length;
+
+    return {
+      round,
+      track,
+      regime: classifyRegime(track, sp500Return),
+      leaderboard,
+      sp500Return,
+      maxPossibleReturn,
+      averageAlpha: average(alphas),
+      hitRate: modelRows.length ? hits / modelRows.length : undefined,
+      modelCount: modelRows.length
+    };
+  })
+  .filter((round): round is RegimeRound => round !== null);
+
+function buildCoverage(track: BenchmarkTrack): RegimeCoverage[] {
+  const trackRounds = regimeRounds.filter((round) => round.track === track);
+  return regimeDefinitions[track].map((definition) => {
+    const rounds = trackRounds.filter((round) => round.regime.key === definition.key);
+    return {
+      ...definition,
+      count: rounds.length,
+      averageSp500Return: average(rounds.map((round) => round.sp500Return)),
+      status: regimeStatus(rounds.length),
+      rounds
+    };
+  });
+}
+
+const coverageByTrack = {
+  weekly: buildCoverage("weekly"),
+  monthly: buildCoverage("monthly")
+};
+
+function trackConfidence(track: BenchmarkTrack): { label: string; detail: string; className: string } {
+  const coverage = coverageByTrack[track];
+  const ready = coverage.filter((item) => item.status === "Ready");
+  const hasReadyDown = ready.some((item) => item.direction === "down");
+  const hasReadyUp = ready.some((item) => item.direction === "up");
+
+  if (ready.length === 0) {
+    return {
+      label: "No scored regimes",
+      detail: "The page will update after resolved rounds exist.",
+      className: "empty"
+    };
+  }
+
+  if (hasReadyDown && hasReadyUp) {
+    return {
+      label: "More balanced",
+      detail: `${ready.length} market types are ready, including up and down markets.`,
+      className: "ready"
+    };
+  }
+
+  return {
+    label: "Still one-sided",
+    detail: `${ready.length} market type${ready.length === 1 ? "" : "s"} ready; more market variety is needed.`,
+    className: "forming"
+  };
+}
+
+function allRoundScore(track: BenchmarkTrack, modelId: string): number | undefined {
+  const row = scorecards[track]?.normalizedRows.find((item) => item.kind === "model" && item.key === modelId);
+  return row?.averageScore;
+}
+
+function buildRegimeLeaderboard(track: BenchmarkTrack): RegimeLeaderboardRow[] {
+  const readyRegimes = coverageByTrack[track].filter((item) => item.status === "Ready");
+  const accumulators = new Map<
+    string,
+    {
+      modelId: string;
+      provider: string;
+      regimes: Map<RegimeKey, ModelRegimeStats>;
+    }
+  >();
+
+  for (const regime of readyRegimes) {
+    for (const regimeRound of regime.rounds) {
+      for (const row of regimeRound.leaderboard) {
+        const returnValue = leaderboardReturn(row);
+        if (!finiteNumber(returnValue)) continue;
+
+        const existing = accumulators.get(row.model_id) ?? {
+          modelId: row.model_id,
+          provider: row.provider,
+          regimes: new Map<RegimeKey, ModelRegimeStats>()
+        };
+        const stats = existing.regimes.get(regime.key) ?? {
+          returns: [],
+          maxReturns: [],
+          alphas: [],
+          hits: [],
+          rounds: []
+        };
+
+        stats.returns.push(returnValue);
+        stats.maxReturns.push(regimeRound.maxPossibleReturn);
+        if (finiteNumber(row.alpha_vs_sp500)) stats.alphas.push(row.alpha_vs_sp500);
+        stats.hits.push(finiteNumber(row.alpha_vs_sp500) && row.alpha_vs_sp500 > 0);
+        stats.rounds.push(regimeRound.round.round_id);
+        existing.regimes.set(regime.key, stats);
+        accumulators.set(row.model_id, existing);
+      }
+    }
+  }
+
+  return Array.from(accumulators.values())
+    .map((item) => {
+      const regimeScores = readyRegimes.map((regime) => {
+        const stats = item.regimes.get(regime.key);
+        return {
+          key: regime.key,
+          label: regime.label,
+          score: stats ? cumulativeCapitalBenchScore(stats.returns, stats.maxReturns) ?? undefined : undefined,
+          tests: stats?.returns.length ?? 0
+        };
+      });
+      const includedScores = regimeScores.map((row) => row.score).filter(finiteNumber);
+      const allStats = Array.from(item.regimes.values());
+      const alphas = allStats.flatMap((stats) => stats.alphas);
+      const hits = allStats.flatMap((stats) => stats.hits);
+      const testsIncluded = allStats.reduce((total, stats) => total + stats.returns.length, 0);
+      const readyRegimesCovered = regimeScores.filter((row) => finiteNumber(row.score)).length;
+      const status: "Ready" | "Forming" =
+        readyRegimes.length > 0 && readyRegimesCovered === readyRegimes.length ? "Ready" : "Forming";
+
+      return {
+        modelId: item.modelId,
+        provider: item.provider,
+        label: modelLabel(item.modelId),
+        providerName: providerLabel(item.provider),
+        logoSrc: providerLogoSrc(item.provider),
+        regimeBalancedScore: average(includedScores),
+        allRoundScore: allRoundScore(track, item.modelId),
+        averageAlpha: average(alphas),
+        hitRate: hits.length ? hits.filter(Boolean).length / hits.length : undefined,
+        testsIncluded,
+        readyRegimesCovered,
+        readyRegimesRequired: readyRegimes.length,
+        status,
+        regimeScores
+      };
+    })
+    .sort(
+      (left, right) =>
+        Number(right.status === "Ready") - Number(left.status === "Ready") ||
+        (right.regimeBalancedScore ?? Number.NEGATIVE_INFINITY) -
+          (left.regimeBalancedScore ?? Number.NEGATIVE_INFINITY) ||
+        left.label.localeCompare(right.label)
+    );
+}
+
+const leaderboards = {
+  weekly: buildRegimeLeaderboard("weekly"),
+  monthly: buildRegimeLeaderboard("monthly")
+};
+
+function buildBalancedSampleLeaderboard(selectedRounds: RegimeRound[]): BalancedSampleLeaderboardRow[] {
+  if (selectedRounds.length === 0) return [];
+
+  const accumulators = new Map<
+    string,
+    {
+      modelId: string;
+      provider: string;
+      returns: number[];
+      maxReturns: number[];
+      alphas: number[];
+      hits: boolean[];
+    }
+  >();
+
+  for (const sampleRound of selectedRounds) {
+    for (const row of sampleRound.leaderboard) {
+      const returnValue = leaderboardReturn(row);
+      if (!finiteNumber(returnValue)) continue;
+
+      const existing = accumulators.get(row.model_id) ?? {
+        modelId: row.model_id,
+        provider: row.provider,
+        returns: [],
+        maxReturns: [],
+        alphas: [],
+        hits: []
+      };
+
+      existing.returns.push(returnValue);
+      existing.maxReturns.push(sampleRound.maxPossibleReturn);
+      if (finiteNumber(row.alpha_vs_sp500)) existing.alphas.push(row.alpha_vs_sp500);
+      existing.hits.push(finiteNumber(row.alpha_vs_sp500) && row.alpha_vs_sp500 > 0);
+      accumulators.set(row.model_id, existing);
+    }
+  }
+
+  return Array.from(accumulators.values())
+    .map((item) => {
+      const status: "Ready" | "Forming" = item.returns.length === selectedRounds.length ? "Ready" : "Forming";
+      return {
+        modelId: item.modelId,
+        provider: item.provider,
+        label: modelLabel(item.modelId),
+        providerName: providerLabel(item.provider),
+        logoSrc: providerLogoSrc(item.provider),
+        score: cumulativeCapitalBenchScore(item.returns, item.maxReturns) ?? undefined,
+        averageAlpha: average(item.alphas),
+        hitRate: item.hits.length ? item.hits.filter(Boolean).length / item.hits.length : undefined,
+        testsIncluded: item.returns.length,
+        testsRequired: selectedRounds.length,
+        status
+      };
+    })
+    .sort(
+      (left, right) =>
+        Number(right.status === "Ready") - Number(left.status === "Ready") ||
+        (right.score ?? Number.NEGATIVE_INFINITY) - (left.score ?? Number.NEGATIVE_INFINITY) ||
+        left.label.localeCompare(right.label)
+    );
+}
+
+function buildBalancedSample(track: BenchmarkTrack): BalancedSampleTrack {
+  const trackRounds = regimeRounds.filter((round) => round.track === track);
+  const categories = sampleCategoryDefinitions[track].map((definition) => {
+    const rounds = trackRounds.filter((round) => classifySampleCategory(track, round.sp500Return).key === definition.key);
+    return {
+      ...definition,
+      count: rounds.length,
+      missing: Math.max(0, BALANCED_SAMPLE_THRESHOLD - rounds.length),
+      selectedCount: 0
+    };
+  });
+  const status: "Ready" | "Forming" = categories.every((category) => category.count >= BALANCED_SAMPLE_THRESHOLD)
+    ? "Ready"
+    : "Forming";
+  const sampleSize = status === "Ready" ? Math.min(...categories.map((category) => category.count)) : 0;
+  const selectedRounds =
+    status === "Ready"
+      ? categories.flatMap((category) =>
+          trackRounds
+            .filter((round) => classifySampleCategory(track, round.sp500Return).key === category.key)
+            .sort(roundRecencySort)
+            .slice(0, sampleSize)
+        )
+      : [];
+  const selectedCountByCategory = new Map<SampleCategoryKey, number>();
+  for (const round of selectedRounds) {
+    const key = classifySampleCategory(track, round.sp500Return).key;
+    selectedCountByCategory.set(key, (selectedCountByCategory.get(key) ?? 0) + 1);
+  }
+  const categoriesWithSelection = categories.map((category) => ({
+    ...category,
+    selectedCount: selectedCountByCategory.get(category.key) ?? 0
+  }));
+  const missingParts = categoriesWithSelection
+    .filter((category) => category.missing > 0)
+    .map(
+      (category) =>
+        `${category.missing} more ${category.label.toLowerCase()} ${track} round${category.missing === 1 ? "" : "s"}`
+    );
+
+  return {
+    track,
+    status,
+    categories: categoriesWithSelection,
+    sampleSize,
+    selectedRounds,
+    missingSummary: missingParts.length ? `Needs ${missingParts.join(" and ")}.` : "Ready to rank models.",
+    leaderboard: buildBalancedSampleLeaderboard(selectedRounds)
+  };
+}
+
+const balancedSamples = {
+  weekly: buildBalancedSample("weekly"),
+  monthly: buildBalancedSample("monthly")
+};
+
+const trackSummaries = (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
+  const coverage = coverageByTrack[track];
+  const readyCount = coverage.filter((item) => item.status === "Ready").length;
+  const totalRounds = regimeRounds.filter((round) => round.track === track).length;
+  const confidence = trackConfidence(track);
+  return {
+    track,
+    label: trackLabel(track),
+    readyCount,
+    totalRounds,
+    confidence
+  };
+});
+
+const latestIncludedRound = regimeRounds
+  .slice()
+  .sort((left, right) => (right.round.exit_date ?? "").localeCompare(left.round.exit_date ?? ""))[0];
+
+const auditRows = regimeRounds
+  .slice()
+  .sort(
+    (left, right) =>
+      (right.round.exit_date ?? "").localeCompare(left.round.exit_date ?? "") ||
+      right.round.round_id.localeCompare(left.round.round_id)
+  );
+---
+
+<BaseLayout
+  title="Market Regime Benchmark"
+  description="A separate CapitalBench view that groups completed AI portfolio rounds by S&P 500 market regime and balances model scores across market types."
+>
+  <PageHeader
+    eyebrow="Market Regime Benchmark"
+    title="Balanced By Market Type"
+    summary="This separate benchmark groups completed weekly and monthly rounds by how much the S&P 500 moved, then scores models across ready market types with equal weight."
+  />
+
+  <section class="section market-regime-page">
+    <div class="regime-method-panel">
+      <div>
+        <span class="panel-kicker">Method</span>
+        <h2>Each ready market type gets equal weight.</h2>
+        <p>
+          The official benchmark shows all completed results. This page adds context: it checks whether models perform
+          across up, down, and flat S&P 500 windows instead of being helped by one dominant market environment.
+        </p>
+      </div>
+      <dl>
+        <div>
+          <dt>Ready rule</dt>
+          <dd>{READY_ROUND_THRESHOLD}+ rounds</dd>
+        </div>
+        <div>
+          <dt>Score</dt>
+          <dd>Average of ready regime scores</dd>
+        </div>
+        <div>
+          <dt>Scope</dt>
+          <dd>Resolved official rounds only</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="regime-kpi-grid" aria-label="Market regime benchmark summary">
+      <article>
+        <span>Weekly rounds</span>
+        <strong>{trackSummaries.find((item) => item.track === "weekly")?.totalRounds ?? 0}</strong>
+        <em>{trackConfidence("weekly").label}</em>
+      </article>
+      <article>
+        <span>Monthly rounds</span>
+        <strong>{trackSummaries.find((item) => item.track === "monthly")?.totalRounds ?? 0}</strong>
+        <em>{trackConfidence("monthly").label}</em>
+      </article>
+      <article>
+        <span>Weekly ready types</span>
+        <strong>{trackSummaries.find((item) => item.track === "weekly")?.readyCount ?? 0}<small>/5</small></strong>
+        <em>Used in weekly score</em>
+      </article>
+      <article>
+        <span>Latest included</span>
+        <strong>{latestIncludedRound?.round.round_id ?? "n/a"}</strong>
+        <em>{latestIncludedRound ? `${trackLabel(latestIncludedRound.track)} ${dateOnly(latestIncludedRound.round.exit_date)}` : "No scored rounds"}</em>
+      </article>
+    </div>
+
+    <section class="regime-section" aria-labelledby="market-coverage-title">
+      <div class="regime-section-head">
+        <span class="panel-kicker">Market coverage</span>
+        <h2 id="market-coverage-title">What market types have been tested?</h2>
+        <p>Counts update automatically as new weekly and monthly rounds resolve.</p>
+      </div>
+
+      {
+        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
+          const confidence = trackConfidence(track);
+          return (
+            <div class="regime-track-panel">
+              <div class="regime-track-head">
+                <div>
+                  <span class="panel-kicker">{trackLabel(track)}</span>
+                  <h3>{trackLabel(track)} S&amp;P 500 regimes</h3>
+                  <p>{confidence.detail}</p>
+                </div>
+                <strong class:list={["regime-confidence", `regime-confidence-${confidence.className}`]}>
+                  {confidence.label}
+                </strong>
+              </div>
+              <div class="regime-coverage-grid">
+                {coverageByTrack[track].map((regime) => (
+                  <article class:list={["regime-coverage-card", `regime-card-${regime.key}`]}>
+                    <span class:list={["regime-status", `regime-status-${statusClass(regime.status)}`]}>
+                      {regime.status}
+                    </span>
+                    <strong>{regime.label}</strong>
+                    <em>{regime.rangeLabel}</em>
+                    <div>
+                      <b>{regime.count}</b>
+                      <small>round{regime.count === 1 ? "" : "s"}</small>
+                    </div>
+                    <p>Average S&amp;P 500 move: {pctText(regime.averageSp500Return)}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          );
+        })
+      }
+    </section>
+
+    <section class="regime-section" aria-labelledby="regime-leaderboard-title">
+      <div class="regime-section-head">
+        <span class="panel-kicker">Regime-balanced leaderboard</span>
+        <h2 id="regime-leaderboard-title">Who performs best after balancing market types?</h2>
+        <p>
+          Only Ready market types are used in the score. Forming market types stay visible in the coverage grid, but do
+          not affect rankings until they have enough resolved rounds.
+        </p>
+      </div>
+
+      {
+        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => (
+          <div class="regime-leaderboard-panel">
+            <div class="regime-leaderboard-head">
+              <div>
+                <span class="panel-kicker">{trackLabel(track)} benchmark</span>
+                <h3>{trackLabel(track)} regime-balanced scores</h3>
+              </div>
+              <span class:list={["regime-confidence", `regime-confidence-${trackConfidence(track).className}`]}>
+                {trackConfidence(track).label}
+              </span>
+            </div>
+            <div class="table-shell regime-table-shell">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Regime-balanced score</th>
+                    <th>Ready market scores</th>
+                    <th>All-round score</th>
+                    <th>Avg alpha vs S&amp;P</th>
+                    <th>Hit rate</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaderboards[track].length ? (
+                    leaderboards[track].map((row, index) => (
+                      <tr>
+                        <td>
+                          <div class="regime-model-cell">
+                            <span>{index + 1}</span>
+                            {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
+                            <div>
+                              <strong>{row.label}</strong>
+                              <em>{row.providerName}</em>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="regime-score-value">
+                          <strong>{scoreText(row.regimeBalancedScore)}</strong>
+                          <span>{row.readyRegimesCovered}/{row.readyRegimesRequired} ready types</span>
+                        </td>
+                        <td>
+                          <div class="regime-score-strip">
+                            {row.regimeScores.map((score) => (
+                              <span>
+                                <b>{score.label}</b>
+                                <em>{scoreText(score.score)}</em>
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td>{scoreText(row.allRoundScore)}</td>
+                        <td>{signedPctText(row.averageAlpha)}</td>
+                        <td>{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
+                        <td>
+                          <span class:list={["regime-status", `regime-status-${statusClass(row.status)}`]}>
+                            {row.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colspan="7">No ready market types yet.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="regime-section" aria-labelledby="balanced-sample-title">
+      <div class="regime-section-head">
+        <span class="panel-kicker">Balanced sample benchmark</span>
+        <h2 id="balanced-sample-title">What happens when each market type has a fair sample?</h2>
+        <p>
+          This stricter benchmark waits for at least {BALANCED_SAMPLE_THRESHOLD} down, {BALANCED_SAMPLE_THRESHOLD} flat,
+          and {BALANCED_SAMPLE_THRESHOLD} up rounds. When ready, it uses the same number of recent rounds from each
+          category.
+        </p>
+      </div>
+
+      {
+        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
+          const sample = balancedSamples[track];
+          return (
+            <div class="balanced-sample-panel">
+              <div class="balanced-sample-head">
+                <div>
+                  <span class="panel-kicker">{trackLabel(track)} balanced sample</span>
+                  <h3>{trackLabel(track)} down / flat / up benchmark</h3>
+                  <p>{sample.missingSummary}</p>
+                </div>
+                <span class:list={["regime-confidence", sample.status === "Ready" ? "regime-confidence-ready" : "regime-confidence-forming"]}>
+                  {sample.status}
+                </span>
+              </div>
+
+              <div class="balanced-sample-counts" aria-label={`${trackLabel(track)} balanced sample category counts`}>
+                {sample.categories.map((category) => (
+                  <article>
+                    <span>{category.label}</span>
+                    <strong>
+                      {category.count}<small>/{BALANCED_SAMPLE_THRESHOLD}</small>
+                    </strong>
+                    <em>{category.rangeLabel}</em>
+                    <p>
+                      {sample.status === "Ready"
+                        ? `${category.selectedCount} selected for the balanced sample.`
+                        : category.missing > 0
+                          ? `${category.missing} more needed.`
+                          : "Requirement met."}
+                    </p>
+                  </article>
+                ))}
+              </div>
+
+              {sample.status === "Ready" ? (
+                <div class="balanced-sample-ready">
+                  <div class="balanced-sample-summary">
+                    <span>
+                      <strong>{sample.sampleSize}</strong>
+                      <em>rounds per category</em>
+                    </span>
+                    <span>
+                      <strong>{sample.selectedRounds.length}</strong>
+                      <em>total selected rounds</em>
+                    </span>
+                  </div>
+                  <div class="table-shell regime-table-shell">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Model</th>
+                          <th>Balanced sample score</th>
+                          <th>Avg alpha vs S&amp;P</th>
+                          <th>Hit rate</th>
+                          <th>Tests</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sample.leaderboard.map((row, index) => (
+                          <tr>
+                            <td>
+                              <div class="regime-model-cell">
+                                <span>{index + 1}</span>
+                                {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
+                                <div>
+                                  <strong>{row.label}</strong>
+                                  <em>{row.providerName}</em>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="regime-score-value">
+                              <strong>{scoreText(row.score)}</strong>
+                              <span>Equal down / flat / up sample</span>
+                            </td>
+                            <td>{signedPctText(row.averageAlpha)}</td>
+                            <td>{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
+                            <td>
+                              {row.testsIncluded}/{row.testsRequired}
+                            </td>
+                            <td>
+                              <span class:list={["regime-status", `regime-status-${statusClass(row.status)}`]}>
+                                {row.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <div class="balanced-sample-forming">
+                  <strong>Not ranked yet</strong>
+                  <p>
+                    The {trackLabel(track).toLowerCase()} sample is still forming, so this benchmark is shown as a
+                    readiness check rather than a leaderboard.
+                  </p>
+                </div>
+              )}
+            </div>
+          );
+        })
+      }
+    </section>
+
+    <section class="regime-section" aria-labelledby="regime-rounds-title">
+      <div class="regime-section-head">
+        <span class="panel-kicker">Audit table</span>
+        <h2 id="regime-rounds-title">Which rounds are included?</h2>
+        <p>Every row below is a resolved official round with a final S&amp;P 500 return.</p>
+      </div>
+
+      <div class="table-shell regime-table-shell">
+        <table>
+          <thead>
+            <tr>
+              <th>Round</th>
+              <th>Track</th>
+              <th>Window</th>
+              <th>S&amp;P 500 return</th>
+              <th>Market type</th>
+              <th>Avg model alpha</th>
+              <th>Hit rate</th>
+              <th>Models</th>
+            </tr>
+          </thead>
+          <tbody>
+            {auditRows.map((row) => (
+              <tr>
+                <td>
+                  <a href={`/rounds/${row.round.round_id}`}>{row.round.round_id}</a>
+                </td>
+                <td>{trackLabel(row.track)}</td>
+                <td>{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
+                <td>{signedPctText(row.sp500Return)}</td>
+                <td>{row.regime.label}</td>
+                <td>{signedPctText(row.averageAlpha)}</td>
+                <td>{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
+                <td>{row.modelCount}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+</BaseLayout>
