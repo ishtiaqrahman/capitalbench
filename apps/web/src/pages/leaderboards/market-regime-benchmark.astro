@@ -124,6 +124,7 @@ type RawChartSeries = {
   label: string;
   color: string;
   points: RawChartPoint[];
+  isLead?: boolean;
 };
 
 type LineChart = {
@@ -143,6 +144,7 @@ type LineChart = {
       valueLabel: string;
     }>;
     pointsAttr: string;
+    isLead?: boolean;
   }>;
   baseline?: {
     label: string;
@@ -356,6 +358,12 @@ function trackLabel(track: BenchmarkTrack): string {
   return track === "weekly" ? "Weekly" : "Monthly";
 }
 
+function statusMeaning(status: RegimeStatus | "Ready" | "Forming"): string {
+  if (status === "Ready") return "Included in score";
+  if (status === "Forming") return "Collecting rounds";
+  return "Not tested yet";
+}
+
 function roundSortKey(round: RoundRecord): string {
   return `${round.exit_date ?? ""}:${round.decision_deadline_utc ?? ""}:${round.round_id}`;
 }
@@ -430,7 +438,7 @@ function trackConfidence(track: BenchmarkTrack): { label: string; detail: string
 
   if (ready.length === 0) {
     return {
-      label: "No scored regimes",
+      label: "No ready types",
       detail: "The page will update after resolved rounds exist.",
       className: "empty"
     };
@@ -689,7 +697,7 @@ function buildSp500MovementChart(track: BenchmarkTrack): LineChart {
   return buildLineChart({
     id: `${track}-sp500-regime-path`,
     title: `${trackLabel(track)} S&P 500 movement`,
-    description: "Each point is one completed scored round, grouped into the market types below.",
+    description: "Each point is one scored round. The S&P 500 move decides the market type.",
     format: "percent",
     includeZero: true,
     series: [
@@ -712,7 +720,7 @@ function buildLeaderboardScorePathChart(track: BenchmarkTrack): LineChart {
   return buildLineChart({
     id: `${track}-regime-score-path`,
     title: `${trackLabel(track)} top score path`,
-    description: "Cumulative score movement for the current top regime-balanced models.",
+    description: "Cumulative score movement for the current top market-type models.",
     format: "score",
     includeZero: true,
     series: topRows.map((row, index) => {
@@ -740,7 +748,8 @@ function buildLeaderboardScorePathChart(track: BenchmarkTrack): LineChart {
         key: row.modelId,
         label: row.label,
         color: scorePathColors[index % scorePathColors.length],
-        points
+        points,
+        isLead: index === 0
       };
     })
   });
@@ -768,7 +777,7 @@ function buildBalancedProgressChart(track: BenchmarkTrack): LineChart {
   return buildLineChart({
     id: `${track}-balanced-sample-progress`,
     title: `${trackLabel(track)} sample balance progress`,
-    description: "Down, flat, and up round counts as the scored sample grows.",
+    description: "Shows how many down, flat, and up rounds are available.",
     format: "count",
     floorZero: true,
     threshold: {
@@ -824,16 +833,18 @@ const auditRows = regimeRounds
       (right.round.exit_date ?? "").localeCompare(left.round.exit_date ?? "") ||
       right.round.round_id.localeCompare(left.round.round_id)
   );
+const visibleAuditRows = auditRows.slice(0, 10);
+const hiddenAuditRows = auditRows.slice(10);
 ---
 
 <BaseLayout
-  title="Market Regime Benchmark"
-  description="A separate CapitalBench view that groups completed AI portfolio rounds by S&P 500 market regime and balances model scores across market types."
+  title="Market Type Benchmark"
+  description="A separate CapitalBench view that groups completed AI portfolio rounds by S&P 500 movement and balances model scores across market types."
 >
   <PageHeader
-    eyebrow="Market Regime Benchmark"
+    eyebrow="Market Type Benchmark"
     title="Balanced By Market Type"
-    summary="This separate benchmark groups completed weekly and monthly rounds by how much the S&P 500 moved, then scores models across ready market types with equal weight."
+    summary="This separate benchmark groups completed weekly and monthly rounds by how much the S&P 500 moved, then gives each ready market type equal weight."
   />
 
   <section class="section market-regime-page">
@@ -842,8 +853,8 @@ const auditRows = regimeRounds
         <span class="panel-kicker">Method</span>
         <h2>Each ready market type gets equal weight.</h2>
         <p>
-          The official benchmark shows all completed results. This page adds context: it checks whether models perform
-          across up, down, and flat S&P 500 windows instead of being helped by one dominant market environment.
+          A market type is the S&amp;P 500 move during a scored round. This page checks whether models perform across
+          up, down, and flat markets instead of being helped by one dominant environment.
         </p>
       </div>
       <dl>
@@ -853,16 +864,33 @@ const auditRows = regimeRounds
         </div>
         <div>
           <dt>Score</dt>
-          <dd>Average of ready regime scores</dd>
+          <dd>Average of ready market type scores</dd>
         </div>
         <div>
           <dt>Scope</dt>
           <dd>Resolved official rounds only</dd>
         </div>
       </dl>
+      <ol class="regime-method-flow" aria-label="Market type benchmark process">
+        <li>
+          <span>1</span>
+          <strong>Use completed rounds</strong>
+          <em>Only resolved official results enter this page.</em>
+        </li>
+        <li>
+          <span>2</span>
+          <strong>Group by S&amp;P 500 move</strong>
+          <em>Each round becomes down, flat, or up.</em>
+        </li>
+        <li>
+          <span>3</span>
+          <strong>Average ready types equally</strong>
+          <em>Ready market types carry the same weight.</em>
+        </li>
+      </ol>
     </div>
 
-    <div class="regime-kpi-grid" aria-label="Market regime benchmark summary">
+    <div class="regime-kpi-grid" aria-label="Market type benchmark summary">
       <article>
         <span>Weekly rounds</span>
         <strong>{trackSummaries.find((item) => item.track === "weekly")?.totalRounds ?? 0}</strong>
@@ -879,7 +907,7 @@ const auditRows = regimeRounds
         <em>Used in weekly score</em>
       </article>
       <article>
-        <span>Latest included</span>
+        <span>Latest round</span>
         <strong>{latestIncludedRound?.round.round_id ?? "n/a"}</strong>
         <em>{latestIncludedRound ? `${trackLabel(latestIncludedRound.track)} ${dateOnly(latestIncludedRound.round.exit_date)}` : "No scored rounds"}</em>
       </article>
@@ -889,7 +917,12 @@ const auditRows = regimeRounds
       <div class="regime-section-head">
         <span class="panel-kicker">Market coverage</span>
         <h2 id="market-coverage-title">What market types have been tested?</h2>
-        <p>Counts update automatically as new weekly and monthly rounds resolve.</p>
+        <p>Counts update automatically as weekly and monthly rounds resolve.</p>
+        <div class="regime-status-legend" aria-label="Market type status legend">
+          <span class="regime-status regime-status-ready">Ready <em>Included in score</em></span>
+          <span class="regime-status regime-status-forming">Forming <em>Collecting rounds</em></span>
+          <span class="regime-status regime-status-no-data-yet">No data <em>Not tested yet</em></span>
+        </div>
       </div>
 
       {
@@ -900,7 +933,7 @@ const auditRows = regimeRounds
               <div class="regime-track-head">
                 <div>
                   <span class="panel-kicker">{trackLabel(track)}</span>
-                  <h3>{trackLabel(track)} S&amp;P 500 regimes</h3>
+                  <h3>{trackLabel(track)} market types</h3>
                   <p>{confidence.detail}</p>
                 </div>
                 <strong class:list={["regime-confidence", `regime-confidence-${confidence.className}`]}>
@@ -913,6 +946,7 @@ const auditRows = regimeRounds
                   <article class:list={["regime-coverage-card", `regime-card-${regime.key}`]}>
                     <span class:list={["regime-status", `regime-status-${statusClass(regime.status)}`]}>
                       {regime.status}
+                      <em>{statusMeaning(regime.status)}</em>
                     </span>
                     <strong>{regime.label}</strong>
                     <em>{regime.rangeLabel}</em>
@@ -932,11 +966,10 @@ const auditRows = regimeRounds
 
     <section class="regime-section" aria-labelledby="regime-leaderboard-title">
       <div class="regime-section-head">
-        <span class="panel-kicker">Regime-balanced leaderboard</span>
+        <span class="panel-kicker">Market-type balanced leaderboard</span>
         <h2 id="regime-leaderboard-title">Who performs best after balancing market types?</h2>
         <p>
-          Only Ready market types are used in the score. Forming market types stay visible in the coverage grid, but do
-          not affect rankings until they have enough resolved rounds.
+          Ready market types are scored equally. Forming types stay visible, but do not affect rankings yet.
         </p>
       </div>
 
@@ -946,20 +979,34 @@ const auditRows = regimeRounds
             <div class="regime-leaderboard-head">
               <div>
                 <span class="panel-kicker">{trackLabel(track)} benchmark</span>
-                <h3>{trackLabel(track)} regime-balanced scores</h3>
+                <h3>{trackLabel(track)} market-type balanced scores</h3>
               </div>
               <span class:list={["regime-confidence", `regime-confidence-${trackConfidence(track).className}`]}>
                 {trackConfidence(track).label}
               </span>
             </div>
             <MarketRegimeLineChart chart={leaderboardScorePathCharts[track]} />
+            <div class="regime-mobile-rank-summary" aria-label={`${trackLabel(track)} top market-type balanced models`}>
+              {leaderboards[track].slice(0, 3).map((row, index) => (
+                <article>
+                  <span>{index + 1}</span>
+                  {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
+                  <div>
+                    <strong>{row.label}</strong>
+                    <em>{row.providerName}</em>
+                  </div>
+                  <b>{scoreText(row.regimeBalancedScore)}</b>
+                  <small>{row.readyRegimesCovered}/{row.readyRegimesRequired} ready types</small>
+                </article>
+              ))}
+            </div>
             <div class="table-shell regime-table-shell">
               <table>
                 <thead>
                   <tr>
                     <th>Model</th>
-                    <th>Regime-balanced score</th>
-                    <th>Ready market scores</th>
+                    <th>Market-type score</th>
+                    <th>Ready market type scores</th>
                     <th>All-round score</th>
                     <th>Avg alpha vs S&amp;P</th>
                     <th>Hit rate</th>
@@ -980,11 +1027,11 @@ const auditRows = regimeRounds
                             </div>
                           </div>
                         </td>
-                        <td class="regime-score-value" data-label="Regime-balanced score">
+                        <td class="regime-score-value" data-label="Market-type score">
                           <strong>{scoreText(row.regimeBalancedScore)}</strong>
                           <span>{row.readyRegimesCovered}/{row.readyRegimesRequired} ready types</span>
                         </td>
-                        <td data-label="Ready market scores">
+                        <td data-label="Ready market type scores">
                           <div class="regime-score-strip">
                             {row.regimeScores.map((score) => (
                               <span>
@@ -1023,8 +1070,7 @@ const auditRows = regimeRounds
         <h2 id="balanced-sample-title">What happens when each market type has a fair sample?</h2>
         <p>
           This stricter benchmark waits for at least {BALANCED_SAMPLE_THRESHOLD} down, {BALANCED_SAMPLE_THRESHOLD} flat,
-          and {BALANCED_SAMPLE_THRESHOLD} up rounds. When ready, it uses the same number of recent rounds from each
-          category.
+          and {BALANCED_SAMPLE_THRESHOLD} up rounds. When ready, it compares the same number from each type.
         </p>
       </div>
 
@@ -1052,6 +1098,11 @@ const auditRows = regimeRounds
                     <strong>
                       {category.count}<small>/{BALANCED_SAMPLE_THRESHOLD}</small>
                     </strong>
+                    <i
+                      class="balanced-sample-progress"
+                      style={`--sample-progress: ${Math.min(100, (category.count / BALANCED_SAMPLE_THRESHOLD) * 100)}%;`}
+                      aria-hidden="true"
+                    ></i>
                     <em>{category.rangeLabel}</em>
                     <p>
                       {sample.status === "Ready"
@@ -1140,7 +1191,7 @@ const auditRows = regimeRounds
       <div class="regime-section-head">
         <span class="panel-kicker">Audit table</span>
         <h2 id="regime-rounds-title">Which rounds are included?</h2>
-        <p>Every row below is a resolved official round with a final S&amp;P 500 return.</p>
+        <p>Showing the latest 10 resolved official rounds. Open the full audit for every included round.</p>
       </div>
 
       <div class="table-shell regime-table-shell">
@@ -1158,7 +1209,7 @@ const auditRows = regimeRounds
             </tr>
           </thead>
           <tbody>
-            {auditRows.map((row) => (
+            {visibleAuditRows.map((row) => (
               <tr>
                 <td data-label="Round">
                   <a href={`/rounds/${row.round.round_id}`}>{row.round.round_id}</a>
@@ -1175,6 +1226,44 @@ const auditRows = regimeRounds
           </tbody>
         </table>
       </div>
+
+      {hiddenAuditRows.length > 0 && (
+        <details class="regime-audit-details">
+          <summary>View full audit table <span>{auditRows.length} rounds</span></summary>
+          <div class="table-shell regime-table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>Round</th>
+                  <th>Track</th>
+                  <th>Window</th>
+                  <th>S&amp;P 500 return</th>
+                  <th>Market type</th>
+                  <th>Avg model alpha</th>
+                  <th>Hit rate</th>
+                  <th>Models</th>
+                </tr>
+              </thead>
+              <tbody>
+                {hiddenAuditRows.map((row) => (
+                  <tr>
+                    <td data-label="Round">
+                      <a href={`/rounds/${row.round.round_id}`}>{row.round.round_id}</a>
+                    </td>
+                    <td data-label="Track">{trackLabel(row.track)}</td>
+                    <td data-label="Window">{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
+                    <td data-label="S&P 500 return">{signedPctText(row.sp500Return)}</td>
+                    <td data-label="Market type">{row.regime.label}</td>
+                    <td data-label="Avg model alpha">{signedPctText(row.averageAlpha)}</td>
+                    <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
+                    <td data-label="Models">{row.modelCount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      )}
     </section>
   </section>
 </BaseLayout>

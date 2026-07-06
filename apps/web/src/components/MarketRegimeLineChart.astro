@@ -12,6 +12,7 @@ type ChartSeries = {
   color: string;
   points: ChartPoint[];
   pointsAttr: string;
+  isLead?: boolean;
 };
 
 type ChartMarker = {
@@ -32,6 +33,7 @@ type MarketRegimeLineChart = {
 
 const { chart } = Astro.props as { chart: MarketRegimeLineChart };
 const hasData = chart.series.some((series) => series.points.length > 0);
+const hasExplicitLead = chart.series.some((series) => series.isLead);
 const chartTitleId = `${chart.id}-title`;
 const chartDescId = `${chart.id}-desc`;
 ---
@@ -79,10 +81,18 @@ const chartDescId = `${chart.id}-desc`;
             </text>
           </g>
         )}
-        {chart.series.map((series) => (
-          <g>
+        {chart.series.map((series) => {
+          const isLead = hasExplicitLead ? series.isLead === true : chart.series.length === 1;
+          const lastPoint = series.points[series.points.length - 1];
+          return (
+          <g class:list={[{ "regime-chart-series-muted": hasExplicitLead && !isLead }]}>
             {series.points.length > 1 && (
-              <polyline points={series.pointsAttr} fill="none" stroke={series.color} class="regime-chart-line" />
+              <polyline
+                points={series.pointsAttr}
+                fill="none"
+                stroke={series.color}
+                class:list={["regime-chart-line", { "regime-chart-line-lead": isLead }]}
+              />
             )}
             {series.points.map((point) => (
               <g>
@@ -90,8 +100,19 @@ const chartDescId = `${chart.id}-desc`;
                 <title>{`${series.label}, ${point.label}: ${point.valueLabel}`}</title>
               </g>
             ))}
+            {hasExplicitLead && isLead && lastPoint && (
+              <text
+                x={lastPoint.x > 540 ? lastPoint.x - 8 : lastPoint.x + 8}
+                y={Math.max(16, lastPoint.y - 8)}
+                text-anchor={lastPoint.x > 540 ? "end" : "start"}
+                class="regime-chart-leader-label"
+              >
+                Leader
+              </text>
+            )}
           </g>
-        ))}
+          );
+        })}
       </svg>
     ) : (
       <div class="regime-line-chart-empty">More scored rounds are needed for a trend line.</div>
