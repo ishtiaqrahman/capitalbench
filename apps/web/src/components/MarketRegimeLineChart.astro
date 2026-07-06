@@ -1,0 +1,106 @@
+---
+type ChartPoint = {
+  x: number;
+  y: number;
+  label: string;
+  valueLabel: string;
+};
+
+type ChartSeries = {
+  key: string;
+  label: string;
+  color: string;
+  points: ChartPoint[];
+  pointsAttr: string;
+};
+
+type ChartMarker = {
+  label: string;
+  y: number;
+};
+
+type MarketRegimeLineChart = {
+  id: string;
+  title: string;
+  description: string;
+  minLabel: string;
+  maxLabel: string;
+  series: ChartSeries[];
+  baseline?: ChartMarker;
+  threshold?: ChartMarker;
+};
+
+const { chart } = Astro.props as { chart: MarketRegimeLineChart };
+const hasData = chart.series.some((series) => series.points.length > 0);
+const chartTitleId = `${chart.id}-title`;
+const chartDescId = `${chart.id}-desc`;
+---
+
+<div class="regime-line-chart">
+  <div class="regime-line-chart-head">
+    <div>
+      <h4>{chart.title}</h4>
+      <p>{chart.description}</p>
+    </div>
+    <div class="regime-line-chart-scale" aria-hidden="true">
+      <span>{chart.maxLabel}</span>
+      <span>{chart.minLabel}</span>
+    </div>
+  </div>
+
+  <div class="regime-line-chart-frame">
+    {hasData ? (
+      <svg viewBox="0 0 640 190" role="img" aria-labelledby={`${chartTitleId} ${chartDescId}`}>
+        <title id={chartTitleId}>{chart.title}</title>
+        <desc id={chartDescId}>{chart.description}</desc>
+        <defs>
+          <linearGradient id={`${chart.id}-surface`} x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+            <stop offset="100%" stop-color="#e8f4f1" stop-opacity="0.82" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="640" height="190" rx="12" fill={`url(#${chart.id}-surface)`} />
+        <line x1="42" x2="610" y1="30" y2="30" class="regime-chart-grid-line" />
+        <line x1="42" x2="610" y1="94" y2="94" class="regime-chart-grid-line" />
+        <line x1="42" x2="610" y1="158" y2="158" class="regime-chart-grid-line" />
+        {chart.baseline && (
+          <g>
+            <line x1="42" x2="610" y1={chart.baseline.y} y2={chart.baseline.y} class="regime-chart-baseline" />
+            <text x="610" y={chart.baseline.y - 6} class="regime-chart-marker-label" text-anchor="end">
+              {chart.baseline.label}
+            </text>
+          </g>
+        )}
+        {chart.threshold && (
+          <g>
+            <line x1="42" x2="610" y1={chart.threshold.y} y2={chart.threshold.y} class="regime-chart-threshold" />
+            <text x="610" y={chart.threshold.y - 6} class="regime-chart-marker-label" text-anchor="end">
+              {chart.threshold.label}
+            </text>
+          </g>
+        )}
+        {chart.series.map((series) => (
+          <g>
+            {series.points.length > 1 && (
+              <polyline points={series.pointsAttr} fill="none" stroke={series.color} class="regime-chart-line" />
+            )}
+            {series.points.map((point) => (
+              <g>
+                <circle cx={point.x} cy={point.y} r="4.4" fill={series.color} class="regime-chart-point" />
+                <title>{`${series.label}, ${point.label}: ${point.valueLabel}`}</title>
+              </g>
+            ))}
+          </g>
+        ))}
+      </svg>
+    ) : (
+      <div class="regime-line-chart-empty">More scored rounds are needed for a trend line.</div>
+    )}
+  </div>
+
+  <div class="regime-line-chart-legend" aria-label={`${chart.title} legend`}>
+    {chart.series.map((series) => (
+      <span style={`--series-color: ${series.color};`}>{series.label}</span>
+    ))}
+  </div>
+</div>

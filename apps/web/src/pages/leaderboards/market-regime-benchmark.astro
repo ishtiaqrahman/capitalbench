@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import MarketRegimeLineChart from "../../components/MarketRegimeLineChart.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import { modelLabel, providerLabel, type LeaderboardRecord, type RoundRecord } from "../../data/fallback";
 import { cumulativeCapitalBenchScore } from "../../lib/capitalBenchScore.js";
@@ -111,8 +112,56 @@ type BalancedSampleTrack = {
   leaderboard: BalancedSampleLeaderboardRow[];
 };
 
+type ChartValueFormat = "percent" | "score" | "count";
+
+type RawChartPoint = {
+  label: string;
+  value: number;
+};
+
+type RawChartSeries = {
+  key: string;
+  label: string;
+  color: string;
+  points: RawChartPoint[];
+};
+
+type LineChart = {
+  id: string;
+  title: string;
+  description: string;
+  minLabel: string;
+  maxLabel: string;
+  series: Array<{
+    key: string;
+    label: string;
+    color: string;
+    points: Array<{
+      x: number;
+      y: number;
+      label: string;
+      valueLabel: string;
+    }>;
+    pointsAttr: string;
+  }>;
+  baseline?: {
+    label: string;
+    y: number;
+  };
+  threshold?: {
+    label: string;
+    y: number;
+  };
+};
+
 const READY_ROUND_THRESHOLD = 3;
 const BALANCED_SAMPLE_THRESHOLD = 3;
+const CHART_WIDTH = 640;
+const CHART_HEIGHT = 190;
+const CHART_LEFT = 42;
+const CHART_RIGHT = 30;
+const CHART_TOP = 30;
+const CHART_BOTTOM = 32;
 
 const regimeDefinitions: Record<BenchmarkTrack, RegimeDefinition[]> = {
   weekly: [
@@ -213,12 +262,102 @@ function signedPctText(value: number | undefined): string {
   return value > 0 ? `+${formatted}` : formatted;
 }
 
+function chartValueText(value: number, format: ChartValueFormat): string {
+  if (format === "percent") {
+    const sign = value > 0 ? "+" : "";
+    return `${sign}${value.toFixed(1)}%`;
+  }
+  if (format === "count") return Math.round(value).toString();
+  return value.toFixed(1);
+}
+
+function chartY(value: number, min: number, max: number): number {
+  if (max === min) return CHART_TOP + (CHART_HEIGHT - CHART_TOP - CHART_BOTTOM) / 2;
+  const usableHeight = CHART_HEIGHT - CHART_TOP - CHART_BOTTOM;
+  return CHART_TOP + (max - value) / (max - min) * usableHeight;
+}
+
+function chartBounds(values: number[], options?: { includeZero?: boolean; threshold?: number; floorZero?: boolean }) {
+  const boundedValues = values.slice();
+  if (options?.includeZero) boundedValues.push(0);
+  if (finiteNumber(options?.threshold)) boundedValues.push(options.threshold);
+
+  let min = boundedValues.length ? Math.min(...boundedValues) : 0;
+  let max = boundedValues.length ? Math.max(...boundedValues) : 1;
+  if (options?.floorZero) min = Math.min(0, min);
+
+  if (min === max) {
+    min -= 1;
+    max += 1;
+  } else if (!options?.floorZero) {
+    const padding = (max - min) * 0.12;
+    min -= padding;
+    max += padding;
+  } else {
+    max += Math.max(1, (max - min) * 0.16);
+  }
+
+  return { min, max };
+}
+
+function buildLineChart(options: {
+  id: string;
+  title: string;
+  description: string;
+  format: ChartValueFormat;
+  series: RawChartSeries[];
+  includeZero?: boolean;
+  threshold?: { value: number; label: string };
+  floorZero?: boolean;
+}): LineChart {
+  const values = options.series.flatMap((series) => series.points.map((point) => point.value)).filter(finiteNumber);
+  const bounds = chartBounds(values, {
+    includeZero: options.includeZero,
+    threshold: options.threshold?.value,
+    floorZero: options.floorZero
+  });
+  const xSpan = CHART_WIDTH - CHART_LEFT - CHART_RIGHT;
+
+  return {
+    id: options.id,
+    title: options.title,
+    description: options.description,
+    minLabel: chartValueText(bounds.min, options.format),
+    maxLabel: chartValueText(bounds.max, options.format),
+    series: options.series.map((series) => {
+      const denominator = Math.max(1, series.points.length - 1);
+      const points = series.points.map((point, index) => ({
+        x: CHART_LEFT + (index / denominator) * xSpan,
+        y: chartY(point.value, bounds.min, bounds.max),
+        label: point.label,
+        valueLabel: chartValueText(point.value, options.format)
+      }));
+      return {
+        ...series,
+        points,
+        pointsAttr: points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ")
+      };
+    }),
+    baseline:
+      options.includeZero && bounds.min <= 0 && bounds.max >= 0
+        ? { label: "0", y: chartY(0, bounds.min, bounds.max) }
+        : undefined,
+    threshold: options.threshold
+      ? { label: options.threshold.label, y: chartY(options.threshold.value, bounds.min, bounds.max) }
+      : undefined
+  };
+}
+
 function statusClass(status: string): string {
   return status.toLowerCase().replaceAll(" ", "-");
 }
 
 function trackLabel(track: BenchmarkTrack): string {
   return track === "weekly" ? "Weekly" : "Monthly";
+}
+
+function roundSortKey(round: RoundRecord): string {
+  return `${round.exit_date ?? ""}:${round.decision_deadline_utc ?? ""}:${round.round_id}`;
 }
 
 function roundRecencySort(left: RegimeRound, right: RegimeRound): number {
@@ -527,6 +666,139 @@ const balancedSamples = {
   monthly: buildBalancedSample("monthly")
 };
 
+const scorePathColors = ["#006b5f", "#1e476f", "#b45335", "#80520a"];
+const sampleCategoryColors: Record<SampleCategoryKey, string> = {
+  down: "#b45335",
+  flat: "#64748b",
+  up: "#006b5f"
+};
+
+function chronologicalRounds(track: BenchmarkTrack): RegimeRound[] {
+  return regimeRounds
+    .filter((round) => round.track === track)
+    .slice()
+    .sort((left, right) => roundSortKey(left.round).localeCompare(roundSortKey(right.round)));
+}
+
+function roundChartLabel(round: RegimeRound): string {
+  return dateOnly(round.round.exit_date) || round.round.round_id;
+}
+
+function buildSp500MovementChart(track: BenchmarkTrack): LineChart {
+  const rounds = chronologicalRounds(track);
+  return buildLineChart({
+    id: `${track}-sp500-regime-path`,
+    title: `${trackLabel(track)} S&P 500 movement`,
+    description: "Each point is one completed scored round, grouped into the market types below.",
+    format: "percent",
+    includeZero: true,
+    series: [
+      {
+        key: "sp500",
+        label: "S&P 500 return",
+        color: "#006b5f",
+        points: rounds.map((round) => ({
+          label: roundChartLabel(round),
+          value: round.sp500Return * 100
+        }))
+      }
+    ]
+  });
+}
+
+function buildLeaderboardScorePathChart(track: BenchmarkTrack): LineChart {
+  const rounds = chronologicalRounds(track);
+  const topRows = leaderboards[track].filter((row) => finiteNumber(row.regimeBalancedScore)).slice(0, 4);
+  return buildLineChart({
+    id: `${track}-regime-score-path`,
+    title: `${trackLabel(track)} top score path`,
+    description: "Cumulative score movement for the current top regime-balanced models.",
+    format: "score",
+    includeZero: true,
+    series: topRows.map((row, index) => {
+      const returns: number[] = [];
+      const maxReturns: number[] = [];
+      const points: RawChartPoint[] = [];
+
+      for (const round of rounds) {
+        const modelRound = round.leaderboard.find((item) => item.model_id === row.modelId);
+        const returnValue = modelRound ? leaderboardReturn(modelRound) : undefined;
+        if (!finiteNumber(returnValue)) continue;
+
+        returns.push(returnValue);
+        maxReturns.push(round.maxPossibleReturn);
+        const score = cumulativeCapitalBenchScore(returns, maxReturns);
+        if (finiteNumber(score)) {
+          points.push({
+            label: roundChartLabel(round),
+            value: score
+          });
+        }
+      }
+
+      return {
+        key: row.modelId,
+        label: row.label,
+        color: scorePathColors[index % scorePathColors.length],
+        points
+      };
+    })
+  });
+}
+
+function buildBalancedProgressChart(track: BenchmarkTrack): LineChart {
+  const rounds = chronologicalRounds(track);
+  const counts = new Map<SampleCategoryKey, number>(sampleCategoryDefinitions[track].map((category) => [category.key, 0]));
+  const pointsByCategory = new Map<SampleCategoryKey, RawChartPoint[]>(
+    sampleCategoryDefinitions[track].map((category) => [category.key, []])
+  );
+
+  for (const round of rounds) {
+    const category = classifySampleCategory(track, round.sp500Return);
+    counts.set(category.key, (counts.get(category.key) ?? 0) + 1);
+    const label = roundChartLabel(round);
+    for (const definition of sampleCategoryDefinitions[track]) {
+      pointsByCategory.get(definition.key)?.push({
+        label,
+        value: counts.get(definition.key) ?? 0
+      });
+    }
+  }
+
+  return buildLineChart({
+    id: `${track}-balanced-sample-progress`,
+    title: `${trackLabel(track)} sample balance progress`,
+    description: "Down, flat, and up round counts as the scored sample grows.",
+    format: "count",
+    floorZero: true,
+    threshold: {
+      value: BALANCED_SAMPLE_THRESHOLD,
+      label: `${BALANCED_SAMPLE_THRESHOLD} needed`
+    },
+    series: sampleCategoryDefinitions[track].map((category) => ({
+      key: category.key,
+      label: category.label,
+      color: sampleCategoryColors[category.key],
+      points: pointsByCategory.get(category.key) ?? []
+    }))
+  });
+}
+
+const sp500MovementCharts = {
+  weekly: buildSp500MovementChart("weekly"),
+  monthly: buildSp500MovementChart("monthly")
+};
+
+const leaderboardScorePathCharts = {
+  weekly: buildLeaderboardScorePathChart("weekly"),
+  monthly: buildLeaderboardScorePathChart("monthly")
+};
+
+const balancedProgressCharts = {
+  weekly: buildBalancedProgressChart("weekly"),
+  monthly: buildBalancedProgressChart("monthly")
+};
+
 const trackSummaries = (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
   const coverage = coverageByTrack[track];
   const readyCount = coverage.filter((item) => item.status === "Ready").length;
@@ -635,6 +907,7 @@ const auditRows = regimeRounds
                   {confidence.label}
                 </strong>
               </div>
+              <MarketRegimeLineChart chart={sp500MovementCharts[track]} />
               <div class="regime-coverage-grid">
                 {coverageByTrack[track].map((regime) => (
                   <article class:list={["regime-coverage-card", `regime-card-${regime.key}`]}>
@@ -679,6 +952,7 @@ const auditRows = regimeRounds
                 {trackConfidence(track).label}
               </span>
             </div>
+            <MarketRegimeLineChart chart={leaderboardScorePathCharts[track]} />
             <div class="table-shell regime-table-shell">
               <table>
                 <thead>
@@ -696,7 +970,7 @@ const auditRows = regimeRounds
                   {leaderboards[track].length ? (
                     leaderboards[track].map((row, index) => (
                       <tr>
-                        <td>
+                        <td data-label="Model">
                           <div class="regime-model-cell">
                             <span>{index + 1}</span>
                             {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
@@ -706,11 +980,11 @@ const auditRows = regimeRounds
                             </div>
                           </div>
                         </td>
-                        <td class="regime-score-value">
+                        <td class="regime-score-value" data-label="Regime-balanced score">
                           <strong>{scoreText(row.regimeBalancedScore)}</strong>
                           <span>{row.readyRegimesCovered}/{row.readyRegimesRequired} ready types</span>
                         </td>
-                        <td>
+                        <td data-label="Ready market scores">
                           <div class="regime-score-strip">
                             {row.regimeScores.map((score) => (
                               <span>
@@ -720,10 +994,10 @@ const auditRows = regimeRounds
                             ))}
                           </div>
                         </td>
-                        <td>{scoreText(row.allRoundScore)}</td>
-                        <td>{signedPctText(row.averageAlpha)}</td>
-                        <td>{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
-                        <td>
+                        <td data-label="All-round score">{scoreText(row.allRoundScore)}</td>
+                        <td data-label="Avg alpha vs S&P">{signedPctText(row.averageAlpha)}</td>
+                        <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
+                        <td data-label="Status">
                           <span class:list={["regime-status", `regime-status-${statusClass(row.status)}`]}>
                             {row.status}
                           </span>
@@ -732,7 +1006,7 @@ const auditRows = regimeRounds
                     ))
                   ) : (
                     <tr>
-                      <td colspan="7">No ready market types yet.</td>
+                      <td colspan="7" data-label="Status">No ready market types yet.</td>
                     </tr>
                   )}
                 </tbody>
@@ -769,6 +1043,7 @@ const auditRows = regimeRounds
                   {sample.status}
                 </span>
               </div>
+              <MarketRegimeLineChart chart={balancedProgressCharts[track]} />
 
               <div class="balanced-sample-counts" aria-label={`${trackLabel(track)} balanced sample category counts`}>
                 {sample.categories.map((category) => (
@@ -816,7 +1091,7 @@ const auditRows = regimeRounds
                       <tbody>
                         {sample.leaderboard.map((row, index) => (
                           <tr>
-                            <td>
+                            <td data-label="Model">
                               <div class="regime-model-cell">
                                 <span>{index + 1}</span>
                                 {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
@@ -826,16 +1101,16 @@ const auditRows = regimeRounds
                                 </div>
                               </div>
                             </td>
-                            <td class="regime-score-value">
+                            <td class="regime-score-value" data-label="Balanced sample score">
                               <strong>{scoreText(row.score)}</strong>
                               <span>Equal down / flat / up sample</span>
                             </td>
-                            <td>{signedPctText(row.averageAlpha)}</td>
-                            <td>{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
-                            <td>
+                            <td data-label="Avg alpha vs S&P">{signedPctText(row.averageAlpha)}</td>
+                            <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
+                            <td data-label="Tests">
                               {row.testsIncluded}/{row.testsRequired}
                             </td>
-                            <td>
+                            <td data-label="Status">
                               <span class:list={["regime-status", `regime-status-${statusClass(row.status)}`]}>
                                 {row.status}
                               </span>
@@ -885,16 +1160,16 @@ const auditRows = regimeRounds
           <tbody>
             {auditRows.map((row) => (
               <tr>
-                <td>
+                <td data-label="Round">
                   <a href={`/rounds/${row.round.round_id}`}>{row.round.round_id}</a>
                 </td>
-                <td>{trackLabel(row.track)}</td>
-                <td>{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
-                <td>{signedPctText(row.sp500Return)}</td>
-                <td>{row.regime.label}</td>
-                <td>{signedPctText(row.averageAlpha)}</td>
-                <td>{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
-                <td>{row.modelCount}</td>
+                <td data-label="Track">{trackLabel(row.track)}</td>
+                <td data-label="Window">{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
+                <td data-label="S&P 500 return">{signedPctText(row.sp500Return)}</td>
+                <td data-label="Market type">{row.regime.label}</td>
+                <td data-label="Avg model alpha">{signedPctText(row.averageAlpha)}</td>
+                <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
+                <td data-label="Models">{row.modelCount}</td>
               </tr>
             ))}
           </tbody>
