@@ -1,6 +1,6 @@
 # CapitalBench Insights
 
-Generated at: `2026-07-07T01:00:23Z`
+Generated at: `2026-07-07T05:51:17Z`
 Data as of: `2026-07-06`
 Engine: `deterministic_insights_v1`
 
@@ -64,11 +64,11 @@ Why it matters: This shows whether models identified the eventual best asset bef
 
 Category: `oracle_comparison`
 
-## Live AI risk posture is balanced
+## Live AI risk posture is risk-seeking
 
 Context: Latest live portfolios · Live portfolios
 
-The newest live portfolios have a deterministic risk-taking score of 59.9 out of 100.
+The newest live portfolios have a deterministic risk-taking score of 78.1 out of 100.
 
 Why it matters: The score translates allocations into a common risk scale, so readers can see whether models are collectively leaning defensive, balanced, or aggressive.
 
@@ -84,11 +84,21 @@ Why it matters: Confidence calibration helps readers judge whether model self-re
 
 Category: `confidence_calibration`
 
+## Weekly and monthly AI portfolios both favor broad and cyclical equity
+
+Context: Latest live portfolios · Live portfolios
+
+The newest weekly portfolios allocate +54.17% to broad and cyclical equity, while the newest monthly portfolios allocate +64.17%.
+
+Why it matters: Agreement across horizons signals that the current model posture is not just a short-term tactical move.
+
+Category: `horizon_agreement`
+
 ## Model allocation styles are separating into clear behavior profiles
 
 Context: Model behavior profiles
 
-GPT-5.5 has the highest average risk-taking score at 85.9/100. Gemini 3.1 Pro has the largest average top holding at +39.71%. GPT-5.5 has the lowest measured turnover at +41.94%.
+GPT-5.5 has the highest average risk-taking score at 86.0/100. Gemini 3.1 Pro has the largest average top holding at +39.72%. GPT-5.5 has the lowest measured turnover at +42.94%.
 
 Why it matters: Behavior profiles help readers separate model style from short-term score noise: some models seek more risk, some concentrate harder, and some change portfolios less between rounds.
 
@@ -114,21 +124,11 @@ Why it matters: Attribution turns a model score into an explanation of which hol
 
 Category: `performance_attribution`
 
-## Weekly and monthly AI portfolios point to different regimes
-
-Context: Latest live portfolios · Live portfolios
-
-The newest weekly portfolios lean toward defensive equity, while the newest monthly portfolios lean toward broad and cyclical equity.
-
-Why it matters: A horizon split helps readers separate short-window positioning from the longer one-month model view.
-
-Category: `horizon_agreement`
-
 ## Monthly models are leaning into recent winners
 
-Context: Monthly live round · CB-2026-07-02-1M · Live portfolios
+Context: Monthly live round · CB-2026-07-06-1M · Live portfolios
 
-The newest monthly portfolios allocate +87.50% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).
+The newest monthly portfolios allocate +93.33% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).
 
 Why it matters: This measures whether models are chasing recent momentum or allocating away from it before outcomes are known.
 
@@ -136,19 +136,19 @@ Category: `model_behavior`
 
 ## Weekly models are leaning into recent winners
 
-Context: Weekly live round · CB-2026-07-02-1W · Live portfolios
+Context: Weekly live round · CB-2026-07-06-1W · Live portfolios
 
-The newest weekly portfolios allocate +84.17% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).
+The newest weekly portfolios allocate +72.50% to the top 20% of assets by prior 30-day return. The strongest 30-day asset in the input table was Biotechnology (XBI).
 
 Why it matters: This measures whether models are chasing recent momentum or allocating away from it before outcomes are known.
 
 Category: `model_behavior`
 
-## Live AI portfolios are concentrated in Healthcare Sector (XLV)
+## Live AI portfolios are concentrated in Financials Sector (XLF)
 
 Context: Latest live portfolios · Live portfolios
 
-Across the newest live weekly and monthly portfolios, Healthcare Sector (XLV) is the largest aggregate allocation at +26.67%.
+Across the newest live weekly and monthly portfolios, Financials Sector (XLF) is the largest aggregate allocation at +20.83%.
 
 Why it matters: This shows the current crowding point in model capital allocation, before the open rounds receive their final market scores.
 
@@ -168,7 +168,7 @@ Category: `live_performance`
 
 Context: Latest live portfolios · Live portfolios
 
-The closest live allocation pair is Claude Opus 4.7 and Claude Opus 4.8 with +89.00% cosine similarity. The current allocation outlier is Gemini 3.1 Pro.
+The closest live allocation pair is Claude Opus 4.7 and Claude Opus 4.8 with +84.78% cosine similarity. The current allocation outlier is Gemini 3.1 Pro.
 
 Why it matters: Similarity analysis shows whether models are independently converging on the same portfolio or expressing meaningfully different capital-allocation behavior.
 
