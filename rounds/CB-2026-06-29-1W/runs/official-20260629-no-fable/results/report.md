@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-06-29-1W / official-20260629-no-fable
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-06-29-1W
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-20260629-no-fable
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench CB-2026-06-29-1W
+- Description: One-week market allocation evaluation round.
+- Decision date: 2026-06-29
 - Decision deadline: 2026-06-30T03:30:00Z
 - Horizon: one week
-- Official run ID: official-20260629-no-fable
-- Mock: no
+- Entry date: 2026-06-29
+- Exit date: 2026-07-06
+- Entry rule: Use the official entry prices supplied in prices/entry_prices.csv.
+- Exit rule: Use the official exit prices supplied in prices/exit_prices.csv.
+- Options: 70
 
 ## Model Decisions
 
@@ -93,25 +108,84 @@
 | MOMENTUM | US Momentum Equities | 336.0 | 321.7099914550781 | -0.04252978733607704 | 69 |
 | SEMICONDUCTORS | Semiconductors | 631.97998046875 | 604.2999877929688 | -0.04379884415840285 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| anthropic-claude-opus-4-8 | portfolio | HEALTHCARE | 5 | 0.55 | 0.007589904062526687 | 0.0026982027024587693 | -0.011174981233944697 | 0.10432796178922268 |  | False | True |
-| anthropic-claude-opus-4-7 | portfolio | HEALTHCARE | 5 | 0.6 | 0.007589904062526687 | -0.005638976116492633 | -0.019512160052896098 | 0.11266514060817409 |  | False | False |
-| google-gemini-3-1-pro | portfolio | SEMICONDUCTORS | 3 | 0.65 | -0.04379884415840285 | -0.013031603731419594 | -0.02690478766782306 | 0.12005776822310105 |  | False | False |
-| openai-gpt-5-5 | portfolio | SEMICONDUCTORS | 5 | 0.57 | -0.04379884415840285 | -0.014340726442426593 | -0.02821391037883006 | 0.12136689093410805 |  | False | False |
-| xai-grok-4-3 | portfolio | NASDAQ100 | 3 | 0.65 | -0.0017401526570075543 | -0.015505945387092507 | -0.029379129323495973 | 0.12253210987877396 |  | False | False |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-opus-4-7 | HEALTHCARE | 30.0 | 0.007589904062526687 | 0.002276971218758006 | Strong recent leadership with defensive characteristics; XBI biotech strength and sector breadth ahead of holiday-shortened week. |
+| anthropic-claude-opus-4-7 | MID_CAP | 20.0 | -0.001437352830342964 | -0.0002874705660685928 | Mid-caps near 52w highs with solid macro (Q1 GDP revised up, claims falling, PMIs expanding) and lower vol than small caps. |
+| anthropic-claude-opus-4-7 | EQUAL_WEIGHT_SP500 | 20.0 | 0.00915276658207076 | 0.001830553316414152 | Broad participation play after mega-cap AI volatility; benefits from broadening rally with lower concentration risk. |
+| anthropic-claude-opus-4-7 | SEMICONDUCTORS | 15.0 | -0.04379884415840285 | -0.006569826623760427 | Micron blowout guide ($50B Q4, 86% GM) signals memory cycle still accelerating; HBM demand outpacing supply through 2027. |
+| anthropic-claude-opus-4-7 | LONG_TREASURY | 15.0 | -0.019261356412238473 | -0.002889203461835771 | Hedge against equity reversal; benefits if payrolls/JOLTS soften and yields drift lower into July FOMC. |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 30.0 | 0.007589904062526687 | 0.002276971218758006 | Strong recent breadth and leadership (+7.1% 7d, +9.8% vs SPX 30d), low beta defensive sector at 52w high with positive momentum into a busy macro data week. |
+| anthropic-claude-opus-4-8 | BIOTECH | 20.0 | 0.015791801140510486 | 0.0031583602281020974 | Best recent performer (+8.5% 7d, +17.7% vs SPX 30d) with high up-day share; healthcare/biotech rotation supported by independent sector strength, not price alone. |
+| anthropic-claude-opus-4-8 | INDUSTRIALS | 15.0 | 0.015320656248176245 | 0.0022980984372264366 | Solid breadth (+5.8% 30d), supported by improving flash PMI manufacturing output at 59-month high; cyclical participation with moderate beta. |
+| anthropic-claude-opus-4-8 | SEMICONDUCTORS | 15.0 | -0.04379884415840285 | -0.006569826623760427 | Micron blowout guidance ($50B revenue, ~86% GM) signals memory demand exceeding supply; near-term AI chip catalyst despite high volatility. |
+| anthropic-claude-opus-4-8 | LOW_VOL | 20.0 | 0.007672997210663279 | 0.001534599442132656 | Defensive ballast (+3.2% 7d, beta 0.07) ahead of JOLTS, ISM, and the July 2 jobs report which fall inside the scoring window. |
+| google-gemini-3-1-pro | SEMICONDUCTORS | 50.0 | -0.04379884415840285 | -0.021899422079201425 | Micron's strong earnings, positive guidance, and commentary on memory demand exceeding supply provide a clear near-term catalyst for the semiconductor sector. |
+| google-gemini-3-1-pro | COMMUNICATIONS | 25.0 | 0.021598089454723857 | 0.005399522363680964 | Alphabet's inclusion in the Dow and the sector's reported strength during the June 29 session offer positive near-term sentiment. |
+| google-gemini-3-1-pro | SP500 | 25.0 | 0.013873183936403466 | 0.0034682959841008665 | Provides diversified baseline exposure to the broader market while targeted sector bets play out. |
+| openai-gpt-5-5 | SEMICONDUCTORS | 45.0 | -0.04379884415840285 | -0.01970947987128128 | Micron's exceptionally strong reported results, guidance, and comments that memory demand is running ahead of supply provide a near-term fundamental catalyst for AI-linked semiconductor sentiment, despite very high volatility and reversal risk after large prior gains. |
+| openai-gpt-5-5 | BIOTECH | 20.0 | 0.015791801140510486 | 0.0031583602281020974 | Biotech has shown strong recent relative strength and healthcare is at a 52-week high in the supplied data; independent near-term support is limited, but the group can benefit from risk appetite while being less directly tied to rates than long-duration tech. |
+| openai-gpt-5-5 | REGIONAL_BANKS | 15.0 | 0.010836120401337856 | 0.0016254180602006784 | Regional banks have recent relative strength with high up-day participation, and the solid macro and claims backdrop may support domestic cyclicals if this week's labor data avoid a growth scare. |
+| openai-gpt-5-5 | NASDAQ100 | 10.0 | -0.0017401526570075543 | -0.00017401526570075544 | Nasdaq and AI-linked stocks rebounded on June 29 after a five-day losing streak, and large growth exposure should benefit if the risk-on bounce continues into the holiday-shortened week. |
+| openai-gpt-5-5 | HEALTHCARE | 10.0 | 0.007589904062526687 | 0.0007589904062526687 | Healthcare has strong recent performance, lower beta than the S&P 500, and a 52-week-high position, offering participation in sector momentum with some ballast against a reversal in high-beta technology. |
+| xai-grok-4-3 | NASDAQ100 | 40.0 | -0.0017401526570075543 | -0.0006960610628030218 | Rebound in AI-linked stocks and Nasdaq on June 29 after prior weakness, supported by strong Micron earnings and guidance indicating sustained memory demand. |
+| xai-grok-4-3 | SEMICONDUCTORS | 35.0 | -0.04379884415840285 | -0.015329595455440997 | Micron fiscal Q3 results and Q4 guidance highlight demand exceeding supply through 2027, with HBM4 in high-volume production. |
+| xai-grok-4-3 | SMALL_VALUE | 25.0 | 0.0020788445246060494 | 0.0005197111311515124 | Positive 7-day return amid solid macro data including upward GDP revision and strong flash PMI readings. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 5 | 0.55 | 0.007589904062526687 | 0.0026982027024587693 | -0.011174981233944697 | 0.10432796178922268 |  | False | True |
+| anthropic-claude-opus-4-7 | HEALTHCARE | 5 | 0.6 | 0.007589904062526687 | -0.005638976116492633 | -0.019512160052896098 | 0.11266514060817409 |  | False | False |
+| google-gemini-3-1-pro | SEMICONDUCTORS | 3 | 0.65 | -0.04379884415840285 | -0.013031603731419594 | -0.02690478766782306 | 0.12005776822310105 |  | False | False |
+| openai-gpt-5-5 | SEMICONDUCTORS | 5 | 0.57 | -0.04379884415840285 | -0.014340726442426593 | -0.02821391037883006 | 0.12136689093410805 |  | False | False |
+| xai-grok-4-3 | NASDAQ100 | 3 | 0.65 | -0.0017401526570075543 | -0.015505945387092507 | -0.029379129323495973 | 0.12253210987877396 |  | False | False |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | 73765871e99df8b3698748a0947e5d669444b0b9ccaa2c481d82ab979927242e |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | 66320ebc013af445c33450b3005ec684487d06b5bca45c52a3ff9e8e24373e4c |
+| manifest.yaml | a2801398a3d1e92f2c2887aa498452789a4885d075fbe8ad2acfed94fdc687ea |
+| market_data/universe_trailing_returns.csv | c0937e790244709e8e76b1ac70bf45e07da98eef8d36b4849f6ddd7fda1cef3d |
+| market_data/universe_trailing_returns.md | ecc7c68b2d5f32fdd96dc2de8c4c7c8c4528b2232c02ba17d9ea0117ad289d08 |
+| market_data/universe_trailing_returns.json | 7da1345fbf9dd088b0d276a9211e6ee827a7f2f5456080c0e163254cfc297187 |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | 68ea14f7cdf7ce35eb687d4ec9be8a27bbecd2dc2b1155c78d0e438cff3e84ab | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | 4707ce1223ffd1865d3864f299dfbe7baefaaff92c12f892dcf64bfa3945a86b | yes |
+| Final briefing | research/final_briefing.md | model-facing | 73765871e99df8b3698748a0947e5d669444b0b9ccaa2c481d82ab979927242e | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-06-30-1W has no scored official run.
-- Round CB-2026-07-01-1W has no scored official run.
-- Round CB-2026-07-02-1W has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.
