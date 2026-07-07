@@ -1,0 +1,52 @@
+{
+  "confidence": 0.5,
+  "is_official_score": true,
+  "key_risks": [
+    "TSMC or bank earnings disappoint versus elevated expectations, hitting SMH/EWT/XLF within the window",
+    "Hot June CPI (July 14) or hawkish FOMC on July 29 given 3.4% core PCE could compress high-beta tech multiples",
+    "Weak payrolls (+57k with negative revisions) could morph into growth-scare selloff hurting cyclicals and financials",
+    "Semiconductor and Taiwan positions are crowded after large trailing gains; reversal/positioning risk is elevated (SMH 30d vol ~66%)"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "AI capex cycle intact: Broadcom-Apple silicon deals, TSMC guiding strong Q2 with earnings July 16, SK Hynix capacity expansion, and ISM shortages in electronic/memory components signal demand exceeding supply."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "FINANCIALS",
+      "rationale": "Bank earnings kick off July 14 (JPM, WFC) into strong capital markets activity; recent strength supported by steady Fed policy and solid economic activity per FOMC statement."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "INDUSTRIALS",
+      "rationale": "ISM manufacturing at 53.3 with New Orders 56.0 shows expanding activity; defense demand (ITA strength) and broad cyclical support."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive with catalyst momentum via biotech strength; low beta ballast against soft labor data while still participating in rotation."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "TAIWAN",
+      "rationale": "TSMC-heavy exposure into its July 16 earnings with guidance of 65.5-67.5% gross margin and June monthly sales July 10; direct beneficiary of AI silicon demand cited across the briefing."
+    }
+  ],
+  "portfolio_rationale": "Overweight the AI semiconductor complex (SMH, EWT) into TSMC's July 16 earnings and strong silicon-demand datapoints, paired with financials into July 14 bank earnings and cyclical/defensive ballast in industrials and healthcare given weak payrolls and sticky inflation.",
+  "provider": "anthropic",
+  "rationale_summary": "Concentrated in AI-chip beneficiaries with confirmed near-window catalysts (TSMC earnings/sales, Broadcom-Apple deal, component shortages), balanced by financials into earnings and healthcare/industrials to manage beta.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-06-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 22596,
+    "latency_seconds": 17.98909479402937,
+    "output_tokens": 970,
+    "total_tokens": 23566
+  }
+}

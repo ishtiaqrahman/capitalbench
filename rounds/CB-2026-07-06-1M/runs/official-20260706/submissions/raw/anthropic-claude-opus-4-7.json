@@ -1,0 +1,52 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Bank earnings disappointment or CPI hotter-than-expected pressuring cyclicals",
+    "Mega-cap tech leadership resumes, causing equal-weight/value tilt to underperform SPY",
+    "Sector rotation reversal; recent industrials/financials strength could mean-revert",
+    "FOMC minutes/July 29 meeting introducing hawkish surprise hitting rate-sensitive sectors"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "option_id": "FINANCIALS",
+      "rationale": "Big bank earnings (JPM, WFC) July 14 with strong sector momentum; steep yield curve and low vol support."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "INDUSTRIALS",
+      "rationale": "Strong breadth, ISM Manufacturing still expansionary, low drawdown, high up-day share."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "Geopolitical tailwinds and strong recent breadth; 0% distance from 52w high with sustained defense spending."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with recent breakout, low beta 0.36 offering ballast against tech reversal risk."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broad breadth participation while cap-weighted index concentration risks a mega-cap pullback."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward cyclical value and defensives with strong breadth into big-bank earnings and CPI. Avoid stretched semis/AI after recent 7d weakness and quiet periods; equal-weight captures broadening rally.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight financials into JPM/WFC earnings, industrials/defense with strong breadth, healthcare for defensive ballast, and equal-weight SPX to diversify away mega-cap concentration risk.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-06-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 22605,
+    "latency_seconds": 13.341419212985784,
+    "output_tokens": 738,
+    "total_tokens": 23343
+  }
+}

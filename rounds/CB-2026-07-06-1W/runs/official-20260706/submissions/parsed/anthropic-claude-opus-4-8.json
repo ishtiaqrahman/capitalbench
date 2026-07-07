@@ -1,0 +1,53 @@
+{
+  "confidence": 0.58,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC minutes on July 8 could signal hawkish stance, pressuring rate-sensitive financials and cyclicals",
+    "Recent sector strength may reverse; momentum-heavy positioning faces rotation risk into defensives",
+    "Narrow index breadth (most stocks declining while index near highs) suggests fragile leadership",
+    "Financials at 52w high have limited cushion if credit or curve dynamics disappoint"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "FINANCIALS",
+      "rationale": "Strong recent breadth with +4.5% 7d and +7.7% 30d, at 52w high; steepening curve context and healthy banking sector momentum with supporting sector rotation."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "INDUSTRIALS",
+      "rationale": "At 52w high with broad participation (72% up days), solid ISM manufacturing/production, and cyclical strength; beta near 1 offers benchmark-plus without extreme volatility."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "Leading industry with +4.87% 7d, at 52w high, geopolitical tailwinds and defense budget support; positive relative strength beyond pure momentum."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive-cyclical mix with +6.3% 30d, at 52w high territory, low beta (0.36) cushions if market wobbles into FOMC minutes."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "SP500",
+      "rationale": "Core benchmark anchor to limit tracking error against the scoring benchmark over the one-week window."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward broadening cyclical leadership (financials, industrials, defense) at fresh highs with strong breadth, balanced by defensive healthcare and an SPY core anchor to control benchmark-relative risk through the FOMC minutes catalyst.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight cyclicals showing broad participation and 52w highs, with healthcare and SPY ballast for a one-week close-to-close window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-06-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 22031,
+    "latency_seconds": 12.307645548018627,
+    "output_tokens": 794,
+    "total_tokens": 22825
+  }
+}

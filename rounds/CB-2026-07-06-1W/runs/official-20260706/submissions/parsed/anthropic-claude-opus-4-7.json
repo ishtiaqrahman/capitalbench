@@ -1,0 +1,53 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC minutes read hawkish, hitting rate-sensitive financials and cyclicals",
+    "Mega-cap tech rebound leaves equal-weight/value tilt lagging SPY benchmark",
+    "Weaker payroll revisions signal deeper slowdown, hurting cyclicals",
+    "Oil/commodity weakness spills into risk sentiment"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "FINANCIALS",
+      "rationale": "Strongest sector momentum with soft payrolls supporting rate-cut hopes; ISM services employment turned positive, benign backdrop for banks."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "INDUSTRIALS",
+      "rationale": "ISM Manufacturing still expansionary, broad sector strength, high up-day share."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "Sustained defense spending and strong recent trend with high up-day share into a quiet catalyst week."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive with improving 30d relative performance; low beta cushions if mega-cap tech wobbles."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "AP noted most stocks declined despite index near ATH; equal-weight captures broadening participation."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward cyclical value (financials, industrials, defense) benefiting from soft-landing narrative post-weak payrolls and dovish FOMC minutes potential, balanced with healthcare defensiveness and equal-weight broadening exposure.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight financials/industrials/defense on catalyst mix (soft payrolls, ISM services employment recovery, FOMC minutes) with healthcare and RSP as ballast against mega-cap tech reversal risk highlighted by MTUM/SMH weekly drawdowns.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-06-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 22036,
+    "latency_seconds": 14.079736832994968,
+    "output_tokens": 749,
+    "total_tokens": 22785
+  }
+}
