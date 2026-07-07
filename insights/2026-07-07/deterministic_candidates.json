@@ -62,7 +62,7 @@
           "source": "rounds/CB-2026-06-05-1M/runs/official-20260605-r3/results"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
+      "generated_at": "2026-07-07T23:58:50Z",
       "id": "consensus-performance-CB-2026-06-05-1M",
       "importance_score": 92.0,
       "related": [
@@ -89,58 +89,58 @@
           "formula": "sum(average_model_allocation * asset_return)",
           "name": "consensus_portfolio_return",
           "unit": "percent",
-          "value": -0.9164
+          "value": -4.0223
         },
         {
           "formula": "average resolved model portfolio return",
           "name": "average_model_return",
           "unit": "percent",
-          "value": -0.9164
+          "value": -4.0223
         },
         {
           "formula": "100 * consensus_return / oracle_return",
           "name": "consensus_capitalbench_score",
           "unit": "points",
-          "value": -8.5622
+          "value": -29.522
         }
       ],
       "category": "consensus_performance",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-07-06",
-        "decision_date": "2026-06-29",
-        "entry_date": "2026-06-29",
-        "exit_date": "2026-07-06",
+        "data_as_of": "2026-07-07",
+        "decision_date": "2026-06-30",
+        "entry_date": "2026-06-30",
+        "exit_date": "2026-07-07",
         "model_count": 5,
         "oracle_asset": {
           "display": "Ethereum ETF (ETHA)",
           "name": "Ethereum ETF",
           "option_id": "ETHEREUM_ETF",
-          "return_pct": 10.7026,
+          "return_pct": 13.6249,
           "ticker": "ETHA"
         },
         "primary_label": "Weekly result",
         "result_count": 5,
-        "round_id": "CB-2026-06-29-1W",
-        "run_id": "official-20260629-no-fable",
+        "round_id": "CB-2026-06-30-1W",
+        "run_id": "official-20260630-no-fable-clean",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-07-06",
+      "data_as_of": "2026-07-07",
       "date": "2026-07-07",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-29-1W",
+          "href": "/rounds/CB-2026-06-30-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-06-29-1W/runs/official-20260629-no-fable/results"
+          "source": "rounds/CB-2026-06-30-1W/runs/official-20260630-no-fable-clean/results"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
-      "id": "consensus-performance-CB-2026-06-29-1W",
+      "generated_at": "2026-07-07T23:58:50Z",
+      "id": "consensus-performance-CB-2026-06-30-1W",
       "importance_score": 92.0,
       "related": [
         {
@@ -150,8 +150,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "If the weekly model allocations were averaged into one consensus portfolio, it returned -0.92% versus +1.39% for the S&P 500 and +10.70% for the hindsight best asset.",
-      "title": "AI consensus portfolio scored -8.6 versus the oracle",
+      "summary": "If the weekly model allocations were averaged into one consensus portfolio, it returned -4.02% versus +0.13% for the S&P 500 and +13.62% for the hindsight best asset.",
+      "title": "AI consensus portfolio scored -29.5 versus the oracle",
       "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
     },
     {
@@ -215,7 +215,7 @@
           "source": "rounds/CB-2026-06-05-1M/runs/official-20260605-r3/results/returns.csv"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
+      "generated_at": "2026-07-07T23:58:50Z",
       "id": "benchmark-difficulty-CB-2026-06-05-1M",
       "importance_score": 90.0,
       "related": [
@@ -241,58 +241,58 @@
           "formula": "max(scored asset returns)",
           "name": "oracle_return",
           "unit": "percent",
-          "value": 10.7026
+          "value": 13.6249
         },
         {
           "formula": "min(scored asset returns)",
           "name": "worst_asset_return",
           "unit": "percent",
-          "value": -4.3799
+          "value": -11.3495
         },
         {
           "formula": "positive asset count / scored asset count",
           "name": "positive_universe_share",
           "unit": "percent",
-          "value": 62.8571
+          "value": 50.0
         }
       ],
       "category": "benchmark_difficulty",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-07-06",
-        "decision_date": "2026-06-29",
-        "entry_date": "2026-06-29",
-        "exit_date": "2026-07-06",
+        "data_as_of": "2026-07-07",
+        "decision_date": "2026-06-30",
+        "entry_date": "2026-06-30",
+        "exit_date": "2026-07-07",
         "model_count": 5,
         "oracle_asset": {
           "display": "Ethereum ETF (ETHA)",
           "name": "Ethereum ETF",
           "option_id": "ETHEREUM_ETF",
-          "return_pct": 10.7026,
+          "return_pct": 13.6249,
           "ticker": "ETHA"
         },
         "primary_label": "Weekly result",
         "result_count": 5,
-        "round_id": "CB-2026-06-29-1W",
-        "run_id": "official-20260629-no-fable",
+        "round_id": "CB-2026-06-30-1W",
+        "run_id": "official-20260630-no-fable-clean",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-07-06",
+      "data_as_of": "2026-07-07",
       "date": "2026-07-07",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-29-1W",
+          "href": "/rounds/CB-2026-06-30-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-06-29-1W/runs/official-20260629-no-fable/results/returns.csv"
+          "source": "rounds/CB-2026-06-30-1W/runs/official-20260630-no-fable-clean/results/returns.csv"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
-      "id": "benchmark-difficulty-CB-2026-06-29-1W",
+      "generated_at": "2026-07-07T23:58:50Z",
+      "id": "benchmark-difficulty-CB-2026-06-30-1W",
       "importance_score": 90.0,
       "related": [
         {
@@ -302,8 +302,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The best scored asset returned +10.70%, the worst returned -4.38%, and +62.86% of the universe was positive. The S&P 500 ranked 25 out of 70 options.",
-      "title": "Weekly round had +15.08% asset dispersion",
+      "summary": "The best scored asset returned +13.62%, the worst returned -11.35%, and +50.00% of the universe was positive. The S&P 500 ranked 33 out of 70 options.",
+      "title": "Weekly round had +24.97% asset dispersion",
       "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
     },
     {
@@ -362,7 +362,7 @@
           "source": "rounds/CB-2026-06-05-1M/runs/official-20260605-r3/results"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
+      "generated_at": "2026-07-07T23:58:50Z",
       "id": "missed-oracle-CB-2026-06-05-1M",
       "importance_score": 89.0,
       "related": [
@@ -402,39 +402,39 @@
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-07-06",
-        "decision_date": "2026-06-29",
-        "entry_date": "2026-06-29",
-        "exit_date": "2026-07-06",
+        "data_as_of": "2026-07-07",
+        "decision_date": "2026-06-30",
+        "entry_date": "2026-06-30",
+        "exit_date": "2026-07-07",
         "model_count": 5,
         "oracle_asset": {
           "display": "Ethereum ETF (ETHA)",
           "name": "Ethereum ETF",
           "option_id": "ETHEREUM_ETF",
-          "return_pct": 10.7026,
+          "return_pct": 13.6249,
           "ticker": "ETHA"
         },
         "primary_label": "Weekly result",
         "result_count": 5,
-        "round_id": "CB-2026-06-29-1W",
-        "run_id": "official-20260629-no-fable",
+        "round_id": "CB-2026-06-30-1W",
+        "run_id": "official-20260630-no-fable-clean",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-07-06",
+      "data_as_of": "2026-07-07",
       "date": "2026-07-07",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-29-1W",
+          "href": "/rounds/CB-2026-06-30-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-06-29-1W/runs/official-20260629-no-fable/results"
+          "source": "rounds/CB-2026-06-30-1W/runs/official-20260630-no-fable-clean/results"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
-      "id": "missed-oracle-CB-2026-06-29-1W",
+      "generated_at": "2026-07-07T23:58:50Z",
+      "id": "missed-oracle-CB-2026-06-30-1W",
       "importance_score": 89.0,
       "related": [
         {
@@ -444,7 +444,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The hindsight best asset was Ethereum ETF (ETHA) at +10.70%. 0 of 5 models held it, with +0.00% average allocation.",
+      "summary": "The hindsight best asset was Ethereum ETF (ETHA) at +13.62%. 0 of 5 models held it, with +0.00% average allocation.",
       "title": "Models missed the weekly oracle asset",
       "why_it_matters": "This shows whether models identified the eventual best asset before scoring, even when portfolio weights were too small to fully capture the oracle return."
     },
@@ -497,7 +497,7 @@
           "source": "rounds/CB-2026-07-06-1M"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
+      "generated_at": "2026-07-07T23:58:50Z",
       "id": "active-risk-2026-07-06",
       "importance_score": 86.0,
       "related": [
@@ -523,42 +523,42 @@
           "formula": "average return for confidence >= median confidence",
           "name": "high_confidence_average_return",
           "unit": "percent",
-          "value": -0.9873
+          "value": -1.0516
         },
         {
           "formula": "average return for confidence < median confidence",
           "name": "low_confidence_average_return",
           "unit": "percent",
-          "value": -0.2837
+          "value": -0.4472
         },
         {
           "formula": "average CapitalBench Score for confidence >= median confidence",
           "name": "high_confidence_average_capitalbench_score",
           "unit": "points",
-          "value": -19.6409
+          "value": -19.9556
         },
         {
           "formula": "average CapitalBench Score for confidence < median confidence",
           "name": "low_confidence_average_capitalbench_score",
           "unit": "points",
-          "value": -17.9
+          "value": -18.2988
         }
       ],
       "category": "confidence_calibration",
       "confidence": "high",
       "context": {
-        "data_as_of": "2026-07-06",
-        "median_confidence": 0.57,
+        "data_as_of": "2026-07-07",
+        "median_confidence": 0.565,
         "primary_label": "All resolved official results",
-        "result_count": 153,
-        "round_count": 31,
+        "result_count": 158,
+        "round_count": 32,
         "scope": "resolved_history",
         "status": "resolved",
         "status_label": "Resolved history",
         "track": "all",
         "track_label": "Weekly + Monthly"
       },
-      "data_as_of": "2026-07-06",
+      "data_as_of": "2026-07-07",
       "date": "2026-07-07",
       "evidence": [
         {
@@ -567,8 +567,8 @@
           "source": "resolved official leaderboard rows"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
-      "id": "confidence-calibration-2026-07-06",
+      "generated_at": "2026-07-07T23:58:50Z",
+      "id": "confidence-calibration-2026-07-07",
       "importance_score": 85.0,
       "related": [
         {
@@ -578,7 +578,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Across resolved official results, submissions at or above the median confidence of 0.57 averaged -0.99%, while lower-confidence submissions averaged -0.28%.",
+      "summary": "Across resolved official results, submissions at or above the median confidence of 0.56 averaged -1.05%, while lower-confidence submissions averaged -0.45%.",
       "title": "High-confidence model calls have underperformed lower-confidence calls",
       "why_it_matters": "Confidence calibration helps readers judge whether model self-reported confidence carries useful information about realized benchmark performance."
     },
@@ -638,7 +638,7 @@
           "source": "rounds/CB-2026-07-06-1M"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
+      "generated_at": "2026-07-07T23:58:50Z",
       "id": "horizon-agreement-2026-07-06",
       "importance_score": 84.0,
       "related": [
@@ -683,7 +683,7 @@
       "category": "model_behavior",
       "confidence": "high",
       "context": {
-        "data_as_of": "2026-07-06",
+        "data_as_of": "2026-07-07",
         "highest_risk_model_id": "openai-gpt-5-5",
         "model_count": 6,
         "most_concentrated_model_id": "google-gemini-3-1-pro",
@@ -692,7 +692,7 @@
         "primary_label": "Model behavior profiles",
         "scope": "all official portfolios"
       },
-      "data_as_of": "2026-07-06",
+      "data_as_of": "2026-07-07",
       "date": "2026-07-07",
       "evidence": [
         {
@@ -706,8 +706,8 @@
           "source": "asset risk model and behavior formulas"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
-      "id": "model-behavior-profiles-2026-07-06",
+      "generated_at": "2026-07-07T23:58:50Z",
+      "id": "model-behavior-profiles-2026-07-07",
       "importance_score": 83.0,
       "related": [
         {
@@ -781,7 +781,7 @@
           "source": "rounds/CB-2026-06-05-1M/runs/official-20260605-r3/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
+      "generated_at": "2026-07-07T23:58:50Z",
       "id": "attribution-CB-2026-06-05-1M-xai-grok-4-3",
       "importance_score": 83.0,
       "related": [
@@ -807,49 +807,49 @@
           "formula": "allocation weight * asset return",
           "name": "largest_positive_contribution",
           "unit": "percent",
-          "value": 0.3158
+          "value": 0.7286
         },
         {
           "formula": "allocation weight * asset return",
           "name": "largest_negative_contribution",
           "unit": "percent",
-          "value": -0.657
+          "value": -3.4048
         }
       ],
       "category": "performance_attribution",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-07-06",
-        "decision_date": "2026-06-29",
-        "entry_date": "2026-06-29",
-        "exit_date": "2026-07-06",
+        "data_as_of": "2026-07-07",
+        "decision_date": "2026-06-30",
+        "entry_date": "2026-06-30",
+        "exit_date": "2026-07-07",
         "model": {
-          "label": "Claude Opus 4.8",
-          "model_id": "anthropic-claude-opus-4-8"
+          "label": "Claude Opus 4.7",
+          "model_id": "anthropic-claude-opus-4-7"
         },
         "model_count": 5,
         "primary_label": "Weekly result",
         "result_count": 5,
-        "round_id": "CB-2026-06-29-1W",
-        "run_id": "official-20260629-no-fable",
+        "round_id": "CB-2026-06-30-1W",
+        "run_id": "official-20260630-no-fable-clean",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-07-06",
+      "data_as_of": "2026-07-07",
       "date": "2026-07-07",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-06-29-1W",
+          "href": "/rounds/CB-2026-06-30-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-06-29-1W/runs/official-20260629-no-fable/results/allocations.csv"
+          "source": "rounds/CB-2026-06-30-1W/runs/official-20260630-no-fable-clean/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
-      "id": "attribution-CB-2026-06-29-1W-anthropic-claude-opus-4-8",
+      "generated_at": "2026-07-07T23:58:50Z",
+      "id": "attribution-CB-2026-06-30-1W-anthropic-claude-opus-4-7",
       "importance_score": 83.0,
       "related": [
         {
@@ -859,8 +859,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "In the latest weekly result, Biotechnology contributed +0.32% to Claude Opus 4.8's portfolio. The largest drag came from Semiconductors at -0.66%.",
-      "title": "Claude Opus 4.8's result was driven by Biotechnology",
+      "summary": "In the latest weekly result, Healthcare Sector contributed +0.73% to Claude Opus 4.7's portfolio. The largest drag came from Semiconductors at -3.40%.",
+      "title": "Claude Opus 4.7's result was driven by Healthcare Sector",
       "why_it_matters": "Attribution turns a model score into an explanation of which holdings actually helped or hurt the frozen portfolio."
     },
     {
@@ -911,7 +911,7 @@
           "source": "rounds/CB-2026-07-06-1M/market_data/universe_trailing_returns.json"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
+      "generated_at": "2026-07-07T23:58:50Z",
       "id": "momentum-exposure-CB-2026-07-06-1M",
       "importance_score": 80.0,
       "related": [
@@ -974,7 +974,7 @@
           "source": "rounds/CB-2026-07-06-1W/market_data/universe_trailing_returns.json"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
+      "generated_at": "2026-07-07T23:58:50Z",
       "id": "momentum-exposure-CB-2026-07-06-1W",
       "importance_score": 80.0,
       "related": [
@@ -1038,7 +1038,7 @@
           "source": "rounds/CB-2026-07-06-1M"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
+      "generated_at": "2026-07-07T23:58:50Z",
       "id": "active-positioning-2026-07-06",
       "importance_score": 78.0,
       "related": [
@@ -1084,7 +1084,7 @@
         "data_as_of": "2026-07-06",
         "model_count": 6,
         "primary_label": "Open-round interim performance",
-        "round_count": 20,
+        "round_count": 19,
         "round_ids": [
           "CB-2026-06-08-1M",
           "CB-2026-06-09-1M",
@@ -1101,7 +1101,6 @@
           "CB-2026-06-26-1M",
           "CB-2026-06-29-1M",
           "CB-2026-06-30-1M",
-          "CB-2026-06-30-1W",
           "CB-2026-07-01-1M",
           "CB-2026-07-01-1W",
           "CB-2026-07-02-1M",
@@ -1127,7 +1126,7 @@
           "source": "weekly_performance.csv"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
+      "generated_at": "2026-07-07T23:58:50Z",
       "id": "live-path-2026-07-06",
       "importance_score": 77.0,
       "related": [
@@ -1191,7 +1190,7 @@
           "source": "live parsed submissions"
         }
       ],
-      "generated_at": "2026-07-07T10:01:06Z",
+      "generated_at": "2026-07-07T23:58:50Z",
       "id": "model-similarity-2026-07-06",
       "importance_score": 76.0,
       "related": [

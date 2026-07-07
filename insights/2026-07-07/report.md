@@ -1,7 +1,7 @@
 # CapitalBench Insights
 
-Generated at: `2026-07-07T10:01:06Z`
-Data as of: `2026-07-06`
+Generated at: `2026-07-07T23:58:50Z`
+Data as of: `2026-07-07`
 Engine: `deterministic_insights_v1`
 
 ## AI consensus portfolio scored 4.5 versus the oracle
@@ -14,11 +14,11 @@ Why it matters: The consensus portfolio tests whether the combined AI view is mo
 
 Category: `consensus_performance`
 
-## AI consensus portfolio scored -8.6 versus the oracle
+## AI consensus portfolio scored -29.5 versus the oracle
 
-Context: Weekly result · CB-2026-06-29-1W · Resolved result · Oracle: Ethereum ETF (ETHA)
+Context: Weekly result · CB-2026-06-30-1W · Resolved result · Oracle: Ethereum ETF (ETHA)
 
-If the weekly model allocations were averaged into one consensus portfolio, it returned -0.92% versus +1.39% for the S&P 500 and +10.70% for the hindsight best asset.
+If the weekly model allocations were averaged into one consensus portfolio, it returned -4.02% versus +0.13% for the S&P 500 and +13.62% for the hindsight best asset.
 
 Why it matters: The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark.
 
@@ -34,11 +34,11 @@ Why it matters: Benchmark difficulty matters because model scores should be inte
 
 Category: `benchmark_difficulty`
 
-## Weekly round had +15.08% asset dispersion
+## Weekly round had +24.97% asset dispersion
 
-Context: Weekly result · CB-2026-06-29-1W · Resolved result · Oracle: Ethereum ETF (ETHA)
+Context: Weekly result · CB-2026-06-30-1W · Resolved result · Oracle: Ethereum ETF (ETHA)
 
-The best scored asset returned +10.70%, the worst returned -4.38%, and +62.86% of the universe was positive. The S&P 500 ranked 25 out of 70 options.
+The best scored asset returned +13.62%, the worst returned -11.35%, and +50.00% of the universe was positive. The S&P 500 ranked 33 out of 70 options.
 
 Why it matters: Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced.
 
@@ -56,9 +56,9 @@ Category: `oracle_comparison`
 
 ## Models missed the weekly oracle asset
 
-Context: Weekly result · CB-2026-06-29-1W · Resolved result · Oracle: Ethereum ETF (ETHA)
+Context: Weekly result · CB-2026-06-30-1W · Resolved result · Oracle: Ethereum ETF (ETHA)
 
-The hindsight best asset was Ethereum ETF (ETHA) at +10.70%. 0 of 5 models held it, with +0.00% average allocation.
+The hindsight best asset was Ethereum ETF (ETHA) at +13.62%. 0 of 5 models held it, with +0.00% average allocation.
 
 Why it matters: This shows whether models identified the eventual best asset before scoring, even when portfolio weights were too small to fully capture the oracle return.
 
@@ -78,7 +78,7 @@ Category: `risk_regime`
 
 Context: All resolved official results · Resolved history
 
-Across resolved official results, submissions at or above the median confidence of 0.57 averaged -0.99%, while lower-confidence submissions averaged -0.28%.
+Across resolved official results, submissions at or above the median confidence of 0.56 averaged -1.05%, while lower-confidence submissions averaged -0.45%.
 
 Why it matters: Confidence calibration helps readers judge whether model self-reported confidence carries useful information about realized benchmark performance.
 
@@ -114,11 +114,11 @@ Why it matters: Attribution turns a model score into an explanation of which hol
 
 Category: `performance_attribution`
 
-## Claude Opus 4.8's result was driven by Biotechnology
+## Claude Opus 4.7's result was driven by Healthcare Sector
 
-Context: Weekly result · CB-2026-06-29-1W · Resolved result
+Context: Weekly result · CB-2026-06-30-1W · Resolved result
 
-In the latest weekly result, Biotechnology contributed +0.32% to Claude Opus 4.8's portfolio. The largest drag came from Semiconductors at -0.66%.
+In the latest weekly result, Healthcare Sector contributed +0.73% to Claude Opus 4.7's portfolio. The largest drag came from Semiconductors at -3.40%.
 
 Why it matters: Attribution turns a model score into an explanation of which holdings actually helped or hurt the frozen portfolio.
 
