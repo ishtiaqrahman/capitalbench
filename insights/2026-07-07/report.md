@@ -1,6 +1,6 @@
 # CapitalBench Insights
 
-Generated at: `2026-07-07T05:51:17Z`
+Generated at: `2026-07-07T10:01:06Z`
 Data as of: `2026-07-06`
 Engine: `deterministic_insights_v1`
 
@@ -154,11 +154,11 @@ Why it matters: This shows the current crowding point in model capital allocatio
 
 Category: `current_positioning`
 
-## Grok 4.3 has the strongest live alpha
+## Claude Opus 4.7 has the strongest live alpha
 
 Context: Open-round interim performance · Interim, not final
 
-Using the latest available interim close, Grok 4.3 in CB-2026-07-01-1W is ahead of the S&P 500 by +2.50 percentage points, while GPT-5.5 in CB-2026-06-22-1M is at -8.11 percentage points.
+Using the latest available interim close, Claude Opus 4.7 in CB-2026-06-08-1M is ahead of the S&P 500 by +1.87 percentage points, while GPT-5.5 in CB-2026-06-22-1M is at -7.08 percentage points.
 
 Why it matters: Live alpha is provisional, but it shows how open model portfolios are moving before the final official score.
 
