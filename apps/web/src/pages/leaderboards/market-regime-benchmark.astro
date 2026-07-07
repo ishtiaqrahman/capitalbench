@@ -399,8 +399,14 @@ function trackLabel(track: BenchmarkTrack): string {
 
 function statusMeaning(status: RegimeStatus | "Ready" | "Forming"): string {
   if (status === "Ready") return "Included in score";
-  if (status === "Forming") return "Collecting rounds";
+  if (status === "Forming") return "Shown, not counted yet";
   return "Not tested yet";
+}
+
+function statusLabel(status: RegimeStatus | "Ready" | "Forming"): string {
+  if (status === "Ready") return "Counts now";
+  if (status === "Forming") return "Needs more rounds";
+  return "No rounds yet";
 }
 
 function roundSortKey(round: RoundRecord): string {
@@ -477,7 +483,7 @@ function trackConfidence(track: BenchmarkTrack): { label: string; detail: string
 
   if (ready.length === 0) {
     return {
-      label: "No ready types",
+      label: "No counting types",
       detail: "The page will update after resolved rounds exist.",
       className: "empty"
     };
@@ -486,14 +492,14 @@ function trackConfidence(track: BenchmarkTrack): { label: string; detail: string
   if (hasReadyDown && hasReadyUp) {
     return {
       label: "More balanced",
-      detail: `${ready.length} market types are ready, including up and down markets.`,
+      detail: `${ready.length} market types count now, including up and down markets.`,
       className: "ready"
     };
   }
 
   return {
     label: "Still one-sided",
-    detail: `${ready.length} market type${ready.length === 1 ? "" : "s"} ready; more market variety is needed.`,
+    detail: `${ready.length} market type${ready.length === 1 ? "" : "s"} count now; more market variety is needed.`,
     className: "forming"
   };
 }
@@ -1160,9 +1166,21 @@ const trackSummaries = (["weekly", "monthly"] as BenchmarkTrack[]).map((track) =
   };
 });
 
-const latestIncludedRound = regimeRounds
-  .slice()
-  .sort((left, right) => (right.round.exit_date ?? "").localeCompare(left.round.exit_date ?? ""))[0];
+const weeklySummary = trackSummaries.find((item) => item.track === "weekly");
+const monthlySummary = trackSummaries.find((item) => item.track === "monthly");
+const topLeaders = {
+  weekly: leaderboards.weekly.find((row) => finiteNumber(row.regimeBalancedScore)),
+  monthly: leaderboards.monthly.find((row) => finiteNumber(row.regimeBalancedScore))
+};
+
+function leaderContext(track: BenchmarkTrack, leader: RegimeLeaderboardRow | undefined): string {
+  if (!leader) return "No market type has enough resolved rounds to rank models yet.";
+  const represented = `${leader.readyRegimesCovered}/${leader.readyRegimesRequired} counting market types represented.`;
+  const confidence = trackConfidence(track);
+  if (confidence.className === "ready") return `${represented} Up and down markets both count.`;
+  if (confidence.className === "forming") return `${represented} More market variety is needed.`;
+  return represented;
+}
 
 const auditRows = regimeRounds
   .slice()
@@ -1177,87 +1195,244 @@ const hiddenAuditRows = auditRows.slice(10);
 
 <BaseLayout
   title="Market Type Benchmark"
-  description="A separate CapitalBench view that groups completed AI portfolio rounds by S&P 500 movement and balances model scores across market types."
+  description="CapitalBench model rankings grouped by S&P 500 movement, with equal weight for ready down, flat, and up market types."
 >
   <PageHeader
     eyebrow="Market Type Benchmark"
-    title="Balanced By Market Type"
-    summary="This separate benchmark groups completed weekly and monthly rounds by how much the S&P 500 moved, then gives each ready market type equal weight."
+    title="Model Performance By Market Type"
+    summary="See whether AI portfolios still hold up when completed rounds are grouped by the S&P 500 move."
   />
 
   <section class="section market-regime-page">
-    <div class="regime-method-panel">
-      <div>
-        <span class="panel-kicker">Method</span>
-        <h2>Each ready market type gets equal weight.</h2>
+    <section class="regime-read-first" aria-labelledby="regime-read-first-title">
+      <div class="regime-section-head">
+        <span class="panel-kicker">Read this first</span>
+        <h2 id="regime-read-first-title">This tests whether a model works in more than one market.</h2>
         <p>
-          A market type is the S&amp;P 500 move during a scored round. This page checks whether models perform across
-          up, down, and flat markets instead of being helped by one dominant environment.
+          Completed rounds are grouped by S&amp;P 500 movement. A market type only counts after
+          {` ${READY_ROUND_THRESHOLD}+ `}resolved rounds, then the equal-market score averages the counting types so one
+          common market does not dominate.
+        </p>
+        <p class="regime-score-note">
+          Higher is better. Scores can be negative when models underperform the benchmark, and pending rounds appear here
+          only after scoring is resolved.
         </p>
       </div>
-      <dl>
-        <div>
-          <dt>Ready rule</dt>
-          <dd>{READY_ROUND_THRESHOLD}+ rounds</dd>
-        </div>
-        <div>
-          <dt>Score</dt>
-          <dd>Average of ready market type scores</dd>
-        </div>
-        <div>
-          <dt>Scope</dt>
-          <dd>Resolved official rounds only</dd>
-        </div>
-      </dl>
-      <ol class="regime-method-flow" aria-label="Market type benchmark process">
-        <li>
-          <span>1</span>
-          <strong>Use completed rounds</strong>
-          <em>Only resolved official results enter this page.</em>
-        </li>
-        <li>
-          <span>2</span>
-          <strong>Group by S&amp;P 500 move</strong>
-          <em>Each round becomes down, flat, or up.</em>
-        </li>
-        <li>
-          <span>3</span>
-          <strong>Average ready types equally</strong>
-          <em>Ready market types carry the same weight.</em>
-        </li>
-      </ol>
-    </div>
+
+      <div class="regime-answer-grid" aria-label="Current market type benchmark leaders">
+        {(["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
+          const top = topLeaders[track];
+          return (
+            <article class="regime-answer-card">
+              <span class="panel-kicker">{trackLabel(track)} leader</span>
+              <h3>{top?.label ?? "No leader yet"}</h3>
+              <strong>{scoreText(top?.regimeBalancedScore)}</strong>
+              <em>Equal-market score; higher is better.</em>
+              <p>{leaderContext(track, top)}</p>
+            </article>
+          );
+        })}
+      </div>
+    </section>
 
     <div class="regime-kpi-grid" aria-label="Market type benchmark summary">
       <article>
-        <span>Weekly rounds</span>
-        <strong>{trackSummaries.find((item) => item.track === "weekly")?.totalRounds ?? 0}</strong>
+        <span>Weekly counting types</span>
+        <strong>{weeklySummary?.readyCount ?? 0}<small>/5</small></strong>
         <em>{trackConfidence("weekly").label}</em>
       </article>
       <article>
-        <span>Monthly rounds</span>
-        <strong>{trackSummaries.find((item) => item.track === "monthly")?.totalRounds ?? 0}</strong>
+        <span>Monthly counting types</span>
+        <strong>{monthlySummary?.readyCount ?? 0}<small>/5</small></strong>
         <em>{trackConfidence("monthly").label}</em>
       </article>
       <article>
-        <span>Weekly ready types</span>
-        <strong>{trackSummaries.find((item) => item.track === "weekly")?.readyCount ?? 0}<small>/5</small></strong>
-        <em>Used in weekly score</em>
+        <span>Weekly rounds</span>
+        <strong>{weeklySummary?.totalRounds ?? 0}</strong>
+        <em>Resolved only</em>
       </article>
       <article>
-        <span>Latest round</span>
-        <strong>{latestIncludedRound?.round.round_id ?? "n/a"}</strong>
-        <em>{latestIncludedRound ? `${trackLabel(latestIncludedRound.track)} ${dateOnly(latestIncludedRound.round.exit_date)}` : "No scored rounds"}</em>
+        <span>Monthly rounds</span>
+        <strong>{monthlySummary?.totalRounds ?? 0}</strong>
+        <em>Resolved only</em>
       </article>
     </div>
+
+    <section class="regime-section" aria-labelledby="regime-leaderboard-title">
+      <div class="regime-section-head">
+        <span class="panel-kicker">Main leaderboard</span>
+        <h2 id="regime-leaderboard-title">Who performs best across market types?</h2>
+        <p>
+          The equal-market score averages only market types that have at least {READY_ROUND_THRESHOLD} resolved rounds.
+          Supporting columns show the normal all-round score, average alpha, and hit rate for context.
+        </p>
+      </div>
+
+      {
+        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => (
+          <div class="regime-leaderboard-panel">
+            <div class="regime-leaderboard-head">
+              <div>
+                <span class="panel-kicker">{trackLabel(track)} benchmark</span>
+                <h3>{trackLabel(track)} equal-market scores</h3>
+              </div>
+              <span class:list={["regime-confidence", `regime-confidence-${trackConfidence(track).className}`]}>
+                {trackConfidence(track).label}
+              </span>
+            </div>
+            <MarketRegimeLineChart chart={leaderboardScorePathCharts[track]} />
+            <div class="regime-mobile-rank-summary" aria-label={`${trackLabel(track)} top equal-market models`}>
+              {leaderboards[track].slice(0, 3).map((row, index) => (
+                <article>
+                  <span>{index + 1}</span>
+                  {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
+                  <div>
+                    <strong>{row.label}</strong>
+                    <em>{row.providerName}</em>
+                  </div>
+                  <b>{scoreText(row.regimeBalancedScore)}</b>
+                  <small>{row.readyRegimesCovered}/{row.readyRegimesRequired} counting types</small>
+                </article>
+              ))}
+            </div>
+            <div class="table-shell regime-table-shell">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Equal-market score</th>
+                    <th>Scores that count</th>
+                    <th>All-round score</th>
+                    <th>Avg alpha vs S&amp;P</th>
+                    <th>Hit rate</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaderboards[track].length ? (
+                    leaderboards[track].map((row, index) => (
+                      <tr>
+                        <td data-label="Model">
+                          <div class="regime-model-cell">
+                            <span>{index + 1}</span>
+                            {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
+                            <div>
+                              <strong>{row.label}</strong>
+                              <em>{row.providerName}</em>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="regime-score-value" data-label="Equal-market score">
+                          <strong>{scoreText(row.regimeBalancedScore)}</strong>
+                          <span>{row.readyRegimesCovered}/{row.readyRegimesRequired} counting types</span>
+                        </td>
+                        <td data-label="Scores that count">
+                          <div class="regime-score-strip">
+                            {row.regimeScores.map((score) => (
+                              <span>
+                                <b>{score.label}</b>
+                                <em>{scoreText(score.score)}</em>
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td data-label="All-round score">{scoreText(row.allRoundScore)}</td>
+                        <td data-label="Avg alpha vs S&P">{signedPctText(row.averageAlpha)}</td>
+                        <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
+                        <td data-label="Status">
+                          <span class:list={["regime-status", `regime-status-${statusClass(row.status)}`]}>
+                            {statusLabel(row.status)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colspan="7" data-label="Status">No market types count yet.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="regime-section" aria-labelledby="market-coverage-title">
+      <div class="regime-section-head">
+        <span class="panel-kicker">Market coverage</span>
+        <h2 id="market-coverage-title">Can we trust the current ranking?</h2>
+        <p>
+          A market type counts only after {READY_ROUND_THRESHOLD}+ resolved rounds. Until then it is shown as a signal,
+          but it does not affect the equal-market score.
+        </p>
+        <div class="regime-status-legend" aria-label="Market type status legend">
+          <span class="regime-status regime-status-ready">Counts now <em>Included in score</em></span>
+          <span class="regime-status regime-status-forming">Needs more rounds <em>Shown only</em></span>
+          <span class="regime-status regime-status-no-data-yet">No rounds yet <em>Not tested yet</em></span>
+        </div>
+      </div>
+
+      <div class="regime-bucket-key" aria-label="Market type threshold key">
+        {(["weekly", "monthly"] as BenchmarkTrack[]).map((track) => (
+          <article>
+            <strong>{trackLabel(track)} bucket key</strong>
+            <div>
+              {regimeDefinitions[track].map((regime) => (
+                <span>{regime.label}: {regime.rangeLabel}</span>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {
+        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
+          const confidence = trackConfidence(track);
+          return (
+            <div class="regime-track-panel">
+              <div class="regime-track-head">
+                <div>
+                  <span class="panel-kicker">{trackLabel(track)}</span>
+                  <h3>{trackLabel(track)} market types</h3>
+                  <p>{confidence.detail}</p>
+                </div>
+                <strong class:list={["regime-confidence", `regime-confidence-${confidence.className}`]}>
+                  {confidence.label}
+                </strong>
+              </div>
+              <MarketRegimeLineChart chart={sp500MovementCharts[track]} />
+              <div class="regime-coverage-grid">
+                {coverageByTrack[track].map((regime) => (
+                  <article class:list={["regime-coverage-card", `regime-card-${regime.key}`]}>
+                    <span class:list={["regime-status", `regime-status-${statusClass(regime.status)}`]}>
+                      {statusLabel(regime.status)}
+                      <em>{statusMeaning(regime.status)}</em>
+                    </span>
+                    <strong>{regime.label}</strong>
+                    <em>{regime.rangeLabel}</em>
+                    <div>
+                      <b>{regime.count}</b>
+                      <small>round{regime.count === 1 ? "" : "s"}</small>
+                    </div>
+                    <p>Average S&amp;P 500 move: {pctText(regime.averageSp500Return)}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          );
+        })
+      }
+    </section>
 
     <section class="regime-section market-insights-section" aria-labelledby="market-insights-title">
       <div class="regime-section-head">
         <span class="panel-kicker">Calculated insights</span>
         <h2 id="market-insights-title">What changes when the market moves differently?</h2>
         <p>
-          These cards compare models inside weekly and monthly tracks separately. Ready means the market type has at
-          least {READY_ROUND_THRESHOLD} resolved rounds; forming cards are current signals with thinner samples.
+          Use these after the main leaderboard. They compare model behavior inside down, flat, and up markets, including
+          market types that still need more rounds.
         </p>
       </div>
 
@@ -1279,7 +1454,9 @@ const hiddenAuditRows = auditRows.slice(10);
                 <article class:list={["market-insight-card", `market-insight-card-${card.tone}`, `market-insight-card-${statusClass(card.status)}`]}>
                   <header>
                     <span class="panel-kicker">{card.eyebrow}</span>
-                    <span class:list={["regime-status", `regime-status-${statusClass(card.status)}`]}>{card.status}</span>
+                    <span class:list={["regime-status", `regime-status-${statusClass(card.status)}`]}>
+                      {statusLabel(card.status)}
+                    </span>
                   </header>
                   <h4>{card.title}</h4>
                   {card.model && (
@@ -1312,357 +1489,273 @@ const hiddenAuditRows = auditRows.slice(10);
       </div>
     </section>
 
-    <section class="regime-section" aria-labelledby="market-coverage-title">
-      <div class="regime-section-head">
-        <span class="panel-kicker">Market coverage</span>
-        <h2 id="market-coverage-title">What market types have been tested?</h2>
-        <p>Counts update automatically as weekly and monthly rounds resolve.</p>
-        <div class="regime-status-legend" aria-label="Market type status legend">
-          <span class="regime-status regime-status-ready">Ready <em>Included in score</em></span>
-          <span class="regime-status regime-status-forming">Forming <em>Collecting rounds</em></span>
-          <span class="regime-status regime-status-no-data-yet">No data <em>Not tested yet</em></span>
+    <section class="regime-section" aria-labelledby="regime-method-title">
+      <div class="regime-method-panel">
+        <div>
+          <span class="panel-kicker">Method</span>
+          <h2 id="regime-method-title">How the equal-market score works.</h2>
+          <p>
+            A market type is the S&amp;P 500 move during a scored round. This view checks whether models perform across
+            different environments instead of being helped by one dominant environment.
+          </p>
+        </div>
+        <dl>
+          <div>
+            <dt>Counting rule</dt>
+            <dd>{READY_ROUND_THRESHOLD}+ rounds</dd>
+          </div>
+          <div>
+            <dt>Main score</dt>
+            <dd>Average of counting market types</dd>
+          </div>
+          <div>
+            <dt>Scope</dt>
+            <dd>Resolved official rounds only</dd>
+          </div>
+        </dl>
+        <ol class="regime-method-flow" aria-label="Market type benchmark process">
+          <li>
+            <span>1</span>
+            <strong>Use completed rounds</strong>
+            <em>Only resolved official results enter this page.</em>
+          </li>
+          <li>
+            <span>2</span>
+            <strong>Group by S&amp;P 500 move</strong>
+            <em>Each round becomes a market type.</em>
+          </li>
+          <li>
+            <span>3</span>
+            <strong>Average counting types equally</strong>
+            <em>Every counting market type carries the same weight.</em>
+          </li>
+        </ol>
+        <div class="regime-method-example">
+          <span class="panel-kicker">Example</span>
+          <p>
+            If a model scores 20 in up markets and -10 in down markets, its equal-market score is 5. That keeps a large
+            pile of up-market rounds from drowning out the down-market result.
+          </p>
         </div>
       </div>
-
-      {
-        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
-          const confidence = trackConfidence(track);
-          return (
-            <div class="regime-track-panel">
-              <div class="regime-track-head">
-                <div>
-                  <span class="panel-kicker">{trackLabel(track)}</span>
-                  <h3>{trackLabel(track)} market types</h3>
-                  <p>{confidence.detail}</p>
-                </div>
-                <strong class:list={["regime-confidence", `regime-confidence-${confidence.className}`]}>
-                  {confidence.label}
-                </strong>
-              </div>
-              <MarketRegimeLineChart chart={sp500MovementCharts[track]} />
-              <div class="regime-coverage-grid">
-                {coverageByTrack[track].map((regime) => (
-                  <article class:list={["regime-coverage-card", `regime-card-${regime.key}`]}>
-                    <span class:list={["regime-status", `regime-status-${statusClass(regime.status)}`]}>
-                      {regime.status}
-                      <em>{statusMeaning(regime.status)}</em>
-                    </span>
-                    <strong>{regime.label}</strong>
-                    <em>{regime.rangeLabel}</em>
-                    <div>
-                      <b>{regime.count}</b>
-                      <small>round{regime.count === 1 ? "" : "s"}</small>
-                    </div>
-                    <p>Average S&amp;P 500 move: {pctText(regime.averageSp500Return)}</p>
-                  </article>
-                ))}
-              </div>
-            </div>
-          );
-        })
-      }
     </section>
 
-    <section class="regime-section" aria-labelledby="regime-leaderboard-title">
-      <div class="regime-section-head">
-        <span class="panel-kicker">Market-type balanced leaderboard</span>
-        <h2 id="regime-leaderboard-title">Who performs best after balancing market types?</h2>
-        <p>
-          Ready market types are scored equally. Forming types stay visible, but do not affect rankings yet.
-        </p>
-      </div>
+    <details class="regime-advanced-details">
+      <summary>
+        <span>Advanced check</span>
+        <strong>Strict equal-sample benchmark</strong>
+        <em>Waits for the same number of down, flat, and up rounds before ranking.</em>
+      </summary>
 
-      {
-        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => (
-          <div class="regime-leaderboard-panel">
-            <div class="regime-leaderboard-head">
-              <div>
-                <span class="panel-kicker">{trackLabel(track)} benchmark</span>
-                <h3>{trackLabel(track)} market-type balanced scores</h3>
-              </div>
-              <span class:list={["regime-confidence", `regime-confidence-${trackConfidence(track).className}`]}>
-                {trackConfidence(track).label}
-              </span>
-            </div>
-            <MarketRegimeLineChart chart={leaderboardScorePathCharts[track]} />
-            <div class="regime-mobile-rank-summary" aria-label={`${trackLabel(track)} top market-type balanced models`}>
-              {leaderboards[track].slice(0, 3).map((row, index) => (
-                <article>
-                  <span>{index + 1}</span>
-                  {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
+      <section class="regime-section" aria-labelledby="balanced-sample-title">
+        <div class="regime-section-head">
+          <span class="panel-kicker">Strict equal-sample check</span>
+          <h2 id="balanced-sample-title">What happens when each market type has the same sample size?</h2>
+          <p>
+            This stricter benchmark waits for at least {BALANCED_SAMPLE_THRESHOLD} down, {BALANCED_SAMPLE_THRESHOLD} flat,
+            and {BALANCED_SAMPLE_THRESHOLD} up rounds. When ready, it compares the same number from each type.
+          </p>
+        </div>
+
+        {
+          (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
+            const sample = balancedSamples[track];
+            return (
+              <div class="balanced-sample-panel">
+                <div class="balanced-sample-head">
                   <div>
-                    <strong>{row.label}</strong>
-                    <em>{row.providerName}</em>
+                    <span class="panel-kicker">{trackLabel(track)} equal sample</span>
+                    <h3>{trackLabel(track)} down / flat / up benchmark</h3>
+                    <p>{sample.missingSummary}</p>
                   </div>
-                  <b>{scoreText(row.regimeBalancedScore)}</b>
-                  <small>{row.readyRegimesCovered}/{row.readyRegimesRequired} ready types</small>
-                </article>
+                  <span class:list={["regime-confidence", sample.status === "Ready" ? "regime-confidence-ready" : "regime-confidence-forming"]}>
+                    {statusLabel(sample.status)}
+                  </span>
+                </div>
+                <MarketRegimeLineChart chart={balancedProgressCharts[track]} />
+
+                <div class="balanced-sample-counts" aria-label={`${trackLabel(track)} balanced sample category counts`}>
+                  {sample.categories.map((category) => (
+                    <article>
+                      <span>{category.label}</span>
+                      <strong>
+                        {category.count}<small>/{BALANCED_SAMPLE_THRESHOLD}</small>
+                      </strong>
+                      <i
+                        class="balanced-sample-progress"
+                        style={`--sample-progress: ${Math.min(100, (category.count / BALANCED_SAMPLE_THRESHOLD) * 100)}%;`}
+                        aria-hidden="true"
+                      ></i>
+                      <em>{category.rangeLabel}</em>
+                      <p>
+                        {sample.status === "Ready"
+                          ? `${category.selectedCount} selected for the balanced sample.`
+                          : category.missing > 0
+                            ? `${category.missing} more needed.`
+                            : "Requirement met."}
+                      </p>
+                    </article>
+                  ))}
+                </div>
+
+                {sample.status === "Ready" ? (
+                  <div class="balanced-sample-ready">
+                    <div class="balanced-sample-summary">
+                      <span>
+                        <strong>{sample.sampleSize}</strong>
+                        <em>rounds per category</em>
+                      </span>
+                      <span>
+                        <strong>{sample.selectedRounds.length}</strong>
+                        <em>total selected rounds</em>
+                      </span>
+                    </div>
+                    <div class="table-shell regime-table-shell">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Model</th>
+                            <th>Balanced sample score</th>
+                            <th>Avg alpha vs S&amp;P</th>
+                            <th>Hit rate</th>
+                            <th>Tests</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sample.leaderboard.map((row, index) => (
+                            <tr>
+                              <td data-label="Model">
+                                <div class="regime-model-cell">
+                                  <span>{index + 1}</span>
+                                  {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
+                                  <div>
+                                    <strong>{row.label}</strong>
+                                    <em>{row.providerName}</em>
+                                  </div>
+                                </div>
+                              </td>
+                              <td class="regime-score-value" data-label="Balanced sample score">
+                                <strong>{scoreText(row.score)}</strong>
+                                <span>Equal down / flat / up sample</span>
+                              </td>
+                              <td data-label="Avg alpha vs S&P">{signedPctText(row.averageAlpha)}</td>
+                              <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
+                              <td data-label="Tests">
+                                {row.testsIncluded}/{row.testsRequired}
+                              </td>
+                              <td data-label="Status">
+                                <span class:list={["regime-status", `regime-status-${statusClass(row.status)}`]}>
+                                  {statusLabel(row.status)}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : (
+                  <div class="balanced-sample-forming">
+                    <strong>Not ranked yet</strong>
+                    <p>
+                      The {trackLabel(track).toLowerCase()} sample is still forming, so this benchmark is shown as a
+                      readiness check rather than a leaderboard.
+                    </p>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        }
+      </section>
+    </details>
+
+    <details class="regime-advanced-details">
+      <summary>
+        <span>Audit table</span>
+        <strong>Included rounds</strong>
+        <em>{auditRows.length} resolved official rounds feed this benchmark.</em>
+      </summary>
+
+      <section class="regime-section" aria-labelledby="regime-rounds-title">
+        <div class="regime-section-head">
+          <span class="panel-kicker">Audit table</span>
+          <h2 id="regime-rounds-title">Which rounds are included?</h2>
+          <p>Showing the latest 10 resolved official rounds. Open the full audit for every included round.</p>
+        </div>
+
+        <div class="table-shell regime-table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th>Round</th>
+                <th>Track</th>
+                <th>Window</th>
+                <th>S&amp;P 500 return</th>
+                <th>Market type</th>
+                <th>Avg model alpha</th>
+                <th>Hit rate</th>
+                <th>Models</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibleAuditRows.map((row) => (
+                <tr>
+                  <td data-label="Round">
+                    <a href={`/rounds/${row.round.round_id}`}>{row.round.round_id}</a>
+                  </td>
+                  <td data-label="Track">{trackLabel(row.track)}</td>
+                  <td data-label="Window">{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
+                  <td data-label="S&P 500 return">{signedPctText(row.sp500Return)}</td>
+                  <td data-label="Market type">{row.regime.label}</td>
+                  <td data-label="Avg model alpha">{signedPctText(row.averageAlpha)}</td>
+                  <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
+                  <td data-label="Models">{row.modelCount}</td>
+                </tr>
               ))}
-            </div>
+            </tbody>
+          </table>
+        </div>
+
+        {hiddenAuditRows.length > 0 && (
+          <details class="regime-audit-details">
+            <summary>View full audit table <span>{auditRows.length} rounds</span></summary>
             <div class="table-shell regime-table-shell">
               <table>
                 <thead>
                   <tr>
-                    <th>Model</th>
-                    <th>Market-type score</th>
-                    <th>Ready market type scores</th>
-                    <th>All-round score</th>
-                    <th>Avg alpha vs S&amp;P</th>
+                    <th>Round</th>
+                    <th>Track</th>
+                    <th>Window</th>
+                    <th>S&amp;P 500 return</th>
+                    <th>Market type</th>
+                    <th>Avg model alpha</th>
                     <th>Hit rate</th>
-                    <th>Status</th>
+                    <th>Models</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {leaderboards[track].length ? (
-                    leaderboards[track].map((row, index) => (
-                      <tr>
-                        <td data-label="Model">
-                          <div class="regime-model-cell">
-                            <span>{index + 1}</span>
-                            {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
-                            <div>
-                              <strong>{row.label}</strong>
-                              <em>{row.providerName}</em>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="regime-score-value" data-label="Market-type score">
-                          <strong>{scoreText(row.regimeBalancedScore)}</strong>
-                          <span>{row.readyRegimesCovered}/{row.readyRegimesRequired} ready types</span>
-                        </td>
-                        <td data-label="Ready market type scores">
-                          <div class="regime-score-strip">
-                            {row.regimeScores.map((score) => (
-                              <span>
-                                <b>{score.label}</b>
-                                <em>{scoreText(score.score)}</em>
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td data-label="All-round score">{scoreText(row.allRoundScore)}</td>
-                        <td data-label="Avg alpha vs S&P">{signedPctText(row.averageAlpha)}</td>
-                        <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
-                        <td data-label="Status">
-                          <span class:list={["regime-status", `regime-status-${statusClass(row.status)}`]}>
-                            {row.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
+                  {hiddenAuditRows.map((row) => (
                     <tr>
-                      <td colspan="7" data-label="Status">No ready market types yet.</td>
+                      <td data-label="Round">
+                        <a href={`/rounds/${row.round.round_id}`}>{row.round.round_id}</a>
+                      </td>
+                      <td data-label="Track">{trackLabel(row.track)}</td>
+                      <td data-label="Window">{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
+                      <td data-label="S&P 500 return">{signedPctText(row.sp500Return)}</td>
+                      <td data-label="Market type">{row.regime.label}</td>
+                      <td data-label="Avg model alpha">{signedPctText(row.averageAlpha)}</td>
+                      <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
+                      <td data-label="Models">{row.modelCount}</td>
                     </tr>
-                  )}
+                  ))}
                 </tbody>
               </table>
             </div>
-          </div>
-        ))
-      }
-    </section>
-
-    <section class="regime-section" aria-labelledby="balanced-sample-title">
-      <div class="regime-section-head">
-        <span class="panel-kicker">Balanced sample benchmark</span>
-        <h2 id="balanced-sample-title">What happens when each market type has a fair sample?</h2>
-        <p>
-          This stricter benchmark waits for at least {BALANCED_SAMPLE_THRESHOLD} down, {BALANCED_SAMPLE_THRESHOLD} flat,
-          and {BALANCED_SAMPLE_THRESHOLD} up rounds. When ready, it compares the same number from each type.
-        </p>
-      </div>
-
-      {
-        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
-          const sample = balancedSamples[track];
-          return (
-            <div class="balanced-sample-panel">
-              <div class="balanced-sample-head">
-                <div>
-                  <span class="panel-kicker">{trackLabel(track)} balanced sample</span>
-                  <h3>{trackLabel(track)} down / flat / up benchmark</h3>
-                  <p>{sample.missingSummary}</p>
-                </div>
-                <span class:list={["regime-confidence", sample.status === "Ready" ? "regime-confidence-ready" : "regime-confidence-forming"]}>
-                  {sample.status}
-                </span>
-              </div>
-              <MarketRegimeLineChart chart={balancedProgressCharts[track]} />
-
-              <div class="balanced-sample-counts" aria-label={`${trackLabel(track)} balanced sample category counts`}>
-                {sample.categories.map((category) => (
-                  <article>
-                    <span>{category.label}</span>
-                    <strong>
-                      {category.count}<small>/{BALANCED_SAMPLE_THRESHOLD}</small>
-                    </strong>
-                    <i
-                      class="balanced-sample-progress"
-                      style={`--sample-progress: ${Math.min(100, (category.count / BALANCED_SAMPLE_THRESHOLD) * 100)}%;`}
-                      aria-hidden="true"
-                    ></i>
-                    <em>{category.rangeLabel}</em>
-                    <p>
-                      {sample.status === "Ready"
-                        ? `${category.selectedCount} selected for the balanced sample.`
-                        : category.missing > 0
-                          ? `${category.missing} more needed.`
-                          : "Requirement met."}
-                    </p>
-                  </article>
-                ))}
-              </div>
-
-              {sample.status === "Ready" ? (
-                <div class="balanced-sample-ready">
-                  <div class="balanced-sample-summary">
-                    <span>
-                      <strong>{sample.sampleSize}</strong>
-                      <em>rounds per category</em>
-                    </span>
-                    <span>
-                      <strong>{sample.selectedRounds.length}</strong>
-                      <em>total selected rounds</em>
-                    </span>
-                  </div>
-                  <div class="table-shell regime-table-shell">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Model</th>
-                          <th>Balanced sample score</th>
-                          <th>Avg alpha vs S&amp;P</th>
-                          <th>Hit rate</th>
-                          <th>Tests</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {sample.leaderboard.map((row, index) => (
-                          <tr>
-                            <td data-label="Model">
-                              <div class="regime-model-cell">
-                                <span>{index + 1}</span>
-                                {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
-                                <div>
-                                  <strong>{row.label}</strong>
-                                  <em>{row.providerName}</em>
-                                </div>
-                              </div>
-                            </td>
-                            <td class="regime-score-value" data-label="Balanced sample score">
-                              <strong>{scoreText(row.score)}</strong>
-                              <span>Equal down / flat / up sample</span>
-                            </td>
-                            <td data-label="Avg alpha vs S&P">{signedPctText(row.averageAlpha)}</td>
-                            <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
-                            <td data-label="Tests">
-                              {row.testsIncluded}/{row.testsRequired}
-                            </td>
-                            <td data-label="Status">
-                              <span class:list={["regime-status", `regime-status-${statusClass(row.status)}`]}>
-                                {row.status}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ) : (
-                <div class="balanced-sample-forming">
-                  <strong>Not ranked yet</strong>
-                  <p>
-                    The {trackLabel(track).toLowerCase()} sample is still forming, so this benchmark is shown as a
-                    readiness check rather than a leaderboard.
-                  </p>
-                </div>
-              )}
-            </div>
-          );
-        })
-      }
-    </section>
-
-    <section class="regime-section" aria-labelledby="regime-rounds-title">
-      <div class="regime-section-head">
-        <span class="panel-kicker">Audit table</span>
-        <h2 id="regime-rounds-title">Which rounds are included?</h2>
-        <p>Showing the latest 10 resolved official rounds. Open the full audit for every included round.</p>
-      </div>
-
-      <div class="table-shell regime-table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>Round</th>
-              <th>Track</th>
-              <th>Window</th>
-              <th>S&amp;P 500 return</th>
-              <th>Market type</th>
-              <th>Avg model alpha</th>
-              <th>Hit rate</th>
-              <th>Models</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visibleAuditRows.map((row) => (
-              <tr>
-                <td data-label="Round">
-                  <a href={`/rounds/${row.round.round_id}`}>{row.round.round_id}</a>
-                </td>
-                <td data-label="Track">{trackLabel(row.track)}</td>
-                <td data-label="Window">{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
-                <td data-label="S&P 500 return">{signedPctText(row.sp500Return)}</td>
-                <td data-label="Market type">{row.regime.label}</td>
-                <td data-label="Avg model alpha">{signedPctText(row.averageAlpha)}</td>
-                <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
-                <td data-label="Models">{row.modelCount}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {hiddenAuditRows.length > 0 && (
-        <details class="regime-audit-details">
-          <summary>View full audit table <span>{auditRows.length} rounds</span></summary>
-          <div class="table-shell regime-table-shell">
-            <table>
-              <thead>
-                <tr>
-                  <th>Round</th>
-                  <th>Track</th>
-                  <th>Window</th>
-                  <th>S&amp;P 500 return</th>
-                  <th>Market type</th>
-                  <th>Avg model alpha</th>
-                  <th>Hit rate</th>
-                  <th>Models</th>
-                </tr>
-              </thead>
-              <tbody>
-                {hiddenAuditRows.map((row) => (
-                  <tr>
-                    <td data-label="Round">
-                      <a href={`/rounds/${row.round.round_id}`}>{row.round.round_id}</a>
-                    </td>
-                    <td data-label="Track">{trackLabel(row.track)}</td>
-                    <td data-label="Window">{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
-                    <td data-label="S&P 500 return">{signedPctText(row.sp500Return)}</td>
-                    <td data-label="Market type">{row.regime.label}</td>
-                    <td data-label="Avg model alpha">{signedPctText(row.averageAlpha)}</td>
-                    <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
-                    <td data-label="Models">{row.modelCount}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </details>
-      )}
-    </section>
+          </details>
+        )}
+      </section>
+    </details>
   </section>
 </BaseLayout>
