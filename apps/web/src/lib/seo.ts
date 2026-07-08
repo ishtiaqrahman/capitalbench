@@ -136,9 +136,9 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: "/leaderboards/market-regime-benchmark",
-    title: "Market Type AI Benchmark",
+    title: "Market Environment AI Benchmark",
     description:
-      "CapitalBench AI model rankings grouped by S&P 500 movement, with equal weight for down, flat, and up market types once enough rounds exist.",
+      "CapitalBench AI model rankings grouped by S&P 500 movement, showing model performance in sharp down, down, flat, up, and sharp up environments.",
     priority: 0.84,
     changefreq: "weekly",
     lastmod: latestResolvedRoundDate

@@ -119,15 +119,36 @@ type DirectionModelRow = {
   providerName: string;
   logoSrc: string | undefined;
   score: number | undefined;
+  averageReturn: number | undefined;
+  averageSp500Return: number | undefined;
   averageAlpha: number | undefined;
   hitRate: number | undefined;
   tests: number;
+};
+
+type EnvironmentPerformanceCard = RegimeCoverage & {
+  track: BenchmarkTrack;
+  best: DirectionModelRow | undefined;
+  worst: DirectionModelRow | undefined;
+};
+
+type DirectionPerformanceCard = {
+  track: BenchmarkTrack;
+  key: "negative" | "positive";
+  label: string;
+  rangeLabel: string;
+  rounds: RegimeRound[];
+  averageSp500Return: number | undefined;
+  status: "Ready" | "Forming";
+  best: DirectionModelRow | undefined;
+  worst: DirectionModelRow | undefined;
 };
 
 type DirectionBucket = SampleCategoryDefinition & {
   track: BenchmarkTrack;
   rounds: RegimeRound[];
   status: "Ready" | "Forming";
+  averageSp500Return: number | undefined;
   modelRows: DirectionModelRow[];
 };
 
@@ -293,10 +314,6 @@ function scoreText(value: number | undefined): string {
   return finiteNumber(value) ? value.toFixed(1) : "n/a";
 }
 
-function pctText(value: number | undefined): string {
-  return finiteNumber(value) ? pct(value) : "n/a";
-}
-
 function signedPctText(value: number | undefined): string {
   if (!finiteNumber(value)) return "n/a";
   const formatted = pct(value);
@@ -397,12 +414,6 @@ function trackLabel(track: BenchmarkTrack): string {
   return track === "weekly" ? "Weekly" : "Monthly";
 }
 
-function statusMeaning(status: RegimeStatus | "Ready" | "Forming"): string {
-  if (status === "Ready") return "Included in score";
-  if (status === "Forming") return "Shown, not counted yet";
-  return "Not tested yet";
-}
-
 function statusLabel(status: RegimeStatus | "Ready" | "Forming"): string {
   if (status === "Ready") return "Counts now";
   if (status === "Forming") return "Needs more rounds";
@@ -483,7 +494,7 @@ function trackConfidence(track: BenchmarkTrack): { label: string; detail: string
 
   if (ready.length === 0) {
     return {
-      label: "No counting types",
+      label: "No counting environments",
       detail: "The page will update after resolved rounds exist.",
       className: "empty"
     };
@@ -492,14 +503,14 @@ function trackConfidence(track: BenchmarkTrack): { label: string; detail: string
   if (hasReadyDown && hasReadyUp) {
     return {
       label: "More balanced",
-      detail: `${ready.length} market types count now, including up and down markets.`,
+      detail: `${ready.length} environments count now, including up and down environments.`,
       className: "ready"
     };
   }
 
   return {
     label: "Still one-sided",
-    detail: `${ready.length} market type${ready.length === 1 ? "" : "s"} count now; more market variety is needed.`,
+    detail: `${ready.length} environment${ready.length === 1 ? "" : "s"} count now; more S&P 500 variety is needed.`,
     className: "forming"
   };
 }
@@ -727,11 +738,7 @@ function missingRoundText(count: number): string {
   return count > 0 ? `Needs ${pluralizeRound(count)} more.` : "Ready for scoring.";
 }
 
-function buildDirectionBucket(track: BenchmarkTrack, direction: SampleCategoryKey): DirectionBucket {
-  const definition = sampleCategoryDefinitions[track].find((item) => item.key === direction) ?? sampleCategoryDefinitions[track][0];
-  const rounds = regimeRounds.filter(
-    (round) => round.track === track && classifySampleCategory(track, round.sp500Return).key === direction
-  );
+function modelRowsForRounds(rounds: RegimeRound[]): DirectionModelRow[] {
   const accumulators = new Map<
     string,
     {
@@ -739,6 +746,7 @@ function buildDirectionBucket(track: BenchmarkTrack, direction: SampleCategoryKe
       provider: string;
       returns: number[];
       maxReturns: number[];
+      sp500Returns: number[];
       alphas: number[];
       hits: boolean[];
     }
@@ -754,19 +762,21 @@ function buildDirectionBucket(track: BenchmarkTrack, direction: SampleCategoryKe
         provider: row.provider,
         returns: [],
         maxReturns: [],
+        sp500Returns: [],
         alphas: [],
         hits: []
       };
 
       existing.returns.push(returnValue);
       existing.maxReturns.push(round.maxPossibleReturn);
+      existing.sp500Returns.push(round.sp500Return);
       if (finiteNumber(row.alpha_vs_sp500)) existing.alphas.push(row.alpha_vs_sp500);
       existing.hits.push(finiteNumber(row.alpha_vs_sp500) && row.alpha_vs_sp500 > 0);
       accumulators.set(row.model_id, existing);
     }
   }
 
-  const modelRows = Array.from(accumulators.values())
+  return Array.from(accumulators.values())
     .map((item) => ({
       modelId: item.modelId,
       provider: item.provider,
@@ -774,21 +784,33 @@ function buildDirectionBucket(track: BenchmarkTrack, direction: SampleCategoryKe
       providerName: providerLabel(item.provider),
       logoSrc: providerLogoSrc(item.provider),
       score: cumulativeCapitalBenchScore(item.returns, item.maxReturns) ?? undefined,
+      averageReturn: average(item.returns),
+      averageSp500Return: average(item.sp500Returns),
       averageAlpha: average(item.alphas),
       hitRate: item.hits.length ? item.hits.filter(Boolean).length / item.hits.length : undefined,
       tests: item.returns.length
     }))
     .sort(
       (left, right) =>
+        (right.averageReturn ?? Number.NEGATIVE_INFINITY) - (left.averageReturn ?? Number.NEGATIVE_INFINITY) ||
         (right.score ?? Number.NEGATIVE_INFINITY) - (left.score ?? Number.NEGATIVE_INFINITY) ||
         left.label.localeCompare(right.label)
     );
+}
+
+function buildDirectionBucket(track: BenchmarkTrack, direction: SampleCategoryKey): DirectionBucket {
+  const definition = sampleCategoryDefinitions[track].find((item) => item.key === direction) ?? sampleCategoryDefinitions[track][0];
+  const rounds = regimeRounds.filter(
+    (round) => round.track === track && classifySampleCategory(track, round.sp500Return).key === direction
+  );
+  const modelRows = modelRowsForRounds(rounds);
 
   return {
     ...definition,
     track,
     rounds,
     status: rounds.length >= READY_ROUND_THRESHOLD ? "Ready" : "Forming",
+    averageSp500Return: average(rounds.map((round) => round.sp500Return)),
     modelRows
   };
 }
@@ -806,15 +828,71 @@ const directionBuckets = {
   }
 };
 
+const environmentPerformance = {
+  weekly: coverageByTrack.weekly.map(
+    (regime): EnvironmentPerformanceCard => {
+      const rows = modelRowsForRounds(regime.rounds);
+      return {
+        ...regime,
+        track: "weekly",
+        best: rows[0],
+        worst: rows.at(-1)
+      };
+    }
+  ),
+  monthly: coverageByTrack.monthly.map(
+    (regime): EnvironmentPerformanceCard => {
+      const rows = modelRowsForRounds(regime.rounds);
+      return {
+        ...regime,
+        track: "monthly",
+        best: rows[0],
+        worst: rows.at(-1)
+      };
+    }
+  )
+};
+
+function buildDirectionalPerformance(track: BenchmarkTrack, key: "negative" | "positive"): DirectionPerformanceCard {
+  const direction: RegimeDirection = key === "negative" ? "down" : "up";
+  const rounds = regimeRounds.filter((round) => round.track === track && round.regime.direction === direction);
+  const rows = modelRowsForRounds(rounds);
+  const rangeLabel =
+    key === "negative"
+      ? track === "weekly"
+        ? "S&P < -0.5%"
+        : "S&P < -1.0%"
+      : track === "weekly"
+        ? "S&P > +0.5%"
+        : "S&P > +1.0%";
+
+  return {
+    track,
+    key,
+    label: key === "negative" ? "Down environments" : "Up environments",
+    rangeLabel,
+    rounds,
+    averageSp500Return: average(rounds.map((round) => round.sp500Return)),
+    status: rounds.length >= READY_ROUND_THRESHOLD ? "Ready" : "Forming",
+    best: rows[0],
+    worst: rows.at(-1)
+  };
+}
+
+const directionalPerformance = {
+  weekly: [buildDirectionalPerformance("weekly", "negative"), buildDirectionalPerformance("weekly", "positive")],
+  monthly: [buildDirectionalPerformance("monthly", "negative"), buildDirectionalPerformance("monthly", "positive")]
+};
+
 const directionCopy: Record<SampleCategoryKey, { adjective: string; noun: string; tone: "down" | "flat" | "up" }> = {
-  down: { adjective: "negative", noun: "down markets", tone: "down" },
-  flat: { adjective: "flat", noun: "flat markets", tone: "flat" },
-  up: { adjective: "positive", noun: "up markets", tone: "up" }
+  down: { adjective: "negative", noun: "down environments", tone: "down" },
+  flat: { adjective: "flat", noun: "flat environments", tone: "flat" },
+  up: { adjective: "positive", noun: "up environments", tone: "up" }
 };
 
 function buildDirectionLeaderInsight(track: BenchmarkTrack, direction: SampleCategoryKey): MarketInsightCard {
   const bucket = directionBuckets[track][direction];
-  const leader = bucket.modelRows.find((row) => finiteNumber(row.score));
+  const leader = bucket.modelRows.find((row) => finiteNumber(row.averageReturn));
   const copy = directionCopy[direction];
   const missing = Math.max(0, READY_ROUND_THRESHOLD - bucket.rounds.length);
 
@@ -826,8 +904,8 @@ function buildDirectionLeaderInsight(track: BenchmarkTrack, direction: SampleCat
       tone: copy.tone,
       status: "Forming",
       metricValue: "n/a",
-      metricLabel: "benchmark score",
-      detail: `No resolved ${trackLabel(track).toLowerCase()} rounds have landed in this market type yet.`,
+      metricLabel: "avg model return",
+      detail: `No resolved ${trackLabel(track).toLowerCase()} rounds have landed in this S&P 500 environment yet.`,
       stats: [
         { label: "Rounds", value: pluralizeRound(bucket.rounds.length) },
         { label: "Range", value: bucket.rangeLabel }
@@ -846,15 +924,15 @@ function buildDirectionLeaderInsight(track: BenchmarkTrack, direction: SampleCat
       providerName: leader.providerName,
       logoSrc: leader.logoSrc
     },
-    metricValue: scoreText(leader.score),
-    metricLabel: "benchmark score",
+    metricValue: signedPctText(leader.averageReturn),
+    metricLabel: "avg model return",
     detail:
       bucket.status === "Ready"
         ? `Based on ${pluralizeRound(bucket.rounds.length)} where the S&P 500 was ${copy.adjective}.`
         : `Current signal only. ${missingRoundText(missing)}`,
     stats: [
-      { label: "Avg alpha", value: signedPctText(leader.averageAlpha) },
-      { label: "Hit rate", value: finiteNumber(leader.hitRate) ? pct(leader.hitRate) : "n/a" },
+      { label: "S&P avg", value: signedPctText(bucket.averageSp500Return) },
+      { label: "Benchmark", value: scoreText(leader.score) },
       { label: "Tests", value: `${leader.tests}/${bucket.rounds.length}` }
     ]
   };
@@ -882,6 +960,8 @@ function buildConsistencyInsight(track: BenchmarkTrack): MarketInsightCard {
         logoSrc: first.logoSrc,
         floorScore: Math.min(...scores),
         averageScore: average(scores),
+        averageReturn: average(rows.map((row) => row.averageReturn).filter(finiteNumber)),
+        averageSp500Return: average(rows.map((row) => row.averageSp500Return).filter(finiteNumber)),
         directionsCovered: rows.length,
         averageAlpha: average(rows.map((row) => row.averageAlpha).filter(finiteNumber)),
         hitRate: average(rows.map((row) => row.hitRate).filter(finiteNumber))
@@ -905,8 +985,8 @@ function buildConsistencyInsight(track: BenchmarkTrack): MarketInsightCard {
       tone: "steady",
       status: "Forming",
       metricValue: "n/a",
-      metricLabel: "score floor",
-      detail: "At least two tested market types are needed before comparing model consistency.",
+      metricLabel: "avg model return",
+      detail: "At least two tested S&P 500 environments are needed before comparing model consistency.",
       stats: [
         { label: "Types tested", value: `${buckets.length}/3` },
         { label: "Ready types", value: `${buckets.filter((bucket) => bucket.status === "Ready").length}/3` }
@@ -925,12 +1005,12 @@ function buildConsistencyInsight(track: BenchmarkTrack): MarketInsightCard {
       providerName: leader.providerName,
       logoSrc: leader.logoSrc
     },
-    metricValue: scoreText(leader.floorScore),
-    metricLabel: "lowest tested score",
-    detail: `Lowest score across ${leader.directionsCovered} tested market types; average score ${scoreText(leader.averageScore)}.`,
+    metricValue: signedPctText(leader.averageReturn),
+    metricLabel: "avg model return",
+    detail: `Lowest score across ${leader.directionsCovered} tested environments; average score ${scoreText(leader.averageScore)}.`,
     stats: [
-      { label: "Avg alpha", value: signedPctText(leader.averageAlpha) },
-      { label: "Avg hit rate", value: finiteNumber(leader.hitRate) ? pct(leader.hitRate) : "n/a" },
+      { label: "S&P avg", value: signedPctText(leader.averageSp500Return) },
+      { label: "Score floor", value: scoreText(leader.floorScore) },
       { label: "Types", value: `${leader.directionsCovered}/3` }
     ]
   };
@@ -955,8 +1035,14 @@ function buildSplitInsight(track: BenchmarkTrack): MarketInsightCard {
         logoSrc: up.logoSrc,
         downScore: down.score,
         upScore: up.score,
+        downReturn: down.averageReturn,
+        upReturn: up.averageReturn,
+        downSp500Return: down.averageSp500Return,
+        upSp500Return: up.averageSp500Return,
         gap,
-        absGap: Math.abs(gap)
+        absGap: Math.abs(gap),
+        returnGap:
+          finiteNumber(down.averageReturn) && finiteNumber(up.averageReturn) ? up.averageReturn - down.averageReturn : undefined
       };
     })
     .filter((item): item is NonNullable<typeof item> => item !== null)
@@ -972,7 +1058,7 @@ function buildSplitInsight(track: BenchmarkTrack): MarketInsightCard {
       tone: "split",
       status: "Forming",
       metricValue: "n/a",
-      metricLabel: "score gap",
+      metricLabel: "avg return gap",
       detail: "Both negative and positive S&P 500 samples are needed before measuring directional split.",
       stats: [
         { label: "Down rounds", value: pluralizeRound(downBucket.rounds.length) },
@@ -981,13 +1067,10 @@ function buildSplitInsight(track: BenchmarkTrack): MarketInsightCard {
     };
   }
 
-  const stronger = leader.gap >= 0 ? "up markets" : "down markets";
-  const weaker = leader.gap >= 0 ? "down markets" : "up markets";
-
   return {
     key: `${track}-split`,
     eyebrow: `${trackLabel(track)} up/down split`,
-    title: `${leader.label} changes most between up and down markets.`,
+    title: `${leader.label} changes most between up and down environments.`,
     tone: "split",
     status: allReady ? "Ready" : "Forming",
     model: {
@@ -995,12 +1078,12 @@ function buildSplitInsight(track: BenchmarkTrack): MarketInsightCard {
       providerName: leader.providerName,
       logoSrc: leader.logoSrc
     },
-    metricValue: `${leader.absGap.toFixed(1)} pts`,
-    metricLabel: `${stronger} over ${weaker}`,
-    detail: `${scoreText(leader.upScore)} in up markets versus ${scoreText(leader.downScore)} in down markets.`,
+    metricValue: finiteNumber(leader.returnGap) ? `${(Math.abs(leader.returnGap) * 100).toFixed(1)} pts` : `${leader.absGap.toFixed(1)} pts`,
+    metricLabel: `avg return gap`,
+    detail: `${scoreText(leader.upScore)} in up environments versus ${scoreText(leader.downScore)} in down environments.`,
     stats: [
-      { label: "Down score", value: scoreText(leader.downScore) },
-      { label: "Up score", value: scoreText(leader.upScore) },
+      { label: "Down avg", value: signedPctText(leader.downReturn) },
+      { label: "Up avg", value: signedPctText(leader.upReturn) },
       { label: "Samples", value: `${downBucket.rounds.length}/${upBucket.rounds.length}` }
     ]
   };
@@ -1041,7 +1124,7 @@ function buildSp500MovementChart(track: BenchmarkTrack): LineChart {
   return buildLineChart({
     id: `${track}-sp500-regime-path`,
     title: `${trackLabel(track)} S&P 500 movement`,
-    description: "Each point is one scored round. The S&P 500 move decides the market type.",
+    description: "Each point is one scored round. The S&P 500 move decides the environment.",
     format: "percent",
     includeZero: true,
     series: [
@@ -1064,7 +1147,7 @@ function buildLeaderboardScorePathChart(track: BenchmarkTrack): LineChart {
   return buildLineChart({
     id: `${track}-regime-score-path`,
     title: `${trackLabel(track)} top score path`,
-    description: "Cumulative score movement for the current top market-type models.",
+    description: "Cumulative score movement for the current top environment-ranked models.",
     format: "score",
     includeZero: true,
     series: topRows.map((row, index) => {
@@ -1168,19 +1251,6 @@ const trackSummaries = (["weekly", "monthly"] as BenchmarkTrack[]).map((track) =
 
 const weeklySummary = trackSummaries.find((item) => item.track === "weekly");
 const monthlySummary = trackSummaries.find((item) => item.track === "monthly");
-const topLeaders = {
-  weekly: leaderboards.weekly.find((row) => finiteNumber(row.regimeBalancedScore)),
-  monthly: leaderboards.monthly.find((row) => finiteNumber(row.regimeBalancedScore))
-};
-
-function leaderContext(track: BenchmarkTrack, leader: RegimeLeaderboardRow | undefined): string {
-  if (!leader) return "No market type has enough resolved rounds to rank models yet.";
-  const represented = `${leader.readyRegimesCovered}/${leader.readyRegimesRequired} counting market types represented.`;
-  const confidence = trackConfidence(track);
-  if (confidence.className === "ready") return `${represented} Up and down markets both count.`;
-  if (confidence.className === "forming") return `${represented} More market variety is needed.`;
-  return represented;
-}
 
 const auditRows = regimeRounds
   .slice()
@@ -1194,55 +1264,40 @@ const hiddenAuditRows = auditRows.slice(10);
 ---
 
 <BaseLayout
-  title="Market Type AI Benchmark"
-  description="CapitalBench model rankings grouped by S&P 500 movement, with equal weight for down, flat, and up market types once enough rounds exist."
+  title="Market Environment AI Benchmark"
+  description="CapitalBench model rankings grouped by S&P 500 movement, showing which models perform best and worst in sharp down, down, flat, up, and sharp up environments."
 >
   <PageHeader
-    eyebrow="Market Type Benchmark"
-    title="Model Performance By Market Type"
-    summary="See whether AI portfolios still hold up when completed rounds are grouped by the S&P 500 move."
+    eyebrow="Market Environment Benchmark"
+    title="Model Performance By Market Environment"
+    summary="Completed benchmark rounds are grouped by how the S&P 500 moved during the scoring window. This shows which models performed best and worst in each market environment."
   />
 
   <section class="section market-regime-page">
     <section class="regime-read-first" aria-labelledby="regime-read-first-title">
       <div class="regime-section-head">
         <span class="panel-kicker">Read this first</span>
-        <h2 id="regime-read-first-title">This tests whether a model works in more than one market.</h2>
+        <h2 id="regime-read-first-title">This compares model performance across S&amp;P 500 environments.</h2>
         <p>
-          Completed rounds are grouped by S&amp;P 500 movement. A market type only counts after
-          {` ${READY_ROUND_THRESHOLD}+ `}resolved rounds, then the equal-market score averages the counting types so one
-          common market does not dominate.
+          Each resolved round is classified by the S&amp;P 500 return during its scoring window: sharp down, down,
+          flat, up, or sharp up. The page first shows who did best and worst in each environment, then shows the
+          equal-environment benchmark.
         </p>
         <p class="regime-score-note">
-          Higher is better. Scores can be negative when models underperform the benchmark, and pending rounds appear here
-          only after scoring is resolved.
+          Average return is the primary number in the environment cards. Benchmark score remains as supporting context,
+          where higher is better and negative scores mean models lagged the scoring benchmark.
         </p>
-      </div>
-
-      <div class="regime-answer-grid" aria-label="Current market type benchmark leaders">
-        {(["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
-          const top = topLeaders[track];
-          return (
-            <article class="regime-answer-card">
-              <span class="panel-kicker">{trackLabel(track)} leader</span>
-              <h3>{top?.label ?? "No leader yet"}</h3>
-              <strong>{scoreText(top?.regimeBalancedScore)}</strong>
-              <em>Equal-market score; higher is better.</em>
-              <p>{leaderContext(track, top)}</p>
-            </article>
-          );
-        })}
       </div>
     </section>
 
-    <div class="regime-kpi-grid" aria-label="Market type benchmark summary">
+    <div class="regime-kpi-grid" aria-label="Market environment benchmark summary">
       <article>
-        <span>Weekly counting types</span>
+        <span>Weekly counting environments</span>
         <strong>{weeklySummary?.readyCount ?? 0}<small>/5</small></strong>
         <em>{trackConfidence("weekly").label}</em>
       </article>
       <article>
-        <span>Monthly counting types</span>
+        <span>Monthly counting environments</span>
         <strong>{monthlySummary?.readyCount ?? 0}<small>/5</small></strong>
         <em>{trackConfidence("monthly").label}</em>
       </article>
@@ -1258,12 +1313,162 @@ const hiddenAuditRows = auditRows.slice(10);
       </article>
     </div>
 
+    <section class="regime-section environment-overview-section" aria-labelledby="environment-overview-title">
+      <div class="regime-section-head">
+        <span class="panel-kicker">Market environments</span>
+        <h2 id="environment-overview-title">Where do models win or lose?</h2>
+        <p>
+          These cards classify completed rounds by the S&amp;P 500 move, then average model returns inside each
+          environment. Best and worst are based on average portfolio return for that environment.
+        </p>
+      </div>
+
+      {
+        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
+          const confidence = trackConfidence(track);
+          return (
+            <div class="environment-track-panel">
+              <div class="regime-track-head">
+                <div>
+                  <span class="panel-kicker">{trackLabel(track)} environments</span>
+                  <h3>{trackLabel(track)} S&amp;P 500 climate map</h3>
+                  <p>{confidence.detail}</p>
+                </div>
+                <strong class:list={["regime-confidence", `regime-confidence-${confidence.className}`]}>
+                  {confidence.label}
+                </strong>
+              </div>
+              <MarketRegimeLineChart chart={sp500MovementCharts[track]} />
+              <div class="environment-card-grid">
+                {environmentPerformance[track].map((environment) => (
+                  <article class:list={["environment-card", `environment-card-${environment.key}`]}>
+                    <header>
+                      <span class:list={["regime-status", `regime-status-${statusClass(environment.status)}`]}>
+                        {statusLabel(environment.status)}
+                      </span>
+                      <strong>{environment.label}</strong>
+                      <em>{environment.rangeLabel}</em>
+                    </header>
+                    <div class="environment-count">
+                      <b>{environment.count}</b>
+                      <span>resolved round{environment.count === 1 ? "" : "s"}</span>
+                    </div>
+                    <dl class="environment-winners">
+                      <div>
+                        <dt>Best avg return</dt>
+                        <dd>
+                          {environment.best ? (
+                            <>
+                              {environment.best.logoSrc && <img src={environment.best.logoSrc} alt="" loading="lazy" />}
+                              <span>
+                                <strong>{environment.best.label}</strong>
+                                <em>{signedPctText(environment.best.averageReturn)}</em>
+                              </span>
+                            </>
+                          ) : (
+                            <span>
+                              <strong>No model yet</strong>
+                              <em>n/a</em>
+                            </span>
+                          )}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Worst avg return</dt>
+                        <dd>
+                          {environment.worst ? (
+                            <>
+                              {environment.worst.logoSrc && <img src={environment.worst.logoSrc} alt="" loading="lazy" />}
+                              <span>
+                                <strong>{environment.worst.label}</strong>
+                                <em>{signedPctText(environment.worst.averageReturn)}</em>
+                              </span>
+                            </>
+                          ) : (
+                            <span>
+                              <strong>No model yet</strong>
+                              <em>n/a</em>
+                            </span>
+                          )}
+                        </dd>
+                      </div>
+                    </dl>
+                    <div class="environment-stats">
+                      <span>
+                        <b>{signedPctText(environment.averageSp500Return)}</b>
+                        <em>S&amp;P avg</em>
+                      </span>
+                      <span>
+                        <b>{scoreText(environment.best?.score)}</b>
+                        <em>best score</em>
+                      </span>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          );
+        })
+      }
+    </section>
+
+    <section class="regime-section direction-summary-section" aria-labelledby="direction-summary-title">
+      <div class="regime-section-head">
+        <span class="panel-kicker">Down versus up</span>
+        <h2 id="direction-summary-title">Who leads when the S&amp;P 500 falls or rises?</h2>
+        <p>
+          These summaries combine sharp down with down, and sharp up with up. Flat rounds stay separate so the positive
+          and negative comparisons stay clean.
+        </p>
+      </div>
+
+      <div class="direction-summary-grid">
+        {(["weekly", "monthly"] as BenchmarkTrack[]).flatMap((track) =>
+          directionalPerformance[track].map((direction) => (
+            <article class:list={["direction-summary-card", `direction-summary-card-${direction.key}`]}>
+              <header>
+                <span class="panel-kicker">{trackLabel(track)}</span>
+                <strong>{direction.label}</strong>
+                <em>{direction.rangeLabel}</em>
+              </header>
+              <div class="direction-summary-main">
+                <div>
+                  <span>Best</span>
+                  <strong>{direction.best?.label ?? "No model yet"}</strong>
+                  <em>{signedPctText(direction.best?.averageReturn)} avg return</em>
+                </div>
+                <div>
+                  <span>Worst</span>
+                  <strong>{direction.worst?.label ?? "No model yet"}</strong>
+                  <em>{signedPctText(direction.worst?.averageReturn)} avg return</em>
+                </div>
+              </div>
+              <dl>
+                <div>
+                  <dt>S&amp;P avg</dt>
+                  <dd>{signedPctText(direction.averageSp500Return)}</dd>
+                </div>
+                <div>
+                  <dt>Best alpha</dt>
+                  <dd>{signedPctText(direction.best?.averageAlpha)}</dd>
+                </div>
+                <div>
+                  <dt>Rounds</dt>
+                  <dd>{direction.rounds.length}</dd>
+                </div>
+              </dl>
+            </article>
+          ))
+        )}
+      </div>
+    </section>
+
     <section class="regime-section" aria-labelledby="regime-leaderboard-title">
       <div class="regime-section-head">
-        <span class="panel-kicker">Main leaderboard</span>
-        <h2 id="regime-leaderboard-title">Who performs best across market types?</h2>
+        <span class="panel-kicker">Equal-environment leaderboard</span>
+        <h2 id="regime-leaderboard-title">Who performs best after environments are balanced?</h2>
         <p>
-          The equal-market score averages only market types that have at least {READY_ROUND_THRESHOLD} resolved rounds.
+          The equal-environment score averages only environments that have at least {READY_ROUND_THRESHOLD} resolved rounds.
           Supporting columns show the normal all-round score, average alpha, and hit rate for context.
         </p>
       </div>
@@ -1274,14 +1479,14 @@ const hiddenAuditRows = auditRows.slice(10);
             <div class="regime-leaderboard-head">
               <div>
                 <span class="panel-kicker">{trackLabel(track)} benchmark</span>
-                <h3>{trackLabel(track)} equal-market scores</h3>
+                  <h3>{trackLabel(track)} equal-environment scores</h3>
               </div>
               <span class:list={["regime-confidence", `regime-confidence-${trackConfidence(track).className}`]}>
                 {trackConfidence(track).label}
               </span>
             </div>
             <MarketRegimeLineChart chart={leaderboardScorePathCharts[track]} />
-            <div class="regime-mobile-rank-summary" aria-label={`${trackLabel(track)} top equal-market models`}>
+            <div class="regime-mobile-rank-summary" aria-label={`${trackLabel(track)} top equal-environment models`}>
               {leaderboards[track].slice(0, 3).map((row, index) => (
                 <article>
                   <span>{index + 1}</span>
@@ -1291,7 +1496,7 @@ const hiddenAuditRows = auditRows.slice(10);
                     <em>{row.providerName}</em>
                   </div>
                   <b>{scoreText(row.regimeBalancedScore)}</b>
-                  <small>{row.readyRegimesCovered}/{row.readyRegimesRequired} counting types</small>
+                  <small>{row.readyRegimesCovered}/{row.readyRegimesRequired} counting environments</small>
                 </article>
               ))}
             </div>
@@ -1300,7 +1505,7 @@ const hiddenAuditRows = auditRows.slice(10);
                 <thead>
                   <tr>
                     <th>Model</th>
-                    <th>Equal-market score</th>
+                    <th>Equal-environment score</th>
                     <th>Scores that count</th>
                     <th>All-round score</th>
                     <th>Avg alpha vs S&amp;P</th>
@@ -1322,9 +1527,9 @@ const hiddenAuditRows = auditRows.slice(10);
                             </div>
                           </div>
                         </td>
-                        <td class="regime-score-value" data-label="Equal-market score">
+                        <td class="regime-score-value" data-label="Equal-environment score">
                           <strong>{scoreText(row.regimeBalancedScore)}</strong>
-                          <span>{row.readyRegimesCovered}/{row.readyRegimesRequired} counting types</span>
+                          <span>{row.readyRegimesCovered}/{row.readyRegimesRequired} counting environments</span>
                         </td>
                         <td data-label="Scores that count">
                           <div class="regime-score-strip">
@@ -1348,7 +1553,7 @@ const hiddenAuditRows = auditRows.slice(10);
                     ))
                   ) : (
                     <tr>
-                      <td colspan="7" data-label="Status">No market types count yet.</td>
+                      <td colspan="7" data-label="Status">No environments count yet.</td>
                     </tr>
                   )}
                 </tbody>
@@ -1359,80 +1564,13 @@ const hiddenAuditRows = auditRows.slice(10);
       }
     </section>
 
-    <section class="regime-section" aria-labelledby="market-coverage-title">
-      <div class="regime-section-head">
-        <span class="panel-kicker">Market coverage</span>
-        <h2 id="market-coverage-title">Can we trust the current ranking?</h2>
-        <p>
-          A market type counts only after {READY_ROUND_THRESHOLD}+ resolved rounds. Until then it is shown as a signal,
-          but it does not affect the equal-market score.
-        </p>
-        <div class="regime-status-legend" aria-label="Market type status legend">
-          <span class="regime-status regime-status-ready">Counts now <em>Included in score</em></span>
-          <span class="regime-status regime-status-forming">Needs more rounds <em>Shown only</em></span>
-          <span class="regime-status regime-status-no-data-yet">No rounds yet <em>Not tested yet</em></span>
-        </div>
-      </div>
-
-      <div class="regime-bucket-key" aria-label="Market type threshold key">
-        {(["weekly", "monthly"] as BenchmarkTrack[]).map((track) => (
-          <article>
-            <strong>{trackLabel(track)} bucket key</strong>
-            <div>
-              {regimeDefinitions[track].map((regime) => (
-                <span>{regime.label}: {regime.rangeLabel}</span>
-              ))}
-            </div>
-          </article>
-        ))}
-      </div>
-
-      {
-        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
-          const confidence = trackConfidence(track);
-          return (
-            <div class="regime-track-panel">
-              <div class="regime-track-head">
-                <div>
-                  <span class="panel-kicker">{trackLabel(track)}</span>
-                  <h3>{trackLabel(track)} market types</h3>
-                  <p>{confidence.detail}</p>
-                </div>
-                <strong class:list={["regime-confidence", `regime-confidence-${confidence.className}`]}>
-                  {confidence.label}
-                </strong>
-              </div>
-              <MarketRegimeLineChart chart={sp500MovementCharts[track]} />
-              <div class="regime-coverage-grid">
-                {coverageByTrack[track].map((regime) => (
-                  <article class:list={["regime-coverage-card", `regime-card-${regime.key}`]}>
-                    <span class:list={["regime-status", `regime-status-${statusClass(regime.status)}`]}>
-                      {statusLabel(regime.status)}
-                      <em>{statusMeaning(regime.status)}</em>
-                    </span>
-                    <strong>{regime.label}</strong>
-                    <em>{regime.rangeLabel}</em>
-                    <div>
-                      <b>{regime.count}</b>
-                      <small>round{regime.count === 1 ? "" : "s"}</small>
-                    </div>
-                    <p>Average S&amp;P 500 move: {pctText(regime.averageSp500Return)}</p>
-                  </article>
-                ))}
-              </div>
-            </div>
-          );
-        })
-      }
-    </section>
-
     <section class="regime-section market-insights-section" aria-labelledby="market-insights-title">
       <div class="regime-section-head">
         <span class="panel-kicker">Calculated insights</span>
         <h2 id="market-insights-title">What changes when the market moves differently?</h2>
         <p>
-          Use these after the main leaderboard. They compare model behavior inside down, flat, and up markets, including
-          market types that still need more rounds.
+          These cards compare model behavior inside down, flat, and up S&amp;P 500 environments, including environments
+          that still need more resolved rounds.
         </p>
       </div>
 
@@ -1493,9 +1631,9 @@ const hiddenAuditRows = auditRows.slice(10);
       <div class="regime-method-panel">
         <div>
           <span class="panel-kicker">Method</span>
-          <h2 id="regime-method-title">How the equal-market score works.</h2>
+          <h2 id="regime-method-title">How the equal-environment score works.</h2>
           <p>
-            A market type is the S&amp;P 500 move during a scored round. This view checks whether models perform across
+            An environment is the S&amp;P 500 move during a scored round. This view checks whether models perform across
             different environments instead of being helped by one dominant environment.
           </p>
         </div>
@@ -1506,14 +1644,14 @@ const hiddenAuditRows = auditRows.slice(10);
           </div>
           <div>
             <dt>Main score</dt>
-            <dd>Average of counting market types</dd>
+            <dd>Average of counting environments</dd>
           </div>
           <div>
             <dt>Scope</dt>
             <dd>Resolved official rounds only</dd>
           </div>
         </dl>
-        <ol class="regime-method-flow" aria-label="Market type benchmark process">
+        <ol class="regime-method-flow" aria-label="Market environment benchmark process">
           <li>
             <span>1</span>
             <strong>Use completed rounds</strong>
@@ -1522,19 +1660,19 @@ const hiddenAuditRows = auditRows.slice(10);
           <li>
             <span>2</span>
             <strong>Group by S&amp;P 500 move</strong>
-            <em>Each round becomes a market type.</em>
+            <em>Each round becomes one S&amp;P 500 environment.</em>
           </li>
           <li>
             <span>3</span>
-            <strong>Average counting types equally</strong>
-            <em>Every counting market type carries the same weight.</em>
+            <strong>Average counting environments equally</strong>
+            <em>Every counting environment carries the same weight.</em>
           </li>
         </ol>
         <div class="regime-method-example">
           <span class="panel-kicker">Example</span>
           <p>
-            If a model scores 20 in up markets and -10 in down markets, its equal-market score is 5. That keeps a large
-            pile of up-market rounds from drowning out the down-market result.
+          If a model scores 20 in up environments and -10 in down environments, its equal-environment score is 5. That
+          keeps a large pile of up rounds from drowning out the down-environment result.
           </p>
         </div>
       </div>
@@ -1550,7 +1688,7 @@ const hiddenAuditRows = auditRows.slice(10);
       <section class="regime-section" aria-labelledby="balanced-sample-title">
         <div class="regime-section-head">
           <span class="panel-kicker">Strict equal-sample check</span>
-          <h2 id="balanced-sample-title">What happens when each market type has the same sample size?</h2>
+        <h2 id="balanced-sample-title">What happens when down, flat, and up each have the same sample size?</h2>
           <p>
             This stricter benchmark waits for at least {BALANCED_SAMPLE_THRESHOLD} down, {BALANCED_SAMPLE_THRESHOLD} flat,
             and {BALANCED_SAMPLE_THRESHOLD} up rounds. When ready, it compares the same number from each type.
@@ -1693,7 +1831,7 @@ const hiddenAuditRows = auditRows.slice(10);
                 <th>Track</th>
                 <th>Window</th>
                 <th>S&amp;P 500 return</th>
-                <th>Market type</th>
+                <th>Environment</th>
                 <th>Avg model alpha</th>
                 <th>Hit rate</th>
                 <th>Models</th>
@@ -1708,7 +1846,7 @@ const hiddenAuditRows = auditRows.slice(10);
                   <td data-label="Track">{trackLabel(row.track)}</td>
                   <td data-label="Window">{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
                   <td data-label="S&P 500 return">{signedPctText(row.sp500Return)}</td>
-                  <td data-label="Market type">{row.regime.label}</td>
+                  <td data-label="Environment">{row.regime.label}</td>
                   <td data-label="Avg model alpha">{signedPctText(row.averageAlpha)}</td>
                   <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
                   <td data-label="Models">{row.modelCount}</td>
@@ -1729,7 +1867,7 @@ const hiddenAuditRows = auditRows.slice(10);
                     <th>Track</th>
                     <th>Window</th>
                     <th>S&amp;P 500 return</th>
-                    <th>Market type</th>
+                    <th>Environment</th>
                     <th>Avg model alpha</th>
                     <th>Hit rate</th>
                     <th>Models</th>
@@ -1744,7 +1882,7 @@ const hiddenAuditRows = auditRows.slice(10);
                       <td data-label="Track">{trackLabel(row.track)}</td>
                       <td data-label="Window">{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
                       <td data-label="S&P 500 return">{signedPctText(row.sp500Return)}</td>
-                      <td data-label="Market type">{row.regime.label}</td>
+                      <td data-label="Environment">{row.regime.label}</td>
                       <td data-label="Avg model alpha">{signedPctText(row.averageAlpha)}</td>
                       <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
                       <td data-label="Models">{row.modelCount}</td>
