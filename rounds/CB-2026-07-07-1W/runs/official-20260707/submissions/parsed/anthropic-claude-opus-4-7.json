@@ -1,0 +1,54 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot CPI on July 14 hits rate-sensitive defensives and gold simultaneously",
+    "Bank earnings disappoint on NII or credit, reversing Financials' recent 7.5% run (continuation/reversal risk)",
+    "Tech-led rebound (SMH/QQQ oversold bounce) causes defensive underperformance vs SPY",
+    "Oil spike from Iran/Hormuz escalation broadly pressures equities",
+    "FOMC minutes read more hawkish than expected, hurting duration-sensitive positions"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "FINANCIALS",
+      "rationale": "JPM and WFC report July 14 within the scoring window; sector has strong recent breadth (+7.55% 30d) with solid ISM services and steepening backdrop."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector leadership (+7.94% 30d, +6.31% vs SPY) with low beta; positioned well if soft payrolls drive defensive rotation."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "LOW_VOL",
+      "rationale": "Weakening labor market (57k payrolls, downward revisions) and elevated VIX favor low-vol defensive tilt into CPI print."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "GOLD",
+      "rationale": "Iran sanctions reinstated and Strait of Hormuz uncertainty; hedge against CPI upside surprise given sticky core PCE at 3.4%."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Dry powder buffer against CPI/earnings volatility with positive carry."
+    }
+  ],
+  "portfolio_rationale": "Defensive tilt into a week with major catalysts (CPI July 14, big bank earnings, FOMC minutes) against a softening labor backdrop and elevated VIX. Financials overweight captures the JPM/WFC earnings catalyst inside the window while Healthcare/Low-Vol provide ballast; gold hedges geopolitical and inflation tail risks.",
+  "provider": "anthropic",
+  "rationale_summary": "Barbell of catalyst-driven Financials with defensive Healthcare and Low-Vol, plus gold and T-bills as hedges against CPI and geopolitical tail risks in a soft-labor macro backdrop.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-07-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 21722,
+    "latency_seconds": 15.722331659053452,
+    "output_tokens": 866,
+    "total_tokens": 22588
+  }
+}

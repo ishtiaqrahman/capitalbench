@@ -1,0 +1,53 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot June CPI (July 14) or hawkish FOMC minutes could pressure equities broadly and lift Treasury yields",
+    "Bank earnings (JPM/WFC July 14) could disappoint on credit/NIM, hurting the financials overweight",
+    "A sharp tech/semiconductor rebound would cause underperformance versus SPY given underweight to QQQ/SMH",
+    "Defensive value/healthcare rally is recent and could mean-revert (reversal risk) with limited fresh catalyst support in the briefing"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "FINANCIALS",
+      "rationale": "JPMorgan and Wells Fargo Q2 earnings on July 14 are catalysts inside the window; XLF showed leadership (+4.55% 7d, +7.55% 30d) with low volatility and near 52w highs, supported by bank earnings kickoff."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong recent breadth (+3.64% 7d, +7.94% 30d, +6.31% vs SPY 30d) at 52w highs and low beta (0.35); provides ballast versus tech-led weakness."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive factor at 52w highs with very low beta (0.06); useful given elevated VIX, sticky core PCE, and CPI/FOMC-minutes event risk in the window."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value leadership (+2.19% 7d, +3.48% vs SPY 30d), lower vol, financial/energy tilt aligns with bank earnings and firmer oil; at 52w highs."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like buffer against CPI/FOMC-minutes volatility with positive carry and near-zero drawdown."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward defensive and value-oriented equity with a bank-earnings catalyst (JPM/WFC July 14), while underweighting the high-beta tech/semis that led recent weakness and avoiding rate-sensitive duration ahead of CPI.",
+  "provider": "anthropic",
+  "rationale_summary": "Defensive/value equity plus financials earnings catalyst, cushioned by short Treasuries, to seek alpha over SPY through a CPI- and Fed-minutes-heavy week.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-07-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 21717,
+    "latency_seconds": 13.627381725003943,
+    "output_tokens": 915,
+    "total_tokens": 22632
+  }
+}
