@@ -49,6 +49,7 @@ type RegimeCoverage = RegimeDefinition & {
 type ModelRegimeStats = {
   returns: number[];
   maxReturns: number[];
+  sp500Returns: number[];
   alphas: number[];
   hits: boolean[];
   rounds: string[];
@@ -66,7 +67,10 @@ type RegimeLeaderboardRow = {
   label: string;
   providerName: string;
   logoSrc: string | undefined;
+  averageReturn: number | undefined;
+  averageSp500Return: number | undefined;
   regimeBalancedScore: number | undefined;
+  sp500RegimeScore: number | undefined;
   allRoundScore: number | undefined;
   averageAlpha: number | undefined;
   hitRate: number | undefined;
@@ -78,6 +82,8 @@ type RegimeLeaderboardRow = {
     key: RegimeKey;
     label: string;
     score: number | undefined;
+    averageReturn: number | undefined;
+    averageSp500Return: number | undefined;
     tests: number;
   }>;
 };
@@ -128,6 +134,7 @@ type DirectionModelRow = {
 
 type EnvironmentPerformanceCard = RegimeCoverage & {
   track: BenchmarkTrack;
+  modelRows: DirectionModelRow[];
   best: DirectionModelRow | undefined;
   worst: DirectionModelRow | undefined;
 };
@@ -318,6 +325,19 @@ function signedPctText(value: number | undefined): string {
   if (!finiteNumber(value)) return "n/a";
   const formatted = pct(value);
   return value > 0 ? `+${formatted}` : formatted;
+}
+
+function valueTone(value: number | undefined): "positive" | "negative" | "neutral" {
+  if (!finiteNumber(value) || value === 0) return "neutral";
+  return value > 0 ? "positive" : "negative";
+}
+
+function averageSp500Score(rounds: RegimeRound[]): number | undefined {
+  if (rounds.length === 0) return undefined;
+  return cumulativeCapitalBenchScore(
+    rounds.map((round) => round.sp500Return),
+    rounds.map((round) => round.maxPossibleReturn)
+  ) ?? undefined;
 }
 
 function chartValueText(value: number, format: ChartValueFormat): string {
@@ -545,6 +565,7 @@ function buildRegimeLeaderboard(track: BenchmarkTrack): RegimeLeaderboardRow[] {
         const stats = existing.regimes.get(regime.key) ?? {
           returns: [],
           maxReturns: [],
+          sp500Returns: [],
           alphas: [],
           hits: [],
           rounds: []
@@ -552,6 +573,7 @@ function buildRegimeLeaderboard(track: BenchmarkTrack): RegimeLeaderboardRow[] {
 
         stats.returns.push(returnValue);
         stats.maxReturns.push(regimeRound.maxPossibleReturn);
+        stats.sp500Returns.push(regimeRound.sp500Return);
         if (finiteNumber(row.alpha_vs_sp500)) stats.alphas.push(row.alpha_vs_sp500);
         stats.hits.push(finiteNumber(row.alpha_vs_sp500) && row.alpha_vs_sp500 > 0);
         stats.rounds.push(regimeRound.round.round_id);
@@ -569,10 +591,15 @@ function buildRegimeLeaderboard(track: BenchmarkTrack): RegimeLeaderboardRow[] {
           key: regime.key,
           label: regime.label,
           score: stats ? cumulativeCapitalBenchScore(stats.returns, stats.maxReturns) ?? undefined : undefined,
+          averageReturn: stats ? average(stats.returns) : undefined,
+          averageSp500Return: stats ? average(stats.sp500Returns) : undefined,
           tests: stats?.returns.length ?? 0
         };
       });
       const includedScores = regimeScores.map((row) => row.score).filter(finiteNumber);
+      const includedReturns = regimeScores.map((row) => row.averageReturn).filter(finiteNumber);
+      const includedSp500Returns = regimeScores.map((row) => row.averageSp500Return).filter(finiteNumber);
+      const sp500RegimeScores = readyRegimes.map((regime) => averageSp500Score(regime.rounds)).filter(finiteNumber);
       const allStats = Array.from(item.regimes.values());
       const alphas = allStats.flatMap((stats) => stats.alphas);
       const hits = allStats.flatMap((stats) => stats.hits);
@@ -587,7 +614,10 @@ function buildRegimeLeaderboard(track: BenchmarkTrack): RegimeLeaderboardRow[] {
         label: modelLabel(item.modelId),
         providerName: providerLabel(item.provider),
         logoSrc: providerLogoSrc(item.provider),
+        averageReturn: average(includedReturns),
+        averageSp500Return: average(includedSp500Returns),
         regimeBalancedScore: average(includedScores),
+        sp500RegimeScore: average(sp500RegimeScores),
         allRoundScore: allRoundScore(track, item.modelId),
         averageAlpha: average(alphas),
         hitRate: hits.length ? hits.filter(Boolean).length / hits.length : undefined,
@@ -601,6 +631,7 @@ function buildRegimeLeaderboard(track: BenchmarkTrack): RegimeLeaderboardRow[] {
     .sort(
       (left, right) =>
         Number(right.status === "Ready") - Number(left.status === "Ready") ||
+        (right.averageReturn ?? Number.NEGATIVE_INFINITY) - (left.averageReturn ?? Number.NEGATIVE_INFINITY) ||
         (right.regimeBalancedScore ?? Number.NEGATIVE_INFINITY) -
           (left.regimeBalancedScore ?? Number.NEGATIVE_INFINITY) ||
         left.label.localeCompare(right.label)
@@ -835,6 +866,7 @@ const environmentPerformance = {
       return {
         ...regime,
         track: "weekly",
+        modelRows: rows,
         best: rows[0],
         worst: rows.at(-1)
       };
@@ -846,6 +878,7 @@ const environmentPerformance = {
       return {
         ...regime,
         track: "monthly",
+        modelRows: rows,
         best: rows[0],
         worst: rows.at(-1)
       };
@@ -1101,7 +1134,6 @@ const marketInsightTracks = (["weekly", "monthly"] as BenchmarkTrack[]).map((tra
   ]
 }));
 
-const scorePathColors = ["#006b5f", "#1e476f", "#b45335", "#80520a"];
 const sampleCategoryColors: Record<SampleCategoryKey, string> = {
   down: "#b45335",
   flat: "#64748b",
@@ -1138,47 +1170,6 @@ function buildSp500MovementChart(track: BenchmarkTrack): LineChart {
         }))
       }
     ]
-  });
-}
-
-function buildLeaderboardScorePathChart(track: BenchmarkTrack): LineChart {
-  const rounds = chronologicalRounds(track);
-  const topRows = leaderboards[track].filter((row) => finiteNumber(row.regimeBalancedScore)).slice(0, 4);
-  return buildLineChart({
-    id: `${track}-regime-score-path`,
-    title: `${trackLabel(track)} top score path`,
-    description: "Cumulative score movement for the current top environment-ranked models.",
-    format: "score",
-    includeZero: true,
-    series: topRows.map((row, index) => {
-      const returns: number[] = [];
-      const maxReturns: number[] = [];
-      const points: RawChartPoint[] = [];
-
-      for (const round of rounds) {
-        const modelRound = round.leaderboard.find((item) => item.model_id === row.modelId);
-        const returnValue = modelRound ? leaderboardReturn(modelRound) : undefined;
-        if (!finiteNumber(returnValue)) continue;
-
-        returns.push(returnValue);
-        maxReturns.push(round.maxPossibleReturn);
-        const score = cumulativeCapitalBenchScore(returns, maxReturns);
-        if (finiteNumber(score)) {
-          points.push({
-            label: roundChartLabel(round),
-            value: score
-          });
-        }
-      }
-
-      return {
-        key: row.modelId,
-        label: row.label,
-        color: scorePathColors[index % scorePathColors.length],
-        points,
-        isLead: index === 0
-      };
-    })
   });
 }
 
@@ -1223,11 +1214,6 @@ function buildBalancedProgressChart(track: BenchmarkTrack): LineChart {
 const sp500MovementCharts = {
   weekly: buildSp500MovementChart("weekly"),
   monthly: buildSp500MovementChart("monthly")
-};
-
-const leaderboardScorePathCharts = {
-  weekly: buildLeaderboardScorePathChart("weekly"),
-  monthly: buildLeaderboardScorePathChart("monthly")
 };
 
 const balancedProgressCharts = {
@@ -1353,46 +1339,35 @@ const hiddenAuditRows = auditRows.slice(10);
                       <b>{environment.count}</b>
                       <span>resolved round{environment.count === 1 ? "" : "s"}</span>
                     </div>
-                    <dl class="environment-winners">
-                      <div>
-                        <dt>Best avg return</dt>
-                        <dd>
-                          {environment.best ? (
-                            <>
-                              {environment.best.logoSrc && <img src={environment.best.logoSrc} alt="" loading="lazy" />}
-                              <span>
-                                <strong>{environment.best.label}</strong>
-                                <em>{signedPctText(environment.best.averageReturn)}</em>
-                              </span>
-                            </>
-                          ) : (
-                            <span>
-                              <strong>No model yet</strong>
-                              <em>n/a</em>
-                            </span>
-                          )}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt>Worst avg return</dt>
-                        <dd>
-                          {environment.worst ? (
-                            <>
-                              {environment.worst.logoSrc && <img src={environment.worst.logoSrc} alt="" loading="lazy" />}
-                              <span>
-                                <strong>{environment.worst.label}</strong>
-                                <em>{signedPctText(environment.worst.averageReturn)}</em>
-                              </span>
-                            </>
-                          ) : (
-                            <span>
-                              <strong>No model yet</strong>
-                              <em>n/a</em>
-                            </span>
-                          )}
-                        </dd>
-                      </div>
-                    </dl>
+                    {environment.modelRows.length ? (
+                      <ol class="environment-model-ranking" aria-label={`${environment.label} model average returns`}>
+                        {environment.modelRows.map((modelRow, index) => {
+                          const isBest = index === 0;
+                          const isWorst = index === environment.modelRows.length - 1 && environment.modelRows.length > 1;
+                          return (
+                            <li class:list={[
+                              "environment-model-row",
+                              {
+                                "environment-model-row-best": isBest,
+                                "environment-model-row-worst": isWorst
+                              }
+                            ]}>
+                              <span class="environment-rank">{index + 1}</span>
+                              {modelRow.logoSrc && <img src={modelRow.logoSrc} alt="" loading="lazy" />}
+                              <div>
+                                <strong>{modelRow.label}</strong>
+                                <em>{isBest ? "Best" : isWorst ? "Worst" : `${modelRow.tests} tests`}</em>
+                              </div>
+                              <b class:list={["return-value", `return-value-${valueTone(modelRow.averageReturn)}`]}>
+                                {signedPctText(modelRow.averageReturn)}
+                              </b>
+                            </li>
+                          );
+                        })}
+                      </ol>
+                    ) : (
+                      <div class="environment-empty-ranking">No model returns yet.</div>
+                    )}
                     <div class="environment-stats">
                       <span>
                         <b>{signedPctText(environment.averageSp500Return)}</b>
@@ -1469,7 +1444,8 @@ const hiddenAuditRows = auditRows.slice(10);
         <h2 id="regime-leaderboard-title">Who performs best after environments are balanced?</h2>
         <p>
           The equal-environment score averages only environments that have at least {READY_ROUND_THRESHOLD} resolved rounds.
-          Supporting columns show the normal all-round score, average alpha, and hit rate for context.
+          Average return is shown first, then benchmark score and S&amp;P 500 context. Hit rate is the share of included
+          model tests where the model beat the S&amp;P 500 return.
         </p>
       </div>
 
@@ -1485,18 +1461,19 @@ const hiddenAuditRows = auditRows.slice(10);
                 {trackConfidence(track).label}
               </span>
             </div>
-            <MarketRegimeLineChart chart={leaderboardScorePathCharts[track]} />
-            <div class="regime-mobile-rank-summary" aria-label={`${trackLabel(track)} top equal-environment models`}>
+            <div class="regime-rank-card-grid" aria-label={`${trackLabel(track)} top equal-environment models`}>
               {leaderboards[track].slice(0, 3).map((row, index) => (
-                <article>
-                  <span>{index + 1}</span>
+                <article class:list={["regime-rank-card", index === 0 && "regime-rank-card-leader"]}>
+                  <span class="environment-rank">{index + 1}</span>
                   {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
                   <div>
                     <strong>{row.label}</strong>
                     <em>{row.providerName}</em>
                   </div>
-                  <b>{scoreText(row.regimeBalancedScore)}</b>
-                  <small>{row.readyRegimesCovered}/{row.readyRegimesRequired} counting environments</small>
+                  <b class:list={["return-value", `return-value-${valueTone(row.averageReturn)}`]}>
+                    {signedPctText(row.averageReturn)}
+                  </b>
+                  <small>Score {scoreText(row.regimeBalancedScore)} · S&amp;P {signedPctText(row.averageSp500Return)}</small>
                 </article>
               ))}
             </div>
@@ -1505,12 +1482,13 @@ const hiddenAuditRows = auditRows.slice(10);
                 <thead>
                   <tr>
                     <th>Model</th>
-                    <th>Equal-environment score</th>
-                    <th>Scores that count</th>
+                    <th>Avg return</th>
+                    <th>Benchmark score</th>
+                    <th>S&amp;P 500 context</th>
+                    <th>Environment returns</th>
                     <th>All-round score</th>
                     <th>Avg alpha vs S&amp;P</th>
                     <th>Hit rate</th>
-                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1527,33 +1505,46 @@ const hiddenAuditRows = auditRows.slice(10);
                             </div>
                           </div>
                         </td>
-                        <td class="regime-score-value" data-label="Equal-environment score">
-                          <strong>{scoreText(row.regimeBalancedScore)}</strong>
+                        <td class="regime-score-value" data-label="Avg return">
+                          <strong class:list={["return-value", `return-value-${valueTone(row.averageReturn)}`]}>
+                            {signedPctText(row.averageReturn)}
+                          </strong>
                           <span>{row.readyRegimesCovered}/{row.readyRegimesRequired} counting environments</span>
                         </td>
-                        <td data-label="Scores that count">
+                        <td class="regime-score-value" data-label="Benchmark score">
+                          <strong>{scoreText(row.regimeBalancedScore)}</strong>
+                          <span>higher is better</span>
+                        </td>
+                        <td class="regime-score-value" data-label="S&P 500 context">
+                          <strong class:list={["return-value", `return-value-${valueTone(row.averageSp500Return)}`]}>
+                            {signedPctText(row.averageSp500Return)}
+                          </strong>
+                          <span>S&amp;P score {scoreText(row.sp500RegimeScore)}</span>
+                        </td>
+                        <td data-label="Environment returns">
                           <div class="regime-score-strip">
                             {row.regimeScores.map((score) => (
                               <span>
                                 <b>{score.label}</b>
-                                <em>{scoreText(score.score)}</em>
+                                <em class:list={["return-value", `return-value-${valueTone(score.averageReturn)}`]}>
+                                  {signedPctText(score.averageReturn)}
+                                </em>
                               </span>
                             ))}
                           </div>
                         </td>
                         <td data-label="All-round score">{scoreText(row.allRoundScore)}</td>
                         <td data-label="Avg alpha vs S&P">{signedPctText(row.averageAlpha)}</td>
-                        <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
-                        <td data-label="Status">
-                          <span class:list={["regime-status", `regime-status-${statusClass(row.status)}`]}>
-                            {statusLabel(row.status)}
+                        <td data-label="Hit rate">
+                          <span title="Share of included model tests where this model beat the S&P 500 return.">
+                            {finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}
                           </span>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colspan="7" data-label="Status">No environments count yet.</td>
+                      <td colspan="8">No environments count yet.</td>
                     </tr>
                   )}
                 </tbody>
