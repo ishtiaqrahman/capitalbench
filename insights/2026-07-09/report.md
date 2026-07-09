@@ -1,6 +1,6 @@
 # CapitalBench Insights
 
-Generated at: `2026-07-09T04:14:41Z`
+Generated at: `2026-07-09T07:54:45Z`
 Data as of: `2026-07-08`
 Engine: `deterministic_insights_v1`
 
@@ -154,11 +154,11 @@ Why it matters: This shows the current crowding point in model capital allocatio
 
 Category: `current_positioning`
 
-## Claude Opus 4.7 has the strongest live alpha
+## Gemini 3.1 Pro has the strongest live alpha
 
 Context: Open-round interim performance · Interim, not final
 
-Using the latest available interim close, Claude Opus 4.7 in CB-2026-07-01-1M is ahead of the S&P 500 by +1.95 percentage points, while GPT-5.5 in CB-2026-06-22-1M is at -9.61 percentage points.
+Using the latest available interim close, Gemini 3.1 Pro in CB-2026-07-07-1W is ahead of the S&P 500 by +1.53 percentage points, while GPT-5.5 in CB-2026-06-22-1M is at -8.16 percentage points.
 
 Why it matters: Live alpha is provisional, but it shows how open model portfolios are moving before the final official score.
 
