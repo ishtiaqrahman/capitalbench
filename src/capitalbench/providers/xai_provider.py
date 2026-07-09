@@ -40,6 +40,8 @@ class XAIProvider(BaseProvider):
                 },
             },
         }
+        if runtime_limits.reasoning_effort:
+            payload["reasoning_effort"] = runtime_limits.reasoning_effort
         response = self._post_json(
             "https://api.x.ai/v1/chat/completions",
             {"Authorization": f"Bearer {self._api_key()}"},

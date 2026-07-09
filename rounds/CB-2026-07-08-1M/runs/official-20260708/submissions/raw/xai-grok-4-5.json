@@ -1,0 +1,53 @@
+{
+  "confidence": 0.42,
+  "is_official_score": true,
+  "key_risks": [
+    "Biotech sharp mean-reversion after extreme 30d gains",
+    "Oil/energy pullback if Iran truce stabilizes or demand softens",
+    "Hawkish FOMC (July 29) or hot CPI (July 14) pressuring equities",
+    "Soft payrolls/revisions signaling growth scare that hits cyclicals and financials"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "option_id": "BIOTECH",
+      "rationale": "Extreme 30d momentum (+27%) near 52w highs with high up-day share; healthcare strength and risk appetite can extend into the window before any mean-reversion."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong 30d outperformance vs SPX with lower beta; defensive characteristics amid sticky inflation and soft labor data."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "FINANCIALS",
+      "rationale": "Recent relative strength, higher yields supportive, and bank earnings catalysts (JPM/WFC July 14) within the scoring window."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "ENERGY",
+      "rationale": "Oil spike on Iran truce doubts and geo risk; potential short-term catch-up after 30d underperformance."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value tilt with lower beta and positive 30d relative return; benefits from rates/inflation backdrop vs pure growth."
+    }
+  ],
+  "portfolio_rationale": "Tilt to recent relative strength in biotech/healthcare plus financials and energy for one-month catalysts (earnings, oil geo, sticky inflation) while avoiding high-vol growth/tech and long duration given FOMC minutes and elevated price risks.",
+  "provider": "xai",
+  "rationale_summary": "Prioritize momentum and sector strength with near-term catalysts over broad beta or bonds; biotech leads for upside capture, balanced by healthcare/value and energy/financials exposure.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-08-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15093,
+    "latency_seconds": 11.532886842964217,
+    "output_tokens": 565,
+    "reasoning_tokens": 746,
+    "total_tokens": 16404
+  }
+}

@@ -297,7 +297,8 @@ export function modelLabel(modelId: string): string {
     "anthropic-claude-opus-4-8": "Claude Opus 4.8",
     "google-gemini-3-1-pro": "Gemini 3.1 Pro",
     "openai-gpt-5-5": "GPT-5.5",
-    "xai-grok-4-3": "Grok 4.3"
+    "xai-grok-4-3": "Grok 4.3",
+    "xai-grok-4-5": "Grok 4.5"
   };
   if (known[modelId]) return known[modelId];
   return modelId

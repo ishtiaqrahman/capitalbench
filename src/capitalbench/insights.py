@@ -2298,6 +2298,7 @@ def _model_label(model_id: str) -> str:
         "google-gemini-3-1-pro": "Gemini 3.1 Pro",
         "openai-gpt-5-5": "GPT-5.5",
         "xai-grok-4-3": "Grok 4.3",
+        "xai-grok-4-5": "Grok 4.5",
     }
     return labels.get(model_id, model_id)
 
