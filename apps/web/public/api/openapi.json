@@ -398,6 +398,21 @@
             "$ref": "#/components/parameters/InsightCategory"
           },
           {
+            "$ref": "#/components/parameters/InsightTier"
+          },
+          {
+            "$ref": "#/components/parameters/InsightConfidence"
+          },
+          {
+            "$ref": "#/components/parameters/Track"
+          },
+          {
+            "$ref": "#/components/parameters/InsightMaturity"
+          },
+          {
+            "$ref": "#/components/parameters/InsightView"
+          },
+          {
             "$ref": "#/components/parameters/Limit"
           },
           {
@@ -455,6 +470,41 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/v1/market-environments": {
+      "get": {
+        "tags": [
+          "Insights"
+        ],
+        "summary": "Market environment benchmark",
+        "description": "Resolved weekly and monthly model performance grouped by S&P 500 environment, including sample maturity, balanced scores, and deterministic signals.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Track"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Market environment response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketEnvironmentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
         }
       }
@@ -963,6 +1013,48 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/v1/models/{model_id}/market-environments": {
+      "get": {
+        "tags": [
+          "Models",
+          "Insights"
+        ],
+        "summary": "Model market environment performance",
+        "description": "One model's returns, scores, sample counts, and related signals across resolved weekly and monthly S&P 500 environments.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ModelIdPath"
+          },
+          {
+            "$ref": "#/components/parameters/Track"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model market environment response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelMarketEnvironmentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
@@ -1719,6 +1811,63 @@
         },
         "description": "Optional insight category filter."
       },
+      "InsightTier": {
+        "name": "tier",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "global",
+            "category",
+            "detail",
+            "all"
+          ],
+          "default": "all"
+        },
+        "description": "Publication tier filter."
+      },
+      "InsightConfidence": {
+        "name": "confidence",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "all"
+          ],
+          "default": "all"
+        },
+        "description": "Evidence-confidence filter."
+      },
+      "InsightMaturity": {
+        "name": "maturity",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "ready",
+            "forming",
+            "all"
+          ],
+          "default": "all"
+        },
+        "description": "Statistical maturity filter for insights that expose maturity metadata."
+      },
+      "InsightView": {
+        "name": "view",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "featured",
+            "all"
+          ],
+          "default": "all"
+        },
+        "description": "Return the category-balanced featured feed or the complete feed."
+      },
       "AsOf": {
         "name": "as_of",
         "in": "query",
@@ -1812,6 +1961,16 @@
       }
     },
     "responses": {
+      "BadRequest": {
+        "description": "The request contains an invalid parameter.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
       "Unauthorized": {
         "description": "Missing or invalid API key.",
         "content": {
@@ -2932,6 +3091,11 @@
               "type": "string"
             }
           },
+          "filters": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Normalized filters applied to this insight response."
+          },
           "data": {
             "type": "array",
             "items": {
@@ -2951,6 +3115,7 @@
           "data_as_of",
           "insight_count",
           "categories",
+          "filters",
           "data",
           "next_cursor"
         ]
@@ -2995,6 +3160,17 @@
             "type": "number",
             "minimum": 0,
             "maximum": 100
+          },
+          "publication_tier": {
+            "type": "string",
+            "enum": [
+              "global",
+              "category",
+              "detail"
+            ]
+          },
+          "publication_reason": {
+            "type": "string"
           },
           "data_as_of": {
             "type": [
@@ -3046,6 +3222,7 @@
           "source_type",
           "status",
           "importance_score",
+          "publication_tier",
           "context",
           "calculations",
           "evidence"
@@ -5130,6 +5307,82 @@
         "required": [
           "version",
           "tracks"
+        ]
+      },
+      "MarketEnvironmentResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "engine_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "generated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "data_as_of": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "thresholds": {
+            "type": "object"
+          },
+          "tracks": {
+            "type": "object"
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "version",
+          "status",
+          "thresholds"
+        ]
+      },
+      "ModelMarketEnvironmentResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MarketEnvironmentResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "model_id": {
+                "type": "string"
+              },
+              "model_name": {
+                "type": "string"
+              },
+              "track": {
+                "type": "string",
+                "enum": [
+                  "weekly",
+                  "monthly",
+                  "all"
+                ]
+              }
+            },
+            "required": [
+              "model_id",
+              "track",
+              "tracks"
+            ]
+          }
         ]
       }
     }

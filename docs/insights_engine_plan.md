@@ -1,7 +1,7 @@
 # CapitalBench Insights Engine Plan
 
-Status: deterministic v1 implemented; NVIDIA LLM rewrite layer implemented
-Last updated: 2026-06-16
+Status: deterministic v3 implemented; immutable publication and guarded NVIDIA rewrite layer implemented
+Last updated: 2026-07-10
 
 This document defines the CapitalBench Insights engine. The deterministic v1
 pipeline publishes static artifacts, a website page, and API responses. The
@@ -28,46 +28,49 @@ validated deterministic candidates.
 ## Implemented V1
 
 - `src/capitalbench/insights.py` builds canonical input packets, generates
-  deterministic insights, validates public insight artifacts, and writes dated
-  run outputs.
+  deterministic insights, validates cross-artifact integrity, and writes hashed
+  immutable run outputs.
 - CLI commands:
   - `capitalbench build-insights-input --rounds-dir rounds --output <temp>/input.json --run-date <date>`
   - `capitalbench generate-insights --input <temp>/input.json --output insights`
   - `capitalbench validate-insights --insights-dir insights`
 - Public artifacts:
   - `insights/latest.json`
+  - `insights/latest_pointer.json`
+  - `insights/market_environment_latest.json`
   - `insights/index.json`
-  - `insights/<date>/input.json`
-  - `insights/<date>/deterministic_candidates.json`
-  - `insights/<date>/insights.json`
-  - `insights/<date>/run_manifest.json`
-  - `insights/<date>/report.md`
+  - `insights/runs/<timestamp>-<build-fingerprint>/input.json`
+  - `insights/runs/<timestamp>-<build-fingerprint>/deterministic_candidates.json`
+  - `insights/runs/<timestamp>-<build-fingerprint>/market_environment.json`
+  - `insights/runs/<timestamp>-<build-fingerprint>/insights.json`
+  - `insights/runs/<timestamp>-<build-fingerprint>/run_manifest.json`
+  - `insights/runs/<timestamp>-<build-fingerprint>/report.md`
 - Website/API:
   - `/insights`
-  - `GET /api/v1/insights?category=&limit=&cursor=`
+  - `GET /api/v1/insights?category=&tier=&confidence=&track=&maturity=&view=&limit=&cursor=`
   - `GET /api/v1/insights/{insight_id}`
 - NVIDIA LLM rewrite:
   - Default model: `meta/llama-3.1-8b-instruct`
   - Default base URL: `https://integrate.api.nvidia.com/v1`
-  - Default CLI mode: `--llm auto`
+  - Scheduled production mode: `--llm off`; an operator can explicitly use
+    `--llm auto` or `--llm required` for a guarded editorial pass.
   - The LLM receives only the compact candidate packet, not raw repository files.
-  - The LLM can rewrite title, summary, and `why_it_matters`; calculations,
+  - The LLM receives at most one candidate per category and can rewrite title,
+    summary, and `why_it_matters`; calculations,
     evidence, IDs, and source rows remain deterministic.
+  - Length, unsupported-number, action-language, model-entity, and claim-polarity
+    guards reject unsafe rewrites.
   - If the key is absent or the LLM fails in `auto` mode, deterministic insights
     still publish and the run manifest records the LLM status.
 - Automation:
-  - The prepared `.github/workflows/insights.yml` automation is coordinated by
-    `workflow_run` after successful `CapitalBench Resolver` or `Interim
-    Performance Refresh` completions once the repository token has
-    workflow-file write scope.
-  - A `06:12 UTC` Tuesday-Saturday cron is a backstop for late corrections or
-    missed dispatches.
-  - The workflow must compute a stable benchmark-data fingerprint before
-    calling NVIDIA. If the newest input matches the latest published
-    fingerprint, it skips the LLM call and does not rewrite public insight
-    artifacts.
-  - When artifacts change, the workflow validates, commits, and deploys the
-    website when credentials are configured.
+  - Resolver and interim-performance workflows share the
+    `capitalbench-public-data-writer` lock so they cannot race commits.
+  - Both workflows regenerate and validate insights before committing or
+    deploying changed public data.
+  - Data and build fingerprints are separate. Publication is skipped only when
+    both source data and the complete engine/policy configuration are unchanged.
+  - `.github/workflows/insights-integrity.yml` tests the Python engines,
+    validates published hashes and cross-links, and runs web/API data tests.
 
 ## Current System Findings
 
@@ -152,6 +155,7 @@ reason for the score.
 | Data quality and freshness | All audiences | "Latest price close is June 12; no newer eligible close has been ingested." |
 | Consensus portfolio | Investors, allocators, researchers | "The average AI portfolio captured 12% of the hindsight oracle return in the latest weekly round." |
 | Benchmark difficulty | Investors, allocators, researchers | "The latest weekly round had a wide opportunity set: the best asset beat the worst asset by 24 percentage points." |
+| Market environment | Investors, allocators, traders, researchers | "Weekly model leadership changes between negative and positive S&P 500 environments." |
 | Outcome regime | Investors, traders | "The resolved window rewarded growth and technology while models were positioned defensively." |
 | Missed-oracle analysis | Investors, researchers | "The oracle asset was Semiconductors (SMH); three models held it, but average allocation was only 12%." |
 | Confidence calibration | AI researchers, allocators | "High-confidence submissions have not outperformed lower-confidence submissions so far." |
@@ -185,6 +189,13 @@ Required candidate families:
   percent of the scored universe with positive returns, S&P 500 rank inside the
   saved universe, and whether the round was broad, narrow, high-opportunity, or
   low-opportunity.
+- Market Environment: classify resolved weekly and monthly rounds by the S&P
+  500 return over the same scoring window, then calculate direction leaders,
+  equal-environment scores, score floors, and up/down splits. A feed-ready
+  finding requires at least three rounds shared by every eligible model in the
+  comparison. High confidence requires at least six shared observations,
+  leave-one-round-out stability of at least 80%, and a positive lower bound for
+  the paired 95% leader-margin confidence interval.
 - Outcome Regime: regime group of the best and worst assets after scoring, then
   compare the winning regime with the regime models favored before the outcome.
 - Missed-Oracle Analysis: whether each model held the eventual oracle asset,
@@ -251,6 +262,8 @@ Every generated insight should conform to this shape:
   "why_it_matters": "It shows the benchmark models are allocating more to growth, momentum, cyclical, and technology assets than before.",
   "importance_score": 88,
   "confidence": "high",
+  "publication_tier": "global",
+  "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
   "status": "published",
   "calculations": [
     {
@@ -341,57 +354,52 @@ LLM guardrails:
 
 ## Pipeline Design
 
-Add a dedicated Insights workflow after the implementation phase.
+Insight generation is part of both public-data writer workflows.
 
 Proposed commands:
 
 ```bash
 capitalbench build-insights-input --rounds-dir rounds --output /tmp/capitalbench-insights-input.json
-capitalbench generate-insights --input /tmp/capitalbench-insights-input.json --output insights
+capitalbench generate-insights --input /tmp/capitalbench-insights-input.json --output insights --llm off
 capitalbench validate-insights --insights-dir insights
 ```
 
-The commands write a canonical input packet, generate dated public artifacts,
-update `latest.json` and `index.json`, and validate the public insight contract.
-`generate-insights` defaults to `--llm auto`, which attempts NVIDIA rewriting
-only when `NVIDIA_API_KEY` is configured. In scheduled automation the input
-packet is built in runner temp storage; it is copied into `insights/YYYY-MM-DD/`
-only when the benchmark-data fingerprint has changed.
+The commands write a canonical input packet, generate an immutable run, update
+the atomic latest pointer and compatibility mirrors, and validate hashes,
+cross-artifact truth, and the public insight contract. Scheduled automation uses
+`--llm off`; an editorial run can explicitly use `--llm auto` or
+`--llm required`.
 
-Proposed artifacts:
+Published artifacts:
 
 ```text
 insights/
   latest.json
+  latest_pointer.json
+  market_environment_latest.json
   index.json
-  YYYY-MM-DD/
-    run_manifest.json
-    input.json
-    deterministic_candidates.json
-    llm_request.redacted.json
-    llm_response.json
-    insights.json
-    report.md
+  runs/
+    YYYYMMDDTHHMMSSZ-buildfingerprint/
+      run_manifest.json
+      input.json
+      deterministic_candidates.json
+      market_environment.json
+      llm_request.redacted.json
+      llm_response.json
+      insights.json
+      report.md
 ```
 
-Automation workflow:
+Automation protocol:
 
-- Primary trigger: run after successful `CapitalBench Resolver` completion.
-  This captures newly settled official weekly or monthly results.
-- Primary trigger: run after successful `Interim Performance Refresh`
-  completion. This captures the newest live mark-to-market portfolios after the
-  U.S. market-close data refresh.
-- Backstop trigger: run at `06:12 UTC` Tuesday-Saturday. This summarizes the
-  prior U.S. trading day and leaves time for the `03:15 UTC` interim refresh and
-  several resolver cycles to finish.
-- Manual trigger: allow `workflow_dispatch` with optional `run_date`.
-- If no benchmark data changed since the previous published run, skip NVIDIA,
-  do not overwrite `insights/latest.json`, do not create dated public artifacts,
-  and let the workflow finish without a commit or deploy.
+- Resolver and interim-performance jobs generate insights immediately after
+  changing benchmark data and share one repository-writer concurrency group.
+- If neither benchmark data nor the complete build configuration changed, do
+  not create a run, commit, or deployment.
 - If NVIDIA fails, publish deterministic insights and record the LLM failure in
   the run manifest.
-- Commit only generated `insights/` artifacts and deploy the website only when
-  public insight artifacts changed.
+- Validate immutable hashes and current mirrors before commit and again before
+  deployment.
 
 Required secrets:
 
@@ -414,6 +422,10 @@ V1 public surfaces:
   evidence links.
 - `/api`: API documentation now includes the insight feed endpoint and example
   payloads.
+- `/v1/market-environments`: full weekly/monthly environment analytics, with
+  `/v1/models/<model_id>/market-environments` for model-specific views.
+- `/leaderboards/market-regime-benchmark`: canonical detailed presentation for
+  ready and forming environment findings.
 - `/risk-appetite`: show risk-regime and model-agreement insights near the
   existing calculation explanation in a future page-specific integration.
 - `/leaderboards/latest-weekly` and `/leaderboards/latest-monthly`: show latest

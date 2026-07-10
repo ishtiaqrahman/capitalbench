@@ -1,4 +1,4 @@
-import { insightHref, leadInsightsByCategory } from "./insights.js";
+import { insightHref, insightsForSurface } from "./insights.js";
 import { currentRiskDateLabel, signedPulseChangeLabel } from "./riskFormatting.js";
 
 function shortDate(value) {
@@ -595,11 +595,7 @@ export function buildBenchmarkTickerTape(readModel, options = {}) {
   const activeWeeklyCount = rounds.filter((round) => round.status === "active" && roundTrack(round) === "weekly").length;
   const activeMonthlyCount = rounds.filter((round) => round.status === "active" && roundTrack(round) === "monthly").length;
   const topAsset = active.assets[0];
-  const tickerInsight = leadInsightsByCategory(
-    readModel,
-    ["current_positioning", "risk_regime", "horizon_agreement", "live_performance", "oracle_comparison"],
-    1
-  )[0];
+  const tickerInsight = insightsForSurface(readModel, "ticker", 1)[0];
 
   const items = [
     {

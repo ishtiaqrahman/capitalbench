@@ -11,7 +11,7 @@ import {
   officialRowsForRound
 } from "../src/lib/dataApi.js";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
-import { insightContextRecencyValue, insightRecencyValue } from "../src/lib/insights.js";
+import { publishedInsightRows } from "../src/lib/insights.js";
 import apiReadModel from "../src/generated/apiReadModel.js";
 
 function getRequest(path, token, headers = {}) {
@@ -272,6 +272,47 @@ test("risk appetite returns the current live decision pulse", async () => {
         .map((portfolio) => `${portfolio.round_id}:${portfolio.run_id}:${portfolio.model_id}`)
     ).size
   );
+});
+
+test("market environments return canonical weekly and monthly analytics", async () => {
+  const weekly = await apiGet("/api/v1/market-environments?track=weekly");
+  const all = await apiGet("/api/v1/market-environments?track=all");
+  const invalid = await apiGet("/api/v1/market-environments?track=quarterly");
+
+  assert.equal(weekly.status, 200);
+  assert.equal(weekly.body.track, "weekly");
+  assert.equal(weekly.body.data.environments.length, 5);
+  assert.equal(weekly.body.data.directions.length, 3);
+  assert.ok(weekly.body.data.round_count > 0);
+  assert.ok(weekly.body.data.signals.some((signal) => signal.kind === "synthesis" && signal.maturity === "ready"));
+  for (const signal of weekly.body.data.signals.filter((row) => row.kind === "direction_leader" && row.maturity === "ready")) {
+    assert.ok(signal.environment_round_count >= weekly.body.thresholds.environment_rounds);
+    assert.ok(signal.model.tests >= weekly.body.thresholds.model_observations);
+  }
+
+  assert.equal(all.status, 200);
+  assert.ok(all.body.tracks.weekly);
+  assert.ok(all.body.tracks.monthly);
+  assert.equal(invalid.status, 400);
+});
+
+test("model market environments return only the requested model's rows and signals", async () => {
+  const modelId = apiReadModel.market_environment.tracks.weekly.signals.find(
+    (signal) => signal.kind === "direction_leader" && signal.model?.model_id
+  ).model.model_id;
+  const result = await apiGet(`/api/v1/models/${modelId}/market-environments?track=weekly`);
+
+  assert.equal(result.status, 200);
+  assert.equal(result.body.model_id, modelId);
+  assert.equal(result.body.track, "weekly");
+  assert.deepEqual(Object.keys(result.body.tracks), ["weekly"]);
+  for (const environment of result.body.tracks.weekly.environments) {
+    if (environment.model) assert.equal(environment.model.model_id, modelId);
+  }
+  for (const signal of result.body.tracks.weekly.signals) {
+    const referencedIds = signal.model_ids ?? [signal.model?.model_id, signal.candidate?.model?.model_id].filter(Boolean);
+    assert.ok(referencedIds.includes(modelId));
+  }
 });
 
 test("latest weekly leaderboard returns resolved scored rows", async () => {
@@ -590,21 +631,7 @@ test("insights endpoint returns ranked public insights with detail lookups", asy
     list.body.categories,
     Array.from(new Set(apiReadModel.insights.insights.filter((row) => row.status === "published").map((row) => row.category))).sort()
   );
-  for (let index = 1; index < list.body.data.length; index += 1) {
-    const previous = list.body.data[index - 1];
-    const current = list.body.data[index];
-    const previousRecency = insightRecencyValue(previous);
-    const currentRecency = insightRecencyValue(current);
-    assert.ok(previousRecency >= currentRecency);
-    const previousContextRecency = insightContextRecencyValue(previous);
-    const currentContextRecency = insightContextRecencyValue(current);
-    if (previousRecency === currentRecency) {
-      assert.ok(previousContextRecency >= currentContextRecency);
-    }
-    if (previousRecency === currentRecency && previousContextRecency === currentContextRecency) {
-      assert.ok(previous.importance_score >= current.importance_score);
-    }
-  }
+  assert.deepEqual(list.body.data, publishedInsightRows(apiReadModel.insights.insights).slice(0, 3));
 
   const first = list.body.data[0];
   assert.ok(first.id);
@@ -623,6 +650,19 @@ test("insights endpoint returns ranked public insights with detail lookups", asy
   assert.equal(filtered.status, 200);
   assert.ok(filtered.body.data.length > 0);
   assert.ok(filtered.body.data.every((insight) => insight.category === category));
+
+  const featured = await apiGet("/api/v1/insights?view=featured&limit=50");
+  assert.equal(featured.status, 200);
+  assert.ok(featured.body.data.length > 0);
+  assert.ok(featured.body.data.every((insight) => insight.publication_tier !== "detail"));
+
+  const confidence = featured.body.data[0].confidence;
+  const confidenceFiltered = await apiGet(`/api/v1/insights?confidence=${confidence}&limit=50`);
+  assert.equal(confidenceFiltered.status, 200);
+  assert.ok(confidenceFiltered.body.data.every((insight) => insight.confidence === confidence));
+
+  const invalidTier = await apiGet("/api/v1/insights?tier=homepage");
+  assert.equal(invalidTier.status, 400);
 
   const missing = await apiGet("/api/v1/insights/not-a-real-insight");
   assert.equal(missing.status, 404);
@@ -663,6 +703,7 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
     ["/v1/leaderboards/benchmark-sets", "/api/v1/leaderboards/benchmark-sets?track=weekly"],
     ["/v1/leaderboards/benchmark-sets/{set_id}", `/api/v1/leaderboards/benchmark-sets/${benchmarkSetId}`],
     ["/v1/benchmark-evidence", "/api/v1/benchmark-evidence"],
+    ["/v1/market-environments", "/api/v1/market-environments?track=all"],
     ["/v1/insights", "/api/v1/insights?limit=5"],
     ["/v1/insights/{insight_id}", `/api/v1/insights/${insightId}`],
     ["/v1/models", "/api/v1/models"],
@@ -670,6 +711,7 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
     ["/v1/models/{model_id}/holdings", `/api/v1/models/${modelId}/holdings?track=all&scope=active`],
     ["/v1/models/{model_id}/portfolios", `/api/v1/models/${modelId}/portfolios?track=all&scope=cumulative`],
     ["/v1/models/{model_id}/live-performance", `/api/v1/models/${modelId}/live-performance?track=all`],
+    ["/v1/models/{model_id}/market-environments", `/api/v1/models/${modelId}/market-environments?track=all`],
     ["/v1/models/{model_id}/style", `/api/v1/models/${modelId}/style`],
     ["/v1/models/behavior", "/api/v1/models/behavior"],
     ["/v1/models/patterns", "/api/v1/models/patterns"],
@@ -717,6 +759,7 @@ test("every top-level generated read model dataset has an API exposure path", as
     model_behavior: "/api/v1/models/behavior",
     risk_appetite: "/api/v1/risk-appetite",
     insights: "/api/v1/insights?limit=5",
+    market_environment: "/api/v1/market-environments?track=all",
     proof: `/api/v1/rounds/${activeRoundId}/proof`,
     benchmark_evidence: "/api/v1/benchmark-evidence"
   };

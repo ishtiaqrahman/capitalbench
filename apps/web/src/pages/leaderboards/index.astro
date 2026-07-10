@@ -35,7 +35,7 @@ import {
 } from "../../lib/localRoundRecords";
 import { buildScoreReturnChartData, providerLogoSrc } from "../../lib/scoreReturnChart";
 import { benchmarkSetToScorecard, buildBenchmarkSetsData, featuredBenchmarkSet } from "../../lib/benchmarkSets";
-import { topInsightsByCategory } from "../../lib/insights.js";
+import { insightsForSurface } from "../../lib/insights.js";
 import { buildTrackScorecard, type TrackScorecardData } from "../../lib/trackScorecard";
 import {
   latestPendingRoundForTrack,
@@ -149,11 +149,7 @@ const liveRoundLabel = liveTracks
   .map((track) => track.pendingRound?.round_id)
   .filter(Boolean)
   .join(" / ") || "None";
-const resultsHubInsights = topInsightsByCategory(
-  apiReadModel,
-  ["consensus_performance", "oracle_comparison", "benchmark_difficulty", "confidence_calibration"],
-  3
-);
+const resultsHubInsights = insightsForSurface(apiReadModel, "results", 3);
 
 function trackStateLabel(track: ResultsTrackState): string {
   if (track.scorecard) return `${track.completedCount} scored`;
@@ -271,6 +267,7 @@ const proofLinks = [
           <ArrowRight size={15} aria-hidden="true" />
         </a>
         <a class="action-link" href="/leaderboards/benchmark-sets">Comparison sets</a>
+        <a class="action-link" href="/leaderboards/market-regime-benchmark/">Market environments</a>
         <a class="action-link" href="/leaderboards/cumulative-weekly">All weekly history</a>
         <a class="action-link" href="#combined-results">Combined results</a>
         <a class="action-link" href="#proof-data">Audit and data</a>
@@ -356,8 +353,8 @@ const proofLinks = [
   <InsightStrip
     id="results-insights"
     kicker="Results insights"
-    title="How To Read The Latest Benchmark Results"
-    description="Signals generated from scored rounds, oracle comparisons, benchmark difficulty, and model confidence behavior."
+    title="What Resolved Results Reveal"
+    description="Signals generated from scored rounds, market environments, oracle comparisons, benchmark difficulty, and model confidence behavior."
     insights={resultsHubInsights}
     viewAllHref="/insights"
     viewAllLabel="All insights"

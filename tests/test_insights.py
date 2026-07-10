@@ -1,8 +1,10 @@
 import json
 from pathlib import Path
 
+import pytest
 import yaml
 
+from capitalbench import insights as insights_module
 from capitalbench.insights import DEFAULT_NVIDIA_MODEL_ID, LLM_OUTPUT_VERSION, build_insights_input, generate_insights, validate_insights
 
 
@@ -226,6 +228,39 @@ def test_generate_and_validate_deterministic_insights(tmp_path: Path) -> None:
     assert manifest["data_fingerprint"] == latest["source"]["data_fingerprint"]
     assert generated.published is True
     assert not (generated.run_dir / "llm_request.redacted.json").exists()
+    pointer = json.loads((tmp_path / "insights" / "latest_pointer.json").read_text(encoding="utf-8"))
+    assert pointer["run_id"] == generated.run_id
+    assert pointer["manifest_sha256"]
+    assert generated.run_dir == tmp_path / "insights" / "runs" / generated.run_id
+
+    second_snapshot = json.loads(input_output.output_path.read_text(encoding="utf-8"))
+    second_snapshot["generated_at"] = "2026-01-09T05:35:00Z"
+    second_input = tmp_path / "second-input.json"
+    second_input.write_text(json.dumps(second_snapshot), encoding="utf-8")
+    second = generate_insights(
+        input_path=second_input,
+        output_dir=tmp_path / "insights",
+        generated_at="2026-01-09T05:35:00Z",
+        force=True,
+    )
+    assert second.run_id != generated.run_id
+    assert second.run_dir.exists()
+    assert generated.run_dir.exists()
+    assert validate_insights(insights_dir=tmp_path / "insights").run_count == 2
+
+    latest_text = second.latest_path.read_text(encoding="utf-8")
+    tampered_latest = json.loads(latest_text)
+    tampered_latest["insights"][0]["title"] = "Tampered but structurally valid title"
+    second.latest_path.write_text(json.dumps(tampered_latest), encoding="utf-8")
+    with pytest.raises(ValueError, match="does not match immutable run"):
+        validate_insights(insights_dir=tmp_path / "insights")
+    second.latest_path.write_text(latest_text, encoding="utf-8")
+
+    report_path = second.run_dir / "report.md"
+    report_text = report_path.read_text(encoding="utf-8")
+    report_path.write_text(report_text + "tampered\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="output hash mismatch"):
+        validate_insights(insights_dir=tmp_path / "insights")
 
 
 def test_generate_insights_skips_unchanged_benchmark_data_before_llm(tmp_path: Path) -> None:
@@ -254,7 +289,7 @@ def test_generate_insights_skips_unchanged_benchmark_data_before_llm(tmp_path: P
         generated_at="2026-01-09T04:35:00Z",
         repo_root=repo_root,
     )
-    first = generate_insights(input_path=first_input.output_path, output_dir=output_dir)
+    first = generate_insights(input_path=first_input.output_path, output_dir=output_dir, llm_mode="off")
     first_latest = json.loads(first.latest_path.read_text(encoding="utf-8"))
 
     second_input = build_insights_input(
@@ -271,14 +306,13 @@ def test_generate_insights_skips_unchanged_benchmark_data_before_llm(tmp_path: P
     second = generate_insights(
         input_path=second_input.output_path,
         output_dir=output_dir,
-        llm_mode="required",
-        nvidia_api_key="test-key-not-written",
+        llm_mode="off",
         llm_client=unexpected_client,
     )
     latest_after_skip = json.loads(first.latest_path.read_text(encoding="utf-8"))
 
     assert second.published is False
-    assert second.skipped_reason == "data_unchanged"
+    assert second.skipped_reason == "build_unchanged"
     assert second.llm_status == "skipped_unchanged"
     assert second.data_fingerprint == first.data_fingerprint
     assert not second.run_dir.exists()
@@ -496,3 +530,49 @@ def test_generate_insights_falls_back_when_llm_introduces_unsupported_number(tmp
     assert "unsupported number" in manifest["llm_error"]
     assert latest["source"]["type"] == "deterministic"
     assert latest["insights"][0]["source_type"] == "deterministic"
+
+
+def test_llm_candidate_selection_is_category_diverse() -> None:
+    candidates = [
+        {"id": "a-1", "category": "a"},
+        {"id": "a-2", "category": "a"},
+        {"id": "b-1", "category": "b"},
+        {"id": "c-1", "category": "c"},
+    ]
+
+    selected = insights_module._select_llm_candidates(candidates, max_candidates=3)
+
+    assert [row["id"] for row in selected] == ["a-1", "b-1", "c-1"]
+
+
+def test_llm_rewrite_guard_rejects_claim_polarity_reversal() -> None:
+    candidate = {
+        "id": "leader",
+        "title": "Model A leads the shared comparison",
+        "summary": "Model A has the strongest result.",
+        "why_it_matters": "Leadership is stable.",
+        "category": "test",
+        "calculations": [],
+        "context": {},
+        "evidence": [],
+    }
+
+    with pytest.raises(ValueError, match="reverses claim polarity"):
+        insights_module._validate_llm_rewrite_text(
+            candidate, "Model A trails the shared comparison", "title"
+        )
+
+
+def test_resolved_round_requires_complete_official_outputs(tmp_path: Path) -> None:
+    rounds_dir = tmp_path / "rounds"
+    _write_round(rounds_dir, "CB-2026-01-01-1W", resolved=True)
+    returns_path = rounds_dir / "CB-2026-01-01-1W" / "runs" / "official" / "results" / "returns.csv"
+    returns_path.unlink()
+
+    with pytest.raises(ValueError, match="incomplete official outputs"):
+        build_insights_input(
+            rounds_dir=rounds_dir,
+            output_path=tmp_path / "input.json",
+            generated_at="2026-01-09T04:35:00Z",
+            repo_root=tmp_path,
+        )

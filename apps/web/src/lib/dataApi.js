@@ -1,7 +1,7 @@
 import apiReadModel from "../generated/apiReadModel.js";
 import { benchmarkSetById, buildBenchmarkSetsData } from "./benchmarkSets.js";
 import { cumulativeCapitalBenchScore } from "./capitalBenchScore.js";
-import { publishedInsightRows } from "./insights.js";
+import { featuredInsightRows, publishedInsightRows } from "./insights.js";
 
 const API_VERSION = "v1";
 const DEFAULT_MINUTE_LIMIT = 120;
@@ -44,6 +44,7 @@ const DATA_API_ENDPOINTS = [
   "/v1/leaderboards/benchmark-sets",
   "/v1/leaderboards/benchmark-sets/{set_id}",
   "/v1/benchmark-evidence",
+  "/v1/market-environments",
   "/v1/insights",
   "/v1/insights/{insight_id}",
   "/v1/models",
@@ -51,6 +52,7 @@ const DATA_API_ENDPOINTS = [
   "/v1/models/{model_id}/holdings",
   "/v1/models/{model_id}/portfolios",
   "/v1/models/{model_id}/live-performance",
+  "/v1/models/{model_id}/market-environments",
   "/v1/models/{model_id}/style",
   "/v1/models/{model_id}/behavior",
   "/v1/models/behavior",
@@ -1143,12 +1145,134 @@ function riskAppetite() {
   return jsonApiResult(200, apiReadModel.risk_appetite);
 }
 
+function normalizedMarketEnvironmentTrack(url) {
+  const track = String(url.searchParams.get("track") || "all").toLowerCase();
+  return VALID_TRACKS.has(track) ? track : null;
+}
+
+function marketEnvironments(url) {
+  const track = normalizedMarketEnvironmentTrack(url);
+  if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  const payload = apiReadModel.market_environment ?? { status: "unavailable", tracks: {} };
+  if (track === "all") return jsonApiResult(200, payload);
+  const data = payload.tracks?.[track];
+  if (!data) return errorResult(404, "not_found", `Market-environment data is unavailable for ${track}.`);
+  return jsonApiResult(200, {
+    version: payload.version ?? null,
+    engine_version: payload.engine_version ?? null,
+    generated_at: payload.generated_at ?? null,
+    data_as_of: data.data_as_of ?? payload.data_as_of ?? null,
+    status: payload.status ?? "unavailable",
+    track,
+    thresholds: payload.thresholds ?? {},
+    definitions: payload.definitions?.[track] ?? {},
+    data
+  });
+}
+
+function signalReferencesModel(signal, modelId) {
+  if (Array.isArray(signal?.model_ids) && signal.model_ids.includes(modelId)) return true;
+  if (signal?.model?.model_id === modelId) return true;
+  if (signal?.candidate?.model?.model_id === modelId) return true;
+  return false;
+}
+
+function modelMarketEnvironments(modelId, url) {
+  const model = modelById.get(modelId);
+  if (!model) return errorResult(404, "not_found", "Model not found.");
+  const selectedTrack = normalizedMarketEnvironmentTrack(url);
+  if (!selectedTrack) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  const payload = apiReadModel.market_environment ?? { status: "unavailable", tracks: {} };
+  const trackKeys = selectedTrack === "all" ? ["weekly", "monthly"] : [selectedTrack];
+  const tracks = {};
+  for (const track of trackKeys) {
+    const trackData = payload.tracks?.[track];
+    if (!trackData) continue;
+    tracks[track] = {
+      track,
+      data_as_of: trackData.data_as_of ?? null,
+      round_count: trackData.round_count ?? 0,
+      environments: (trackData.environments ?? []).map((environment) => ({
+        key: environment.key,
+        label: environment.label,
+        range_label: environment.range_label,
+        status: environment.status,
+        round_count: environment.count,
+        average_sp500_return: environment.average_sp500_return,
+        model: (environment.model_rows ?? []).find((row) => row.model_id === modelId) ?? null,
+        comparison: {
+          status: environment.comparison?.status ?? "forming",
+          confidence: environment.comparison?.confidence ?? "low",
+          round_count: environment.comparison?.round_count ?? 0,
+          model: (environment.comparison?.model_rows ?? []).find((row) => row.model_id === modelId) ?? null
+        }
+      })),
+      directions: (trackData.directions ?? []).map((direction) => ({
+        key: direction.key,
+        label: direction.label,
+        range_label: direction.range_label,
+        status: direction.status,
+        round_count: direction.count,
+        average_sp500_return: direction.average_sp500_return,
+        model: (direction.model_rows ?? []).find((row) => row.model_id === modelId) ?? null,
+        comparison: {
+          status: direction.comparison?.status ?? "forming",
+          confidence: direction.comparison?.confidence ?? "low",
+          round_count: direction.comparison?.round_count ?? 0,
+          model: (direction.comparison?.model_rows ?? []).find((row) => row.model_id === modelId) ?? null
+        }
+      })),
+      regime_leaderboard: (trackData.regime_leaderboard ?? []).find((row) => row.model_id === modelId) ?? null,
+      balanced_sample: {
+        status: trackData.balanced_sample?.status ?? "forming",
+        sample_size: trackData.balanced_sample?.sample_size ?? 0,
+        model: (trackData.balanced_sample?.leaderboard ?? []).find((row) => row.model_id === modelId) ?? null
+      },
+      signals: (trackData.signals ?? []).filter((signal) => signalReferencesModel(signal, modelId))
+    };
+  }
+  return jsonApiResult(200, {
+    version: payload.version ?? null,
+    generated_at: payload.generated_at ?? null,
+    data_as_of: payload.data_as_of ?? null,
+    model_id: modelId,
+    model_name: model.name ?? model.label ?? modelId,
+    track: selectedTrack,
+    thresholds: payload.thresholds ?? {},
+    tracks
+  });
+}
+
 function listInsights(url) {
   const payload = apiReadModel.insights ?? { insights: [] };
   const category = url.searchParams.get("category");
+  const tier = String(url.searchParams.get("tier") || "all").toLowerCase();
+  const confidence = String(url.searchParams.get("confidence") || "all").toLowerCase();
+  const track = String(url.searchParams.get("track") || "all").toLowerCase();
+  const maturity = String(url.searchParams.get("maturity") || "all").toLowerCase();
+  const view = String(url.searchParams.get("view") || "all").toLowerCase();
+  if (!["global", "category", "detail", "all"].includes(tier)) {
+    return errorResult(400, "invalid_tier", "tier must be global, category, detail, or all.");
+  }
+  if (!["high", "medium", "low", "all"].includes(confidence)) {
+    return errorResult(400, "invalid_confidence", "confidence must be high, medium, low, or all.");
+  }
+  if (!["weekly", "monthly", "all"].includes(track)) {
+    return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  }
+  if (!["ready", "forming", "all"].includes(maturity)) {
+    return errorResult(400, "invalid_maturity", "maturity must be ready, forming, or all.");
+  }
+  if (!["featured", "all"].includes(view)) {
+    return errorResult(400, "invalid_view", "view must be featured or all.");
+  }
   const publishedRows = publishedInsightRows(payload.insights);
-  let rows = publishedRows;
+  let rows = view === "featured" ? featuredInsightRows(publishedRows) : publishedRows;
   if (category) rows = rows.filter((row) => row.category === category);
+  if (tier !== "all") rows = rows.filter((row) => row.publication_tier === tier);
+  if (confidence !== "all") rows = rows.filter((row) => row.confidence === confidence);
+  if (track !== "all") rows = rows.filter((row) => row.context?.track === track);
+  if (maturity !== "all") rows = rows.filter((row) => row.context?.maturity === maturity);
   const categories = Array.from(new Set(publishedRows.map((row) => row.category).filter(Boolean))).sort();
   return jsonApiResult(200, {
     engine_version: payload.engine_version ?? null,
@@ -1156,6 +1280,7 @@ function listInsights(url) {
     data_as_of: payload.data_as_of ?? null,
     insight_count: rows.length,
     categories,
+    filters: { category: category ?? null, tier, confidence, track, maturity, view },
     ...pageRows(rows, url)
   });
 }
@@ -1196,6 +1321,10 @@ function metadata() {
       model_styles: apiReadModel.model_styles.length,
       model_behavior_profiles: apiReadModel.model_behavior?.profiles?.length ?? 0,
       risk_appetite_snapshots: apiReadModel.risk_appetite?.history?.decision_pulse?.length ?? 0,
+      market_environment_rounds: Object.values(apiReadModel.market_environment?.tracks ?? {}).reduce(
+        (total, track) => total + Number(track?.round_count ?? 0),
+        0
+      ),
       insights: insights.length,
       published_insights: publishedInsightRows(insights).length,
       proof: (apiReadModel.proof ?? []).length,
@@ -1368,6 +1497,7 @@ function routeGet(request) {
   if (parts[0] === "allocations" && parts.length === 1) return listAllocations(url);
   if (parts[0] === "proof" && parts.length === 1) return listProof(url);
   if (parts[0] === "benchmark-evidence" && parts.length === 1) return benchmarkEvidence();
+  if (parts[0] === "market-environments" && parts.length === 1) return marketEnvironments(url);
   if (parts[0] === "insights" && parts.length === 1) return listInsights(url);
   if (parts[0] === "insights" && parts.length === 2) return insightDetails(parts[1]);
 
@@ -1396,6 +1526,7 @@ function routeGet(request) {
     if (parts.length === 3 && parts[2] === "holdings") return modelHoldings(parts[1], url);
     if (parts.length === 3 && parts[2] === "portfolios") return modelPortfolios(parts[1], url);
     if (parts.length === 3 && parts[2] === "live-performance") return modelLivePerformance(parts[1], url);
+    if (parts.length === 3 && parts[2] === "market-environments") return modelMarketEnvironments(parts[1], url);
     if (parts.length === 3 && parts[2] === "style") return modelStyle(parts[1]);
     if (parts.length === 3 && parts[2] === "behavior") return modelBehavior(parts[1]);
   }

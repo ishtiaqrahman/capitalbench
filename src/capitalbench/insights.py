@@ -6,7 +6,9 @@ import json
 import math
 import os
 import re
+import shutil
 import statistics
+import tempfile
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -16,12 +18,21 @@ from typing import Any, Callable
 
 from .cumulative import discover_rounds
 from .io import load_manifest, load_options, read_json, read_yaml, write_json
+from .market_environments import (
+    MARKET_ENVIRONMENT_ENGINE_VERSION,
+    MARKET_ENVIRONMENT_VERSION,
+    build_market_environment,
+    model_label as market_model_label,
+)
 from .run_store import get_run_paths, list_run_ids, read_run_manifest
 
 INSIGHTS_VERSION = "capitalbench_insights_v1"
 INSIGHTS_INPUT_VERSION = "capitalbench_insights_input_v1"
-INSIGHTS_DATA_FINGERPRINT_VERSION = "capitalbench_insights_data_fingerprint_v1"
-DETERMINISTIC_ENGINE_VERSION = "deterministic_insights_v1"
+INSIGHTS_DATA_FINGERPRINT_VERSION = "capitalbench_insights_data_fingerprint_v3"
+INSIGHTS_BUILD_FINGERPRINT_VERSION = "capitalbench_insights_build_fingerprint_v2"
+INSIGHTS_POINTER_VERSION = "capitalbench_insights_pointer_v1"
+PUBLICATION_POLICY_VERSION = "capitalbench_publication_policy_v1"
+DETERMINISTIC_ENGINE_VERSION = "deterministic_insights_v3"
 LLM_PROMPT_VERSION = "capitalbench_insight_llm_prompt_v1"
 LLM_OUTPUT_VERSION = "insight_llm_output_v1"
 LLM_ENGINE_VERSION = "nvidia_llm_rewrite_v1"
@@ -31,6 +42,7 @@ DEFAULT_NVIDIA_TIMEOUT_SECONDS = 180
 DEFAULT_NVIDIA_MAX_TOKENS = 2000
 DEFAULT_LLM_CANDIDATE_LIMIT = 4
 VALID_LLM_MODES = {"auto", "off", "required"}
+LLM_REWRITE_LENGTH_LIMITS = {"title": 80, "summary": 260, "why_it_matters": 240}
 
 AUDIENCE_ALL = ["investors", "capital_allocators", "traders", "ai_researchers"]
 
@@ -65,6 +77,8 @@ class InsightsGenerationOutput:
     llm_model: str | None
     published: bool
     data_fingerprint: str
+    build_fingerprint: str
+    run_id: str
     skipped_reason: str | None
 
 
@@ -120,13 +134,37 @@ def generate_insights(
     generated_at = generated_at or str(snapshot.get("generated_at") or _utc_now())
     run_date = str(snapshot.get("run_date") or generated_at[:10])
     latest_path = output_dir / "latest.json"
+    market_environment_latest_path = output_dir / "market_environment_latest.json"
+    pointer_path = output_dir / "latest_pointer.json"
     index_path = output_dir / "index.json"
     data_fingerprint = _snapshot_data_fingerprint(snapshot)
+    llm_config = _llm_build_config(
+        llm_mode=llm_mode,
+        api_key=nvidia_api_key,
+        base_url=nvidia_base_url,
+        model_id=nvidia_model_id,
+        max_candidates=max_llm_candidates,
+        llm_client=llm_client,
+    )
+    build_fingerprint = _snapshot_build_fingerprint(
+        data_fingerprint=data_fingerprint,
+        llm_config=llm_config,
+    )
+    run_id = _insights_run_id(generated_at, build_fingerprint)
+    run_dir = output_dir / "runs" / run_id
     previous_latest = _read_previous_latest(latest_path)
-    if not force and _previous_data_fingerprint(previous_latest) == data_fingerprint:
+    previous_pointer = _read_latest_pointer(pointer_path)
+    if (
+        not force
+        and previous_pointer is not None
+        and _previous_build_fingerprint(previous_latest) == build_fingerprint
+        and previous_pointer.get("build_fingerprint") == build_fingerprint
+        and _previous_llm_status(previous_latest) != "failed"
+        and _current_publication_is_valid(output_dir)
+    ):
         return InsightsGenerationOutput(
             insights_dir=output_dir,
-            run_dir=output_dir / run_date,
+            run_dir=run_dir,
             latest_path=latest_path,
             index_path=index_path,
             insight_count=len(previous_latest.get("insights") or []) if isinstance(previous_latest, dict) else 0,
@@ -134,10 +172,21 @@ def generate_insights(
             llm_model=_resolve_nvidia_model(nvidia_model_id),
             published=False,
             data_fingerprint=data_fingerprint,
-            skipped_reason="data_unchanged",
+            build_fingerprint=build_fingerprint,
+            run_id=run_id,
+            skipped_reason="build_unchanged",
         )
 
-    candidates = build_deterministic_candidates(snapshot, generated_at=generated_at)
+    market_environment = build_market_environment(snapshot, generated_at=generated_at)
+    market_environment["source"]["data_fingerprint_version"] = INSIGHTS_DATA_FINGERPRINT_VERSION
+    market_environment["source"]["data_fingerprint"] = data_fingerprint
+    market_environment["source"]["build_fingerprint_version"] = INSIGHTS_BUILD_FINGERPRINT_VERSION
+    market_environment["source"]["build_fingerprint"] = build_fingerprint
+    candidates = build_deterministic_candidates(
+        snapshot,
+        generated_at=generated_at,
+        market_environment=market_environment,
+    )
     llm_result = _maybe_generate_llm_rewrites(
         snapshot=snapshot,
         candidates=candidates,
@@ -150,7 +199,7 @@ def generate_insights(
         max_candidates=max_llm_candidates,
         llm_client=llm_client,
     )
-    public_insights = llm_result["insights"]
+    public_insights = _apply_publication_policy(llm_result["insights"])
     engine_version = (
         f"{DETERMINISTIC_ENGINE_VERSION}+{LLM_ENGINE_VERSION}"
         if llm_result["status"] == "succeeded"
@@ -159,8 +208,10 @@ def generate_insights(
     public = {
         "version": INSIGHTS_VERSION,
         "engine_version": engine_version,
+        "publication_policy_version": PUBLICATION_POLICY_VERSION,
         "generated_at": generated_at,
         "run_date": run_date,
+        "run_id": run_id,
         "data_as_of": _snapshot_data_as_of(snapshot),
         "source": {
             "type": "llm_assisted" if llm_result["status"] == "succeeded" else "deterministic",
@@ -168,51 +219,58 @@ def generate_insights(
             "capitalbench_generated_at": snapshot.get("generated_at"),
             "data_fingerprint_version": INSIGHTS_DATA_FINGERPRINT_VERSION,
             "data_fingerprint": data_fingerprint,
+            "build_fingerprint_version": INSIGHTS_BUILD_FINGERPRINT_VERSION,
+            "build_fingerprint": build_fingerprint,
             "llm": _public_llm_source(llm_result),
         },
         "insight_count": len(public_insights),
         "insights": public_insights,
     }
+    _validate_public_insights(public, Path(f"<generated:{run_id}:insights>"))
+    _validate_market_environment(market_environment, Path(f"<generated:{run_id}:market-environment>"))
+    _validate_market_insight_links(public, market_environment, Path(f"<generated:{run_id}>"))
 
-    run_dir = output_dir / run_date
-    run_dir.mkdir(parents=True, exist_ok=True)
-    write_json(run_dir / "input.json", snapshot)
-    write_json(run_dir / "deterministic_candidates.json", {"insights": candidates})
-    llm_request_path = run_dir / "llm_request.redacted.json"
-    llm_response_path = run_dir / "llm_response.json"
-    if llm_result.get("request") is not None:
-        write_json(llm_request_path, llm_result["request"])
+    output_dir.mkdir(parents=True, exist_ok=True)
+    if run_dir.exists():
+        _validate_existing_immutable_run(
+            run_dir,
+            build_fingerprint=build_fingerprint,
+            data_fingerprint=data_fingerprint,
+            generated_public=public,
+            generated_market_environment=market_environment,
+        )
+        manifest = read_json(run_dir / "run_manifest.json")
     else:
-        llm_request_path.unlink(missing_ok=True)
-    if llm_result.get("response") is not None:
-        write_json(llm_response_path, llm_result["response"])
-    else:
-        llm_response_path.unlink(missing_ok=True)
-    write_json(run_dir / "insights.json", public)
-    write_json(
-        run_dir / "run_manifest.json",
-        {
-            "version": INSIGHTS_VERSION,
-            "engine_version": engine_version,
-            "run_date": run_date,
-            "generated_at": generated_at,
-            "input_path": str(input_path),
-            "published": True,
-            "data_fingerprint_version": INSIGHTS_DATA_FINGERPRINT_VERSION,
-            "data_fingerprint": data_fingerprint,
-            "llm_status": llm_result["status"],
-            "llm_provider": llm_result.get("provider"),
-            "llm_model": llm_result.get("model"),
-            "llm_error": llm_result.get("error"),
-            "llm_prompt_version": LLM_PROMPT_VERSION if llm_result.get("request") is not None else None,
-            "insight_count": len(public_insights),
-            "deterministic_candidate_count": len(candidates),
-        },
+        manifest = _stage_insights_run(
+            output_dir=output_dir,
+            run_dir=run_dir,
+            run_id=run_id,
+            run_date=run_date,
+            generated_at=generated_at,
+            input_path=input_path,
+            snapshot=snapshot,
+            candidates=candidates,
+            market_environment=market_environment,
+            public=public,
+            llm_result=llm_result,
+            engine_version=engine_version,
+            data_fingerprint=data_fingerprint,
+            build_fingerprint=build_fingerprint,
+        )
+
+    pointer = _latest_pointer_payload(
+        run_id=run_id,
+        run_date=run_date,
+        generated_at=generated_at,
+        data_fingerprint=data_fingerprint,
+        build_fingerprint=build_fingerprint,
+        manifest_sha256=_file_sha256(run_dir / "run_manifest.json"),
+        output_hashes=manifest.get("output_hashes") or {},
     )
-    _write_report(run_dir / "report.md", public)
-
-    write_json(latest_path, public)
-    write_json(index_path, _build_index(output_dir, run_date, public))
+    _atomic_write_json(latest_path, public)
+    _atomic_write_json(market_environment_latest_path, market_environment)
+    _atomic_write_json(index_path, _build_index(output_dir, pointer, public))
+    _atomic_write_json(pointer_path, pointer)
     return InsightsGenerationOutput(
         insights_dir=output_dir,
         run_dir=run_dir,
@@ -223,16 +281,232 @@ def generate_insights(
         llm_model=llm_result.get("model"),
         published=True,
         data_fingerprint=data_fingerprint,
+        build_fingerprint=build_fingerprint,
+        run_id=run_id,
         skipped_reason=None,
     )
 
 
+def _stage_insights_run(
+    *,
+    output_dir: Path,
+    run_dir: Path,
+    run_id: str,
+    run_date: str,
+    generated_at: str,
+    input_path: Path,
+    snapshot: dict[str, Any],
+    candidates: list[dict[str, Any]],
+    market_environment: dict[str, Any],
+    public: dict[str, Any],
+    llm_result: dict[str, Any],
+    engine_version: str,
+    data_fingerprint: str,
+    build_fingerprint: str,
+) -> dict[str, Any]:
+    staging_root = output_dir / ".staging"
+    staging_root.mkdir(parents=True, exist_ok=True)
+    staging_dir = Path(tempfile.mkdtemp(prefix=f"{run_id}-", dir=staging_root))
+    try:
+        write_json(staging_dir / "input.json", snapshot)
+        write_json(staging_dir / "deterministic_candidates.json", {"insights": candidates})
+        write_json(staging_dir / "market_environment.json", market_environment)
+        if llm_result.get("request") is not None:
+            write_json(staging_dir / "llm_request.redacted.json", llm_result["request"])
+        if llm_result.get("response") is not None:
+            write_json(staging_dir / "llm_response.json", llm_result["response"])
+        write_json(staging_dir / "insights.json", public)
+        _write_report(staging_dir / "report.md", public)
+        output_names = [
+            "input.json",
+            "deterministic_candidates.json",
+            "market_environment.json",
+            "insights.json",
+            "report.md",
+        ]
+        for optional_name in ("llm_request.redacted.json", "llm_response.json"):
+            if (staging_dir / optional_name).exists():
+                output_names.append(optional_name)
+        output_hashes = {name: _file_sha256(staging_dir / name) for name in sorted(output_names)}
+        manifest = {
+            "version": INSIGHTS_VERSION,
+            "engine_version": engine_version,
+            "publication_policy_version": PUBLICATION_POLICY_VERSION,
+            "run_id": run_id,
+            "run_date": run_date,
+            "generated_at": generated_at,
+            "input_path": str(input_path),
+            "published": True,
+            "immutable": True,
+            "data_fingerprint_version": INSIGHTS_DATA_FINGERPRINT_VERSION,
+            "data_fingerprint": data_fingerprint,
+            "build_fingerprint_version": INSIGHTS_BUILD_FINGERPRINT_VERSION,
+            "build_fingerprint": build_fingerprint,
+            "llm_status": llm_result["status"],
+            "llm_provider": llm_result.get("provider"),
+            "llm_model": llm_result.get("model"),
+            "llm_error": llm_result.get("error"),
+            "llm_prompt_version": LLM_PROMPT_VERSION if llm_result.get("request") is not None else None,
+            "insight_count": len(public.get("insights") or []),
+            "deterministic_candidate_count": len(candidates),
+            "output_hash_algorithm": "sha256",
+            "output_hashes": output_hashes,
+        }
+        write_json(staging_dir / "run_manifest.json", manifest)
+        _validate_run_output_hashes(staging_dir, manifest)
+        run_dir.parent.mkdir(parents=True, exist_ok=True)
+        os.replace(staging_dir, run_dir)
+        return manifest
+    finally:
+        if staging_dir.exists():
+            shutil.rmtree(staging_dir)
+
+
+def _latest_pointer_payload(
+    *,
+    run_id: str,
+    run_date: str,
+    generated_at: str,
+    data_fingerprint: str,
+    build_fingerprint: str,
+    manifest_sha256: str,
+    output_hashes: dict[str, str],
+) -> dict[str, Any]:
+    run_root = f"runs/{run_id}"
+    return {
+        "version": INSIGHTS_POINTER_VERSION,
+        "run_id": run_id,
+        "run_date": run_date,
+        "generated_at": generated_at,
+        "data_fingerprint": data_fingerprint,
+        "build_fingerprint": build_fingerprint,
+        "manifest_href": f"{run_root}/run_manifest.json",
+        "manifest_sha256": manifest_sha256,
+        "insights_href": f"{run_root}/insights.json",
+        "market_environment_href": f"{run_root}/market_environment.json",
+        "output_hash_algorithm": "sha256",
+        "output_hashes": output_hashes,
+    }
+
+
+def _atomic_write_json(path: Path, data: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    os.close(descriptor)
+    temporary_path = Path(temporary_name)
+    try:
+        write_json(temporary_path, data)
+        os.replace(temporary_path, path)
+    finally:
+        temporary_path.unlink(missing_ok=True)
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _validate_run_output_hashes(run_dir: Path, manifest: dict[str, Any]) -> None:
+    output_hashes = manifest.get("output_hashes")
+    if manifest.get("output_hash_algorithm") != "sha256" or not isinstance(output_hashes, dict) or not output_hashes:
+        raise ValueError(f"{run_dir} has invalid output hashes")
+    for name, expected in output_hashes.items():
+        relative_path = Path(str(name))
+        if relative_path.is_absolute() or ".." in relative_path.parts:
+            raise ValueError(f"{run_dir} contains unsafe output hash path: {name}")
+        output_path = run_dir / relative_path
+        if not output_path.is_file():
+            raise ValueError(f"{run_dir} is missing hashed output: {name}")
+        actual = _file_sha256(output_path)
+        if actual != expected:
+            raise ValueError(f"{run_dir} output hash mismatch for {name}")
+
+
+def _validate_existing_immutable_run(
+    run_dir: Path,
+    *,
+    build_fingerprint: str,
+    data_fingerprint: str,
+    generated_public: dict[str, Any],
+    generated_market_environment: dict[str, Any],
+) -> None:
+    manifest_path = run_dir / "run_manifest.json"
+    if not manifest_path.exists():
+        raise ValueError(f"immutable insights run is missing its manifest: {run_dir}")
+    manifest = read_json(manifest_path)
+    if manifest.get("build_fingerprint") != build_fingerprint:
+        raise ValueError(f"immutable insights run has a different build fingerprint: {run_dir}")
+    if manifest.get("data_fingerprint") != data_fingerprint:
+        raise ValueError(f"immutable insights run has a different data fingerprint: {run_dir}")
+    _validate_run_output_hashes(run_dir, manifest)
+    existing_public = read_json(run_dir / "insights.json")
+    existing_market_environment = read_json(run_dir / "market_environment.json")
+    if _sha256_json(existing_public) != _sha256_json(generated_public):
+        raise ValueError(
+            "insight output changed without a build-version change; bump the relevant engine or policy version"
+        )
+    if _sha256_json(existing_market_environment) != _sha256_json(generated_market_environment):
+        raise ValueError(
+            "market-environment output changed without an engine-version change"
+        )
+
+
+def _read_latest_pointer(pointer_path: Path) -> dict[str, Any] | None:
+    if not pointer_path.exists():
+        return None
+    try:
+        pointer = read_json(pointer_path)
+    except Exception:
+        return None
+    return pointer if isinstance(pointer, dict) and pointer.get("version") == INSIGHTS_POINTER_VERSION else None
+
+
+def _current_publication_is_valid(output_dir: Path) -> bool:
+    try:
+        validate_insights(insights_dir=output_dir)
+    except (FileNotFoundError, OSError, ValueError, json.JSONDecodeError):
+        return False
+    return True
+
+
 def validate_insights(*, insights_dir: Path) -> InsightsValidationOutput:
     latest_path = insights_dir / "latest.json"
-    if not latest_path.exists():
-        raise FileNotFoundError(f"missing latest insights file: {latest_path}")
+    market_environment_latest_path = insights_dir / "market_environment_latest.json"
+    pointer_path = insights_dir / "latest_pointer.json"
+    index_path = insights_dir / "index.json"
+    for required_path in (latest_path, market_environment_latest_path, pointer_path, index_path):
+        if not required_path.exists():
+            raise FileNotFoundError(f"missing latest insights artifact: {required_path}")
+
+    pointer = read_json(pointer_path)
+    _validate_latest_pointer(pointer, pointer_path)
+    run_dir = _resolve_pointer_run_dir(insights_dir, pointer)
+    manifest = read_json(run_dir / "run_manifest.json")
+    _validate_pointer_manifest(pointer, manifest, pointer_path)
+    _validate_insights_index(read_json(index_path), pointer, index_path)
+    _validate_run_output_hashes(run_dir, manifest)
+    immutable_insights = read_json(run_dir / "insights.json")
+    immutable_market_environment = read_json(run_dir / "market_environment.json")
+    _validate_public_insights(immutable_insights, run_dir / "insights.json")
+    _validate_market_environment(immutable_market_environment, run_dir / "market_environment.json")
+    _validate_market_insight_links(immutable_insights, immutable_market_environment, run_dir)
+    _validate_current_publication_metadata(
+        immutable_insights, immutable_market_environment, pointer, manifest, run_dir
+    )
+
     latest = read_json(latest_path)
+    market_environment_latest = read_json(market_environment_latest_path)
     _validate_public_insights(latest, latest_path)
+    _validate_market_environment(market_environment_latest, market_environment_latest_path)
+    _validate_market_insight_links(latest, market_environment_latest, insights_dir)
+    if _sha256_json(latest) != _sha256_json(immutable_insights):
+        raise ValueError(f"{latest_path} does not match immutable run {pointer['run_id']}")
+    if _sha256_json(market_environment_latest) != _sha256_json(immutable_market_environment):
+        raise ValueError(f"{market_environment_latest_path} does not match immutable run {pointer['run_id']}")
+
     run_count = 0
     for item in insights_dir.iterdir() if insights_dir.exists() else []:
         if item.is_dir() and re.fullmatch(r"\d{4}-\d{2}-\d{2}", item.name):
@@ -240,7 +514,29 @@ def validate_insights(*, insights_dir: Path) -> InsightsValidationOutput:
             if not run_file.exists():
                 raise ValueError(f"missing dated insights artifact: {run_file}")
             _validate_public_insights(read_json(run_file), run_file)
+            market_environment_file = item / "market_environment.json"
+            if market_environment_file.exists():
+                dated_insights = read_json(run_file)
+                dated_market_environment = read_json(market_environment_file)
+                _validate_market_environment(dated_market_environment, market_environment_file)
+                _validate_market_insight_links(dated_insights, dated_market_environment, item)
             run_count += 1
+
+    runs_root = insights_dir / "runs"
+    if runs_root.exists():
+        for immutable_run in sorted(item for item in runs_root.iterdir() if item.is_dir()):
+            immutable_manifest_path = immutable_run / "run_manifest.json"
+            if not immutable_manifest_path.exists():
+                raise ValueError(f"immutable insights run is missing its manifest: {immutable_run}")
+            immutable_manifest = read_json(immutable_manifest_path)
+            _validate_run_output_hashes(immutable_run, immutable_manifest)
+            run_insights = read_json(immutable_run / "insights.json")
+            run_market_environment = read_json(immutable_run / "market_environment.json")
+            _validate_public_insights(run_insights, immutable_run / "insights.json")
+            _validate_market_environment(run_market_environment, immutable_run / "market_environment.json")
+            _validate_market_insight_links(run_insights, run_market_environment, immutable_run)
+            run_count += 1
+
     return InsightsValidationOutput(
         latest_path=latest_path,
         insight_count=len(latest.get("insights") or []),
@@ -248,8 +544,108 @@ def validate_insights(*, insights_dir: Path) -> InsightsValidationOutput:
     )
 
 
-def build_deterministic_candidates(snapshot: dict[str, Any], *, generated_at: str | None = None) -> list[dict[str, Any]]:
+def _validate_latest_pointer(pointer: dict[str, Any], path: Path) -> None:
+    if not isinstance(pointer, dict) or pointer.get("version") != INSIGHTS_POINTER_VERSION:
+        raise ValueError(f"{path} has invalid pointer version")
+    required = {
+        "run_id",
+        "run_date",
+        "generated_at",
+        "data_fingerprint",
+        "build_fingerprint",
+        "manifest_href",
+        "manifest_sha256",
+        "insights_href",
+        "market_environment_href",
+        "output_hashes",
+    }
+    missing = required - set(pointer)
+    if missing:
+        raise ValueError(f"{path} is missing fields: {', '.join(sorted(missing))}")
+    run_prefix = f"runs/{pointer['run_id']}"
+    expected_hrefs = {
+        "manifest_href": f"{run_prefix}/run_manifest.json",
+        "insights_href": f"{run_prefix}/insights.json",
+        "market_environment_href": f"{run_prefix}/market_environment.json",
+    }
+    for field, expected_href in expected_hrefs.items():
+        if pointer.get(field) != expected_href:
+            raise ValueError(f"{path} has invalid {field}")
+    output_hashes = pointer.get("output_hashes")
+    if pointer.get("output_hash_algorithm") != "sha256" or not isinstance(output_hashes, dict):
+        raise ValueError(f"{path} has invalid output hashes")
+    for required_output in ("insights.json", "market_environment.json"):
+        if not isinstance(output_hashes.get(required_output), str):
+            raise ValueError(f"{path} has no hash for {required_output}")
+
+
+def _validate_pointer_manifest(pointer: dict[str, Any], manifest: dict[str, Any], path: Path) -> None:
+    for field in ("run_id", "run_date", "generated_at", "data_fingerprint", "build_fingerprint"):
+        if pointer.get(field) != manifest.get(field):
+            raise ValueError(f"{path} {field} does not match the immutable manifest")
+    if pointer.get("output_hashes") != manifest.get("output_hashes"):
+        raise ValueError(f"{path} output hashes do not match the immutable manifest")
+    manifest_path = path.parent / str(pointer.get("manifest_href") or "")
+    if not manifest_path.is_file() or _file_sha256(manifest_path) != pointer.get("manifest_sha256"):
+        raise ValueError(f"{path} immutable manifest hash does not match")
+
+
+def _validate_insights_index(index: dict[str, Any], pointer: dict[str, Any], path: Path) -> None:
+    if not isinstance(index, dict) or index.get("version") != INSIGHTS_VERSION:
+        raise ValueError(f"{path} has an invalid insights index version")
+    if index.get("latest_run_id") != pointer.get("run_id"):
+        raise ValueError(f"{path} latest run does not match the pointer")
+    if index.get("latest_immutable_href") != pointer.get("insights_href"):
+        raise ValueError(f"{path} latest immutable href does not match the pointer")
+    runs = index.get("runs")
+    if not isinstance(runs, list) or index.get("run_count") != len(runs):
+        raise ValueError(f"{path} has an invalid run count")
+    current = next((row for row in runs if row.get("id") == pointer.get("run_id")), None)
+    if not isinstance(current, dict) or current.get("immutable") is not True:
+        raise ValueError(f"{path} does not contain the current immutable run")
+    if current.get("href") != pointer.get("insights_href"):
+        raise ValueError(f"{path} current run href does not match the pointer")
+
+
+def _validate_current_publication_metadata(
+    public: dict[str, Any],
+    market_environment: dict[str, Any],
+    pointer: dict[str, Any],
+    manifest: dict[str, Any],
+    run_dir: Path,
+) -> None:
+    if manifest.get("immutable") is not True or manifest.get("published") is not True:
+        raise ValueError(f"{run_dir} manifest is not an immutable published run")
+    if manifest.get("run_id") != run_dir.name or public.get("run_id") != run_dir.name:
+        raise ValueError(f"{run_dir} contains inconsistent run IDs")
+    if manifest.get("insight_count") != len(public.get("insights") or []):
+        raise ValueError(f"{run_dir} manifest insight count is stale")
+    public_source = public.get("source") or {}
+    market_source = market_environment.get("source") or {}
+    for field in ("data_fingerprint", "build_fingerprint"):
+        expected = pointer.get(field)
+        if public_source.get(field) != expected or market_source.get(field) != expected:
+            raise ValueError(f"{run_dir} has inconsistent {field} metadata")
+
+
+def _resolve_pointer_run_dir(insights_dir: Path, pointer: dict[str, Any]) -> Path:
+    run_id = str(pointer.get("run_id") or "")
+    if not re.fullmatch(r"\d{8}T\d{6}Z-[0-9a-f]{12}", run_id):
+        raise ValueError(f"invalid immutable insights run id: {run_id}")
+    run_dir = insights_dir / "runs" / run_id
+    if not run_dir.is_dir():
+        raise FileNotFoundError(f"immutable insights run does not exist: {run_dir}")
+    return run_dir
+
+
+def build_deterministic_candidates(
+    snapshot: dict[str, Any],
+    *,
+    generated_at: str | None = None,
+    market_environment: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     generated_at = generated_at or str(snapshot.get("generated_at") or _utc_now())
+    market_environment = market_environment or build_market_environment(snapshot, generated_at=generated_at)
     candidates: list[dict[str, Any]] = []
     candidates.extend(_active_positioning_insights(snapshot, generated_at))
     candidates.extend(_horizon_agreement_insights(snapshot, generated_at))
@@ -259,11 +655,395 @@ def build_deterministic_candidates(snapshot: dict[str, Any], *, generated_at: st
     candidates.extend(_latest_resolved_track_insights(snapshot, generated_at))
     candidates.extend(_confidence_calibration_insights(snapshot, generated_at))
     candidates.extend(_live_path_insights(snapshot, generated_at))
+    candidates.extend(_market_environment_insights(market_environment, generated_at))
     deduped = _dedupe_insights(candidates)
     return sorted(
         deduped,
         key=lambda row: (-float(row["importance_score"]), str(row["category"]), str(row["id"])),
     )
+
+
+def _market_environment_insights(
+    market_environment: dict[str, Any], generated_at: str
+) -> list[dict[str, Any]]:
+    insights: list[dict[str, Any]] = []
+    tracks = market_environment.get("tracks") or {}
+    for track in ("weekly", "monthly"):
+        track_data = tracks.get(track) or {}
+        data_as_of = str(track_data.get("data_as_of") or market_environment.get("data_as_of") or generated_at[:10])
+        for signal in track_data.get("signals") or []:
+            kind = signal.get("kind")
+            if kind == "synthesis":
+                insight = _market_environment_synthesis(signal, generated_at=generated_at, data_as_of=data_as_of)
+            elif kind == "direction_leader":
+                insight = _market_environment_direction_leader(signal, generated_at=generated_at, data_as_of=data_as_of)
+            elif kind == "consistency":
+                insight = _market_environment_consistency(signal, generated_at=generated_at, data_as_of=data_as_of)
+            elif kind == "split":
+                insight = _market_environment_split(signal, generated_at=generated_at, data_as_of=data_as_of)
+            else:
+                insight = None
+            if insight:
+                insights.append(insight)
+    return insights
+
+
+def _market_environment_synthesis(
+    signal: dict[str, Any], *, generated_at: str, data_as_of: str
+) -> dict[str, Any] | None:
+    directions = [row for row in signal.get("directions") or [] if row.get("model")]
+    if len(directions) < 2:
+        return None
+    track = str(signal.get("track") or "")
+    track_label = _track_label(track)
+    model_ids = list(dict.fromkeys(str(row["model"]["model_id"]) for row in directions))
+    descriptions = [
+        f"{row['model']['model_label']} leads {row['direction']} environments at "
+        f"{_fmt_pct(row['model'].get('average_return'))} across {row['model'].get('tests', 0)} tests"
+        for row in directions
+    ]
+    if len(model_ids) == 1:
+        title = f"{directions[0]['model']['model_label']} leads across multiple {track_label.lower()} market environments"
+    else:
+        title = f"{track_label} model leadership changes with the S&P 500 environment"
+    calculations = []
+    for row in directions:
+        calculations.extend(
+            [
+                {
+                    "name": f"{row['direction']}_leader_average_return",
+                    "value": _percent_value(row["model"].get("average_return")),
+                    "unit": "percent",
+                    "formula": f"average model return on the shared {track} {row['direction']} comparison cohort",
+                },
+                {
+                    "name": f"{row['direction']}_shared_rounds",
+                    "value": int(row.get("comparison_round_count") or 0),
+                    "unit": "count",
+                    "formula": "resolved rounds shared by every eligible model in the comparison",
+                },
+                {
+                    "name": f"{row['direction']}_leader_stability",
+                    "value": _rounded_number((row.get("comparison") or {}).get("leave_one_out_stability")),
+                    "unit": "ratio",
+                    "formula": "share of leave-one-round-out samples retaining the same leader",
+                },
+            ]
+        )
+    context = {
+        "scope": "resolved_history",
+        "track": track,
+        "track_label": track_label,
+        "primary_label": f"{track_label} market environments",
+        "status": "resolved",
+        "status_label": "Ready sample",
+        "data_as_of": data_as_of,
+        "round_ids": signal.get("round_ids") or [],
+        "round_count": len(signal.get("round_ids") or []),
+        "model_ids": model_ids,
+        "model_count": len(model_ids),
+        "maturity": "ready",
+        "comparison_method": "shared_round_cohort",
+        "minimum_shared_round_count": min(
+            (int(row.get("comparison_round_count") or 0) for row in directions), default=0
+        ),
+        "insight_kind": "synthesis",
+    }
+    return _insight(
+        insight_id=f"market-environment-{track}-synthesis",
+        generated_at=generated_at,
+        data_as_of=data_as_of,
+        category="market_environment",
+        audiences=["investors", "capital_allocators", "traders", "ai_researchers"],
+        title=title,
+        summary="; ".join(descriptions) + ".",
+        why=(
+            "Leadership that changes with the broad-market backdrop shows why a single all-history ranking can hide "
+            "meaningful model strengths and weaknesses."
+        ),
+        importance=88 if track == "weekly" else 86,
+        calculations=calculations,
+        evidence=_market_environment_evidence(signal["key"]),
+        related=[{"label": "Market Environment Benchmark", "href": "/leaderboards/market-regime-benchmark/"}],
+        context=context,
+        confidence=str(signal.get("confidence") or "medium"),
+    )
+
+
+def _market_environment_direction_leader(
+    signal: dict[str, Any], *, generated_at: str, data_as_of: str
+) -> dict[str, Any] | None:
+    model = signal.get("model")
+    if not isinstance(model, dict):
+        return None
+    track = str(signal.get("track") or "")
+    direction = str(signal.get("direction") or "")
+    track_label = _track_label(track)
+    adjective = {"down": "negative", "flat": "flat", "up": "positive"}.get(direction, direction)
+    environment_round_count = int(signal.get("environment_round_count") or 0)
+    round_count = int(signal.get("comparison_round_count") or 0)
+    tests = int(model.get("tests") or 0)
+    maturity = str(signal.get("maturity") or "forming")
+    context = {
+        "scope": "resolved_history",
+        "track": track,
+        "track_label": track_label,
+        "primary_label": f"{track_label} {direction} environments",
+        "status": "resolved",
+        "status_label": "Ready sample" if maturity == "ready" else "Forming sample",
+        "data_as_of": data_as_of,
+        "round_ids": signal.get("round_ids") or [],
+        "round_count": round_count,
+        "model_ids": [model["model_id"]],
+        "model_count": 1,
+        "model": {"model_id": model["model_id"], "label": model["model_label"]},
+        "environment_key": direction,
+        "environment_round_count": environment_round_count,
+        "comparison_round_count": round_count,
+        "eligible_model_count": int(signal.get("eligible_model_count") or 0),
+        "comparison_method": "shared_round_cohort",
+        "leave_one_out_stability": (signal.get("comparison") or {}).get("leave_one_out_stability"),
+        "model_observation_count": tests,
+        "maturity": maturity,
+        "insight_kind": "direction_leader",
+    }
+    sample_note = "The sample meets publication thresholds." if maturity == "ready" else "The result remains provisional while the model sample grows."
+    return _insight(
+        insight_id=f"market-environment-{track}-{direction}-leader",
+        generated_at=generated_at,
+        data_as_of=data_as_of,
+        category="market_environment",
+        audiences=["investors", "capital_allocators", "traders", "ai_researchers"],
+        title=f"{model['model_label']} leads when the S&P 500 is {adjective}",
+        summary=(
+            f"The model averaged {_fmt_pct(model.get('average_return'))} across {tests} shared-cohort rounds drawn from "
+            f"{environment_round_count} resolved {track} {direction} environments. {sample_note}"
+        ),
+        why=(
+            "Environment-specific returns show whether a model's all-history result is broad or depends on a particular "
+            "market direction."
+        ),
+        importance=80 if maturity == "ready" and direction != "flat" else 74 if maturity == "ready" else 58,
+        calculations=[
+            {
+                "name": "average_model_return",
+                "value": _percent_value(model.get("average_return")),
+                "unit": "percent",
+                "formula": f"average model return across resolved {track} {direction} environments",
+            },
+            {
+                "name": "average_sp500_return",
+                "value": _percent_value(signal.get("average_sp500_return")),
+                "unit": "percent",
+                "formula": f"average S&P 500 return across the same {track} environments",
+            },
+            {
+                "name": "capitalbench_score",
+                "value": _rounded_number(model.get("score")),
+                "unit": "points",
+                "formula": "100 * summed model return / summed hindsight-best eligible return",
+            },
+            {
+                "name": "model_observations",
+                "value": tests,
+                "unit": "count",
+                "formula": "resolved rounds shared by every eligible model in the comparison",
+            },
+            {
+                "name": "leader_margin",
+                "value": _percent_value((signal.get("comparison") or {}).get("leader_margin")),
+                "unit": "percentage_points",
+                "formula": "leader average return minus runner-up average return on the shared cohort",
+            },
+            {
+                "name": "leader_margin_ci_95_low",
+                "value": _percent_value((signal.get("comparison") or {}).get("leader_margin_ci_95_low")),
+                "unit": "percentage_points",
+                "formula": "lower bound of the paired 95% confidence interval for the leader margin",
+            },
+            {
+                "name": "leave_one_out_stability",
+                "value": _rounded_number((signal.get("comparison") or {}).get("leave_one_out_stability")),
+                "unit": "ratio",
+                "formula": "share of leave-one-round-out samples retaining the same leader",
+            },
+        ],
+        evidence=_market_environment_evidence(signal["key"]),
+        related=[
+            {"label": model["model_label"], "href": f"/models/{model['model_id']}/"},
+            {"label": "Market Environment Benchmark", "href": "/leaderboards/market-regime-benchmark/"},
+        ],
+        context=context,
+        confidence=str(signal.get("confidence") or "medium"),
+    )
+
+
+def _market_environment_consistency(
+    signal: dict[str, Any], *, generated_at: str, data_as_of: str
+) -> dict[str, Any] | None:
+    candidate = signal.get("candidate")
+    if not isinstance(candidate, dict) or not isinstance(candidate.get("model"), dict):
+        return None
+    model = candidate["model"]
+    track = str(signal.get("track") or "")
+    track_label = _track_label(track)
+    maturity = str(signal.get("maturity") or "forming")
+    direction_tests = candidate.get("direction_tests") or {}
+    minimum_tests = min((int(value) for value in direction_tests.values()), default=0)
+    context = {
+        "scope": "resolved_history",
+        "track": track,
+        "track_label": track_label,
+        "primary_label": f"{track_label} environment consistency",
+        "status": "resolved",
+        "status_label": "Ready sample" if maturity == "ready" else "Forming sample",
+        "data_as_of": data_as_of,
+        "round_ids": candidate.get("round_ids") or [],
+        "round_count": len(candidate.get("round_ids") or []),
+        "model_ids": [model["model_id"]],
+        "model_count": 1,
+        "model": {"model_id": model["model_id"], "label": model["model_label"]},
+        "model_observation_count": sum(int(value) for value in direction_tests.values()),
+        "minimum_direction_observations": minimum_tests,
+        "environment_count": candidate.get("directions_covered"),
+        "maturity": maturity,
+        "comparison_method": "shared_round_cohort",
+        "insight_kind": "consistency",
+    }
+    return _insight(
+        insight_id=f"market-environment-{track}-consistency",
+        generated_at=generated_at,
+        data_as_of=data_as_of,
+        category="market_environment",
+        audiences=["investors", "capital_allocators", "ai_researchers"],
+        title=f"{model['model_label']} has the strongest {track} score floor",
+        summary=(
+            f"Its lowest CapitalBench Score across {candidate['directions_covered']} tested market directions is "
+            f"{candidate['floor_score']:.1f}, with at least {minimum_tests} model observations in each included direction."
+        ),
+        why="A stronger floor identifies models whose benchmark performance is less dependent on one favorable market direction.",
+        importance=78 if maturity == "ready" else 57,
+        calculations=[
+            {
+                "name": "score_floor",
+                "value": round(float(candidate["floor_score"]), 4),
+                "unit": "points",
+                "formula": "minimum direction-level CapitalBench Score across tested market directions",
+            },
+            {
+                "name": "average_model_return",
+                "value": _percent_value(candidate.get("average_return")),
+                "unit": "percent",
+                "formula": "average of direction-level model returns",
+            },
+            {
+                "name": "directions_covered",
+                "value": int(candidate.get("directions_covered") or 0),
+                "unit": "count",
+                "formula": "market directions with scored model observations",
+            },
+        ],
+        evidence=_market_environment_evidence(signal["key"]),
+        related=[
+            {"label": model["model_label"], "href": f"/models/{model['model_id']}/"},
+            {"label": "Market Environment Benchmark", "href": "/leaderboards/market-regime-benchmark/"},
+        ],
+        context=context,
+        confidence=str(signal.get("confidence") or "medium"),
+    )
+
+
+def _market_environment_split(
+    signal: dict[str, Any], *, generated_at: str, data_as_of: str
+) -> dict[str, Any] | None:
+    candidate = signal.get("candidate")
+    if not isinstance(candidate, dict) or not isinstance(candidate.get("model"), dict):
+        return None
+    model = candidate["model"]
+    track = str(signal.get("track") or "")
+    track_label = _track_label(track)
+    maturity = str(signal.get("maturity") or "forming")
+    context = {
+        "scope": "resolved_history",
+        "track": track,
+        "track_label": track_label,
+        "primary_label": f"{track_label} up/down split",
+        "status": "resolved",
+        "status_label": "Ready sample" if maturity == "ready" else "Forming sample",
+        "data_as_of": data_as_of,
+        "round_ids": candidate.get("round_ids") or [],
+        "round_count": len(candidate.get("round_ids") or []),
+        "model_ids": [model["model_id"]],
+        "model_count": 1,
+        "model": {"model_id": model["model_id"], "label": model["model_label"]},
+        "down_environment_round_count": signal.get("down_environment_round_count"),
+        "up_environment_round_count": signal.get("up_environment_round_count"),
+        "down_model_observation_count": candidate.get("down_tests"),
+        "up_model_observation_count": candidate.get("up_tests"),
+        "maturity": maturity,
+        "comparison_method": "shared_round_cohort",
+        "insight_kind": "split",
+    }
+    return _insight(
+        insight_id=f"market-environment-{track}-split",
+        generated_at=generated_at,
+        data_as_of=data_as_of,
+        category="market_environment",
+        audiences=["investors", "capital_allocators", "traders", "ai_researchers"],
+        title=f"{model['model_label']} changes most between {track} up and down environments",
+        summary=(
+            f"The model averaged {_fmt_pct(candidate.get('down_return'))} in down environments and "
+            f"{_fmt_pct(candidate.get('up_return'))} in up environments, a "
+            f"{abs(float(candidate['return_gap'])) * 100:.1f} percentage-point gap."
+        ),
+        why="A large directional split identifies models whose benchmark behavior is especially sensitive to the market backdrop.",
+        importance=76 if maturity == "ready" else 56,
+        calculations=[
+            {
+                "name": "average_return_gap",
+                "value": round(abs(float(candidate["return_gap"])) * 100, 4),
+                "unit": "percentage_points",
+                "formula": "absolute difference between average up- and down-environment model returns",
+            },
+            {
+                "name": "down_average_return",
+                "value": _percent_value(candidate.get("down_return")),
+                "unit": "percent",
+                "formula": "average model return in down environments",
+            },
+            {
+                "name": "up_average_return",
+                "value": _percent_value(candidate.get("up_return")),
+                "unit": "percent",
+                "formula": "average model return in up environments",
+            },
+        ],
+        evidence=_market_environment_evidence(signal["key"]),
+        related=[
+            {"label": model["model_label"], "href": f"/models/{model['model_id']}/"},
+            {"label": "Market Environment Benchmark", "href": "/leaderboards/market-regime-benchmark/"},
+        ],
+        context=context,
+        confidence=str(signal.get("confidence") or "medium"),
+    )
+
+
+def _market_environment_evidence(signal_key: str) -> list[dict[str, str]]:
+    return [
+        {
+            "label": "Market environment analysis",
+            "href": f"/leaderboards/market-regime-benchmark/#market-environment-insight-{signal_key}",
+            "source": "insights/market_environment_latest.json",
+        }
+    ]
+
+
+def _percent_value(value: Any) -> float | None:
+    return round(float(value) * 100, 4) if _finite(value) else None
+
+
+def _rounded_number(value: Any) -> float | None:
+    return round(float(value), 4) if _finite(value) else None
 
 
 def _maybe_generate_llm_rewrites(
@@ -311,7 +1091,12 @@ def _maybe_generate_llm_rewrites(
             endpoint_base=endpoint_base,
         )
         output = _extract_llm_json(raw_response)
-        insights = _apply_llm_output(candidates=candidates, output=output, model=model)
+        insights = _apply_llm_output(
+            candidates=candidates,
+            output=output,
+            model=model,
+            allowed_candidate_ids={row["id"] for row in packet["candidate_insights"]},
+        )
         return {
             "status": "succeeded",
             "provider": "nvidia_nim",
@@ -363,7 +1148,7 @@ def _llm_input_packet(
     model: str,
     max_candidates: int,
 ) -> dict[str, Any]:
-    selected = candidates[: max(1, max_candidates)]
+    selected = _select_llm_candidates(candidates, max_candidates=max_candidates)
     latest_rounds = [
         {
             "round_id": round_item["round_id"],
@@ -419,6 +1204,22 @@ def _llm_input_packet(
             "rejected_candidate_ids": ["candidate ids that should not be rewritten"],
         },
     }
+
+
+def _select_llm_candidates(
+    candidates: list[dict[str, Any]], *, max_candidates: int
+) -> list[dict[str, Any]]:
+    selected = []
+    seen_categories: set[str] = set()
+    for candidate in candidates:
+        category = str(candidate.get("category") or "")
+        if category in seen_categories:
+            continue
+        selected.append(candidate)
+        seen_categories.add(category)
+        if len(selected) >= max(1, max_candidates):
+            break
+    return selected
 
 
 def _compact_candidate_for_llm(candidate: dict[str, Any]) -> dict[str, Any]:
@@ -545,18 +1346,31 @@ def _parse_json_content(content: str) -> dict[str, Any]:
     return parsed
 
 
-def _apply_llm_output(*, candidates: list[dict[str, Any]], output: dict[str, Any], model: str) -> list[dict[str, Any]]:
+def _apply_llm_output(
+    *,
+    candidates: list[dict[str, Any]],
+    output: dict[str, Any],
+    model: str,
+    allowed_candidate_ids: set[str] | None = None,
+) -> list[dict[str, Any]]:
     by_id = {candidate["id"]: candidate for candidate in candidates}
+    allowed_candidate_ids = allowed_candidate_ids or set(by_id)
     referenced = set(output.get("selected_candidate_ids") or []) | set(output.get("rejected_candidate_ids") or [])
     for rewrite in output.get("rewrites") or []:
         if not isinstance(rewrite, dict):
             raise ValueError("LLM rewrite entries must be objects")
         referenced.add(str(rewrite.get("candidate_id") or ""))
-    unknown = sorted(candidate_id for candidate_id in referenced if candidate_id not in by_id)
+    unknown = sorted(candidate_id for candidate_id in referenced if candidate_id not in allowed_candidate_ids)
     if unknown:
         raise ValueError(f"LLM output referenced unknown candidate ids: {', '.join(unknown)}")
 
-    rewrites = {rewrite["candidate_id"]: rewrite for rewrite in output.get("rewrites") or [] if rewrite.get("candidate_id") in by_id}
+    rewrite_rows = output.get("rewrites") or []
+    if len(rewrite_rows) > DEFAULT_LLM_CANDIDATE_LIMIT:
+        raise ValueError(f"LLM output contains more than {DEFAULT_LLM_CANDIDATE_LIMIT} rewrites")
+    rewrite_ids = [rewrite.get("candidate_id") for rewrite in rewrite_rows if isinstance(rewrite, dict)]
+    if len(rewrite_ids) != len(set(rewrite_ids)):
+        raise ValueError("LLM output contains duplicate candidate rewrites")
+    rewrites = {rewrite["candidate_id"]: rewrite for rewrite in rewrite_rows if rewrite.get("candidate_id") in by_id}
     rewritten = []
     for candidate in candidates:
         rewrite = rewrites.get(candidate["id"])
@@ -588,6 +1402,10 @@ def _apply_llm_output(*, candidates: list[dict[str, Any]], output: dict[str, Any
 
 
 def _validate_llm_rewrite_text(candidate: dict[str, Any], text: str, field: str) -> None:
+    if len(text) > LLM_REWRITE_LENGTH_LIMITS[field]:
+        raise ValueError(
+            f"LLM rewrite for {candidate['id']} exceeds the {field} length limit"
+        )
     lowered = text.lower()
     if re.search(r"\b(buy|sell|price target|trade signal|recommend(?:ed|s|ing)? buying|recommend(?:ed|s|ing)? selling|go long|go short)\b", lowered):
         raise ValueError(f"LLM rewrite for {candidate['id']} contains investment-action language")
@@ -595,6 +1413,42 @@ def _validate_llm_rewrite_text(candidate: dict[str, Any], text: str, field: str)
     for number in _normalized_numbers(text):
         if number not in allowed_numbers:
             raise ValueError(f"LLM rewrite for {candidate['id']} introduced unsupported number {number} in {field}")
+    source_text = " ".join(
+        str(candidate.get(key) or "") for key in ("title", "summary", "why_it_matters")
+    ).lower()
+    polarity_pairs = [
+        ({"lead", "leads", "leading", "best", "strongest", "outperform", "outperformed", "above"},
+         {"trail", "trails", "trailing", "worst", "weakest", "underperform", "underperformed", "below"}),
+        ({"gain", "gained", "rose", "positive", "up"}, {"loss", "lost", "fell", "negative", "down"}),
+    ]
+    source_words = set(re.findall(r"[a-z]+", source_text))
+    rewrite_words = set(re.findall(r"[a-z]+", lowered))
+    for positive, negative in polarity_pairs:
+        if source_words & positive and not source_words & negative and rewrite_words & negative:
+            raise ValueError(f"LLM rewrite for {candidate['id']} reverses claim polarity in {field}")
+        if source_words & negative and not source_words & positive and rewrite_words & positive:
+            raise ValueError(f"LLM rewrite for {candidate['id']} reverses claim polarity in {field}")
+    source_entities = {_normalize_entity(value) for value in _model_entities(json.dumps(_compact_candidate_for_llm(candidate)))}
+    for entity in _model_entities(text):
+        if _normalize_entity(entity) not in source_entities:
+            raise ValueError(f"LLM rewrite for {candidate['id']} introduced unsupported model {entity}")
+
+
+def _model_entities(text: str) -> list[str]:
+    return re.findall(
+        r"\b(?:"
+        r"GPT[-\s]?\d+(?:\.\d+)?|"
+        r"Claude(?:\s+(?:Fable|Opus|Sonnet|Haiku))?(?:\s+\d+(?:\.\d+)?)?|"
+        r"Gemini(?:\s+\d+(?:\.\d+)?)?(?:\s+Pro)?|"
+        r"Grok(?:\s+\d+(?:\.\d+)?)?"
+        r")\b",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+
+def _normalize_entity(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "", value.lower())
 
 
 def _allowed_candidate_numbers(candidate: dict[str, Any]) -> set[str]:
@@ -704,6 +1558,57 @@ def _snapshot_data_fingerprint(snapshot: dict[str, Any]) -> str:
     return _sha256_json(stable_payload)
 
 
+def _llm_build_config(
+    *,
+    llm_mode: str,
+    api_key: str | None,
+    base_url: str | None,
+    model_id: str | None,
+    max_candidates: int,
+    llm_client: Callable[[dict[str, Any]], dict[str, Any]] | None,
+) -> dict[str, Any]:
+    configured = bool(api_key or os.environ.get("NVIDIA_API_KEY") or llm_client)
+    enabled = llm_mode != "off" and configured
+    return {
+        "mode": llm_mode,
+        "enabled": enabled,
+        "provider": "nvidia_nim" if enabled else None,
+        "base_url": (
+            (base_url or os.environ.get("NVIDIA_BASE_URL") or DEFAULT_NVIDIA_BASE_URL).rstrip("/")
+            if enabled
+            else None
+        ),
+        "transport": ("custom_client" if llm_client is not None else "http") if enabled else None,
+        "model": _resolve_nvidia_model(model_id),
+        "engine_version": LLM_ENGINE_VERSION,
+        "prompt_version": LLM_PROMPT_VERSION,
+        "max_candidates": max(1, int(max_candidates)),
+    }
+
+
+def _snapshot_build_fingerprint(*, data_fingerprint: str, llm_config: dict[str, Any]) -> str:
+    return _sha256_json(
+        {
+            "version": INSIGHTS_BUILD_FINGERPRINT_VERSION,
+            "data_fingerprint": data_fingerprint,
+            "deterministic_engine_version": DETERMINISTIC_ENGINE_VERSION,
+            "market_environment_version": MARKET_ENVIRONMENT_VERSION,
+            "market_environment_engine_version": MARKET_ENVIRONMENT_ENGINE_VERSION,
+            "publication_policy_version": PUBLICATION_POLICY_VERSION,
+            "llm": llm_config,
+        }
+    )
+
+
+def _insights_run_id(generated_at: str, build_fingerprint: str) -> str:
+    try:
+        timestamp = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise ValueError(f"invalid insights generated_at timestamp: {generated_at}") from exc
+    timestamp = timestamp.astimezone(timezone.utc)
+    return f"{timestamp.strftime('%Y%m%dT%H%M%SZ')}-{build_fingerprint[:12]}"
+
+
 def _read_previous_latest(latest_path: Path) -> dict[str, Any] | None:
     if not latest_path.exists():
         return None
@@ -721,6 +1626,25 @@ def _previous_data_fingerprint(latest: dict[str, Any] | None) -> str | None:
     if not isinstance(source, dict):
         return None
     value = source.get("data_fingerprint")
+    return value if isinstance(value, str) and value else None
+
+
+def _previous_build_fingerprint(latest: dict[str, Any] | None) -> str | None:
+    if not isinstance(latest, dict):
+        return None
+    source = latest.get("source")
+    if not isinstance(source, dict):
+        return None
+    value = source.get("build_fingerprint")
+    return value if isinstance(value, str) and value else None
+
+
+def _previous_llm_status(latest: dict[str, Any] | None) -> str | None:
+    if not isinstance(latest, dict):
+        return None
+    source = latest.get("source")
+    llm = source.get("llm") if isinstance(source, dict) else None
+    value = llm.get("status") if isinstance(llm, dict) else None
     return value if isinstance(value, str) and value else None
 
 
@@ -754,22 +1678,41 @@ def _build_snapshot(*, rounds_dir: Path, repo_root: Path, generated_at: str, run
 
 
 def _round_snapshot(round_path: Path, asset_risk: dict[str, Any]) -> dict[str, Any] | None:
-    try:
-        manifest = load_manifest(round_path)
-    except Exception:
-        return None
+    manifest = load_manifest(round_path)
     selected_run_id = _select_official_run_id(round_path)
     if selected_run_id is None:
         return None
     run_paths = get_run_paths(round_path, selected_run_id)
     run_manifest = read_run_manifest(run_paths)
     leaderboard_path = run_paths.results_dir / "leaderboard.csv"
-    status = "resolved" if leaderboard_path.exists() else "active"
+    has_leaderboard = leaderboard_path.exists()
     options = _option_rows(round_path, asset_risk)
     options_by_id = {row["option_id"]: row for row in options}
     returns = _returns_rows(run_paths, options_by_id)
     return_by_option = {row["option_id"]: row["return"] for row in returns if _finite(row.get("return"))}
     portfolios = _portfolio_rows(run_paths, options_by_id, return_by_option)
+    results = _result_rows(run_paths, returns, portfolios, options_by_id)
+    if has_leaderboard:
+        missing: list[str] = []
+        if not returns:
+            missing.append("returns")
+        if _sp500_return({"returns": returns, "results": results}) is None:
+            missing.append("S&P 500 return")
+        if _oracle_return(returns) is None:
+            missing.append("oracle return")
+        if not results:
+            missing.append("leaderboard results")
+        result_model_ids = [str(row.get("model_id") or "") for row in results]
+        if len(result_model_ids) != len(set(result_model_ids)):
+            missing.append("unique leaderboard model IDs")
+        return_option_ids = [str(row.get("option_id") or "") for row in returns]
+        if len(return_option_ids) != len(set(return_option_ids)):
+            missing.append("unique return option IDs")
+        if missing:
+            raise ValueError(
+                f"resolved round {manifest.round_id} has incomplete official outputs: {', '.join(missing)}"
+            )
+    status = "resolved" if has_leaderboard else "active"
     return {
         "round_id": manifest.round_id,
         "track": _track_from_manifest(manifest),
@@ -796,7 +1739,7 @@ def _round_snapshot(round_path: Path, asset_risk: dict[str, Any]) -> dict[str, A
         },
         "options": options,
         "portfolios": portfolios,
-        "results": _result_rows(run_paths, returns, portfolios, options_by_id),
+        "results": results,
         "returns": returns,
         "allocations": _result_allocation_rows(run_paths, options_by_id),
         "interim_performance": _interim_rows(run_paths),
@@ -2105,12 +3048,80 @@ def _insight(
     }
 
 
+def _apply_publication_policy(insights: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    global_categories = {
+        "benchmark_difficulty",
+        "consensus_performance",
+        "current_positioning",
+        "horizon_agreement",
+        "live_performance",
+        "oracle_comparison",
+        "risk_regime",
+    }
+    output = []
+    for source in insights:
+        insight = dict(source)
+        context = insight.get("context") if isinstance(insight.get("context"), dict) else {}
+        confidence = str(insight.get("confidence") or "low")
+        if insight.get("category") != "market_environment" and context.get("scope") in {
+            "live_rounds",
+            "live_interim",
+        }:
+            confidence = "medium"
+            insight["confidence"] = confidence
+
+        if confidence == "low":
+            tier = "detail"
+            reason = "Low-confidence findings remain available in detail views."
+        elif insight.get("category") == "market_environment":
+            if (
+                context.get("insight_kind") == "synthesis"
+                and context.get("maturity") == "ready"
+                and confidence == "high"
+            ):
+                tier = "global"
+                reason = "A stable, mature cross-environment synthesis can appear across the site."
+            elif context.get("maturity") == "ready":
+                tier = "category"
+                reason = "A mature environment finding belongs on benchmark and insight surfaces."
+            else:
+                tier = "detail"
+                reason = "Forming environment samples stay in detailed analysis."
+        elif (
+            insight.get("category") in global_categories
+            and confidence == "high"
+            and float(insight.get("importance_score") or 0) >= 78
+        ):
+            tier = "global"
+            reason = "High-confidence, high-importance evidence is eligible for global surfaces."
+        else:
+            tier = "category"
+            reason = "The finding is useful in its category without displacing broader signals."
+
+        insight["publication_tier"] = tier
+        insight["publication_reason"] = reason
+        output.append(insight)
+    return output
+
+
 def _validate_public_insights(payload: dict[str, Any], path: Path) -> None:
     if payload.get("version") != INSIGHTS_VERSION:
         raise ValueError(f"{path} has invalid insights version")
     insights = payload.get("insights")
     if not isinstance(insights, list):
         raise ValueError(f"{path} must contain an insights list")
+    if payload.get("insight_count") != len(insights):
+        raise ValueError(f"{path} insight_count does not match the insights list")
+    policy_enabled = payload.get("publication_policy_version") is not None
+    if policy_enabled and payload.get("publication_policy_version") != PUBLICATION_POLICY_VERSION:
+        raise ValueError(f"{path} has invalid publication policy version")
+    source = payload.get("source")
+    if policy_enabled:
+        if not isinstance(source, dict):
+            raise ValueError(f"{path} has no source metadata")
+        for field in ("data_fingerprint", "build_fingerprint"):
+            if not isinstance(source.get(field), str) or not source[field]:
+                raise ValueError(f"{path} has invalid {field}")
     seen_ids: set[str] = set()
     required = {
         "id",
@@ -2139,15 +3150,213 @@ def _validate_public_insights(payload: dict[str, Any], path: Path) -> None:
         if insight["id"] in seen_ids:
             raise ValueError(f"{path} contains duplicate insight id: {insight['id']}")
         seen_ids.add(insight["id"])
+        if not isinstance(insight["id"], str) or not insight["id"].strip():
+            raise ValueError(f"{path} contains an insight with an invalid id")
+        if not isinstance(insight.get("category"), str) or not insight["category"].strip():
+            raise ValueError(f"{path} insight {insight['id']} has invalid category")
         for text_field in ["title", "summary", "why_it_matters"]:
             if not str(insight.get(text_field) or "").strip():
                 raise ValueError(f"{path} insight {insight['id']} has blank {text_field}")
-        if not insight.get("evidence"):
+        if len(str(insight["title"])) > 120 or len(str(insight["summary"])) > 500 or len(str(insight["why_it_matters"])) > 500:
+            raise ValueError(f"{path} insight {insight['id']} exceeds public text limits")
+        audiences = insight.get("audiences")
+        if not isinstance(audiences, list) or not audiences or not all(
+            isinstance(value, str) and value.strip() for value in audiences
+        ):
+            raise ValueError(f"{path} insight {insight['id']} has invalid audiences")
+        evidence = insight.get("evidence")
+        if not isinstance(evidence, list) or not evidence:
             raise ValueError(f"{path} insight {insight['id']} has no evidence")
+        for evidence_item in evidence:
+            if not isinstance(evidence_item, dict) or not str(evidence_item.get("label") or "").strip():
+                raise ValueError(f"{path} insight {insight['id']} has invalid evidence")
+            if not evidence_item.get("href") and not evidence_item.get("source"):
+                raise ValueError(f"{path} insight {insight['id']} has unresolvable evidence")
         if not isinstance(insight.get("context"), dict) or not insight["context"].get("primary_label"):
             raise ValueError(f"{path} insight {insight['id']} has invalid context")
+        if not str(insight["context"].get("scope") or "").strip():
+            raise ValueError(f"{path} insight {insight['id']} has no context scope")
         if insight.get("source_type") not in {"deterministic", "llm_assisted", "system"}:
             raise ValueError(f"{path} insight {insight['id']} has invalid source_type")
+        if insight.get("confidence") not in {"high", "medium", "low"}:
+            raise ValueError(f"{path} insight {insight['id']} has invalid confidence")
+        if insight.get("status") not in {"published", "draft"}:
+            raise ValueError(f"{path} insight {insight['id']} has invalid status")
+        if not _finite(insight.get("importance_score")) or not 0 <= float(insight["importance_score"]) <= 100:
+            raise ValueError(f"{path} insight {insight['id']} has invalid importance_score")
+        calculations = insight.get("calculations")
+        if not isinstance(calculations, list):
+            raise ValueError(f"{path} insight {insight['id']} has invalid calculations")
+        for calculation in calculations:
+            if not isinstance(calculation, dict) or not str(calculation.get("name") or "").strip():
+                raise ValueError(f"{path} insight {insight['id']} has an invalid calculation")
+            value = calculation.get("value")
+            if isinstance(value, (int, float)) and not _finite(value):
+                raise ValueError(f"{path} insight {insight['id']} has a non-finite calculation")
+        if policy_enabled and insight.get("publication_tier") not in {"global", "category", "detail"}:
+            raise ValueError(f"{path} insight {insight['id']} has invalid publication tier")
+        if policy_enabled and not str(insight.get("publication_reason") or "").strip():
+            raise ValueError(f"{path} insight {insight['id']} has no publication reason")
+
+
+def _validate_market_environment(payload: dict[str, Any], path: Path) -> None:
+    if payload.get("version") != MARKET_ENVIRONMENT_VERSION:
+        raise ValueError(f"{path} has invalid market-environment version")
+    thresholds = payload.get("thresholds")
+    if not isinstance(thresholds, dict) or not all(
+        isinstance(thresholds.get(key), int) and thresholds[key] > 0
+        for key in ("environment_rounds", "model_observations", "balanced_sample_per_direction")
+    ):
+        raise ValueError(f"{path} has invalid market-environment thresholds")
+    tracks = payload.get("tracks")
+    if not isinstance(tracks, dict) or set(tracks) != {"weekly", "monthly"}:
+        raise ValueError(f"{path} must contain weekly and monthly market-environment tracks")
+    for track, track_data in tracks.items():
+        if not isinstance(track_data, dict) or track_data.get("track") != track:
+            raise ValueError(f"{path} has invalid {track} track data")
+        rounds = track_data.get("rounds")
+        if not isinstance(rounds, list) or track_data.get("round_count") != len(rounds):
+            raise ValueError(f"{path} {track} track has an invalid round count")
+        round_ids = [row.get("round_id") for row in rounds if isinstance(row, dict)]
+        if len(round_ids) != len(rounds) or len(round_ids) != len(set(round_ids)):
+            raise ValueError(f"{path} {track} track has invalid round IDs")
+        track_round_ids = set(round_ids)
+        if not isinstance(track_data.get("environments"), list) or len(track_data["environments"]) != 5:
+            raise ValueError(f"{path} {track} track must contain five environments")
+        if not isinstance(track_data.get("directions"), list) or len(track_data["directions"]) != 3:
+            raise ValueError(f"{path} {track} track must contain three direction buckets")
+        for bucket in [*track_data["environments"], *track_data["directions"]]:
+            _validate_market_bucket(
+                bucket,
+                track_round_ids=track_round_ids,
+                ready_threshold=thresholds["environment_rounds"],
+                require_comparison=payload.get("engine_version") == MARKET_ENVIRONMENT_ENGINE_VERSION,
+                path=path,
+                track=track,
+            )
+        if track_data.get("ready_environment_count") != sum(
+            1 for row in track_data["environments"] if row.get("status") == "ready"
+        ):
+            raise ValueError(f"{path} {track} track has an invalid ready environment count")
+        signals = track_data.get("signals")
+        if not isinstance(signals, list):
+            raise ValueError(f"{path} {track} track has invalid signals")
+        signal_keys = [row.get("key") for row in track_data.get("signals") or [] if isinstance(row, dict)]
+        if len(signal_keys) != len(signals) or len(signal_keys) != len(set(signal_keys)):
+            raise ValueError(f"{path} {track} track contains duplicate signal keys")
+        for signal in signals:
+            if signal.get("track") != track or signal.get("maturity") not in {"ready", "forming"}:
+                raise ValueError(f"{path} {track} track contains an invalid signal")
+            if signal.get("confidence") not in {"high", "medium", "low"}:
+                raise ValueError(f"{path} {track} track contains an invalid signal confidence")
+
+
+def _validate_market_bucket(
+    bucket: dict[str, Any],
+    *,
+    track_round_ids: set[str],
+    ready_threshold: int,
+    require_comparison: bool,
+    path: Path,
+    track: str,
+) -> None:
+    if not isinstance(bucket, dict) or not str(bucket.get("key") or ""):
+        raise ValueError(f"{path} {track} track contains an invalid bucket")
+    round_ids = bucket.get("round_ids")
+    if not isinstance(round_ids, list) or bucket.get("count") != len(round_ids):
+        raise ValueError(f"{path} {track}/{bucket.get('key')} has an invalid round count")
+    if len(round_ids) != len(set(round_ids)) or not set(round_ids).issubset(track_round_ids):
+        raise ValueError(f"{path} {track}/{bucket.get('key')} has invalid round IDs")
+    expected_status = "ready" if len(round_ids) >= ready_threshold else "forming" if round_ids else "no_data"
+    if bucket.get("status") != expected_status:
+        raise ValueError(f"{path} {track}/{bucket.get('key')} has an invalid status")
+    model_rows = bucket.get("model_rows")
+    if not isinstance(model_rows, list):
+        raise ValueError(f"{path} {track}/{bucket.get('key')} has invalid model rows")
+    model_ids = []
+    for row in model_rows:
+        if not isinstance(row, dict) or not str(row.get("model_id") or ""):
+            raise ValueError(f"{path} {track}/{bucket.get('key')} has an invalid model row")
+        model_ids.append(row["model_id"])
+        row_round_ids = row.get("round_ids")
+        if not isinstance(row_round_ids, list) or row.get("tests") != len(row_round_ids):
+            raise ValueError(f"{path} {track}/{bucket.get('key')} has an invalid model test count")
+        if len(row_round_ids) != len(set(row_round_ids)) or not set(row_round_ids).issubset(set(round_ids)):
+            raise ValueError(f"{path} {track}/{bucket.get('key')} has invalid model round IDs")
+    if len(model_ids) != len(set(model_ids)):
+        raise ValueError(f"{path} {track}/{bucket.get('key')} has duplicate models")
+
+    if not require_comparison:
+        return
+    comparison = bucket.get("comparison")
+    if not isinstance(comparison, dict) or comparison.get("status") not in {"ready", "forming"}:
+        raise ValueError(f"{path} {track}/{bucket.get('key')} has invalid comparison metadata")
+    comparison_round_ids = comparison.get("round_ids")
+    comparison_rows = comparison.get("model_rows")
+    if not isinstance(comparison_round_ids, list) or comparison.get("round_count") != len(comparison_round_ids):
+        raise ValueError(f"{path} {track}/{bucket.get('key')} has invalid comparison rounds")
+    if not set(comparison_round_ids).issubset(set(round_ids)) or not isinstance(comparison_rows, list):
+        raise ValueError(f"{path} {track}/{bucket.get('key')} has an invalid shared cohort")
+    if comparison.get("status") == "ready":
+        if len(comparison_round_ids) < ready_threshold or len(comparison_rows) < 2:
+            raise ValueError(f"{path} {track}/{bucket.get('key')} has an undersized ready comparison")
+        for row in comparison_rows:
+            if row.get("tests") != len(comparison_round_ids) or row.get("round_ids") != comparison_round_ids:
+                raise ValueError(f"{path} {track}/{bucket.get('key')} comparison is not a shared cohort")
+
+
+def _validate_market_insight_links(
+    public: dict[str, Any], market_environment: dict[str, Any], path: Path
+) -> None:
+    market_insights = [
+        row for row in public.get("insights") or [] if isinstance(row, dict) and row.get("category") == "market_environment"
+    ]
+    expected: dict[str, dict[str, Any]] = {}
+    available_models: dict[str, set[str]] = {}
+    available_rounds: dict[str, set[str]] = {}
+    for track, track_data in (market_environment.get("tracks") or {}).items():
+        available_rounds[track] = {str(row.get("round_id")) for row in track_data.get("rounds") or []}
+        available_models[track] = {
+            str(result.get("model_id"))
+            for round_item in track_data.get("rounds") or []
+            for result in round_item.get("results") or []
+        }
+        for signal in track_data.get("signals") or []:
+            kind = signal.get("kind")
+            if kind == "direction_leader" and signal.get("model"):
+                insight_id = f"market-environment-{track}-{signal.get('direction')}-leader"
+            elif kind == "synthesis" and len(signal.get("directions") or []) >= 2:
+                insight_id = f"market-environment-{track}-synthesis"
+            elif kind == "consistency" and signal.get("candidate"):
+                insight_id = f"market-environment-{track}-consistency"
+            elif kind == "split" and signal.get("candidate"):
+                insight_id = f"market-environment-{track}-split"
+            else:
+                continue
+            expected[insight_id] = signal
+
+    actual = {str(row.get("id")): row for row in market_insights}
+    if set(actual) != set(expected):
+        missing = sorted(set(expected) - set(actual))
+        unexpected = sorted(set(actual) - set(expected))
+        raise ValueError(f"{path} market insights do not match signals; missing={missing}, unexpected={unexpected}")
+    for insight_id, insight in actual.items():
+        signal = expected[insight_id]
+        context = insight.get("context") or {}
+        track = str(context.get("track") or "")
+        if track != signal.get("track") or context.get("insight_kind") != signal.get("kind"):
+            raise ValueError(f"{path} insight {insight_id} has stale market context")
+        if context.get("maturity") != signal.get("maturity") or insight.get("confidence") != signal.get("confidence"):
+            raise ValueError(f"{path} insight {insight_id} has stale market maturity or confidence")
+        if not set(context.get("round_ids") or []).issubset(available_rounds.get(track, set())):
+            raise ValueError(f"{path} insight {insight_id} references unknown market rounds")
+        if not set(context.get("model_ids") or []).issubset(available_models.get(track, set())):
+            raise ValueError(f"{path} insight {insight_id} references unknown market models")
+        evidence_sources = {
+            row.get("source") for row in insight.get("evidence") or [] if isinstance(row, dict)
+        }
+        if "insights/market_environment_latest.json" not in evidence_sources:
+            raise ValueError(f"{path} insight {insight_id} has no canonical market evidence")
 
 
 def _write_report(path: Path, public: dict[str, Any]) -> None:
@@ -2186,22 +3395,68 @@ def _write_report(path: Path, public: dict[str, Any]) -> None:
     path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
 
 
-def _build_index(output_dir: Path, run_date: str, public: dict[str, Any]) -> dict[str, Any]:
-    runs = []
+def _build_index(output_dir: Path, pointer: dict[str, Any], public: dict[str, Any]) -> dict[str, Any]:
+    runs: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    immutable_root = output_dir / "runs"
+    if immutable_root.exists():
+        for item in sorted((row for row in immutable_root.iterdir() if row.is_dir()), reverse=True):
+            manifest_path = item / "run_manifest.json"
+            if not manifest_path.exists():
+                continue
+            manifest = read_json(manifest_path)
+            run_id = str(manifest.get("run_id") or item.name)
+            seen_ids.add(run_id)
+            runs.append(
+                {
+                    "id": run_id,
+                    "date": manifest.get("run_date"),
+                    "generated_at": manifest.get("generated_at"),
+                    "href": f"runs/{item.name}/insights.json",
+                    "market_environment_href": f"runs/{item.name}/market_environment.json",
+                    "manifest_href": f"runs/{item.name}/run_manifest.json",
+                    "data_fingerprint": manifest.get("data_fingerprint"),
+                    "build_fingerprint": manifest.get("build_fingerprint"),
+                    "immutable": True,
+                }
+            )
     if output_dir.exists():
         for item in sorted(output_dir.iterdir()):
             if item.is_dir() and re.fullmatch(r"\d{4}-\d{2}-\d{2}", item.name):
                 run_file = item / "insights.json"
                 if run_file.exists():
-                    runs.append({"date": item.name, "href": f"{item.name}/insights.json"})
-    if not any(row["date"] == run_date for row in runs):
-        runs.append({"date": run_date, "href": f"{run_date}/insights.json"})
-    runs = sorted(runs, key=lambda row: row["date"], reverse=True)
+                    legacy_id = f"legacy-{item.name}"
+                    if legacy_id not in seen_ids:
+                        runs.append(
+                            {
+                                "id": legacy_id,
+                                "date": item.name,
+                                "generated_at": None,
+                                "href": f"{item.name}/insights.json",
+                                "market_environment_href": (
+                                    f"{item.name}/market_environment.json"
+                                    if (item / "market_environment.json").exists()
+                                    else None
+                                ),
+                                "manifest_href": (
+                                    f"{item.name}/run_manifest.json"
+                                    if (item / "run_manifest.json").exists()
+                                    else None
+                                ),
+                                "data_fingerprint": None,
+                                "build_fingerprint": None,
+                                "immutable": False,
+                            }
+                        )
+    runs.sort(key=lambda row: (str(row.get("generated_at") or row.get("date") or ""), row["id"]), reverse=True)
     return {
         "version": INSIGHTS_VERSION,
         "generated_at": public["generated_at"],
-        "latest_date": run_date,
+        "latest_run_id": pointer["run_id"],
+        "latest_date": pointer["run_date"],
         "latest_href": "latest.json",
+        "latest_pointer_href": "latest_pointer.json",
+        "latest_immutable_href": pointer["insights_href"],
         "run_count": len(runs),
         "runs": runs,
     }
@@ -2291,16 +3546,7 @@ def _asset_name(row: dict[str, Any]) -> str:
 
 
 def _model_label(model_id: str) -> str:
-    labels = {
-        "anthropic-claude-fable-5": "Claude Fable 5",
-        "anthropic-claude-opus-4-7": "Claude Opus 4.7",
-        "anthropic-claude-opus-4-8": "Claude Opus 4.8",
-        "google-gemini-3-1-pro": "Gemini 3.1 Pro",
-        "openai-gpt-5-5": "GPT-5.5",
-        "xai-grok-4-3": "Grok 4.3",
-        "xai-grok-4-5": "Grok 4.5",
-    }
-    return labels.get(model_id, model_id)
+    return market_model_label(model_id)
 
 
 def _primary_option_id(allocations: list[dict[str, Any]]) -> str:

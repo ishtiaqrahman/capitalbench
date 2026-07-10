@@ -1,18 +1,12 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MarketRegimeLineChart from "../../components/MarketRegimeLineChart.astro";
-import { modelLabel, providerLabel, type LeaderboardRecord, type RoundRecord } from "../../data/fallback";
-import { cumulativeCapitalBenchScore } from "../../lib/capitalBenchScore.js";
+import { modelLabel, providerLabel, type RoundRecord } from "../../data/fallback";
+import apiReadModel from "../../generated/apiReadModel.js";
 import { dateOnly, pct } from "../../lib/format";
-import {
-  staticRoundLeaderboard,
-  staticRoundRecords,
-  staticRoundReturns,
-  type ResultReturnRecord
-} from "../../lib/localRoundRecords";
+import { staticRoundRecords } from "../../lib/localRoundRecords";
 import { providerLogoSrc } from "../../lib/scoreReturnChart";
-import { buildTrackScorecard } from "../../lib/trackScorecard";
-import { roundTrack, type BenchmarkTrack } from "../../lib/tracks";
+import type { BenchmarkTrack } from "../../lib/tracks";
 
 type RegimeKey = "sharp_down" | "down" | "flat" | "up" | "sharp_up";
 type RegimeDirection = "down" | "flat" | "up";
@@ -30,7 +24,7 @@ type RegimeRound = {
   round: RoundRecord;
   track: BenchmarkTrack;
   regime: RegimeDefinition;
-  leaderboard: LeaderboardRecord[];
+  directionKey: SampleCategoryKey;
   sp500Return: number;
   maxPossibleReturn: number;
   averageAlpha: number | undefined;
@@ -43,15 +37,6 @@ type RegimeCoverage = RegimeDefinition & {
   averageSp500Return: number | undefined;
   status: RegimeStatus;
   rounds: RegimeRound[];
-};
-
-type ModelRegimeStats = {
-  returns: number[];
-  maxReturns: number[];
-  sp500Returns: number[];
-  alphas: number[];
-  hits: boolean[];
-  rounds: string[];
 };
 
 type SampleCategoryDefinition = {
@@ -237,8 +222,9 @@ type LineChart = {
   };
 };
 
-const READY_ROUND_THRESHOLD = 3;
-const BALANCED_SAMPLE_THRESHOLD = 3;
+const marketEnvironment: any = apiReadModel.market_environment ?? { thresholds: {}, definitions: {}, tracks: {} };
+const READY_ROUND_THRESHOLD = Number(marketEnvironment.thresholds?.environment_rounds ?? 3);
+const BALANCED_SAMPLE_THRESHOLD = Number(marketEnvironment.thresholds?.balanced_sample_per_direction ?? 3);
 const CHART_WIDTH = 640;
 const CHART_HEIGHT = 190;
 const CHART_LEFT = 42;
@@ -246,90 +232,33 @@ const CHART_RIGHT = 30;
 const CHART_TOP = 30;
 const CHART_BOTTOM = 32;
 
+function mapRegimeDefinition(row: any): RegimeDefinition {
+  return {
+    key: row.key,
+    label: row.label,
+    rangeLabel: row.range_label,
+    direction: row.direction
+  };
+}
+
+function mapSampleDefinition(row: any): SampleCategoryDefinition {
+  return { key: row.key, label: row.label, rangeLabel: row.range_label };
+}
+
 const regimeDefinitions: Record<BenchmarkTrack, RegimeDefinition[]> = {
-  weekly: [
-    { key: "sharp_down", label: "Sharp Down", rangeLabel: "S&P <= -2.0%", direction: "down" },
-    { key: "down", label: "Down", rangeLabel: "-2.0% to -0.5%", direction: "down" },
-    { key: "flat", label: "Flat", rangeLabel: "-0.5% to +0.5%", direction: "flat" },
-    { key: "up", label: "Up", rangeLabel: "+0.5% to +2.0%", direction: "up" },
-    { key: "sharp_up", label: "Sharp Up", rangeLabel: "S&P >= +2.0%", direction: "up" }
-  ],
-  monthly: [
-    { key: "sharp_down", label: "Sharp Down", rangeLabel: "S&P <= -3.0%", direction: "down" },
-    { key: "down", label: "Down", rangeLabel: "-3.0% to -1.0%", direction: "down" },
-    { key: "flat", label: "Flat", rangeLabel: "-1.0% to +1.0%", direction: "flat" },
-    { key: "up", label: "Up", rangeLabel: "+1.0% to +3.0%", direction: "up" },
-    { key: "sharp_up", label: "Sharp Up", rangeLabel: "S&P >= +3.0%", direction: "up" }
-  ]
+  weekly: (marketEnvironment.definitions?.weekly?.environments ?? []).map(mapRegimeDefinition),
+  monthly: (marketEnvironment.definitions?.monthly?.environments ?? []).map(mapRegimeDefinition)
 };
 
 const sampleCategoryDefinitions: Record<BenchmarkTrack, SampleCategoryDefinition[]> = {
-  weekly: [
-    { key: "down", label: "Down", rangeLabel: "S&P < -0.5%" },
-    { key: "flat", label: "Flat", rangeLabel: "-0.5% to +0.5%" },
-    { key: "up", label: "Up", rangeLabel: "S&P > +0.5%" }
-  ],
-  monthly: [
-    { key: "down", label: "Down", rangeLabel: "S&P < -1.0%" },
-    { key: "flat", label: "Flat", rangeLabel: "-1.0% to +1.0%" },
-    { key: "up", label: "Up", rangeLabel: "S&P > +1.0%" }
-  ]
+  weekly: (marketEnvironment.definitions?.weekly?.directions ?? []).map(mapSampleDefinition),
+  monthly: (marketEnvironment.definitions?.monthly?.directions ?? []).map(mapSampleDefinition)
 };
 
 function finiteNumber(value: number | null | undefined): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
-function average(values: number[]): number | undefined {
-  if (values.length === 0) return undefined;
-  return values.reduce((total, value) => total + value, 0) / values.length;
-}
-
-function leaderboardReturn(row: LeaderboardRecord): number | undefined {
-  return row.portfolio_return ?? row.selected_asset_return;
-}
-
-function bestUniverseReturn(rows: ResultReturnRecord[]): number | undefined {
-  return rows
-    .filter((row) => finiteNumber(row.return))
-    .sort((left, right) => right.return - left.return)[0]?.return;
-}
-
-function classifyRegime(track: BenchmarkTrack, sp500Return: number): RegimeDefinition {
-  const definitions = regimeDefinitions[track];
-  if (track === "weekly") {
-    if (sp500Return <= -0.02) return definitions[0];
-    if (sp500Return < -0.005) return definitions[1];
-    if (sp500Return <= 0.005) return definitions[2];
-    if (sp500Return < 0.02) return definitions[3];
-    return definitions[4];
-  }
-
-  if (sp500Return <= -0.03) return definitions[0];
-  if (sp500Return < -0.01) return definitions[1];
-  if (sp500Return <= 0.01) return definitions[2];
-  if (sp500Return < 0.03) return definitions[3];
-  return definitions[4];
-}
-
-function classifySampleCategory(track: BenchmarkTrack, sp500Return: number): SampleCategoryDefinition {
-  const definitions = sampleCategoryDefinitions[track];
-  if (track === "weekly") {
-    if (sp500Return < -0.005) return definitions[0];
-    if (sp500Return <= 0.005) return definitions[1];
-    return definitions[2];
-  }
-
-  if (sp500Return < -0.01) return definitions[0];
-  if (sp500Return <= 0.01) return definitions[1];
-  return definitions[2];
-}
-
-function regimeStatus(count: number): RegimeStatus {
-  if (count >= READY_ROUND_THRESHOLD) return "Ready";
-  if (count > 0) return "Forming";
-  return "No data yet";
-}
 
 function scoreText(value: number | undefined): string {
   return finiteNumber(value) ? value.toFixed(1) : "n/a";
@@ -362,13 +291,6 @@ function environmentReturnBarWidth(environment: EnvironmentPerformanceCard, valu
   return performanceBarWidth(index >= 0 ? index : values.length - 1, values.length);
 }
 
-function averageSp500Score(rounds: RegimeRound[]): number | undefined {
-  if (rounds.length === 0) return undefined;
-  return cumulativeCapitalBenchScore(
-    rounds.map((round) => round.sp500Return),
-    rounds.map((round) => round.maxPossibleReturn)
-  ) ?? undefined;
-}
 
 function chartValueText(value: number, format: ChartValueFormat): string {
   if (format === "percent") {
@@ -477,458 +399,110 @@ function roundSortKey(round: RoundRecord): string {
   return `${round.exit_date ?? ""}:${round.decision_deadline_utc ?? ""}:${round.round_id}`;
 }
 
-function roundRecencySort(left: RegimeRound, right: RegimeRound): number {
-  return (
-    (right.round.exit_date ?? "").localeCompare(left.round.exit_date ?? "") ||
-    (right.round.decision_deadline_utc ?? "").localeCompare(left.round.decision_deadline_utc ?? "") ||
-    right.round.round_id.localeCompare(left.round.round_id)
-  );
+function artifactStatus(value: string): RegimeStatus | "Ready" | "Forming" {
+  if (value === "ready") return "Ready";
+  if (value === "forming") return "Forming";
+  return "No data yet";
+}
+
+function trackArtifact(track: BenchmarkTrack): any {
+  return marketEnvironment.tracks?.[track] ?? {
+    confidence: { label: "No counting environments", detail: "No resolved data is available.", status: "empty" },
+    rounds: [],
+    environments: [],
+    directions: [],
+    regime_leaderboard: [],
+    balanced_sample: { status: "forming", categories: [], selected_round_ids: [], leaderboard: [] },
+    signals: []
+  };
+}
+
+function trackConfidence(track: BenchmarkTrack): { label: string; detail: string; className: string } {
+  const confidence = trackArtifact(track).confidence ?? {};
+  return {
+    label: confidence.label ?? "No counting environments",
+    detail: confidence.detail ?? "No resolved data is available.",
+    className: confidence.status ?? "empty"
+  };
+}
+
+function mapModelRow(row: any): DirectionModelRow {
+  return {
+    modelId: row.model_id,
+    provider: row.provider,
+    label: row.model_label ?? modelLabel(row.model_id),
+    providerName: providerLabel(row.provider),
+    logoSrc: providerLogoSrc(row.provider),
+    score: row.score,
+    averageReturn: row.average_return,
+    averageSp500Return: row.average_sp500_return,
+    averageAlpha: row.average_alpha,
+    hitRate: row.hit_rate,
+    tests: Number(row.tests ?? 0)
+  };
 }
 
 const roundRows = staticRoundRecords().filter((round) => /^CB-\d{4}-\d{2}-\d{2}-(1W|1M)$/.test(round.round_id));
-const scorecards = {
-  weekly: buildTrackScorecard(roundRows, "weekly"),
-  monthly: buildTrackScorecard(roundRows, "monthly")
-};
-
-const regimeRounds = roundRows
-  .filter((round) => round.status === "resolved")
-  .map((round): RegimeRound | null => {
-    const track = roundTrack(round);
-    if (track !== "weekly" && track !== "monthly") return null;
-
-    const leaderboard = staticRoundLeaderboard(round.round_id, round.official_run_id);
-    const sp500Return = leaderboard.find((row) => finiteNumber(row.sp500_return))?.sp500_return;
-    const maxPossibleReturn = bestUniverseReturn(staticRoundReturns(round.round_id, round.official_run_id));
-    if (!finiteNumber(sp500Return) || !finiteNumber(maxPossibleReturn) || leaderboard.length === 0) return null;
-
-    const modelRows = leaderboard.filter((row) => finiteNumber(leaderboardReturn(row)));
-    const alphas = modelRows.map((row) => row.alpha_vs_sp500).filter(finiteNumber);
-    const hits = modelRows.filter((row) => finiteNumber(row.alpha_vs_sp500) && row.alpha_vs_sp500 > 0).length;
-
-    return {
-      round,
-      track,
-      regime: classifyRegime(track, sp500Return),
-      leaderboard,
-      sp500Return,
-      maxPossibleReturn,
-      averageAlpha: average(alphas),
-      hitRate: modelRows.length ? hits / modelRows.length : undefined,
-      modelCount: modelRows.length
-    };
-  })
+const roundById = new Map(roundRows.map((round) => [round.round_id, round]));
+const regimeRounds = regimeTrackOrder
+  .flatMap((track) =>
+    (trackArtifact(track).rounds ?? []).map((row: any): RegimeRound | null => {
+      const round = roundById.get(row.round_id);
+      const regime = regimeDefinitions[track].find((definition) => definition.key === row.environment_key);
+      if (!round || !regime) return null;
+      return {
+        round,
+        track,
+        regime,
+        directionKey: row.direction_key,
+        sp500Return: row.sp500_return,
+        maxPossibleReturn: row.max_possible_return,
+        averageAlpha: row.average_alpha,
+        hitRate: row.hit_rate,
+        modelCount: Number(row.model_count ?? 0)
+      };
+    })
+  )
   .filter((round): round is RegimeRound => round !== null);
+const regimeRoundById = new Map(regimeRounds.map((round) => [round.round.round_id, round]));
 
-function buildCoverage(track: BenchmarkTrack): RegimeCoverage[] {
-  const trackRounds = regimeRounds.filter((round) => round.track === track);
-  return regimeDefinitions[track].map((definition) => {
-    const rounds = trackRounds.filter((round) => round.regime.key === definition.key);
-    return {
-      ...definition,
-      count: rounds.length,
-      averageSp500Return: average(rounds.map((round) => round.sp500Return)),
-      status: regimeStatus(rounds.length),
-      rounds
-    };
-  });
-}
-
-const coverageByTrack = {
-  weekly: buildCoverage("weekly"),
-  monthly: buildCoverage("monthly")
-};
-
-function trackConfidence(track: BenchmarkTrack): { label: string; detail: string; className: string } {
-  const coverage = coverageByTrack[track];
-  const ready = coverage.filter((item) => item.status === "Ready");
-  const hasReadyDown = ready.some((item) => item.direction === "down");
-  const hasReadyUp = ready.some((item) => item.direction === "up");
-
-  if (ready.length === 0) {
-    return {
-      label: "No counting environments",
-      detail: "The page will update after resolved rounds exist.",
-      className: "empty"
-    };
-  }
-
-  if (hasReadyDown && hasReadyUp) {
-    return {
-      label: "More balanced",
-      detail: `${ready.length} environments count now, including up and down environments.`,
-      className: "ready"
-    };
-  }
-
-  return {
-    label: "Still one-sided",
-    detail: `${ready.length} environment${ready.length === 1 ? "" : "s"} count now; more S&P 500 variety is needed.`,
-    className: "forming"
-  };
-}
-
-function allRoundScore(track: BenchmarkTrack, modelId: string): number | undefined {
-  const row = scorecards[track]?.normalizedRows.find((item) => item.kind === "model" && item.key === modelId);
-  return row?.averageScore;
-}
-
-function buildRegimeLeaderboard(track: BenchmarkTrack): RegimeLeaderboardRow[] {
-  const readyRegimes = coverageByTrack[track].filter((item) => item.status === "Ready");
-  const accumulators = new Map<
-    string,
-    {
-      modelId: string;
-      provider: string;
-      regimes: Map<RegimeKey, ModelRegimeStats>;
-    }
-  >();
-
-  for (const regime of readyRegimes) {
-    for (const regimeRound of regime.rounds) {
-      for (const row of regimeRound.leaderboard) {
-        const returnValue = leaderboardReturn(row);
-        if (!finiteNumber(returnValue)) continue;
-
-        const existing = accumulators.get(row.model_id) ?? {
-          modelId: row.model_id,
-          provider: row.provider,
-          regimes: new Map<RegimeKey, ModelRegimeStats>()
-        };
-        const stats = existing.regimes.get(regime.key) ?? {
-          returns: [],
-          maxReturns: [],
-          sp500Returns: [],
-          alphas: [],
-          hits: [],
-          rounds: []
-        };
-
-        stats.returns.push(returnValue);
-        stats.maxReturns.push(regimeRound.maxPossibleReturn);
-        stats.sp500Returns.push(regimeRound.sp500Return);
-        if (finiteNumber(row.alpha_vs_sp500)) stats.alphas.push(row.alpha_vs_sp500);
-        stats.hits.push(finiteNumber(row.alpha_vs_sp500) && row.alpha_vs_sp500 > 0);
-        stats.rounds.push(regimeRound.round.round_id);
-        existing.regimes.set(regime.key, stats);
-        accumulators.set(row.model_id, existing);
-      }
-    }
-  }
-
-  return Array.from(accumulators.values())
-    .map((item) => {
-      const regimeScores = readyRegimes.map((regime) => {
-        const stats = item.regimes.get(regime.key);
-        return {
-          key: regime.key,
-          label: regime.label,
-          score: stats ? cumulativeCapitalBenchScore(stats.returns, stats.maxReturns) ?? undefined : undefined,
-          averageReturn: stats ? average(stats.returns) : undefined,
-          averageSp500Return: stats ? average(stats.sp500Returns) : undefined,
-          tests: stats?.returns.length ?? 0
-        };
-      });
-      const includedScores = regimeScores.map((row) => row.score).filter(finiteNumber);
-      const includedReturns = regimeScores.map((row) => row.averageReturn).filter(finiteNumber);
-      const includedSp500Returns = regimeScores.map((row) => row.averageSp500Return).filter(finiteNumber);
-      const sp500RegimeScores = readyRegimes.map((regime) => averageSp500Score(regime.rounds)).filter(finiteNumber);
-      const allStats = Array.from(item.regimes.values());
-      const alphas = allStats.flatMap((stats) => stats.alphas);
-      const hits = allStats.flatMap((stats) => stats.hits);
-      const testsIncluded = allStats.reduce((total, stats) => total + stats.returns.length, 0);
-      const readyRegimesCovered = regimeScores.filter((row) => finiteNumber(row.score)).length;
-      const status: "Ready" | "Forming" =
-        readyRegimes.length > 0 && readyRegimesCovered === readyRegimes.length ? "Ready" : "Forming";
-
-      return {
-        modelId: item.modelId,
-        provider: item.provider,
-        label: modelLabel(item.modelId),
-        providerName: providerLabel(item.provider),
-        logoSrc: providerLogoSrc(item.provider),
-        averageReturn: average(includedReturns),
-        averageSp500Return: average(includedSp500Returns),
-        regimeBalancedScore: average(includedScores),
-        sp500RegimeScore: average(sp500RegimeScores),
-        allRoundScore: allRoundScore(track, item.modelId),
-        averageAlpha: average(alphas),
-        hitRate: hits.length ? hits.filter(Boolean).length / hits.length : undefined,
-        testsIncluded,
-        readyRegimesCovered,
-        readyRegimesRequired: readyRegimes.length,
-        status,
-        regimeScores
-      };
-    })
-    .sort(
-      (left, right) =>
-        Number(right.status === "Ready") - Number(left.status === "Ready") ||
-        (right.averageReturn ?? Number.NEGATIVE_INFINITY) - (left.averageReturn ?? Number.NEGATIVE_INFINITY) ||
-        (right.regimeBalancedScore ?? Number.NEGATIVE_INFINITY) -
-          (left.regimeBalancedScore ?? Number.NEGATIVE_INFINITY) ||
-        left.label.localeCompare(right.label)
-    );
-}
-
-const leaderboards = {
-  weekly: buildRegimeLeaderboard("weekly"),
-  monthly: buildRegimeLeaderboard("monthly")
-};
-
-function buildBalancedSampleLeaderboard(selectedRounds: RegimeRound[]): BalancedSampleLeaderboardRow[] {
-  if (selectedRounds.length === 0) return [];
-
-  const accumulators = new Map<
-    string,
-    {
-      modelId: string;
-      provider: string;
-      returns: number[];
-      maxReturns: number[];
-      alphas: number[];
-      hits: boolean[];
-    }
-  >();
-
-  for (const sampleRound of selectedRounds) {
-    for (const row of sampleRound.leaderboard) {
-      const returnValue = leaderboardReturn(row);
-      if (!finiteNumber(returnValue)) continue;
-
-      const existing = accumulators.get(row.model_id) ?? {
-        modelId: row.model_id,
-        provider: row.provider,
-        returns: [],
-        maxReturns: [],
-        alphas: [],
-        hits: []
-      };
-
-      existing.returns.push(returnValue);
-      existing.maxReturns.push(sampleRound.maxPossibleReturn);
-      if (finiteNumber(row.alpha_vs_sp500)) existing.alphas.push(row.alpha_vs_sp500);
-      existing.hits.push(finiteNumber(row.alpha_vs_sp500) && row.alpha_vs_sp500 > 0);
-      accumulators.set(row.model_id, existing);
-    }
-  }
-
-  return Array.from(accumulators.values())
-    .map((item) => {
-      const status: "Ready" | "Forming" = item.returns.length === selectedRounds.length ? "Ready" : "Forming";
-      return {
-        modelId: item.modelId,
-        provider: item.provider,
-        label: modelLabel(item.modelId),
-        providerName: providerLabel(item.provider),
-        logoSrc: providerLogoSrc(item.provider),
-        score: cumulativeCapitalBenchScore(item.returns, item.maxReturns) ?? undefined,
-        averageAlpha: average(item.alphas),
-        hitRate: item.hits.length ? item.hits.filter(Boolean).length / item.hits.length : undefined,
-        testsIncluded: item.returns.length,
-        testsRequired: selectedRounds.length,
-        status
-      };
-    })
-    .sort(
-      (left, right) =>
-        Number(right.status === "Ready") - Number(left.status === "Ready") ||
-        (right.score ?? Number.NEGATIVE_INFINITY) - (left.score ?? Number.NEGATIVE_INFINITY) ||
-        left.label.localeCompare(right.label)
-    );
-}
-
-function buildBalancedSample(track: BenchmarkTrack): BalancedSampleTrack {
-  const trackRounds = regimeRounds.filter((round) => round.track === track);
-  const categories = sampleCategoryDefinitions[track].map((definition) => {
-    const rounds = trackRounds.filter((round) => classifySampleCategory(track, round.sp500Return).key === definition.key);
-    return {
-      ...definition,
-      count: rounds.length,
-      missing: Math.max(0, BALANCED_SAMPLE_THRESHOLD - rounds.length),
-      selectedCount: 0
-    };
-  });
-  const status: "Ready" | "Forming" = categories.every((category) => category.count >= BALANCED_SAMPLE_THRESHOLD)
-    ? "Ready"
-    : "Forming";
-  const sampleSize = status === "Ready" ? Math.min(...categories.map((category) => category.count)) : 0;
-  const selectedRounds =
-    status === "Ready"
-      ? categories.flatMap((category) =>
-          trackRounds
-            .filter((round) => classifySampleCategory(track, round.sp500Return).key === category.key)
-            .sort(roundRecencySort)
-            .slice(0, sampleSize)
-        )
-      : [];
-  const selectedCountByCategory = new Map<SampleCategoryKey, number>();
-  for (const round of selectedRounds) {
-    const key = classifySampleCategory(track, round.sp500Return).key;
-    selectedCountByCategory.set(key, (selectedCountByCategory.get(key) ?? 0) + 1);
-  }
-  const categoriesWithSelection = categories.map((category) => ({
-    ...category,
-    selectedCount: selectedCountByCategory.get(category.key) ?? 0
-  }));
-  const missingParts = categoriesWithSelection
-    .filter((category) => category.missing > 0)
-    .map(
-      (category) =>
-        `${category.missing} more ${category.label.toLowerCase()} ${track} round${category.missing === 1 ? "" : "s"}`
-    );
-
-  return {
-    track,
-    status,
-    categories: categoriesWithSelection,
-    sampleSize,
-    selectedRounds,
-    missingSummary: missingParts.length ? `Needs ${missingParts.join(" and ")}.` : "Ready to rank models.",
-    leaderboard: buildBalancedSampleLeaderboard(selectedRounds)
-  };
-}
-
-const balancedSamples = {
-  weekly: buildBalancedSample("weekly"),
-  monthly: buildBalancedSample("monthly")
-};
-
-function pluralizeRound(count: number): string {
-  return `${count} round${count === 1 ? "" : "s"}`;
-}
-
-function missingRoundText(count: number): string {
-  return count > 0 ? `Needs ${pluralizeRound(count)} more.` : "Ready for scoring.";
-}
-
-function modelRowsForRounds(rounds: RegimeRound[]): DirectionModelRow[] {
-  const accumulators = new Map<
-    string,
-    {
-      modelId: string;
-      provider: string;
-      returns: number[];
-      maxReturns: number[];
-      sp500Returns: number[];
-      alphas: number[];
-      hits: boolean[];
-    }
-  >();
-
-  for (const round of rounds) {
-    for (const row of round.leaderboard) {
-      const returnValue = leaderboardReturn(row);
-      if (!finiteNumber(returnValue)) continue;
-
-      const existing = accumulators.get(row.model_id) ?? {
-        modelId: row.model_id,
-        provider: row.provider,
-        returns: [],
-        maxReturns: [],
-        sp500Returns: [],
-        alphas: [],
-        hits: []
-      };
-
-      existing.returns.push(returnValue);
-      existing.maxReturns.push(round.maxPossibleReturn);
-      existing.sp500Returns.push(round.sp500Return);
-      if (finiteNumber(row.alpha_vs_sp500)) existing.alphas.push(row.alpha_vs_sp500);
-      existing.hits.push(finiteNumber(row.alpha_vs_sp500) && row.alpha_vs_sp500 > 0);
-      accumulators.set(row.model_id, existing);
-    }
-  }
-
-  return Array.from(accumulators.values())
-    .map((item) => ({
-      modelId: item.modelId,
-      provider: item.provider,
-      label: modelLabel(item.modelId),
-      providerName: providerLabel(item.provider),
-      logoSrc: providerLogoSrc(item.provider),
-      score: cumulativeCapitalBenchScore(item.returns, item.maxReturns) ?? undefined,
-      averageReturn: average(item.returns),
-      averageSp500Return: average(item.sp500Returns),
-      averageAlpha: average(item.alphas),
-      hitRate: item.hits.length ? item.hits.filter(Boolean).length / item.hits.length : undefined,
-      tests: item.returns.length
-    }))
-    .sort(
-      (left, right) =>
-        (right.averageReturn ?? Number.NEGATIVE_INFINITY) - (left.averageReturn ?? Number.NEGATIVE_INFINITY) ||
-        (right.score ?? Number.NEGATIVE_INFINITY) - (left.score ?? Number.NEGATIVE_INFINITY) ||
-        left.label.localeCompare(right.label)
-    );
-}
-
-function buildDirectionBucket(track: BenchmarkTrack, direction: SampleCategoryKey): DirectionBucket {
-  const definition = sampleCategoryDefinitions[track].find((item) => item.key === direction) ?? sampleCategoryDefinitions[track][0];
-  const rounds = regimeRounds.filter(
-    (round) => round.track === track && classifySampleCategory(track, round.sp500Return).key === direction
-  );
-  const modelRows = modelRowsForRounds(rounds);
-
+function mapCoverage(track: BenchmarkTrack, row: any): RegimeCoverage {
+  const definition = regimeDefinitions[track].find((item) => item.key === row.key) ?? mapRegimeDefinition(row);
   return {
     ...definition,
-    track,
-    rounds,
-    status: rounds.length >= READY_ROUND_THRESHOLD ? "Ready" : "Forming",
-    averageSp500Return: average(rounds.map((round) => round.sp500Return)),
-    modelRows
+    count: Number(row.count ?? 0),
+    averageSp500Return: row.average_sp500_return,
+    status: artifactStatus(row.status) as RegimeStatus,
+    rounds: (row.round_ids ?? []).map((roundId: string) => regimeRoundById.get(roundId)).filter(Boolean)
   };
 }
 
-const directionBuckets = {
-  weekly: {
-    down: buildDirectionBucket("weekly", "down"),
-    flat: buildDirectionBucket("weekly", "flat"),
-    up: buildDirectionBucket("weekly", "up")
-  },
-  monthly: {
-    down: buildDirectionBucket("monthly", "down"),
-    flat: buildDirectionBucket("monthly", "flat"),
-    up: buildDirectionBucket("monthly", "up")
-  }
+const coverageByTrack: Record<BenchmarkTrack, RegimeCoverage[]> = {
+  weekly: (trackArtifact("weekly").environments ?? []).map((row: any) => mapCoverage("weekly", row)),
+  monthly: (trackArtifact("monthly").environments ?? []).map((row: any) => mapCoverage("monthly", row))
 };
 
-const environmentPerformance = {
-  weekly: coverageByTrack.weekly.map(
-    (regime): EnvironmentPerformanceCard => {
-      const rows = modelRowsForRounds(regime.rounds);
-      return {
-        ...regime,
-        track: "weekly",
-        modelRows: rows,
-        best: rows[0],
-        worst: rows.at(-1)
-      };
-    }
-  ),
-  monthly: coverageByTrack.monthly.map(
-    (regime): EnvironmentPerformanceCard => {
-      const rows = modelRowsForRounds(regime.rounds);
-      return {
-        ...regime,
-        track: "monthly",
-        modelRows: rows,
-        best: rows[0],
-        worst: rows.at(-1)
-      };
-    }
-  )
+function mapEnvironment(track: BenchmarkTrack, row: any): EnvironmentPerformanceCard {
+  const coverage = mapCoverage(track, row);
+  const modelRows = (row.comparison?.model_rows ?? []).map(mapModelRow);
+  return {
+    ...coverage,
+    track,
+    status: row.status === "no_data" ? "No data yet" : row.comparison?.status === "ready" ? "Ready" : "Forming",
+    modelRows,
+    best: modelRows[0],
+    worst: modelRows.at(-1)
+  };
+}
+
+const environmentPerformance: Record<BenchmarkTrack, EnvironmentPerformanceCard[]> = {
+  weekly: (trackArtifact("weekly").environments ?? []).map((row: any) => mapEnvironment("weekly", row)),
+  monthly: (trackArtifact("monthly").environments ?? []).map((row: any) => mapEnvironment("monthly", row))
 };
 
 function buildEnvironmentMatrix(track: BenchmarkTrack): EnvironmentMatrixRow[] {
   const environments = environmentPerformance[track];
-  const models = new Map<
-    string,
-    {
-      model: DirectionModelRow;
-      returns: number[];
-    }
-  >();
-
+  const models = new Map<string, { model: DirectionModelRow; returns: number[] }>();
   for (const environment of environments) {
     for (const modelRow of environment.modelRows) {
       const existing = models.get(modelRow.modelId);
@@ -942,14 +516,13 @@ function buildEnvironmentMatrix(track: BenchmarkTrack): EnvironmentMatrixRow[] {
       }
     }
   }
-
   return Array.from(models.values())
     .map(({ model, returns }) => ({
       modelId: model.modelId,
       label: model.label,
       providerName: model.providerName,
       logoSrc: model.logoSrc,
-      averageReturn: average(returns),
+      averageReturn: returns.length ? returns.reduce((total, value) => total + value, 0) / returns.length : undefined,
       cells: environments.map((environment) => {
         const modelIndex = environment.modelRows.findIndex((row) => row.modelId === model.modelId);
         const modelRow = modelIndex >= 0 ? environment.modelRows[modelIndex] : undefined;
@@ -969,257 +542,273 @@ function buildEnvironmentMatrix(track: BenchmarkTrack): EnvironmentMatrixRow[] {
     );
 }
 
-const environmentMatrices = {
+const environmentMatrices: Record<BenchmarkTrack, EnvironmentMatrixRow[]> = {
   weekly: buildEnvironmentMatrix("weekly"),
   monthly: buildEnvironmentMatrix("monthly")
 };
 
-function buildDirectionalPerformance(track: BenchmarkTrack, key: "negative" | "positive"): DirectionPerformanceCard {
-  const direction: RegimeDirection = key === "negative" ? "down" : "up";
-  const rounds = regimeRounds.filter((round) => round.track === track && round.regime.direction === direction);
-  const rows = modelRowsForRounds(rounds);
-  const rangeLabel =
-    key === "negative"
-      ? track === "weekly"
-        ? "S&P < -0.5%"
-        : "S&P < -1.0%"
-      : track === "weekly"
-        ? "S&P > +0.5%"
-        : "S&P > +1.0%";
-
+function mapDirectionBucket(track: BenchmarkTrack, row: any): DirectionBucket {
+  const definition = sampleCategoryDefinitions[track].find((item) => item.key === row.key) ?? mapSampleDefinition(row);
   return {
+    ...definition,
     track,
-    key,
-    label: key === "negative" ? "Down environments" : "Up environments",
-    rangeLabel,
-    rounds,
-    averageSp500Return: average(rounds.map((round) => round.sp500Return)),
-    status: rounds.length >= READY_ROUND_THRESHOLD ? "Ready" : "Forming",
-    best: rows[0],
-    worst: rows.at(-1)
+    rounds: (row.comparison?.round_ids ?? []).map((roundId: string) => regimeRoundById.get(roundId)).filter(Boolean),
+    status: row.comparison?.status === "ready" ? "Ready" : "Forming",
+    averageSp500Return: row.comparison?.model_rows?.[0]?.average_sp500_return,
+    modelRows: (row.comparison?.model_rows ?? []).map(mapModelRow)
   };
 }
 
-const directionalPerformance = {
-  weekly: [buildDirectionalPerformance("weekly", "negative"), buildDirectionalPerformance("weekly", "positive")],
-  monthly: [buildDirectionalPerformance("monthly", "negative"), buildDirectionalPerformance("monthly", "positive")]
+const directionBuckets: Record<BenchmarkTrack, Record<SampleCategoryKey, DirectionBucket>> = {
+  weekly: Object.fromEntries(
+    (trackArtifact("weekly").directions ?? []).map((row: any) => [row.key, mapDirectionBucket("weekly", row)])
+  ) as Record<SampleCategoryKey, DirectionBucket>,
+  monthly: Object.fromEntries(
+    (trackArtifact("monthly").directions ?? []).map((row: any) => [row.key, mapDirectionBucket("monthly", row)])
+  ) as Record<SampleCategoryKey, DirectionBucket>
 };
 
-const directionCopy: Record<SampleCategoryKey, { adjective: string; noun: string; tone: "down" | "flat" | "up" }> = {
-  down: { adjective: "negative", noun: "down environments", tone: "down" },
-  flat: { adjective: "flat", noun: "flat environments", tone: "flat" },
-  up: { adjective: "positive", noun: "up environments", tone: "up" }
-};
-
-function buildDirectionLeaderInsight(track: BenchmarkTrack, direction: SampleCategoryKey): MarketInsightCard {
+function directionSummary(track: BenchmarkTrack, direction: "down" | "up"): DirectionPerformanceCard {
   const bucket = directionBuckets[track][direction];
-  const leader = bucket.modelRows.find((row) => finiteNumber(row.averageReturn));
-  const copy = directionCopy[direction];
-  const missing = Math.max(0, READY_ROUND_THRESHOLD - bucket.rounds.length);
+  return {
+    track,
+    key: direction === "down" ? "negative" : "positive",
+    label: direction === "down" ? "Down environments" : "Up environments",
+    rangeLabel: bucket.rangeLabel,
+    rounds: bucket.rounds,
+    averageSp500Return: bucket.averageSp500Return,
+    status: bucket.status,
+    best: bucket.modelRows[0],
+    worst: bucket.modelRows.at(-1)
+  };
+}
 
-  if (!leader) {
+const directionalPerformance: Record<BenchmarkTrack, DirectionPerformanceCard[]> = {
+  weekly: [directionSummary("weekly", "down"), directionSummary("weekly", "up")],
+  monthly: [directionSummary("monthly", "down"), directionSummary("monthly", "up")]
+};
+
+function mapRegimeLeaderboardRow(row: any): RegimeLeaderboardRow {
+  return {
+    modelId: row.model_id,
+    provider: row.provider,
+    label: row.model_label ?? modelLabel(row.model_id),
+    providerName: providerLabel(row.provider),
+    logoSrc: providerLogoSrc(row.provider),
+    averageReturn: row.average_return,
+    averageSp500Return: row.average_sp500_return,
+    regimeBalancedScore: row.regime_balanced_score,
+    sp500RegimeScore: row.sp500_regime_score,
+    allRoundScore: row.all_round_score,
+    averageAlpha: row.average_alpha,
+    hitRate: row.hit_rate,
+    testsIncluded: Number(row.tests_included ?? 0),
+    readyRegimesCovered: Number(row.ready_environments_covered ?? 0),
+    readyRegimesRequired: Number(row.ready_environments_required ?? 0),
+    status: row.status === "ready" ? "Ready" : "Forming",
+    regimeScores: (row.environment_scores ?? []).map((score: any) => ({
+      key: score.key,
+      label: score.label,
+      score: score.score,
+      averageReturn: score.average_return,
+      averageSp500Return: score.average_sp500_return,
+      tests: Number(score.tests ?? 0)
+    }))
+  };
+}
+
+const leaderboards: Record<BenchmarkTrack, RegimeLeaderboardRow[]> = {
+  weekly: (trackArtifact("weekly").regime_leaderboard ?? []).map(mapRegimeLeaderboardRow),
+  monthly: (trackArtifact("monthly").regime_leaderboard ?? []).map(mapRegimeLeaderboardRow)
+};
+
+function mapBalancedSample(track: BenchmarkTrack): BalancedSampleTrack {
+  const sample = trackArtifact(track).balanced_sample ?? {};
+  const categories = (sample.categories ?? []).map((row: any) => ({
+    ...mapSampleDefinition(row),
+    count: Number(row.count ?? 0),
+    missing: Number(row.missing ?? 0),
+    selectedCount: Number(row.selected_count ?? 0)
+  }));
+  const missingParts = categories
+    .filter((category: BalancedSampleCategory) => category.missing > 0)
+    .map(
+      (category: BalancedSampleCategory) =>
+        `${category.missing} more ${category.label.toLowerCase()} ${track} round${category.missing === 1 ? "" : "s"}`
+    );
+  return {
+    track,
+    status: sample.status === "ready" ? "Ready" : "Forming",
+    categories,
+    sampleSize: Number(sample.sample_size ?? 0),
+    selectedRounds: (sample.selected_round_ids ?? [])
+      .map((roundId: string) => regimeRoundById.get(roundId))
+      .filter(Boolean),
+    missingSummary: missingParts.length ? `Needs ${missingParts.join(" and ")}.` : "Ready to rank models.",
+    leaderboard: (sample.leaderboard ?? []).map((row: any) => ({
+      modelId: row.model_id,
+      provider: row.provider,
+      label: row.model_label ?? modelLabel(row.model_id),
+      providerName: providerLabel(row.provider),
+      logoSrc: providerLogoSrc(row.provider),
+      score: row.score,
+      averageAlpha: row.average_alpha,
+      hitRate: row.hit_rate,
+      testsIncluded: Number(row.tests_included ?? 0),
+      testsRequired: Number(row.tests_required ?? 0),
+      status: row.status === "ready" ? "Ready" : "Forming"
+    }))
+  };
+}
+
+const balancedSamples: Record<BenchmarkTrack, BalancedSampleTrack> = {
+  weekly: mapBalancedSample("weekly"),
+  monthly: mapBalancedSample("monthly")
+};
+
+function pluralizeRound(count: number): string {
+  return `${count} round${count === 1 ? "" : "s"}`;
+}
+
+function modelCard(row: any): MarketInsightCard["model"] {
+  if (!row) return undefined;
+  return {
+    label: row.model_label ?? modelLabel(row.model_id),
+    providerName: providerLabel(row.provider),
+    logoSrc: providerLogoSrc(row.provider)
+  };
+}
+
+function directionInsightCard(signal: any): MarketInsightCard {
+  const direction = signal.direction as SampleCategoryKey;
+  const model = signal.model;
+  const copy = {
+    down: { adjective: "negative", noun: "down environments", tone: "down" as const },
+    flat: { adjective: "flat", noun: "flat environments", tone: "flat" as const },
+    up: { adjective: "positive", noun: "up environments", tone: "up" as const }
+  }[direction];
+  const status = signal.maturity === "ready" ? "Ready" : "Forming";
+  if (!model) {
     return {
-      key: `${track}-${direction}-leader`,
-      eyebrow: `${trackLabel(track)} ${copy.noun}`,
-      title: `No ${trackLabel(track).toLowerCase()} ${copy.noun} leader yet.`,
+      key: signal.key,
+      eyebrow: `${trackLabel(signal.track)} ${copy.noun}`,
+      title: `No ${trackLabel(signal.track).toLowerCase()} ${copy.noun} leader yet.`,
       tone: copy.tone,
-      status: "Forming",
+      status,
       metricValue: "n/a",
       metricLabel: "avg model return",
-      detail: `No resolved ${trackLabel(track).toLowerCase()} rounds have landed in this S&P 500 environment yet.`,
+      detail: "No shared round cohort is large enough for a fair model comparison yet.",
       stats: [
-        { label: "Rounds", value: pluralizeRound(bucket.rounds.length) },
-        { label: "Range", value: bucket.rangeLabel }
+        { label: "Rounds", value: pluralizeRound(Number(signal.environment_round_count ?? 0)) },
+        { label: "Range", value: signal.range_label }
       ]
     };
   }
-
   return {
-    key: `${track}-${direction}-leader`,
-    eyebrow: `${trackLabel(track)} ${copy.noun}`,
-    title: `${leader.label} leads when the S&P 500 is ${copy.adjective}.`,
+    key: signal.key,
+    eyebrow: `${trackLabel(signal.track)} ${copy.noun}`,
+    title: `${model.model_label ?? modelLabel(model.model_id)} leads when the S&P 500 is ${copy.adjective}.`,
     tone: copy.tone,
-    status: bucket.status,
-    model: {
-      label: leader.label,
-      providerName: leader.providerName,
-      logoSrc: leader.logoSrc
-    },
-    metricValue: signedPctText(leader.averageReturn),
+    status,
+    model: modelCard(model),
+    metricValue: signedPctText(model.average_return),
     metricLabel: "avg model return",
     detail:
-      bucket.status === "Ready"
-        ? `Based on ${pluralizeRound(bucket.rounds.length)} where the S&P 500 was ${copy.adjective}.`
-        : `Current signal only. ${missingRoundText(missing)}`,
+      status === "Ready"
+        ? `Based on ${pluralizeRound(signal.comparison_round_count)} shared by ${signal.eligible_model_count} eligible models. ${String(signal.confidence).replace(/^./, (value: string) => value.toUpperCase())} confidence.`
+        : `Current signal only: ${signal.comparison_round_count}/${signal.environment_round_count} rounds form a shared cohort.`,
     stats: [
-      { label: "S&P avg", value: signedPctText(bucket.averageSp500Return) },
-      { label: "Benchmark", value: scoreText(leader.score) },
-      { label: "Tests", value: `${leader.tests}/${bucket.rounds.length}` }
+      { label: "S&P avg", value: signedPctText(signal.average_sp500_return) },
+      { label: "Leader margin", value: signedPctText(signal.comparison?.leader_margin) },
+      {
+        label: "Stability",
+        value: finiteNumber(signal.comparison?.leave_one_out_stability)
+          ? `${(signal.comparison.leave_one_out_stability * 100).toFixed(0)}%`
+          : "n/a"
+      }
     ]
   };
 }
 
-function directionRowForModel(bucket: DirectionBucket, modelId: string): DirectionModelRow | undefined {
-  return bucket.modelRows.find((row) => row.modelId === modelId);
-}
-
-function buildConsistencyInsight(track: BenchmarkTrack): MarketInsightCard {
-  const buckets = sampleCategoryDefinitions[track]
-    .map((definition) => directionBuckets[track][definition.key])
-    .filter((bucket) => bucket.rounds.length > 0);
-  const modelIds = Array.from(new Set(buckets.flatMap((bucket) => bucket.modelRows.map((row) => row.modelId))));
-  const candidates = modelIds
-    .map((modelId) => {
-      const rows = buckets.map((bucket) => directionRowForModel(bucket, modelId)).filter((row): row is DirectionModelRow => !!row && finiteNumber(row.score));
-      if (rows.length < 2) return null;
-      const scores = rows.map((row) => row.score).filter(finiteNumber);
-      const first = rows[0];
-      return {
-        modelId,
-        label: first.label,
-        providerName: first.providerName,
-        logoSrc: first.logoSrc,
-        floorScore: Math.min(...scores),
-        averageScore: average(scores),
-        averageReturn: average(rows.map((row) => row.averageReturn).filter(finiteNumber)),
-        averageSp500Return: average(rows.map((row) => row.averageSp500Return).filter(finiteNumber)),
-        directionsCovered: rows.length,
-        averageAlpha: average(rows.map((row) => row.averageAlpha).filter(finiteNumber)),
-        hitRate: average(rows.map((row) => row.hitRate).filter(finiteNumber))
-      };
-    })
-    .filter((item): item is NonNullable<typeof item> => item !== null)
-    .sort(
-      (left, right) =>
-        right.floorScore - left.floorScore ||
-        right.directionsCovered - left.directionsCovered ||
-        left.label.localeCompare(right.label)
-    );
-  const leader = candidates[0];
-  const allReady = buckets.length >= 2 && buckets.every((bucket) => bucket.status === "Ready");
-
-  if (!leader) {
+function consistencyInsightCard(signal: any): MarketInsightCard {
+  const candidate = signal.candidate;
+  const status = signal.maturity === "ready" ? "Ready" : "Forming";
+  if (!candidate?.model) {
     return {
-      key: `${track}-steady`,
-      eyebrow: `${trackLabel(track)} consistency`,
+      key: signal.key,
+      eyebrow: `${trackLabel(signal.track)} consistency`,
       title: "Consistency insight is still forming.",
       tone: "steady",
-      status: "Forming",
+      status,
       metricValue: "n/a",
       metricLabel: "avg model return",
       detail: "At least two tested S&P 500 environments are needed before comparing model consistency.",
-      stats: [
-        { label: "Types tested", value: `${buckets.length}/3` },
-        { label: "Ready types", value: `${buckets.filter((bucket) => bucket.status === "Ready").length}/3` }
-      ]
+      stats: []
     };
   }
-
   return {
-    key: `${track}-steady`,
-    eyebrow: `${trackLabel(track)} consistency`,
-    title: `${leader.label} has the strongest score floor.`,
+    key: signal.key,
+    eyebrow: `${trackLabel(signal.track)} consistency`,
+    title: `${candidate.model.model_label ?? modelLabel(candidate.model.model_id)} has the strongest score floor.`,
     tone: "steady",
-    status: allReady ? "Ready" : "Forming",
-    model: {
-      label: leader.label,
-      providerName: leader.providerName,
-      logoSrc: leader.logoSrc
-    },
-    metricValue: signedPctText(leader.averageReturn),
+    status,
+    model: modelCard(candidate.model),
+    metricValue: signedPctText(candidate.average_return),
     metricLabel: "avg model return",
-    detail: `Lowest score across ${leader.directionsCovered} tested environments; average score ${scoreText(leader.averageScore)}.`,
+    detail: `Lowest score across ${candidate.directions_covered} tested environments; average score ${scoreText(candidate.average_score)}.`,
     stats: [
-      { label: "S&P avg", value: signedPctText(leader.averageSp500Return) },
-      { label: "Score floor", value: scoreText(leader.floorScore) },
-      { label: "Types", value: `${leader.directionsCovered}/3` }
+      { label: "S&P avg", value: signedPctText(candidate.average_sp500_return) },
+      { label: "Score floor", value: scoreText(candidate.floor_score) },
+      { label: "Ready types", value: `${candidate.ready_directions}/${candidate.directions_covered}` }
     ]
   };
 }
 
-function buildSplitInsight(track: BenchmarkTrack): MarketInsightCard {
-  const downBucket = directionBuckets[track].down;
-  const upBucket = directionBuckets[track].up;
-  const modelIds = Array.from(
-    new Set([...downBucket.modelRows.map((row) => row.modelId), ...upBucket.modelRows.map((row) => row.modelId)])
-  );
-  const candidates = modelIds
-    .map((modelId) => {
-      const down = directionRowForModel(downBucket, modelId);
-      const up = directionRowForModel(upBucket, modelId);
-      if (!down || !up || !finiteNumber(down.score) || !finiteNumber(up.score)) return null;
-      const gap = up.score - down.score;
-      return {
-        modelId,
-        label: up.label,
-        providerName: up.providerName,
-        logoSrc: up.logoSrc,
-        downScore: down.score,
-        upScore: up.score,
-        downReturn: down.averageReturn,
-        upReturn: up.averageReturn,
-        downSp500Return: down.averageSp500Return,
-        upSp500Return: up.averageSp500Return,
-        gap,
-        absGap: Math.abs(gap),
-        returnGap:
-          finiteNumber(down.averageReturn) && finiteNumber(up.averageReturn) ? up.averageReturn - down.averageReturn : undefined
-      };
-    })
-    .filter((item): item is NonNullable<typeof item> => item !== null)
-    .sort((left, right) => right.absGap - left.absGap || left.label.localeCompare(right.label));
-  const leader = candidates[0];
-  const allReady = downBucket.status === "Ready" && upBucket.status === "Ready";
-
-  if (!leader) {
+function splitInsightCard(signal: any): MarketInsightCard {
+  const candidate = signal.candidate;
+  const status = signal.maturity === "ready" ? "Ready" : "Forming";
+  if (!candidate?.model) {
     return {
-      key: `${track}-split`,
-      eyebrow: `${trackLabel(track)} up/down split`,
+      key: signal.key,
+      eyebrow: `${trackLabel(signal.track)} up/down split`,
       title: "Up/down split is still forming.",
       tone: "split",
-      status: "Forming",
+      status,
       metricValue: "n/a",
       metricLabel: "avg return gap",
       detail: "Both negative and positive S&P 500 samples are needed before measuring directional split.",
-      stats: [
-        { label: "Down rounds", value: pluralizeRound(downBucket.rounds.length) },
-        { label: "Up rounds", value: pluralizeRound(upBucket.rounds.length) }
-      ]
+      stats: []
     };
   }
-
   return {
-    key: `${track}-split`,
-    eyebrow: `${trackLabel(track)} up/down split`,
-    title: `${leader.label} changes most between up and down environments.`,
+    key: signal.key,
+    eyebrow: `${trackLabel(signal.track)} up/down split`,
+    title: `${candidate.model.model_label ?? modelLabel(candidate.model.model_id)} changes most between up and down environments.`,
     tone: "split",
-    status: allReady ? "Ready" : "Forming",
-    model: {
-      label: leader.label,
-      providerName: leader.providerName,
-      logoSrc: leader.logoSrc
-    },
-    metricValue: finiteNumber(leader.returnGap) ? `${(Math.abs(leader.returnGap) * 100).toFixed(1)} pts` : `${leader.absGap.toFixed(1)} pts`,
-    metricLabel: `avg return gap`,
-    detail: `${scoreText(leader.upScore)} in up environments versus ${scoreText(leader.downScore)} in down environments.`,
+    status,
+    model: modelCard(candidate.model),
+    metricValue: `${(Math.abs(candidate.return_gap) * 100).toFixed(1)} pts`,
+    metricLabel: "avg return gap",
+    detail: `${scoreText(candidate.up_score)} in up environments versus ${scoreText(candidate.down_score)} in down environments.`,
     stats: [
-      { label: "Down avg", value: signedPctText(leader.downReturn) },
-      { label: "Up avg", value: signedPctText(leader.upReturn) },
-      { label: "Samples", value: `${downBucket.rounds.length}/${upBucket.rounds.length}` }
+      { label: "Down avg", value: signedPctText(candidate.down_return) },
+      { label: "Up avg", value: signedPctText(candidate.up_return) },
+      { label: "Model tests", value: `${candidate.down_tests}/${candidate.up_tests}` }
     ]
   };
+}
+
+function insightCard(signal: any): MarketInsightCard | null {
+  if (signal.kind === "direction_leader") return directionInsightCard(signal);
+  if (signal.kind === "consistency") return consistencyInsightCard(signal);
+  if (signal.kind === "split") return splitInsightCard(signal);
+  return null;
 }
 
 const marketInsightTracks = regimeTrackOrder.map((track) => ({
   track,
   label: trackLabel(track),
-  cards: [
-    buildDirectionLeaderInsight(track, "down"),
-    buildDirectionLeaderInsight(track, "flat"),
-    buildDirectionLeaderInsight(track, "up"),
-    buildConsistencyInsight(track),
-    buildSplitInsight(track)
-  ]
+  cards: (trackArtifact(track).signals ?? []).map(insightCard).filter(Boolean) as MarketInsightCard[]
 }));
 
 const sampleCategoryColors: Record<SampleCategoryKey, string> = {
@@ -1247,8 +836,7 @@ function buildBalancedProgressChart(track: BenchmarkTrack): LineChart {
   );
 
   for (const round of rounds) {
-    const category = classifySampleCategory(track, round.sp500Return);
-    counts.set(category.key, (counts.get(category.key) ?? 0) + 1);
+    counts.set(round.directionKey, (counts.get(round.directionKey) ?? 0) + 1);
     const label = roundChartLabel(round);
     for (const definition of sampleCategoryDefinitions[track]) {
       pointsByCategory.get(definition.key)?.push({
@@ -2009,7 +1597,7 @@ const hiddenAuditRows = auditRows.slice(10);
                 data-market-regime-panel={insightTrack.track}
                 hidden={!active}
               >
-                <article class="market-insight-track">
+                <article class="market-insight-track" id={`market-environment-insight-${insightTrack.track}-synthesis`}>
                   <div class="market-insight-track-head">
                     <div>
                       <span class="panel-kicker">{insightTrack.label} insights</span>
@@ -2022,7 +1610,10 @@ const hiddenAuditRows = auditRows.slice(10);
 
                   <div class="market-insight-grid">
                     {insightTrack.cards.map((card) => (
-                      <article class:list={["market-insight-card", `market-insight-card-${card.tone}`, `market-insight-card-${statusClass(card.status)}`]}>
+                      <article
+                        id={`market-environment-insight-${card.key}`}
+                        class:list={["market-insight-card", `market-insight-card-${card.tone}`, `market-insight-card-${statusClass(card.status)}`]}
+                      >
                         <header>
                           <span class="panel-kicker">{card.eyebrow}</span>
                           <span class:list={["regime-status", `regime-status-${statusClass(card.status)}`]}>
@@ -2418,7 +2009,21 @@ const hiddenAuditRows = auditRows.slice(10);
           selectTrack(root.dataset.activeTrack || tabs[0]?.dataset.marketRegimeTab);
         }
 
+        function activateMarketRegimeHash() {
+          const id = decodeURIComponent(window.location.hash.slice(1));
+          if (!id.startsWith("market-environment-insight-")) return;
+          const target = document.getElementById(id);
+          const panel = target?.closest("[data-market-regime-panel]");
+          const root = panel?.closest("[data-market-regime-tabs]");
+          const track = panel?.dataset.marketRegimePanel;
+          const tab = root?.querySelector(`[data-market-regime-tab="${track}"]`);
+          tab?.click();
+          window.requestAnimationFrame(() => target?.scrollIntoView({ block: "start" }));
+        }
+
         document.querySelectorAll("[data-market-regime-tabs]").forEach(setupMarketRegimeTabs);
+        activateMarketRegimeHash();
+        window.addEventListener("hashchange", activateMarketRegimeHash);
       }
     </script>
   </section>

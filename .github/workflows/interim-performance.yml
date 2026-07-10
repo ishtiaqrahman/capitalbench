@@ -16,7 +16,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 concurrency:
-  group: capitalbench-interim-performance
+  group: capitalbench-public-data-writer
   cancel-in-progress: false
 
 jobs:
@@ -70,6 +70,18 @@ jobs:
             --track all \
             --soft-fail
 
+      - name: Refresh benchmark insights
+        run: |
+          capitalbench build-insights-input \
+            --rounds-dir rounds \
+            --output /tmp/capitalbench-insights-input.json \
+            --run-date "$(date -u +%F)"
+          capitalbench generate-insights \
+            --input /tmp/capitalbench-insights-input.json \
+            --output insights \
+            --llm off
+          capitalbench validate-insights --insights-dir insights
+
       - name: Audit public repository contents
         run: python scripts/public_repo_audit.py
 
@@ -78,7 +90,7 @@ jobs:
         run: |
           git config user.name "capitalbench-bot"
           git config user.email "actions@capitalbench.org"
-          git add market_data/daily_price_snapshots rounds || true
+          git add market_data/daily_price_snapshots rounds insights || true
           if git diff --cached --quiet; then
             echo "No interim artifacts changed."
             echo "changed=false" >> "$GITHUB_OUTPUT"

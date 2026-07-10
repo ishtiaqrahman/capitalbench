@@ -164,6 +164,8 @@ export function insightDefinition(insight) {
       return "Live alpha is interim model return minus interim S&P 500 return. It is provisional until the round reaches its official score date.";
     case "model_similarity":
       return "Cosine similarity measures allocation overlap between model portfolios. A value near 1.00 means the weights are very similar.";
+    case "market_environment":
+      return "Market environments group resolved rounds by the S&P 500 return over the same weekly or monthly window. Models are compared only on shared rounds; high confidence requires at least six observations and stable leadership.";
     default:
       return "This insight is generated from CapitalBench public rounds, frozen portfolios, scored results, and linked evidence files.";
   }
@@ -217,12 +219,27 @@ function generatedAtValue(insight) {
   return maxDateValue([insight?.generated_at, insight?.date]);
 }
 
+function publicationTierValue(insight) {
+  return { global: 3, category: 2, detail: 1 }[insight?.publication_tier] ?? 2;
+}
+
+function confidenceValue(insight) {
+  return { high: 3, medium: 2, low: 1 }[insight?.confidence] ?? 0;
+}
+
+function maturityValue(insight) {
+  return { ready: 2, forming: 1 }[insight?.context?.maturity] ?? 2;
+}
+
 export function compareInsightsNewestFirst(left, right) {
   return (
     insightRecencyValue(right.insight) - insightRecencyValue(left.insight) ||
+    publicationTierValue(right.insight) - publicationTierValue(left.insight) ||
+    confidenceValue(right.insight) - confidenceValue(left.insight) ||
+    maturityValue(right.insight) - maturityValue(left.insight) ||
+    Number(right.insight.importance_score ?? 0) - Number(left.insight.importance_score ?? 0) ||
     insightContextRecencyValue(right.insight) - insightContextRecencyValue(left.insight) ||
     generatedAtValue(right.insight) - generatedAtValue(left.insight) ||
-    Number(right.insight.importance_score ?? 0) - Number(left.insight.importance_score ?? 0) ||
     left.index - right.index
   );
 }
@@ -240,6 +257,30 @@ export function publishedInsights(readModel) {
   return publishedInsightRows(rows);
 }
 
+export function featuredInsightRows(rows, limit = 18, perCategory = 2) {
+  const ranked = publishedInsightRows(rows).filter((insight) => insight?.publication_tier !== "detail");
+  const selected = [];
+  const selectedIds = new Set();
+  const categoryCounts = new Map();
+  for (const insight of ranked) {
+    if (categoryCounts.has(insight.category)) continue;
+    selected.push(insight);
+    selectedIds.add(insight.id);
+    categoryCounts.set(insight.category, 1);
+    if (selected.length >= limit) return selected;
+  }
+  for (const insight of ranked) {
+    if (selectedIds.has(insight.id)) continue;
+    const count = categoryCounts.get(insight.category) ?? 0;
+    if (count >= perCategory) continue;
+    selected.push(insight);
+    selectedIds.add(insight.id);
+    categoryCounts.set(insight.category, count + 1);
+    if (selected.length >= limit) break;
+  }
+  return selected;
+}
+
 export function topInsightsByCategory(readModel, categories, limit = 3) {
   const categorySet = new Set(categories);
   return publishedInsights(readModel)
@@ -255,6 +296,68 @@ export function leadInsightsByCategory(readModel, categories, limit = categories
     .slice(0, limit);
 }
 
+function readyMarketEnvironmentInsight(insight) {
+  return Boolean(
+    insight?.category === "market_environment" &&
+      insight?.confidence !== "low" &&
+      insight?.publication_tier !== "detail" &&
+      insight?.context?.maturity === "ready"
+  );
+}
+
+function marketEnvironmentSynthesis(rows) {
+  return rows.find(
+    (insight) => readyMarketEnvironmentInsight(insight) && insight?.context?.insight_kind === "synthesis"
+  );
+}
+
+function surfaceCategoryLeads(rows, categories) {
+  return categories.map((category) => rows.find((insight) => insight.category === category)).filter(Boolean);
+}
+
+export function insightsForSurface(readModel, surface, limit = 3) {
+  const rows = publishedInsights(readModel);
+  const market = marketEnvironmentSynthesis(rows);
+  if (surface === "home") {
+    const base = surfaceCategoryLeads(rows, [
+      "current_positioning",
+      "risk_regime",
+      "horizon_agreement",
+      "live_performance",
+      "oracle_comparison"
+    ]);
+    return uniqueInsights([base[0], market, ...base.slice(1)]).slice(0, limit);
+  }
+  if (surface === "results") {
+    const base = topInsightsByCategory(
+      readModel,
+      ["consensus_performance", "oracle_comparison", "benchmark_difficulty", "confidence_calibration"],
+      limit
+    );
+    return uniqueInsights([market, ...base]).slice(0, limit);
+  }
+  if (surface === "ticker") {
+    const candidates = [
+      market,
+      ...surfaceCategoryLeads(rows, [
+        "current_positioning",
+        "risk_regime",
+        "horizon_agreement",
+        "live_performance",
+        "oracle_comparison"
+      ])
+    ]
+      .filter(Boolean)
+      .sort(
+        (left, right) =>
+          Number(right.importance_score ?? 0) - Number(left.importance_score ?? 0) ||
+          insightRecencyValue(right) - insightRecencyValue(left)
+      );
+    return uniqueInsights(candidates).slice(0, limit);
+  }
+  return rows.slice(0, limit);
+}
+
 function linkedText(insight) {
   return JSON.stringify({
     id: insight.id,
@@ -268,10 +371,27 @@ function linkedText(insight) {
 
 function matchesRound(insight, roundId) {
   if (!roundId) return false;
-  return linkedText(insight).includes(String(roundId).toLowerCase());
+  const target = String(roundId).toLowerCase();
+  const context = insight?.context ?? {};
+  if (context.scope === "round") return String(context.round_id ?? "").toLowerCase() === target;
+  if (context.scope === "live_rounds" || context.scope === "live_interim") {
+    return (context.round_ids ?? []).some((value) => String(value).toLowerCase() === target);
+  }
+  if (context.scope) return false;
+  return linkedText(insight).includes(target);
 }
 
 function matchesModel(insight, modelId, modelName) {
+  const context = insight?.context ?? {};
+  const structuredIds = uniqueStrings([
+    ...(Array.isArray(context.model_ids) ? context.model_ids : []),
+    context.model?.model_id,
+    context.best?.model_id,
+    context.worst?.model_id
+  ]).map((value) => String(value).toLowerCase());
+  if (structuredIds.length > 0) {
+    return Boolean(modelId && structuredIds.includes(String(modelId).toLowerCase()));
+  }
   const text = linkedText(insight);
   return Boolean(
     (modelId && text.includes(String(modelId).toLowerCase())) ||

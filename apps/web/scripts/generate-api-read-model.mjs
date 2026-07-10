@@ -64,8 +64,70 @@ function readYaml(path, fallback = null) {
   }
 }
 
+const latestInsightPointerPath = join(insightsRoot, "latest_pointer.json");
+const latestInsightPointer = existsSync(latestInsightPointerPath)
+  ? JSON.parse(readFileSync(latestInsightPointerPath, "utf8"))
+  : null;
+
+function pointedInsightPath(href, label) {
+  if (typeof href !== "string" || !href) throw new Error(`Latest insight pointer has no ${label}.`);
+  const root = resolve(insightsRoot);
+  const artifactPath = resolve(insightsRoot, href);
+  if (!artifactPath.startsWith(`${root}/`)) throw new Error(`Latest insight pointer has unsafe ${label}.`);
+  if (!existsSync(artifactPath)) throw new Error(`Latest insight pointer ${label} does not exist: ${href}`);
+  return artifactPath;
+}
+
+function fileSha256(path) {
+  return createHash("sha256").update(readFileSync(path)).digest("hex");
+}
+
+function validateLatestInsightPointer() {
+  if (!latestInsightPointer) return;
+  if (latestInsightPointer.version !== "capitalbench_insights_pointer_v1") {
+    throw new Error("Latest insight pointer has an unsupported version.");
+  }
+  const manifestPath = pointedInsightPath(latestInsightPointer.manifest_href, "manifest_href");
+  if (fileSha256(manifestPath) !== latestInsightPointer.manifest_sha256) {
+    throw new Error("Latest insight pointer manifest hash does not match.");
+  }
+  const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  for (const field of ["run_id", "run_date", "generated_at", "data_fingerprint", "build_fingerprint"]) {
+    if (manifest[field] !== latestInsightPointer[field]) {
+      throw new Error(`Latest insight pointer ${field} does not match its manifest.`);
+    }
+  }
+  const pointerHashes = latestInsightPointer.output_hashes;
+  const manifestHashes = manifest.output_hashes;
+  if (!pointerHashes || !manifestHashes || JSON.stringify(pointerHashes) !== JSON.stringify(manifestHashes)) {
+    throw new Error("Latest insight pointer output hashes do not match its manifest.");
+  }
+  const runRoot = resolve(manifestPath, "..");
+  for (const [filename, expectedHash] of Object.entries(pointerHashes)) {
+    const outputPath = resolve(runRoot, filename);
+    if (!outputPath.startsWith(`${runRoot}/`) || !existsSync(outputPath)) {
+      throw new Error(`Latest insight run is missing hashed output: ${filename}`);
+    }
+    if (fileSha256(outputPath) !== expectedHash) {
+      throw new Error(`Latest insight run hash mismatch: ${filename}`);
+    }
+  }
+}
+
+validateLatestInsightPointer();
+
+function readPointedInsightArtifact(field, fallbackFilename) {
+  if (latestInsightPointer) {
+    const artifactPath = pointedInsightPath(latestInsightPointer[field], field);
+    const payload = readJson(artifactPath, null);
+    if (!payload) throw new Error(`Latest insight pointer ${field} is not valid JSON.`);
+    return payload;
+  }
+  return readJson(join(insightsRoot, fallbackFilename), null);
+}
+
 function loadLatestInsights() {
-  const payload = readJson(join(insightsRoot, "latest.json"), null);
+  const payload = readPointedInsightArtifact("insights_href", "latest.json");
   if (!payload || !Array.isArray(payload.insights)) {
     return {
       status: "unavailable",
@@ -74,6 +136,23 @@ function loadLatestInsights() {
       data_as_of: null,
       insight_count: 0,
       insights: []
+    };
+  }
+  return payload;
+}
+
+function loadMarketEnvironment() {
+  const payload = readPointedInsightArtifact("market_environment_href", "market_environment_latest.json");
+  if (!payload || !payload.tracks || typeof payload.tracks !== "object") {
+    return {
+      version: "capitalbench_market_environment_v1",
+      engine_version: null,
+      generated_at: null,
+      data_as_of: null,
+      status: "unavailable",
+      thresholds: {},
+      definitions: {},
+      tracks: {}
     };
   }
   return payload;
@@ -1886,6 +1965,7 @@ function buildReadModel() {
     model_behavior: modelBehavior,
     risk_appetite: riskAppetite,
     insights: loadLatestInsights(),
+    market_environment: loadMarketEnvironment(),
     proof
   };
   return {

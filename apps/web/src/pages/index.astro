@@ -43,7 +43,7 @@ import { benchmarkSetToScorecard, featuredBenchmarkSet } from "../lib/benchmarkS
 import type { TrackScorecardData } from "../lib/trackScorecard";
 import { siteConfig } from "../lib/seo";
 import { buildLatestOfficialResultTracks } from "../lib/latestOfficialResults";
-import { leadInsightsByCategory } from "../lib/insights.js";
+import { insightsForSurface } from "../lib/insights.js";
 import {
   latestRoundForTrack,
   roundTrack
@@ -106,8 +106,7 @@ const riskPreviousDateLabel = pairedPulseDateLabel(
   dateFromRoundId(currentRiskPulse.previous_round_ids?.monthly)
 );
 const riskChangeLabel = riskPreviousDateLabel ? `Change vs ${riskPreviousDateLabel} portfolios` : "Change vs earlier portfolios";
-const homeInsightCategories = ["current_positioning", "risk_regime", "horizon_agreement", "live_performance", "oracle_comparison"];
-const homeInsights = leadInsightsByCategory(apiReadModel, homeInsightCategories, 3);
+const homeInsights = insightsForSurface(apiReadModel, "home", 3);
 const modelBehavior: any = apiReadModel.model_behavior ?? { summary: {}, profiles: [], methodology_href: "/risk-appetite/#model-behavior-methodology" };
 const modelPatternReport = modelBehavior.pattern_report ?? { rows: [], comparative_findings: [], summary: {} };
 const modelPatternRows = Array.isArray(modelPatternReport.rows) ? modelPatternReport.rows : [];

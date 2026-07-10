@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import apiReadModel from "../generated/apiReadModel.js";
-import { publishedInsightRows, roundReferenceTokens } from "../lib/insights.js";
+import { featuredInsightRows, publishedInsightRows, roundReferenceTokens } from "../lib/insights.js";
 import { itemListSchema } from "../lib/seo";
 
 type InsightCalculation = {
@@ -60,6 +60,7 @@ type InsightRecord = {
   source_type?: string;
   status?: string;
   importance_score?: number;
+  publication_tier?: string;
   data_as_of?: string | null;
   generated_at?: string | null;
   context?: InsightContext;
@@ -77,7 +78,9 @@ const snapshot = apiReadModel.insights ?? {
 const insights = Array.isArray(snapshot.insights)
   ? (publishedInsightRows(snapshot.insights) as InsightRecord[])
   : [];
-const leadInsight = insights[0];
+const featuredInsights = featuredInsightRows(insights) as InsightRecord[];
+const featuredIds = new Set(featuredInsights.map((insight) => insight.id));
+const leadInsight = featuredInsights[0] ?? insights[0];
 const highConfidenceCount = insights.filter((insight) => insight.confidence === "high").length;
 const deterministicCount = insights.filter((insight) => insight.source_type === "deterministic").length;
 const categories = Array.from(
@@ -260,6 +263,8 @@ function insightDefinition(insight: InsightRecord) {
       return "Live alpha is interim model return minus interim S&P 500 return. It is provisional until the round reaches its official score date.";
     case "model_similarity":
       return "Cosine similarity measures allocation overlap between model portfolios. A value near 1.00 means the weights are very similar.";
+    case "market_environment":
+      return "Market environments group resolved rounds by the S&P 500 return over the same weekly or monthly window. Models are compared only on shared rounds; high confidence requires at least six observations and stable leadership.";
     default:
       return "This insight is generated from CapitalBench public rounds, frozen portfolios, scored results, and linked evidence files.";
   }
@@ -289,6 +294,8 @@ function categoryDescription(category: string) {
       return "How much the live portfolios overlap across models and which model is the allocation outlier.";
     case "risk_regime":
       return "Whether live portfolios are collectively defensive, balanced, or aggressive based on holdings.";
+    case "market_environment":
+      return "Which models lead, remain consistent, or change most across resolved down, flat, and up S&P 500 environments.";
     default:
       return "A validated signal generated from CapitalBench benchmark data.";
   }
@@ -392,7 +399,8 @@ function categoryDescription(category: string) {
     </div>
 
     <div class="insights-filter-row" aria-label="Filter insights by category" data-insight-filters>
-      <button type="button" class="is-active" data-insight-filter="all" aria-pressed="true">All <span>{insights.length}</span></button>
+      <button type="button" class="is-active" data-insight-filter="featured" aria-pressed="true">Featured <span>{featuredInsights.length}</span></button>
+      <button type="button" data-insight-filter="all" aria-pressed="false">All <span>{insights.length}</span></button>
       {categories.map(([category, count]) => (
         <button type="button" data-insight-filter={category} aria-pressed="false">
           {categoryLabel(category)} <span>{count}</span>
@@ -402,7 +410,13 @@ function categoryDescription(category: string) {
 
     <div class="insight-card-grid">
       {insights.map((insight) => (
-        <article class="insight-card" id={insight.id} data-insight-category={insight.category}>
+        <article
+          class="insight-card"
+          id={insight.id}
+          data-insight-category={insight.category}
+          data-insight-featured={featuredIds.has(insight.id) ? "true" : "false"}
+          hidden={!featuredIds.has(insight.id)}
+        >
           <header>
             <span>{categoryLabel(insight.category)}</span>
             <strong title="Timeframe for this insight">{insightTimeframeLabel(insight)}</strong>
@@ -460,7 +474,7 @@ function categoryDescription(category: string) {
 
   <script is:inline>
     const insightFilters = document.querySelector("[data-insight-filters]");
-    const insightCards = Array.from(document.querySelectorAll("[data-insight-category]"));
+    const insightCards = Array.from(document.querySelectorAll(".insight-card[data-insight-category]"));
     if (insightFilters && insightCards.length > 0) {
       insightFilters.addEventListener("click", (event) => {
         const target = event.target instanceof Element ? event.target : null;
@@ -473,10 +487,17 @@ function categoryDescription(category: string) {
           item.setAttribute("aria-pressed", active ? "true" : "false");
         }
         for (const card of insightCards) {
-          const visible = selected === "all" || card.getAttribute("data-insight-category") === selected;
+          const visible =
+            selected === "all" ||
+            (selected === "featured" && card.getAttribute("data-insight-featured") === "true") ||
+            card.getAttribute("data-insight-category") === selected;
           card.hidden = !visible;
         }
       });
+      const targetedCard = insightCards.find((card) => `#${card.id}` === window.location.hash);
+      if (targetedCard && targetedCard.hidden) {
+        insightFilters.querySelector('[data-insight-filter="all"]')?.click();
+      }
     }
   </script>
 
@@ -520,7 +541,7 @@ function categoryDescription(category: string) {
       <li>
         <span>2</span>
         <strong>Run deterministic math</strong>
-        <p>Calculate consensus performance, benchmark difficulty, risk posture, similarity, attribution, and live paths.</p>
+        <p>Calculate consensus performance, benchmark difficulty, market-environment results, risk posture, similarity, attribution, and live paths.</p>
       </li>
       <li>
         <span>3</span>

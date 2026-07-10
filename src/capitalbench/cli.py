@@ -491,7 +491,9 @@ def _cmd_generate_insights(args: argparse.Namespace) -> int:
     print(f"llm_status: {output.llm_status}")
     if output.llm_model:
         print(f"llm_model: {output.llm_model}")
+    print(f"run_id: {output.run_id}")
     print(f"data_fingerprint: {output.data_fingerprint}")
+    print(f"build_fingerprint: {output.build_fingerprint}")
     return 0
 
 
@@ -499,7 +501,7 @@ def _cmd_validate_insights(args: argparse.Namespace) -> int:
     output = validate_insights(insights_dir=args.insights_dir)
     print(f"validated latest insights: {output.latest_path}")
     print(f"insights: {output.insight_count}")
-    print(f"dated runs: {output.run_count}")
+    print(f"archived runs: {output.run_count}")
     return 0
 
 

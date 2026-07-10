@@ -271,8 +271,10 @@ const endpointGroups = [
     title: "Insights",
     description: "Readable signals generated from benchmark math, model behavior, positioning, and scored results.",
     endpoints: [
-      ["GET", "/v1/insights", "Ranked insight feed with category filters, evidence links, calculations, and confidence metadata."],
-      ["GET", "/v1/insights/{insight_id}", "One insight with its supporting calculations and source evidence."]
+      ["GET", "/v1/insights", "Ranked insight feed with Featured, category, tier, confidence, track, and maturity filters."],
+      ["GET", "/v1/insights/{insight_id}", "One insight with its supporting calculations and source evidence."],
+      ["GET", "/v1/market-environments", "Weekly and monthly performance grouped by resolved S&P 500 environment."],
+      ["GET", "/v1/models/{model_id}/market-environments", "One model's returns, scores, and sample maturity by market environment."]
     ]
   },
   {
