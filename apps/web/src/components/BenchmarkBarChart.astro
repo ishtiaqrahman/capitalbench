@@ -1,0 +1,675 @@
+---
+import { benchmarkBarCoordinate, buildBenchmarkBarDomain } from "../lib/benchmarkBars.js";
+
+type BarKind = "model" | "benchmark" | "reference";
+type ValueFormat = "percent" | "score";
+
+type BarRow = {
+  key: string;
+  label: string;
+  value: number;
+  kind?: BarKind;
+  provider?: string;
+  logoSrc?: string;
+  href?: string;
+  rank?: number;
+  meta?: string;
+  secondaryLabel?: string;
+};
+
+type BarDomain = {
+  minimum: number;
+  maximum: number;
+  ticks: number[];
+};
+
+interface Props {
+  rows: BarRow[];
+  ariaLabel: string;
+  format?: ValueFormat;
+  orientation?: "responsive" | "horizontal";
+  domain?: BarDomain;
+  compact?: boolean;
+  showLegend?: boolean;
+}
+
+const {
+  rows: inputRows,
+  ariaLabel,
+  format = "percent",
+  orientation = "responsive",
+  domain: suppliedDomain,
+  compact = false,
+  showLegend = false
+} = Astro.props;
+
+const rows = inputRows.filter((row) => Number.isFinite(row.value));
+const domain = suppliedDomain ?? buildBenchmarkBarDomain(rows.map((row) => row.value));
+const zeroCoordinate = benchmarkBarCoordinate(0, domain);
+
+function exactValue(value: number): string {
+  if (format === "score") return value.toFixed(1);
+  const points = value * 100;
+  return `${points > 0 ? "+" : ""}${points.toFixed(2)}%`;
+}
+
+function tickValue(value: number): string {
+  if (format === "score") return `${Math.round(value)}`;
+  const points = value * 100;
+  const precision = Math.abs(points) < 1 && points !== 0 ? 1 : 0;
+  return `${points.toFixed(precision)}%`;
+}
+
+function rowKind(row: BarRow): BarKind {
+  return row.kind ?? "model";
+}
+
+function rowClass(row: BarRow): string {
+  const kind = rowKind(row);
+  const modelKey = row.key.toLowerCase();
+  const variant = modelKey.includes("fable")
+    ? "anthropic-fable"
+    : modelKey.includes("4-8")
+      ? "anthropic-alt"
+      : row.provider ?? "model";
+  return [`is-${kind}`, `is-${variant}`].join(" ");
+}
+
+function horizontalBarStyle(value: number): string {
+  const endpoint = benchmarkBarCoordinate(value, domain);
+  const left = Math.min(zeroCoordinate, endpoint);
+  const width = Math.max(0.35, Math.abs(endpoint - zeroCoordinate));
+  return `left:${left.toFixed(3)}%;width:${width.toFixed(3)}%;`;
+}
+
+function verticalBarStyle(value: number): string {
+  const endpoint = benchmarkBarCoordinate(value, domain);
+  const bottom = Math.min(zeroCoordinate, endpoint);
+  const height = Math.max(0.6, Math.abs(endpoint - zeroCoordinate));
+  return `bottom:${bottom.toFixed(3)}%;height:${height.toFixed(3)}%;`;
+}
+
+function verticalValueStyle(value: number): string {
+  const endpoint = benchmarkBarCoordinate(value, domain);
+  if (value < 0) return `top:calc(${(100 - endpoint).toFixed(3)}% + 7px);`;
+  return `bottom:calc(${endpoint.toFixed(3)}% + 7px);`;
+}
+
+function tickTransform(index: number): string {
+  if (index === 0) return "translateX(0)";
+  if (index === domain.ticks.length - 1) return "translateX(-100%)";
+  return "translateX(-50%)";
+}
+---
+
+<figure
+  class:list={[
+    "benchmark-bars",
+    `is-${orientation}`,
+    compact && "is-compact"
+  ]}
+  aria-label={ariaLabel}
+>
+  {showLegend && (
+    <div class="benchmark-bars-legend" aria-hidden="true">
+      <span class="is-model">Models</span>
+      {rows.some((row) => rowKind(row) === "benchmark") && <span class="is-benchmark">S&amp;P 500</span>}
+      {rows.some((row) => rowKind(row) === "reference") && <span class="is-reference">Max possible</span>}
+    </div>
+  )}
+
+  {orientation === "responsive" && (
+    <div class="benchmark-bars-vertical" style={`--benchmark-bar-count:${rows.length};`}>
+      <div class="benchmark-bars-vertical-axis" aria-hidden="true">
+        {domain.ticks.map((tick) => (
+          <span style={`bottom:${benchmarkBarCoordinate(tick, domain).toFixed(3)}%;`}>{tickValue(tick)}</span>
+        ))}
+      </div>
+      <div class="benchmark-bars-vertical-plot" aria-hidden="true">
+        {domain.ticks.map((tick) => (
+          <i
+            class:list={[tick === 0 && "is-zero"]}
+            style={`bottom:${benchmarkBarCoordinate(tick, domain).toFixed(3)}%;`}
+          ></i>
+        ))}
+        <div class="benchmark-bars-columns">
+          {rows.map((row) => (
+            <div class:list={["benchmark-bars-column", rowClass(row)]}>
+              <strong class:list={["benchmark-bars-column-value", row.value < 0 && "is-negative"]} style={verticalValueStyle(row.value)}>
+                {exactValue(row.value)}
+              </strong>
+              <span class="benchmark-bars-column-bar" style={verticalBarStyle(row.value)}></span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div class="benchmark-bars-vertical-label-spacer"></div>
+      <div class="benchmark-bars-vertical-labels">
+        {rows.map((row) => (
+          <div class:list={["benchmark-bars-identity", rowClass(row)]}>
+            <span class="benchmark-bars-mark">
+              {rowKind(row) === "benchmark" ? (
+                <span class="benchmark-bars-chip">S&amp;P</span>
+              ) : rowKind(row) === "reference" ? (
+                <span class="benchmark-bars-chip is-reference">MAX</span>
+              ) : row.logoSrc ? (
+                <img src={row.logoSrc} alt="" width="34" height="34" loading="lazy" />
+              ) : (
+                <span class="benchmark-bars-rank">{row.rank ?? "-"}</span>
+              )}
+            </span>
+            <span class="benchmark-bars-name">
+              {row.href ? <a href={row.href}>{row.label}</a> : <strong>{row.label}</strong>}
+              {row.meta && <small>{row.meta}</small>}
+              {row.secondaryLabel && <em>{row.secondaryLabel}</em>}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div class:list={["benchmark-bars-horizontal", orientation === "horizontal" && "is-primary-horizontal"]}>
+    <div class="benchmark-bars-horizontal-axis" aria-hidden="true">
+      <span></span>
+      <div>
+        {domain.ticks.map((tick, index) => (
+          <i
+            style={`left:${benchmarkBarCoordinate(tick, domain).toFixed(3)}%;transform:${tickTransform(index)};`}
+          >{tickValue(tick)}</i>
+        ))}
+      </div>
+      <span></span>
+    </div>
+    <div class="benchmark-bars-horizontal-rows">
+      {rows.map((row) => (
+        <article
+          class:list={["benchmark-bars-row", rowClass(row)]}
+          aria-label={`${row.label}: ${exactValue(row.value)}${row.secondaryLabel ? `. ${row.secondaryLabel}` : ""}`}
+        >
+          <div class="benchmark-bars-identity">
+            <span class="benchmark-bars-mark">
+              {rowKind(row) === "benchmark" ? (
+                <span class="benchmark-bars-chip">S&amp;P</span>
+              ) : rowKind(row) === "reference" ? (
+                <span class="benchmark-bars-chip is-reference">MAX</span>
+              ) : row.logoSrc ? (
+                <img src={row.logoSrc} alt="" width="34" height="34" loading="lazy" />
+              ) : (
+                <span class="benchmark-bars-rank">{row.rank ?? "-"}</span>
+              )}
+            </span>
+            <span class="benchmark-bars-name">
+              {row.href ? <a href={row.href}>{row.label}</a> : <strong>{row.label}</strong>}
+              {row.meta && <small>{row.meta}</small>}
+            </span>
+          </div>
+          <div class="benchmark-bars-track" aria-hidden="true">
+            {domain.ticks.map((tick) => (
+              <i
+                class:list={[tick === 0 && "is-zero"]}
+                style={`left:${benchmarkBarCoordinate(tick, domain).toFixed(3)}%;`}
+              ></i>
+            ))}
+            <span class="benchmark-bars-fill" style={horizontalBarStyle(row.value)}></span>
+          </div>
+          <div class="benchmark-bars-values">
+            <strong>{exactValue(row.value)}</strong>
+            {row.secondaryLabel && <span>{row.secondaryLabel}</span>}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <ul class="benchmark-bars-accessible">
+    {rows.map((row) => (
+      <li>{row.label}: {exactValue(row.value)}. {row.secondaryLabel ?? row.meta ?? ""}</li>
+    ))}
+  </ul>
+</figure>
+
+<style>
+  .benchmark-bars {
+    min-width: 0;
+    margin: 0;
+    --bar-openai-a: #18a384;
+    --bar-openai-b: #006b5f;
+    --bar-xai-a: #3a74be;
+    --bar-xai-b: #214f8f;
+    --bar-anthropic-a: #8166db;
+    --bar-anthropic-b: #5f45b8;
+    --bar-anthropic-alt-a: #b86f12;
+    --bar-anthropic-alt-b: #7c4a00;
+    --bar-anthropic-fable-a: #c24f6d;
+    --bar-anthropic-fable-b: #79344a;
+    --bar-google-a: #39a36e;
+    --bar-google-b: #18705d;
+    --bar-benchmark-a: #e3ad3d;
+    --bar-benchmark-b: #aa6e05;
+  }
+
+  .benchmark-bars-accessible {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .benchmark-bars-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 7px;
+    margin-bottom: 12px;
+  }
+
+  .benchmark-bars-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: #fff;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+
+  .benchmark-bars-legend span::before {
+    width: 17px;
+    height: 7px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--bar-openai-a), var(--bar-xai-a), var(--bar-anthropic-a), var(--bar-google-a));
+    content: "";
+  }
+
+  .benchmark-bars-legend .is-benchmark::before {
+    background: linear-gradient(90deg, var(--bar-benchmark-a), var(--bar-benchmark-b));
+  }
+
+  .benchmark-bars-legend .is-reference::before {
+    border: 1px solid rgb(111 70 0 / 40%);
+    background: repeating-linear-gradient(135deg, #a76600 0 4px, #f2bd55 4px 8px);
+  }
+
+  .benchmark-bars-vertical {
+    min-width: 720px;
+    display: grid;
+    grid-template-columns: 46px minmax(0, 1fr);
+    column-gap: 10px;
+    overflow: visible;
+  }
+
+  .benchmark-bars-vertical-axis,
+  .benchmark-bars-vertical-plot {
+    height: 280px;
+  }
+
+  .benchmark-bars-vertical-axis {
+    position: relative;
+  }
+
+  .benchmark-bars-vertical-axis span {
+    position: absolute;
+    right: 0;
+    transform: translateY(50%);
+    color: var(--muted-2);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 700;
+  }
+
+  .benchmark-bars-vertical-plot {
+    position: relative;
+    border-left: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    border-radius: 7px 7px 0 0;
+    background: linear-gradient(180deg, rgb(238 244 242 / 52%), rgb(255 255 255 / 20%));
+  }
+
+  .benchmark-bars-vertical-plot > i,
+  .benchmark-bars-track > i {
+    position: absolute;
+    z-index: 1;
+    display: block;
+    margin: 0;
+    background: rgb(170 187 181 / 45%);
+    font-style: normal;
+  }
+
+  .benchmark-bars-vertical-plot > i {
+    right: 0;
+    left: 0;
+    height: 1px;
+  }
+
+  .benchmark-bars-vertical-plot > i.is-zero,
+  .benchmark-bars-track > i.is-zero {
+    z-index: 2;
+    background: rgb(55 69 64 / 78%);
+  }
+
+  .benchmark-bars-columns,
+  .benchmark-bars-vertical-labels {
+    display: grid;
+    grid-template-columns: repeat(var(--benchmark-bar-count), minmax(72px, 1fr));
+    gap: 18px;
+    padding-inline: 18px;
+  }
+
+  .benchmark-bars-columns {
+    position: absolute;
+    inset: 0;
+  }
+
+  .benchmark-bars-column {
+    position: relative;
+    z-index: 3;
+    min-width: 0;
+    --bar-a: var(--bar-openai-a);
+    --bar-b: var(--bar-openai-b);
+  }
+
+  .benchmark-bars-column-bar {
+    position: absolute;
+    left: 50%;
+    width: min(58px, 72%);
+    min-height: 2px;
+    transform: translateX(-50%);
+    border-radius: 5px 5px 1px 1px;
+    background: linear-gradient(180deg, var(--bar-a), var(--bar-b));
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 20%);
+  }
+
+  .benchmark-bars-column-value {
+    position: absolute;
+    right: 0;
+    left: 0;
+    color: var(--ink-strong);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .benchmark-bars-column-value.is-negative {
+    color: #8f3827;
+  }
+
+  .benchmark-bars-vertical-label-spacer {
+    min-height: 1px;
+  }
+
+  .benchmark-bars-vertical-labels {
+    padding-top: 11px;
+  }
+
+  .benchmark-bars-identity {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    --bar-a: var(--bar-openai-a);
+    --bar-b: var(--bar-openai-b);
+  }
+
+  .benchmark-bars-vertical-labels .benchmark-bars-identity {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .benchmark-bars-mark {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .benchmark-bars-mark img {
+    width: 34px;
+    height: 34px;
+    border-radius: 7px;
+    padding: 4px;
+    background: var(--dark);
+    object-fit: contain;
+  }
+
+  .benchmark-bars-chip {
+    min-width: 48px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(170 110 5 / 24%);
+    border-radius: 6px;
+    background: #fff3d1;
+    color: #7e5100;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 800;
+  }
+
+  .benchmark-bars-chip.is-reference {
+    background: repeating-linear-gradient(135deg, #fff3cf 0 6px, #f8d37b 6px 12px);
+    color: #684100;
+  }
+
+  .benchmark-bars-rank {
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--accent-bg);
+    color: var(--accent-strong);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 800;
+  }
+
+  .benchmark-bars-name {
+    min-width: 0;
+    display: grid;
+    gap: 2px;
+  }
+
+  .benchmark-bars-name strong,
+  .benchmark-bars-name a {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--ink-strong);
+    font-size: 0.75rem;
+    font-weight: 750;
+    line-height: 1.2;
+    text-decoration-thickness: 1px;
+    text-overflow: ellipsis;
+  }
+
+  .benchmark-bars-name small,
+  .benchmark-bars-name em {
+    color: var(--muted-2);
+    font-size: 0.62rem;
+    font-style: normal;
+    line-height: 1.25;
+  }
+
+  .benchmark-bars-name em {
+    color: var(--accent-2-strong);
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+
+  .benchmark-bars-horizontal {
+    min-width: 0;
+  }
+
+  .is-responsive > .benchmark-bars-horizontal {
+    display: none;
+  }
+
+  .benchmark-bars-horizontal-axis,
+  .benchmark-bars-row {
+    display: grid;
+    grid-template-columns: minmax(170px, 220px) minmax(240px, 1fr) 118px;
+    gap: 14px;
+  }
+
+  .benchmark-bars-horizontal-axis {
+    align-items: end;
+    min-height: 22px;
+    padding-bottom: 5px;
+  }
+
+  .benchmark-bars-horizontal-axis > div {
+    position: relative;
+    height: 16px;
+  }
+
+  .benchmark-bars-horizontal-axis i {
+    position: absolute;
+    bottom: 0;
+    color: var(--muted-2);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-style: normal;
+    white-space: nowrap;
+  }
+
+  .benchmark-bars-horizontal-rows {
+    border-top: 1px solid var(--line);
+  }
+
+  .benchmark-bars-row {
+    min-width: 0;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    padding: 9px 0;
+    --bar-a: var(--bar-openai-a);
+    --bar-b: var(--bar-openai-b);
+  }
+
+  .benchmark-bars-row.is-benchmark {
+    background: rgb(255 247 224 / 52%);
+  }
+
+  .benchmark-bars-row.is-reference {
+    background: rgb(255 250 235 / 58%);
+  }
+
+  .benchmark-bars-track {
+    position: relative;
+    height: 24px;
+    border-radius: 4px;
+    background: #f1f5f4;
+    overflow: hidden;
+  }
+
+  .benchmark-bars-track > i {
+    top: 0;
+    bottom: 0;
+    width: 1px;
+  }
+
+  .benchmark-bars-fill {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    min-width: 2px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--bar-a), var(--bar-b));
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 18%);
+  }
+
+  .benchmark-bars-values {
+    min-width: 0;
+    display: grid;
+    justify-items: end;
+    gap: 2px;
+    text-align: right;
+  }
+
+  .benchmark-bars-values strong {
+    color: var(--ink-strong);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+
+  .benchmark-bars-values span {
+    color: var(--muted-2);
+    font-size: 0.62rem;
+    line-height: 1.2;
+  }
+
+  .is-openai { --bar-a: var(--bar-openai-a); --bar-b: var(--bar-openai-b); }
+  .is-xai { --bar-a: var(--bar-xai-a); --bar-b: var(--bar-xai-b); }
+  .is-anthropic { --bar-a: var(--bar-anthropic-a); --bar-b: var(--bar-anthropic-b); }
+  .is-anthropic-alt { --bar-a: var(--bar-anthropic-alt-a); --bar-b: var(--bar-anthropic-alt-b); }
+  .is-anthropic-fable { --bar-a: var(--bar-anthropic-fable-a); --bar-b: var(--bar-anthropic-fable-b); }
+  .is-google { --bar-a: var(--bar-google-a); --bar-b: var(--bar-google-b); }
+  .is-benchmark { --bar-a: var(--bar-benchmark-a); --bar-b: var(--bar-benchmark-b); }
+
+  .benchmark-bars-column.is-reference .benchmark-bars-column-bar,
+  .benchmark-bars-row.is-reference .benchmark-bars-fill {
+    background: repeating-linear-gradient(135deg, #a76600 0 6px, #f2bd55 6px 12px);
+  }
+
+  .benchmark-bars.is-compact .benchmark-bars-row {
+    padding-block: 7px;
+  }
+
+  .benchmark-bars.is-compact .benchmark-bars-mark img {
+    width: 30px;
+    height: 30px;
+  }
+
+  @media (max-width: 760px) {
+    .benchmark-bars-vertical {
+      display: none;
+    }
+
+    .is-responsive > .benchmark-bars-horizontal {
+      display: block;
+    }
+
+    .benchmark-bars-horizontal-axis {
+      grid-template-columns: minmax(0, 1fr);
+      padding-top: 4px;
+    }
+
+    .benchmark-bars-horizontal-axis > span {
+      display: none;
+    }
+
+    .benchmark-bars-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 7px 10px;
+      padding: 10px 0;
+    }
+
+    .benchmark-bars-row .benchmark-bars-track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    .benchmark-bars-values {
+      max-width: 122px;
+    }
+
+    .benchmark-bars-name strong,
+    .benchmark-bars-name a {
+      font-size: 0.72rem;
+    }
+
+    .benchmark-bars-legend {
+      justify-content: flex-start;
+    }
+  }
+</style>

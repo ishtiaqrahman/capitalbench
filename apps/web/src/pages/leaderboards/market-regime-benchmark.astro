@@ -1,2030 +1,2634 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import MarketRegimeLineChart from "../../components/MarketRegimeLineChart.astro";
-import { modelLabel, providerLabel, type RoundRecord } from "../../data/fallback";
+import BenchmarkBarChart from "../../components/BenchmarkBarChart.astro";
+import { modelLabel, providerLabel } from "../../data/fallback";
 import apiReadModel from "../../generated/apiReadModel.js";
+import { buildBenchmarkBarDomain } from "../../lib/benchmarkBars.js";
 import { dateOnly, pct } from "../../lib/format";
-import { staticRoundRecords } from "../../lib/localRoundRecords";
 import { providerLogoSrc } from "../../lib/scoreReturnChart";
 import type { BenchmarkTrack } from "../../lib/tracks";
 
 type RegimeKey = "sharp_down" | "down" | "flat" | "up" | "sharp_up";
-type RegimeDirection = "down" | "flat" | "up";
-type RegimeStatus = "Ready" | "Forming" | "No data yet";
-type SampleCategoryKey = "down" | "flat" | "up";
+type DirectionKey = "down" | "flat" | "up";
 
-type RegimeDefinition = {
-  key: RegimeKey;
-  label: string;
-  rangeLabel: string;
-  direction: RegimeDirection;
-};
-
-type RegimeRound = {
-  round: RoundRecord;
-  track: BenchmarkTrack;
-  regime: RegimeDefinition;
-  directionKey: SampleCategoryKey;
-  sp500Return: number;
-  maxPossibleReturn: number;
-  averageAlpha: number | undefined;
-  hitRate: number | undefined;
-  modelCount: number;
-};
-
-type RegimeCoverage = RegimeDefinition & {
-  count: number;
-  averageSp500Return: number | undefined;
-  status: RegimeStatus;
-  rounds: RegimeRound[];
-};
-
-type SampleCategoryDefinition = {
-  key: SampleCategoryKey;
-  label: string;
-  rangeLabel: string;
-};
-
-type RegimeLeaderboardRow = {
-  modelId: string;
-  provider: string;
-  label: string;
-  providerName: string;
-  logoSrc: string | undefined;
-  averageReturn: number | undefined;
-  averageSp500Return: number | undefined;
-  regimeBalancedScore: number | undefined;
-  sp500RegimeScore: number | undefined;
-  allRoundScore: number | undefined;
-  averageAlpha: number | undefined;
-  hitRate: number | undefined;
-  testsIncluded: number;
-  readyRegimesCovered: number;
-  readyRegimesRequired: number;
-  status: "Ready" | "Forming";
-  regimeScores: Array<{
-    key: RegimeKey;
-    label: string;
-    score: number | undefined;
-    averageReturn: number | undefined;
-    averageSp500Return: number | undefined;
-    tests: number;
-  }>;
-};
-
-type BalancedSampleCategory = SampleCategoryDefinition & {
-  count: number;
-  missing: number;
-  selectedCount: number;
-};
-
-type BalancedSampleLeaderboardRow = {
-  modelId: string;
-  provider: string;
-  label: string;
-  providerName: string;
-  logoSrc: string | undefined;
-  score: number | undefined;
-  averageAlpha: number | undefined;
-  hitRate: number | undefined;
-  testsIncluded: number;
-  testsRequired: number;
-  status: "Ready" | "Forming";
-};
-
-type BalancedSampleTrack = {
-  track: BenchmarkTrack;
-  status: "Ready" | "Forming";
-  categories: BalancedSampleCategory[];
-  sampleSize: number;
-  selectedRounds: RegimeRound[];
-  missingSummary: string;
-  leaderboard: BalancedSampleLeaderboardRow[];
-};
-
-type DirectionModelRow = {
-  modelId: string;
-  provider: string;
-  label: string;
-  providerName: string;
-  logoSrc: string | undefined;
-  score: number | undefined;
-  averageReturn: number | undefined;
-  averageSp500Return: number | undefined;
-  averageAlpha: number | undefined;
-  hitRate: number | undefined;
-  tests: number;
-};
-
-type EnvironmentPerformanceCard = RegimeCoverage & {
-  track: BenchmarkTrack;
-  modelRows: DirectionModelRow[];
-  best: DirectionModelRow | undefined;
-  worst: DirectionModelRow | undefined;
-};
-
-type EnvironmentMatrixRow = {
-  modelId: string;
-  label: string;
-  providerName: string;
-  logoSrc: string | undefined;
-  averageReturn: number | undefined;
-  cells: Array<{
-    key: RegimeKey;
-    label: string;
-    value: number | undefined;
-    rank: number | undefined;
-    width: number;
-  }>;
-};
-
-type DirectionPerformanceCard = {
-  track: BenchmarkTrack;
-  key: "negative" | "positive";
-  label: string;
-  rangeLabel: string;
-  rounds: RegimeRound[];
-  averageSp500Return: number | undefined;
-  status: "Ready" | "Forming";
-  best: DirectionModelRow | undefined;
-  worst: DirectionModelRow | undefined;
-};
-
-type DirectionBucket = SampleCategoryDefinition & {
-  track: BenchmarkTrack;
-  rounds: RegimeRound[];
-  status: "Ready" | "Forming";
-  averageSp500Return: number | undefined;
-  modelRows: DirectionModelRow[];
-};
-
-type MarketInsightCard = {
-  key: string;
-  eyebrow: string;
-  title: string;
-  tone: "down" | "flat" | "up" | "steady" | "split";
-  status: "Ready" | "Forming";
-  model?: {
-    label: string;
-    providerName: string;
-    logoSrc: string | undefined;
-  };
-  metricValue: string;
-  metricLabel: string;
-  detail: string;
-  stats: Array<{
-    label: string;
-    value: string;
-  }>;
-};
-
-type ChartValueFormat = "percent" | "score" | "count";
-
-type RawChartPoint = {
-  label: string;
-  value: number;
-};
-
-type RawChartSeries = {
-  key: string;
-  label: string;
-  color: string;
-  points: RawChartPoint[];
-  isLead?: boolean;
-};
-
-type LineChart = {
-  id: string;
-  title: string;
-  description: string;
-  minLabel: string;
-  maxLabel: string;
-  series: Array<{
-    key: string;
-    label: string;
-    color: string;
-    points: Array<{
-      x: number;
-      y: number;
-      label: string;
-      valueLabel: string;
-    }>;
-    pointsAttr: string;
-    isLead?: boolean;
-  }>;
-  baseline?: {
-    label: string;
-    y: number;
-  };
-  threshold?: {
-    label: string;
-    y: number;
-  };
-};
-
+const TRACKS = ["monthly", "weekly"] as BenchmarkTrack[];
+const DEFAULT_TRACK: BenchmarkTrack = "monthly";
 const marketEnvironment: any = apiReadModel.market_environment ?? { thresholds: {}, definitions: {}, tracks: {} };
 const READY_ROUND_THRESHOLD = Number(marketEnvironment.thresholds?.environment_rounds ?? 3);
 const BALANCED_SAMPLE_THRESHOLD = Number(marketEnvironment.thresholds?.balanced_sample_per_direction ?? 3);
-const CHART_WIDTH = 640;
-const CHART_HEIGHT = 190;
-const CHART_LEFT = 42;
-const CHART_RIGHT = 30;
-const CHART_TOP = 30;
-const CHART_BOTTOM = 32;
 
-function mapRegimeDefinition(row: any): RegimeDefinition {
-  return {
-    key: row.key,
-    label: row.label,
-    rangeLabel: row.range_label,
-    direction: row.direction
-  };
-}
-
-function mapSampleDefinition(row: any): SampleCategoryDefinition {
-  return { key: row.key, label: row.label, rangeLabel: row.range_label };
-}
-
-const regimeDefinitions: Record<BenchmarkTrack, RegimeDefinition[]> = {
-  weekly: (marketEnvironment.definitions?.weekly?.environments ?? []).map(mapRegimeDefinition),
-  monthly: (marketEnvironment.definitions?.monthly?.environments ?? []).map(mapRegimeDefinition)
-};
-
-const sampleCategoryDefinitions: Record<BenchmarkTrack, SampleCategoryDefinition[]> = {
-  weekly: (marketEnvironment.definitions?.weekly?.directions ?? []).map(mapSampleDefinition),
-  monthly: (marketEnvironment.definitions?.monthly?.directions ?? []).map(mapSampleDefinition)
-};
-
-function finiteNumber(value: number | null | undefined): value is number {
+function finiteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
-
-function scoreText(value: number | undefined): string {
-  return finiteNumber(value) ? value.toFixed(1) : "n/a";
-}
-
-function signedPctText(value: number | undefined): string {
+function signedPctText(value: unknown): string {
   if (!finiteNumber(value)) return "n/a";
   const formatted = pct(value);
   return value > 0 ? `+${formatted}` : formatted;
 }
 
-function valueTone(value: number | undefined): "positive" | "negative" | "neutral" {
+function scoreText(value: unknown): string {
+  return finiteNumber(value) ? value.toFixed(1) : "n/a";
+}
+
+function pointText(value: unknown, signed = false): string {
+  if (!finiteNumber(value)) return "n/a";
+  const rawPoints = value * 100;
+  const points = Math.abs(rawPoints) < 0.005 ? 0 : rawPoints;
+  const prefix = signed && points > 0 ? "+" : "";
+  return `${prefix}${points.toFixed(2)} pts`;
+}
+
+function confidenceLabel(value: unknown): string {
+  const label = String(value ?? "low").toLowerCase();
+  return `${label.charAt(0).toUpperCase()}${label.slice(1)} evidence`;
+}
+
+function stabilityText(value: unknown): string {
+  return finiteNumber(value) ? `${Math.round(value * 100)}%` : "n/a";
+}
+
+function humanDate(value: unknown): string {
+  if (typeof value !== "string" || !value) return "Latest resolved round";
+  const parsed = new Date(`${value.slice(0, 10)}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC"
+  }).format(parsed);
+}
+
+function valueTone(value: unknown): "positive" | "negative" | "neutral" {
   if (!finiteNumber(value) || value === 0) return "neutral";
   return value > 0 ? "positive" : "negative";
-}
-
-function performanceBarWidth(index: number, total: number): number {
-  if (total <= 1) return 100;
-  const minWidth = 34;
-  return Math.round(100 - index / (total - 1) * (100 - minWidth));
-}
-
-function environmentReturnBarWidth(environment: EnvironmentPerformanceCard, value: number | undefined): number {
-  if (!finiteNumber(value)) return 0;
-  const values = [environment.averageSp500Return, ...environment.modelRows.map((row) => row.averageReturn)]
-    .filter(finiteNumber)
-    .sort((left, right) => right - left);
-  if (values.length <= 1) return 100;
-  const index = values.findIndex((item) => item === value);
-  return performanceBarWidth(index >= 0 ? index : values.length - 1, values.length);
-}
-
-
-function chartValueText(value: number, format: ChartValueFormat): string {
-  if (format === "percent") {
-    const sign = value > 0 ? "+" : "";
-    return `${sign}${value.toFixed(1)}%`;
-  }
-  if (format === "count") return Math.round(value).toString();
-  return value.toFixed(1);
-}
-
-function chartY(value: number, min: number, max: number): number {
-  if (max === min) return CHART_TOP + (CHART_HEIGHT - CHART_TOP - CHART_BOTTOM) / 2;
-  const usableHeight = CHART_HEIGHT - CHART_TOP - CHART_BOTTOM;
-  return CHART_TOP + (max - value) / (max - min) * usableHeight;
-}
-
-function chartBounds(values: number[], options?: { includeZero?: boolean; threshold?: number; floorZero?: boolean }) {
-  const boundedValues = values.slice();
-  if (options?.includeZero) boundedValues.push(0);
-  if (finiteNumber(options?.threshold)) boundedValues.push(options.threshold);
-
-  let min = boundedValues.length ? Math.min(...boundedValues) : 0;
-  let max = boundedValues.length ? Math.max(...boundedValues) : 1;
-  if (options?.floorZero) min = Math.min(0, min);
-
-  if (min === max) {
-    min -= 1;
-    max += 1;
-  } else if (!options?.floorZero) {
-    const padding = (max - min) * 0.12;
-    min -= padding;
-    max += padding;
-  } else {
-    max += Math.max(1, (max - min) * 0.16);
-  }
-
-  return { min, max };
-}
-
-function buildLineChart(options: {
-  id: string;
-  title: string;
-  description: string;
-  format: ChartValueFormat;
-  series: RawChartSeries[];
-  includeZero?: boolean;
-  threshold?: { value: number; label: string };
-  floorZero?: boolean;
-}): LineChart {
-  const values = options.series.flatMap((series) => series.points.map((point) => point.value)).filter(finiteNumber);
-  const bounds = chartBounds(values, {
-    includeZero: options.includeZero,
-    threshold: options.threshold?.value,
-    floorZero: options.floorZero
-  });
-  const xSpan = CHART_WIDTH - CHART_LEFT - CHART_RIGHT;
-
-  return {
-    id: options.id,
-    title: options.title,
-    description: options.description,
-    minLabel: chartValueText(bounds.min, options.format),
-    maxLabel: chartValueText(bounds.max, options.format),
-    series: options.series.map((series) => {
-      const denominator = Math.max(1, series.points.length - 1);
-      const points = series.points.map((point, index) => ({
-        x: CHART_LEFT + (index / denominator) * xSpan,
-        y: chartY(point.value, bounds.min, bounds.max),
-        label: point.label,
-        valueLabel: chartValueText(point.value, options.format)
-      }));
-      return {
-        ...series,
-        points,
-        pointsAttr: points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ")
-      };
-    }),
-    baseline:
-      options.includeZero && bounds.min <= 0 && bounds.max >= 0
-        ? { label: "0", y: chartY(0, bounds.min, bounds.max) }
-        : undefined,
-    threshold: options.threshold
-      ? { label: options.threshold.label, y: chartY(options.threshold.value, bounds.min, bounds.max) }
-      : undefined
-  };
-}
-
-function statusClass(status: string): string {
-  return status.toLowerCase().replaceAll(" ", "-");
 }
 
 function trackLabel(track: BenchmarkTrack): string {
   return track === "weekly" ? "Weekly" : "Monthly";
 }
 
-const regimeTrackOrder = ["monthly", "weekly"] as BenchmarkTrack[];
-const defaultRegimeTrack = regimeTrackOrder[0];
-
-function statusLabel(status: RegimeStatus | "Ready" | "Forming"): string {
-  if (status === "Ready") return "Counts now";
-  if (status === "Forming") return "Needs more rounds";
-  return "No rounds yet";
-}
-
-function roundSortKey(round: RoundRecord): string {
-  return `${round.exit_date ?? ""}:${round.decision_deadline_utc ?? ""}:${round.round_id}`;
-}
-
-function artifactStatus(value: string): RegimeStatus | "Ready" | "Forming" {
-  if (value === "ready") return "Ready";
-  if (value === "forming") return "Forming";
-  return "No data yet";
-}
-
-function trackArtifact(track: BenchmarkTrack): any {
-  return marketEnvironment.tracks?.[track] ?? {
-    confidence: { label: "No counting environments", detail: "No resolved data is available.", status: "empty" },
-    rounds: [],
-    environments: [],
-    directions: [],
-    regime_leaderboard: [],
-    balanced_sample: { status: "forming", categories: [], selected_round_ids: [], leaderboard: [] },
-    signals: []
-  };
-}
-
-function trackConfidence(track: BenchmarkTrack): { label: string; detail: string; className: string } {
-  const confidence = trackArtifact(track).confidence ?? {};
+function enrichModel(row: any) {
   return {
-    label: confidence.label ?? "No counting environments",
-    detail: confidence.detail ?? "No resolved data is available.",
-    className: confidence.status ?? "empty"
-  };
-}
-
-function mapModelRow(row: any): DirectionModelRow {
-  return {
+    ...row,
     modelId: row.model_id,
-    provider: row.provider,
-    label: row.model_label ?? modelLabel(row.model_id),
-    providerName: providerLabel(row.provider),
-    logoSrc: providerLogoSrc(row.provider),
-    score: row.score,
-    averageReturn: row.average_return,
-    averageSp500Return: row.average_sp500_return,
-    averageAlpha: row.average_alpha,
-    hitRate: row.hit_rate,
-    tests: Number(row.tests ?? 0)
-  };
-}
-
-const roundRows = staticRoundRecords().filter((round) => /^CB-\d{4}-\d{2}-\d{2}-(1W|1M)$/.test(round.round_id));
-const roundById = new Map(roundRows.map((round) => [round.round_id, round]));
-const regimeRounds = regimeTrackOrder
-  .flatMap((track) =>
-    (trackArtifact(track).rounds ?? []).map((row: any): RegimeRound | null => {
-      const round = roundById.get(row.round_id);
-      const regime = regimeDefinitions[track].find((definition) => definition.key === row.environment_key);
-      if (!round || !regime) return null;
-      return {
-        round,
-        track,
-        regime,
-        directionKey: row.direction_key,
-        sp500Return: row.sp500_return,
-        maxPossibleReturn: row.max_possible_return,
-        averageAlpha: row.average_alpha,
-        hitRate: row.hit_rate,
-        modelCount: Number(row.model_count ?? 0)
-      };
-    })
-  )
-  .filter((round): round is RegimeRound => round !== null);
-const regimeRoundById = new Map(regimeRounds.map((round) => [round.round.round_id, round]));
-
-function mapCoverage(track: BenchmarkTrack, row: any): RegimeCoverage {
-  const definition = regimeDefinitions[track].find((item) => item.key === row.key) ?? mapRegimeDefinition(row);
-  return {
-    ...definition,
-    count: Number(row.count ?? 0),
-    averageSp500Return: row.average_sp500_return,
-    status: artifactStatus(row.status) as RegimeStatus,
-    rounds: (row.round_ids ?? []).map((roundId: string) => regimeRoundById.get(roundId)).filter(Boolean)
-  };
-}
-
-const coverageByTrack: Record<BenchmarkTrack, RegimeCoverage[]> = {
-  weekly: (trackArtifact("weekly").environments ?? []).map((row: any) => mapCoverage("weekly", row)),
-  monthly: (trackArtifact("monthly").environments ?? []).map((row: any) => mapCoverage("monthly", row))
-};
-
-function mapEnvironment(track: BenchmarkTrack, row: any): EnvironmentPerformanceCard {
-  const coverage = mapCoverage(track, row);
-  const modelRows = (row.comparison?.model_rows ?? []).map(mapModelRow);
-  return {
-    ...coverage,
-    track,
-    status: row.status === "no_data" ? "No data yet" : row.comparison?.status === "ready" ? "Ready" : "Forming",
-    modelRows,
-    best: modelRows[0],
-    worst: modelRows.at(-1)
-  };
-}
-
-const environmentPerformance: Record<BenchmarkTrack, EnvironmentPerformanceCard[]> = {
-  weekly: (trackArtifact("weekly").environments ?? []).map((row: any) => mapEnvironment("weekly", row)),
-  monthly: (trackArtifact("monthly").environments ?? []).map((row: any) => mapEnvironment("monthly", row))
-};
-
-function buildEnvironmentMatrix(track: BenchmarkTrack): EnvironmentMatrixRow[] {
-  const environments = environmentPerformance[track];
-  const models = new Map<string, { model: DirectionModelRow; returns: number[] }>();
-  for (const environment of environments) {
-    for (const modelRow of environment.modelRows) {
-      const existing = models.get(modelRow.modelId);
-      if (existing) {
-        if (finiteNumber(modelRow.averageReturn)) existing.returns.push(modelRow.averageReturn);
-      } else {
-        models.set(modelRow.modelId, {
-          model: modelRow,
-          returns: finiteNumber(modelRow.averageReturn) ? [modelRow.averageReturn] : []
-        });
-      }
-    }
-  }
-  return Array.from(models.values())
-    .map(({ model, returns }) => ({
-      modelId: model.modelId,
-      label: model.label,
-      providerName: model.providerName,
-      logoSrc: model.logoSrc,
-      averageReturn: returns.length ? returns.reduce((total, value) => total + value, 0) / returns.length : undefined,
-      cells: environments.map((environment) => {
-        const modelIndex = environment.modelRows.findIndex((row) => row.modelId === model.modelId);
-        const modelRow = modelIndex >= 0 ? environment.modelRows[modelIndex] : undefined;
-        return {
-          key: environment.key,
-          label: environment.label,
-          value: modelRow?.averageReturn,
-          rank: modelRow ? modelIndex + 1 : undefined,
-          width: modelRow ? environmentReturnBarWidth(environment, modelRow.averageReturn) : 0
-        };
-      })
-    }))
-    .sort(
-      (left, right) =>
-        (right.averageReturn ?? Number.NEGATIVE_INFINITY) - (left.averageReturn ?? Number.NEGATIVE_INFINITY) ||
-        left.label.localeCompare(right.label)
-    );
-}
-
-const environmentMatrices: Record<BenchmarkTrack, EnvironmentMatrixRow[]> = {
-  weekly: buildEnvironmentMatrix("weekly"),
-  monthly: buildEnvironmentMatrix("monthly")
-};
-
-function mapDirectionBucket(track: BenchmarkTrack, row: any): DirectionBucket {
-  const definition = sampleCategoryDefinitions[track].find((item) => item.key === row.key) ?? mapSampleDefinition(row);
-  return {
-    ...definition,
-    track,
-    rounds: (row.comparison?.round_ids ?? []).map((roundId: string) => regimeRoundById.get(roundId)).filter(Boolean),
-    status: row.comparison?.status === "ready" ? "Ready" : "Forming",
-    averageSp500Return: row.comparison?.model_rows?.[0]?.average_sp500_return,
-    modelRows: (row.comparison?.model_rows ?? []).map(mapModelRow)
-  };
-}
-
-const directionBuckets: Record<BenchmarkTrack, Record<SampleCategoryKey, DirectionBucket>> = {
-  weekly: Object.fromEntries(
-    (trackArtifact("weekly").directions ?? []).map((row: any) => [row.key, mapDirectionBucket("weekly", row)])
-  ) as Record<SampleCategoryKey, DirectionBucket>,
-  monthly: Object.fromEntries(
-    (trackArtifact("monthly").directions ?? []).map((row: any) => [row.key, mapDirectionBucket("monthly", row)])
-  ) as Record<SampleCategoryKey, DirectionBucket>
-};
-
-function directionSummary(track: BenchmarkTrack, direction: "down" | "up"): DirectionPerformanceCard {
-  const bucket = directionBuckets[track][direction];
-  return {
-    track,
-    key: direction === "down" ? "negative" : "positive",
-    label: direction === "down" ? "Down environments" : "Up environments",
-    rangeLabel: bucket.rangeLabel,
-    rounds: bucket.rounds,
-    averageSp500Return: bucket.averageSp500Return,
-    status: bucket.status,
-    best: bucket.modelRows[0],
-    worst: bucket.modelRows.at(-1)
-  };
-}
-
-const directionalPerformance: Record<BenchmarkTrack, DirectionPerformanceCard[]> = {
-  weekly: [directionSummary("weekly", "down"), directionSummary("weekly", "up")],
-  monthly: [directionSummary("monthly", "down"), directionSummary("monthly", "up")]
-};
-
-function mapRegimeLeaderboardRow(row: any): RegimeLeaderboardRow {
-  return {
-    modelId: row.model_id,
-    provider: row.provider,
-    label: row.model_label ?? modelLabel(row.model_id),
-    providerName: providerLabel(row.provider),
-    logoSrc: providerLogoSrc(row.provider),
-    averageReturn: row.average_return,
-    averageSp500Return: row.average_sp500_return,
-    regimeBalancedScore: row.regime_balanced_score,
-    sp500RegimeScore: row.sp500_regime_score,
-    allRoundScore: row.all_round_score,
-    averageAlpha: row.average_alpha,
-    hitRate: row.hit_rate,
-    testsIncluded: Number(row.tests_included ?? 0),
-    readyRegimesCovered: Number(row.ready_environments_covered ?? 0),
-    readyRegimesRequired: Number(row.ready_environments_required ?? 0),
-    status: row.status === "ready" ? "Ready" : "Forming",
-    regimeScores: (row.environment_scores ?? []).map((score: any) => ({
-      key: score.key,
-      label: score.label,
-      score: score.score,
-      averageReturn: score.average_return,
-      averageSp500Return: score.average_sp500_return,
-      tests: Number(score.tests ?? 0)
-    }))
-  };
-}
-
-const leaderboards: Record<BenchmarkTrack, RegimeLeaderboardRow[]> = {
-  weekly: (trackArtifact("weekly").regime_leaderboard ?? []).map(mapRegimeLeaderboardRow),
-  monthly: (trackArtifact("monthly").regime_leaderboard ?? []).map(mapRegimeLeaderboardRow)
-};
-
-function mapBalancedSample(track: BenchmarkTrack): BalancedSampleTrack {
-  const sample = trackArtifact(track).balanced_sample ?? {};
-  const categories = (sample.categories ?? []).map((row: any) => ({
-    ...mapSampleDefinition(row),
-    count: Number(row.count ?? 0),
-    missing: Number(row.missing ?? 0),
-    selectedCount: Number(row.selected_count ?? 0)
-  }));
-  const missingParts = categories
-    .filter((category: BalancedSampleCategory) => category.missing > 0)
-    .map(
-      (category: BalancedSampleCategory) =>
-        `${category.missing} more ${category.label.toLowerCase()} ${track} round${category.missing === 1 ? "" : "s"}`
-    );
-  return {
-    track,
-    status: sample.status === "ready" ? "Ready" : "Forming",
-    categories,
-    sampleSize: Number(sample.sample_size ?? 0),
-    selectedRounds: (sample.selected_round_ids ?? [])
-      .map((roundId: string) => regimeRoundById.get(roundId))
-      .filter(Boolean),
-    missingSummary: missingParts.length ? `Needs ${missingParts.join(" and ")}.` : "Ready to rank models.",
-    leaderboard: (sample.leaderboard ?? []).map((row: any) => ({
-      modelId: row.model_id,
-      provider: row.provider,
-      label: row.model_label ?? modelLabel(row.model_id),
-      providerName: providerLabel(row.provider),
-      logoSrc: providerLogoSrc(row.provider),
-      score: row.score,
-      averageAlpha: row.average_alpha,
-      hitRate: row.hit_rate,
-      testsIncluded: Number(row.tests_included ?? 0),
-      testsRequired: Number(row.tests_required ?? 0),
-      status: row.status === "ready" ? "Ready" : "Forming"
-    }))
-  };
-}
-
-const balancedSamples: Record<BenchmarkTrack, BalancedSampleTrack> = {
-  weekly: mapBalancedSample("weekly"),
-  monthly: mapBalancedSample("monthly")
-};
-
-function pluralizeRound(count: number): string {
-  return `${count} round${count === 1 ? "" : "s"}`;
-}
-
-function modelCard(row: any): MarketInsightCard["model"] {
-  if (!row) return undefined;
-  return {
     label: row.model_label ?? modelLabel(row.model_id),
     providerName: providerLabel(row.provider),
     logoSrc: providerLogoSrc(row.provider)
   };
 }
 
-function directionInsightCard(signal: any): MarketInsightCard {
-  const direction = signal.direction as SampleCategoryKey;
-  const model = signal.model;
-  const copy = {
-    down: { adjective: "negative", noun: "down environments", tone: "down" as const },
-    flat: { adjective: "flat", noun: "flat environments", tone: "flat" as const },
-    up: { adjective: "positive", noun: "up environments", tone: "up" as const }
-  }[direction];
-  const status = signal.maturity === "ready" ? "Ready" : "Forming";
-  if (!model) {
+function comparisonStatement(row: any, context: string): string {
+  if (!row) return `No shared model comparison is available for ${context}.`;
+  const rawAlpha = row.average_alpha;
+  const alpha = finiteNumber(rawAlpha) && Math.abs(rawAlpha) < 0.00005 ? 0 : rawAlpha;
+  if (!finiteNumber(alpha)) return `${row.label} has the strongest model result for ${context}.`;
+  if (alpha > 0) {
+    return `${row.label} returned ${signedPctText(row.average_return)} and beat the S&P 500 by ${pointText(alpha)}.`;
+  }
+  if (alpha < 0) {
+    return `${row.label} had the strongest model result, but still trailed the S&P 500 by ${pointText(Math.abs(alpha))}.`;
+  }
+  return `${row.label} had the strongest model result and matched the S&P 500.`;
+}
+
+function evidenceFor(environments: any[]): string {
+  const labels = environments
+    .filter((environment) => environment.status === "ready")
+    .map((environment) => String(environment.comparison?.confidence ?? "low").toLowerCase());
+  if (!labels.length || labels.includes("low")) return "low";
+  if (labels.includes("medium")) return "medium";
+  return "high";
+}
+
+const trackViews = Object.fromEntries(
+  TRACKS.map((track) => {
+    const artifact = marketEnvironment.tracks?.[track] ?? {};
+    const definitions = marketEnvironment.definitions?.[track] ?? { environments: [], directions: [] };
+    const environmentDefinitions = new Map(
+      (definitions.environments ?? []).map((definition: any) => [definition.key, definition])
+    );
+    const directionDefinitions = new Map(
+      (definitions.directions ?? []).map((definition: any) => [definition.key, definition])
+    );
+
+    const environments = (artifact.environments ?? []).map((environment: any) => {
+      const definition: any = environmentDefinitions.get(environment.key) ?? environment;
+      const comparison = environment.comparison ?? {};
+      return {
+        ...environment,
+        ...definition,
+        rawCount: Number(environment.count ?? 0),
+        sharedCount: Number(comparison.round_count ?? 0),
+        eligibleModelCount: Number(comparison.eligible_model_count ?? 0),
+        confidence: comparison.confidence ?? "low",
+        stability: comparison.leave_one_out_stability,
+        leaderMargin: comparison.leader_margin,
+        leaderCiLow: comparison.leader_ci_95_low,
+        leaderCiHigh: comparison.leader_ci_95_high,
+        sharedSp500Return: comparison.model_rows?.[0]?.average_sp500_return,
+        modelRows: (comparison.model_rows ?? []).map(enrichModel)
+      };
+    });
+
+    const directions = (artifact.directions ?? []).map((direction: any) => {
+      const definition: any = directionDefinitions.get(direction.key) ?? direction;
+      const comparison = direction.comparison ?? {};
+      const modelRows = (comparison.model_rows ?? []).map(enrichModel);
+      return {
+        ...direction,
+        ...definition,
+        rawCount: Number(direction.count ?? 0),
+        sharedCount: Number(comparison.round_count ?? 0),
+        eligibleModelCount: Number(comparison.eligible_model_count ?? 0),
+        confidence: comparison.confidence ?? "low",
+        stability: comparison.leave_one_out_stability,
+        leaderMargin: comparison.leader_margin,
+        leaderCiLow: comparison.leader_ci_95_low,
+        leaderCiHigh: comparison.leader_ci_95_high,
+        averageSp500Return: modelRows[0]?.average_sp500_return,
+        modelRows,
+        best: modelRows[0]
+      };
+    });
+
+    const leaderboard = (artifact.regime_leaderboard ?? []).map((row: any) => {
+      const equalEnvironmentAlpha = finiteNumber(row.average_return) && finiteNumber(row.average_sp500_return)
+        ? row.average_return - row.average_sp500_return
+        : row.average_alpha;
+      return {
+        ...enrichModel(row),
+        averageReturn: row.average_return,
+        averageSp500Return: row.average_sp500_return,
+        averageAlpha: equalEnvironmentAlpha,
+        balancedScore: row.regime_balanced_score,
+        sp500Score: row.sp500_regime_score,
+        allRoundScore: row.all_round_score,
+        hitRate: row.hit_rate,
+        testsIncluded: Number(row.tests_included ?? 0),
+        covered: Number(row.ready_environments_covered ?? 0),
+        required: Number(row.ready_environments_required ?? 0),
+        comparable: row.status === "ready" && Number(row.ready_environments_covered ?? 0) === Number(row.ready_environments_required ?? 0),
+        environmentScores: row.environment_scores ?? []
+      };
+    });
+    const comparableRows = leaderboard.filter((row: any) => row.comparable);
+    const limitedRows = leaderboard.filter((row: any) => !row.comparable);
+    const leader = comparableRows[0];
+
+    const returnChartRows: any[] = comparableRows.map((row: any, index: number) => ({
+      key: row.modelId,
+      label: row.label,
+      value: row.averageReturn,
+      kind: "model",
+      provider: row.provider,
+      logoSrc: row.logoSrc,
+      href: `/models/${row.modelId}`,
+      rank: index + 1,
+      meta: `${row.providerName} · ${row.covered}/${row.required} environments`,
+      secondaryLabel: `${pointText(row.averageAlpha, true)} vs S&P`
+    }));
+    if (finiteNumber(leader?.averageSp500Return)) {
+      returnChartRows.push({
+        key: `${track}-sp500-return`,
+        label: "S&P 500",
+        value: leader.averageSp500Return,
+        kind: "benchmark",
+        provider: "benchmark",
+        logoSrc: undefined,
+        href: undefined,
+        rank: undefined,
+        meta: "Market reference",
+        secondaryLabel: "Reference return"
+      });
+    }
+
+    const scoreChartRows: any[] = comparableRows.map((row: any, index: number) => ({
+      key: row.modelId,
+      label: row.label,
+      value: row.balancedScore,
+      kind: "model",
+      provider: row.provider,
+      logoSrc: row.logoSrc,
+      href: `/models/${row.modelId}`,
+      rank: index + 1,
+      meta: row.providerName,
+      secondaryLabel: `Rank ${index + 1} · ${signedPctText(row.averageReturn)} return`
+    }));
+    if (finiteNumber(leader?.sp500Score)) {
+      scoreChartRows.push({
+        key: `${track}-sp500-score`,
+        label: "S&P 500",
+        value: leader.sp500Score,
+        kind: "benchmark",
+        provider: "benchmark",
+        logoSrc: undefined,
+        href: undefined,
+        rank: undefined,
+        meta: "Market reference",
+        secondaryLabel: "Same environment weights"
+      });
+    }
+    scoreChartRows.push({
+      key: `${track}-max-score`,
+      label: "Max possible",
+      value: 100,
+      kind: "reference",
+      provider: "reference",
+      logoSrc: undefined,
+      href: undefined,
+      rank: undefined,
+      meta: "Hindsight ceiling",
+      secondaryLabel: "Not an investable portfolio"
+    });
+
+    const directionChartRows = Object.fromEntries(
+      directions.map((direction: any) => {
+        const rows: any[] = direction.modelRows.map((row: any, index: number) => ({
+          key: row.modelId,
+          label: row.label,
+          value: row.average_return,
+          kind: "model",
+          provider: row.provider,
+          logoSrc: row.logoSrc,
+          href: `/models/${row.modelId}`,
+          rank: index + 1,
+          meta: `${row.providerName} · ${row.tests} tests`,
+          secondaryLabel: `${pointText(row.average_alpha, true)} vs S&P`
+        }));
+        if (finiteNumber(direction.averageSp500Return)) {
+          rows.push({
+            key: `${track}-${direction.key}-sp500`,
+            label: "S&P 500",
+            value: direction.averageSp500Return,
+            kind: "benchmark",
+            provider: "benchmark",
+            logoSrc: undefined,
+            href: undefined,
+            rank: undefined,
+            meta: `${direction.sharedCount} shared rounds`,
+            secondaryLabel: "Reference return"
+          });
+        }
+        return [direction.key, rows];
+      })
+    );
+    const directionDomain = buildBenchmarkBarDomain(
+      ["down", "up"].flatMap((key) => (directionChartRows[key] ?? []).map((row: any) => row.value)),
+      { symmetric: true, targetTicks: 4 }
+    );
+
+    const environmentChartRows = Object.fromEntries(
+      environments.map((environment: any) => {
+        const rows: any[] = environment.modelRows.map((row: any, index: number) => ({
+          key: row.modelId,
+          label: row.label,
+          value: row.average_return,
+          kind: "model",
+          provider: row.provider,
+          logoSrc: row.logoSrc,
+          href: `/models/${row.modelId}`,
+          rank: index + 1,
+          meta: `${row.providerName} · ${row.tests} tests`,
+          secondaryLabel: `${pointText(row.average_alpha, true)} vs S&P`
+        }));
+        if (finiteNumber(environment.sharedSp500Return)) {
+          rows.push({
+            key: `${track}-${environment.key}-sp500`,
+            label: "S&P 500",
+            value: environment.sharedSp500Return,
+            kind: "benchmark",
+            provider: "benchmark",
+            logoSrc: undefined,
+            href: undefined,
+            rank: undefined,
+            meta: `${environment.sharedCount} shared rounds`,
+            secondaryLabel: "Reference return"
+          });
+        }
+        return [environment.key, rows];
+      })
+    );
+    const environmentDomain = buildBenchmarkBarDomain(
+      Object.values(environmentChartRows).flatMap((rows: any) => rows.map((row: any) => row.value)),
+      { symmetric: true, targetTicks: 4 }
+    );
+
+    const matrixRows = leaderboard.map((row: any) => ({
+      ...row,
+      cells: environments.map((environment: any) => {
+        const modelRow = environment.modelRows.find((candidate: any) => candidate.modelId === row.modelId);
+        return {
+          key: environment.key,
+          label: environment.label,
+          returnValue: modelRow?.average_return,
+          alpha: modelRow?.average_alpha,
+          tests: Number(modelRow?.tests ?? 0)
+        };
+      })
+    }));
+
+    const sample = artifact.balanced_sample ?? {};
+    const balancedLeaderboard = (sample.leaderboard ?? []).map((row: any) => ({
+      ...enrichModel(row),
+      score: row.score,
+      averageAlpha: row.average_alpha,
+      hitRate: row.hit_rate,
+      testsIncluded: Number(row.tests_included ?? 0),
+      testsRequired: Number(row.tests_required ?? 0),
+      comparable: row.status === "ready" && Number(row.tests_included ?? 0) === Number(row.tests_required ?? 0)
+    }));
+    const balancedSample = {
+      status: sample.status === "ready" ? "ready" : "forming",
+      sampleSize: Number(sample.sample_size ?? 0),
+      selectedRoundIds: sample.selected_round_ids ?? [],
+      categories: (sample.categories ?? []).map((category: any) => ({
+        ...category,
+        count: Number(category.count ?? 0),
+        missing: Number(category.missing ?? 0),
+        selectedCount: Number(category.selected_count ?? 0)
+      })),
+      comparableRows: balancedLeaderboard.filter((row: any) => row.comparable),
+      limitedRows: balancedLeaderboard.filter((row: any) => !row.comparable)
+    };
+
+    const rounds = (artifact.rounds ?? []).map((round: any) => {
+      const definition: any = environmentDefinitions.get(round.environment_key) ?? {};
+      return {
+        ...round,
+        track,
+        environmentLabel: definition.label ?? round.environment_key,
+        environmentKey: round.environment_key
+      };
+    });
+
+    return [
+      track,
+      {
+        track,
+        label: trackLabel(track),
+        artifact,
+        environments,
+        directions,
+        leaderboard,
+        comparableRows,
+        limitedRows,
+        leader,
+        returnChartRows,
+        returnChartDomain: buildBenchmarkBarDomain(returnChartRows.map((row: any) => row.value), { targetTicks: 4 }),
+        scoreChartRows,
+        scoreChartDomain: buildBenchmarkBarDomain(scoreChartRows.map((row: any) => row.value), { targetTicks: 4 }),
+        directionChartRows,
+        directionDomain,
+        environmentChartRows,
+        environmentDomain,
+        matrixRows,
+        balancedSample,
+        rounds,
+        signals: (artifact.signals ?? []).filter((signal: any) => signal.kind !== "synthesis"),
+        readyEnvironmentCount: environments.filter((environment: any) => environment.status === "ready").length,
+        resolvedRoundCount: rounds.length,
+        evidence: evidenceFor(environments)
+      }
+    ];
+  })
+) as Record<BenchmarkTrack, any>;
+
+const thresholdCards: Array<{
+  key: RegimeKey;
+  label: string;
+  weeklyRange: string;
+  monthlyRange: string;
+  weeklyCount: number;
+  monthlyCount: number;
+}> = (marketEnvironment.definitions?.weekly?.environments ?? []).map((weekly: any) => {
+  const monthly = (marketEnvironment.definitions?.monthly?.environments ?? []).find(
+    (definition: any) => definition.key === weekly.key
+  );
+  const weeklyEnvironment = trackViews.weekly.environments.find((environment: any) => environment.key === weekly.key);
+  const monthlyEnvironment = trackViews.monthly.environments.find((environment: any) => environment.key === weekly.key);
+  return {
+    key: weekly.key as RegimeKey,
+    label: weekly.label,
+    weeklyRange: weekly.range_label.replace("S&P ", ""),
+    monthlyRange: monthly?.range_label.replace("S&P ", "") ?? "n/a",
+    weeklyCount: weeklyEnvironment?.rawCount ?? 0,
+    monthlyCount: monthlyEnvironment?.rawCount ?? 0
+  };
+});
+
+const auditRows = TRACKS.flatMap((track) => trackViews[track].rounds).sort(
+  (left: any, right: any) =>
+    String(right.exit_date ?? "").localeCompare(String(left.exit_date ?? "")) ||
+    String(right.round_id).localeCompare(String(left.round_id))
+);
+
+function rankChange(view: any, modelId: string, strictRank: number): string {
+  const mainRank = view.comparableRows.findIndex((row: any) => row.modelId === modelId) + 1;
+  if (!mainRank) return "Not comparable";
+  if (mainRank === strictRank) return "No change";
+  return strictRank < mainRank ? `Up ${mainRank - strictRank}` : `Down ${strictRank - mainRank}`;
+}
+
+function insightView(signal: any) {
+  const status = signal.maturity === "ready" ? "Ready" : "Building history";
+  if (signal.kind === "direction_leader") {
+    const model = signal.model ? enrichModel(signal.model) : undefined;
+    const direction = String(signal.direction ?? "market");
+    if (!model) {
+      return {
+        tone: direction,
+        status,
+        eyebrow: `${trackLabel(signal.track)} ${direction}`,
+        title: `${direction.charAt(0).toUpperCase()}${direction.slice(1)}-market evidence is still building.`,
+        metric: "n/a",
+        metricLabel: "model return",
+        detail: `${signal.environment_round_count ?? 0} raw round${Number(signal.environment_round_count ?? 0) === 1 ? " is" : "s are"} available, but no common model cohort is large enough yet.`,
+        stats: [
+          ["Shared rounds", String(signal.comparison_round_count ?? 0)],
+          ["Raw rounds", String(signal.environment_round_count ?? 0)],
+          ["Range", signal.range_label ?? "n/a"]
+        ]
+      };
+    }
+    const beatsBenchmark = finiteNumber(model.average_alpha) && model.average_alpha > 0;
     return {
-      key: signal.key,
-      eyebrow: `${trackLabel(signal.track)} ${copy.noun}`,
-      title: `No ${trackLabel(signal.track).toLowerCase()} ${copy.noun} leader yet.`,
-      tone: copy.tone,
+      tone: direction,
       status,
-      metricValue: "n/a",
-      metricLabel: "avg model return",
-      detail: "No shared round cohort is large enough for a fair model comparison yet.",
+      eyebrow: `${trackLabel(signal.track)} ${direction}`,
+      title: beatsBenchmark
+        ? `${model.label} beat the S&P 500 in ${direction} environments.`
+        : `The strongest model still trailed the S&P 500 in ${direction} environments.`,
+      metric: signedPctText(model.average_return),
+      metricLabel: "model return",
+      detail: `${model.label} ranked first among the compared models. Its benchmark difference was ${pointText(model.average_alpha, true)}.`,
       stats: [
-        { label: "Rounds", value: pluralizeRound(Number(signal.environment_round_count ?? 0)) },
-        { label: "Range", value: signal.range_label }
+        ["S&P 500", signedPctText(signal.average_sp500_return)],
+        ["Shared / raw", `${signal.comparison_round_count}/${signal.environment_round_count}`],
+        [
+          "Stability",
+          stabilityText(signal.comparison?.leave_one_out_stability)
+        ]
       ]
     };
   }
-  return {
-    key: signal.key,
-    eyebrow: `${trackLabel(signal.track)} ${copy.noun}`,
-    title: `${model.model_label ?? modelLabel(model.model_id)} leads when the S&P 500 is ${copy.adjective}.`,
-    tone: copy.tone,
-    status,
-    model: modelCard(model),
-    metricValue: signedPctText(model.average_return),
-    metricLabel: "avg model return",
-    detail:
-      status === "Ready"
-        ? `Based on ${pluralizeRound(signal.comparison_round_count)} shared by ${signal.eligible_model_count} eligible models. ${String(signal.confidence).replace(/^./, (value: string) => value.toUpperCase())} confidence.`
-        : `Current signal only: ${signal.comparison_round_count}/${signal.environment_round_count} rounds form a shared cohort.`,
-    stats: [
-      { label: "S&P avg", value: signedPctText(signal.average_sp500_return) },
-      { label: "Leader margin", value: signedPctText(signal.comparison?.leader_margin) },
-      {
-        label: "Stability",
-        value: finiteNumber(signal.comparison?.leave_one_out_stability)
-          ? `${(signal.comparison.leave_one_out_stability * 100).toFixed(0)}%`
-          : "n/a"
-      }
-    ]
-  };
-}
 
-function consistencyInsightCard(signal: any): MarketInsightCard {
-  const candidate = signal.candidate;
-  const status = signal.maturity === "ready" ? "Ready" : "Forming";
-  if (!candidate?.model) {
+  if (signal.kind === "consistency") {
+    const candidate = signal.candidate;
+    if (!candidate?.model) {
+      return {
+        tone: "steady",
+        status,
+        eyebrow: `${trackLabel(signal.track)} consistency`,
+        title: "Cross-environment consistency is still building.",
+        metric: "n/a",
+        metricLabel: "average return",
+        detail: "At least two comparable directions are needed before this pattern is reported.",
+        stats: []
+      };
+    }
+    const model = enrichModel(candidate.model);
     return {
-      key: signal.key,
-      eyebrow: `${trackLabel(signal.track)} consistency`,
-      title: "Consistency insight is still forming.",
       tone: "steady",
       status,
-      metricValue: "n/a",
-      metricLabel: "avg model return",
-      detail: "At least two tested S&P 500 environments are needed before comparing model consistency.",
-      stats: []
+      eyebrow: `${trackLabel(signal.track)} consistency`,
+      title: `${model.label} has the strongest score floor across tested directions.`,
+      metric: signedPctText(candidate.average_return),
+      metricLabel: "average return",
+      detail: `Its lowest CapitalBench Score is ${scoreText(candidate.floor_score)} across ${candidate.directions_covered} tested directions.`,
+      stats: [
+        ["S&P 500", signedPctText(candidate.average_sp500_return)],
+        ["Average score", scoreText(candidate.average_score)],
+        ["Directions", `${candidate.ready_directions}/${candidate.directions_covered}`]
+      ]
     };
   }
-  return {
-    key: signal.key,
-    eyebrow: `${trackLabel(signal.track)} consistency`,
-    title: `${candidate.model.model_label ?? modelLabel(candidate.model.model_id)} has the strongest score floor.`,
-    tone: "steady",
-    status,
-    model: modelCard(candidate.model),
-    metricValue: signedPctText(candidate.average_return),
-    metricLabel: "avg model return",
-    detail: `Lowest score across ${candidate.directions_covered} tested environments; average score ${scoreText(candidate.average_score)}.`,
-    stats: [
-      { label: "S&P avg", value: signedPctText(candidate.average_sp500_return) },
-      { label: "Score floor", value: scoreText(candidate.floor_score) },
-      { label: "Ready types", value: `${candidate.ready_directions}/${candidate.directions_covered}` }
-    ]
-  };
-}
 
-function splitInsightCard(signal: any): MarketInsightCard {
   const candidate = signal.candidate;
-  const status = signal.maturity === "ready" ? "Ready" : "Forming";
   if (!candidate?.model) {
     return {
-      key: signal.key,
-      eyebrow: `${trackLabel(signal.track)} up/down split`,
-      title: "Up/down split is still forming.",
       tone: "split",
       status,
-      metricValue: "n/a",
-      metricLabel: "avg return gap",
-      detail: "Both negative and positive S&P 500 samples are needed before measuring directional split.",
+      eyebrow: `${trackLabel(signal.track)} sensitivity`,
+      title: "Up/down sensitivity is still building.",
+      metric: "n/a",
+      metricLabel: "return gap",
+      detail: "Comparable down and up samples are both required before this pattern is reported.",
       stats: []
     };
   }
+  const model = enrichModel(candidate.model);
   return {
-    key: signal.key,
-    eyebrow: `${trackLabel(signal.track)} up/down split`,
-    title: `${candidate.model.model_label ?? modelLabel(candidate.model.model_id)} changes most between up and down environments.`,
     tone: "split",
     status,
-    model: modelCard(candidate.model),
-    metricValue: `${(Math.abs(candidate.return_gap) * 100).toFixed(1)} pts`,
-    metricLabel: "avg return gap",
-    detail: `${scoreText(candidate.up_score)} in up environments versus ${scoreText(candidate.down_score)} in down environments.`,
+    eyebrow: `${trackLabel(signal.track)} sensitivity`,
+    title: `${model.label} changes most between up and down environments.`,
+    metric: pointText(Math.abs(candidate.return_gap)),
+    metricLabel: "return gap",
+    detail: `Average return moves from ${signedPctText(candidate.down_return)} in down environments to ${signedPctText(candidate.up_return)} in up environments.`,
     stats: [
-      { label: "Down avg", value: signedPctText(candidate.down_return) },
-      { label: "Up avg", value: signedPctText(candidate.up_return) },
-      { label: "Model tests", value: `${candidate.down_tests}/${candidate.up_tests}` }
+      ["Down score", scoreText(candidate.down_score)],
+      ["Up score", scoreText(candidate.up_score)],
+      ["Tests", `${candidate.down_tests}/${candidate.up_tests}`]
     ]
   };
 }
 
-function insightCard(signal: any): MarketInsightCard | null {
-  if (signal.kind === "direction_leader") return directionInsightCard(signal);
-  if (signal.kind === "consistency") return consistencyInsightCard(signal);
-  if (signal.kind === "split") return splitInsightCard(signal);
-  return null;
-}
-
-const marketInsightTracks = regimeTrackOrder.map((track) => ({
-  track,
-  label: trackLabel(track),
-  cards: (trackArtifact(track).signals ?? []).map(insightCard).filter(Boolean) as MarketInsightCard[]
-}));
-
-const sampleCategoryColors: Record<SampleCategoryKey, string> = {
-  down: "#b45335",
-  flat: "#64748b",
-  up: "#006b5f"
-};
-
-function chronologicalRounds(track: BenchmarkTrack): RegimeRound[] {
-  return regimeRounds
-    .filter((round) => round.track === track)
-    .slice()
-    .sort((left, right) => roundSortKey(left.round).localeCompare(roundSortKey(right.round)));
-}
-
-function roundChartLabel(round: RegimeRound): string {
-  return dateOnly(round.round.exit_date) || round.round.round_id;
-}
-
-function buildBalancedProgressChart(track: BenchmarkTrack): LineChart {
-  const rounds = chronologicalRounds(track);
-  const counts = new Map<SampleCategoryKey, number>(sampleCategoryDefinitions[track].map((category) => [category.key, 0]));
-  const pointsByCategory = new Map<SampleCategoryKey, RawChartPoint[]>(
-    sampleCategoryDefinitions[track].map((category) => [category.key, []])
-  );
-
-  for (const round of rounds) {
-    counts.set(round.directionKey, (counts.get(round.directionKey) ?? 0) + 1);
-    const label = roundChartLabel(round);
-    for (const definition of sampleCategoryDefinitions[track]) {
-      pointsByCategory.get(definition.key)?.push({
-        label,
-        value: counts.get(definition.key) ?? 0
-      });
-    }
-  }
-
-  return buildLineChart({
-    id: `${track}-balanced-sample-progress`,
-    title: `${trackLabel(track)} sample balance progress`,
-    description: "Shows how many down, flat, and up rounds are available.",
-    format: "count",
-    floorZero: true,
-    threshold: {
-      value: BALANCED_SAMPLE_THRESHOLD,
-      label: `${BALANCED_SAMPLE_THRESHOLD} needed`
-    },
-    series: sampleCategoryDefinitions[track].map((category) => ({
-      key: category.key,
-      label: category.label,
-      color: sampleCategoryColors[category.key],
-      points: pointsByCategory.get(category.key) ?? []
-    }))
-  });
-}
-
-const balancedProgressCharts = {
-  weekly: buildBalancedProgressChart("weekly"),
-  monthly: buildBalancedProgressChart("monthly")
-};
-
-const trackSummaries = regimeTrackOrder.map((track) => {
-  const coverage = coverageByTrack[track];
-  const readyCount = coverage.filter((item) => item.status === "Ready").length;
-  const totalRounds = regimeRounds.filter((round) => round.track === track).length;
-  const confidence = trackConfidence(track);
-  return {
-    track,
-    label: trackLabel(track),
-    readyCount,
-    totalRounds,
-    confidence
-  };
-});
-
-const weeklySummary = trackSummaries.find((item) => item.track === "weekly");
-const monthlySummary = trackSummaries.find((item) => item.track === "monthly");
-const regimeIntroCards = regimeDefinitions.weekly.map((weeklyDefinition) => {
-  const monthlyDefinition = regimeDefinitions.monthly.find((definition) => definition.key === weeklyDefinition.key);
-  const weeklyEnvironment = environmentPerformance.weekly.find((environment) => environment.key === weeklyDefinition.key);
-  const monthlyEnvironment = environmentPerformance.monthly.find((environment) => environment.key === weeklyDefinition.key);
-
-  return {
-    ...weeklyDefinition,
-    weeklyRange: weeklyDefinition.rangeLabel.replace("S&P ", ""),
-    monthlyRange: monthlyDefinition?.rangeLabel.replace("S&P ", "") ?? "n/a",
-    weeklyCount: weeklyEnvironment?.count ?? 0,
-    monthlyCount: monthlyEnvironment?.count ?? 0
-  };
-});
-
-const auditRows = regimeRounds
-  .slice()
-  .sort(
-    (left, right) =>
-      (right.round.exit_date ?? "").localeCompare(left.round.exit_date ?? "") ||
-      right.round.round_id.localeCompare(left.round.round_id)
-  );
-const visibleAuditRows = auditRows.slice(0, 10);
-const hiddenAuditRows = auditRows.slice(10);
+const dataAsOf = humanDate(marketEnvironment.data_as_of);
+const benchmarkVersion = String(marketEnvironment.version ?? "market_regime_v1").split("_").at(-1)?.toUpperCase() ?? "V1";
+const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").split("_").at(-1)?.toUpperCase() ?? "V1";
 ---
 
 <BaseLayout
-  title="Market Environment AI Benchmark"
-  description="CapitalBench model rankings grouped by S&P 500 movement, showing which models perform best and worst in sharp down, down, flat, up, and sharp up environments."
+  title="Market Regime AI Benchmark"
+  description="The CapitalBench Market Regime Benchmark ranks AI models across falling, flat, and rising S&P 500 environments using shared samples, equal weighting, and auditable results."
 >
-  <section class="section market-regime-page">
-    <section class="regime-compact-hero" aria-labelledby="market-regime-title">
-      <div class="regime-compact-copy">
-        <span class="panel-kicker">Market environment benchmark</span>
-        <h1 id="market-regime-title">Which models perform best in different S&amp;P 500 environments?</h1>
+  <section class="section market-regime-page regime-dashboard">
+    <header class="mrb-hero" aria-labelledby="market-regime-title">
+      <div class="mrb-hero-copy">
+        <span class="panel-kicker">CapitalBench benchmark</span>
+        <h1 id="market-regime-title">Market Regime Benchmark</h1>
         <p>
-          We group each completed round by how the S&amp;P 500 moved, then compare model returns inside each environment.
+          See how AI model portfolios perform when markets fall, stall, and rise. The benchmark ranks comparable
+          models on equally weighted market environments and keeps the S&amp;P 500 visible as the investable reference.
         </p>
+        <div class="mrb-hero-meta" aria-label="Benchmark metadata">
+          <span>Data through <strong>{dataAsOf}</strong></span>
+          <span title={marketEnvironment.version}>Benchmark <strong>{benchmarkVersion}</strong></span>
+          <span title={marketEnvironment.engine_version}>Engine <strong>{engineVersion}</strong></span>
+        </div>
       </div>
-      <div class="regime-coverage-strip" aria-label="Benchmark coverage">
-        <article>
-          <span>Weekly</span>
-          <strong>{weeklySummary?.readyCount ?? 0}<small>/5 environments</small></strong>
-          <em>{weeklySummary?.totalRounds ?? 0} resolved rounds · {trackConfidence("weekly").label}</em>
-        </article>
-        <article>
-          <span>Monthly</span>
-          <strong>{monthlySummary?.readyCount ?? 0}<small>/5 environments</small></strong>
-          <em>{monthlySummary?.totalRounds ?? 0} resolved rounds · {trackConfidence("monthly").label}</em>
-        </article>
+      <div class="mrb-hero-question">
+        <span>Benchmark specification</span>
+        <div><small>Primary rank</small><strong>Equal-environment return</strong></div>
+        <div><small>Market reference</small><strong>S&amp;P 500</strong></div>
+        <div><small>Eligibility</small><strong>Complete shared history</strong></div>
       </div>
-    </section>
+    </header>
 
-    <div class="regime-environment-key" aria-label="S&P 500 environment definitions">
-      {regimeIntroCards.map((regime) => (
-        <article class:list={["regime-key-card", `regime-key-card-${regime.key}`]}>
-          <svg viewBox="0 0 64 64" aria-hidden="true" class="regime-key-icon">
-            <path class="regime-key-baseline" d="M8 42 H56" />
-            {
-              regime.key === "sharp_down" ? (
-                <path class="regime-key-line" d="M9 14 L22 22 L34 40 L55 54" />
-              ) : regime.key === "down" ? (
-                <path class="regime-key-line" d="M9 22 L23 27 L38 36 L55 44" />
-              ) : regime.key === "flat" ? (
-                <path class="regime-key-line" d="M9 34 L22 33 L38 35 L55 34" />
-              ) : regime.key === "up" ? (
-                <path class="regime-key-line" d="M9 44 L24 38 L39 29 L55 21" />
-              ) : (
-                <path class="regime-key-line" d="M9 54 L23 45 L37 25 L55 12" />
-              )
-            }
-            <circle class="regime-key-point" cx="55" cy={regime.key === "sharp_down" ? "54" : regime.key === "down" ? "44" : regime.key === "flat" ? "34" : regime.key === "up" ? "21" : "12"} r="4" />
-          </svg>
-          <strong>{regime.label}</strong>
-          <div class="regime-key-ranges">
-            <span>W {regime.weeklyRange}</span>
-            <span>M {regime.monthlyRange}</span>
-          </div>
-          <div class="regime-key-counts">
-            <span>{regime.weeklyCount} weekly</span>
-            <span>{regime.monthlyCount} monthly</span>
-          </div>
-        </article>
-      ))}
+    <div class="mrb-context-bar" data-mrb-context-bar>
+      <div class="mrb-track-switch" role="group" aria-label="Choose benchmark horizon">
+        {TRACKS.map((track) => (
+          <button
+            type="button"
+            data-mrb-track={track}
+            aria-pressed={track === DEFAULT_TRACK ? "true" : "false"}
+            class:list={[track === DEFAULT_TRACK && "is-active"]}
+          >
+            {trackLabel(track)}
+          </button>
+        ))}
+      </div>
+      <nav class="mrb-section-links" aria-label="Benchmark sections">
+        <a href="#equal-environment-ranking">Leaderboard</a>
+        <a href="#direction-performance">Down / up</a>
+        <a href="#environment-explorer">Environments</a>
+        <a href="#performance-patterns">Insights</a>
+        <a href="#benchmark-evidence">Method</a>
+      </nav>
+      <span class="sr-only" aria-live="polite" data-mrb-track-announcement>Monthly results selected</span>
     </div>
 
-    <section class="regime-section environment-overview-section" aria-labelledby="environment-overview-title">
-      <div class="regime-section-head">
-        <span class="panel-kicker">Results</span>
-        <h2 id="environment-overview-title">Where do models win or lose?</h2>
-        <p>
-          Average return appears first. Best and worst are marked inside each environment.
-        </p>
-        <p class="environment-reference-note">
-          S&amp;P 500 is shown as the market reference in each bar view.
-        </p>
+    <section class="mrb-section mrb-answer-section" aria-labelledby="benchmark-answer-title">
+      <div class="mrb-section-head">
+        <span class="panel-kicker">Current result</span>
+        <h2 id="benchmark-answer-title">The leader, benchmark outcome, and evidence at a glance</h2>
       </div>
-
-      <div
-        class="market-regime-track-tab-shell"
-        data-market-regime-tabs
-        data-active-track={defaultRegimeTrack}
-        aria-label="Monthly and weekly environment results"
-      >
-        <div class="track-scorecard-tabs" role="tablist" aria-label="Choose environment result horizon">
-          {regimeTrackOrder.map((track) => {
-            const active = track === defaultRegimeTrack;
-            const tabId = `environment-overview-tab-${track}`;
-            const panelId = `environment-overview-panel-${track}`;
-            return (
-              <button
-                id={tabId}
-                class:list={["track-scorecard-tab", active && "is-active"]}
-                type="button"
-                role="tab"
-                aria-selected={active ? "true" : "false"}
-                aria-controls={panelId}
-                tabindex={active ? "0" : "-1"}
-                data-market-regime-tab={track}
-              >
-                <strong>{trackLabel(track)}</strong>
-                <span>{trackConfidence(track).label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div class="track-scorecard-tab-panels market-regime-tab-panels">
-          {regimeTrackOrder.map((track) => {
-            const active = track === defaultRegimeTrack;
-            const confidence = trackConfidence(track);
-            const environments = environmentPerformance[track];
-            const matrixRows = environmentMatrices[track];
-            const tabId = `environment-overview-tab-${track}`;
-            const panelId = `environment-overview-panel-${track}`;
-            return (
-              <div
-                id={panelId}
-                class="track-scorecard-tab-panel market-regime-tab-panel"
-                role="tabpanel"
-                aria-labelledby={tabId}
-                data-market-regime-panel={track}
-                hidden={!active}
-              >
-                <div class="environment-track-panel">
-                  <div class="regime-track-head">
-                    <div>
-                      <span class="panel-kicker">{trackLabel(track)} environments</span>
-                      <h3>{trackLabel(track)} model returns by environment</h3>
-                      <p>Average return is shown first. Longer bars mean better performance within each environment.</p>
-                    </div>
-                    <strong class:list={["regime-confidence", `regime-confidence-${confidence.className}`]}>
-                      {confidence.label}
-                    </strong>
-                  </div>
-
-                  <div class="environment-performance-matrix" aria-label={`${trackLabel(track)} model return matrix`}>
-                    <div class="environment-matrix-scroll">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th scope="col">Model</th>
-                            {environments.map((environment) => (
-                              <th scope="col">{environment.label}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr class="environment-matrix-sp500-row">
-                            <th scope="row">
-                              <div class="environment-matrix-model environment-matrix-reference">
-                                <span class="environment-market-avatar">S&amp;P</span>
-                                <span>
-                                  <strong>S&amp;P 500</strong>
-                                  <em>Market reference</em>
-                                </span>
-                              </div>
-                            </th>
-                            {environments.map((environment) => {
-                              const value = environment.averageSp500Return;
-                              return (
-                                <td
-                                  class:list={[
-                                    "environment-matrix-cell",
-                                    "environment-matrix-cell-reference",
-                                    `environment-matrix-cell-${valueTone(value)}`
-                                  ]}
-                                  data-label={environment.label}
-                                >
-                                  {finiteNumber(value) ? (
-                                    <>
-                                      <span class="environment-matrix-pill">{signedPctText(value)}</span>
-                                      <span
-                                        class="environment-matrix-bar environment-matrix-reference-bar"
-                                        style={`--matrix-bar-width: ${environmentReturnBarWidth(environment, value)}%;`}
-                                        aria-hidden="true"
-                                      >
-                                        <i></i>
-                                      </span>
-                                    </>
-                                  ) : (
-                                    <span class="environment-matrix-empty">n/a</span>
-                                  )}
-                                </td>
-                              );
-                            })}
-                          </tr>
-                          {matrixRows.map((row) => (
-                            <tr>
-                              <th scope="row">
-                                <div class="environment-matrix-model">
-                                  {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
-                                  <span>
-                                    <strong>{row.label}</strong>
-                                    <em>{signedPctText(row.averageReturn)} avg</em>
-                                  </span>
-                                </div>
-                              </th>
-                              {row.cells.map((cell) => (
-                                <td
-                                  class:list={[
-                                    "environment-matrix-cell",
-                                    `environment-matrix-cell-${cell.key}`,
-                                    `environment-matrix-cell-${valueTone(cell.value)}`
-                                  ]}
-                                  data-label={cell.label}
-                                >
-                                  {finiteNumber(cell.value) ? (
-                                    <>
-                                      <span class="environment-matrix-pill">{signedPctText(cell.value)}</span>
-                                      <span
-                                        class="environment-matrix-bar"
-                                        style={`--matrix-bar-width: ${cell.width}%;`}
-                                        aria-hidden="true"
-                                      >
-                                        <i></i>
-                                      </span>
-                                    </>
-                                  ) : (
-                                    <span class="environment-matrix-empty">n/a</span>
-                                  )}
-                                </td>
-                              ))}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  <div class="environment-card-grid">
-                    {environments.map((environment) => (
-                      <article class:list={["environment-card", `environment-card-${environment.key}`]}>
-                        <header>
-                          <span class:list={["regime-status", `regime-status-${statusClass(environment.status)}`]}>
-                            {statusLabel(environment.status)}
-                          </span>
-                          <strong>{environment.label}</strong>
-                          <em>{environment.rangeLabel}</em>
-                        </header>
-                        <div class="environment-count">
-                          <b>{environment.count}</b>
-                          <span>resolved round{environment.count === 1 ? "" : "s"}</span>
-                        </div>
-                        {finiteNumber(environment.averageSp500Return) && (
-                          <div
-                            class:list={[
-                              "environment-market-reference-row",
-                              `environment-market-reference-row-${valueTone(environment.averageSp500Return)}`
-                            ]}
-                            style={`--environment-bar-width: ${environmentReturnBarWidth(environment, environment.averageSp500Return)}%;`}
-                          >
-                            <span class="environment-market-avatar">S&amp;P</span>
-                            <div class="environment-model-copy">
-                              <strong>S&amp;P 500</strong>
-                              <em>Market reference</em>
-                            </div>
-                            <b class:list={["return-value", `return-value-${valueTone(environment.averageSp500Return)}`]}>
-                              {signedPctText(environment.averageSp500Return)}
-                            </b>
-                            <div class="environment-model-bar" aria-hidden="true">
-                              <span></span>
-                            </div>
-                          </div>
-                        )}
-                        {environment.modelRows.length ? (
-                          <ol class="environment-model-ranking" aria-label={`${environment.label} model average returns`}>
-                            {environment.modelRows.map((modelRow, index) => {
-                              const isBest = index === 0;
-                              const isWorst = index === environment.modelRows.length - 1 && environment.modelRows.length > 1;
-                              const tone = valueTone(modelRow.averageReturn);
-                              return (
-                                <li class:list={[
-                                  "environment-model-row",
-                                  `environment-model-row-${tone}`,
-                                  {
-                                    "environment-model-row-best": isBest,
-                                    "environment-model-row-worst": isWorst
-                                  }
-                                ]} style={`--environment-bar-width: ${environmentReturnBarWidth(environment, modelRow.averageReturn)}%;`}>
-                                  <span class="environment-rank">{index + 1}</span>
-                                  {modelRow.logoSrc && <img src={modelRow.logoSrc} alt="" loading="lazy" />}
-                                  <div class="environment-model-copy">
-                                    <strong>{modelRow.label}</strong>
-                                    <em>{isBest ? "Best" : isWorst ? "Worst" : `${modelRow.tests} tests`}</em>
-                                  </div>
-                                  <b class:list={["return-value", `return-value-${tone}`]}>
-                                    {signedPctText(modelRow.averageReturn)}
-                                  </b>
-                                  <div class="environment-model-bar" aria-hidden="true">
-                                    <span></span>
-                                  </div>
-                                </li>
-                              );
-                            })}
-                          </ol>
-                        ) : (
-                          <div class="environment-empty-ranking">No model returns yet.</div>
-                        )}
-                        <div class="environment-stats">
-                          <span>
-                            <b>{signedPctText(environment.averageSp500Return)}</b>
-                            <em>S&amp;P avg</em>
-                          </span>
-                          <span>
-                            <b>{scoreText(environment.best?.score)}</b>
-                            <em>best score</em>
-                          </span>
-                        </div>
-                      </article>
-                    ))}
+      {TRACKS.map((track) => {
+        const view = trackViews[track];
+        const leader = view.leader;
+        const alpha = leader?.averageAlpha;
+        const benchmarkVerdict = finiteNumber(alpha)
+          ? alpha > 0
+            ? "Beat the S&P 500"
+            : alpha < 0
+              ? "Trailed the S&P 500"
+              : "Matched the S&P 500"
+          : "Benchmark comparison unavailable";
+        return (
+          <div data-mrb-track-panel={track} hidden={track !== DEFAULT_TRACK}>
+            <div class="mrb-answer-grid">
+              <article class="mrb-answer-card mrb-answer-card-leader">
+                <span>Highest comparable return</span>
+                <div class="mrb-model-heading">
+                  {leader?.logoSrc && <img src={leader.logoSrc} alt="" />}
+                  <div>
+                    <h3>{leader?.label ?? "Still building"}</h3>
+                    <p>{leader?.providerName ?? "No common model history yet"}</p>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-
-    <section class="regime-section direction-summary-section" aria-labelledby="direction-summary-title">
-      <div class="regime-section-head">
-        <span class="panel-kicker">Down versus up</span>
-        <h2 id="direction-summary-title">Who leads when the S&amp;P 500 falls or rises?</h2>
-        <p>
-          These summaries combine sharp down with down, and sharp up with up. Flat rounds stay separate so the positive
-          and negative comparisons stay clean.
-        </p>
-      </div>
-
-      <div
-        class="market-regime-track-tab-shell"
-        data-market-regime-tabs
-        data-active-track={defaultRegimeTrack}
-        aria-label="Monthly and weekly directional summaries"
-      >
-        <div class="track-scorecard-tabs" role="tablist" aria-label="Choose down and up summary horizon">
-          {regimeTrackOrder.map((track) => {
-            const active = track === defaultRegimeTrack;
-            const tabId = `direction-summary-tab-${track}`;
-            const panelId = `direction-summary-panel-${track}`;
-            return (
-              <button
-                id={tabId}
-                class:list={["track-scorecard-tab", active && "is-active"]}
-                type="button"
-                role="tab"
-                aria-selected={active ? "true" : "false"}
-                aria-controls={panelId}
-                tabindex={active ? "0" : "-1"}
-                data-market-regime-tab={track}
-              >
-                <strong>{trackLabel(track)}</strong>
-                <span>{trackConfidence(track).label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div class="track-scorecard-tab-panels market-regime-tab-panels">
-          {regimeTrackOrder.map((track) => {
-            const active = track === defaultRegimeTrack;
-            const tabId = `direction-summary-tab-${track}`;
-            const panelId = `direction-summary-panel-${track}`;
-            return (
-              <div
-                id={panelId}
-                class="track-scorecard-tab-panel market-regime-tab-panel"
-                role="tabpanel"
-                aria-labelledby={tabId}
-                data-market-regime-panel={track}
-                hidden={!active}
-              >
-                <div class="direction-summary-grid direction-summary-track-grid">
-                  {directionalPerformance[track].map((direction) => (
-                    <article class:list={["direction-summary-card", `direction-summary-card-${direction.key}`]}>
-                      <header>
-                        <span class="panel-kicker">{trackLabel(track)}</span>
-                        <strong>{direction.label}</strong>
-                        <em>{direction.rangeLabel}</em>
-                      </header>
-                      <div class="direction-summary-main">
-                        <div>
-                          <span>Best</span>
-                          <strong>{direction.best?.label ?? "No model yet"}</strong>
-                          <em>{signedPctText(direction.best?.averageReturn)} avg return</em>
-                        </div>
-                        <div>
-                          <span>Worst</span>
-                          <strong>{direction.worst?.label ?? "No model yet"}</strong>
-                          <em>{signedPctText(direction.worst?.averageReturn)} avg return</em>
-                        </div>
-                      </div>
-                      <dl>
-                        <div>
-                          <dt>S&amp;P avg</dt>
-                          <dd>{signedPctText(direction.averageSp500Return)}</dd>
-                        </div>
-                        <div>
-                          <dt>Best alpha</dt>
-                          <dd>{signedPctText(direction.best?.averageAlpha)}</dd>
-                        </div>
-                        <div>
-                          <dt>Rounds</dt>
-                          <dd>{direction.rounds.length}</dd>
-                        </div>
-                      </dl>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-
-    <section class="regime-section" aria-labelledby="regime-leaderboard-title">
-      <div class="regime-section-head">
-        <span class="panel-kicker">Equal-environment leaderboard</span>
-        <h2 id="regime-leaderboard-title">Who performs best after environments are balanced?</h2>
-        <p>
-          The equal-environment score averages only environments that have at least {READY_ROUND_THRESHOLD} resolved rounds.
-          Average return is shown first, then benchmark score and S&amp;P 500 context. Hit rate is the share of included
-          model tests where the model beat the S&amp;P 500 return.
-        </p>
-      </div>
-
-      <div
-        class="market-regime-track-tab-shell"
-        data-market-regime-tabs
-        data-active-track={defaultRegimeTrack}
-        aria-label="Monthly and weekly equal-environment leaderboards"
-      >
-        <div class="track-scorecard-tabs" role="tablist" aria-label="Choose equal-environment leaderboard horizon">
-          {regimeTrackOrder.map((track) => {
-            const active = track === defaultRegimeTrack;
-            const tabId = `regime-leaderboard-tab-${track}`;
-            const panelId = `regime-leaderboard-panel-${track}`;
-            return (
-              <button
-                id={tabId}
-                class:list={["track-scorecard-tab", active && "is-active"]}
-                type="button"
-                role="tab"
-                aria-selected={active ? "true" : "false"}
-                aria-controls={panelId}
-                tabindex={active ? "0" : "-1"}
-                data-market-regime-tab={track}
-              >
-                <strong>{trackLabel(track)}</strong>
-                <span>{trackConfidence(track).label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div class="track-scorecard-tab-panels market-regime-tab-panels">
-          {regimeTrackOrder.map((track) => {
-            const active = track === defaultRegimeTrack;
-            const tabId = `regime-leaderboard-tab-${track}`;
-            const panelId = `regime-leaderboard-panel-${track}`;
-            return (
-              <div
-                id={panelId}
-                class="track-scorecard-tab-panel market-regime-tab-panel"
-                role="tabpanel"
-                aria-labelledby={tabId}
-                data-market-regime-panel={track}
-                hidden={!active}
-              >
-                <div class="regime-leaderboard-panel">
-            <div class="regime-leaderboard-head">
-              <div>
-                <span class="panel-kicker">{trackLabel(track)} benchmark</span>
-                  <h3>{trackLabel(track)} equal-environment scores</h3>
-              </div>
-              <span class:list={["regime-confidence", `regime-confidence-${trackConfidence(track).className}`]}>
-                {trackConfidence(track).label}
-              </span>
+                <strong class:list={["mrb-answer-value", `is-${valueTone(leader?.averageReturn)}`]}>
+                  {signedPctText(leader?.averageReturn)}
+                </strong>
+                <p>Equal-environment average across every environment that currently counts.</p>
+              </article>
+              <article class:list={["mrb-answer-card", finiteNumber(alpha) && alpha >= 0 ? "is-success" : "is-warning"]}>
+                <span>Benchmark check</span>
+                <h3>{benchmarkVerdict}</h3>
+                <strong class:list={["mrb-answer-value", `is-${valueTone(alpha)}`]}>{pointText(alpha, true)}</strong>
+                <p>
+                  S&amp;P 500 equal-environment return: <strong>{signedPctText(leader?.averageSp500Return)}</strong>
+                </p>
+              </article>
+              <article class="mrb-answer-card">
+                <span>Evidence</span>
+                <h3>{confidenceLabel(view.evidence)}</h3>
+                <strong class="mrb-answer-value">{view.readyEnvironmentCount}/5</strong>
+                <p>
+                  Environments count now, using {leader?.testsIncluded ?? 0} shared model-round observations from
+                  {view.resolvedRoundCount} resolved {track} rounds.
+                </p>
+              </article>
             </div>
-            {leaderboards[track].length ? (
-              <div class="regime-rank-list" aria-label={`${trackLabel(track)} equal-environment model rankings`}>
-                {leaderboards[track].map((row, index) => (
-                  <article class:list={["regime-rank-row", index === 0 && "regime-rank-row-leader"]}>
-                    <span class="environment-rank">{index + 1}</span>
-                    <div class="regime-rank-model">
-                      {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
-                      <div>
-                        <strong>{row.label}</strong>
-                        <em>{row.providerName}</em>
-                      </div>
-                    </div>
-                    <div class="regime-rank-primary">
-                      <span>Avg return</span>
-                      <strong class:list={["return-value", `return-value-${valueTone(row.averageReturn)}`]}>
-                        {signedPctText(row.averageReturn)}
-                      </strong>
-                      <em>{row.readyRegimesCovered}/{row.readyRegimesRequired} counting environments</em>
-                    </div>
-                    <div class="regime-rank-stat regime-rank-score">
-                      <span>Benchmark score</span>
-                      <strong>{scoreText(row.regimeBalancedScore)}</strong>
-                      <em>Higher is better</em>
-                    </div>
-                    <div class="regime-rank-stat regime-rank-context">
-                      <span>S&amp;P 500 context</span>
-                      <strong class:list={["return-value", `return-value-${valueTone(row.averageSp500Return)}`]}>
-                        {signedPctText(row.averageSp500Return)}
-                      </strong>
-                      <em>S&amp;P score {scoreText(row.sp500RegimeScore)}</em>
-                    </div>
-                    <div class="regime-rank-strip" aria-label={`${row.label} environment returns`}>
-                      {row.regimeScores.map((score) => (
-                        <span>
-                          <b>{score.label}</b>
-                          <em class:list={["return-value", `return-value-${valueTone(score.averageReturn)}`]}>
-                            {signedPctText(score.averageReturn)}
-                          </em>
-                        </span>
-                      ))}
-                    </div>
-                    <div class="regime-rank-meta">
-                      <span>
-                        <b>{scoreText(row.allRoundScore)}</b>
-                        <em>all-round score</em>
-                      </span>
-                      <span>
-                        <b>{signedPctText(row.averageAlpha)}</b>
-                        <em>avg alpha vs S&amp;P</em>
-                      </span>
-                      <span title="Share of included model tests where this model beat the S&P 500 return.">
-                        <b>{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</b>
-                        <em>hit rate</em>
-                      </span>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <div class="environment-empty-ranking">No environments count yet.</div>
+            {leader && finiteNumber(alpha) && alpha < 0 && (
+              <p class="mrb-benchmark-alert">
+                <strong>Important:</strong> {leader.label} ranks first among models with comparable history, but no
+                comparable model beat the S&amp;P 500 on the equal-environment average.
+              </p>
             )}
-            <div class="regime-rank-card-grid" aria-label={`${trackLabel(track)} top equal-environment models`}>
-              {leaderboards[track].slice(0, 3).map((row, index) => (
-                <article class:list={["regime-rank-card", index === 0 && "regime-rank-card-leader"]}>
-                  <span class="environment-rank">{index + 1}</span>
-                  {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
-                  <div>
-                    <strong>{row.label}</strong>
-                    <em>{row.providerName}</em>
-                  </div>
-                  <b class:list={["return-value", `return-value-${valueTone(row.averageReturn)}`]}>
-                    {signedPctText(row.averageReturn)}
-                  </b>
-                  <small>Score {scoreText(row.regimeBalancedScore)} · S&amp;P {signedPctText(row.averageSp500Return)}</small>
-                </article>
-              ))}
+          </div>
+        );
+      })}
+    </section>
+
+    <section id="equal-environment-ranking" class="mrb-section mrb-leaderboard-section" aria-labelledby="ranking-title">
+      <div class="mrb-section-head">
+        <span class="panel-kicker">Official benchmark leaderboard</span>
+        <h2 id="ranking-title">Rank models across equally weighted market environments</h2>
+        <p>
+          Equal-environment return is the primary ranking metric. Only models with enough shared observations in every
+          counting environment receive an ordinal rank; the S&amp;P 500 remains a reference, not a ranked participant.
+        </p>
+      </div>
+      {TRACKS.map((track) => {
+        const view = trackViews[track];
+        const leader = view.leader;
+        return (
+          <div data-mrb-track-panel={track} hidden={track !== DEFAULT_TRACK}>
+            <div class="mrb-benchmark-definition" aria-label={`${view.label} benchmark specification`}>
+              <div><span>Ranking metric</span><strong>Equal-environment return</strong><small>Higher is better</small></div>
+              <div><span>Counting environments</span><strong>{view.readyEnvironmentCount} of 5</strong><small>{view.label} thresholds</small></div>
+              <div><span>Eligible field</span><strong>{view.comparableRows.length} models</strong><small>{view.limitedRows.length} limited-history</small></div>
+              <div><span>Included tests</span><strong>{leader?.testsIncluded ?? 0}</strong><small>Per eligible model</small></div>
             </div>
-            <div class="table-shell regime-table-shell">
-              <table>
+
+            <div class="mrb-benchmark-charts">
+              <article class="mrb-chart-panel mrb-chart-panel-primary">
+                <header>
+                  <div><span>Primary ranking</span><h3>Equal-environment average return</h3></div>
+                  <p>True return scale with zero and the S&amp;P 500 reference visible.</p>
+                </header>
+                <div class="mrb-chart-body">
+                  <BenchmarkBarChart
+                    rows={view.returnChartRows}
+                    domain={view.returnChartDomain}
+                    format="percent"
+                    orientation="responsive"
+                    showLegend={true}
+                    ariaLabel={`${view.label} Market Regime Benchmark equal-environment returns`}
+                  />
+                </div>
+              </article>
+
+              <article class="mrb-chart-panel mrb-chart-panel-score">
+                <header>
+                  <div><span>Score context</span><h3>Equal-environment CapitalBench Score</h3></div>
+                  <p>100 matches the hindsight best eligible asset on the same scoring windows. Negative scores preserve losses.</p>
+                </header>
+                <BenchmarkBarChart
+                  rows={view.scoreChartRows}
+                  domain={view.scoreChartDomain}
+                  format="score"
+                  orientation="horizontal"
+                  compact={true}
+                  showLegend={true}
+                  ariaLabel={`${view.label} equal-environment CapitalBench Scores`}
+                />
+              </article>
+            </div>
+
+            <div class="mrb-reference-banner">
+              <span class="mrb-sp500-mark">S&amp;P</span>
+              <p>
+                <strong>S&amp;P 500 reference:</strong> {signedPctText(leader?.averageSp500Return)} equal-environment
+                return and {scoreText(leader?.sp500Score)} CapitalBench Score on the same environment weights.
+              </p>
+              <span>{view.readyEnvironmentCount} environments count</span>
+            </div>
+
+            <div class="mrb-exact-results-head">
+              <div><span>Exact results</span><h3>{view.label} ranked field</h3></div>
+              <p>Rank follows equal-environment return; score, coverage, tests, and hit rate explain the result.</p>
+            </div>
+            <div class="mrb-data-scroll" tabindex="0" aria-label={`${view.label} equal-environment ranking`}>
+              <table class="mrb-ranking-table">
                 <thead>
                   <tr>
-                    <th>Model</th>
-                    <th>Avg return</th>
-                    <th>Benchmark score</th>
-                    <th>S&amp;P 500 context</th>
-                    <th>Environment returns</th>
-                    <th>All-round score</th>
-                    <th>Avg alpha vs S&amp;P</th>
+                    <th>Rank and model</th>
+                    <th>Equal-env return</th>
+                    <th>vs S&amp;P</th>
+                    <th>CapitalBench Score</th>
+                    <th>Coverage</th>
+                    <th>Shared tests</th>
                     <th>Hit rate</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {leaderboards[track].length ? (
-                    leaderboards[track].map((row, index) => (
-                      <tr>
-                        <td data-label="Model">
-                          <div class="regime-model-cell">
-                            <span>{index + 1}</span>
-                            {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
-                            <div>
-                              <strong>{row.label}</strong>
-                              <em>{row.providerName}</em>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="regime-score-value" data-label="Avg return">
-                          <strong class:list={["return-value", `return-value-${valueTone(row.averageReturn)}`]}>
-                            {signedPctText(row.averageReturn)}
-                          </strong>
-                          <span>{row.readyRegimesCovered}/{row.readyRegimesRequired} counting environments</span>
-                        </td>
-                        <td class="regime-score-value" data-label="Benchmark score">
-                          <strong>{scoreText(row.regimeBalancedScore)}</strong>
-                          <span>higher is better</span>
-                        </td>
-                        <td class="regime-score-value" data-label="S&P 500 context">
-                          <strong class:list={["return-value", `return-value-${valueTone(row.averageSp500Return)}`]}>
-                            {signedPctText(row.averageSp500Return)}
-                          </strong>
-                          <span>S&amp;P score {scoreText(row.sp500RegimeScore)}</span>
-                        </td>
-                        <td data-label="Environment returns">
-                          <div class="regime-score-strip">
-                            {row.regimeScores.map((score) => (
-                              <span>
-                                <b>{score.label}</b>
-                                <em class:list={["return-value", `return-value-${valueTone(score.averageReturn)}`]}>
-                                  {signedPctText(score.averageReturn)}
-                                </em>
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td data-label="All-round score">{scoreText(row.allRoundScore)}</td>
-                        <td data-label="Avg alpha vs S&P">{signedPctText(row.averageAlpha)}</td>
-                        <td data-label="Hit rate">
-                          <span title="Share of included model tests where this model beat the S&P 500 return.">
-                            {finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colspan="8">No environments count yet.</td>
+                  {view.comparableRows.map((row: any, index: number) => (
+                    <tr class:list={[index === 0 && "is-leader"]}>
+                      <th scope="row">
+                        <span class="mrb-row-rank">{index + 1}</span>
+                        {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
+                        <span><a href={`/models/${row.modelId}`}>{row.label}</a><small>{row.providerName}</small></span>
+                      </th>
+                      <td class:list={[`is-${valueTone(row.averageReturn)}`]}><strong>{signedPctText(row.averageReturn)}</strong></td>
+                      <td class:list={[`is-${valueTone(row.averageAlpha)}`]}><strong>{pointText(row.averageAlpha, true)}</strong></td>
+                      <td>{scoreText(row.balancedScore)}</td>
+                      <td>{row.covered}/{row.required}</td>
+                      <td>{row.testsIncluded}</td>
+                      <td>{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
                     </tr>
-                  )}
+                  ))}
                 </tbody>
               </table>
             </div>
+            {view.limitedRows.length > 0 && (
+              <details class="mrb-limited-history">
+                <summary>Models with limited shared history <span>{view.limitedRows.length}</span></summary>
+                <p class="mrb-limited-note">These rows remain visible for transparency but are not assigned an equal-environment rank.</p>
+                <div class="mrb-data-scroll" tabindex="0">
+                  <table class="mrb-ranking-table">
+                    <thead><tr><th>Model</th><th>Observed return</th><th>vs S&amp;P</th><th>Coverage</th><th>Shared tests</th></tr></thead>
+                    <tbody>
+                      {view.limitedRows.map((row: any) => (
+                        <tr>
+                          <th scope="row">{row.logoSrc && <img src={row.logoSrc} alt="" />}<span><a href={`/models/${row.modelId}`}>{row.label}</a><small>{row.providerName}</small></span></th>
+                          <td>{signedPctText(row.averageReturn)}</td>
+                          <td>{pointText(row.averageAlpha, true)}</td>
+                          <td>{row.covered}/{row.required}</td>
+                          <td>{row.testsIncluded}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+              </details>
+            )}
+          </div>
+        );
+      })}
     </section>
 
-    <section class="regime-section market-insights-section" aria-labelledby="market-insights-title">
-      <div class="regime-section-head">
-        <span class="panel-kicker">Calculated insights</span>
-        <h2 id="market-insights-title">What changes when the market moves differently?</h2>
+    <aside class="mrb-reading-guide" aria-label="How to read this page">
+      <div><span>1</span><p><strong>Benchmark first</strong> A model can rank first and still trail the S&amp;P 500.</p></div>
+      <div><span>2</span><p><strong>Shared samples</strong> Every comparison uses rounds available for the same model cohort.</p></div>
+      <div><span>3</span><p><strong>Equal weighting</strong> Each counting environment matters equally, regardless of how often it occurred.</p></div>
+    </aside>
+
+    <section id="direction-performance" class="mrb-section" aria-labelledby="direction-title">
+      <div class="mrb-section-head">
+        <span class="panel-kicker">Downside protection and upside capture</span>
+        <h2 id="direction-title">Who protects capital when markets fall, and who captures rising markets?</h2>
+        <p>Model returns and benchmark differences use only the shared rounds shown in each panel.</p>
+      </div>
+      {TRACKS.map((track) => {
+        const view = trackViews[track];
+        return (
+          <div data-mrb-track-panel={track} hidden={track !== DEFAULT_TRACK}>
+            <div class="mrb-direction-grid">
+              {(["down", "up"] as DirectionKey[]).map((key) => {
+                const direction = view.directions.find((candidate: any) => candidate.key === key);
+                if (!direction) return null;
+                return (
+                  <article class:list={["mrb-direction-panel", `is-${key}`]}>
+                    <header>
+                      <div>
+                        <span>{key === "down" ? "Downside protection" : "Upside capture"}</span>
+                        <h3>{direction.label} environments</h3>
+                        <p>{direction.range_label}</p>
+                      </div>
+                      <span class:list={["mrb-evidence", `is-${direction.confidence}`]}>
+                        {confidenceLabel(direction.confidence)}
+                      </span>
+                    </header>
+                    <p class="mrb-direction-verdict">{comparisonStatement(direction.best, `${key} environments`)}</p>
+                    {direction.modelRows.length ? (
+                      <>
+                        <BenchmarkBarChart
+                          rows={view.directionChartRows[key]}
+                          domain={view.directionDomain}
+                          format="percent"
+                          orientation="horizontal"
+                          compact={true}
+                          ariaLabel={`${view.label} ${direction.label} environment returns`}
+                        />
+                        <p class="mrb-chart-scale-note">Down and up panels share the same zero-centred return scale.</p>
+                        <details class="mrb-exact-values">
+                          <summary>Exact values and ranks</summary>
+                          <div class="mrb-compact-table-scroll">
+                            <table class="mrb-direction-table">
+                              <thead>
+                                <tr><th>Model</th><th>Return</th><th>vs S&amp;P</th></tr>
+                              </thead>
+                              <tbody>
+                                <tr class="mrb-reference-row">
+                                  <th scope="row"><span class="mrb-inline-model"><span class="mrb-sp500-mark">S&amp;P</span> S&amp;P 500</span></th>
+                                  <td>{signedPctText(direction.averageSp500Return)}</td>
+                                  <td>Reference</td>
+                                </tr>
+                                {direction.modelRows.map((row: any, index: number) => (
+                                  <tr>
+                                    <th scope="row">
+                                      <span class="mrb-inline-model">
+                                        <span class="mrb-row-rank">{index + 1}</span>
+                                        {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
+                                        <a href={`/models/${row.modelId}`} title={row.label}>{row.label}</a>
+                                      </span>
+                                    </th>
+                                    <td class:list={[`is-${valueTone(row.average_return)}`]}>{signedPctText(row.average_return)}</td>
+                                    <td class:list={[`is-${valueTone(row.average_alpha)}`]}>{pointText(row.average_alpha, true)}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </details>
+                      </>
+                    ) : (
+                      <p class="mrb-empty-state">
+                        {direction.rawCount} raw round{direction.rawCount === 1 ? " is" : "s are"} available; a common
+                        model cohort has not reached the comparison threshold.
+                      </p>
+                    )}
+                    <dl class="mrb-evidence-stats">
+                      <div><dt>Shared / raw</dt><dd>{direction.sharedCount}/{direction.rawCount} rounds</dd></div>
+                      <div><dt>Model cohort</dt><dd>{direction.eligibleModelCount || "n/a"}</dd></div>
+                      <div><dt>Leader stability</dt><dd>{stabilityText(direction.stability)}</dd></div>
+                      <div><dt>Leader margin</dt><dd>{pointText(direction.leaderMargin, true)}</dd></div>
+                    </dl>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </section>
+
+    <section id="environment-explorer" class="mrb-section" aria-labelledby="environment-title">
+      <div class="mrb-section-head">
+        <span class="panel-kicker">Environment explorer</span>
+        <h2 id="environment-title">See every model and market environment in one comparison</h2>
         <p>
-          These cards compare model behavior inside down, flat, and up S&amp;P 500 environments, including environments
-          that still need more resolved rounds.
+          The large number is model return. The smaller number is the difference from the S&amp;P 500 on the same shared
+          rounds. Limited-history rows are not assigned a rank.
         </p>
       </div>
 
-      <div
-        class="market-regime-track-tab-shell"
-        data-market-regime-tabs
-        data-active-track={defaultRegimeTrack}
-        aria-label="Monthly and weekly calculated insights"
-      >
-        <div class="track-scorecard-tabs" role="tablist" aria-label="Choose calculated insight horizon">
-          {marketInsightTracks.map((insightTrack) => {
-            const active = insightTrack.track === defaultRegimeTrack;
-            const tabId = `market-insights-tab-${insightTrack.track}`;
-            const panelId = `market-insights-panel-${insightTrack.track}`;
-            return (
-              <button
-                id={tabId}
-                class:list={["track-scorecard-tab", active && "is-active"]}
-                type="button"
-                role="tab"
-                aria-selected={active ? "true" : "false"}
-                aria-controls={panelId}
-                tabindex={active ? "0" : "-1"}
-                data-market-regime-tab={insightTrack.track}
-              >
-                <strong>{insightTrack.label}</strong>
-                <span>{trackConfidence(insightTrack.track).label}</span>
-              </button>
-            );
-          })}
-        </div>
+      <div class="mrb-threshold-strip" aria-label="S&P 500 environment thresholds and round counts">
+        {thresholdCards.map((environment) => (
+          <article class:list={[`is-${environment.key}`]}>
+            <span class="mrb-environment-swatch" aria-hidden="true"></span>
+            <strong>{environment.label}</strong>
+            <span>W {environment.weeklyRange}</span>
+            <span>M {environment.monthlyRange}</span>
+            <small>{environment.weeklyCount}W / {environment.monthlyCount}M rounds</small>
+          </article>
+        ))}
+      </div>
 
-        <div class="track-scorecard-tab-panels market-regime-tab-panels">
-          {marketInsightTracks.map((insightTrack) => {
-            const active = insightTrack.track === defaultRegimeTrack;
-            const tabId = `market-insights-tab-${insightTrack.track}`;
-            const panelId = `market-insights-panel-${insightTrack.track}`;
-            return (
-              <div
-                id={panelId}
-                class="track-scorecard-tab-panel market-regime-tab-panel"
-                role="tabpanel"
-                aria-labelledby={tabId}
-                data-market-regime-panel={insightTrack.track}
-                hidden={!active}
-              >
-                <article class="market-insight-track" id={`market-environment-insight-${insightTrack.track}-synthesis`}>
-                  <div class="market-insight-track-head">
-                    <div>
-                      <span class="panel-kicker">{insightTrack.label} insights</span>
-                      <h3>{insightTrack.label} model behavior</h3>
-                    </div>
-                    <span class:list={["regime-confidence", `regime-confidence-${trackConfidence(insightTrack.track).className}`]}>
-                      {trackConfidence(insightTrack.track).label}
-                    </span>
-                  </div>
-
-                  <div class="market-insight-grid">
-                    {insightTrack.cards.map((card) => (
-                      <article
-                        id={`market-environment-insight-${card.key}`}
-                        class:list={["market-insight-card", `market-insight-card-${card.tone}`, `market-insight-card-${statusClass(card.status)}`]}
-                      >
-                        <header>
-                          <span class="panel-kicker">{card.eyebrow}</span>
-                          <span class:list={["regime-status", `regime-status-${statusClass(card.status)}`]}>
-                            {statusLabel(card.status)}
-                          </span>
-                        </header>
-                        <h4>{card.title}</h4>
-                        {card.model && (
-                          <div class="market-insight-model">
-                            {card.model.logoSrc && <img src={card.model.logoSrc} alt="" loading="lazy" />}
-                            <div>
-                              <strong>{card.model.label}</strong>
-                              <em>{card.model.providerName}</em>
-                            </div>
-                          </div>
-                        )}
-                        <div class="market-insight-metric">
-                          <strong>{card.metricValue}</strong>
-                          <span>{card.metricLabel}</span>
-                        </div>
-                        <p>{card.detail}</p>
-                        <dl>
-                          {card.stats.map((stat) => (
-                            <div>
-                              <dt>{stat.label}</dt>
-                              <dd>{stat.value}</dd>
-                            </div>
-                          ))}
-                        </dl>
-                      </article>
+      {TRACKS.map((track) => {
+        const view = trackViews[track];
+        return (
+          <div data-mrb-track-panel={track} hidden={track !== DEFAULT_TRACK}>
+            <div class="mrb-data-scroll mrb-matrix-scroll" tabindex="0" aria-label={`${view.label} environment matrix`}>
+              <table class="mrb-matrix-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Model</th>
+                    {view.environments.map((environment: any) => (
+                      <th scope="col">
+                        <strong>{environment.label}</strong>
+                        <span>{environment.range_label}</span>
+                        <small>{environment.sharedCount}/{environment.rawCount} shared</small>
+                      </th>
                     ))}
-                  </div>
-                </article>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="mrb-matrix-reference">
+                    <th scope="row"><span class="mrb-sp500-mark">S&amp;P</span><span>S&amp;P 500<small>Market reference</small></span></th>
+                    {view.environments.map((environment: any) => (
+                      <td>
+                        <strong class:list={[`is-${valueTone(environment.sharedSp500Return ?? environment.average_sp500_return)}`]}>
+                          {signedPctText(environment.sharedSp500Return ?? environment.average_sp500_return)}
+                        </strong>
+                        <small>{finiteNumber(environment.sharedSp500Return) ? "shared reference" : "all resolved rounds"}</small>
+                      </td>
+                    ))}
+                  </tr>
+                  {view.matrixRows.map((row: any, index: number) => (
+                    <tr class:list={[!row.comparable && "mrb-limited-row"]}>
+                      <th scope="row">
+                        <span class="mrb-row-rank">{row.comparable ? index + 1 : "-"}</span>
+                        {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
+                        <span>{row.label}<small>{row.comparable ? `${row.covered}/${row.required} counting` : "Limited shared history"}</small></span>
+                      </th>
+                      {row.cells.map((cell: any) => (
+                        <td>
+                          {finiteNumber(cell.returnValue) ? (
+                            <>
+                              <strong class:list={[`is-${valueTone(cell.returnValue)}`]}>{signedPctText(cell.returnValue)}</strong>
+                              <small class:list={[`is-${valueTone(cell.alpha)}`]}>{pointText(cell.alpha, true)} vs S&amp;P</small>
+                            </>
+                          ) : (
+                            <><strong>n/a</strong><small>No shared cohort</small></>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-    <section class="regime-section" aria-labelledby="regime-method-title">
-      <div class="regime-method-panel">
-        <div>
-          <span class="panel-kicker">Method</span>
-          <h2 id="regime-method-title">How the equal-environment score works.</h2>
-          <p>
-            An environment is the S&amp;P 500 move during a scored round. This view checks whether models perform across
-            different environments instead of being helped by one dominant environment.
-          </p>
-        </div>
-        <dl>
-          <div>
-            <dt>Counting rule</dt>
-            <dd>{READY_ROUND_THRESHOLD}+ rounds</dd>
-          </div>
-          <div>
-            <dt>Main score</dt>
-            <dd>Average of counting environments</dd>
-          </div>
-          <div>
-            <dt>Scope</dt>
-            <dd>Resolved official rounds only</dd>
-          </div>
-        </dl>
-        <ol class="regime-method-flow" aria-label="Market environment benchmark process">
-          <li>
-            <span>1</span>
-            <strong>Use completed rounds</strong>
-            <em>Only resolved official results enter this page.</em>
-          </li>
-          <li>
-            <span>2</span>
-            <strong>Group by S&amp;P 500 move</strong>
-            <em>Each round becomes one S&amp;P 500 environment.</em>
-          </li>
-          <li>
-            <span>3</span>
-            <strong>Average counting environments equally</strong>
-            <em>Every counting environment carries the same weight.</em>
-          </li>
-        </ol>
-        <div class="regime-method-example">
-          <span class="panel-kicker">Example</span>
-          <p>
-          If a model scores 20 in up environments and -10 in down environments, its equal-environment score is 5. That
-          keeps a large pile of up rounds from drowning out the down-environment result.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <details class="regime-advanced-details">
-      <summary>
-        <span>Advanced check</span>
-        <strong>Strict equal-sample benchmark</strong>
-        <em>Waits for the same number of down, flat, and up rounds before ranking.</em>
-      </summary>
-
-      <section class="regime-section" aria-labelledby="balanced-sample-title">
-        <div class="regime-section-head">
-          <span class="panel-kicker">Strict equal-sample check</span>
-        <h2 id="balanced-sample-title">What happens when down, flat, and up each have the same sample size?</h2>
-          <p>
-            This stricter benchmark waits for at least {BALANCED_SAMPLE_THRESHOLD} down, {BALANCED_SAMPLE_THRESHOLD} flat,
-            and {BALANCED_SAMPLE_THRESHOLD} up rounds. When ready, it compares the same number from each type.
-          </p>
-        </div>
-
-        <div
-          class="market-regime-track-tab-shell"
-          data-market-regime-tabs
-          data-active-track={defaultRegimeTrack}
-          aria-label="Monthly and weekly strict equal-sample checks"
-        >
-          <div class="track-scorecard-tabs" role="tablist" aria-label="Choose strict equal-sample horizon">
-            {regimeTrackOrder.map((track) => {
-              const active = track === defaultRegimeTrack;
-              const tabId = `balanced-sample-tab-${track}`;
-              const panelId = `balanced-sample-panel-${track}`;
-              return (
-                <button
-                  id={tabId}
-                  class:list={["track-scorecard-tab", active && "is-active"]}
-                  type="button"
-                  role="tab"
-                  aria-selected={active ? "true" : "false"}
-                  aria-controls={panelId}
-                  tabindex={active ? "0" : "-1"}
-                  data-market-regime-tab={track}
-                >
-                  <strong>{trackLabel(track)}</strong>
-                  <span>{statusLabel(balancedSamples[track].status)}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div class="track-scorecard-tab-panels market-regime-tab-panels">
-            {regimeTrackOrder.map((track) => {
-              const active = track === defaultRegimeTrack;
-              const sample = balancedSamples[track];
-              const tabId = `balanced-sample-tab-${track}`;
-              const panelId = `balanced-sample-panel-${track}`;
-              return (
-                <div
-                  id={panelId}
-                  class="track-scorecard-tab-panel market-regime-tab-panel"
-                  role="tabpanel"
-                  aria-labelledby={tabId}
-                  data-market-regime-panel={track}
-                  hidden={!active}
-                >
-                  <div class="balanced-sample-panel">
-                <div class="balanced-sample-head">
-                  <div>
-                    <span class="panel-kicker">{trackLabel(track)} equal sample</span>
-                    <h3>{trackLabel(track)} down / flat / up benchmark</h3>
-                    <p>{sample.missingSummary}</p>
-                  </div>
-                  <span class:list={["regime-confidence", sample.status === "Ready" ? "regime-confidence-ready" : "regime-confidence-forming"]}>
-                    {statusLabel(sample.status)}
-                  </span>
-                </div>
-                <MarketRegimeLineChart chart={balancedProgressCharts[track]} />
-
-                <div class="balanced-sample-counts" aria-label={`${trackLabel(track)} balanced sample category counts`}>
-                  {sample.categories.map((category) => (
-                    <article>
-                      <span>{category.label}</span>
-                      <strong>
-                        {category.count}<small>/{BALANCED_SAMPLE_THRESHOLD}</small>
-                      </strong>
-                      <i
-                        class="balanced-sample-progress"
-                        style={`--sample-progress: ${Math.min(100, (category.count / BALANCED_SAMPLE_THRESHOLD) * 100)}%;`}
-                        aria-hidden="true"
-                      ></i>
-                      <em>{category.rangeLabel}</em>
+            <div class="mrb-environment-details">
+              {view.environments.map((environment: any) => (
+                <details class:list={[`is-${environment.key}`]}>
+                  <summary>
+                    <span class="mrb-environment-swatch" aria-hidden="true"></span>
+                    <span><strong>{environment.label}</strong><small>{environment.range_label}</small></span>
+                    <span><strong>{environment.sharedCount}/{environment.rawCount}</strong><small>shared / raw</small></span>
+                    <span class:list={["mrb-evidence", `is-${environment.confidence}`]}>{confidenceLabel(environment.confidence)}</span>
+                  </summary>
+                  <div class="mrb-environment-detail-body">
+                    {environment.modelRows.length ? (
+                      <>
+                        <p>{comparisonStatement(environment.modelRows[0], environment.label.toLowerCase())}</p>
+                        <div class="mrb-environment-chart">
+                          <BenchmarkBarChart
+                            rows={view.environmentChartRows[environment.key]}
+                            domain={view.environmentDomain}
+                            format="percent"
+                            orientation="horizontal"
+                            compact={true}
+                            ariaLabel={`${view.label} ${environment.label} model and S&P 500 returns`}
+                          />
+                          <p class="mrb-chart-scale-note">All {view.label.toLowerCase()} environment drill-downs share this zero-centred scale.</p>
+                        </div>
+                        <dl class="mrb-evidence-stats">
+                          <div><dt>Models compared</dt><dd>{environment.eligibleModelCount}</dd></div>
+                          <div><dt>Leader stability</dt><dd>{stabilityText(environment.stability)}</dd></div>
+                          <div><dt>Leader margin</dt><dd>{pointText(environment.leaderMargin, true)}</dd></div>
+                          <div><dt>Leader return 95% CI</dt><dd>{finiteNumber(environment.leaderCiLow) ? `${signedPctText(environment.leaderCiLow)} to ${signedPctText(environment.leaderCiHigh)}` : "n/a"}</dd></div>
+                        </dl>
+                      </>
+                    ) : (
                       <p>
-                        {sample.status === "Ready"
-                          ? `${category.selectedCount} selected for the balanced sample.`
-                          : category.missing > 0
-                            ? `${category.missing} more needed.`
-                            : "Requirement met."}
+                        {environment.rawCount === 0
+                          ? "No resolved rounds have landed in this environment yet."
+                          : `${environment.rawCount} raw round${environment.rawCount === 1 ? " is" : "s are"} available; ${Math.max(0, READY_ROUND_THRESHOLD - environment.rawCount)} more needed before this environment can count.`}
                       </p>
+                    )}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </section>
+
+    <section id="performance-patterns" class="mrb-section" aria-labelledby="insights-title">
+      <div class="mrb-section-head">
+        <span class="panel-kicker">Performance patterns</span>
+        <h2 id="insights-title">The findings that matter, with the evidence beside them</h2>
+        <p>Every statement identifies the benchmark outcome, sample coverage, and stability behind the pattern.</p>
+      </div>
+      {TRACKS.map((track) => {
+        const view = trackViews[track];
+        const primarySignals = view.signals.filter((signal: any) => signal.kind === "direction_leader");
+        const secondarySignals = view.signals.filter((signal: any) => signal.kind !== "direction_leader");
+        return (
+          <div
+            id={`market-environment-insight-${track}-synthesis`}
+            data-mrb-track-panel={track}
+            hidden={track !== DEFAULT_TRACK}
+          >
+            <div class="mrb-insight-grid">
+              {primarySignals.map((signal: any) => {
+                const insight = insightView(signal);
+                return (
+                  <article
+                    id={`market-environment-insight-${signal.key}`}
+                    class:list={["mrb-insight", `is-${insight.tone}`]}
+                  >
+                    <header><span>{insight.eyebrow}</span><strong>{insight.status}</strong></header>
+                    <div class="mrb-insight-copy">
+                      <h3>{insight.title}</h3>
+                      <p>{insight.detail}</p>
+                    </div>
+                    <div class="mrb-insight-metric"><strong>{insight.metric}</strong><span>{insight.metricLabel}</span></div>
+                    {insight.stats.length > 0 && (
+                      <dl>
+                        {insight.stats.map((stat: any[]) => (
+                          <div><dt>{stat[0]}</dt><dd>{stat[1]}</dd></div>
+                        ))}
+                      </dl>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+            {secondarySignals.length > 0 && (
+              <details class="mrb-secondary-insights">
+                <summary>More cross-environment patterns <span>{secondarySignals.length}</span></summary>
+                <div class="mrb-insight-grid">
+                  {secondarySignals.map((signal: any) => {
+                    const insight = insightView(signal);
+                    return (
+                      <article
+                        id={`market-environment-insight-${signal.key}`}
+                        class:list={["mrb-insight", `is-${insight.tone}`]}
+                      >
+                        <header><span>{insight.eyebrow}</span><strong>{insight.status}</strong></header>
+                        <div class="mrb-insight-copy">
+                          <h3>{insight.title}</h3>
+                          <p>{insight.detail}</p>
+                        </div>
+                        <div class="mrb-insight-metric"><strong>{insight.metric}</strong><span>{insight.metricLabel}</span></div>
+                        {insight.stats.length > 0 && (
+                          <dl>
+                            {insight.stats.map((stat: any[]) => (
+                              <div><dt>{stat[0]}</dt><dd>{stat[1]}</dd></div>
+                            ))}
+                          </dl>
+                        )}
+                      </article>
+                    );
+                  })}
+                </div>
+              </details>
+            )}
+          </div>
+        );
+      })}
+    </section>
+
+    <section id="benchmark-evidence" class="mrb-section mrb-evidence-section" aria-labelledby="evidence-title">
+      <div class="mrb-section-head">
+        <span class="panel-kicker">Evidence and audit</span>
+        <h2 id="evidence-title">Inspect the calculation, robustness check, and every included round</h2>
+      </div>
+
+      <details class="mrb-disclosure">
+        <summary><span>How to read the benchmark</span><strong>Definitions and calculation</strong><em>Shared cohorts, equal weighting, and metric definitions</em></summary>
+        <div class="mrb-method-body">
+          <div class="mrb-method-steps">
+            <article><span>1</span><h3>Resolve official rounds</h3><p>Only completed official results enter this analysis.</p></article>
+            <article><span>2</span><h3>Classify the market</h3><p>Each round is grouped by the S&amp;P 500 return over the same scoring window.</p></article>
+            <article><span>3</span><h3>Build a shared cohort</h3><p>Models are compared only on rounds available to every model in that comparison.</p></article>
+            <article><span>4</span><h3>Weight environments equally</h3><p>Every environment with at least {READY_ROUND_THRESHOLD} rounds receives the same weight.</p></article>
+          </div>
+          <dl class="mrb-metric-dictionary">
+            <div><dt>Return</dt><dd>Average model portfolio return on the displayed shared rounds.</dd></div>
+            <div><dt>vs S&amp;P</dt><dd>Model return minus S&amp;P 500 return on those same rounds.</dd></div>
+            <div><dt>Equal-environment return</dt><dd>Average of the model's per-environment returns across all counting environments.</dd></div>
+            <div><dt>CapitalBench Score</dt><dd>The official round score relative to the benchmark and best available option. <a href="/scoring">Scoring details</a>.</dd></div>
+            <div><dt>Hit rate</dt><dd>Share of included model tests where the model beat the S&amp;P 500.</dd></div>
+            <div><dt>Stability</dt><dd>How often the same leader remains first when one shared round is removed.</dd></div>
+          </dl>
+          <p class="mrb-method-note">
+            Weekly and monthly scoring windows can overlap. They should not be interpreted as independent trades or
+            combined into a cumulative return series. Confidence labels are descriptive evidence checks, not investment certainty.
+          </p>
+        </div>
+      </details>
+
+      <details class="mrb-disclosure">
+        <summary><span>Robustness check</span><strong>Strict equal-sample benchmark</strong><em>Uses the same number of down, flat, and up rounds</em></summary>
+        <div class="mrb-disclosure-body">
+          {TRACKS.map((track) => {
+            const view = trackViews[track];
+            const sample = view.balancedSample;
+            return (
+              <div data-mrb-track-panel={track} hidden={track !== DEFAULT_TRACK}>
+                <div class="mrb-sample-head">
+                  <div><span>{view.label} robustness check</span><h3>{sample.status === "ready" ? `${sample.sampleSize} rounds selected per direction` : "The equal sample is still building"}</h3></div>
+                  <strong class:list={["mrb-evidence", sample.status === "ready" ? "is-medium" : "is-low"]}>{sample.status === "ready" ? "Ready to compare" : "Not ranked yet"}</strong>
+                </div>
+                <div class="mrb-sample-progress">
+                  {sample.categories.map((category: any) => (
+                    <article class:list={[`is-${category.key}`]}>
+                      <span>{category.label}</span>
+                      <strong>{category.count}</strong>
+                      <small>{sample.status === "ready" ? `${category.selectedCount} selected` : category.missing ? `${category.missing} more needed` : "Requirement met"}</small>
+                      <i style={`--sample-width:${Math.min(100, (category.count / BALANCED_SAMPLE_THRESHOLD) * 100)}%`}></i>
                     </article>
                   ))}
                 </div>
-
-                {sample.status === "Ready" ? (
-                  <div class="balanced-sample-ready">
-                    <div class="balanced-sample-summary">
-                      <span>
-                        <strong>{sample.sampleSize}</strong>
-                        <em>rounds per category</em>
-                      </span>
-                      <span>
-                        <strong>{sample.selectedRounds.length}</strong>
-                        <em>total selected rounds</em>
-                      </span>
-                    </div>
-                    <div class="table-shell regime-table-shell">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Model</th>
-                            <th>Balanced sample score</th>
-                            <th>Avg alpha vs S&amp;P</th>
-                            <th>Hit rate</th>
-                            <th>Tests</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
+                {sample.status === "ready" ? (
+                  <>
+                    <div class="mrb-data-scroll" tabindex="0">
+                      <table class="mrb-ranking-table">
+                        <thead><tr><th>Strict rank and model</th><th>Balanced score</th><th>vs S&amp;P</th><th>Hit rate</th><th>Tests</th><th>vs main rank</th></tr></thead>
                         <tbody>
-                          {sample.leaderboard.map((row, index) => (
+                          {sample.comparableRows.map((row: any, index: number) => (
                             <tr>
-                              <td data-label="Model">
-                                <div class="regime-model-cell">
-                                  <span>{index + 1}</span>
-                                  {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
-                                  <div>
-                                    <strong>{row.label}</strong>
-                                    <em>{row.providerName}</em>
-                                  </div>
-                                </div>
-                              </td>
-                              <td class="regime-score-value" data-label="Balanced sample score">
-                                <strong>{scoreText(row.score)}</strong>
-                                <span>Equal down / flat / up sample</span>
-                              </td>
-                              <td data-label="Avg alpha vs S&P">{signedPctText(row.averageAlpha)}</td>
-                              <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
-                              <td data-label="Tests">
-                                {row.testsIncluded}/{row.testsRequired}
-                              </td>
-                              <td data-label="Status">
-                                <span class:list={["regime-status", `regime-status-${statusClass(row.status)}`]}>
-                                  {statusLabel(row.status)}
-                                </span>
-                              </td>
+                              <th scope="row"><span class="mrb-row-rank">{index + 1}</span>{row.logoSrc && <img src={row.logoSrc} alt="" />}<span>{row.label}<small>{row.providerName}</small></span></th>
+                              <td>{scoreText(row.score)}</td><td>{pointText(row.averageAlpha, true)}</td><td>{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td><td>{row.testsIncluded}/{row.testsRequired}</td><td>{rankChange(view, row.modelId, index + 1)}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
-                  </div>
+                    {sample.limitedRows.length > 0 && <p class="mrb-method-note">{sample.limitedRows.length} model{sample.limitedRows.length === 1 ? " has" : "s have"} insufficient shared history for this strict comparison and {sample.limitedRows.length === 1 ? "receives" : "receive"} no rank.</p>}
+                    <details class="mrb-selected-rounds">
+                      <summary>View {sample.selectedRoundIds.length} selected rounds</summary>
+                      <div>{sample.selectedRoundIds.map((roundId: string) => <a href={`/rounds/${roundId}`}>{roundId}</a>)}</div>
+                    </details>
+                  </>
                 ) : (
-                  <div class="balanced-sample-forming">
-                    <strong>Not ranked yet</strong>
-                    <p>
-                      The {trackLabel(track).toLowerCase()} sample is still forming, so this benchmark is shown as a
-                      readiness check rather than a leaderboard.
-                    </p>
-                  </div>
+                  <p class="mrb-empty-state">
+                    This view waits for at least {BALANCED_SAMPLE_THRESHOLD} down, {BALANCED_SAMPLE_THRESHOLD} flat,
+                    and {BALANCED_SAMPLE_THRESHOLD} up rounds before assigning ranks.
+                  </p>
                 )}
-                  </div>
-                </div>
-              );
-            })}
+              </div>
+            );
+          })}
+        </div>
+      </details>
+
+      <details class="mrb-disclosure">
+        <summary><span>Round audit</span><strong>Included official rounds</strong><em>{auditRows.length} resolved rounds with filters and source links</em></summary>
+        <div class="mrb-disclosure-body">
+          <div class="mrb-audit-tools">
+            <label><span>Find round</span><input type="search" placeholder="CB-2026..." data-mrb-audit-search /></label>
+            <label><span>Track</span><select data-mrb-audit-track><option value="all">All tracks</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label>
+            <label><span>Environment</span><select data-mrb-audit-environment><option value="all">All environments</option>{thresholdCards.map((environment) => <option value={environment.key}>{environment.label}</option>)}</select></label>
+            <a class="mrb-data-link" href="/api/v1/market-environments?track=all">Open JSON data</a>
           </div>
+          <p class="mrb-audit-count" data-mrb-audit-count>Showing 10 of {auditRows.length} rounds</p>
+          <div class="mrb-audit-table" role="table" aria-label="Included market environment rounds">
+            <div class="mrb-audit-header" role="row"><span>Round</span><span>Track</span><span>Window</span><span>S&amp;P</span><span>Environment</span><span>Model alpha</span><span>Models</span></div>
+            {auditRows.map((row: any, index: number) => (
+              <div
+                class="mrb-audit-row"
+                role="row"
+                data-audit-row
+                data-index={index}
+                data-track={row.track}
+                data-environment={row.environmentKey}
+                data-round={String(row.round_id).toLowerCase()}
+              >
+                <span role="cell" data-label="Round"><a href={`/rounds/${row.round_id}`}>{row.round_id}</a></span>
+                <span role="cell" data-label="Track">{trackLabel(row.track)}</span>
+                <span role="cell" data-label="Window">{dateOnly(row.entry_date)} to {dateOnly(row.exit_date)}</span>
+                <span role="cell" data-label="S&P" class:list={[`is-${valueTone(row.sp500_return)}`]}>{signedPctText(row.sp500_return)}</span>
+                <span role="cell" data-label="Environment">{row.environmentLabel}</span>
+                <span role="cell" data-label="Model alpha" class:list={[`is-${valueTone(row.average_alpha)}`]}>{pointText(row.average_alpha, true)}</span>
+                <span role="cell" data-label="Models">{row.model_count}</span>
+              </div>
+            ))}
+          </div>
+          <p class="mrb-empty-state" data-mrb-audit-empty hidden>No rounds match these filters.</p>
+          <button type="button" class="mrb-show-more" data-mrb-audit-more>Show all {auditRows.length} rounds</button>
         </div>
-      </section>
-    </details>
-
-    <details class="regime-advanced-details">
-      <summary>
-        <span>Audit table</span>
-        <strong>Included rounds</strong>
-        <em>{auditRows.length} resolved official rounds feed this benchmark.</em>
-      </summary>
-
-      <section class="regime-section" aria-labelledby="regime-rounds-title">
-        <div class="regime-section-head">
-          <span class="panel-kicker">Audit table</span>
-          <h2 id="regime-rounds-title">Which rounds are included?</h2>
-          <p>Showing the latest 10 resolved official rounds. Open the full audit for every included round.</p>
-        </div>
-
-        <div class="table-shell regime-table-shell">
-          <table>
-            <thead>
-              <tr>
-                <th>Round</th>
-                <th>Track</th>
-                <th>Window</th>
-                <th>S&amp;P 500 return</th>
-                <th>Environment</th>
-                <th>Avg model alpha</th>
-                <th>Hit rate</th>
-                <th>Models</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleAuditRows.map((row) => (
-                <tr>
-                  <td data-label="Round">
-                    <a href={`/rounds/${row.round.round_id}`}>{row.round.round_id}</a>
-                  </td>
-                  <td data-label="Track">{trackLabel(row.track)}</td>
-                  <td data-label="Window">{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
-                  <td data-label="S&P 500 return">{signedPctText(row.sp500Return)}</td>
-                  <td data-label="Environment">{row.regime.label}</td>
-                  <td data-label="Avg model alpha">{signedPctText(row.averageAlpha)}</td>
-                  <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
-                  <td data-label="Models">{row.modelCount}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {hiddenAuditRows.length > 0 && (
-          <details class="regime-audit-details">
-            <summary>View full audit table <span>{auditRows.length} rounds</span></summary>
-            <div class="table-shell regime-table-shell">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Round</th>
-                    <th>Track</th>
-                    <th>Window</th>
-                    <th>S&amp;P 500 return</th>
-                    <th>Environment</th>
-                    <th>Avg model alpha</th>
-                    <th>Hit rate</th>
-                    <th>Models</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {hiddenAuditRows.map((row) => (
-                    <tr>
-                      <td data-label="Round">
-                        <a href={`/rounds/${row.round.round_id}`}>{row.round.round_id}</a>
-                      </td>
-                      <td data-label="Track">{trackLabel(row.track)}</td>
-                      <td data-label="Window">{dateOnly(row.round.entry_date)} to {dateOnly(row.round.exit_date)}</td>
-                      <td data-label="S&P 500 return">{signedPctText(row.sp500Return)}</td>
-                      <td data-label="Environment">{row.regime.label}</td>
-                      <td data-label="Avg model alpha">{signedPctText(row.averageAlpha)}</td>
-                      <td data-label="Hit rate">{finiteNumber(row.hitRate) ? pct(row.hitRate) : "n/a"}</td>
-                      <td data-label="Models">{row.modelCount}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </details>
-        )}
-      </section>
-    </details>
-
-    <script is:inline>
-      if (!window.__capitalbenchMarketRegimeTabs) {
-        window.__capitalbenchMarketRegimeTabs = true;
-
-        function setupMarketRegimeTabs(root) {
-          const tabs = Array.from(root.querySelectorAll("[data-market-regime-tab]"));
-          const panels = Array.from(root.querySelectorAll("[data-market-regime-panel]"));
-
-          function selectTrack(track) {
-            if (!track) return;
-            root.dataset.activeTrack = track;
-            tabs.forEach((tab) => {
-              const active = tab.dataset.marketRegimeTab === track;
-              tab.classList.toggle("is-active", active);
-              tab.setAttribute("aria-selected", active ? "true" : "false");
-              tab.setAttribute("tabindex", active ? "0" : "-1");
-            });
-
-            panels.forEach((panel) => {
-              panel.hidden = panel.dataset.marketRegimePanel !== track;
-            });
-          }
-
-          tabs.forEach((tab, index) => {
-            tab.addEventListener("click", () => selectTrack(tab.dataset.marketRegimeTab));
-            tab.addEventListener("keydown", (event) => {
-              if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
-              event.preventDefault();
-              const nextIndex =
-                event.key === "Home"
-                  ? 0
-                  : event.key === "End"
-                    ? tabs.length - 1
-                    : event.key === "ArrowRight"
-                      ? (index + 1) % tabs.length
-                      : (index - 1 + tabs.length) % tabs.length;
-              tabs[nextIndex]?.focus();
-              selectTrack(tabs[nextIndex]?.dataset.marketRegimeTab);
-            });
-          });
-
-          selectTrack(root.dataset.activeTrack || tabs[0]?.dataset.marketRegimeTab);
-        }
-
-        function activateMarketRegimeHash() {
-          const id = decodeURIComponent(window.location.hash.slice(1));
-          if (!id.startsWith("market-environment-insight-")) return;
-          const target = document.getElementById(id);
-          const panel = target?.closest("[data-market-regime-panel]");
-          const root = panel?.closest("[data-market-regime-tabs]");
-          const track = panel?.dataset.marketRegimePanel;
-          const tab = root?.querySelector(`[data-market-regime-tab="${track}"]`);
-          tab?.click();
-          window.requestAnimationFrame(() => target?.scrollIntoView({ block: "start" }));
-        }
-
-        document.querySelectorAll("[data-market-regime-tabs]").forEach(setupMarketRegimeTabs);
-        activateMarketRegimeHash();
-        window.addEventListener("hashchange", activateMarketRegimeHash);
-      }
-    </script>
+      </details>
+    </section>
   </section>
+
+  <style>
+    .regime-dashboard {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      padding-bottom: 48px;
+    }
+
+    .mrb-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.7fr);
+      gap: 32px;
+      align-items: end;
+      border-radius: 8px;
+      padding: 40px;
+      background: #0b2521;
+      color: #f4fbf8;
+      box-shadow: var(--shadow-strong);
+    }
+
+    .mrb-hero-copy {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mrb-hero .panel-kicker {
+      color: #7fdccd;
+    }
+
+    .mrb-hero h1 {
+      max-width: 820px;
+      margin: 0;
+      color: #ffffff;
+      font-family: var(--font-display);
+      font-size: 3rem;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .mrb-hero-copy > p {
+      max-width: 760px;
+      margin: 0;
+      color: #c7d9d3;
+      font-size: 1.08rem;
+      line-height: 1.55;
+    }
+
+    .mrb-hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .mrb-hero-meta span {
+      border: 1px solid rgb(127 220 205 / 25%);
+      border-radius: 6px;
+      padding: 6px 9px;
+      color: #a9c0b9;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+    }
+
+    .mrb-hero-meta strong {
+      color: #ffffff;
+    }
+
+    .mrb-hero-question {
+      display: grid;
+      gap: 10px;
+      border-left: 1px solid rgb(127 220 205 / 24%);
+      padding-left: 24px;
+    }
+
+    .mrb-hero-question span {
+      color: #7fdccd;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .mrb-hero-question > div {
+      display: grid;
+      gap: 2px;
+      border-top: 1px solid rgb(127 220 205 / 17%);
+      padding-top: 9px;
+    }
+
+    .mrb-hero-question small {
+      color: #8ea9a1;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .mrb-hero-question strong {
+      color: #ffffff;
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .mrb-context-bar {
+      position: sticky;
+      top: 102px;
+      z-index: 12;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 54px;
+      margin: 16px 0 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: rgb(255 255 255 / 95%);
+      box-shadow: 0 10px 26px rgb(17 24 39 / 9%);
+      backdrop-filter: blur(12px);
+    }
+
+    .mrb-track-switch {
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      padding: 3px;
+      background: var(--surface-muted);
+    }
+
+    .mrb-track-switch button {
+      min-width: 108px;
+      border: 0;
+      border-radius: 5px;
+      padding: 8px 14px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .mrb-track-switch button.is-active {
+      background: var(--dark);
+      color: #ffffff;
+      box-shadow: 0 2px 7px rgb(7 16 13 / 18%);
+    }
+
+    .mrb-track-switch button:focus-visible,
+    .mrb-section-links a:focus-visible,
+    .mrb-show-more:focus-visible,
+    .mrb-data-link:focus-visible {
+      outline: 3px solid rgb(33 79 143 / 30%);
+      outline-offset: 2px;
+    }
+
+    .mrb-section-links {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 2px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .mrb-section-links::-webkit-scrollbar { display: none; }
+
+    .mrb-section-links a {
+      flex: 0 0 auto;
+      border-radius: 5px;
+      padding: 8px 10px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .mrb-section-links a:hover {
+      background: var(--surface-cool);
+      color: var(--accent-2-strong);
+    }
+
+    .mrb-section {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+      scroll-margin-top: 176px;
+      border-top: 1px solid var(--line);
+      padding: 54px 0;
+    }
+
+    .mrb-answer-section {
+      border-top: 0;
+      padding-top: 38px;
+    }
+
+    .mrb-section-head {
+      max-width: 820px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .mrb-section-head h2 {
+      margin: 0;
+      color: var(--ink-strong);
+      font-family: var(--font-display);
+      font-size: 2rem;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .mrb-section-head p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    [data-mrb-track-panel][hidden] { display: none !important; }
+
+    .mrb-answer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mrb-answer-card {
+      min-width: 0;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-top: 4px solid #5f7080;
+      border-radius: 8px;
+      padding: 20px;
+      background: #ffffff;
+      box-shadow: 0 8px 20px rgb(17 24 39 / 5%);
+    }
+
+    .mrb-answer-card-leader { border-top-color: var(--accent); }
+    .mrb-answer-card.is-success { border-top-color: var(--resolved); }
+    .mrb-answer-card.is-warning { border-top-color: #b45335; }
+
+    .mrb-answer-card > span,
+    .mrb-direction-panel header > div > span,
+    .mrb-sample-head > div > span {
+      color: var(--muted-2);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .mrb-answer-card h3 {
+      margin: 0;
+      color: var(--ink-strong);
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      line-height: 1.08;
+    }
+
+    .mrb-answer-card > p,
+    .mrb-model-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .mrb-model-heading {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mrb-model-heading img,
+    .mrb-direction-table img,
+    .mrb-ranking-table img,
+    .mrb-matrix-table img {
+      width: 30px;
+      height: 30px;
+      flex: 0 0 auto;
+      border-radius: 6px;
+      padding: 3px;
+      background: var(--dark);
+      object-fit: contain;
+    }
+
+    .mrb-answer-value {
+      color: var(--ink-strong);
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .is-positive { color: var(--resolved) !important; }
+    .is-negative { color: #a33f2b !important; }
+    .is-neutral { color: var(--ink) !important; }
+
+    .mrb-benchmark-alert {
+      margin: 12px 0 0;
+      border-left: 4px solid #b45335;
+      padding: 12px 14px;
+      background: #fff4ef;
+      color: #693021;
+      line-height: 1.45;
+    }
+
+    .mrb-leaderboard-section {
+      gap: 20px;
+      padding-top: 46px;
+    }
+
+    .mrb-benchmark-definition {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-block: 1px solid var(--line);
+      background: #f3f7f6;
+    }
+
+    .mrb-benchmark-definition > div {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+      padding: 13px 15px;
+    }
+
+    .mrb-benchmark-definition > div + div {
+      border-left: 1px solid var(--line);
+    }
+
+    .mrb-benchmark-definition span,
+    .mrb-chart-panel header span,
+    .mrb-exact-results-head span {
+      color: var(--muted-2);
+      font-size: 0.63rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .mrb-benchmark-definition strong {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      color: var(--ink-strong);
+      font-family: var(--font-display);
+      font-size: 0.94rem;
+      line-height: 1.2;
+    }
+
+    .mrb-benchmark-definition small {
+      color: var(--muted);
+      font-size: 0.68rem;
+    }
+
+    .mrb-benchmark-charts {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .mrb-chart-panel {
+      min-width: 0;
+      display: grid;
+      gap: 16px;
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 20px;
+      background: #ffffff;
+      box-shadow: 0 8px 24px rgb(17 24 39 / 5%);
+    }
+
+    .mrb-chart-panel-score {
+      border-top-color: var(--accent-2);
+    }
+
+    .mrb-chart-panel > header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .mrb-chart-panel h3,
+    .mrb-exact-results-head h3 {
+      margin: 3px 0 0;
+      color: var(--ink-strong);
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      line-height: 1.15;
+    }
+
+    .mrb-chart-panel header p,
+    .mrb-exact-results-head p {
+      max-width: 470px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.76rem;
+      line-height: 1.4;
+    }
+
+    .mrb-chart-body {
+      min-width: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-top: 2px;
+    }
+
+    .mrb-exact-results-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-top: 20px;
+      padding: 4px 2px 0;
+    }
+
+    .mrb-reading-guide {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      border-block: 1px solid var(--line);
+      background: #eef4fb;
+    }
+
+    .mrb-reading-guide > div {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 16px;
+    }
+
+    .mrb-reading-guide > div + div { border-left: 1px solid #cbd9e8; }
+
+    .mrb-reading-guide span,
+    .mrb-row-rank {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: #dbe8f5;
+      color: var(--accent-2-strong);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .mrb-reading-guide p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .mrb-reading-guide strong { display: block; color: var(--ink-strong); }
+
+    .mrb-direction-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mrb-direction-panel {
+      min-width: 0;
+      display: grid;
+      align-content: start;
+      gap: 16px;
+      border: 1px solid var(--line);
+      border-top: 4px solid #b45335;
+      border-radius: 8px;
+      padding: 20px;
+      background: #ffffff;
+    }
+
+    .mrb-direction-panel.is-up { border-top-color: var(--accent); }
+
+    .mrb-direction-panel > header,
+    .mrb-sample-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .mrb-direction-panel h3,
+    .mrb-sample-head h3 {
+      margin: 3px 0 2px;
+      color: var(--ink-strong);
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      line-height: 1.08;
+    }
+
+    .mrb-direction-panel header p {
+      margin: 0;
+      color: var(--muted-2);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+    }
+
+    .mrb-evidence {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 8px;
+      color: var(--muted);
+      background: var(--surface-muted);
+      font-size: 0.66rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .mrb-evidence.is-high { border-color: #9bcebf; background: #e5f5ef; color: #075642; }
+    .mrb-evidence.is-medium { border-color: #d9c58f; background: #fff8df; color: #76500b; }
+    .mrb-evidence.is-low { border-color: #e3b5a8; background: #fff0ea; color: #8c3826; }
+
+    .mrb-direction-verdict {
+      margin: 0;
+      border-left: 3px solid #b45335;
+      padding: 8px 0 8px 12px;
+      color: var(--ink);
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    .mrb-direction-panel.is-up .mrb-direction-verdict { border-left-color: var(--accent); }
+
+    .mrb-chart-scale-note {
+      margin: -7px 0 0;
+      color: var(--muted-2);
+      font-size: 0.66rem;
+      line-height: 1.35;
+    }
+
+    .mrb-exact-values {
+      border-top: 1px solid var(--line);
+      padding-top: 9px;
+    }
+
+    .mrb-exact-values > summary {
+      color: var(--accent-2-strong);
+      font-size: 0.73rem;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .mrb-exact-values > .mrb-compact-table-scroll {
+      margin-top: 9px;
+    }
+
+    .mrb-compact-table-scroll,
+    .mrb-data-scroll {
+      min-width: 0;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #ffffff;
+    }
+
+    .mrb-data-scroll:focus-visible {
+      outline: 3px solid rgb(33 79 143 / 24%);
+      outline-offset: 2px;
+    }
+
+    .mrb-direction-table,
+    .mrb-ranking-table,
+    .mrb-matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .mrb-direction-table { min-width: 0; table-layout: fixed; }
+    .mrb-direction-table th:first-child { width: 54%; }
+    .mrb-direction-table th:nth-child(2) { width: 20%; }
+    .mrb-direction-table th:nth-child(3) { width: 26%; }
+
+    .mrb-direction-table th,
+    .mrb-direction-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 9px 10px;
+      font-size: 0.78rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .mrb-direction-table thead th {
+      color: var(--muted-2);
+      font-size: 0.64rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .mrb-direction-table th:first-child,
+    .mrb-direction-table td:first-child { text-align: left; }
+
+    .mrb-direction-table tbody th {
+      display: table-cell;
+      min-width: 0;
+      overflow: hidden;
+      color: var(--ink-strong);
+    }
+
+    .mrb-inline-model {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--ink-strong);
+    }
+
+    .mrb-inline-model a {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mrb-direction-table a,
+    .mrb-ranking-table a { color: var(--ink-strong); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+    .mrb-reference-row { background: #eef4fb; }
+
+    .mrb-sp500-mark {
+      min-width: 38px;
+      height: 25px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      background: #243e5c;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      font-weight: 700;
+    }
+
+    .mrb-evidence-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0;
+    }
+
+    .mrb-evidence-stats div {
+      min-width: 0;
+      border-left: 2px solid var(--line-strong);
+      padding-left: 8px;
+    }
+
+    .mrb-evidence-stats dt {
+      color: var(--muted-2);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .mrb-evidence-stats dd {
+      margin: 3px 0 0;
+      color: var(--ink-strong);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .mrb-empty-state {
+      margin: 0;
+      border: 1px dashed var(--line-strong);
+      border-radius: 7px;
+      padding: 16px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .mrb-threshold-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .mrb-threshold-strip article {
+      --env-color: #64748b;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 10px minmax(0, 1fr);
+      gap: 4px 7px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 10px;
+      background: #ffffff;
+    }
+
+    .mrb-threshold-strip article.is-sharp_down,
+    .mrb-environment-details details.is-sharp_down { --env-color: #8f3527; }
+    .mrb-threshold-strip article.is-down,
+    .mrb-environment-details details.is-down { --env-color: #bd6436; }
+    .mrb-threshold-strip article.is-flat,
+    .mrb-environment-details details.is-flat { --env-color: #64748b; }
+    .mrb-threshold-strip article.is-up,
+    .mrb-environment-details details.is-up { --env-color: #188777; }
+    .mrb-threshold-strip article.is-sharp_up,
+    .mrb-environment-details details.is-sharp_up { --env-color: #006b5f; }
+
+    .mrb-environment-swatch {
+      width: 10px;
+      height: 28px;
+      grid-row: span 4;
+      border-radius: 3px;
+      background: var(--env-color);
+    }
+
+    .mrb-threshold-strip strong { color: var(--ink-strong); font-size: 0.82rem; }
+    .mrb-threshold-strip span:not(.mrb-environment-swatch) { color: var(--muted); font-family: var(--font-mono); font-size: 0.64rem; }
+    .mrb-threshold-strip small { color: var(--env-color); font-size: 0.62rem; font-weight: 700; }
+
+    .mrb-matrix-scroll { max-width: 100%; }
+
+    .mrb-matrix-table { min-width: 990px; }
+
+    .mrb-matrix-table th,
+    .mrb-matrix-table td {
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 11px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .mrb-matrix-table thead th {
+      background: #f3f7f6;
+      color: var(--ink-strong);
+      font-size: 0.72rem;
+    }
+
+    .mrb-matrix-table thead th > span,
+    .mrb-matrix-table thead th > small,
+    .mrb-matrix-table tbody small,
+    .mrb-ranking-table small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted-2);
+      font-family: var(--font-mono);
+      font-size: 0.61rem;
+      font-weight: 500;
+    }
+
+    .mrb-matrix-table thead th:first-child,
+    .mrb-matrix-table tbody th {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      min-width: 205px;
+      background: #ffffff;
+      text-align: left;
+    }
+
+    .mrb-matrix-table thead th:first-child { z-index: 3; background: #f3f7f6; }
+
+    .mrb-matrix-table tbody th {
+      display: grid;
+      grid-template-columns: 24px 30px minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+      color: var(--ink-strong);
+      font-size: 0.76rem;
+    }
+
+    .mrb-matrix-table tbody td > strong {
+      display: block;
+      color: var(--ink-strong);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+
+    .mrb-matrix-reference th,
+    .mrb-matrix-reference td { background: #eef4fb !important; }
+
+    .mrb-matrix-reference th { grid-template-columns: 40px minmax(0, 1fr) !important; }
+
+    .mrb-limited-row th,
+    .mrb-limited-row td { background: #fffaf0; }
+
+    .mrb-environment-details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .mrb-environment-details details {
+      --env-color: #64748b;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #ffffff;
+    }
+
+    .mrb-environment-details summary {
+      display: grid;
+      grid-template-columns: 10px minmax(0, 1fr) auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .mrb-environment-details summary::-webkit-details-marker { display: none; }
+    .mrb-environment-details summary .mrb-environment-swatch { grid-row: auto; height: 34px; }
+    .mrb-environment-details summary span { min-width: 0; }
+    .mrb-environment-details summary strong,
+    .mrb-environment-details summary small { display: block; }
+    .mrb-environment-details summary strong { color: var(--ink-strong); font-size: 0.8rem; }
+    .mrb-environment-details summary small { margin-top: 2px; color: var(--muted-2); font-family: var(--font-mono); font-size: 0.6rem; }
+
+    .mrb-environment-detail-body {
+      display: none;
+      gap: 12px;
+      border-top: 1px solid var(--line);
+      padding: 14px;
+    }
+
+    .mrb-environment-details details[open] > .mrb-environment-detail-body { display: grid; }
+
+    .mrb-environment-detail-body > p { margin: 0; color: var(--muted); line-height: 1.45; }
+
+    .mrb-environment-chart {
+      min-width: 0;
+      display: grid;
+      gap: 10px;
+      border-block: 1px solid var(--line);
+      padding-block: 10px 14px;
+    }
+
+    .mrb-reference-banner {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid #cbd9e8;
+      border-radius: 7px;
+      padding: 11px 12px;
+      background: #eef4fb;
+    }
+
+    .mrb-reference-banner p { margin: 0; color: #243e5c; font-size: 0.82rem; }
+    .mrb-reference-banner > span:last-child { color: #415c76; font-size: 0.7rem; font-weight: 700; }
+
+    .mrb-ranking-table { min-width: 900px; }
+
+    .mrb-ranking-table th,
+    .mrb-ranking-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 11px 12px;
+      color: var(--ink);
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .mrb-ranking-table thead th {
+      background: #f3f7f6;
+      color: var(--muted-2);
+      font-size: 0.62rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .mrb-ranking-table th:first-child { text-align: left; }
+
+    .mrb-ranking-table tbody th {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 220px;
+      font-family: var(--font-sans);
+    }
+
+    .mrb-ranking-table tr.is-leader { background: #edf8f4; }
+    .mrb-ranking-table tr.is-leader .mrb-row-rank { background: #d2eee5; color: var(--accent-strong); }
+
+    .mrb-limited-history {
+      margin-top: 12px;
+      border: 1px solid #e6d7b2;
+      border-radius: 7px;
+      background: #fffaf0;
+    }
+
+    .mrb-limited-history > summary {
+      padding: 12px 14px;
+      color: var(--ink-strong);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .mrb-limited-history > summary span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      margin-left: 5px;
+      border-radius: 50%;
+      background: #f4e4b9;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+    }
+
+    .mrb-limited-history > .mrb-limited-note { display: none; margin: 0; padding: 0 14px 12px; color: var(--muted); font-size: 0.82rem; }
+    .mrb-limited-history > .mrb-data-scroll { display: none; border-width: 1px 0 0; border-radius: 0; }
+    .mrb-limited-history[open] > .mrb-limited-note { display: block; }
+    .mrb-limited-history[open] > .mrb-data-scroll { display: block; }
+
+    .mrb-insight-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .mrb-insight {
+      --insight-color: #64748b;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px 16px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--insight-color);
+      border-radius: 7px;
+      padding: 16px;
+      background: #ffffff;
+    }
+
+    .mrb-insight.is-down { --insight-color: #b45335; }
+    .mrb-insight.is-flat { --insight-color: #64748b; }
+    .mrb-insight.is-up { --insight-color: #007969; }
+    .mrb-insight.is-steady { --insight-color: #214f8f; }
+    .mrb-insight.is-split { --insight-color: #9a6500; }
+
+    .mrb-insight > header {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .mrb-insight > header span,
+    .mrb-insight > header strong {
+      color: var(--insight-color);
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .mrb-insight-copy h3 { margin: 0; color: var(--ink-strong); font-family: var(--font-display); font-size: 1.08rem; line-height: 1.2; }
+    .mrb-insight-copy p { margin: 7px 0 0; color: var(--muted); font-size: 0.8rem; line-height: 1.45; }
+
+    .mrb-insight-metric { min-width: 90px; text-align: right; }
+    .mrb-insight-metric strong { display: block; color: var(--insight-color); font-family: var(--font-mono); font-size: 1.2rem; }
+    .mrb-insight-metric span { display: block; color: var(--muted-2); font-size: 0.62rem; text-transform: uppercase; }
+
+    .mrb-insight dl {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin: 0;
+    }
+
+    .mrb-insight dl div { border-top: 1px solid var(--line); padding-top: 7px; }
+    .mrb-insight dt { color: var(--muted-2); font-size: 0.6rem; text-transform: uppercase; }
+    .mrb-insight dd { margin: 2px 0 0; color: var(--ink-strong); font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; }
+
+    .mrb-secondary-insights {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #f8faf9;
+    }
+
+    .mrb-secondary-insights > summary {
+      padding: 12px 14px;
+      color: var(--ink-strong);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .mrb-secondary-insights > summary span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      margin-left: 5px;
+      border-radius: 50%;
+      background: var(--surface-cool);
+      color: var(--accent-2-strong);
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+    }
+
+    .mrb-secondary-insights > .mrb-insight-grid {
+      display: none;
+      border-top: 1px solid var(--line);
+      padding: 10px;
+    }
+
+    .mrb-secondary-insights[open] > .mrb-insight-grid { display: grid; }
+
+    .mrb-evidence-section { gap: 12px; }
+
+    .mrb-disclosure {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      overflow: clip;
+    }
+
+    .mrb-disclosure > summary {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr) minmax(220px, 0.7fr);
+      gap: 16px;
+      align-items: center;
+      padding: 17px 18px;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .mrb-disclosure > summary::-webkit-details-marker { display: none; }
+    .mrb-disclosure > summary::after { content: "+"; justify-self: end; color: var(--accent); font-family: var(--font-mono); font-size: 1.4rem; }
+    .mrb-disclosure[open] > summary::after { content: "-"; }
+
+    .mrb-disclosure > summary span { color: var(--accent-strong); font-size: 0.66rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+    .mrb-disclosure > summary strong { color: var(--ink-strong); font-family: var(--font-display); font-size: 1.05rem; }
+    .mrb-disclosure > summary em { color: var(--muted); font-size: 0.76rem; font-style: normal; }
+
+    .mrb-method-body,
+    .mrb-disclosure-body {
+      display: none;
+      gap: 18px;
+      border-top: 1px solid var(--line);
+      padding: 20px;
+      background: #f8faf9;
+    }
+
+    .mrb-disclosure[open] > .mrb-method-body,
+    .mrb-disclosure[open] > .mrb-disclosure-body { display: grid; }
+
+    .mrb-method-steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .mrb-method-steps article {
+      display: grid;
+      align-content: start;
+      gap: 6px;
+      border-top: 3px solid var(--accent);
+      padding: 12px;
+      background: #ffffff;
+    }
+
+    .mrb-method-steps article > span { color: var(--accent); font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; }
+    .mrb-method-steps h3 { margin: 0; color: var(--ink-strong); font-size: 0.86rem; }
+    .mrb-method-steps p { margin: 0; color: var(--muted); font-size: 0.74rem; line-height: 1.4; }
+
+    .mrb-metric-dictionary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 24px;
+      margin: 0;
+    }
+
+    .mrb-metric-dictionary div { border-top: 1px solid var(--line); padding: 10px 0; }
+    .mrb-metric-dictionary dt { color: var(--ink-strong); font-weight: 700; }
+    .mrb-metric-dictionary dd { margin: 3px 0 0; color: var(--muted); font-size: 0.8rem; line-height: 1.4; }
+
+    .mrb-method-note {
+      margin: 0;
+      border-left: 3px solid var(--accent-2);
+      padding: 10px 12px;
+      background: #eef4fb;
+      color: #304d68;
+      font-size: 0.8rem;
+      line-height: 1.45;
+    }
+
+    .mrb-sample-progress {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .mrb-sample-progress article {
+      --sample-color: #64748b;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 4px 8px;
+      padding: 12px;
+      background: #ffffff;
+    }
+
+    .mrb-sample-progress article.is-down { --sample-color: #b45335; }
+    .mrb-sample-progress article.is-up { --sample-color: #007969; }
+    .mrb-sample-progress span { color: var(--muted); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+    .mrb-sample-progress strong { color: var(--ink-strong); font-family: var(--font-mono); }
+    .mrb-sample-progress small { color: var(--muted-2); font-size: 0.68rem; }
+    .mrb-sample-progress i { grid-column: 1 / -1; height: 5px; overflow: hidden; border-radius: 3px; background: var(--line); }
+    .mrb-sample-progress i::after { content: ""; display: block; width: var(--sample-width); height: 100%; background: var(--sample-color); }
+
+    .mrb-selected-rounds { border-top: 1px solid var(--line); padding-top: 12px; }
+    .mrb-selected-rounds summary { color: var(--ink-strong); font-weight: 700; cursor: pointer; }
+    .mrb-selected-rounds > div { display: none; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+    .mrb-selected-rounds[open] > div { display: flex; }
+    .mrb-selected-rounds a { border: 1px solid var(--line); border-radius: 5px; padding: 5px 7px; background: #ffffff; color: var(--ink); font-family: var(--font-mono); font-size: 0.66rem; }
+
+    .mrb-audit-tools {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) 160px 180px auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .mrb-audit-tools label { display: grid; gap: 5px; }
+    .mrb-audit-tools label > span { color: var(--muted-2); font-size: 0.64rem; font-weight: 700; text-transform: uppercase; }
+    .mrb-audit-tools input,
+    .mrb-audit-tools select {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 7px 9px;
+      background: #ffffff;
+      color: var(--ink-strong);
+      font: inherit;
+      font-size: 0.8rem;
+    }
+
+    .mrb-data-link,
+    .mrb-show-more {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--dark);
+      border-radius: 6px;
+      padding: 8px 12px;
+      background: var(--dark);
+      color: #ffffff;
+      font: inherit;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .mrb-audit-count { margin: 0; color: var(--muted); font-size: 0.76rem; }
+
+    .mrb-audit-table {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .mrb-audit-header,
+    .mrb-audit-row {
+      display: grid;
+      grid-template-columns: minmax(170px, 1.25fr) 72px minmax(210px, 1.35fr) 76px 100px 90px 60px;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 12px;
+    }
+
+    .mrb-audit-header {
+      background: #f0f5f4;
+      color: var(--muted-2);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .mrb-audit-row { border-top: 1px solid var(--line); color: var(--ink); font-family: var(--font-mono); font-size: 0.68rem; }
+    .mrb-audit-row a { color: var(--accent-2-strong); font-weight: 700; }
+    .mrb-audit-row[hidden] { display: none; }
+    .mrb-show-more { justify-self: center; min-width: 190px; }
+    .mrb-show-more[hidden],
+    .mrb-empty-state[hidden] { display: none !important; }
+
+    @media (max-width: 980px) {
+      .mrb-hero { grid-template-columns: minmax(0, 1fr); align-items: start; }
+      .mrb-hero-question { grid-template-columns: repeat(3, minmax(0, 1fr)); border-left: 0; border-top: 1px solid rgb(127 220 205 / 24%); padding: 18px 0 0; }
+      .mrb-hero-question span { grid-column: 1 / -1; }
+      .mrb-section-links a { padding-inline: 7px; }
+      .mrb-answer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mrb-answer-card-leader { grid-column: 1 / -1; }
+      .mrb-benchmark-definition { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mrb-benchmark-definition > div:nth-child(odd) { border-left: 0; }
+      .mrb-benchmark-definition > div:nth-child(n + 3) { border-top: 1px solid var(--line); }
+      .mrb-direction-grid { grid-template-columns: minmax(0, 1fr); }
+      .mrb-threshold-strip { overflow-x: auto; grid-template-columns: repeat(5, minmax(150px, 1fr)); padding-bottom: 5px; }
+      .mrb-environment-details { grid-template-columns: minmax(0, 1fr); }
+      .mrb-insight-grid { grid-template-columns: minmax(0, 1fr); }
+      .mrb-method-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mrb-disclosure > summary { grid-template-columns: 120px minmax(0, 1fr) auto; }
+      .mrb-disclosure > summary em { display: none; }
+      .mrb-audit-tools { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .mrb-data-link { grid-column: 1 / -1; justify-self: start; }
+      .mrb-audit-table { overflow-x: auto; }
+      .mrb-audit-header,
+      .mrb-audit-row { min-width: 900px; }
+    }
+
+    @media (max-width: 760px) {
+      .regime-dashboard { width: 100%; }
+      .mrb-hero { border-radius: 0; padding: 24px 20px; }
+      .mrb-hero h1 { font-size: 2.15rem; line-height: 1.04; }
+      .mrb-hero-copy > p { font-size: 0.95rem; }
+      .mrb-hero-question { grid-template-columns: minmax(0, 1fr); }
+      .mrb-hero-question strong { font-size: 0.9rem; }
+      .mrb-context-bar { top: 114px; justify-content: center; margin: 0; border-width: 0 0 1px; border-radius: 0; }
+      .mrb-track-switch { width: min(100%, 320px); }
+      .mrb-track-switch button { min-width: 0; }
+      .mrb-section-links { display: none; }
+      .mrb-section { gap: 18px; scroll-margin-top: 172px; padding: 38px 20px; }
+      .mrb-section-head h2 { font-size: 1.55rem; }
+      .mrb-answer-grid { grid-template-columns: minmax(0, 1fr); }
+      .mrb-answer-card-leader { grid-column: auto; }
+      .mrb-chart-panel { padding: 15px; }
+      .mrb-chart-panel > header,
+      .mrb-exact-results-head { display: grid; align-items: start; }
+      .mrb-exact-results-head { margin-top: 16px; }
+      .mrb-reading-guide { grid-template-columns: minmax(0, 1fr); }
+      .mrb-reading-guide > div { padding-inline: 20px; }
+      .mrb-reading-guide > div + div { border-top: 1px solid #cbd9e8; border-left: 0; }
+      .mrb-direction-panel { padding: 15px; }
+      .mrb-direction-panel > header { display: grid; }
+      .mrb-evidence { justify-self: start; }
+      .mrb-evidence-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mrb-threshold-strip { margin-inline: -20px; padding-inline: 20px; scroll-snap-type: x proximity; }
+      .mrb-threshold-strip article { scroll-snap-align: start; }
+      .mrb-data-scroll { margin-inline: -20px; border-right: 0; border-left: 0; border-radius: 0; }
+      .mrb-matrix-table thead th:first-child,
+      .mrb-matrix-table tbody th { min-width: 175px; }
+      .mrb-environment-details { grid-template-columns: minmax(0, 1fr); }
+      .mrb-environment-details summary { grid-template-columns: 10px minmax(0, 1fr) auto; }
+      .mrb-environment-details summary .mrb-evidence { grid-column: 2 / -1; }
+      .mrb-reference-banner { grid-template-columns: auto minmax(0, 1fr); }
+      .mrb-reference-banner > span:last-child { grid-column: 2; }
+      .mrb-insight { grid-template-columns: minmax(0, 1fr); }
+      .mrb-insight-metric { text-align: left; }
+      .mrb-insight dl { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .mrb-disclosure { border-radius: 0; margin-inline: -20px; }
+      .mrb-disclosure > summary { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; padding: 14px 20px; }
+      .mrb-disclosure > summary span { grid-column: 1; }
+      .mrb-disclosure > summary strong { grid-column: 1; }
+      .mrb-disclosure > summary::after { grid-column: 2; grid-row: 1 / span 2; }
+      .mrb-method-body,
+      .mrb-disclosure-body { padding: 16px 20px; }
+      .mrb-method-steps,
+      .mrb-metric-dictionary,
+      .mrb-sample-progress { grid-template-columns: minmax(0, 1fr); }
+      .mrb-sample-head { display: grid; }
+      .mrb-audit-tools { grid-template-columns: minmax(0, 1fr); }
+      .mrb-data-link { grid-column: auto; justify-self: stretch; }
+      .mrb-audit-header { display: none; }
+      .mrb-audit-table { overflow: visible; border: 0; background: transparent; }
+      .mrb-audit-row {
+        min-width: 0;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 12px;
+        margin-bottom: 7px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 11px;
+        background: #ffffff;
+      }
+      .mrb-audit-row span { min-width: 0; overflow-wrap: anywhere; }
+      .mrb-audit-row span::before { content: attr(data-label); display: block; margin-bottom: 2px; color: var(--muted-2); font-family: var(--font-sans); font-size: 0.56rem; font-weight: 700; text-transform: uppercase; }
+      .mrb-audit-row span:first-child { grid-column: 1 / -1; font-size: 0.74rem; }
+    }
+
+    @media (max-width: 430px) {
+      .mrb-hero h1 { font-size: 1.9rem; }
+      .mrb-answer-card { padding: 16px; }
+      .mrb-benchmark-definition { grid-template-columns: minmax(0, 1fr); }
+      .mrb-benchmark-definition > div + div { border-top: 1px solid var(--line); border-left: 0; }
+      .mrb-direction-table th,
+      .mrb-direction-table td { padding-inline: 7px; }
+      .mrb-reference-banner { align-items: start; }
+    }
+  </style>
+
+  <script is:inline>
+    (() => {
+      const trackButtons = Array.from(document.querySelectorAll("[data-mrb-track]"));
+      const trackPanels = Array.from(document.querySelectorAll("[data-mrb-track-panel]"));
+      const announcement = document.querySelector("[data-mrb-track-announcement]");
+      const disclosureRoots = Array.from(document.querySelectorAll("details"));
+
+      function syncDisclosure(details) {
+        Array.from(details.children).forEach((child) => {
+          if (child.tagName === "SUMMARY") return;
+          child.inert = !details.open;
+          child.setAttribute("aria-hidden", details.open ? "false" : "true");
+        });
+      }
+
+      disclosureRoots.forEach((details) => {
+        syncDisclosure(details);
+        details.addEventListener("toggle", () => syncDisclosure(details));
+      });
+
+      function trackFromHash() {
+        const match = window.location.hash.match(/market-environment-insight-(weekly|monthly)-/);
+        return match?.[1];
+      }
+
+      function selectTrack(track, updateUrl = true) {
+        if (!['monthly', 'weekly'].includes(track)) return;
+        document.documentElement.dataset.marketRegimeTrack = track;
+        trackButtons.forEach((button) => {
+          const active = button.dataset.mrbTrack === track;
+          button.classList.toggle("is-active", active);
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        trackPanels.forEach((panel) => {
+          panel.hidden = panel.dataset.mrbTrackPanel !== track;
+        });
+        if (announcement) announcement.textContent = `${track === 'weekly' ? 'Weekly' : 'Monthly'} results selected`;
+        if (updateUrl) {
+          const url = new URL(window.location.href);
+          url.searchParams.set("track", track);
+          window.history.replaceState({}, "", url);
+        }
+      }
+
+      trackButtons.forEach((button, index) => {
+        button.addEventListener("click", () => selectTrack(button.dataset.mrbTrack));
+        button.addEventListener("keydown", (event) => {
+          if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+          event.preventDefault();
+          const nextIndex = event.key === 'Home'
+            ? 0
+            : event.key === 'End'
+              ? trackButtons.length - 1
+              : event.key === 'ArrowRight'
+                ? (index + 1) % trackButtons.length
+                : (index - 1 + trackButtons.length) % trackButtons.length;
+          const next = trackButtons[nextIndex];
+          next?.focus();
+          selectTrack(next?.dataset.mrbTrack);
+        });
+      });
+
+      function activateHash() {
+        const hashTrack = trackFromHash();
+        if (hashTrack) selectTrack(hashTrack, false);
+        const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+        if (target) {
+          const details = target.closest("details");
+          details?.setAttribute("open", "");
+          if (details) syncDisclosure(details);
+          window.requestAnimationFrame(() => target.scrollIntoView({ block: "start" }));
+        }
+      }
+
+      const requestedTrack = trackFromHash() || new URL(window.location.href).searchParams.get("track") || "monthly";
+      selectTrack(requestedTrack, false);
+      if (window.location.hash) activateHash();
+      window.addEventListener("hashchange", activateHash);
+
+      const search = document.querySelector("[data-mrb-audit-search]");
+      const trackFilter = document.querySelector("[data-mrb-audit-track]");
+      const environmentFilter = document.querySelector("[data-mrb-audit-environment]");
+      const auditRows = Array.from(document.querySelectorAll("[data-audit-row]"));
+      const auditCount = document.querySelector("[data-mrb-audit-count]");
+      const auditEmpty = document.querySelector("[data-mrb-audit-empty]");
+      const showMore = document.querySelector("[data-mrb-audit-more]");
+      let expanded = false;
+
+      function applyAuditFilters() {
+        const query = String(search?.value || "").trim().toLowerCase();
+        const track = String(trackFilter?.value || "all");
+        const environment = String(environmentFilter?.value || "all");
+        const filtering = Boolean(query || track !== "all" || environment !== "all");
+        let matched = 0;
+        let visible = 0;
+        auditRows.forEach((row) => {
+          const matches = (!query || row.dataset.round.includes(query)) &&
+            (track === "all" || row.dataset.track === track) &&
+            (environment === "all" || row.dataset.environment === environment);
+          if (matches) matched += 1;
+          const show = matches && (filtering || expanded || Number(row.dataset.index) < 10);
+          row.hidden = !show;
+          row.inert = !show;
+          row.setAttribute("aria-hidden", show ? "false" : "true");
+          if (show) visible += 1;
+        });
+        if (auditCount) auditCount.textContent = `Showing ${visible} of ${matched} matching rounds`;
+        if (auditEmpty) auditEmpty.hidden = matched !== 0;
+        if (showMore) {
+          showMore.hidden = filtering || expanded || matched <= 10;
+          showMore.textContent = `Show all ${matched} rounds`;
+        }
+      }
+
+      search?.addEventListener("input", applyAuditFilters);
+      trackFilter?.addEventListener("change", applyAuditFilters);
+      environmentFilter?.addEventListener("change", applyAuditFilters);
+      showMore?.addEventListener("click", () => { expanded = true; applyAuditFilters(); });
+      applyAuditFilters();
+    })();
+  </script>
 </BaseLayout>

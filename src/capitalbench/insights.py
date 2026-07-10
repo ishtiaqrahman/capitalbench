@@ -764,7 +764,7 @@ def _market_environment_synthesis(
         importance=88 if track == "weekly" else 86,
         calculations=calculations,
         evidence=_market_environment_evidence(signal["key"]),
-        related=[{"label": "Market Environment Benchmark", "href": "/leaderboards/market-regime-benchmark/"}],
+        related=[{"label": "Market Regime Benchmark", "href": "/leaderboards/market-regime-benchmark/"}],
         context=context,
         confidence=str(signal.get("confidence") or "medium"),
     )
@@ -871,7 +871,7 @@ def _market_environment_direction_leader(
         evidence=_market_environment_evidence(signal["key"]),
         related=[
             {"label": model["model_label"], "href": f"/models/{model['model_id']}/"},
-            {"label": "Market Environment Benchmark", "href": "/leaderboards/market-regime-benchmark/"},
+            {"label": "Market Regime Benchmark", "href": "/leaderboards/market-regime-benchmark/"},
         ],
         context=context,
         confidence=str(signal.get("confidence") or "medium"),
@@ -946,7 +946,7 @@ def _market_environment_consistency(
         evidence=_market_environment_evidence(signal["key"]),
         related=[
             {"label": model["model_label"], "href": f"/models/{model['model_id']}/"},
-            {"label": "Market Environment Benchmark", "href": "/leaderboards/market-regime-benchmark/"},
+            {"label": "Market Regime Benchmark", "href": "/leaderboards/market-regime-benchmark/"},
         ],
         context=context,
         confidence=str(signal.get("confidence") or "medium"),
@@ -1021,7 +1021,7 @@ def _market_environment_split(
         evidence=_market_environment_evidence(signal["key"]),
         related=[
             {"label": model["model_label"], "href": f"/models/{model['model_id']}/"},
-            {"label": "Market Environment Benchmark", "href": "/leaderboards/market-regime-benchmark/"},
+            {"label": "Market Regime Benchmark", "href": "/leaderboards/market-regime-benchmark/"},
         ],
         context=context,
         confidence=str(signal.get("confidence") or "medium"),
