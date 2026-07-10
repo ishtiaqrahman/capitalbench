@@ -352,6 +352,16 @@ function performanceBarWidth(index: number, total: number): number {
   return Math.round(100 - index / (total - 1) * (100 - minWidth));
 }
 
+function environmentReturnBarWidth(environment: EnvironmentPerformanceCard, value: number | undefined): number {
+  if (!finiteNumber(value)) return 0;
+  const values = [environment.averageSp500Return, ...environment.modelRows.map((row) => row.averageReturn)]
+    .filter(finiteNumber)
+    .sort((left, right) => right - left);
+  if (values.length <= 1) return 100;
+  const index = values.findIndex((item) => item === value);
+  return performanceBarWidth(index >= 0 ? index : values.length - 1, values.length);
+}
+
 function averageSp500Score(rounds: RegimeRound[]): number | undefined {
   if (rounds.length === 0) return undefined;
   return cumulativeCapitalBenchScore(
@@ -453,6 +463,9 @@ function statusClass(status: string): string {
 function trackLabel(track: BenchmarkTrack): string {
   return track === "weekly" ? "Weekly" : "Monthly";
 }
+
+const regimeTrackOrder = ["monthly", "weekly"] as BenchmarkTrack[];
+const defaultRegimeTrack = regimeTrackOrder[0];
 
 function statusLabel(status: RegimeStatus | "Ready" | "Forming"): string {
   if (status === "Ready") return "Counts now";
@@ -945,7 +958,7 @@ function buildEnvironmentMatrix(track: BenchmarkTrack): EnvironmentMatrixRow[] {
           label: environment.label,
           value: modelRow?.averageReturn,
           rank: modelRow ? modelIndex + 1 : undefined,
-          width: modelRow ? performanceBarWidth(modelIndex, environment.modelRows.length) : 0
+          width: modelRow ? environmentReturnBarWidth(environment, modelRow.averageReturn) : 0
         };
       })
     }))
@@ -1197,7 +1210,7 @@ function buildSplitInsight(track: BenchmarkTrack): MarketInsightCard {
   };
 }
 
-const marketInsightTracks = (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => ({
+const marketInsightTracks = regimeTrackOrder.map((track) => ({
   track,
   label: trackLabel(track),
   cards: [
@@ -1269,7 +1282,7 @@ const balancedProgressCharts = {
   monthly: buildBalancedProgressChart("monthly")
 };
 
-const trackSummaries = (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
+const trackSummaries = regimeTrackOrder.map((track) => {
   const coverage = coverageByTrack[track];
   const readyCount = coverage.filter((item) => item.status === "Ready").length;
   const totalRounds = regimeRounds.filter((round) => round.track === track).length;
@@ -1377,146 +1390,251 @@ const hiddenAuditRows = auditRows.slice(10);
         <p>
           Average return appears first. Best and worst are marked inside each environment.
         </p>
+        <p class="environment-reference-note">
+          S&amp;P 500 is shown as the market reference in each bar view.
+        </p>
       </div>
 
-      {
-        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
-          const confidence = trackConfidence(track);
-          const environments = environmentPerformance[track];
-          const matrixRows = environmentMatrices[track];
-          return (
-            <div class="environment-track-panel">
-              <div class="regime-track-head">
-                <div>
-                  <span class="panel-kicker">{trackLabel(track)} environments</span>
-                  <h3>{trackLabel(track)} model returns by environment</h3>
-                  <p>Average return is shown first. Longer bars mean better performance within each environment.</p>
-                </div>
-                <strong class:list={["regime-confidence", `regime-confidence-${confidence.className}`]}>
-                  {confidence.label}
-                </strong>
-              </div>
+      <div
+        class="market-regime-track-tab-shell"
+        data-market-regime-tabs
+        data-active-track={defaultRegimeTrack}
+        aria-label="Monthly and weekly environment results"
+      >
+        <div class="track-scorecard-tabs" role="tablist" aria-label="Choose environment result horizon">
+          {regimeTrackOrder.map((track) => {
+            const active = track === defaultRegimeTrack;
+            const tabId = `environment-overview-tab-${track}`;
+            const panelId = `environment-overview-panel-${track}`;
+            return (
+              <button
+                id={tabId}
+                class:list={["track-scorecard-tab", active && "is-active"]}
+                type="button"
+                role="tab"
+                aria-selected={active ? "true" : "false"}
+                aria-controls={panelId}
+                tabindex={active ? "0" : "-1"}
+                data-market-regime-tab={track}
+              >
+                <strong>{trackLabel(track)}</strong>
+                <span>{trackConfidence(track).label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-              <div class="environment-performance-matrix" aria-label={`${trackLabel(track)} model return matrix`}>
-                <div class="environment-matrix-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th scope="col">Model</th>
-                        {environments.map((environment) => (
-                          <th scope="col">{environment.label}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {matrixRows.map((row) => (
-                        <tr>
-                          <th scope="row">
-                            <div class="environment-matrix-model">
-                              {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
-                              <span>
-                                <strong>{row.label}</strong>
-                                <em>{signedPctText(row.averageReturn)} avg</em>
-                              </span>
-                            </div>
-                          </th>
-                          {row.cells.map((cell) => (
-                            <td
-                              class:list={[
-                                "environment-matrix-cell",
-                                `environment-matrix-cell-${cell.key}`,
-                                `environment-matrix-cell-${valueTone(cell.value)}`
-                              ]}
-                              data-label={cell.label}
-                            >
-                              {finiteNumber(cell.value) ? (
-                                <>
-                                  <span class="environment-matrix-pill">{signedPctText(cell.value)}</span>
-                                  <span
-                                    class="environment-matrix-bar"
-                                    style={`--matrix-bar-width: ${cell.width}%;`}
-                                    aria-hidden="true"
-                                  >
-                                    <i></i>
+        <div class="track-scorecard-tab-panels market-regime-tab-panels">
+          {regimeTrackOrder.map((track) => {
+            const active = track === defaultRegimeTrack;
+            const confidence = trackConfidence(track);
+            const environments = environmentPerformance[track];
+            const matrixRows = environmentMatrices[track];
+            const tabId = `environment-overview-tab-${track}`;
+            const panelId = `environment-overview-panel-${track}`;
+            return (
+              <div
+                id={panelId}
+                class="track-scorecard-tab-panel market-regime-tab-panel"
+                role="tabpanel"
+                aria-labelledby={tabId}
+                data-market-regime-panel={track}
+                hidden={!active}
+              >
+                <div class="environment-track-panel">
+                  <div class="regime-track-head">
+                    <div>
+                      <span class="panel-kicker">{trackLabel(track)} environments</span>
+                      <h3>{trackLabel(track)} model returns by environment</h3>
+                      <p>Average return is shown first. Longer bars mean better performance within each environment.</p>
+                    </div>
+                    <strong class:list={["regime-confidence", `regime-confidence-${confidence.className}`]}>
+                      {confidence.label}
+                    </strong>
+                  </div>
+
+                  <div class="environment-performance-matrix" aria-label={`${trackLabel(track)} model return matrix`}>
+                    <div class="environment-matrix-scroll">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th scope="col">Model</th>
+                            {environments.map((environment) => (
+                              <th scope="col">{environment.label}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="environment-matrix-sp500-row">
+                            <th scope="row">
+                              <div class="environment-matrix-model environment-matrix-reference">
+                                <span class="environment-market-avatar">S&amp;P</span>
+                                <span>
+                                  <strong>S&amp;P 500</strong>
+                                  <em>Market reference</em>
+                                </span>
+                              </div>
+                            </th>
+                            {environments.map((environment) => {
+                              const value = environment.averageSp500Return;
+                              return (
+                                <td
+                                  class:list={[
+                                    "environment-matrix-cell",
+                                    "environment-matrix-cell-reference",
+                                    `environment-matrix-cell-${valueTone(value)}`
+                                  ]}
+                                  data-label={environment.label}
+                                >
+                                  {finiteNumber(value) ? (
+                                    <>
+                                      <span class="environment-matrix-pill">{signedPctText(value)}</span>
+                                      <span
+                                        class="environment-matrix-bar environment-matrix-reference-bar"
+                                        style={`--matrix-bar-width: ${environmentReturnBarWidth(environment, value)}%;`}
+                                        aria-hidden="true"
+                                      >
+                                        <i></i>
+                                      </span>
+                                    </>
+                                  ) : (
+                                    <span class="environment-matrix-empty">n/a</span>
+                                  )}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                          {matrixRows.map((row) => (
+                            <tr>
+                              <th scope="row">
+                                <div class="environment-matrix-model">
+                                  {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
+                                  <span>
+                                    <strong>{row.label}</strong>
+                                    <em>{signedPctText(row.averageReturn)} avg</em>
                                   </span>
-                                </>
-                              ) : (
-                                <span class="environment-matrix-empty">n/a</span>
-                              )}
-                            </td>
+                                </div>
+                              </th>
+                              {row.cells.map((cell) => (
+                                <td
+                                  class:list={[
+                                    "environment-matrix-cell",
+                                    `environment-matrix-cell-${cell.key}`,
+                                    `environment-matrix-cell-${valueTone(cell.value)}`
+                                  ]}
+                                  data-label={cell.label}
+                                >
+                                  {finiteNumber(cell.value) ? (
+                                    <>
+                                      <span class="environment-matrix-pill">{signedPctText(cell.value)}</span>
+                                      <span
+                                        class="environment-matrix-bar"
+                                        style={`--matrix-bar-width: ${cell.width}%;`}
+                                        aria-hidden="true"
+                                      >
+                                        <i></i>
+                                      </span>
+                                    </>
+                                  ) : (
+                                    <span class="environment-matrix-empty">n/a</span>
+                                  )}
+                                </td>
+                              ))}
+                            </tr>
                           ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="environment-card-grid">
+                    {environments.map((environment) => (
+                      <article class:list={["environment-card", `environment-card-${environment.key}`]}>
+                        <header>
+                          <span class:list={["regime-status", `regime-status-${statusClass(environment.status)}`]}>
+                            {statusLabel(environment.status)}
+                          </span>
+                          <strong>{environment.label}</strong>
+                          <em>{environment.rangeLabel}</em>
+                        </header>
+                        <div class="environment-count">
+                          <b>{environment.count}</b>
+                          <span>resolved round{environment.count === 1 ? "" : "s"}</span>
+                        </div>
+                        {finiteNumber(environment.averageSp500Return) && (
+                          <div
+                            class:list={[
+                              "environment-market-reference-row",
+                              `environment-market-reference-row-${valueTone(environment.averageSp500Return)}`
+                            ]}
+                            style={`--environment-bar-width: ${environmentReturnBarWidth(environment, environment.averageSp500Return)}%;`}
+                          >
+                            <span class="environment-market-avatar">S&amp;P</span>
+                            <div class="environment-model-copy">
+                              <strong>S&amp;P 500</strong>
+                              <em>Market reference</em>
+                            </div>
+                            <b class:list={["return-value", `return-value-${valueTone(environment.averageSp500Return)}`]}>
+                              {signedPctText(environment.averageSp500Return)}
+                            </b>
+                            <div class="environment-model-bar" aria-hidden="true">
+                              <span></span>
+                            </div>
+                          </div>
+                        )}
+                        {environment.modelRows.length ? (
+                          <ol class="environment-model-ranking" aria-label={`${environment.label} model average returns`}>
+                            {environment.modelRows.map((modelRow, index) => {
+                              const isBest = index === 0;
+                              const isWorst = index === environment.modelRows.length - 1 && environment.modelRows.length > 1;
+                              const tone = valueTone(modelRow.averageReturn);
+                              return (
+                                <li class:list={[
+                                  "environment-model-row",
+                                  `environment-model-row-${tone}`,
+                                  {
+                                    "environment-model-row-best": isBest,
+                                    "environment-model-row-worst": isWorst
+                                  }
+                                ]} style={`--environment-bar-width: ${environmentReturnBarWidth(environment, modelRow.averageReturn)}%;`}>
+                                  <span class="environment-rank">{index + 1}</span>
+                                  {modelRow.logoSrc && <img src={modelRow.logoSrc} alt="" loading="lazy" />}
+                                  <div class="environment-model-copy">
+                                    <strong>{modelRow.label}</strong>
+                                    <em>{isBest ? "Best" : isWorst ? "Worst" : `${modelRow.tests} tests`}</em>
+                                  </div>
+                                  <b class:list={["return-value", `return-value-${tone}`]}>
+                                    {signedPctText(modelRow.averageReturn)}
+                                  </b>
+                                  <div class="environment-model-bar" aria-hidden="true">
+                                    <span></span>
+                                  </div>
+                                </li>
+                              );
+                            })}
+                          </ol>
+                        ) : (
+                          <div class="environment-empty-ranking">No model returns yet.</div>
+                        )}
+                        <div class="environment-stats">
+                          <span>
+                            <b>{signedPctText(environment.averageSp500Return)}</b>
+                            <em>S&amp;P avg</em>
+                          </span>
+                          <span>
+                            <b>{scoreText(environment.best?.score)}</b>
+                            <em>best score</em>
+                          </span>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
                 </div>
               </div>
-
-              <div class="environment-card-grid">
-                {environments.map((environment) => (
-                  <article class:list={["environment-card", `environment-card-${environment.key}`]}>
-                    <header>
-                      <span class:list={["regime-status", `regime-status-${statusClass(environment.status)}`]}>
-                        {statusLabel(environment.status)}
-                      </span>
-                      <strong>{environment.label}</strong>
-                      <em>{environment.rangeLabel}</em>
-                    </header>
-                    <div class="environment-count">
-                      <b>{environment.count}</b>
-                      <span>resolved round{environment.count === 1 ? "" : "s"}</span>
-                    </div>
-                    {environment.modelRows.length ? (
-                      <ol class="environment-model-ranking" aria-label={`${environment.label} model average returns`}>
-                        {environment.modelRows.map((modelRow, index) => {
-                          const isBest = index === 0;
-                          const isWorst = index === environment.modelRows.length - 1 && environment.modelRows.length > 1;
-                          const tone = valueTone(modelRow.averageReturn);
-                          return (
-                            <li class:list={[
-                              "environment-model-row",
-                              `environment-model-row-${tone}`,
-                              {
-                                "environment-model-row-best": isBest,
-                                "environment-model-row-worst": isWorst
-                              }
-                            ]} style={`--environment-bar-width: ${performanceBarWidth(index, environment.modelRows.length)}%;`}>
-                              <span class="environment-rank">{index + 1}</span>
-                              {modelRow.logoSrc && <img src={modelRow.logoSrc} alt="" loading="lazy" />}
-                              <div class="environment-model-copy">
-                                <strong>{modelRow.label}</strong>
-                                <em>{isBest ? "Best" : isWorst ? "Worst" : `${modelRow.tests} tests`}</em>
-                              </div>
-                              <b class:list={["return-value", `return-value-${tone}`]}>
-                                {signedPctText(modelRow.averageReturn)}
-                              </b>
-                              <div class="environment-model-bar" aria-hidden="true">
-                                <span></span>
-                              </div>
-                            </li>
-                          );
-                        })}
-                      </ol>
-                    ) : (
-                      <div class="environment-empty-ranking">No model returns yet.</div>
-                    )}
-                    <div class="environment-stats">
-                      <span>
-                        <b>{signedPctText(environment.averageSp500Return)}</b>
-                        <em>S&amp;P avg</em>
-                      </span>
-                      <span>
-                        <b>{scoreText(environment.best?.score)}</b>
-                        <em>best score</em>
-                      </span>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          );
-        })
-      }
+            );
+          })}
+        </div>
+      </div>
     </section>
 
     <section class="regime-section direction-summary-section" aria-labelledby="direction-summary-title">
@@ -1529,44 +1647,90 @@ const hiddenAuditRows = auditRows.slice(10);
         </p>
       </div>
 
-      <div class="direction-summary-grid">
-        {(["weekly", "monthly"] as BenchmarkTrack[]).flatMap((track) =>
-          directionalPerformance[track].map((direction) => (
-            <article class:list={["direction-summary-card", `direction-summary-card-${direction.key}`]}>
-              <header>
-                <span class="panel-kicker">{trackLabel(track)}</span>
-                <strong>{direction.label}</strong>
-                <em>{direction.rangeLabel}</em>
-              </header>
-              <div class="direction-summary-main">
-                <div>
-                  <span>Best</span>
-                  <strong>{direction.best?.label ?? "No model yet"}</strong>
-                  <em>{signedPctText(direction.best?.averageReturn)} avg return</em>
-                </div>
-                <div>
-                  <span>Worst</span>
-                  <strong>{direction.worst?.label ?? "No model yet"}</strong>
-                  <em>{signedPctText(direction.worst?.averageReturn)} avg return</em>
+      <div
+        class="market-regime-track-tab-shell"
+        data-market-regime-tabs
+        data-active-track={defaultRegimeTrack}
+        aria-label="Monthly and weekly directional summaries"
+      >
+        <div class="track-scorecard-tabs" role="tablist" aria-label="Choose down and up summary horizon">
+          {regimeTrackOrder.map((track) => {
+            const active = track === defaultRegimeTrack;
+            const tabId = `direction-summary-tab-${track}`;
+            const panelId = `direction-summary-panel-${track}`;
+            return (
+              <button
+                id={tabId}
+                class:list={["track-scorecard-tab", active && "is-active"]}
+                type="button"
+                role="tab"
+                aria-selected={active ? "true" : "false"}
+                aria-controls={panelId}
+                tabindex={active ? "0" : "-1"}
+                data-market-regime-tab={track}
+              >
+                <strong>{trackLabel(track)}</strong>
+                <span>{trackConfidence(track).label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div class="track-scorecard-tab-panels market-regime-tab-panels">
+          {regimeTrackOrder.map((track) => {
+            const active = track === defaultRegimeTrack;
+            const tabId = `direction-summary-tab-${track}`;
+            const panelId = `direction-summary-panel-${track}`;
+            return (
+              <div
+                id={panelId}
+                class="track-scorecard-tab-panel market-regime-tab-panel"
+                role="tabpanel"
+                aria-labelledby={tabId}
+                data-market-regime-panel={track}
+                hidden={!active}
+              >
+                <div class="direction-summary-grid direction-summary-track-grid">
+                  {directionalPerformance[track].map((direction) => (
+                    <article class:list={["direction-summary-card", `direction-summary-card-${direction.key}`]}>
+                      <header>
+                        <span class="panel-kicker">{trackLabel(track)}</span>
+                        <strong>{direction.label}</strong>
+                        <em>{direction.rangeLabel}</em>
+                      </header>
+                      <div class="direction-summary-main">
+                        <div>
+                          <span>Best</span>
+                          <strong>{direction.best?.label ?? "No model yet"}</strong>
+                          <em>{signedPctText(direction.best?.averageReturn)} avg return</em>
+                        </div>
+                        <div>
+                          <span>Worst</span>
+                          <strong>{direction.worst?.label ?? "No model yet"}</strong>
+                          <em>{signedPctText(direction.worst?.averageReturn)} avg return</em>
+                        </div>
+                      </div>
+                      <dl>
+                        <div>
+                          <dt>S&amp;P avg</dt>
+                          <dd>{signedPctText(direction.averageSp500Return)}</dd>
+                        </div>
+                        <div>
+                          <dt>Best alpha</dt>
+                          <dd>{signedPctText(direction.best?.averageAlpha)}</dd>
+                        </div>
+                        <div>
+                          <dt>Rounds</dt>
+                          <dd>{direction.rounds.length}</dd>
+                        </div>
+                      </dl>
+                    </article>
+                  ))}
                 </div>
               </div>
-              <dl>
-                <div>
-                  <dt>S&amp;P avg</dt>
-                  <dd>{signedPctText(direction.averageSp500Return)}</dd>
-                </div>
-                <div>
-                  <dt>Best alpha</dt>
-                  <dd>{signedPctText(direction.best?.averageAlpha)}</dd>
-                </div>
-                <div>
-                  <dt>Rounds</dt>
-                  <dd>{direction.rounds.length}</dd>
-                </div>
-              </dl>
-            </article>
-          ))
-        )}
+            );
+          })}
+        </div>
       </div>
     </section>
 
@@ -1581,9 +1745,50 @@ const hiddenAuditRows = auditRows.slice(10);
         </p>
       </div>
 
-      {
-        (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => (
-          <div class="regime-leaderboard-panel">
+      <div
+        class="market-regime-track-tab-shell"
+        data-market-regime-tabs
+        data-active-track={defaultRegimeTrack}
+        aria-label="Monthly and weekly equal-environment leaderboards"
+      >
+        <div class="track-scorecard-tabs" role="tablist" aria-label="Choose equal-environment leaderboard horizon">
+          {regimeTrackOrder.map((track) => {
+            const active = track === defaultRegimeTrack;
+            const tabId = `regime-leaderboard-tab-${track}`;
+            const panelId = `regime-leaderboard-panel-${track}`;
+            return (
+              <button
+                id={tabId}
+                class:list={["track-scorecard-tab", active && "is-active"]}
+                type="button"
+                role="tab"
+                aria-selected={active ? "true" : "false"}
+                aria-controls={panelId}
+                tabindex={active ? "0" : "-1"}
+                data-market-regime-tab={track}
+              >
+                <strong>{trackLabel(track)}</strong>
+                <span>{trackConfidence(track).label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div class="track-scorecard-tab-panels market-regime-tab-panels">
+          {regimeTrackOrder.map((track) => {
+            const active = track === defaultRegimeTrack;
+            const tabId = `regime-leaderboard-tab-${track}`;
+            const panelId = `regime-leaderboard-panel-${track}`;
+            return (
+              <div
+                id={panelId}
+                class="track-scorecard-tab-panel market-regime-tab-panel"
+                role="tabpanel"
+                aria-labelledby={tabId}
+                data-market-regime-panel={track}
+                hidden={!active}
+              >
+                <div class="regime-leaderboard-panel">
             <div class="regime-leaderboard-head">
               <div>
                 <span class="panel-kicker">{trackLabel(track)} benchmark</span>
@@ -1743,9 +1948,12 @@ const hiddenAuditRows = auditRows.slice(10);
                 </tbody>
               </table>
             </div>
-          </div>
-        ))
-      }
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </section>
 
     <section class="regime-section market-insights-section" aria-labelledby="market-insights-title">
@@ -1758,56 +1966,100 @@ const hiddenAuditRows = auditRows.slice(10);
         </p>
       </div>
 
-      <div class="market-insight-track-list">
-        {marketInsightTracks.map((insightTrack) => (
-          <article class="market-insight-track">
-            <div class="market-insight-track-head">
-              <div>
-                <span class="panel-kicker">{insightTrack.label} insights</span>
-                <h3>{insightTrack.label} model behavior</h3>
-              </div>
-              <span class:list={["regime-confidence", `regime-confidence-${trackConfidence(insightTrack.track).className}`]}>
-                {trackConfidence(insightTrack.track).label}
-              </span>
-            </div>
+      <div
+        class="market-regime-track-tab-shell"
+        data-market-regime-tabs
+        data-active-track={defaultRegimeTrack}
+        aria-label="Monthly and weekly calculated insights"
+      >
+        <div class="track-scorecard-tabs" role="tablist" aria-label="Choose calculated insight horizon">
+          {marketInsightTracks.map((insightTrack) => {
+            const active = insightTrack.track === defaultRegimeTrack;
+            const tabId = `market-insights-tab-${insightTrack.track}`;
+            const panelId = `market-insights-panel-${insightTrack.track}`;
+            return (
+              <button
+                id={tabId}
+                class:list={["track-scorecard-tab", active && "is-active"]}
+                type="button"
+                role="tab"
+                aria-selected={active ? "true" : "false"}
+                aria-controls={panelId}
+                tabindex={active ? "0" : "-1"}
+                data-market-regime-tab={insightTrack.track}
+              >
+                <strong>{insightTrack.label}</strong>
+                <span>{trackConfidence(insightTrack.track).label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-            <div class="market-insight-grid">
-              {insightTrack.cards.map((card) => (
-                <article class:list={["market-insight-card", `market-insight-card-${card.tone}`, `market-insight-card-${statusClass(card.status)}`]}>
-                  <header>
-                    <span class="panel-kicker">{card.eyebrow}</span>
-                    <span class:list={["regime-status", `regime-status-${statusClass(card.status)}`]}>
-                      {statusLabel(card.status)}
-                    </span>
-                  </header>
-                  <h4>{card.title}</h4>
-                  {card.model && (
-                    <div class="market-insight-model">
-                      {card.model.logoSrc && <img src={card.model.logoSrc} alt="" loading="lazy" />}
-                      <div>
-                        <strong>{card.model.label}</strong>
-                        <em>{card.model.providerName}</em>
-                      </div>
+        <div class="track-scorecard-tab-panels market-regime-tab-panels">
+          {marketInsightTracks.map((insightTrack) => {
+            const active = insightTrack.track === defaultRegimeTrack;
+            const tabId = `market-insights-tab-${insightTrack.track}`;
+            const panelId = `market-insights-panel-${insightTrack.track}`;
+            return (
+              <div
+                id={panelId}
+                class="track-scorecard-tab-panel market-regime-tab-panel"
+                role="tabpanel"
+                aria-labelledby={tabId}
+                data-market-regime-panel={insightTrack.track}
+                hidden={!active}
+              >
+                <article class="market-insight-track">
+                  <div class="market-insight-track-head">
+                    <div>
+                      <span class="panel-kicker">{insightTrack.label} insights</span>
+                      <h3>{insightTrack.label} model behavior</h3>
                     </div>
-                  )}
-                  <div class="market-insight-metric">
-                    <strong>{card.metricValue}</strong>
-                    <span>{card.metricLabel}</span>
+                    <span class:list={["regime-confidence", `regime-confidence-${trackConfidence(insightTrack.track).className}`]}>
+                      {trackConfidence(insightTrack.track).label}
+                    </span>
                   </div>
-                  <p>{card.detail}</p>
-                  <dl>
-                    {card.stats.map((stat) => (
-                      <div>
-                        <dt>{stat.label}</dt>
-                        <dd>{stat.value}</dd>
-                      </div>
+
+                  <div class="market-insight-grid">
+                    {insightTrack.cards.map((card) => (
+                      <article class:list={["market-insight-card", `market-insight-card-${card.tone}`, `market-insight-card-${statusClass(card.status)}`]}>
+                        <header>
+                          <span class="panel-kicker">{card.eyebrow}</span>
+                          <span class:list={["regime-status", `regime-status-${statusClass(card.status)}`]}>
+                            {statusLabel(card.status)}
+                          </span>
+                        </header>
+                        <h4>{card.title}</h4>
+                        {card.model && (
+                          <div class="market-insight-model">
+                            {card.model.logoSrc && <img src={card.model.logoSrc} alt="" loading="lazy" />}
+                            <div>
+                              <strong>{card.model.label}</strong>
+                              <em>{card.model.providerName}</em>
+                            </div>
+                          </div>
+                        )}
+                        <div class="market-insight-metric">
+                          <strong>{card.metricValue}</strong>
+                          <span>{card.metricLabel}</span>
+                        </div>
+                        <p>{card.detail}</p>
+                        <dl>
+                          {card.stats.map((stat) => (
+                            <div>
+                              <dt>{stat.label}</dt>
+                              <dd>{stat.value}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      </article>
                     ))}
-                  </dl>
+                  </div>
                 </article>
-              ))}
-            </div>
-          </article>
-        ))}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
 
@@ -1879,11 +2131,51 @@ const hiddenAuditRows = auditRows.slice(10);
           </p>
         </div>
 
-        {
-          (["weekly", "monthly"] as BenchmarkTrack[]).map((track) => {
-            const sample = balancedSamples[track];
-            return (
-              <div class="balanced-sample-panel">
+        <div
+          class="market-regime-track-tab-shell"
+          data-market-regime-tabs
+          data-active-track={defaultRegimeTrack}
+          aria-label="Monthly and weekly strict equal-sample checks"
+        >
+          <div class="track-scorecard-tabs" role="tablist" aria-label="Choose strict equal-sample horizon">
+            {regimeTrackOrder.map((track) => {
+              const active = track === defaultRegimeTrack;
+              const tabId = `balanced-sample-tab-${track}`;
+              const panelId = `balanced-sample-panel-${track}`;
+              return (
+                <button
+                  id={tabId}
+                  class:list={["track-scorecard-tab", active && "is-active"]}
+                  type="button"
+                  role="tab"
+                  aria-selected={active ? "true" : "false"}
+                  aria-controls={panelId}
+                  tabindex={active ? "0" : "-1"}
+                  data-market-regime-tab={track}
+                >
+                  <strong>{trackLabel(track)}</strong>
+                  <span>{statusLabel(balancedSamples[track].status)}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div class="track-scorecard-tab-panels market-regime-tab-panels">
+            {regimeTrackOrder.map((track) => {
+              const active = track === defaultRegimeTrack;
+              const sample = balancedSamples[track];
+              const tabId = `balanced-sample-tab-${track}`;
+              const panelId = `balanced-sample-panel-${track}`;
+              return (
+                <div
+                  id={panelId}
+                  class="track-scorecard-tab-panel market-regime-tab-panel"
+                  role="tabpanel"
+                  aria-labelledby={tabId}
+                  data-market-regime-panel={track}
+                  hidden={!active}
+                >
+                  <div class="balanced-sample-panel">
                 <div class="balanced-sample-head">
                   <div>
                     <span class="panel-kicker">{trackLabel(track)} equal sample</span>
@@ -1986,10 +2278,12 @@ const hiddenAuditRows = auditRows.slice(10);
                     </p>
                   </div>
                 )}
-              </div>
-            );
-          })
-        }
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </section>
     </details>
 
@@ -2079,5 +2373,53 @@ const hiddenAuditRows = auditRows.slice(10);
         )}
       </section>
     </details>
+
+    <script is:inline>
+      if (!window.__capitalbenchMarketRegimeTabs) {
+        window.__capitalbenchMarketRegimeTabs = true;
+
+        function setupMarketRegimeTabs(root) {
+          const tabs = Array.from(root.querySelectorAll("[data-market-regime-tab]"));
+          const panels = Array.from(root.querySelectorAll("[data-market-regime-panel]"));
+
+          function selectTrack(track) {
+            if (!track) return;
+            root.dataset.activeTrack = track;
+            tabs.forEach((tab) => {
+              const active = tab.dataset.marketRegimeTab === track;
+              tab.classList.toggle("is-active", active);
+              tab.setAttribute("aria-selected", active ? "true" : "false");
+              tab.setAttribute("tabindex", active ? "0" : "-1");
+            });
+
+            panels.forEach((panel) => {
+              panel.hidden = panel.dataset.marketRegimePanel !== track;
+            });
+          }
+
+          tabs.forEach((tab, index) => {
+            tab.addEventListener("click", () => selectTrack(tab.dataset.marketRegimeTab));
+            tab.addEventListener("keydown", (event) => {
+              if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+              event.preventDefault();
+              const nextIndex =
+                event.key === "Home"
+                  ? 0
+                  : event.key === "End"
+                    ? tabs.length - 1
+                    : event.key === "ArrowRight"
+                      ? (index + 1) % tabs.length
+                      : (index - 1 + tabs.length) % tabs.length;
+              tabs[nextIndex]?.focus();
+              selectTrack(tabs[nextIndex]?.dataset.marketRegimeTab);
+            });
+          });
+
+          selectTrack(root.dataset.activeTrack || tabs[0]?.dataset.marketRegimeTab);
+        }
+
+        document.querySelectorAll("[data-market-regime-tabs]").forEach(setupMarketRegimeTabs);
+      }
+    </script>
   </section>
 </BaseLayout>

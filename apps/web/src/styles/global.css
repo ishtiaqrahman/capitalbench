@@ -8372,6 +8372,30 @@ a.snapshot-model-chip:hover {
   gap: 16px;
 }
 
+.market-regime-track-tab-shell,
+.market-regime-tab-panels,
+.market-regime-tab-panel {
+  min-width: 0;
+}
+
+.market-regime-track-tab-shell {
+  display: grid;
+  gap: 14px;
+}
+
+.market-regime-track-tab-shell .track-scorecard-tabs {
+  justify-self: center;
+}
+
+.market-regime-tab-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.market-regime-tab-panel[hidden] {
+  display: none;
+}
+
 .environment-track-panel,
 .direction-summary-card {
   min-width: 0;
@@ -8439,12 +8463,39 @@ a.snapshot-model-chip:hover {
   border-bottom: 0;
 }
 
+.environment-matrix-sp500-row th,
+.environment-matrix-sp500-row td {
+  background: rgb(240 245 244 / 72%);
+}
+
+.environment-matrix-sp500-row th:first-child {
+  background: rgb(240 245 244 / 96%);
+}
+
 .environment-matrix-model {
   min-width: 0;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 8px;
+}
+
+.environment-market-avatar {
+  width: 34px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(15 23 42 / 16%);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgb(30 41 59 / 96%), rgb(51 65 85 / 92%)),
+    #1f2937;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
 }
 
 .environment-matrix-model img {
@@ -8495,6 +8546,10 @@ a.snapshot-model-chip:hover {
 
 .environment-matrix-cell-neutral {
   --matrix-cell-color: #64748b;
+}
+
+.environment-matrix-cell-reference {
+  --matrix-cell-color: #334155;
 }
 
 .environment-matrix-pill {
@@ -8635,6 +8690,23 @@ a.snapshot-model-chip:hover {
   list-style: none;
 }
 
+.environment-market-reference-row {
+  --environment-row-color: #334155;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) auto;
+  grid-template-rows: auto 30px;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 7px;
+  border: 1px solid rgb(51 65 85 / 18%);
+  border-radius: 8px;
+  padding: 9px;
+  background:
+    linear-gradient(135deg, rgb(240 245 244 / 82%), rgb(255 255 255 / 88%)),
+    #ffffff;
+}
+
 .environment-model-row {
   --environment-row-color: var(--muted);
   min-width: 0;
@@ -8730,6 +8802,35 @@ a.snapshot-model-chip:hover {
   text-align: center;
 }
 
+.environment-market-reference-row > .environment-market-avatar {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: center;
+}
+
+.environment-market-reference-row strong,
+.environment-market-reference-row em {
+  display: block;
+  min-width: 0;
+}
+
+.environment-market-reference-row strong {
+  color: var(--ink-strong);
+  font-size: 0.82rem;
+  line-height: 1.12;
+}
+
+.environment-market-reference-row em {
+  margin-top: 2px;
+  color: var(--muted-2);
+  font-size: 0.58rem;
+  font-style: normal;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  line-height: 1.14;
+  text-transform: uppercase;
+}
+
 .environment-model-row strong {
   color: var(--ink-strong);
   font-size: 0.82rem;
@@ -8760,6 +8861,11 @@ a.snapshot-model-chip:hover {
   background: var(--environment-row-color);
 }
 
+.environment-market-reference-row > .environment-model-bar {
+  grid-column: 2;
+  grid-row: 2;
+}
+
 .return-value {
   color: var(--ink-strong);
   font-family: var(--font-mono);
@@ -8771,6 +8877,11 @@ a.snapshot-model-chip:hover {
 
 .environment-model-row > .return-value {
   grid-column: 4;
+  grid-row: 2;
+}
+
+.environment-market-reference-row > .return-value {
+  grid-column: 3;
   grid-row: 2;
 }
 
@@ -8835,6 +8946,10 @@ a.snapshot-model-chip:hover {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
+}
+
+.direction-summary-track-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .direction-summary-card {
@@ -9166,6 +9281,12 @@ a.snapshot-model-chip:hover {
   color: var(--muted);
   font-size: 1rem;
   line-height: 1.5;
+}
+
+.environment-reference-note {
+  color: var(--muted-2);
+  font-size: 0.88rem;
+  font-weight: 800;
 }
 
 .regime-status-legend {
