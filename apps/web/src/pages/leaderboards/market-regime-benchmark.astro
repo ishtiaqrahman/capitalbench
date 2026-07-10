@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BenchmarkBarChart from "../../components/BenchmarkBarChart.astro";
+import { Info } from "lucide-react";
 import { modelLabel, providerLabel } from "../../data/fallback";
 import apiReadModel from "../../generated/apiReadModel.js";
 import { buildBenchmarkBarDomain } from "../../lib/benchmarkBars.js";
@@ -36,12 +37,14 @@ function pointText(value: unknown, signed = false): string {
   const rawPoints = value * 100;
   const points = Math.abs(rawPoints) < 0.005 ? 0 : rawPoints;
   const prefix = signed && points > 0 ? "+" : "";
-  return `${prefix}${points.toFixed(2)} pts`;
+  return `${prefix}${points.toFixed(2)} points`;
 }
 
 function confidenceLabel(value: unknown): string {
   const label = String(value ?? "low").toLowerCase();
-  return `${label.charAt(0).toUpperCase()}${label.slice(1)} evidence`;
+  if (label === "high") return "More evidence";
+  if (label === "medium") return "Some evidence";
+  return "Early result";
 }
 
 function stabilityText(value: unknown): string {
@@ -69,6 +72,17 @@ function trackLabel(track: BenchmarkTrack): string {
   return track === "weekly" ? "Weekly" : "Monthly";
 }
 
+function plainMarketType(key: RegimeKey | string, fallback = "Market type"): string {
+  const labels: Record<RegimeKey, string> = {
+    sharp_down: "Large fall",
+    down: "Small fall",
+    flat: "Little change",
+    up: "Small rise",
+    sharp_up: "Large rise"
+  };
+  return labels[key as RegimeKey] ?? fallback;
+}
+
 function enrichModel(row: any) {
   return {
     ...row,
@@ -80,17 +94,17 @@ function enrichModel(row: any) {
 }
 
 function comparisonStatement(row: any, context: string): string {
-  if (!row) return `No shared model comparison is available for ${context}.`;
+  if (!row) return `There are not enough matching results to compare models ${context}.`;
   const rawAlpha = row.average_alpha;
   const alpha = finiteNumber(rawAlpha) && Math.abs(rawAlpha) < 0.00005 ? 0 : rawAlpha;
-  if (!finiteNumber(alpha)) return `${row.label} has the strongest model result for ${context}.`;
+  if (!finiteNumber(alpha)) return `${row.label} ranks first among the models ${context}.`;
   if (alpha > 0) {
-    return `${row.label} returned ${signedPctText(row.average_return)} and beat the S&P 500 by ${pointText(alpha)}.`;
+    return `${row.label} ranks first here with a ${signedPctText(row.average_return)} return, beating the S&P 500 by ${pointText(alpha)}.`;
   }
   if (alpha < 0) {
-    return `${row.label} had the strongest model result, but still trailed the S&P 500 by ${pointText(Math.abs(alpha))}.`;
+    return `${row.label} ranks first among the models, but the S&P 500 did better by ${pointText(Math.abs(alpha))}.`;
   }
-  return `${row.label} had the strongest model result and matched the S&P 500.`;
+  return `${row.label} ranks first among the models and matches the S&P 500.`;
 }
 
 function evidenceFor(environments: any[]): string {
@@ -119,6 +133,7 @@ const trackViews = Object.fromEntries(
       return {
         ...environment,
         ...definition,
+        plainLabel: plainMarketType(environment.key, definition.label),
         rawCount: Number(environment.count ?? 0),
         sharedCount: Number(comparison.round_count ?? 0),
         eligibleModelCount: Number(comparison.eligible_model_count ?? 0),
@@ -186,7 +201,7 @@ const trackViews = Object.fromEntries(
       logoSrc: row.logoSrc,
       href: `/models/${row.modelId}`,
       rank: index + 1,
-      meta: `${row.providerName} · ${row.covered}/${row.required} environments`,
+      meta: `${row.providerName} · ${row.covered}/${row.required} market types`,
       secondaryLabel: `${pointText(row.averageAlpha, true)} vs S&P`
     }));
     if (finiteNumber(leader?.averageSp500Return)) {
@@ -199,8 +214,8 @@ const trackViews = Object.fromEntries(
         logoSrc: undefined,
         href: undefined,
         rank: undefined,
-        meta: "Market reference",
-        secondaryLabel: "Reference return"
+        meta: "Comparison",
+        secondaryLabel: "S&P 500 return"
       });
     }
 
@@ -226,21 +241,21 @@ const trackViews = Object.fromEntries(
         logoSrc: undefined,
         href: undefined,
         rank: undefined,
-        meta: "Market reference",
-        secondaryLabel: "Same environment weights"
+        meta: "Comparison",
+        secondaryLabel: "Same market-type weights"
       });
     }
     scoreChartRows.push({
       key: `${track}-max-score`,
-      label: "Max possible",
+      label: "Best possible",
       value: 100,
       kind: "reference",
       provider: "reference",
       logoSrc: undefined,
       href: undefined,
       rank: undefined,
-      meta: "Hindsight ceiling",
-      secondaryLabel: "Not an investable portfolio"
+      meta: "Known only after prices changed",
+      secondaryLabel: "Reference only"
     });
 
     const directionChartRows = Object.fromEntries(
@@ -254,7 +269,7 @@ const trackViews = Object.fromEntries(
           logoSrc: row.logoSrc,
           href: `/models/${row.modelId}`,
           rank: index + 1,
-          meta: `${row.providerName} · ${row.tests} tests`,
+          meta: `${row.providerName} · ${row.tests} results`,
           secondaryLabel: `${pointText(row.average_alpha, true)} vs S&P`
         }));
         if (finiteNumber(direction.averageSp500Return)) {
@@ -267,8 +282,8 @@ const trackViews = Object.fromEntries(
             logoSrc: undefined,
             href: undefined,
             rank: undefined,
-            meta: `${direction.sharedCount} shared rounds`,
-            secondaryLabel: "Reference return"
+            meta: `${direction.sharedCount} matching dates`,
+            secondaryLabel: "S&P 500 return"
           });
         }
         return [direction.key, rows];
@@ -290,7 +305,7 @@ const trackViews = Object.fromEntries(
           logoSrc: row.logoSrc,
           href: `/models/${row.modelId}`,
           rank: index + 1,
-          meta: `${row.providerName} · ${row.tests} tests`,
+          meta: `${row.providerName} · ${row.tests} results`,
           secondaryLabel: `${pointText(row.average_alpha, true)} vs S&P`
         }));
         if (finiteNumber(environment.sharedSp500Return)) {
@@ -303,8 +318,8 @@ const trackViews = Object.fromEntries(
             logoSrc: undefined,
             href: undefined,
             rank: undefined,
-            meta: `${environment.sharedCount} shared rounds`,
-            secondaryLabel: "Reference return"
+            meta: `${environment.sharedCount} matching dates`,
+            secondaryLabel: "S&P 500 return"
           });
         }
         return [environment.key, rows];
@@ -358,7 +373,7 @@ const trackViews = Object.fromEntries(
       return {
         ...round,
         track,
-        environmentLabel: definition.label ?? round.environment_key,
+        environmentLabel: plainMarketType(round.environment_key, definition.label ?? round.environment_key),
         environmentKey: round.environment_key
       };
     });
@@ -410,7 +425,7 @@ const thresholdCards: Array<{
   const monthlyEnvironment = trackViews.monthly.environments.find((environment: any) => environment.key === weekly.key);
   return {
     key: weekly.key as RegimeKey,
-    label: weekly.label,
+    label: plainMarketType(weekly.key, weekly.label),
     weeklyRange: weekly.range_label.replace("S&P ", ""),
     monthlyRange: monthly?.range_label.replace("S&P ", "") ?? "n/a",
     weeklyCount: weeklyEnvironment?.rawCount ?? 0,
@@ -428,27 +443,31 @@ function rankChange(view: any, modelId: string, strictRank: number): string {
   const mainRank = view.comparableRows.findIndex((row: any) => row.modelId === modelId) + 1;
   if (!mainRank) return "Not comparable";
   if (mainRank === strictRank) return "No change";
-  return strictRank < mainRank ? `Up ${mainRank - strictRank}` : `Down ${strictRank - mainRank}`;
+  const difference = Math.abs(mainRank - strictRank);
+  return strictRank < mainRank
+    ? `${difference} place${difference === 1 ? "" : "s"} higher`
+    : `${difference} place${difference === 1 ? "" : "s"} lower`;
 }
 
 function insightView(signal: any) {
-  const status = signal.maturity === "ready" ? "Ready" : "Building history";
+  const status = signal.maturity === "ready" ? "Enough data" : "Early result";
   if (signal.kind === "direction_leader") {
     const model = signal.model ? enrichModel(signal.model) : undefined;
     const direction = String(signal.direction ?? "market");
+    const directionText = direction === "down" ? "when the market fell" : direction === "up" ? "when the market rose" : "when the market was flat";
     if (!model) {
       return {
         tone: direction,
         status,
-        eyebrow: `${trackLabel(signal.track)} ${direction}`,
-        title: `${direction.charAt(0).toUpperCase()}${direction.slice(1)}-market evidence is still building.`,
+        eyebrow: `${trackLabel(signal.track)} · ${directionText}`,
+        title: `We need more results ${directionText}.`,
         metric: "n/a",
-        metricLabel: "model return",
-        detail: `${signal.environment_round_count ?? 0} raw round${Number(signal.environment_round_count ?? 0) === 1 ? " is" : "s are"} available, but no common model cohort is large enough yet.`,
+        metricLabel: "return",
+        detail: `${signal.environment_round_count ?? 0} result${Number(signal.environment_round_count ?? 0) === 1 ? " is" : "s are"} available, but not enough dates were completed by every model.`,
         stats: [
-          ["Shared rounds", String(signal.comparison_round_count ?? 0)],
-          ["Raw rounds", String(signal.environment_round_count ?? 0)],
-          ["Range", signal.range_label ?? "n/a"]
+          ["Dates used", String(signal.comparison_round_count ?? 0)],
+          ["Dates available", String(signal.environment_round_count ?? 0)],
+          ["S&P 500 move", signal.range_label ?? "n/a"]
         ]
       };
     }
@@ -456,18 +475,18 @@ function insightView(signal: any) {
     return {
       tone: direction,
       status,
-      eyebrow: `${trackLabel(signal.track)} ${direction}`,
+      eyebrow: `${trackLabel(signal.track)} · ${directionText}`,
       title: beatsBenchmark
-        ? `${model.label} beat the S&P 500 in ${direction} environments.`
-        : `The strongest model still trailed the S&P 500 in ${direction} environments.`,
+        ? `${model.label} beat the S&P 500 ${directionText}.`
+        : `The S&P 500 beat every compared model ${directionText}.`,
       metric: signedPctText(model.average_return),
-      metricLabel: "model return",
-      detail: `${model.label} ranked first among the compared models. Its benchmark difference was ${pointText(model.average_alpha, true)}.`,
+      metricLabel: "return",
+      detail: `${model.label} ranked first among the models. Its difference from the S&P 500 was ${pointText(model.average_alpha, true)}.`,
       stats: [
         ["S&P 500", signedPctText(signal.average_sp500_return)],
-        ["Shared / raw", `${signal.comparison_round_count}/${signal.environment_round_count}`],
+        ["Used / available", `${signal.comparison_round_count}/${signal.environment_round_count}`],
         [
-          "Stability",
+          "Leader repeated",
           stabilityText(signal.comparison?.leave_one_out_stability)
         ]
       ]
@@ -480,11 +499,11 @@ function insightView(signal: any) {
       return {
         tone: "steady",
         status,
-        eyebrow: `${trackLabel(signal.track)} consistency`,
-        title: "Cross-environment consistency is still building.",
+        eyebrow: `${trackLabel(signal.track)} · across market types`,
+        title: "We need more results across different markets.",
         metric: "n/a",
         metricLabel: "average return",
-        detail: "At least two comparable directions are needed before this pattern is reported.",
+        detail: "This comparison needs matching results from at least two kinds of market move.",
         stats: []
       };
     }
@@ -492,15 +511,15 @@ function insightView(signal: any) {
     return {
       tone: "steady",
       status,
-      eyebrow: `${trackLabel(signal.track)} consistency`,
-      title: `${model.label} has the strongest score floor across tested directions.`,
+      eyebrow: `${trackLabel(signal.track)} · across market types`,
+      title: `${model.label} has the best worst-case score across the tested market moves.`,
       metric: signedPctText(candidate.average_return),
       metricLabel: "average return",
-      detail: `Its lowest CapitalBench Score is ${scoreText(candidate.floor_score)} across ${candidate.directions_covered} tested directions.`,
+      detail: `Its lowest CapitalBench Score is ${scoreText(candidate.floor_score)} across ${candidate.directions_covered} kinds of market move.`,
       stats: [
         ["S&P 500", signedPctText(candidate.average_sp500_return)],
         ["Average score", scoreText(candidate.average_score)],
-        ["Directions", `${candidate.ready_directions}/${candidate.directions_covered}`]
+        ["Market moves", `${candidate.ready_directions}/${candidate.directions_covered}`]
       ]
     };
   }
@@ -510,11 +529,11 @@ function insightView(signal: any) {
     return {
       tone: "split",
       status,
-      eyebrow: `${trackLabel(signal.track)} sensitivity`,
-      title: "Up/down sensitivity is still building.",
+      eyebrow: `${trackLabel(signal.track)} · biggest change`,
+      title: "We need more falling and rising market results.",
       metric: "n/a",
-      metricLabel: "return gap",
-      detail: "Comparable down and up samples are both required before this pattern is reported.",
+      metricLabel: "return difference",
+      detail: "This comparison needs matching results from both falling and rising markets.",
       stats: []
     };
   }
@@ -522,27 +541,25 @@ function insightView(signal: any) {
   return {
     tone: "split",
     status,
-    eyebrow: `${trackLabel(signal.track)} sensitivity`,
-    title: `${model.label} changes most between up and down environments.`,
+    eyebrow: `${trackLabel(signal.track)} · biggest change`,
+    title: `${model.label} changes the most between falling and rising markets.`,
     metric: pointText(Math.abs(candidate.return_gap)),
-    metricLabel: "return gap",
-    detail: `Average return moves from ${signedPctText(candidate.down_return)} in down environments to ${signedPctText(candidate.up_return)} in up environments.`,
+    metricLabel: "return difference",
+    detail: `Its average return moves from ${signedPctText(candidate.down_return)} when the market fell to ${signedPctText(candidate.up_return)} when it rose.`,
     stats: [
-      ["Down score", scoreText(candidate.down_score)],
-      ["Up score", scoreText(candidate.up_score)],
-      ["Tests", `${candidate.down_tests}/${candidate.up_tests}`]
+      ["Falling-market score", scoreText(candidate.down_score)],
+      ["Rising-market score", scoreText(candidate.up_score)],
+      ["Results used", `${candidate.down_tests}/${candidate.up_tests}`]
     ]
   };
 }
 
 const dataAsOf = humanDate(marketEnvironment.data_as_of);
-const benchmarkVersion = String(marketEnvironment.version ?? "market_regime_v1").split("_").at(-1)?.toUpperCase() ?? "V1";
-const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").split("_").at(-1)?.toUpperCase() ?? "V1";
 ---
 
 <BaseLayout
   title="Market Regime AI Benchmark"
-  description="The CapitalBench Market Regime Benchmark ranks AI models across falling, flat, and rising S&P 500 environments using shared samples, equal weighting, and auditable results."
+  description="See which AI models perform best when the S&P 500 falls, stays flat, or rises, with simple comparisons and fully checkable results."
 >
   <section class="section market-regime-page regime-dashboard">
     <header class="mrb-hero" aria-labelledby="market-regime-title">
@@ -550,25 +567,25 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
         <span class="panel-kicker">CapitalBench benchmark</span>
         <h1 id="market-regime-title">Market Regime Benchmark</h1>
         <p>
-          See how AI model portfolios perform when markets fall, stall, and rise. The benchmark ranks comparable
-          models on equally weighted market environments and keeps the S&amp;P 500 visible as the investable reference.
+          A market regime is simply a type of market move: falling, flat, or rising. See which AI model portfolios do
+          best in each one. Every market type gets the same importance in the main ranking.
         </p>
         <div class="mrb-hero-meta" aria-label="Benchmark metadata">
-          <span>Data through <strong>{dataAsOf}</strong></span>
-          <span title={marketEnvironment.version}>Benchmark <strong>{benchmarkVersion}</strong></span>
-          <span title={marketEnvironment.engine_version}>Engine <strong>{engineVersion}</strong></span>
+          <span>Updated <strong>{dataAsOf}</strong></span>
+          <span><strong>Monthly and weekly</strong> views</span>
+          <span><strong>Completed tests</strong> only</span>
         </div>
       </div>
       <div class="mrb-hero-question">
-        <span>Benchmark specification</span>
-        <div><small>Primary rank</small><strong>Equal-environment return</strong></div>
-        <div><small>Market reference</small><strong>S&amp;P 500</strong></div>
-        <div><small>Eligibility</small><strong>Complete shared history</strong></div>
+        <span>How this page works</span>
+        <div><small>Models are ranked by</small><strong>Average return across market types</strong></div>
+        <div><small>Models are compared with</small><strong>S&amp;P 500</strong></div>
+        <div><small>A model gets a rank when</small><strong>It has enough results in every market type used</strong></div>
       </div>
     </header>
 
     <div class="mrb-context-bar" data-mrb-context-bar>
-      <div class="mrb-track-switch" role="group" aria-label="Choose benchmark horizon">
+      <div class="mrb-track-switch" role="group" aria-label="Choose monthly or weekly results">
         {TRACKS.map((track) => (
           <button
             type="button"
@@ -582,18 +599,24 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
       </div>
       <nav class="mrb-section-links" aria-label="Benchmark sections">
         <a href="#equal-environment-ranking">Leaderboard</a>
-        <a href="#direction-performance">Down / up</a>
-        <a href="#environment-explorer">Environments</a>
-        <a href="#performance-patterns">Insights</a>
-        <a href="#benchmark-evidence">Method</a>
+        <a href="#direction-performance">Falling / rising</a>
+        <a href="#environment-explorer">Market types</a>
+        <a href="#performance-patterns">Patterns</a>
+        <a href="#benchmark-evidence">Check results</a>
       </nav>
       <span class="sr-only" aria-live="polite" data-mrb-track-announcement>Monthly results selected</span>
     </div>
 
     <section class="mrb-section mrb-answer-section" aria-labelledby="benchmark-answer-title">
       <div class="mrb-section-head">
-        <span class="panel-kicker">Current result</span>
-        <h2 id="benchmark-answer-title">The leader, benchmark outcome, and evidence at a glance</h2>
+        <span class="panel-kicker">Quick answer</span>
+        <div class="mrb-question-title">
+          <h2 id="benchmark-answer-title">Who leads, and did they beat the S&amp;P 500?</h2>
+          <span class="home-info-tip mrb-info-tip" tabindex="0" aria-label="The leader has the highest average return after each market type is given the same importance. Only models with enough matching results receive a rank.">
+            <Info size={15} aria-hidden="true" />
+          </span>
+        </div>
+        <p>Start here for the result. The charts and exact numbers below explain it.</p>
       </div>
       {TRACKS.map((track) => {
         const view = trackViews[track];
@@ -601,50 +624,50 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
         const alpha = leader?.averageAlpha;
         const benchmarkVerdict = finiteNumber(alpha)
           ? alpha > 0
-            ? "Beat the S&P 500"
+            ? "Yes"
             : alpha < 0
-              ? "Trailed the S&P 500"
-              : "Matched the S&P 500"
-          : "Benchmark comparison unavailable";
+              ? "No"
+              : "It matched"
+          : "Not enough data";
         return (
           <div data-mrb-track-panel={track} hidden={track !== DEFAULT_TRACK}>
             <div class="mrb-answer-grid">
               <article class="mrb-answer-card mrb-answer-card-leader">
-                <span>Highest comparable return</span>
+                <span>Which model leads?</span>
                 <div class="mrb-model-heading">
                   {leader?.logoSrc && <img src={leader.logoSrc} alt="" />}
                   <div>
                     <h3>{leader?.label ?? "Still building"}</h3>
-                    <p>{leader?.providerName ?? "No common model history yet"}</p>
+                    <p>{leader?.providerName ?? "Not enough matching results yet"}</p>
                   </div>
                 </div>
                 <strong class:list={["mrb-answer-value", `is-${valueTone(leader?.averageReturn)}`]}>
                   {signedPctText(leader?.averageReturn)}
                 </strong>
-                <p>Equal-environment average across every environment that currently counts.</p>
+                <p>Average return across every market type with enough data.</p>
               </article>
               <article class:list={["mrb-answer-card", finiteNumber(alpha) && alpha >= 0 ? "is-success" : "is-warning"]}>
-                <span>Benchmark check</span>
+                <span>Did the leader beat the S&amp;P 500?</span>
                 <h3>{benchmarkVerdict}</h3>
                 <strong class:list={["mrb-answer-value", `is-${valueTone(alpha)}`]}>{pointText(alpha, true)}</strong>
                 <p>
-                  S&amp;P 500 equal-environment return: <strong>{signedPctText(leader?.averageSp500Return)}</strong>
+                  S&amp;P 500 average return across the same market types: <strong>{signedPctText(leader?.averageSp500Return)}</strong>
                 </p>
               </article>
               <article class="mrb-answer-card">
-                <span>Evidence</span>
+                <span>How much data supports this?</span>
                 <h3>{confidenceLabel(view.evidence)}</h3>
-                <strong class="mrb-answer-value">{view.readyEnvironmentCount}/5</strong>
+                <strong class="mrb-answer-value">{view.readyEnvironmentCount} of 5</strong>
                 <p>
-                  Environments count now, using {leader?.testsIncluded ?? 0} shared model-round observations from
-                  {view.resolvedRoundCount} resolved {track} rounds.
+                  {view.readyEnvironmentCount} market types have enough matching results. Each ranked model contributes
+                  {" "}{leader?.testsIncluded ?? 0} results.
                 </p>
               </article>
             </div>
             {leader && finiteNumber(alpha) && alpha < 0 && (
               <p class="mrb-benchmark-alert">
-                <strong>Important:</strong> {leader.label} ranks first among models with comparable history, but no
-                comparable model beat the S&amp;P 500 on the equal-environment average.
+                <strong>Important:</strong> {leader.label} ranks first among the models, but the S&amp;P 500 still did
+                better across the same market types.
               </p>
             )}
           </div>
@@ -654,12 +677,14 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
 
     <section id="equal-environment-ranking" class="mrb-section mrb-leaderboard-section" aria-labelledby="ranking-title">
       <div class="mrb-section-head">
-        <span class="panel-kicker">Official benchmark leaderboard</span>
-        <h2 id="ranking-title">Rank models across equally weighted market environments</h2>
-        <p>
-          Equal-environment return is the primary ranking metric. Only models with enough shared observations in every
-          counting environment receive an ordinal rank; the S&amp;P 500 remains a reference, not a ranked participant.
-        </p>
+        <span class="panel-kicker">Model ranking</span>
+        <div class="mrb-question-title">
+          <h2 id="ranking-title">Which model performs best across different markets?</h2>
+          <span class="home-info-tip mrb-info-tip" tabindex="0" aria-label="We average each model's return within each market type, then give every market type the same importance. The S&P 500 is shown for comparison but is not ranked as a model.">
+            <Info size={15} aria-hidden="true" />
+          </span>
+        </div>
+        <p>Models are ranked by their average return across the market types that have enough data.</p>
       </div>
       {TRACKS.map((track) => {
         const view = trackViews[track];
@@ -667,17 +692,25 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
         return (
           <div data-mrb-track-panel={track} hidden={track !== DEFAULT_TRACK}>
             <div class="mrb-benchmark-definition" aria-label={`${view.label} benchmark specification`}>
-              <div><span>Ranking metric</span><strong>Equal-environment return</strong><small>Higher is better</small></div>
-              <div><span>Counting environments</span><strong>{view.readyEnvironmentCount} of 5</strong><small>{view.label} thresholds</small></div>
-              <div><span>Eligible field</span><strong>{view.comparableRows.length} models</strong><small>{view.limitedRows.length} limited-history</small></div>
-              <div><span>Included tests</span><strong>{leader?.testsIncluded ?? 0}</strong><small>Per eligible model</small></div>
+              <div><span>Models are ranked by</span><strong>Average return across market types</strong><small>Higher is better</small></div>
+              <div><span>Market types used</span><strong>{view.readyEnvironmentCount} of 5</strong><small>Enough results to compare</small></div>
+              <div><span>Models ranked</span><strong>{view.comparableRows.length}</strong><small>{view.limitedRows.length} need more results</small></div>
+              <div><span>Results used</span><strong>{leader?.testsIncluded ?? 0} per model</strong><small>Same dates for every ranked model</small></div>
             </div>
 
             <div class="mrb-benchmark-charts">
               <article class="mrb-chart-panel mrb-chart-panel-primary">
                 <header>
-                  <div><span>Primary ranking</span><h3>Equal-environment average return</h3></div>
-                  <p>True return scale with zero and the S&amp;P 500 reference visible.</p>
+                  <div>
+                    <span>Main ranking</span>
+                    <div class="mrb-chart-question">
+                      <h3>Who had the highest average return?</h3>
+                      <span class="home-info-tip mrb-info-tip mrb-info-tip-small" tabindex="0" aria-label="This average gives every market type the same importance. Bars use actual returns, and the S&P 500 appears in gold for comparison.">
+                        <Info size={14} aria-hidden="true" />
+                      </span>
+                    </div>
+                  </div>
+                  <p>Bars to the right are gains. Bars to the left are losses.</p>
                 </header>
                 <div class="mrb-chart-body">
                   <BenchmarkBarChart
@@ -686,15 +719,23 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                     format="percent"
                     orientation="responsive"
                     showLegend={true}
-                    ariaLabel={`${view.label} Market Regime Benchmark equal-environment returns`}
+                    ariaLabel={`${view.label} average returns across market types`}
                   />
                 </div>
               </article>
 
               <article class="mrb-chart-panel mrb-chart-panel-score">
                 <header>
-                  <div><span>Score context</span><h3>Equal-environment CapitalBench Score</h3></div>
-                  <p>100 matches the hindsight best eligible asset on the same scoring windows. Negative scores preserve losses.</p>
+                  <div>
+                    <span>Score view</span>
+                    <div class="mrb-chart-question">
+                      <h3>How did each model score?</h3>
+                      <span class="home-info-tip mrb-info-tip mrb-info-tip-small" tabindex="0" aria-label="CapitalBench Score compares each result with the S&P 500 and the best available investment after prices are known. A score of 100 matches that best-after-the-fact result.">
+                        <Info size={14} aria-hidden="true" />
+                      </span>
+                    </div>
+                  </div>
+                  <p>100 is the best possible result after the fact. It is a reference, not a real portfolio.</p>
                 </header>
                 <BenchmarkBarChart
                   rows={view.scoreChartRows}
@@ -703,7 +744,7 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                   orientation="horizontal"
                   compact={true}
                   showLegend={true}
-                  ariaLabel={`${view.label} equal-environment CapitalBench Scores`}
+                  ariaLabel={`${view.label} CapitalBench Scores across market types`}
                 />
               </article>
             </div>
@@ -711,27 +752,27 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
             <div class="mrb-reference-banner">
               <span class="mrb-sp500-mark">S&amp;P</span>
               <p>
-                <strong>S&amp;P 500 reference:</strong> {signedPctText(leader?.averageSp500Return)} equal-environment
-                return and {scoreText(leader?.sp500Score)} CapitalBench Score on the same environment weights.
+                <strong>S&amp;P 500 comparison:</strong> {signedPctText(leader?.averageSp500Return)} average return and
+                {" "}{scoreText(leader?.sp500Score)} CapitalBench Score across the same market types.
               </p>
-              <span>{view.readyEnvironmentCount} environments count</span>
+              <span>{view.readyEnvironmentCount} market types used</span>
             </div>
 
             <div class="mrb-exact-results-head">
-              <div><span>Exact results</span><h3>{view.label} ranked field</h3></div>
-              <p>Rank follows equal-environment return; score, coverage, tests, and hit rate explain the result.</p>
+              <div><span>Exact numbers</span><h3>What are the full {view.label.toLowerCase()} results?</h3></div>
+              <p>Rank follows average return. The other columns show how the result was built.</p>
             </div>
-            <div class="mrb-data-scroll" tabindex="0" aria-label={`${view.label} equal-environment ranking`}>
+            <div class="mrb-data-scroll" tabindex="0" aria-label={`${view.label} ranking across market types`}>
               <table class="mrb-ranking-table">
                 <thead>
                   <tr>
                     <th>Rank and model</th>
-                    <th>Equal-env return</th>
-                    <th>vs S&amp;P</th>
+                    <th>Average return</th>
+                    <th>Difference from S&amp;P</th>
                     <th>CapitalBench Score</th>
-                    <th>Coverage</th>
-                    <th>Shared tests</th>
-                    <th>Hit rate</th>
+                    <th>Market types</th>
+                    <th>Results used</th>
+                    <th>Beat S&amp;P</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -755,11 +796,11 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
             </div>
             {view.limitedRows.length > 0 && (
               <details class="mrb-limited-history">
-                <summary>Models with limited shared history <span>{view.limitedRows.length}</span></summary>
-                <p class="mrb-limited-note">These rows remain visible for transparency but are not assigned an equal-environment rank.</p>
+                <summary>Models that need more results <span>{view.limitedRows.length}</span></summary>
+                <p class="mrb-limited-note">These models are shown, but they do not receive a rank until they have enough matching results in every market type used.</p>
                 <div class="mrb-data-scroll" tabindex="0">
                   <table class="mrb-ranking-table">
-                    <thead><tr><th>Model</th><th>Observed return</th><th>vs S&amp;P</th><th>Coverage</th><th>Shared tests</th></tr></thead>
+                    <thead><tr><th>Model</th><th>Return so far</th><th>Difference from S&amp;P</th><th>Market types</th><th>Results used</th></tr></thead>
                     <tbody>
                       {view.limitedRows.map((row: any) => (
                         <tr>
@@ -781,16 +822,21 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
     </section>
 
     <aside class="mrb-reading-guide" aria-label="How to read this page">
-      <div><span>1</span><p><strong>Benchmark first</strong> A model can rank first and still trail the S&amp;P 500.</p></div>
-      <div><span>2</span><p><strong>Shared samples</strong> Every comparison uses rounds available for the same model cohort.</p></div>
-      <div><span>3</span><p><strong>Equal weighting</strong> Each counting environment matters equally, regardless of how often it occurred.</p></div>
+      <div><span>1</span><p><strong>Check the S&amp;P 500</strong> A model can rank first and still do worse than the market.</p></div>
+      <div><span>2</span><p><strong>Use the same dates</strong> Models are compared only on dates every model shown completed.</p></div>
+      <div><span>3</span><p><strong>Count each market type equally</strong> Falling, flat, and rising markets get the same importance.</p></div>
     </aside>
 
     <section id="direction-performance" class="mrb-section" aria-labelledby="direction-title">
       <div class="mrb-section-head">
-        <span class="panel-kicker">Downside protection and upside capture</span>
-        <h2 id="direction-title">Who protects capital when markets fall, and who captures rising markets?</h2>
-        <p>Model returns and benchmark differences use only the shared rounds shown in each panel.</p>
+        <span class="panel-kicker">Falling and rising markets</span>
+        <div class="mrb-question-title">
+          <h2 id="direction-title">Who does best when markets fall or rise?</h2>
+          <span class="home-info-tip mrb-info-tip" tabindex="0" aria-label="These two charts separate falling and rising markets. Both use the same scale and only dates completed by every model shown.">
+            <Info size={15} aria-hidden="true" />
+          </span>
+        </div>
+        <p>Each chart uses the same dates for every model shown, with the S&amp;P 500 beside them.</p>
       </div>
       {TRACKS.map((track) => {
         const view = trackViews[track];
@@ -804,15 +850,15 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                   <article class:list={["mrb-direction-panel", `is-${key}`]}>
                     <header>
                       <div>
-                        <span>{key === "down" ? "Downside protection" : "Upside capture"}</span>
-                        <h3>{direction.label} environments</h3>
+                        <span>{key === "down" ? "Market fell" : "Market rose"}</span>
+                        <h3>{key === "down" ? "When the S&P 500 fell" : "When the S&P 500 rose"}</h3>
                         <p>{direction.range_label}</p>
                       </div>
                       <span class:list={["mrb-evidence", `is-${direction.confidence}`]}>
                         {confidenceLabel(direction.confidence)}
                       </span>
                     </header>
-                    <p class="mrb-direction-verdict">{comparisonStatement(direction.best, `${key} environments`)}</p>
+                    <p class="mrb-direction-verdict">{comparisonStatement(direction.best, key === "down" ? "when the market fell" : "when the market rose")}</p>
                     {direction.modelRows.length ? (
                       <>
                         <BenchmarkBarChart
@@ -821,11 +867,11 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                           format="percent"
                           orientation="horizontal"
                           compact={true}
-                          ariaLabel={`${view.label} ${direction.label} environment returns`}
+                          ariaLabel={`${view.label} returns ${key === "down" ? "when the market fell" : "when the market rose"}`}
                         />
-                        <p class="mrb-chart-scale-note">Down and up panels share the same zero-centred return scale.</p>
+                        <p class="mrb-chart-scale-note">Both charts use the same scale, with zero in the middle.</p>
                         <details class="mrb-exact-values">
-                          <summary>Exact values and ranks</summary>
+                          <summary>Show exact numbers and ranks</summary>
                           <div class="mrb-compact-table-scroll">
                             <table class="mrb-direction-table">
                               <thead>
@@ -835,7 +881,7 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                                 <tr class="mrb-reference-row">
                                   <th scope="row"><span class="mrb-inline-model"><span class="mrb-sp500-mark">S&amp;P</span> S&amp;P 500</span></th>
                                   <td>{signedPctText(direction.averageSp500Return)}</td>
-                                  <td>Reference</td>
+                                  <td>Comparison</td>
                                 </tr>
                                 {direction.modelRows.map((row: any, index: number) => (
                                   <tr>
@@ -857,15 +903,15 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                       </>
                     ) : (
                       <p class="mrb-empty-state">
-                        {direction.rawCount} raw round{direction.rawCount === 1 ? " is" : "s are"} available; a common
-                        model cohort has not reached the comparison threshold.
+                        {direction.rawCount} result{direction.rawCount === 1 ? " is" : "s are"} available, but not
+                        enough dates were completed by every model.
                       </p>
                     )}
                     <dl class="mrb-evidence-stats">
-                      <div><dt>Shared / raw</dt><dd>{direction.sharedCount}/{direction.rawCount} rounds</dd></div>
-                      <div><dt>Model cohort</dt><dd>{direction.eligibleModelCount || "n/a"}</dd></div>
-                      <div><dt>Leader stability</dt><dd>{stabilityText(direction.stability)}</dd></div>
-                      <div><dt>Leader margin</dt><dd>{pointText(direction.leaderMargin, true)}</dd></div>
+                      <div><dt>Dates used</dt><dd>{direction.sharedCount} of {direction.rawCount}</dd></div>
+                      <div><dt>Models compared</dt><dd>{direction.eligibleModelCount || "n/a"}</dd></div>
+                      <div><dt>Leader repeated</dt><dd>{stabilityText(direction.stability)}</dd></div>
+                      <div><dt>Lead over #2</dt><dd>{pointText(direction.leaderMargin, true)}</dd></div>
                     </dl>
                   </article>
                 );
@@ -878,22 +924,24 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
 
     <section id="environment-explorer" class="mrb-section" aria-labelledby="environment-title">
       <div class="mrb-section-head">
-        <span class="panel-kicker">Environment explorer</span>
-        <h2 id="environment-title">See every model and market environment in one comparison</h2>
-        <p>
-          The large number is model return. The smaller number is the difference from the S&amp;P 500 on the same shared
-          rounds. Limited-history rows are not assigned a rank.
-        </p>
+        <span class="panel-kicker">Market types</span>
+        <div class="mrb-question-title">
+          <h2 id="environment-title">How did each model perform in each type of market?</h2>
+          <span class="home-info-tip mrb-info-tip" tabindex="0" aria-label="We group each completed test by how much the S&P 500 moved. The large number is model return. The smaller number is how far it was above or below the S&P 500 on the same dates.">
+            <Info size={15} aria-hidden="true" />
+          </span>
+        </div>
+        <p>The table shows model return first, followed by the difference from the S&amp;P 500.</p>
       </div>
 
-      <div class="mrb-threshold-strip" aria-label="S&P 500 environment thresholds and round counts">
+      <div class="mrb-threshold-strip" aria-label="S&P 500 market-type ranges and result counts">
         {thresholdCards.map((environment) => (
           <article class:list={[`is-${environment.key}`]}>
             <span class="mrb-environment-swatch" aria-hidden="true"></span>
             <strong>{environment.label}</strong>
-            <span>W {environment.weeklyRange}</span>
-            <span>M {environment.monthlyRange}</span>
-            <small>{environment.weeklyCount}W / {environment.monthlyCount}M rounds</small>
+            <span>Weekly: {environment.weeklyRange}</span>
+            <span>Monthly: {environment.monthlyRange}</span>
+            <small>{environment.weeklyCount} weekly / {environment.monthlyCount} monthly results</small>
           </article>
         ))}
       </div>
@@ -902,29 +950,29 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
         const view = trackViews[track];
         return (
           <div data-mrb-track-panel={track} hidden={track !== DEFAULT_TRACK}>
-            <div class="mrb-data-scroll mrb-matrix-scroll" tabindex="0" aria-label={`${view.label} environment matrix`}>
+            <div class="mrb-data-scroll mrb-matrix-scroll" tabindex="0" aria-label={`${view.label} results by market type`}>
               <table class="mrb-matrix-table">
                 <thead>
                   <tr>
                     <th scope="col">Model</th>
                     {view.environments.map((environment: any) => (
                       <th scope="col">
-                        <strong>{environment.label}</strong>
+                        <strong>{environment.plainLabel}</strong>
                         <span>{environment.range_label}</span>
-                        <small>{environment.sharedCount}/{environment.rawCount} shared</small>
+                        <small>{environment.sharedCount}/{environment.rawCount} dates used</small>
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   <tr class="mrb-matrix-reference">
-                    <th scope="row"><span class="mrb-sp500-mark">S&amp;P</span><span>S&amp;P 500<small>Market reference</small></span></th>
+                    <th scope="row"><span class="mrb-sp500-mark">S&amp;P</span><span>S&amp;P 500<small>Comparison</small></span></th>
                     {view.environments.map((environment: any) => (
                       <td>
                         <strong class:list={[`is-${valueTone(environment.sharedSp500Return ?? environment.average_sp500_return)}`]}>
                           {signedPctText(environment.sharedSp500Return ?? environment.average_sp500_return)}
                         </strong>
-                        <small>{finiteNumber(environment.sharedSp500Return) ? "shared reference" : "all resolved rounds"}</small>
+                        <small>{finiteNumber(environment.sharedSp500Return) ? "same dates" : "all available dates"}</small>
                       </td>
                     ))}
                   </tr>
@@ -933,7 +981,7 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                       <th scope="row">
                         <span class="mrb-row-rank">{row.comparable ? index + 1 : "-"}</span>
                         {row.logoSrc && <img src={row.logoSrc} alt="" loading="lazy" />}
-                        <span>{row.label}<small>{row.comparable ? `${row.covered}/${row.required} counting` : "Limited shared history"}</small></span>
+                        <span>{row.label}<small>{row.comparable ? `${row.covered}/${row.required} market types` : "Needs more matching results"}</small></span>
                       </th>
                       {row.cells.map((cell: any) => (
                         <td>
@@ -943,7 +991,7 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                               <small class:list={[`is-${valueTone(cell.alpha)}`]}>{pointText(cell.alpha, true)} vs S&amp;P</small>
                             </>
                           ) : (
-                            <><strong>n/a</strong><small>No shared cohort</small></>
+                            <><strong>n/a</strong><small>Not enough matching results</small></>
                           )}
                         </td>
                       ))}
@@ -958,14 +1006,14 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                 <details class:list={[`is-${environment.key}`]}>
                   <summary>
                     <span class="mrb-environment-swatch" aria-hidden="true"></span>
-                    <span><strong>{environment.label}</strong><small>{environment.range_label}</small></span>
-                    <span><strong>{environment.sharedCount}/{environment.rawCount}</strong><small>shared / raw</small></span>
+                    <span><strong>{environment.plainLabel}</strong><small>{environment.range_label}</small></span>
+                    <span><strong>{environment.sharedCount}/{environment.rawCount}</strong><small>used / available</small></span>
                     <span class:list={["mrb-evidence", `is-${environment.confidence}`]}>{confidenceLabel(environment.confidence)}</span>
                   </summary>
                   <div class="mrb-environment-detail-body">
                     {environment.modelRows.length ? (
                       <>
-                        <p>{comparisonStatement(environment.modelRows[0], environment.label.toLowerCase())}</p>
+                        <p>{comparisonStatement(environment.modelRows[0], `during a ${environment.plainLabel.toLowerCase()}`)}</p>
                         <div class="mrb-environment-chart">
                           <BenchmarkBarChart
                             rows={view.environmentChartRows[environment.key]}
@@ -973,22 +1021,22 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                             format="percent"
                             orientation="horizontal"
                             compact={true}
-                            ariaLabel={`${view.label} ${environment.label} model and S&P 500 returns`}
+                            ariaLabel={`${view.label} model and S&P 500 returns during a ${environment.plainLabel.toLowerCase()}`}
                           />
-                          <p class="mrb-chart-scale-note">All {view.label.toLowerCase()} environment drill-downs share this zero-centred scale.</p>
+                          <p class="mrb-chart-scale-note">Every {view.label.toLowerCase()} market-type chart uses this same scale.</p>
                         </div>
                         <dl class="mrb-evidence-stats">
                           <div><dt>Models compared</dt><dd>{environment.eligibleModelCount}</dd></div>
-                          <div><dt>Leader stability</dt><dd>{stabilityText(environment.stability)}</dd></div>
-                          <div><dt>Leader margin</dt><dd>{pointText(environment.leaderMargin, true)}</dd></div>
-                          <div><dt>Leader return 95% CI</dt><dd>{finiteNumber(environment.leaderCiLow) ? `${signedPctText(environment.leaderCiLow)} to ${signedPctText(environment.leaderCiHigh)}` : "n/a"}</dd></div>
+                          <div><dt>Leader repeated</dt><dd>{stabilityText(environment.stability)}</dd></div>
+                          <div><dt>Lead over #2</dt><dd>{pointText(environment.leaderMargin, true)}</dd></div>
+                          <div><dt>Estimated range for #1</dt><dd>{finiteNumber(environment.leaderCiLow) ? `${signedPctText(environment.leaderCiLow)} to ${signedPctText(environment.leaderCiHigh)}` : "n/a"}</dd></div>
                         </dl>
                       </>
                     ) : (
                       <p>
                         {environment.rawCount === 0
-                          ? "No resolved rounds have landed in this environment yet."
-                          : `${environment.rawCount} raw round${environment.rawCount === 1 ? " is" : "s are"} available; ${Math.max(0, READY_ROUND_THRESHOLD - environment.rawCount)} more needed before this environment can count.`}
+                          ? "No completed tests fall into this market type yet."
+                          : `${environment.rawCount} result${environment.rawCount === 1 ? " is" : "s are"} available. ${Math.max(0, READY_ROUND_THRESHOLD - environment.rawCount)} more needed before models can be compared here.`}
                       </p>
                     )}
                   </div>
@@ -1002,9 +1050,14 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
 
     <section id="performance-patterns" class="mrb-section" aria-labelledby="insights-title">
       <div class="mrb-section-head">
-        <span class="panel-kicker">Performance patterns</span>
-        <h2 id="insights-title">The findings that matter, with the evidence beside them</h2>
-        <p>Every statement identifies the benchmark outcome, sample coverage, and stability behind the pattern.</p>
+        <span class="panel-kicker">What the results show</span>
+        <div class="mrb-question-title">
+          <h2 id="insights-title">What patterns stand out?</h2>
+          <span class="home-info-tip mrb-info-tip" tabindex="0" aria-label="These statements summarize the clearest patterns in the completed results. Each one shows how many dates were used and whether the same leader usually stays first when one date is removed.">
+            <Info size={15} aria-hidden="true" />
+          </span>
+        </div>
+        <p>Each statement shows the result and how much data supports it.</p>
       </div>
       {TRACKS.map((track) => {
         const view = trackViews[track];
@@ -1043,7 +1096,7 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
             </div>
             {secondarySignals.length > 0 && (
               <details class="mrb-secondary-insights">
-                <summary>More cross-environment patterns <span>{secondarySignals.length}</span></summary>
+                <summary>Show more patterns across market types <span>{secondarySignals.length}</span></summary>
                 <div class="mrb-insight-grid">
                   {secondarySignals.map((signal: any) => {
                     const insight = insightView(signal);
@@ -1078,36 +1131,42 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
 
     <section id="benchmark-evidence" class="mrb-section mrb-evidence-section" aria-labelledby="evidence-title">
       <div class="mrb-section-head">
-        <span class="panel-kicker">Evidence and audit</span>
-        <h2 id="evidence-title">Inspect the calculation, robustness check, and every included round</h2>
+        <span class="panel-kicker">Check the work</span>
+        <div class="mrb-question-title">
+          <h2 id="evidence-title">How can you check these results?</h2>
+          <span class="home-info-tip mrb-info-tip" tabindex="0" aria-label="Open these sections to see the calculation, test whether the ranking changes with equal sample sizes, and inspect every completed test used by the page.">
+            <Info size={15} aria-hidden="true" />
+          </span>
+        </div>
+        <p>The method, a second ranking check, and every included test are available below.</p>
       </div>
 
       <details class="mrb-disclosure">
-        <summary><span>How to read the benchmark</span><strong>Definitions and calculation</strong><em>Shared cohorts, equal weighting, and metric definitions</em></summary>
+        <summary><span>Simple method</span><strong>How are the results calculated?</strong><em>Same dates, clear market groups, and equal importance</em></summary>
         <div class="mrb-method-body">
           <div class="mrb-method-steps">
-            <article><span>1</span><h3>Resolve official rounds</h3><p>Only completed official results enter this analysis.</p></article>
-            <article><span>2</span><h3>Classify the market</h3><p>Each round is grouped by the S&amp;P 500 return over the same scoring window.</p></article>
-            <article><span>3</span><h3>Build a shared cohort</h3><p>Models are compared only on rounds available to every model in that comparison.</p></article>
-            <article><span>4</span><h3>Weight environments equally</h3><p>Every environment with at least {READY_ROUND_THRESHOLD} rounds receives the same weight.</p></article>
+            <article><span>1</span><h3>Use completed tests</h3><p>Open tests do not count. Only finished results are included.</p></article>
+            <article><span>2</span><h3>Group each market move</h3><p>Each test is placed in a market type using the S&amp;P 500 return over the same dates.</p></article>
+            <article><span>3</span><h3>Compare the same dates</h3><p>A chart uses only dates completed by every model shown in that chart.</p></article>
+            <article><span>4</span><h3>Give each type equal importance</h3><p>A market type needs at least {READY_ROUND_THRESHOLD} results before it affects the main ranking.</p></article>
           </div>
           <dl class="mrb-metric-dictionary">
-            <div><dt>Return</dt><dd>Average model portfolio return on the displayed shared rounds.</dd></div>
-            <div><dt>vs S&amp;P</dt><dd>Model return minus S&amp;P 500 return on those same rounds.</dd></div>
-            <div><dt>Equal-environment return</dt><dd>Average of the model's per-environment returns across all counting environments.</dd></div>
-            <div><dt>CapitalBench Score</dt><dd>The official round score relative to the benchmark and best available option. <a href="/scoring">Scoring details</a>.</dd></div>
-            <div><dt>Hit rate</dt><dd>Share of included model tests where the model beat the S&amp;P 500.</dd></div>
-            <div><dt>Stability</dt><dd>How often the same leader remains first when one shared round is removed.</dd></div>
+            <div><dt>Average return</dt><dd>The model portfolio's average gain or loss on the dates shown.</dd></div>
+            <div><dt>Difference from S&amp;P</dt><dd>Model return minus S&amp;P 500 return on the same dates.</dd></div>
+            <div><dt>Average across market types</dt><dd>First average each market type, then average those results so every type matters equally.</dd></div>
+            <div><dt>CapitalBench Score</dt><dd>A score that compares the model with the S&amp;P 500 and the best available choice after the fact. <a href="/scoring">See the formula</a>.</dd></div>
+            <div><dt>Beat-S&amp;P rate</dt><dd>The percentage of included tests where the model did better than the S&amp;P 500.</dd></div>
+            <div><dt>Leader repeated</dt><dd>How often the same model stays first when one date is removed and the ranking is recalculated.</dd></div>
           </dl>
           <p class="mrb-method-note">
-            Weekly and monthly scoring windows can overlap. They should not be interpreted as independent trades or
-            combined into a cumulative return series. Confidence labels are descriptive evidence checks, not investment certainty.
+            Weekly and monthly periods can overlap, so do not add them together as if they were separate trades.
+            Result-strength labels describe how much data supports a comparison; they do not promise what will happen next.
           </p>
         </div>
       </details>
 
       <details class="mrb-disclosure">
-        <summary><span>Robustness check</span><strong>Strict equal-sample benchmark</strong><em>Uses the same number of down, flat, and up rounds</em></summary>
+        <summary><span>Second check</span><strong>Does the ranking change with equal sample sizes?</strong><em>Uses the same number of falling, flat, and rising market results</em></summary>
         <div class="mrb-disclosure-body">
           {TRACKS.map((track) => {
             const view = trackViews[track];
@@ -1115,15 +1174,15 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
             return (
               <div data-mrb-track-panel={track} hidden={track !== DEFAULT_TRACK}>
                 <div class="mrb-sample-head">
-                  <div><span>{view.label} robustness check</span><h3>{sample.status === "ready" ? `${sample.sampleSize} rounds selected per direction` : "The equal sample is still building"}</h3></div>
-                  <strong class:list={["mrb-evidence", sample.status === "ready" ? "is-medium" : "is-low"]}>{sample.status === "ready" ? "Ready to compare" : "Not ranked yet"}</strong>
+                  <div><span>{view.label} second check</span><h3>{sample.status === "ready" ? `${sample.sampleSize} results used for each market move` : "More results are needed for this check"}</h3></div>
+                  <strong class:list={["mrb-evidence", sample.status === "ready" ? "is-medium" : "is-low"]}>{sample.status === "ready" ? "Ready" : "Not enough data"}</strong>
                 </div>
                 <div class="mrb-sample-progress">
                   {sample.categories.map((category: any) => (
                     <article class:list={[`is-${category.key}`]}>
                       <span>{category.label}</span>
                       <strong>{category.count}</strong>
-                      <small>{sample.status === "ready" ? `${category.selectedCount} selected` : category.missing ? `${category.missing} more needed` : "Requirement met"}</small>
+                      <small>{sample.status === "ready" ? `${category.selectedCount} used` : category.missing ? `${category.missing} more needed` : "Enough results"}</small>
                       <i style={`--sample-width:${Math.min(100, (category.count / BALANCED_SAMPLE_THRESHOLD) * 100)}%`}></i>
                     </article>
                   ))}
@@ -1132,7 +1191,7 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                   <>
                     <div class="mrb-data-scroll" tabindex="0">
                       <table class="mrb-ranking-table">
-                        <thead><tr><th>Strict rank and model</th><th>Balanced score</th><th>vs S&amp;P</th><th>Hit rate</th><th>Tests</th><th>vs main rank</th></tr></thead>
+                        <thead><tr><th>Rank and model</th><th>Score</th><th>Difference from S&amp;P</th><th>Beat S&amp;P</th><th>Results used</th><th>Change from main rank</th></tr></thead>
                         <tbody>
                           {sample.comparableRows.map((row: any, index: number) => (
                             <tr>
@@ -1143,16 +1202,16 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                         </tbody>
                       </table>
                     </div>
-                    {sample.limitedRows.length > 0 && <p class="mrb-method-note">{sample.limitedRows.length} model{sample.limitedRows.length === 1 ? " has" : "s have"} insufficient shared history for this strict comparison and {sample.limitedRows.length === 1 ? "receives" : "receive"} no rank.</p>}
+                    {sample.limitedRows.length > 0 && <p class="mrb-method-note">{sample.limitedRows.length} model{sample.limitedRows.length === 1 ? " does" : "s do"} not have enough matching results for this second check and {sample.limitedRows.length === 1 ? "receives" : "receive"} no rank.</p>}
                     <details class="mrb-selected-rounds">
-                      <summary>View {sample.selectedRoundIds.length} selected rounds</summary>
+                      <summary>View the {sample.selectedRoundIds.length} tests used</summary>
                       <div>{sample.selectedRoundIds.map((roundId: string) => <a href={`/rounds/${roundId}`}>{roundId}</a>)}</div>
                     </details>
                   </>
                 ) : (
                   <p class="mrb-empty-state">
-                    This view waits for at least {BALANCED_SAMPLE_THRESHOLD} down, {BALANCED_SAMPLE_THRESHOLD} flat,
-                    and {BALANCED_SAMPLE_THRESHOLD} up rounds before assigning ranks.
+                    This check needs at least {BALANCED_SAMPLE_THRESHOLD} falling, {BALANCED_SAMPLE_THRESHOLD} flat,
+                    and {BALANCED_SAMPLE_THRESHOLD} rising market results before it can rank models.
                   </p>
                 )}
               </div>
@@ -1162,17 +1221,17 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
       </details>
 
       <details class="mrb-disclosure">
-        <summary><span>Round audit</span><strong>Included official rounds</strong><em>{auditRows.length} resolved rounds with filters and source links</em></summary>
+        <summary><span>Full list</span><strong>Which completed tests are included?</strong><em>{auditRows.length} tests with filters and source links</em></summary>
         <div class="mrb-disclosure-body">
           <div class="mrb-audit-tools">
-            <label><span>Find round</span><input type="search" placeholder="CB-2026..." data-mrb-audit-search /></label>
-            <label><span>Track</span><select data-mrb-audit-track><option value="all">All tracks</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label>
-            <label><span>Environment</span><select data-mrb-audit-environment><option value="all">All environments</option>{thresholdCards.map((environment) => <option value={environment.key}>{environment.label}</option>)}</select></label>
-            <a class="mrb-data-link" href="/api/v1/market-environments?track=all">Open JSON data</a>
+            <label><span>Find a test</span><input type="search" placeholder="CB-2026..." data-mrb-audit-search /></label>
+            <label><span>View</span><select data-mrb-audit-track><option value="all">Monthly and weekly</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label>
+            <label><span>Market type</span><select data-mrb-audit-environment><option value="all">All market types</option>{thresholdCards.map((environment) => <option value={environment.key}>{environment.label}</option>)}</select></label>
+            <a class="mrb-data-link" href="/api/v1/market-environments?track=all">Open the data</a>
           </div>
-          <p class="mrb-audit-count" data-mrb-audit-count>Showing 10 of {auditRows.length} rounds</p>
-          <div class="mrb-audit-table" role="table" aria-label="Included market environment rounds">
-            <div class="mrb-audit-header" role="row"><span>Round</span><span>Track</span><span>Window</span><span>S&amp;P</span><span>Environment</span><span>Model alpha</span><span>Models</span></div>
+          <p class="mrb-audit-count" data-mrb-audit-count>Showing 10 of {auditRows.length} tests</p>
+          <div class="mrb-audit-table" role="table" aria-label="Completed tests included in this benchmark">
+            <div class="mrb-audit-header" role="row"><span>Test</span><span>View</span><span>Dates</span><span>S&amp;P return</span><span>Market type</span><span>Avg. model difference</span><span>Models</span></div>
             {auditRows.map((row: any, index: number) => (
               <div
                 class="mrb-audit-row"
@@ -1183,18 +1242,18 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
                 data-environment={row.environmentKey}
                 data-round={String(row.round_id).toLowerCase()}
               >
-                <span role="cell" data-label="Round"><a href={`/rounds/${row.round_id}`}>{row.round_id}</a></span>
-                <span role="cell" data-label="Track">{trackLabel(row.track)}</span>
-                <span role="cell" data-label="Window">{dateOnly(row.entry_date)} to {dateOnly(row.exit_date)}</span>
-                <span role="cell" data-label="S&P" class:list={[`is-${valueTone(row.sp500_return)}`]}>{signedPctText(row.sp500_return)}</span>
-                <span role="cell" data-label="Environment">{row.environmentLabel}</span>
-                <span role="cell" data-label="Model alpha" class:list={[`is-${valueTone(row.average_alpha)}`]}>{pointText(row.average_alpha, true)}</span>
+                <span role="cell" data-label="Test"><a href={`/rounds/${row.round_id}`}>{row.round_id}</a></span>
+                <span role="cell" data-label="View">{trackLabel(row.track)}</span>
+                <span role="cell" data-label="Dates">{dateOnly(row.entry_date)} to {dateOnly(row.exit_date)}</span>
+                <span role="cell" data-label="S&P return" class:list={[`is-${valueTone(row.sp500_return)}`]}>{signedPctText(row.sp500_return)}</span>
+                <span role="cell" data-label="Market type">{row.environmentLabel}</span>
+                <span role="cell" data-label="Avg. model difference" class:list={[`is-${valueTone(row.average_alpha)}`]}>{pointText(row.average_alpha, true)}</span>
                 <span role="cell" data-label="Models">{row.model_count}</span>
               </div>
             ))}
           </div>
-          <p class="mrb-empty-state" data-mrb-audit-empty hidden>No rounds match these filters.</p>
-          <button type="button" class="mrb-show-more" data-mrb-audit-more>Show all {auditRows.length} rounds</button>
+          <p class="mrb-empty-state" data-mrb-audit-empty hidden>No tests match these filters.</p>
+          <button type="button" class="mrb-show-more" data-mrb-audit-more>Show all {auditRows.length} tests</button>
         </div>
       </details>
     </section>
@@ -1401,8 +1460,20 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
     }
 
     .mrb-section-head {
-      max-width: 820px;
+      max-width: 900px;
       display: grid;
+      justify-items: center;
+      gap: 8px;
+      margin-inline: auto;
+      text-align: center;
+    }
+
+    .mrb-question-title {
+      min-width: 0;
+      max-width: 820px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
       gap: 8px;
     }
 
@@ -1413,12 +1484,36 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
       font-size: 2rem;
       line-height: 1.08;
       letter-spacing: 0;
+      text-wrap: balance;
     }
 
     .mrb-section-head p {
       margin: 0;
       color: var(--muted);
       line-height: 1.55;
+    }
+
+    .mrb-info-tip {
+      margin: 3px 0 0;
+      transform: none;
+    }
+
+    .mrb-info-tip-small {
+      width: 24px;
+      height: 24px;
+      margin-top: 0;
+    }
+
+    .mrb-chart-question {
+      min-width: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+    }
+
+    .mrb-chart-question h3 {
+      min-width: 0;
+      text-wrap: balance;
     }
 
     [data-mrb-track-panel][hidden] { display: none !important; }
@@ -2416,7 +2511,7 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
       .mrb-benchmark-definition > div:nth-child(odd) { border-left: 0; }
       .mrb-benchmark-definition > div:nth-child(n + 3) { border-top: 1px solid var(--line); }
       .mrb-direction-grid { grid-template-columns: minmax(0, 1fr); }
-      .mrb-threshold-strip { overflow-x: auto; grid-template-columns: repeat(5, minmax(150px, 1fr)); padding-bottom: 5px; }
+      .mrb-threshold-strip { overflow-x: auto; grid-template-columns: repeat(5, minmax(190px, 1fr)); padding-bottom: 5px; }
       .mrb-environment-details { grid-template-columns: minmax(0, 1fr); }
       .mrb-insight-grid { grid-template-columns: minmax(0, 1fr); }
       .mrb-method-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -2442,6 +2537,8 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
       .mrb-section-links { display: none; }
       .mrb-section { gap: 18px; scroll-margin-top: 172px; padding: 38px 20px; }
       .mrb-section-head h2 { font-size: 1.55rem; }
+      .mrb-question-title { max-width: 100%; gap: 7px; }
+      .mrb-info-tip { flex: 0 0 auto; }
       .mrb-answer-grid { grid-template-columns: minmax(0, 1fr); }
       .mrb-answer-card-leader { grid-column: auto; }
       .mrb-chart-panel { padding: 15px; }
@@ -2616,11 +2713,11 @@ const engineVersion = String(marketEnvironment.engine_version ?? "engine_v1").sp
           row.setAttribute("aria-hidden", show ? "false" : "true");
           if (show) visible += 1;
         });
-        if (auditCount) auditCount.textContent = `Showing ${visible} of ${matched} matching rounds`;
+        if (auditCount) auditCount.textContent = `Showing ${visible} of ${matched} matching tests`;
         if (auditEmpty) auditEmpty.hidden = matched !== 0;
         if (showMore) {
           showMore.hidden = filtering || expanded || matched <= 10;
-          showMore.textContent = `Show all ${matched} rounds`;
+          showMore.textContent = `Show all ${matched} tests`;
         }
       }
 

@@ -112,9 +112,9 @@ function tickTransform(index: number): string {
 >
   {showLegend && (
     <div class="benchmark-bars-legend" aria-hidden="true">
-      <span class="is-model">Models</span>
+      <span class="is-model">AI models</span>
       {rows.some((row) => rowKind(row) === "benchmark") && <span class="is-benchmark">S&amp;P 500</span>}
-      {rows.some((row) => rowKind(row) === "reference") && <span class="is-reference">Max possible</span>}
+      {rows.some((row) => rowKind(row) === "reference") && <span class="is-reference">Best possible</span>}
     </div>
   )}
 
@@ -151,7 +151,7 @@ function tickTransform(index: number): string {
               {rowKind(row) === "benchmark" ? (
                 <span class="benchmark-bars-chip">S&amp;P</span>
               ) : rowKind(row) === "reference" ? (
-                <span class="benchmark-bars-chip is-reference">MAX</span>
+                <span class="benchmark-bars-chip is-reference">BEST</span>
               ) : row.logoSrc ? (
                 <img src={row.logoSrc} alt="" width="34" height="34" loading="lazy" />
               ) : (
@@ -192,7 +192,7 @@ function tickTransform(index: number): string {
               {rowKind(row) === "benchmark" ? (
                 <span class="benchmark-bars-chip">S&amp;P</span>
               ) : rowKind(row) === "reference" ? (
-                <span class="benchmark-bars-chip is-reference">MAX</span>
+                <span class="benchmark-bars-chip is-reference">BEST</span>
               ) : row.logoSrc ? (
                 <img src={row.logoSrc} alt="" width="34" height="34" loading="lazy" />
               ) : (
