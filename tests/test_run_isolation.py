@@ -268,6 +268,52 @@ def test_smoke_provider_uses_minimal_openai_reasoning_effort(tmp_path: Path, mon
     assert captured["runtime_reasoning_effort"] == "minimal"
 
 
+def test_smoke_provider_uses_none_for_gpt_5_6_reasoning_effort(tmp_path: Path, monkeypatch) -> None:
+    round_path = _copy_example_round(tmp_path)
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    captured = {}
+
+    class CapturingProvider:
+        def run_model(self, model_config, prompt, json_schema, runtime_limits):
+            captured["model_reasoning_effort"] = model_config.reasoning_effort
+            captured["runtime_reasoning_effort"] = runtime_limits.reasoning_effort
+            from capitalbench.schemas import Usage
+            from capitalbench.providers.base import ProviderResult
+
+            return ProviderResult(
+                raw_text=(
+                    '{"round_id":"example-round","model_id":"openai-smoke","provider":"openai",'
+                    '"mode":"closed_capability","selected_option_id":"SP500","confidence":0.5,'
+                    '"rationale_summary":"Test","key_risks":["Risk one","Risk two"]}'
+                ),
+                parsed_json={
+                    "round_id": "example-round",
+                    "model_id": "openai-smoke",
+                    "provider": "openai",
+                    "mode": "closed_capability",
+                    "selected_option_id": "SP500",
+                    "confidence": 0.5,
+                    "rationale_summary": "Test",
+                    "key_risks": ["Risk one", "Risk two"],
+                },
+                usage=Usage(latency_seconds=0.01),
+                error=None,
+            )
+
+    monkeypatch.setitem(provider_smoke_module.PROVIDER_CLASSES, "openai", CapturingProvider)
+
+    summary = smoke_provider(
+        provider="openai",
+        api_model_name="gpt-5.6-sol",
+        round_path=round_path,
+        allow_real_api_calls=True,
+    )
+
+    assert summary.validation_status == "valid"
+    assert captured["model_reasoning_effort"] == "none"
+    assert captured["runtime_reasoning_effort"] == "none"
+
+
 def test_smoke_provider_uses_low_google_reasoning_effort(tmp_path: Path, monkeypatch) -> None:
     round_path = _copy_example_round(tmp_path)
     monkeypatch.setenv("GOOGLE_API_KEY", "test-key")

@@ -159,6 +159,7 @@ function resultAssetLabel(asset?: { label: string; asset_symbol: string }): stri
 function scoreChartModelColorClass(modelId: string, index: number): string {
   const modelColors: Record<string, string> = {
     "openai-gpt-5-5": "score-bar-openai",
+    "openai-gpt-5-6-sol": "score-bar-openai",
     "xai-grok-4-3": "score-bar-xai",
     "xai-grok-4-5": "score-bar-xai",
     "anthropic-claude-fable-5": "score-bar-anthropic-fable",

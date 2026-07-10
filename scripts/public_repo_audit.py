@@ -56,6 +56,9 @@ TOKEN_PATTERNS = [
     ("Bearer token", re.compile(r"Bearer\s+[A-Za-z0-9._-]{20,}")),
     ("Supabase project URL", re.compile(r"https://[a-z0-9]{20}\.supabase\.co")),
 ]
+TOKEN_VALUE_ALLOWLIST = {
+    "sk-hynix-nasdaq-memory-chips-nvidia-73f13a85ae00e30bad0540281bbe44f3",
+}
 
 ENV_ASSIGNMENT_RE = re.compile(
     r"^\s*(?:export\s+)?(?P<key>[A-Z][A-Z0-9_]{2,})\s*(?::|=)\s*(?P<value>.+?)\s*(?:#.*)?$"
@@ -345,7 +348,8 @@ def audit_text(path: Path, text: str) -> list[Finding]:
 
     for line_number, line in enumerate(text.splitlines(), start=1):
         for label, pattern in TOKEN_PATTERNS:
-            if pattern.search(line):
+            match = pattern.search(line)
+            if match and match.group(0) not in TOKEN_VALUE_ALLOWLIST:
                 findings.append(Finding(path_str, f"possible {label} found", line_number))
 
         env_match = ENV_ASSIGNMENT_RE.match(line)

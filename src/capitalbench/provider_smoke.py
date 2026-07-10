@@ -62,7 +62,7 @@ def smoke_provider(
     if provider == "google":
         reasoning_effort = "low"
     elif provider == "openai":
-        reasoning_effort = "minimal"
+        reasoning_effort = "none" if api_model_name.startswith("gpt-5.6") else "minimal"
     elif provider == "anthropic":
         reasoning_effort = "low"
 

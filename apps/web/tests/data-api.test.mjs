@@ -121,6 +121,11 @@ test("API accepts an active bearer key", async () => {
   assert.equal(result.status, 200);
   assert.ok(result.body.data.length >= 5);
   assert.ok(result.body.data.some((model) => model.model_id === "openai-gpt-5-5"));
+  assert.ok(
+    result.body.data.some(
+      (model) => model.model_id === "openai-gpt-5-6-sol" && model.label === "GPT-5.6 Sol"
+    )
+  );
 });
 
 test("API rejects bearer keys without read:v1 scope", async () => {
