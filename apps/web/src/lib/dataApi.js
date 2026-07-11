@@ -29,6 +29,7 @@ const DATA_API_ENDPOINTS = [
   "/v1/risk-appetite",
   "/v1/live/performance",
   "/v1/live/performance/history",
+  "/v1/results",
   "/v1/returns",
   "/v1/allocations",
   "/v1/proof",
@@ -157,35 +158,27 @@ export function createD1ApiAuthRepository(db) {
 
     async incrementWindow(keyHash, windowName, windowStart, limit, nowIso) {
       await ensureApiAuthSchema(db);
+      const updated = await db
+        .prepare(
+          `insert into data_api_rate_limits (key_hash, window_name, window_start, count, updated_at)
+           values (?, ?, ?, 1, ?)
+           on conflict(key_hash, window_name, window_start) do update set
+             count = data_api_rate_limits.count + 1,
+             updated_at = excluded.updated_at
+           where data_api_rate_limits.count < ?
+           returning count`
+        )
+        .bind(keyHash, windowName, windowStart, nowIso, limit)
+        .first();
+      if (updated) return { ok: true, count: Number(updated.count), limit };
+
       const existing = await db
         .prepare(
           "select count from data_api_rate_limits where key_hash = ? and window_name = ? and window_start = ?"
         )
         .bind(keyHash, windowName, windowStart)
         .first();
-      const count = Number(existing?.count ?? 0);
-      if (count >= limit) {
-        return { ok: false, count, limit };
-      }
-      if (existing) {
-        await db
-          .prepare(
-            `update data_api_rate_limits
-             set count = count + 1, updated_at = ?
-             where key_hash = ? and window_name = ? and window_start = ?`
-          )
-          .bind(nowIso, keyHash, windowName, windowStart)
-          .run();
-      } else {
-        await db
-          .prepare(
-            `insert into data_api_rate_limits (key_hash, window_name, window_start, count, updated_at)
-             values (?, ?, ?, 1, ?)`
-          )
-          .bind(keyHash, windowName, windowStart, nowIso)
-          .run();
-      }
-      return { ok: true, count: count + 1, limit };
+      return { ok: false, count: Number(existing?.count ?? limit), limit };
     }
   };
 }
@@ -343,16 +336,39 @@ function optionalBooleanFilter(url, name) {
 }
 
 function limitAndCursor(url) {
-  const limit = Math.min(250, Math.max(1, numericLimit(url.searchParams.get("limit"), 100)));
-  const cursor = Math.max(0, Number.parseInt(url.searchParams.get("cursor") || "0", 10) || 0);
-  return { limit, cursor };
+  const rawLimit = url.searchParams.get("limit");
+  const rawCursor = url.searchParams.get("cursor");
+  if (rawLimit !== null && !/^\d+$/.test(rawLimit)) {
+    return { ok: false, result: errorResult(400, "invalid_limit", "limit must be an integer from 1 to 250.") };
+  }
+  if (rawCursor !== null && !/^\d+$/.test(rawCursor)) {
+    return { ok: false, result: errorResult(400, "invalid_cursor", "cursor must be a non-negative integer.") };
+  }
+  const limit = rawLimit === null ? 100 : Number(rawLimit);
+  const cursor = rawCursor === null ? 0 : Number(rawCursor);
+  if (!Number.isSafeInteger(limit) || limit < 1 || limit > 250) {
+    return { ok: false, result: errorResult(400, "invalid_limit", "limit must be an integer from 1 to 250.") };
+  }
+  if (!Number.isSafeInteger(cursor) || cursor < 0) {
+    return { ok: false, result: errorResult(400, "invalid_cursor", "cursor must be a non-negative integer.") };
+  }
+  return { ok: true, limit, cursor };
 }
 
 function pageRows(rows, url) {
-  const { limit, cursor } = limitAndCursor(url);
+  const pagination = limitAndCursor(url);
+  if (!pagination.ok) return pagination;
+  const { limit, cursor } = pagination;
   const data = rows.slice(cursor, cursor + limit);
   const nextCursor = cursor + limit < rows.length ? String(cursor + limit) : null;
-  return { data, next_cursor: nextCursor };
+  return {
+    ok: true,
+    body: {
+      row_count: rows.length,
+      data,
+      next_cursor: nextCursor
+    }
+  };
 }
 
 const assetById = new Map(apiReadModel.assets.map((asset) => [asset.option_id, asset]));
@@ -516,6 +532,9 @@ function aggregatePositioning(rows, groupBy, scope, track) {
 }
 
 function positioningResponse(url, options = {}) {
+  if (url.searchParams.has("as_of")) {
+    return errorResult(400, "unsupported_as_of", "Historical as_of positioning snapshots are not supported.");
+  }
   const track = options.track ?? normalizedTrack(url);
   const scope = options.scope ?? normalizedScope(url);
   const groupBy = options.groupBy ?? normalizedGroupBy(url);
@@ -528,17 +547,34 @@ function positioningResponse(url, options = {}) {
   if (optionId && !assetById.has(optionId)) return errorResult(404, "not_found", "Asset not found.");
   let rows = filterByScope(filterByTrack(officialRowsForReadModel(apiReadModel, apiReadModel.allocations), track), scope);
   if (modelId) rows = rows.filter((row) => row.model_id === modelId);
+  const eligiblePortfolioCount = optionId ? new Set(rows.map(portfolioKey)).size : null;
   if (optionId) rows = rows.filter((row) => row.option_id === optionId);
   if (options.category) rows = rows.filter((row) => (assetById.get(row.option_id)?.category ?? row.category) === options.category);
-  return jsonApiResult(200, aggregatePositioning(rows, groupBy, scope, track));
+  const body = aggregatePositioning(rows, groupBy, scope, track);
+  if (optionId) {
+    const holderPortfolioCount = new Set(rows.map(portfolioKey)).size;
+    const totalAllocation = rows.reduce((total, row) => total + Number(row.allocation_pct ?? 0), 0);
+    return jsonApiResult(200, {
+      ...body,
+      eligible_portfolio_count: eligiblePortfolioCount,
+      holder_portfolio_count: holderPortfolioCount,
+      holder_rate_pct: eligiblePortfolioCount ? (holderPortfolioCount / eligiblePortfolioCount) * 100 : null,
+      average_holder_allocation_pct: holderPortfolioCount ? totalAllocation / holderPortfolioCount : null,
+      consensus_allocation_pct: eligiblePortfolioCount ? totalAllocation / eligiblePortfolioCount : 0
+    });
+  }
+  return jsonApiResult(200, body);
 }
 
 function positioningChanges(url) {
-  const track = normalizedTrack(url);
-  if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  const track = String(url.searchParams.get("track") || "weekly").toLowerCase();
+  if (!["weekly", "monthly"].includes(track)) {
+    return errorResult(400, "invalid_track", "track must be weekly or monthly for positioning changes.");
+  }
   const window = String(url.searchParams.get("window") || "latest").toLowerCase();
   if (window !== "latest") return errorResult(400, "invalid_window", "window must be latest.");
-  const groupBy = normalizedGroupBy(url) ?? "asset";
+  const groupBy = normalizedGroupBy(url);
+  if (!groupBy) return errorResult(400, "invalid_group_by", "group_by must be asset, category, or model.");
   const allocationRows = officialRowsForReadModel(apiReadModel, apiReadModel.allocations);
   const rounds = filterByTrack(apiReadModel.rounds, track)
     .filter((round) => allocationRows.some((allocation) => allocation.round_id === round.round_id))
@@ -548,6 +584,8 @@ function positioningChanges(url) {
     return jsonApiResult(200, {
       as_of: apiReadModel.generated_at,
       window,
+      track,
+      group_by: groupBy,
       data: []
     });
   }
@@ -563,23 +601,27 @@ function positioningChanges(url) {
     "cumulative",
     track
   );
+  const currentByKey = new Map(current.data.map((row) => [row.key, row]));
   const priorByKey = new Map(prior.data.map((row) => [row.key, row]));
   return jsonApiResult(200, {
     as_of: apiReadModel.generated_at,
     window,
+    track,
     current_round_id: currentRound.round_id,
     prior_round_id: priorRound.round_id,
     group_by: groupBy,
-    data: current.data
-      .map((row) => {
+    data: Array.from(new Set([...currentByKey.keys(), ...priorByKey.keys()]))
+      .map((key) => {
+        const row = currentByKey.get(key) ?? priorByKey.get(key);
         const priorRow = priorByKey.get(row.key);
+        const currentAllocation = currentByKey.get(row.key)?.allocation_pct ?? 0;
         const priorAllocation = priorRow?.allocation_pct ?? 0;
         return {
           key: row.key,
           label: row.label,
-          allocation_pct: row.allocation_pct,
+          allocation_pct: currentAllocation,
           prior_allocation_pct: priorAllocation,
-          change_pp: row.allocation_pct - priorAllocation
+          change_pp: currentAllocation - priorAllocation
         };
       })
       .sort((a, b) => Math.abs(b.change_pp) - Math.abs(a.change_pp))
@@ -923,7 +965,9 @@ function listRounds(url) {
     return errorResult(400, "invalid_status", "status must be active, resolved, overdue, or all.");
   }
   const rows = filterByRoundStatus(filterByTrack(apiReadModel.rounds, track), status);
-  return jsonApiResult(200, pageRows(rows, url));
+  const page = pageRows(rows, url);
+  if (!page.ok) return page.result;
+  return jsonApiResult(200, page.body);
 }
 
 function roundDetails(roundId) {
@@ -1132,12 +1176,13 @@ function listAssets(url) {
   let rows = apiReadModel.assets;
   if (current === "true") rows = rows.filter((asset) => asset.in_current_universe);
   if (current === "false") rows = rows.filter((asset) => !asset.in_current_universe);
+  const page = pageRows(rows, url);
+  if (!page.ok) return page.result;
   return jsonApiResult(200, {
     as_of: apiReadModel.generated_at,
     current_universe_round_id: apiReadModel.current_universe_round_id,
     current_filter: current,
-    row_count: rows.length,
-    ...pageRows(rows, url)
+    ...page.body
   });
 }
 
@@ -1274,6 +1319,8 @@ function listInsights(url) {
   if (track !== "all") rows = rows.filter((row) => row.context?.track === track);
   if (maturity !== "all") rows = rows.filter((row) => row.context?.maturity === maturity);
   const categories = Array.from(new Set(publishedRows.map((row) => row.category).filter(Boolean))).sort();
+  const page = pageRows(rows, url);
+  if (!page.ok) return page.result;
   return jsonApiResult(200, {
     engine_version: payload.engine_version ?? null,
     generated_at: payload.generated_at ?? null,
@@ -1281,7 +1328,7 @@ function listInsights(url) {
     insight_count: rows.length,
     categories,
     filters: { category: category ?? null, tier, confidence, track, maturity, view },
-    ...pageRows(rows, url)
+    ...page.body
   });
 }
 
@@ -1352,6 +1399,19 @@ function sortRoundRowsDescending(rows) {
   });
 }
 
+function sortResultRowsDescending(rows) {
+  return rows.sort((a, b) => {
+    const leftRound = roundById.get(a.round_id);
+    const rightRound = roundById.get(b.round_id);
+    return (
+      String(rightRound?.exit_date ?? "").localeCompare(String(leftRound?.exit_date ?? "")) ||
+      String(b.round_id ?? "").localeCompare(String(a.round_id ?? "")) ||
+      Number(a.rank ?? 9999) - Number(b.rank ?? 9999) ||
+      String(a.model_id ?? "").localeCompare(String(b.model_id ?? ""))
+    );
+  });
+}
+
 function listAllocations(url) {
   const track = normalizedTrack(url);
   const scope = normalizedScope(url);
@@ -1369,12 +1429,37 @@ function listAllocations(url) {
   if (modelId) rows = rows.filter((row) => row.model_id === modelId);
   if (optionId) rows = rows.filter((row) => row.option_id === optionId);
   rows = sortRoundRowsDescending(rows);
+  const page = pageRows(rows, url);
+  if (!page.ok) return page.result;
   return jsonApiResult(200, {
     as_of: apiReadModel.generated_at,
     track,
     scope,
-    row_count: rows.length,
-    ...pageRows(rows, url)
+    ...page.body
+  });
+}
+
+function listResults(url) {
+  const track = normalizedTrack(url);
+  if (!track) return errorResult(400, "invalid_track", "track must be weekly, monthly, or all.");
+  const roundId = url.searchParams.get("round_id");
+  const modelId = url.searchParams.get("model_id");
+  if (roundId && !roundById.has(roundId)) return errorResult(404, "not_found", "Round not found.");
+  if (modelId && !modelById.has(modelId)) return errorResult(404, "not_found", "Model not found.");
+
+  let rows = filterByTrack(officialRowsForReadModel(apiReadModel, apiReadModel.results), track);
+  if (roundId) rows = rows.filter((row) => row.round_id === roundId);
+  if (modelId) rows = rows.filter((row) => row.model_id === modelId);
+  rows = sortResultRowsDescending(rows).map((row) => ({
+    ...row,
+    label: modelById.get(row.model_id)?.label ?? row.model_id
+  }));
+  const page = pageRows(rows, url);
+  if (!page.ok) return page.result;
+  return jsonApiResult(200, {
+    as_of: apiReadModel.generated_at,
+    track,
+    ...page.body
   });
 }
 
@@ -1393,11 +1478,12 @@ function listReturns(url) {
   if (optionId) rows = rows.filter((row) => row.option_id === optionId);
   if (isBenchmark !== null) rows = rows.filter((row) => Boolean(row.is_benchmark) === isBenchmark);
   rows = sortRoundRowsDescending(rows);
+  const page = pageRows(rows, url);
+  if (!page.ok) return page.result;
   return jsonApiResult(200, {
     as_of: apiReadModel.generated_at,
     track,
-    row_count: rows.length,
-    ...pageRows(rows, url)
+    ...page.body
   });
 }
 
@@ -1427,11 +1513,12 @@ function listLivePerformanceHistory(url) {
       String(b.round_id ?? "").localeCompare(String(a.round_id ?? "")) ||
       String(a.model_id ?? "").localeCompare(String(b.model_id ?? ""))
   );
+  const page = pageRows(rows, url);
+  if (!page.ok) return page.result;
   return jsonApiResult(200, {
     as_of: apiReadModel.generated_at,
     track,
-    row_count: rows.length,
-    ...pageRows(rows, url)
+    ...page.body
   });
 }
 
@@ -1453,12 +1540,13 @@ function listProof(url) {
   if (track !== "all") rows = rows.filter((row) => row.track === track);
   if (status !== "all") rows = rows.filter((row) => row.status === status);
   rows = sortRoundRowsDescending(rows);
+  const page = pageRows(rows, url);
+  if (!page.ok) return page.result;
   return jsonApiResult(200, {
     as_of: apiReadModel.generated_at,
     track,
     status,
-    row_count: rows.length,
-    ...pageRows(rows, url)
+    ...page.body
   });
 }
 
@@ -1493,6 +1581,7 @@ function routeGet(request) {
   if (parts[0] === "live" && parts[1] === "performance" && parts.length === 2) return livePerformance(url);
   if (parts[0] === "live" && parts[1] === "performance" && parts.length === 3 && parts[2] === "history") return listLivePerformanceHistory(url);
   if (parts[0] === "risk-appetite" && parts.length === 1) return riskAppetite();
+  if (parts[0] === "results" && parts.length === 1) return listResults(url);
   if (parts[0] === "returns" && parts.length === 1) return listReturns(url);
   if (parts[0] === "allocations" && parts.length === 1) return listAllocations(url);
   if (parts[0] === "proof" && parts.length === 1) return listProof(url);

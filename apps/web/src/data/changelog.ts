@@ -26,6 +26,28 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-07-11-data-api-results-and-contracts",
+    date: "2026-07-11",
+    title: "Data API results and contracts expanded",
+    category: "Data",
+    status: "updated",
+    summary:
+      "CapitalBench now exposes scored results as a filterable collection and applies clearer, stricter contracts across positioning, pagination, and asset-holder data.",
+    details: [
+      "The new /v1/results endpoint returns official scored model rows with track, round, model, limit, and cursor filters.",
+      "Positioning changes now compare consecutive rounds within one weekly or monthly track, include assets that moved to zero, and reject invalid grouping values.",
+      "Paginated collections now consistently include row_count and reject malformed cursors or limits instead of silently changing them.",
+      "Asset-holder responses now distinguish eligible portfolios, holder portfolios, holder rate, average holder allocation, and full-cohort consensus allocation.",
+      "The unsupported historical as_of positioning parameter was removed from OpenAPI and is now explicitly rejected.",
+      "API-key quota increments now use one conditional atomic database operation under concurrent traffic."
+    ],
+    links: [
+      { label: "Data API", href: "/api" },
+      { label: "API use cases", href: "/api/use-cases" },
+      { label: "OpenAPI", href: "/api/openapi.json" }
+    ]
+  },
+  {
     id: "2026-06-16-insights-engine-v1",
     date: "2026-06-16",
     title: "Insights engine v1 added",

@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   buildCumulativeLeaderboardData,
+  createD1ApiAuthRepository,
   createMemoryApiAuthRepository,
   dataResultToResponse,
   handleDataApiRequest,
@@ -176,6 +177,49 @@ test("API applies per-minute key rate limit", async () => {
   assert.equal(second.body.error, "rate_limit_exceeded");
 });
 
+test("D1 rate-limit increments use one conditional atomic upsert", async () => {
+  const statements = [];
+  let count = 0;
+  const db = {
+    prepare(sql) {
+      const statement = {
+        args: [],
+        bind(...args) {
+          this.args = args;
+          return this;
+        },
+        async run() {
+          statements.push({ sql, args: this.args, operation: "run" });
+          return { success: true };
+        },
+        async first() {
+          statements.push({ sql, args: this.args, operation: "first" });
+          if (sql.includes("on conflict(key_hash, window_name, window_start)")) {
+            const limit = Number(this.args.at(-1));
+            if (count >= limit) return null;
+            count += 1;
+            return { count };
+          }
+          if (sql.startsWith("select count from data_api_rate_limits")) return { count };
+          return null;
+        }
+      };
+      return statement;
+    }
+  };
+  const repo = createD1ApiAuthRepository(db);
+
+  const first = await repo.incrementWindow("hash", "minute", "2026-07-11T18:20", 1, "2026-07-11T18:20:00Z");
+  const second = await repo.incrementWindow("hash", "minute", "2026-07-11T18:20", 1, "2026-07-11T18:20:01Z");
+  const mutations = statements.filter((row) => row.sql.includes("on conflict(key_hash, window_name, window_start)"));
+
+  assert.deepEqual(first, { ok: true, count: 1, limit: 1 });
+  assert.deepEqual(second, { ok: false, count: 1, limit: 1 });
+  assert.equal(mutations.length, 2);
+  assert.ok(mutations.every((row) => row.sql.includes("where data_api_rate_limits.count < ?")));
+  assert.ok(mutations.every((row) => row.sql.includes("returning count")));
+});
+
 test("active positioning returns live model allocation data", async () => {
   const result = await apiGet("/api/v1/positioning/active?track=all&group_by=asset");
   const activePortfolioCount = new Set(
@@ -204,6 +248,32 @@ test("active positioning returns live model allocation data", async () => {
       assert.ok(!resolvedRoundIds.has(roundId), `active positioning included resolved round ${roundId}`);
     }
   }
+});
+
+test("positioning changes compare consecutive rounds in one track and validate filters", async () => {
+  const result = await apiGet("/api/v1/positioning/changes");
+  const allTracks = await apiGet("/api/v1/positioning/changes?track=all");
+  const invalidGroup = await apiGet("/api/v1/positioning/changes?group_by=invalid");
+  const unsupportedAsOf = await apiGet("/api/v1/positioning/active?as_of=2026-01-01T00:00:00Z");
+
+  assert.equal(result.status, 200);
+  assert.equal(result.body.track, "weekly");
+  assert.equal(result.body.group_by, "asset");
+  assert.equal(apiReadModel.rounds.find((row) => row.round_id === result.body.current_round_id)?.track, "weekly");
+  assert.equal(apiReadModel.rounds.find((row) => row.round_id === result.body.prior_round_id)?.track, "weekly");
+
+  const expectedAssetIds = new Set(
+    officialRowsForReadModel(apiReadModel, apiReadModel.allocations)
+      .filter((row) => [result.body.current_round_id, result.body.prior_round_id].includes(row.round_id))
+      .map((row) => row.option_id)
+  );
+  assert.deepEqual(new Set(result.body.data.map((row) => row.key)), expectedAssetIds);
+  assert.equal(allTracks.status, 400);
+  assert.equal(allTracks.body.error, "invalid_track");
+  assert.equal(invalidGroup.status, 400);
+  assert.equal(invalidGroup.body.error, "invalid_group_by");
+  assert.equal(unsupportedAsOf.status, 400);
+  assert.equal(unsupportedAsOf.body.error, "unsupported_as_of");
 });
 
 test("live performance returns interim mark-to-market data for open tests", async () => {
@@ -528,6 +598,11 @@ test("metadata and raw dataset endpoints expose generated read model data", asyn
   assert.equal(returns.body.row_count, canonicalRoundReturns(resolvedRoundId).length);
   assert.deepEqual(returns.body.data, canonicalRoundReturns(resolvedRoundId));
 
+  const resultRows = await apiGet(`/api/v1/results?track=weekly&round_id=${resolvedRoundId}&limit=250`);
+  assert.equal(resultRows.status, 200);
+  assert.equal(resultRows.body.row_count, canonicalLeaderboardRows(resolvedRoundId).length);
+  assert.deepEqual(resultRows.body.data, canonicalLeaderboardRows(resolvedRoundId));
+
   const allocations = await apiGet(`/api/v1/allocations?track=weekly&scope=cumulative&round_id=${activeRoundId}&limit=250`);
   assert.equal(allocations.status, 200);
   assert.equal(allocations.body.row_count, canonicalRoundAllocations(activeRoundId).length);
@@ -565,6 +640,27 @@ test("metadata and raw dataset endpoints expose generated read model data", asyn
   assert.ok(proofList.body.data.some((row) => row.round_id === activeRoundId));
 });
 
+test("paginated collections return totals and reject malformed pagination", async () => {
+  const rounds = await apiGet("/api/v1/rounds?track=all&status=all&limit=2");
+  const insights = await apiGet("/api/v1/insights?limit=2");
+  const invalidCursor = await apiGet("/api/v1/rounds?cursor=abc");
+  const negativeCursor = await apiGet("/api/v1/rounds?cursor=-1");
+  const invalidLimit = await apiGet("/api/v1/rounds?limit=251");
+
+  assert.equal(rounds.status, 200);
+  assert.equal(rounds.body.row_count, apiReadModel.rounds.length);
+  assert.equal(rounds.body.data.length, 2);
+  assert.equal(rounds.body.next_cursor, "2");
+  assert.equal(insights.status, 200);
+  assert.equal(insights.body.row_count, insights.body.insight_count);
+  assert.equal(invalidCursor.status, 400);
+  assert.equal(invalidCursor.body.error, "invalid_cursor");
+  assert.equal(negativeCursor.status, 400);
+  assert.equal(negativeCursor.body.error, "invalid_cursor");
+  assert.equal(invalidLimit.status, 400);
+  assert.equal(invalidLimit.body.error, "invalid_limit");
+});
+
 test("round concentration endpoint returns consensus and concentration data", async () => {
   const latestWeeklyRoundId = latestRoundId("weekly");
   const result = await apiGet(`/api/v1/rounds/${latestWeeklyRoundId}/concentration`);
@@ -593,6 +689,16 @@ test("model holdings and asset holder endpoints filter correctly", async () => {
   assert.equal(holders.status, 200);
   assert.equal(holders.body.group_by, "model");
   assert.ok(holders.body.data.length > 0);
+  assert.equal(holders.body.portfolio_count, holders.body.holder_portfolio_count);
+  assert.ok(holders.body.eligible_portfolio_count >= holders.body.holder_portfolio_count);
+  assertApproxEqual(
+    holders.body.holder_rate_pct,
+    (holders.body.holder_portfolio_count / holders.body.eligible_portfolio_count) * 100
+  );
+  assertApproxEqual(
+    holders.body.consensus_allocation_pct,
+    holders.body.average_holder_allocation_pct * (holders.body.holder_portfolio_count / holders.body.eligible_portfolio_count)
+  );
 });
 
 test("model behavior endpoint exposes canonical behavior profiles", async () => {
@@ -693,6 +799,7 @@ test("OpenAPI documented endpoints are served by the data API", async () => {
     ["/v1/risk-appetite", "/api/v1/risk-appetite"],
     ["/v1/live/performance", "/api/v1/live/performance?track=all"],
     ["/v1/live/performance/history", "/api/v1/live/performance/history?track=all&limit=5"],
+    ["/v1/results", `/api/v1/results?track=weekly&round_id=${resolvedRoundId}&limit=5`],
     ["/v1/returns", `/api/v1/returns?track=weekly&round_id=${resolvedRoundId}&limit=5`],
     ["/v1/allocations", "/api/v1/allocations?track=all&scope=active&limit=5"],
     ["/v1/proof", "/api/v1/proof?track=all&status=all&limit=5"],
@@ -757,7 +864,7 @@ test("every top-level generated read model dataset has an API exposure path", as
     assets: "/api/v1/assets?current=all&limit=5",
     portfolios: `/api/v1/models/${modelId}/portfolios?track=all&scope=cumulative`,
     allocations: "/api/v1/allocations?track=all&scope=active&limit=5",
-    results: `/api/v1/rounds/${resolvedRoundId}/results`,
+    results: `/api/v1/results?track=weekly&round_id=${resolvedRoundId}&limit=5`,
     returns: `/api/v1/returns?track=weekly&round_id=${resolvedRoundId}&limit=5`,
     interim_performance: `/api/v1/live/performance/history?track=weekly&round_id=${activeRoundId}&limit=5`,
     model_styles: `/api/v1/models/${modelId}/style`,

@@ -47,6 +47,11 @@ const assetHoldersExample = exampleBlock("/api/v1/assets/SEMICONDUCTORS/model-ho
   track: assetHoldersBody.track,
   group_by: assetHoldersBody.group_by,
   portfolio_count: assetHoldersBody.portfolio_count,
+  eligible_portfolio_count: assetHoldersBody.eligible_portfolio_count,
+  holder_portfolio_count: assetHoldersBody.holder_portfolio_count,
+  holder_rate_pct: assetHoldersBody.holder_rate_pct,
+  average_holder_allocation_pct: assetHoldersBody.average_holder_allocation_pct,
+  consensus_allocation_pct: assetHoldersBody.consensus_allocation_pct,
   data: assetHoldersTop ? [assetHoldersTop] : []
 });
 
@@ -288,6 +293,7 @@ const endpointGroups = [
       ["GET", "/v1/rounds/{round_id}/concentration", "Run-level allocation consensus and concentration summary."],
       ["GET", "/v1/rounds/{round_id}/live-performance", "Interim mark-to-market rows for an unresolved round."],
       ["GET", "/v1/rounds/{round_id}/results", "Resolved portfolio returns, S&P 500 returns, Portfolio Minus S&P 500, regret, and max-possible context."],
+      ["GET", "/v1/results", "All official scored model results with track, round, and model filters."],
       ["GET", "/v1/returns", "Raw official-run asset return rows, including benchmark and cash rows where available."],
       ["GET", "/v1/leaderboards/latest", "Most recent scored weekly or monthly leaderboard."],
       ["GET", "/v1/leaderboards/benchmark-sets", "Living equal-run comparison sets, including the current weekly and monthly benchmarks."],
@@ -348,6 +354,11 @@ const fields = [
   ["option_id", "Stable asset identifier from the saved universe."],
   ["pattern_report", "Dynamic model behavior comparison report with one row per model, deterministic traits, key numbers, comparative findings, freshness metadata, and NVIDIA prompt provenance."],
   ["portfolio_count", "Number of model portfolios included in an aggregate calculation."],
+  ["eligible_portfolio_count", "All portfolios considered before filtering to holders of a requested asset."],
+  ["holder_portfolio_count", "Eligible portfolios with a non-zero allocation to a requested asset."],
+  ["holder_rate_pct", "Share of eligible portfolios holding a requested asset."],
+  ["average_holder_allocation_pct", "Average asset weight among portfolios that hold it."],
+  ["consensus_allocation_pct", "Average asset weight across the full eligible cohort, with non-holders counted as zero."],
   ["row_count", "Total number of records matching a list endpoint before pagination."],
   ["risk_on_loading", "Versioned asset loading from -1 defensive to +1 risk seeking, used by AI Risk Appetite."],
   ["risk_score_1_5", "Standalone asset-risk rating used by the existing historical model profile."],

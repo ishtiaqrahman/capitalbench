@@ -47,7 +47,7 @@
     },
     {
       "name": "Raw Data",
-      "description": "First-class access to generated allocation, return, interim performance, and proof tables."
+      "description": "First-class access to generated allocation, scored result, return, interim performance, and proof tables."
     },
     {
       "name": "Evidence",
@@ -68,9 +68,6 @@
           },
           {
             "$ref": "#/components/parameters/GroupBy"
-          },
-          {
-            "$ref": "#/components/parameters/AsOf"
           }
         ],
         "responses": {
@@ -121,6 +118,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
@@ -292,7 +292,10 @@
         "description": "Change in allocation by asset, category, or model between recent rounds.",
         "parameters": [
           {
-            "$ref": "#/components/parameters/Track"
+            "$ref": "#/components/parameters/LeaderboardTrack"
+          },
+          {
+            "$ref": "#/components/parameters/GroupBy"
           },
           {
             "name": "window",
@@ -317,6 +320,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
@@ -538,6 +544,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "row_count": {
+                      "type": "integer"
+                    },
                     "data": {
                       "type": "array",
                       "items": {
@@ -552,6 +561,7 @@
                     }
                   },
                   "required": [
+                    "row_count",
                     "data",
                     "next_cursor"
                   ]
@@ -1391,6 +1401,56 @@
         }
       }
     },
+    "/v1/results": {
+      "get": {
+        "tags": [
+          "Raw Data"
+        ],
+        "summary": "List scored results",
+        "description": "Official scored model result rows across resolved rounds, filterable by track, round, and model.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Track"
+          },
+          {
+            "$ref": "#/components/parameters/RoundIdQuery"
+          },
+          {
+            "$ref": "#/components/parameters/ModelId"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List scored results response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
     "/v1/returns": {
       "get": {
         "tags": [
@@ -1868,15 +1928,6 @@
         },
         "description": "Return the category-balanced featured feed or the complete feed."
       },
-      "AsOf": {
-        "name": "as_of",
-        "in": "query",
-        "schema": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "description": "Optional timestamp for reproducible active-position snapshots."
-      },
       "Limit": {
         "name": "limit",
         "in": "query",
@@ -2288,6 +2339,32 @@
               "model"
             ]
           },
+          "eligible_portfolio_count": {
+            "type": "integer",
+            "description": "All portfolios eligible for an asset-holder calculation before filtering to holders. Present on asset positioning responses."
+          },
+          "holder_portfolio_count": {
+            "type": "integer",
+            "description": "Eligible portfolios with a non-zero allocation to the requested asset. Present on asset positioning responses."
+          },
+          "holder_rate_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Share of eligible portfolios holding the requested asset."
+          },
+          "average_holder_allocation_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Average requested-asset allocation among portfolios that hold it."
+          },
+          "consensus_allocation_pct": {
+            "type": "number",
+            "description": "Average requested-asset allocation across all eligible portfolios, including non-holders as zero."
+          },
           "data": {
             "type": "array",
             "items": {
@@ -2312,6 +2389,27 @@
           },
           "window": {
             "type": "string"
+          },
+          "track": {
+            "type": "string",
+            "enum": [
+              "weekly",
+              "monthly"
+            ]
+          },
+          "current_round_id": {
+            "type": "string"
+          },
+          "prior_round_id": {
+            "type": "string"
+          },
+          "group_by": {
+            "type": "string",
+            "enum": [
+              "asset",
+              "category",
+              "model"
+            ]
           },
           "data": {
             "type": "array",
@@ -2347,6 +2445,8 @@
         "required": [
           "as_of",
           "window",
+          "track",
+          "group_by",
           "data"
         ]
       },
@@ -3085,6 +3185,10 @@
           "insight_count": {
             "type": "integer"
           },
+          "row_count": {
+            "type": "integer",
+            "description": "Total insights matching the normalized filters before pagination."
+          },
           "categories": {
             "type": "array",
             "items": {
@@ -3114,6 +3218,7 @@
           "generated_at",
           "data_as_of",
           "insight_count",
+          "row_count",
           "categories",
           "filters",
           "data",
@@ -4923,7 +5028,136 @@
           }
         },
         "required": [
-          "data"
+          "as_of",
+          "track",
+          "scope",
+          "row_count",
+          "data",
+          "next_cursor"
+        ]
+      },
+      "ResultRow": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "round_id": {
+            "type": "string"
+          },
+          "run_id": {
+            "type": "string"
+          },
+          "track": {
+            "type": "string",
+            "enum": [
+              "weekly",
+              "monthly"
+            ]
+          },
+          "model_id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "selected_option_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "holding_count": {
+            "type": "integer"
+          },
+          "portfolio_return_pct": {
+            "type": "number"
+          },
+          "benchmark_return_pct": {
+            "type": "number"
+          },
+          "alpha_pp": {
+            "type": "number",
+            "description": "Portfolio return minus the S&P 500 return, in percentage points."
+          },
+          "max_possible_return_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "capitalbench_score": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "regret_vs_best_option_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "round_id",
+          "run_id",
+          "track",
+          "model_id",
+          "label",
+          "rank",
+          "portfolio_return_pct",
+          "benchmark_return_pct",
+          "alpha_pp"
+        ]
+      },
+      "ResultListResponse": {
+        "type": "object",
+        "properties": {
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "track": {
+            "type": "string",
+            "enum": [
+              "weekly",
+              "monthly",
+              "all"
+            ]
+          },
+          "row_count": {
+            "type": "integer"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResultRow"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "as_of",
+          "track",
+          "row_count",
+          "data",
+          "next_cursor"
         ]
       },
       "ReturnRow": {
