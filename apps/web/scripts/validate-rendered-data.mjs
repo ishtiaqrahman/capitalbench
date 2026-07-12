@@ -2030,7 +2030,17 @@ for (const track of ["weekly", "monthly"]) {
       `homepage ${track} comparison set scorecard`
     );
     const setLeader = featuredSet.leader;
-    includes(indexHtml, "Monthly and weekly tracks stay separate. Higher benchmark score is better.", "homepage scorecard comparison-set explanation");
+    includes(indexHtml, "Monthly and weekly tracks stay separate.", "homepage scorecard track explanation");
+    includes(
+      indexHtml,
+      "A score of 30 means the model earned 30% of the best possible return across these rounds.",
+      "homepage benchmark score explanation"
+    );
+    includes(
+      leaderboardsHtml,
+      "A score of 30 means the model earned 30% of the best possible return across these rounds.",
+      "results landing benchmark score explanation"
+    );
     includes(homepageScorecardHtml, featuredSet.is_current ? `Current ${trackLabel(track)} Benchmark` : `${trackLabel(track)} Benchmark Forming`, `homepage ${track} comparison title`);
     includes(homepageScorecardHtml, "CapitalBench Score", `homepage ${track} comparison chart title`);
     includes(

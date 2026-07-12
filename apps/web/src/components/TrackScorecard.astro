@@ -1,4 +1,5 @@
 ---
+import { Info } from "lucide-react";
 import type {
   TrackScorecardAverageRow,
   TrackScorecardData,
@@ -23,7 +24,9 @@ const displayTitle = scorecard.displayTitle ?? `Full-History ${scorecard.label} 
 const displayDescription = scorecard.description ?? `Resolved ${scorecard.label.toLowerCase()} rounds only.`;
 const scoreChartKicker = scorecard.scoreChartKicker ?? "All resolved rounds";
 const scoreChartTitle = scorecard.scoreChartTitle ?? "Full-History Model Scores";
-const scoreChartDescription = scorecard.scoreChartDescription ?? "Higher benchmark score is better.";
+const scoreExplanation = "A score of 30 means the model earned 30% of the best possible return across these rounds.";
+const scoreExplanationInfo =
+  "Best possible means choosing the highest-returning eligible asset in each round, based on results known afterward.";
 const maxPossibleInfoText =
   "Max possible is the best eligible asset after scoring for the same rounds. It is a hindsight ceiling, not a model portfolio.";
 
@@ -137,7 +140,6 @@ const scoreDomainMin = Math.min(0, ...scoreValues);
 const scoreDomainMax = Math.max(100, ...scoreValues);
 const scoreZero = valueCoordinate(0, scoreDomainMin, scoreDomainMax);
 const scoreTicks = scoreDomainMin < 0 ? [scoreDomainMin, 0, 50, 100] : [0, 25, 50, 75, 100];
-const scoreMobileBenchmarkNote = "Higher benchmark score is better.";
 const scoreMobileComparableScores = scoreRows
   .filter((row) => row.kind !== "reference")
   .map((row) => row.averageScore)
@@ -231,9 +233,16 @@ const scorecardBadgeItems = [
             <span>{scoreChartKicker}</span>
             <h4 id={scoreTitleId}>{scoreChartTitle}</h4>
           </div>
-          <p>{scoreChartDescription} <a href="/scoring/#capitalbench-score">Calculation</a>.</p>
         </div>
       )}
+
+      <p class="track-scorecard-score-explainer">
+        <span>{scoreExplanation}</span>
+        <span class="track-scorecard-score-info" tabindex="0" aria-label={scoreExplanationInfo}>
+          <Info size={14} aria-hidden="true" />
+        </span>
+        <a href="/scoring/#capitalbench-score">Calculation</a>
+      </p>
 
       <div class="score-chart-frame track-score-benchmark-frame">
         <div class="score-vertical-inner track-score-vertical-inner">
@@ -301,7 +310,11 @@ const scorecardBadgeItems = [
 
           <div class="score-mobile-rank-chart" aria-label={`${scorecard.label} CapitalBench Score mobile chart`}>
             <p class="score-mobile-rank-note">
-              <span>{scoreMobileBenchmarkNote}</span>
+              <span>{scoreExplanation}</span>
+              <span class="track-scorecard-score-info" tabindex="0" aria-label={scoreExplanationInfo}>
+                <Info size={14} aria-hidden="true" />
+              </span>
+              <a href="/scoring/#capitalbench-score">Calculation</a>
             </p>
             {scoreRows.map((row, index) => (
               <article
