@@ -49,6 +49,20 @@ const {
 } = Astro.props;
 const visibleInsights = insights.filter(Boolean).slice(0, compact ? 2 : 3);
 const titleParts = noOrphanTextParts(title);
+const insightContexts = visibleInsights.map((insight) => contextPills(insight).map(String).filter(Boolean));
+const sharedContextPills = visibleInsights.length > 1
+  ? insightContexts[0].filter((pill) => insightContexts.every((items) => items.includes(pill)))
+  : [];
+const sharedContextSet = new Set(sharedContextPills);
+const timeframeLabels = visibleInsights.map((insight) => insightTimeframeLabel(insight));
+const sharedTimeframe = timeframeLabels.length > 1 && timeframeLabels.every((label) => label === timeframeLabels[0])
+  ? timeframeLabels[0]
+  : "";
+const sharedSamplePills = sharedContextPills.filter((pill) => /\b(rounds?|models?|tests?)\b/i.test(pill));
+const sectionContextItems = Array.from(new Set([
+  sharedTimeframe,
+  ...(sharedSamplePills.length > 0 ? sharedSamplePills : sharedContextPills.slice(0, 2))
+].filter(Boolean))).slice(0, 3);
 ---
 
 {visibleInsights.length > 0 && (
@@ -66,6 +80,11 @@ const titleParts = noOrphanTextParts(title);
           </span>
         </div>
         {description && <p>{description}</p>}
+        {featured && sectionContextItems.length > 0 && (
+          <div class="insight-section-context" aria-label="Insight sample context">
+            {sectionContextItems.map((item) => <span>{item}</span>)}
+          </div>
+        )}
       </div>
     </div>
 
@@ -73,21 +92,27 @@ const titleParts = noOrphanTextParts(title);
       {visibleInsights.map((insight) => {
         const calculations: InsightCalculation[] = Array.isArray(insight.calculations) ? insight.calculations.slice(0, 3) : [];
         const evidence: InsightLink[] = Array.isArray(insight.evidence) ? insight.evidence.slice(0, 2) : [];
+        const cardContextPills = contextPills(insight).filter((pill) => !sharedContextSet.has(String(pill))).slice(0, 3);
+        const metricCount = Math.max(1, calculations.length);
         return (
-          <article class="insight-card">
+          <article class:list={["insight-card", `insight-card-metrics-${metricCount}`]} data-metric-count={metricCount}>
             <header>
               <span>{categoryLabel(insight.category)}</span>
-              <strong title="Timeframe for this insight">{insightTimeframeLabel(insight)}</strong>
+              {(!featured || !sharedTimeframe) && (
+                <strong title="Timeframe for this insight">{insightTimeframeLabel(insight)}</strong>
+              )}
             </header>
-            <div class="insight-context-strip" aria-label={`${insight.title} context`}>
-              {contextPills(insight).map((pill) => (
-                <span>
-                  {roundReferenceTokens(pill).map((token) =>
-                    token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
-                  )}
-                </span>
-              ))}
-            </div>
+            {cardContextPills.length > 0 && (
+              <div class="insight-context-strip" aria-label={`${insight.title} context`}>
+                {cardContextPills.map((pill) => (
+                  <span>
+                    {roundReferenceTokens(pill).map((token) =>
+                      token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+                    )}
+                  </span>
+                ))}
+              </div>
+            )}
             <h3><a href={insightHref(insight)}>{insight.title}</a></h3>
             <p>
               {roundReferenceTokens(insight.summary).map((token) =>
@@ -116,8 +141,11 @@ const titleParts = noOrphanTextParts(title);
                 )}
               </p>
               <div>
-                <a href={insightHref(insight)}>Open insight</a>
-                {evidence.map((item) => item.href ? <a href={item.href}>{item.label}</a> : <em>{item.label}</em>)}
+                <a href={insightHref(insight)}>
+                  Open insight
+                  <ArrowRight size={14} aria-hidden="true" />
+                </a>
+                {!featured && evidence.map((item) => item.href ? <a href={item.href}>{item.label}</a> : <em>{item.label}</em>)}
               </div>
             </footer>
           </article>

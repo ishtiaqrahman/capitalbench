@@ -34340,9 +34340,43 @@ html {
   --insight-accent-strong: #4d34a8;
 }
 
+#benchmark-insights.context-insights-featured .insight-section-context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+#benchmark-insights.context-insights-featured .insight-section-context span {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+#benchmark-insights.context-insights-featured .insight-section-context span:not(:last-child)::after {
+  width: 3px;
+  height: 3px;
+  margin: 0 10px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 48%, transparent);
+  content: "";
+}
+
 #benchmark-insights.context-insights-featured .insight-card {
   position: relative;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
   border-color: color-mix(in srgb, var(--insight-accent, var(--accent)) 24%, transparent);
+  padding: 20px;
   background:
     linear-gradient(145deg, var(--insight-soft, #e4f5ef), #ffffff 66%),
     var(--surface);
@@ -34352,7 +34386,13 @@ html {
 }
 
 #benchmark-insights.context-insights-featured .insight-card header {
+  flex: 0 0 auto;
   border-bottom-color: color-mix(in srgb, var(--insight-accent, var(--accent)) 18%, var(--line));
+  padding-bottom: 12px;
+}
+
+#benchmark-insights.context-insights-featured .insight-card header span {
+  color: var(--insight-accent-strong, var(--accent));
 }
 
 #benchmark-insights.context-insights-featured .insight-card header strong {
@@ -34360,87 +34400,153 @@ html {
   color: var(--insight-accent-strong, var(--accent));
 }
 
+#benchmark-insights.context-insights-featured .insight-context-strip {
+  flex: 0 0 auto;
+  margin-top: 12px;
+}
+
+#benchmark-insights.context-insights-featured .insight-card h3 {
+  margin-top: 18px;
+  font-size: clamp(1.12rem, 1.45vw, 1.28rem);
+  line-height: 1.25;
+}
+
+#benchmark-insights.context-insights-featured .insight-card > p:not(.insight-definition) {
+  margin-top: 10px;
+  line-height: 1.55;
+}
+
 #benchmark-insights.context-insights-featured .insight-calculation-list {
-  min-height: 108px;
-  gap: 10px;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 132px;
+  display: grid;
+  grid-template-columns: repeat(var(--insight-metric-count, 1), minmax(0, 1fr));
+  gap: 0;
+  align-items: stretch;
+  margin-top: 20px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--insight-accent, var(--accent)) 25%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--insight-soft, #e4f5ef) 76%, #ffffff);
+  box-shadow: inset 0 4px 0 var(--insight-accent, var(--accent));
+}
+
+#benchmark-insights.context-insights-featured .insight-card-metrics-1 {
+  --insight-metric-count: 1;
+}
+
+#benchmark-insights.context-insights-featured .insight-card-metrics-2 {
+  --insight-metric-count: 2;
+}
+
+#benchmark-insights.context-insights-featured .insight-card-metrics-3 {
+  --insight-metric-count: 3;
 }
 
 #benchmark-insights.context-insights-featured .insight-calculation-list div {
-  --metric-accent: var(--insight-accent, var(--accent));
-  min-height: 104px;
-  border-color: color-mix(in srgb, var(--metric-accent) 28%, transparent);
-  padding: 13px 12px;
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--metric-accent) 15%, #ffffff), #ffffff 72%);
-  box-shadow:
-    inset 0 4px 0 var(--metric-accent),
-    0 10px 20px rgb(17 24 39 / 6%);
+  min-height: 0;
+  align-content: center;
+  justify-items: center;
+  border: 0;
+  border-radius: 0;
+  padding: 18px 14px 16px;
+  background: transparent;
+  box-shadow: none;
 }
 
-#benchmark-insights.context-insights-featured .insight-calculation-list div:nth-child(2) {
-  --metric-accent: var(--gold);
+#benchmark-insights.context-insights-featured .insight-calculation-list div + div {
+  border-left: 1px solid color-mix(in srgb, var(--insight-accent, var(--accent)) 20%, transparent);
 }
 
 #benchmark-insights.context-insights-featured .insight-calculation-list dt {
-  color: color-mix(in srgb, var(--metric-accent) 42%, var(--muted-2));
+  max-width: 14rem;
+  color: color-mix(in srgb, var(--insight-accent-strong, var(--accent)) 58%, var(--muted));
   font-size: 0.72rem;
-  letter-spacing: 0.03em;
+  letter-spacing: 0;
+  line-height: 1.3;
 }
 
 #benchmark-insights.context-insights-featured .insight-calculation-list dd {
-  margin-top: 7px;
+  margin-top: 10px;
   overflow-wrap: normal;
   color: var(--ink-strong);
-  font-size: clamp(1.85rem, 3.2vw, 2.45rem);
+  font-size: clamp(2rem, 3.2vw, 2.65rem);
   font-weight: 900;
   line-height: 0.96;
   text-wrap: nowrap;
   white-space: nowrap;
 }
 
-@media (min-width: 981px) {
+#benchmark-insights.context-insights-featured .insight-card-footer {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-top: 0;
+  border-top: 0;
+  padding-top: 14px;
+}
+
+#benchmark-insights.context-insights-featured .insight-card-footer div {
+  width: 100%;
+}
+
+#benchmark-insights.context-insights-featured .insight-card-footer a {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-color: color-mix(in srgb, var(--insight-accent, var(--accent)) 26%, var(--line));
+  background: color-mix(in srgb, var(--insight-soft, #e4f5ef) 72%, #ffffff);
+  color: var(--insight-accent-strong, var(--accent));
+  font-weight: 850;
+}
+
+@media (max-width: 700px) {
+  #benchmark-insights.context-insights-featured .insight-section-context {
+    row-gap: 5px;
+  }
+
   #benchmark-insights.context-insights-featured .insight-card {
-    grid-template-rows: auto 34px minmax(4.35rem, auto) 74px minmax(108px, auto) auto;
-  }
-
-  #benchmark-insights.context-insights-featured .insight-context-strip {
-    min-height: 34px;
-    max-height: 34px;
-    flex-wrap: nowrap;
-    overflow: hidden;
-    align-content: center;
-    align-items: center;
-  }
-
-  #benchmark-insights.context-insights-featured .insight-context-strip span {
-    flex: 0 0 auto;
-    white-space: nowrap;
+    height: auto;
+    padding: 18px;
   }
 
   #benchmark-insights.context-insights-featured .insight-card h3 {
-    min-height: 4.35rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin-top: 16px;
   }
 
   #benchmark-insights.context-insights-featured .insight-calculation-list {
-    align-self: stretch;
+    min-height: 116px;
+    margin-top: 18px;
   }
 
-  #benchmark-insights.context-insights-featured .insight-calculation-list div {
-    grid-template-rows: minmax(2.35rem, auto) auto;
+  #benchmark-insights.context-insights-featured .insight-card-metrics-3 .insight-calculation-list {
+    grid-template-columns: 1fr;
   }
 
-  #benchmark-insights.context-insights-featured .insight-calculation-list dt {
-    min-height: 2.35rem;
-    display: flex;
+  #benchmark-insights.context-insights-featured .insight-card-metrics-3 .insight-calculation-list div {
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: center;
+    justify-items: stretch;
+    column-gap: 14px;
+    padding: 14px 16px;
+    text-align: left;
   }
 
-  #benchmark-insights.context-insights-featured .insight-calculation-list dd {
-    font-size: clamp(1.72rem, 2.55vw, 2.25rem);
+  #benchmark-insights.context-insights-featured .insight-card-metrics-3 .insight-calculation-list div + div {
+    border-top: 1px solid color-mix(in srgb, var(--insight-accent, var(--accent)) 20%, transparent);
+    border-left: 0;
+  }
+
+  #benchmark-insights.context-insights-featured .insight-card-metrics-3 .insight-calculation-list dt {
+    text-align: left;
+  }
+
+  #benchmark-insights.context-insights-featured .insight-card-metrics-3 .insight-calculation-list dd {
+    margin-top: 0;
+    font-size: 1.7rem;
+    text-align: right;
   }
 }
 

@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { parse as parseYaml } from "yaml";
 import {
   buildRiskAppetiteSnapshot,
@@ -70,11 +70,16 @@ const latestInsightPointer = existsSync(latestInsightPointerPath)
   ? JSON.parse(readFileSync(latestInsightPointerPath, "utf8"))
   : null;
 
+function isPathWithin(root, candidate) {
+  const relativePath = relative(root, candidate);
+  return relativePath !== "" && relativePath !== ".." && !relativePath.startsWith(`..${sep}`) && !isAbsolute(relativePath);
+}
+
 function pointedInsightPath(href, label) {
   if (typeof href !== "string" || !href) throw new Error(`Latest insight pointer has no ${label}.`);
   const root = resolve(insightsRoot);
   const artifactPath = resolve(insightsRoot, href);
-  if (!artifactPath.startsWith(`${root}/`)) throw new Error(`Latest insight pointer has unsafe ${label}.`);
+  if (!isPathWithin(root, artifactPath)) throw new Error(`Latest insight pointer has unsafe ${label}.`);
   if (!existsSync(artifactPath)) throw new Error(`Latest insight pointer ${label} does not exist: ${href}`);
   return artifactPath;
 }
@@ -106,7 +111,7 @@ function validateLatestInsightPointer() {
   const runRoot = resolve(manifestPath, "..");
   for (const [filename, expectedHash] of Object.entries(pointerHashes)) {
     const outputPath = resolve(runRoot, filename);
-    if (!outputPath.startsWith(`${runRoot}/`) || !existsSync(outputPath)) {
+    if (!isPathWithin(runRoot, outputPath) || !existsSync(outputPath)) {
       throw new Error(`Latest insight run is missing hashed output: ${filename}`);
     }
     if (fileSha256(outputPath) !== expectedHash) {
