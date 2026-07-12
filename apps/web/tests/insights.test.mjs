@@ -159,6 +159,33 @@ test("model pages use structured market-environment model IDs", () => {
   assert.ok(!insightsForModel(readModel, { modelId: "model-a", limit: 3 }).some((row) => row.id === "unrelated-name-match"));
 });
 
+test("model pages can omit generic fallback insights", () => {
+  const readModel = {
+    insights: {
+      insights: [
+        {
+          id: "direct-model",
+          status: "published",
+          category: "market_environment",
+          context: { scope: "resolved_history", model_ids: ["model-a"] }
+        },
+        {
+          id: "generic-fallback",
+          status: "published",
+          category: "model_behavior",
+          context: { scope: "resolved_history" }
+        }
+      ]
+    }
+  };
+
+  assert.deepEqual(
+    insightsForModel(readModel, { modelId: "model-a", includeFallback: false }).map((row) => row.id),
+    ["direct-model"]
+  );
+  assert.deepEqual(insightsForModel(readModel, { modelId: "model-b", includeFallback: false }), []);
+});
+
 test("home and results surfaces include a ready non-low market-environment synthesis", () => {
   const base = {
     status: "published",

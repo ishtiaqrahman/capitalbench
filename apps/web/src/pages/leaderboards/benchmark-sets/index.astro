@@ -1,15 +1,19 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import PageHeader from "../../../components/PageHeader.astro";
-import TrackScorecard from "../../../components/TrackScorecard.astro";
+import { ArrowRight, Info } from "lucide-react";
 import apiReadModel from "../../../generated/apiReadModel.js";
-import { benchmarkSetToScorecard, buildBenchmarkSetsData, featuredBenchmarkSet } from "../../../lib/benchmarkSets";
-import type { TrackScorecardData } from "../../../lib/trackScorecard";
+import { buildBenchmarkSetsData } from "../../../lib/benchmarkSets";
+import {
+  buildBenchmarkSetComparison,
+  defaultBenchmarkSetComparison
+} from "../../../lib/benchmarkSetComparison.js";
 
 const benchmarkSets = buildBenchmarkSetsData(apiReadModel) as any;
-const featuredScorecards = ["weekly", "monthly"]
-  .map((track) => benchmarkSetToScorecard(featuredBenchmarkSet(apiReadModel, track)) as TrackScorecardData | null)
-  .filter((scorecard): scorecard is TrackScorecardData => scorecard !== null);
+const comparisonPreviews = ["weekly", "monthly"]
+  .map((track) => defaultBenchmarkSetComparison(benchmarkSets.sets, track))
+  .filter(Boolean)
+  .map((pair: any) => buildBenchmarkSetComparison(apiReadModel, pair.baseline, pair.comparison));
 
 const statusPriority: Record<string, number> = {
   current: 0,
@@ -88,7 +92,10 @@ const filterOptions = [
             existing set already contains the models in that run. Sets qualify at {benchmarkSets.policy.qualification_thresholds.weekly} weekly shared rounds or {benchmarkSets.policy.qualification_thresholds.monthly} monthly shared rounds.
           </p>
         </div>
-        <a class="action-link" href="/methodology/#comparison-sets">Methodology</a>
+        <div class="benchmark-set-index-actions">
+          <a class="action-link" href="/leaderboards/benchmark-sets/compare/">Compare sets</a>
+          <a class="action-link" href="/methodology/#comparison-sets">Methodology</a>
+        </div>
       </div>
 
       <div class="benchmark-set-filters" aria-label="Filter benchmark sets">
@@ -157,7 +164,7 @@ const filterOptions = [
     <div class="benchmark-set-rule-panel">
       <div>
         <span class="panel-kicker">Selection rule</span>
-        <h2 id="benchmark-set-rules-title">How A Set Becomes Current</h2>
+        <h2 id="benchmark-set-rules-title">How Does a Set Become Current?</h2>
       </div>
       <div class="benchmark-set-rule-grid">
         <span>
@@ -176,15 +183,43 @@ const filterOptions = [
     </div>
   </section>
 
-  {featuredScorecards.length > 0 && (
-    <section class="section benchmark-set-featured-section" aria-labelledby="benchmark-set-featured-title">
-      <div class="home-section-heading">
-        <span class="panel-kicker">Benchmark charts</span>
-        <h2 id="benchmark-set-featured-title">Featured Equal-Run Results</h2>
-        <p>The index above is the source of truth for all sets. These charts show the current weekly set and the best available monthly set.</p>
+  {comparisonPreviews.length > 0 && (
+    <section class="section benchmark-set-comparison-preview" aria-labelledby="benchmark-set-comparison-preview-title">
+      <div class="home-question-heading">
+        <div>
+          <span class="panel-kicker">Cross-set evidence</span>
+          <div class="home-question-title">
+            <h2 id="benchmark-set-comparison-preview-title">How do results change between model groups?</h2>
+            <span class="home-info-tip" tabindex="0" aria-label="A model group is a fixed list of models. Its results use only rounds completed by every model in that group.">
+              <Info size={15} aria-hidden="true" />
+            </span>
+          </div>
+          <p>Main published results compared with the newest groups that have results.</p>
+        </div>
       </div>
-      <div class="track-scorecard-stack results-scorecard-stack">
-        {featuredScorecards.map((scorecard) => <TrackScorecard scorecard={scorecard} />)}
+      <div class="benchmark-set-preview-grid">
+        {comparisonPreviews.map((comparison: any) => (
+          <article class={`benchmark-set-preview benchmark-set-preview-${comparison.track}`}>
+            <div class="benchmark-set-preview-head">
+              <span>{comparison.track === "weekly" ? "Weekly" : "Monthly"}</span>
+              <strong>{comparison.baseline.short_label} vs {comparison.comparison.short_label}</strong>
+            </div>
+            <p>{comparison.summary}</p>
+            <div class="benchmark-set-preview-metrics">
+              <span><strong>{comparison.models.common_count}</strong><em>models in both</em></span>
+              <span><strong>{comparison.rounds.shared.length}</strong><em>rounds used by both</em></span>
+              <span><strong>{comparison.ranking.similarity_label}</strong><em>change in order</em></span>
+              <span><strong>{comparison.ranking.same_leader ? "No" : "Yes"}</strong><em>top model changed</em></span>
+            </div>
+            <div class="benchmark-set-preview-foot">
+              <p>{comparison.trust_guidance}</p>
+              <a href={`/leaderboards/benchmark-sets/compare/?track=${comparison.track}&base=${comparison.baseline.set_id}&compare=${comparison.comparison.set_id}`}>
+                Compare {comparison.track} groups
+                <ArrowRight size={16} aria-hidden="true" />
+              </a>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   )}

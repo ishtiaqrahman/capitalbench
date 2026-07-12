@@ -32,7 +32,8 @@ function openPortfolioLabel(count: number): string {
 }
 
 export default function ModelLiveHoldings({ scopes }: Props) {
-  const [scopeKey, setScopeKey] = useState<ModelScopeKey>("all");
+  const initialScope: ModelScopeKey = scopes.weekly.portfolioCount > 0 ? "weekly" : scopes.monthly.portfolioCount > 0 ? "monthly" : "all";
+  const [scopeKey, setScopeKey] = useState<ModelScopeKey>(initialScope);
   const scope = scopes[scopeKey];
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(scope.topHolding?.optionId ?? null);
   const selectedHolding = useMemo(

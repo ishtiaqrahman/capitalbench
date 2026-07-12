@@ -1,0 +1,56 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import BenchmarkSetComparison from "../../../components/BenchmarkSetComparison";
+import apiReadModel from "../../../generated/apiReadModel.js";
+import { buildBenchmarkSetsData } from "../../../lib/benchmarkSets";
+import {
+  benchmarkSetComparisonOption,
+  buildBenchmarkSetComparison,
+  defaultBenchmarkSetComparison
+} from "../../../lib/benchmarkSetComparison.js";
+
+const benchmarkSets = buildBenchmarkSetsData(apiReadModel) as any;
+const sets = benchmarkSets.sets;
+const comparisons = sets.flatMap((baseline: any) =>
+  sets
+    .filter((comparison: any) => comparison.track === baseline.track && comparison.set_id !== baseline.set_id)
+    .map((comparison: any) => buildBenchmarkSetComparison(apiReadModel, baseline, comparison))
+);
+const weeklyDefault = defaultBenchmarkSetComparison(sets, "weekly");
+const monthlyDefault = defaultBenchmarkSetComparison(sets, "monthly");
+
+if (!weeklyDefault || !monthlyDefault) throw new Error("Weekly and monthly benchmark-set comparisons are required.");
+
+const defaults = {
+  weekly: {
+    baseline: weeklyDefault.baseline.set_id,
+    comparison: weeklyDefault.comparison.set_id
+  },
+  monthly: {
+    baseline: monthlyDefault.baseline.set_id,
+    comparison: monthlyDefault.comparison.set_id
+  }
+};
+---
+
+<BaseLayout
+  title="Compare AI Benchmark Sets"
+  description="Compare two CapitalBench model groups to see which models moved, which rounds changed, and which results have enough evidence to rely on."
+>
+  <PageHeader
+    eyebrow="Compare model groups"
+    title="How Did the AI Model Results Change?"
+    summary="See which models moved, why the results changed, and which ranking has enough completed rounds to rely on."
+    className="benchmark-set-page-header"
+  />
+
+  <section class="section benchmark-set-compare-page" aria-label="Benchmark-set comparison tool">
+    <BenchmarkSetComparison
+      client:load
+      sets={sets.map((set: any) => benchmarkSetComparisonOption(set))}
+      comparisons={comparisons}
+      defaults={defaults}
+    />
+  </section>
+</BaseLayout>

@@ -135,6 +135,15 @@ export const routeMeta: RouteMeta[] = [
     lastmod: latestResolvedRoundDate
   },
   {
+    path: "/leaderboards/benchmark-sets/compare",
+    title: "Compare AI Benchmark Sets",
+    description:
+      "Compare two CapitalBench model groups to see which models moved, which rounds changed, and which results have enough evidence to rely on.",
+    priority: 0.86,
+    changefreq: "weekly",
+    lastmod: latestResolvedRoundDate
+  },
+  {
     path: "/leaderboards/market-regime-benchmark",
     title: "Market Regime AI Benchmark",
     description:

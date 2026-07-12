@@ -414,10 +414,11 @@ export function insightsForRound(readModel, roundId, limit = 3) {
 
 /**
  * @param {any} readModel
- * @param {{ modelId?: string; modelName?: string; limit?: number }} [options]
+ * @param {{ modelId?: string; modelName?: string; limit?: number; includeFallback?: boolean }} [options]
  */
-export function insightsForModel(readModel, { modelId, modelName, limit = 3 } = {}) {
+export function insightsForModel(readModel, { modelId, modelName, limit = 3, includeFallback = true } = {}) {
   const direct = publishedInsights(readModel).filter((insight) => matchesModel(insight, modelId, modelName));
+  if (!includeFallback) return uniqueInsights(direct).slice(0, limit);
   const fallback = topInsightsByCategory(
     readModel,
     ["performance_attribution", "confidence_calibration", "model_behavior", "model_similarity"],

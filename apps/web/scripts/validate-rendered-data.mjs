@@ -1895,6 +1895,7 @@ const indexHtml = readHtml("index.html");
 const liveHtml = readHtml("live/index.html");
 const leaderboardsHtml = readHtml("leaderboards/index.html");
 const benchmarkSetsHtml = readHtml("leaderboards/benchmark-sets/index.html");
+const benchmarkSetComparisonHtml = readHtml("leaderboards/benchmark-sets/compare/index.html");
 const latestMonthlyHtml = readHtml("leaderboards/latest-monthly/index.html");
 const modelsIndexHtml = readHtml("models/index.html");
 const modelPatternsHtml = readHtml("models/patterns/index.html");
@@ -1914,15 +1915,30 @@ includes(benchmarkSetsHtml, 'data-benchmark-set-browser', "benchmark sets page f
 includes(benchmarkSetsHtml, 'data-benchmark-set-filter="weekly"', "benchmark sets page weekly filter");
 includes(benchmarkSetsHtml, 'data-benchmark-set-filter="monthly"', "benchmark sets page monthly filter");
 includes(benchmarkSetsHtml, 'data-benchmark-set-filter="active"', "benchmark sets page active filter");
-includes(benchmarkSetsHtml, "Featured Equal-Run Results", "benchmark sets page featured chart heading");
+includes(benchmarkSetsHtml, "How do results change between model groups?", "benchmark sets page comparison preview heading");
+includes(benchmarkSetsHtml, "Compare weekly groups", "benchmark sets page weekly comparison link");
+includes(benchmarkSetsHtml, "Compare monthly groups", "benchmark sets page monthly comparison link");
 excludes(benchmarkSetsHtml, "Current Benchmarks Are Selected Automatically", "benchmark sets page stale intro heading");
+excludes(benchmarkSetsHtml, "Featured Equal-Run Results", "benchmark sets page removed duplicate scorecards");
 const benchmarkSetListIndex = benchmarkSetsHtml.indexOf('class="benchmark-set-list"');
-const benchmarkSetFeaturedIndex = benchmarkSetsHtml.indexOf("Featured Equal-Run Results");
+const benchmarkSetComparisonIndex = benchmarkSetsHtml.indexOf("How do results change between model groups?");
 if (benchmarkSetListIndex === -1) failures.push("benchmark sets page list missing");
-if (benchmarkSetFeaturedIndex === -1) failures.push("benchmark sets page featured charts missing");
-if (benchmarkSetListIndex !== -1 && benchmarkSetFeaturedIndex !== -1 && benchmarkSetListIndex > benchmarkSetFeaturedIndex) {
-  failures.push("benchmark sets page shows featured charts before the set list");
+if (benchmarkSetComparisonIndex === -1) failures.push("benchmark sets page comparison preview missing");
+if (benchmarkSetListIndex !== -1 && benchmarkSetComparisonIndex !== -1 && benchmarkSetListIndex > benchmarkSetComparisonIndex) {
+  failures.push("benchmark sets page shows comparison preview before the set list");
 }
+includes(benchmarkSetComparisonHtml, "How Did the AI Model Results Change?", "benchmark set comparison page title");
+includes(benchmarkSetComparisonHtml, "Which results do you want to compare?", "benchmark set comparison group selection");
+includes(benchmarkSetComparisonHtml, "A round is one timed market test", "benchmark set comparison plain-language definition");
+includes(benchmarkSetComparisonHtml, "What changed?", "benchmark set comparison direct answer");
+includes(benchmarkSetComparisonHtml, "How did each model&#x27;s result change?", "benchmark set comparison model movement");
+includes(benchmarkSetComparisonHtml, "Did both groups use the same rounds?", "benchmark set comparison round overlap");
+includes(benchmarkSetComparisonHtml, "Which results should you rely on?", "benchmark set comparison guidance");
+includes(benchmarkSetComparisonHtml, "What are all the numbers?", "benchmark set comparison exact values");
+excludes(benchmarkSetComparisonHtml, "Baseline set</span>", "benchmark set comparison internal baseline label");
+excludes(benchmarkSetComparisonHtml, "Comparison set</span>", "benchmark set comparison internal comparison label");
+excludes(benchmarkSetComparisonHtml, "Ranking similarity", "benchmark set comparison statistical jargon");
+excludes(benchmarkSetComparisonHtml, "Evidence conclusion", "benchmark set comparison research jargon");
 for (const set of benchmarkSetsData.sets) {
   const context = `benchmark sets page ${set.set_id}`;
   includes(benchmarkSetsHtml, `/leaderboards/benchmark-sets/${set.set_id}/`, `${context} link`);
@@ -3235,6 +3251,13 @@ for (const model of apiReadModel.models) {
   includes(html, model.label, context);
   includes(html, model.model_id, context);
   includes(html, model.provider_label, context);
+  includes(html, "How Does This Model Tend To Invest?", `${context} portfolio pattern section`);
+  includes(html, "What Is This Model Holding Now?", `${context} current holdings section`);
+  includes(html, "How Has This Model Performed?", `${context} completed results section`);
+  includes(html, "What Did It Choose In Each Round?", `${context} round history section`);
+  includes(html, 'href="#model-fingerprint"', `${context} portfolio pattern navigation`);
+  includes(html, 'href="#model-results"', `${context} results navigation`);
+  includes(html, 'href="#model-history"', `${context} round history navigation`);
 
   const portfolios = apiReadModel.portfolios.filter((row) => row.model_id === model.model_id);
   const activePortfolios = portfolios.filter((row) => isRenderedPendingRow(row));
@@ -3261,7 +3284,7 @@ for (const model of apiReadModel.models) {
 
   const modelLiveRows = latestLiveRows().filter((row) => row.model_id === model.model_id);
   if (modelLiveRows.length > 0) {
-    includes(html, "Current Return Before Final Scores", `${context} live mark-to-market section`);
+    includes(html, "How Are Its Open Portfolios Doing?", `${context} live mark-to-market section`);
     for (const row of modelLiveRows) {
       includes(html, row.round_id, `${context} live return round ${row.round_id}`);
       includes(html, row.price_date, `${context} live return price date ${row.round_id}`);
@@ -3291,7 +3314,7 @@ for (const model of apiReadModel.models) {
 
   const modelBenchmarkSets = benchmarkSetsData.sets.filter((set) => set.model_ids.includes(model.model_id));
   if (modelBenchmarkSets.length > 0) {
-    includes(html, "Benchmark Sets Including This Model", `${context} benchmark sets section`);
+    includes(html, "Where Does It Rank Against Comparable Models?", `${context} benchmark sets section`);
     includes(html, 'data-model-benchmark-sets', `${context} benchmark set tabs controller`);
     includes(html, 'data-model-set-filter="weekly"', `${context} weekly benchmark set filter`);
     includes(html, 'data-model-set-filter="monthly"', `${context} monthly benchmark set filter`);
@@ -3327,7 +3350,7 @@ for (const model of apiReadModel.models) {
 
   const behavior = apiReadModel.model_behavior?.profiles?.find((row) => row.model_id === model.model_id);
   if (behavior) {
-    includes(html, "Behavior vs peers", `${context} behavior section`);
+    includes(html, "Typical approach", `${context} behavior section`);
     includes(html, behavior.archetype.label, `${context} behavior archetype`);
     includesAny(html, [behavior.archetype.description, htmlText(behavior.archetype.description)], `${context} behavior description`);
     includes(html, `${behavior.metrics.average_risk_pulse.toFixed(1)} / 100`, `${context} behavior risk score`);

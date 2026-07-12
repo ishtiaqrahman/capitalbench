@@ -1,0 +1,192 @@
+---
+interface Props {
+  profile: any;
+  closestPeerLabel?: string | null;
+}
+
+const { profile, closestPeerLabel = null } = Astro.props;
+const behavior = profile.behavior;
+const riskAppetite = profile.fingerprint.riskAppetite;
+
+function pct(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return `${value.toFixed(Math.abs(value) >= 1 ? 1 : 2)}%`;
+}
+
+function number(value: number | null | undefined): string {
+  return value === null || value === undefined || !Number.isFinite(value) ? "n/a" : value.toFixed(1);
+}
+
+function score100(value: number | null | undefined): string {
+  return value === null || value === undefined || !Number.isFinite(value) ? "n/a" : `${value.toFixed(1)} / 100`;
+}
+
+function similarity(value: number | null | undefined): string {
+  return value === null || value === undefined || !Number.isFinite(value) ? "n/a" : pct(value * 100);
+}
+
+function riskScore(value: number | null | undefined): string {
+  return value === null || value === undefined || !Number.isFinite(value) ? "n/a" : `${value.toFixed(2)} / 5`;
+}
+
+function riskScoreShort(value: number | null | undefined): string {
+  return value === null || value === undefined || !Number.isFinite(value) ? "n/a" : value.toFixed(2);
+}
+
+function riskWidth(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "0%";
+  return `${Math.min(100, Math.max(0, value)).toFixed(2)}%`;
+}
+
+const behaviorMetrics = behavior
+  ? [
+      {
+        label: "Risk taking",
+        value: score100(behavior.metrics.average_risk_pulse),
+        detail: "0 defensive to 100 aggressive"
+      },
+      {
+        label: "Typical largest position",
+        value: pct(behavior.metrics.average_top_allocation_pct),
+        detail: "average top holding"
+      },
+      {
+        label: "Similarity to peers",
+        value: similarity(behavior.peer.average_peer_similarity),
+        detail: closestPeerLabel ? `closest to ${closestPeerLabel}` : "average portfolio overlap"
+      },
+      {
+        label: "Portfolio turnover",
+        value: pct(behavior.turnover.average_turnover_pct),
+        detail: "average change between rounds"
+      }
+    ]
+  : [];
+---
+
+<section class="section model-fingerprint model-pattern-priority" id="model-fingerprint" aria-labelledby="model-fingerprint-title">
+  <div class="model-section-heading">
+    <div>
+      <span class="panel-kicker">Portfolio pattern</span>
+      <h2 id="model-fingerprint-title">How Does This Model Tend To Invest?</h2>
+    </div>
+    <p>Calculated from every official saved portfolio, including open and completed rounds.</p>
+  </div>
+
+  <div class="model-fingerprint-summary" aria-label={`${profile.label} portfolio pattern sample summary`}>
+    <div>
+      <span>Saved portfolios</span>
+      <strong>{profile.fingerprint.portfolioCount}</strong>
+    </div>
+    <div>
+      <span>Average holdings</span>
+      <strong>{number(profile.fingerprint.averageHoldingCount)}</strong>
+    </div>
+    <div>
+      <span>Average largest position</span>
+      <strong>{pct(profile.fingerprint.averageTopHoldingPct)}</strong>
+    </div>
+    <div>
+      <span>Most common top holding</span>
+      <strong>{profile.fingerprint.mostCommonTopHolding?.label ?? "Not enough data"}</strong>
+    </div>
+  </div>
+
+  {behavior && (
+    <div class="model-strategy-overview">
+      <article class="model-behavior-identity">
+        <span>Typical approach</span>
+        <strong>{behavior.archetype.label}</strong>
+        <p>{behavior.archetype.description}</p>
+        <small>Based on {behavior.sample.portfolio_count} saved portfolios.</small>
+      </article>
+
+      <article class="model-behavior-metrics" aria-label={`${profile.label} defining portfolio metrics`}>
+        {behaviorMetrics.map((item) => (
+          <div>
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <small>{item.detail}</small>
+          </div>
+        ))}
+      </article>
+
+      <article class="model-behavior-comparison">
+        <div>
+          <span class="metric-label">Compared with other models</span>
+          <h3>{closestPeerLabel ? `Most similar to ${closestPeerLabel}` : "Peer comparison building"}</h3>
+          <p>
+            Average portfolio overlap is {similarity(behavior.peer.average_peer_similarity)} on matching rounds.
+            {behavior.peer.outlier_round_count > 0
+              ? ` It made an unusually different allocation in ${behavior.peer.outlier_round_count} round${behavior.peer.outlier_round_count === 1 ? "" : "s"}.`
+              : " It has not repeatedly stood apart from the group."}
+          </p>
+        </div>
+        <a href="/models/patterns/">Compare every model's pattern</a>
+      </article>
+    </div>
+  )}
+
+  <div class="model-fingerprint-grid model-fingerprint-grid-priority">
+    <article class={`model-risk-panel model-risk-${profile.provider}`}>
+      <div class="model-risk-copy">
+        <span class="metric-label">Overall risk appetite</span>
+        <h3>{riskAppetite.label}</h3>
+        <p>{riskAppetite.description}</p>
+      </div>
+      <div class="model-risk-visual" aria-label={`${profile.label} cumulative risk appetite scale`}>
+        <div>
+          <strong>{riskScore(riskAppetite.score)}</strong>
+          <span>allocation-weighted score</span>
+        </div>
+        <div class="risk-scale-stage risk-scale-stage-compact" style={`--risk-position: ${riskWidth(riskAppetite.percentile)};`}>
+          <div class="risk-axis-rail" aria-hidden="true"></div>
+          <a
+            class={`risk-axis-marker risk-axis-marker-${profile.provider}`}
+            href="#model-fingerprint"
+            aria-label={`${profile.label}: ${riskScore(riskAppetite.score)}, ${riskAppetite.label}`}
+            title={`${profile.label}: ${riskScore(riskAppetite.score)}, ${riskAppetite.label}`}
+            style={`--risk-position: ${riskWidth(riskAppetite.percentile)}; --risk-lane-offset: 0px; --risk-mobile-lane: 76px;`}
+          >
+            <span class="risk-axis-logo">
+              {(profile.iconSrc ?? profile.logoSrc) && <img src={profile.iconSrc ?? profile.logoSrc} alt="" loading="lazy" />}
+            </span>
+            <span class="risk-axis-marker-label"><strong>{profile.label}</strong><em>{riskScoreShort(riskAppetite.score)}</em></span>
+          </a>
+          <div class="risk-axis-ticks" aria-hidden="true">
+            <span><b>1</b> Defensive</span>
+            <span><b>2</b></span>
+            <span><b>3</b> Balanced</span>
+            <span><b>4</b> Growth</span>
+            <span><b>5</b> Aggressive</span>
+          </div>
+        </div>
+      </div>
+      <div class="model-risk-breakdown" aria-label="Risk appetite inputs">
+        <span><strong>{pct(riskAppetite.highRiskPct)}</strong> high-risk exposure</span>
+        <span><strong>{pct(riskAppetite.techPct)}</strong> technology exposure</span>
+        <span><strong>{pct(riskAppetite.defensivePct)}</strong> defensive holdings</span>
+      </div>
+    </article>
+
+    <div class="model-pattern-lists">
+      <article class="model-fingerprint-list">
+        <span class="metric-label">Most frequently held assets</span>
+        {profile.fingerprint.assets.slice(0, 7).map((asset: any) => (
+          <div>
+            <span><strong>{asset.label}</strong><small>{asset.group}</small></span>
+            <em>{pct(asset.frequencyPct)} held</em>
+            <b>{pct(asset.averageAllocationPct)} avg</b>
+          </div>
+        ))}
+      </article>
+
+      <article class="model-fingerprint-list compact">
+        <span class="metric-label">Average allocation by category</span>
+        {profile.fingerprint.categories.slice(0, 7).map((category: any) => (
+          <div><span><strong>{category.group}</strong></span><b>{pct(category.averageAllocationPct)}</b></div>
+        ))}
+      </article>
+    </div>
+  </div>
+</section>

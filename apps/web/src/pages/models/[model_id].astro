@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import BenchmarkEvidencePanel from "../../components/BenchmarkEvidencePanel.astro";
 import InsightStrip from "../../components/InsightStrip.astro";
 import ModelLiveHoldings from "../../components/ModelLiveHoldings";
+import ModelPortfolioPattern from "../../components/ModelPortfolioPattern.astro";
 import TrackScorecard from "../../components/TrackScorecard.astro";
 import apiReadModel from "../../generated/apiReadModel.js";
 import { staticAllWeeklyPerformance } from "../../lib/localRoundRecords";
@@ -22,39 +23,19 @@ export function getStaticPaths() {
 const { profile } = Astro.props;
 const repoRoot = `${siteConfig.githubUrl}/tree/main`;
 const repoBlob = `${siteConfig.githubUrl}/blob/main`;
-const modelInsights = insightsForModel(apiReadModel, { modelId: profile.modelId, modelName: profile.label, limit: 3 });
+const modelInsights = insightsForModel(apiReadModel, {
+  modelId: profile.modelId,
+  modelName: profile.label,
+  limit: 3,
+  includeFallback: false
+});
 const behavior = profile.behavior;
 const modelLabelById = new Map(apiReadModel.models.map((model: any) => [model.model_id, model.label]));
 const closestPeerLabel = behavior?.peer?.closest_peer?.peer_model_id
   ? modelLabelById.get(behavior.peer.closest_peer.peer_model_id) ?? behavior.peer.closest_peer.peer_model_id
   : null;
-const behaviorMetricRows = behavior
-  ? [
-      {
-        label: "Risk-taking score",
-        value: score100(behavior.metrics.average_risk_pulse),
-        detail: "0 defensive to 100 aggressive"
-      },
-      {
-        label: "Average top holding",
-        value: pctValue(behavior.metrics.average_top_allocation_pct),
-        detail: "concentration of the largest position"
-      },
-      {
-        label: "Peer overlap",
-        value: similarityPct(behavior.peer.average_peer_similarity),
-        detail: closestPeerLabel ? `closest to ${closestPeerLabel}` : "allocation similarity to other models"
-      },
-      {
-        label: "Average turnover",
-        value: pctValue(behavior.turnover.average_turnover_pct),
-        detail: "round-to-round portfolio change"
-      }
-    ]
-  : [];
 const resultRows = [...profile.allResults].sort((a, b) => a.entryDate.localeCompare(b.entryDate));
 const maxAlphaPct = Math.max(1, ...resultRows.map((row) => Math.abs((row.alphaVsSp500 ?? 0) * 100)));
-const riskAppetite = profile.fingerprint.riskAppetite;
 const liveMarkRows = latestLiveMarkRows(profile.modelId);
 const liveMarkTrackRows = (["weekly", "monthly"] as const).map((track) => {
   const rows = liveMarkRows.filter((row) => row.track === track);
@@ -106,36 +87,6 @@ function pctValue(value: number | null | undefined): string {
 function numberValue(value: number | null | undefined, digits = 1): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
   return value.toFixed(digits);
-}
-
-function score100(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
-  return `${value.toFixed(1)} / 100`;
-}
-
-function similarityPct(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
-  return pctValue(value * 100);
-}
-
-function signedPointValue(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
-  return `${value > 0 ? "+" : ""}${value.toFixed(1)} pts`;
-}
-
-function riskScoreValue(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
-  return `${value.toFixed(2)} / 5`;
-}
-
-function riskScoreShort(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
-  return value.toFixed(2);
-}
-
-function riskWidth(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "0%";
-  return `${Math.min(100, Math.max(0, value)).toFixed(2)}%`;
 }
 
 function plural(count: number, singular: string, pluralLabel = `${singular}s`): string {
@@ -226,6 +177,13 @@ function alphaBarStyle(row: ModelResultRow): string {
         <h1 id="model-title">{profile.label}</h1>
       </div>
       <p class="mono">{profile.modelId}</p>
+      {behavior && (
+        <a class="model-hero-pattern" href="#model-fingerprint">
+          <span>Portfolio pattern</span>
+          <strong>{behavior.archetype.label}</strong>
+          <em>{behavior.archetype.description}</em>
+        </a>
+      )}
       <div class="round-meta-row compact">
         <span class:list={["model-live-indicator", profile.live.all.portfolioCount > 0 ? "is-live" : "is-idle"]}>
           <i aria-hidden="true"></i>
@@ -268,102 +226,25 @@ function alphaBarStyle(row: ModelResultRow): string {
     </div>
   </section>
 
-  <InsightStrip
-    id="model-insights"
-    kicker="Model insights"
-    title={`What The Benchmark Flags For ${profile.label}`}
-    description="Behavior and performance notes connected to this model, with fallback context from model-behavior and attribution signals."
-    insights={modelInsights}
-    viewAllHref="/insights"
-    viewAllLabel="All insights"
-  />
+  <nav class="model-page-nav" aria-label={`${profile.label} profile sections`}>
+    <a href="#model-fingerprint">Portfolio pattern</a>
+    <a href="#live-holdings">Current holdings</a>
+    <a href="#model-results">Results</a>
+    {modelInsights.length > 0 && <a href="#model-insights">Insights</a>}
+    <a href="#model-history">Round history</a>
+  </nav>
 
-  {behavior && (
-    <section class="section model-behavior-detail" id="model-behavior" aria-labelledby="model-behavior-title">
-      <div class="model-section-heading">
-        <div>
-          <span class="panel-kicker">Behavior vs peers</span>
-          <h2 id="model-behavior-title">{behavior.archetype.label}</h2>
-        </div>
-        <p>{behavior.archetype.description}</p>
-      </div>
-
-      <div class="model-behavior-detail-grid">
-        <article class="model-behavior-identity">
-          <span>Behavior label</span>
-          <strong>{behavior.archetype.label}</strong>
-          <p>
-            Based on {behavior.sample.portfolio_count} official saved portfolios, including {behavior.sample.weekly_portfolio_count}
-            weekly and {behavior.sample.monthly_portfolio_count} monthly portfolios.
-          </p>
-          <a href="/models/patterns/">Compare all model patterns</a>
-          <a href={behavior.methodology_href ?? "/models/patterns/#methodology"}>How this is calculated</a>
-        </article>
-
-        <article class="model-behavior-metrics" aria-label={`${profile.label} behavior metrics`}>
-          {behaviorMetricRows.map((item) => (
-            <div>
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <small>{item.detail}</small>
-            </div>
-          ))}
-        </article>
-
-        <article class="model-behavior-comparison">
-          <div>
-            <span class="metric-label">Peer-relative read</span>
-            <h3>{closestPeerLabel ? `Closest behavior match: ${closestPeerLabel}` : "Peer comparison building"}</h3>
-            <p>
-              Average peer overlap is {similarityPct(behavior.peer.average_peer_similarity)} across matching official rounds.
-              {behavior.peer.outlier_round_count > 0
-                ? ` It was a clear allocation outlier in ${plural(behavior.peer.outlier_round_count, "round")}.`
-                : " It has not been a repeated allocation outlier by the current rule."}
-            </p>
-          </div>
-          <dl>
-            <div>
-              <dt>High-risk exposure</dt>
-              <dd>{pctValue(behavior.metrics.high_risk_pct)}</dd>
-            </div>
-            <div>
-              <dt>Defensive exposure</dt>
-              <dd>{pctValue(behavior.metrics.defensive_pct)}</dd>
-            </div>
-            <div>
-              <dt>Tech exposure</dt>
-              <dd>{pctValue(behavior.metrics.tech_pct)}</dd>
-            </div>
-            <div>
-              <dt>Live risk change</dt>
-              <dd>{signedPointValue(behavior.recent.risk_pulse_change_points)}</dd>
-            </div>
-          </dl>
-        </article>
-
-        <article class="model-behavior-list">
-          <span class="metric-label">Most used assets</span>
-          {behavior.top_assets.slice(0, 6).map((asset: any) => (
-            <div>
-              <span>
-                <strong>{asset.ticker ? `${asset.label} (${asset.ticker})` : asset.label}</strong>
-                <small>{asset.category?.replaceAll("_", " ")}</small>
-              </span>
-              <b>{pctValue(asset.average_allocation_pct)}</b>
-            </div>
-          ))}
-        </article>
-      </div>
-    </section>
-  )}
+  <ModelPortfolioPattern profile={profile} closestPeerLabel={closestPeerLabel} />
 
   <section class="section model-section" id="live-holdings" aria-labelledby="live-holdings-title">
     <div class="model-section-heading">
       <div>
-        <span class="panel-kicker">Current live holdings</span>
-        <h2 id="live-holdings-title">Open Portfolios Waiting For Scores</h2>
+        <span class="panel-kicker">Current portfolios</span>
+        <h2 id="live-holdings-title">What Is This Model Holding Now?</h2>
       </div>
-      <p>Completed rounds are excluded here, so this view shows only the model's still-open weekly and monthly portfolios.</p>
+      <p>
+        {plural(profile.live.all.portfolioCount, "open portfolio")} across weekly and monthly tests. Completed rounds are excluded.
+      </p>
     </div>
     <ModelLiveHoldings client:visible scopes={profile.live} />
   </section>
@@ -371,8 +252,8 @@ function alphaBarStyle(row: ModelResultRow): string {
   <section class="section model-section" id="live-performance" aria-labelledby="live-performance-title">
     <div class="model-section-heading">
       <div>
-        <span class="panel-kicker">Live mark-to-market</span>
-        <h2 id="live-performance-title">Current Return Before Final Scores</h2>
+        <span class="panel-kicker">Still in progress</span>
+        <h2 id="live-performance-title">How Are Its Open Portfolios Doing?</h2>
       </div>
       <p>Latest available close for live rounds only. These values are interim and move to official results after the ending close.</p>
     </div>
@@ -401,28 +282,31 @@ function alphaBarStyle(row: ModelResultRow): string {
             </div>
           ))}
         </div>
-        <div class="model-live-performance-list" aria-label={`${profile.label} live round returns`}>
-          {liveMarkRows.map((row) => (
-            <a href={`/rounds/${row.round_id}/#performance`}>
-              <span>
-                <strong>{row.round_id}</strong>
-                <small>{row.track} / close {row.price_date}</small>
-              </span>
-              <span>
-                <em>Portfolio</em>
-                <b>{pctDecimal(row.model_return)}</b>
-              </span>
-              <span>
-                <em>S&amp;P 500</em>
-                <b>{pctDecimal(row.sp500_return)}</b>
-              </span>
-              <span>
-                <em>Portfolio Minus S&amp;P 500</em>
-                <b>{ppDecimal(row.alpha_vs_sp500)}</b>
-              </span>
-            </a>
-          ))}
-        </div>
+        <details class="model-live-round-details">
+          <summary>See all {liveMarkRows.length} open round returns</summary>
+          <div class="model-live-performance-list" aria-label={`${profile.label} live round returns`}>
+            {liveMarkRows.map((row) => (
+              <a href={`/rounds/${row.round_id}/#performance`}>
+                <span>
+                  <strong>{row.round_id}</strong>
+                  <small>{row.track} / close {row.price_date}</small>
+                </span>
+                <span>
+                  <em>Portfolio</em>
+                  <b>{pctDecimal(row.model_return)}</b>
+                </span>
+                <span>
+                  <em>S&amp;P 500</em>
+                  <b>{pctDecimal(row.sp500_return)}</b>
+                </span>
+                <span>
+                  <em>Portfolio Minus S&amp;P 500</em>
+                  <b>{ppDecimal(row.alpha_vs_sp500)}</b>
+                </span>
+              </a>
+            ))}
+          </div>
+        </details>
       </div>
     ) : (
       <div class="model-empty-panel">
@@ -432,12 +316,13 @@ function alphaBarStyle(row: ModelResultRow): string {
     )}
   </section>
 
-  <section class="section model-scorecards" aria-labelledby="model-scorecards-title">
+  <section class="section model-scorecards" id="model-results" aria-labelledby="model-scorecards-title">
     <div class="model-section-heading">
       <div>
-        <span class="panel-kicker">Scored record</span>
-        <h2 id="model-scorecards-title">Weekly And Monthly Results Stay Separate</h2>
+        <span class="panel-kicker">Completed results</span>
+        <h2 id="model-scorecards-title">How Has This Model Performed?</h2>
       </div>
+      <p>Weekly and monthly results stay separate because the holding periods are different.</p>
     </div>
     {(["weekly", "monthly"] as const).map((track) => {
       const card = profile.scorecards[track];
@@ -478,17 +363,48 @@ function alphaBarStyle(row: ModelResultRow): string {
     })}
   </section>
 
+  <section class="section model-performance-panel" aria-labelledby="model-performance-title">
+    <div class="model-section-heading">
+      <div>
+        <span class="panel-kicker">Round by round</span>
+        <h2 id="model-performance-title">When Did It Beat The S&amp;P 500?</h2>
+      </div>
+      <p>Bars to the right beat the S&amp;P 500. Bars to the left trailed it.</p>
+    </div>
+
+    {resultRows.length > 0 ? (
+      <div class="model-alpha-chart" aria-label={`${profile.label} portfolio minus S&P 500 by round`}>
+        {resultRows.map((row) => (
+          <a class="model-alpha-row" href={`/rounds/${row.roundId}/`}>
+            <span><strong>{row.roundId}</strong><small>{row.track} / rank {row.modelRank} of {row.modelCount}</small></span>
+            <em class="model-alpha-track" aria-hidden="true">
+              <i class={row.alphaVsSp500 && row.alphaVsSp500 >= 0 ? "is-positive" : "is-negative"} style={alphaBarStyle(row)} />
+            </em>
+            <b>{ppDecimal(row.alphaVsSp500)}</b>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="model-empty-panel"><strong>No completed score yet.</strong><span>This chart appears after at least one test has ending prices.</span></div>
+    )}
+  </section>
+
   {modelBenchmarkSetCards.length > 0 && (
     <section class="section model-benchmark-sets" id="benchmark-sets" aria-labelledby="model-benchmark-sets-title" data-model-benchmark-sets>
       <div class="model-section-heading">
         <div>
-          <span class="panel-kicker">Equal-run benchmark sets</span>
-          <h2 id="model-benchmark-sets-title">Benchmark Sets Including This Model</h2>
+          <span class="panel-kicker">Ranking context</span>
+          <h2 id="model-benchmark-sets-title">Where Does It Rank Against Comparable Models?</h2>
         </div>
-        <p>These are the equal-run rankings this model belongs to. Each set compares a fixed roster only on rounds every model in that roster completed.</p>
+        <p>Each group uses only rounds completed by every included model.</p>
       </div>
 
-      <div class="model-benchmark-set-shell">
+      <details class="model-benchmark-details">
+        <summary>
+          <span>See every comparison group</span>
+          <strong>{modelBenchmarkSetCards.length}</strong>
+        </summary>
+        <div class="model-benchmark-set-shell">
         <div class="model-benchmark-set-controls">
           <div class="model-benchmark-set-filters" aria-label="Filter benchmark sets for this model">
             {modelBenchmarkFilters.map((filter) => (
@@ -590,7 +506,7 @@ function alphaBarStyle(row: ModelResultRow): string {
             </article>
           ))}
         </div>
-      </div>
+        </div>
 
       <script is:inline>
         if (!window.__capitalbenchModelBenchmarkSets) {
@@ -667,154 +583,30 @@ function alphaBarStyle(row: ModelResultRow): string {
 
           document.querySelectorAll("[data-model-benchmark-sets]").forEach(setupModelBenchmarkSets);
         }
-      </script>
+        </script>
+      </details>
     </section>
   )}
 
-  <section class="section model-performance-panel" aria-labelledby="model-performance-title">
+  {modelInsights.length > 0 && (
+    <InsightStrip
+      id="model-insights"
+      kicker="Model-specific findings"
+      title={`What Has CapitalBench Learned About ${profile.label}?`}
+      description="Findings tied directly to this model's decisions or completed results."
+      insights={modelInsights}
+      viewAllHref="/insights"
+      viewAllLabel="All insights"
+    />
+  )}
+
+  <section class="section model-history" id="model-history" aria-labelledby="model-history-title" data-model-history>
     <div class="model-section-heading">
       <div>
-        <span class="panel-kicker">Performance chart</span>
-        <h2 id="model-performance-title">Portfolio Minus S&amp;P 500 By Completed Round</h2>
+        <span class="panel-kicker">Decision history</span>
+        <h2 id="model-history-title">What Did It Choose In Each Round?</h2>
       </div>
-      <p>Bars to the right mean the portfolio return was higher than the S&amp;P 500 return. Bars to the left mean it was lower.</p>
-    </div>
-
-    {resultRows.length > 0 ? (
-      <div class="model-alpha-chart" aria-label={`${profile.label} portfolio minus S&P 500 by round`}>
-        {resultRows.map((row) => (
-          <a class="model-alpha-row" href={`/rounds/${row.roundId}/`}>
-            <span>
-              <strong>{row.roundId}</strong>
-              <small>{row.track} / rank {row.modelRank} of {row.modelCount}</small>
-            </span>
-            <em class="model-alpha-track" aria-hidden="true">
-              <i class={row.alphaVsSp500 && row.alphaVsSp500 >= 0 ? "is-positive" : "is-negative"} style={alphaBarStyle(row)} />
-            </em>
-            <b>{ppDecimal(row.alphaVsSp500)}</b>
-          </a>
-        ))}
-      </div>
-    ) : (
-      <div class="model-empty-panel">
-        <strong>No completed score yet.</strong>
-        <span>This chart appears after at least one test has ending prices.</span>
-      </div>
-    )}
-  </section>
-
-  <section class="section model-fingerprint" id="model-fingerprint" aria-labelledby="model-fingerprint-title">
-    <div class="model-section-heading">
-      <div>
-        <span class="panel-kicker">Portfolio pattern</span>
-        <h2 id="model-fingerprint-title">What This Model Has Tended To Hold</h2>
-      </div>
-      <p>Calculated from all saved official portfolios for this model, including open and completed rounds.</p>
-    </div>
-
-    <div class="model-fingerprint-grid">
-      <article class={`model-risk-panel model-risk-${profile.provider}`}>
-        <div class="model-risk-copy">
-          <span class="metric-label">Cumulative risk appetite</span>
-          <h3>{riskAppetite.label}</h3>
-          <p>{riskAppetite.description}</p>
-        </div>
-        <div class="model-risk-visual" aria-label={`${profile.label} cumulative risk appetite scale`}>
-          <div>
-            <strong>{riskScoreValue(riskAppetite.score)}</strong>
-            <span>allocation-weighted score</span>
-          </div>
-          <div
-            class="risk-scale-stage risk-scale-stage-compact"
-            style={`--risk-position: ${riskWidth(riskAppetite.percentile)};`}
-          >
-            <div class="risk-axis-rail" aria-hidden="true"></div>
-            <a
-              class={`risk-axis-marker risk-axis-marker-${profile.provider}`}
-              href="#model-fingerprint"
-              aria-label={`${profile.label}: ${riskScoreValue(riskAppetite.score)}, ${riskAppetite.label}`}
-              title={`${profile.label}: ${riskScoreValue(riskAppetite.score)}, ${riskAppetite.label}`}
-              style={`--risk-position: ${riskWidth(riskAppetite.percentile)}; --risk-lane-offset: 0px; --risk-mobile-lane: 76px;`}
-            >
-              <span class="risk-axis-logo">
-                {(profile.iconSrc ?? profile.logoSrc) && <img src={profile.iconSrc ?? profile.logoSrc} alt="" loading="lazy" />}
-              </span>
-              <span class="risk-axis-marker-label">
-                <strong>{profile.label}</strong>
-                <em>{riskScoreShort(riskAppetite.score)}</em>
-              </span>
-            </a>
-            <div class="risk-axis-ticks" aria-hidden="true">
-              <span><b>1</b> Defensive</span>
-              <span><b>2</b></span>
-              <span><b>3</b> Balanced</span>
-              <span><b>4</b> Growth</span>
-              <span><b>5</b> Aggressive</span>
-            </div>
-          </div>
-        </div>
-        <div class="model-risk-breakdown" aria-label="Risk appetite inputs">
-          <span><strong>{pctValue(riskAppetite.highRiskPct)}</strong> high-risk exposure</span>
-          <span><strong>{pctValue(riskAppetite.techPct)}</strong> technology exposure</span>
-          <span><strong>{pctValue(riskAppetite.defensivePct)}</strong> defensive ballast</span>
-        </div>
-      </article>
-
-      <article class="model-fingerprint-summary">
-        <div>
-          <span>Risk appetite</span>
-          <strong>{riskScoreValue(riskAppetite.score)}</strong>
-        </div>
-        <div>
-          <span>Saved portfolios</span>
-          <strong>{profile.fingerprint.portfolioCount}</strong>
-        </div>
-        <div>
-          <span>Avg holdings</span>
-          <strong>{numberValue(profile.fingerprint.averageHoldingCount)}</strong>
-        </div>
-        <div>
-          <span>Avg top holding</span>
-          <strong>{pctValue(profile.fingerprint.averageTopHoldingPct)}</strong>
-        </div>
-        <div>
-          <span>Most common top holding</span>
-          <strong>{profile.fingerprint.mostCommonTopHolding?.label ?? "n/a"}</strong>
-        </div>
-      </article>
-
-      <article class="model-fingerprint-list">
-        <span class="metric-label">Most frequently held assets</span>
-        {profile.fingerprint.assets.slice(0, 7).map((asset) => (
-          <div>
-            <span>
-              <strong>{asset.label}</strong>
-              <small>{asset.group}</small>
-            </span>
-            <em>{pctValue(asset.frequencyPct)} held</em>
-            <b>{pctValue(asset.averageAllocationPct)} avg</b>
-          </div>
-        ))}
-      </article>
-
-      <article class="model-fingerprint-list compact">
-        <span class="metric-label">Average allocation by category</span>
-        {profile.fingerprint.categories.slice(0, 7).map((category) => (
-          <div>
-            <span><strong>{category.group}</strong></span>
-            <b>{pctValue(category.averageAllocationPct)}</b>
-          </div>
-        ))}
-      </article>
-    </div>
-  </section>
-
-  <section class="section model-history" aria-labelledby="model-history-title">
-    <div class="model-section-heading">
-      <div>
-        <span class="panel-kicker">Round history</span>
-        <h2 id="model-history-title">Saved Portfolios And Results</h2>
-      </div>
+      <p>Open a row to see the full portfolio, rationale, and audit files.</p>
     </div>
 
     <div class="model-history-table" role="table" aria-label={`${profile.label} round history`}>
@@ -825,8 +617,8 @@ function alphaBarStyle(row: ModelResultRow): string {
         <span>Portfolio</span>
         <span>Result</span>
       </div>
-      {profile.history.map((row) => (
-        <details class="model-history-row">
+      {profile.history.map((row, index) => (
+        <details class="model-history-row" data-model-history-row hidden={index >= 10}>
           <summary>
             <span>
               <strong><a href={`/rounds/${row.roundId}/`}>{row.roundId}</a></strong>
@@ -875,6 +667,25 @@ function alphaBarStyle(row: ModelResultRow): string {
         </details>
       ))}
     </div>
+    {profile.history.length > 10 && (
+      <button class="model-history-toggle" type="button" data-model-history-toggle data-total={profile.history.length}>
+        Show all {profile.history.length} rounds
+      </button>
+    )}
+
+    <script is:inline>
+      document.querySelectorAll("[data-model-history]").forEach((root) => {
+        const rows = Array.from(root.querySelectorAll("[data-model-history-row]"));
+        const button = root.querySelector("[data-model-history-toggle]");
+        if (!button) return;
+        let expanded = false;
+        button.addEventListener("click", () => {
+          expanded = !expanded;
+          rows.forEach((row, index) => { row.hidden = !expanded && index >= 10; });
+          button.textContent = expanded ? "Show latest 10 rounds" : `Show all ${button.dataset.total} rounds`;
+        });
+      });
+    </script>
   </section>
 
   <section class="section model-proof-drawer" aria-labelledby="model-proof-title">

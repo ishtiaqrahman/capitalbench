@@ -5,10 +5,17 @@ import PageHeader from "../../../components/PageHeader.astro";
 import TrackScorecard from "../../../components/TrackScorecard.astro";
 import apiReadModel from "../../../generated/apiReadModel.js";
 import { benchmarkSetToScorecard, buildBenchmarkSetsData } from "../../../lib/benchmarkSets";
+import {
+  buildBenchmarkSetComparison,
+  defaultBenchmarkSetComparison
+} from "../../../lib/benchmarkSetComparison.js";
 import type { TrackScorecardData } from "../../../lib/trackScorecard";
 
+const benchmarkSets = buildBenchmarkSetsData(apiReadModel) as any;
+
 export function getStaticPaths() {
-  return (buildBenchmarkSetsData(apiReadModel) as any).sets.map((set: any) => ({
+  const sets = (buildBenchmarkSetsData(apiReadModel) as any).sets;
+  return sets.map((set: any) => ({
     params: { set_id: set.set_id },
     props: { set }
   }));
@@ -25,6 +32,16 @@ const trackLabel = set.track === "weekly" ? "Weekly" : "Monthly";
 const remainingRounds = Math.max(0, set.qualification_threshold - set.comparison.comparison_round_count);
 const title = `${set.label} | CapitalBench`;
 const description = `${set.label} ranks ${set.models.length} AI models only on shared ${set.track} rounds that every model completed.`;
+const defaultPair = defaultBenchmarkSetComparison(benchmarkSets.sets, set.track);
+const detailComparisonPair = defaultPair
+  ? set.is_current
+    ? defaultPair
+    : { baseline: defaultPair.baseline, comparison: set }
+  : null;
+const detailComparison =
+  detailComparisonPair && detailComparisonPair.baseline.set_id !== detailComparisonPair.comparison.set_id
+    ? buildBenchmarkSetComparison(apiReadModel, detailComparisonPair.baseline, detailComparisonPair.comparison)
+    : null;
 ---
 
 <BaseLayout title={title} description={description}>
@@ -84,6 +101,36 @@ const description = `${set.label} ranks ${set.models.length} AI models only on s
     </section>
   )}
 
+  {detailComparison && (
+    <section class="section benchmark-set-detail-compare" aria-labelledby="benchmark-set-detail-compare-title">
+      <div class={`benchmark-set-detail-compare-panel benchmark-set-detail-compare-${set.track}`}>
+        <div class="benchmark-set-detail-compare-copy">
+          <span class="panel-kicker">Compare model groups</span>
+          <h2 id="benchmark-set-detail-compare-title">How do these results compare?</h2>
+          <p>{detailComparison.summary}</p>
+          <div class="benchmark-set-detail-compare-metrics">
+            <span><strong>{detailComparison.models.common_count}</strong><em>models in both</em></span>
+            <span><strong>{detailComparison.rounds.shared.length}</strong><em>rounds used by both</em></span>
+            <span><strong>{detailComparison.ranking.similarity_label}</strong><em>change in order</em></span>
+            <span>
+              <strong>{detailComparison.baseline.shared_round_count > 0 && detailComparison.comparison.shared_round_count > 0 ? (detailComparison.ranking.same_leader ? "No" : "Yes") : "Not available"}</strong>
+              <em>top model changed</em>
+            </span>
+          </div>
+        </div>
+        <div class="benchmark-set-detail-compare-action">
+          <p>{detailComparison.trust_guidance}</p>
+          <a
+            class="action-link"
+            href={`/leaderboards/benchmark-sets/compare/?track=${detailComparison.track}&base=${detailComparison.baseline.set_id}&compare=${detailComparison.comparison.set_id}`}
+          >
+            Compare these groups
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
+
   <section class="section">
     <div class="panel">
       <div class="panel-header">
@@ -128,11 +175,12 @@ const description = `${set.label} ranks ${set.models.length} AI models only on s
         </div>
         <div>
           <strong>Excluded for fairness</strong>
-          <span>
-            {set.excluded_rounds.length
-              ? set.excluded_rounds.map((round: any) => `${round.round_id} missing ${round.missing_model_ids.join(", ")}`).join("; ")
-              : "None"}
-          </span>
+          {set.excluded_rounds.length ? (
+            <details class="benchmark-set-round-details">
+              <summary>{set.excluded_rounds.length} resolved candidate rounds</summary>
+              <span>{set.excluded_rounds.map((round: any) => `${round.round_id} missing ${round.missing_model_ids.join(", ")}`).join("; ")}</span>
+            </details>
+          ) : <span>None</span>}
         </div>
       </div>
     </div>
