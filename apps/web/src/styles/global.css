@@ -34475,24 +34475,35 @@ html {
 
 #benchmark-insights.context-insights-featured .insight-context-strip {
   flex: 0 0 auto;
+  height: 58px;
+  min-height: 54px;
+  align-content: center;
+  justify-content: center;
   margin-top: 12px;
 }
 
 #benchmark-insights.context-insights-featured .insight-card h3 {
+  min-height: 3.2rem;
+  display: grid;
+  align-items: center;
   margin-top: 18px;
   font-size: clamp(1.12rem, 1.45vw, 1.28rem);
   line-height: 1.25;
 }
 
 #benchmark-insights.context-insights-featured .insight-card > p:not(.insight-definition) {
+  min-height: 4.65rem;
+  display: grid;
+  align-items: start;
   margin-top: 10px;
   line-height: 1.55;
 }
 
 #benchmark-insights.context-insights-featured .insight-calculation-list {
-  flex: 1 1 auto;
+  flex: 0 0 144px;
   width: 100%;
-  min-height: 132px;
+  height: 144px;
+  min-height: 144px;
   display: grid;
   grid-template-columns: repeat(var(--insight-metric-count, 1), minmax(0, 1fr));
   gap: 0;
@@ -34546,6 +34557,7 @@ html {
   color: var(--ink-strong);
   font-size: clamp(2rem, 3.2vw, 2.65rem);
   font-weight: 900;
+  font-variant-numeric: tabular-nums;
   line-height: 0.96;
   text-wrap: nowrap;
   white-space: nowrap;
@@ -34586,11 +34598,23 @@ html {
   }
 
   #benchmark-insights.context-insights-featured .insight-card h3 {
+    min-height: 0;
     margin-top: 16px;
   }
 
+  #benchmark-insights.context-insights-featured .insight-context-strip {
+    height: auto;
+    min-height: 0;
+  }
+
+  #benchmark-insights.context-insights-featured .insight-card > p:not(.insight-definition) {
+    min-height: 0;
+  }
+
   #benchmark-insights.context-insights-featured .insight-calculation-list {
-    min-height: 116px;
+    height: 132px;
+    min-height: 132px;
+    flex-basis: 132px;
     margin-top: 18px;
   }
 

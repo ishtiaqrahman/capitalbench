@@ -90,7 +90,10 @@ const sectionContextItems = Array.from(new Set([
 
     <div class:list={["insight-card-grid", compact && "insight-card-grid-compact"]}>
       {visibleInsights.map((insight) => {
-        const calculations: InsightCalculation[] = Array.isArray(insight.calculations) ? insight.calculations.slice(0, 3) : [];
+        const calculationLimit = featured ? 1 : 3;
+        const calculations: InsightCalculation[] = Array.isArray(insight.calculations)
+          ? insight.calculations.slice(0, calculationLimit)
+          : [];
         const evidence: InsightLink[] = Array.isArray(insight.evidence) ? insight.evidence.slice(0, 2) : [];
         const cardContextPills = contextPills(insight).filter((pill) => !sharedContextSet.has(String(pill))).slice(0, 3);
         const metricCount = Math.max(1, calculations.length);
