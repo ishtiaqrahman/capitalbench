@@ -23,6 +23,7 @@ export type ScoreReturnChartRow = {
   key: string;
   kind: ScoreReturnChartRowKind;
   label: string;
+  labelDetail?: string;
   detailName: string;
   detailMeta: string;
   detailText: string;
@@ -302,13 +303,17 @@ export function buildScoreReturnChartData({
         holdings: []
       }
     : undefined;
+  const bestAssetTicker = bestResultAsset?.asset_symbol || bestResultAsset?.option_id || "";
+  const bestAssetName = bestResultAsset?.label || bestResultAsset?.option_id || "";
+  const bestAssetDetail = bestAssetName !== bestAssetTicker ? bestAssetName : undefined;
   const bestAssetRow: ScoreReturnChartRow | undefined = bestResultAsset
     ? {
         key: "best-universe-asset",
         kind: "reference",
-        label: "Max",
-        detailName: "Max possible",
-        detailMeta: bestResultAsset.asset_symbol || bestResultAsset.label,
+        label: bestAssetTicker,
+        labelDetail: bestAssetDetail,
+        detailName: bestAssetTicker,
+        detailMeta: bestAssetDetail ? `${bestAssetDetail} - Hindsight best asset` : "Hindsight best asset",
         detailText: `100% ${resultAssetLabel(bestResultAsset)} hindsight ceiling`,
         logoAlt: "Maximum possible return",
         returnValue: bestResultAsset.return,

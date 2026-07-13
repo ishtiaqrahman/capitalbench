@@ -668,9 +668,9 @@ export function buildBenchmarkTickerTape(readModel, options = {}) {
     items.push({
       key: "live-performance",
       tone: Number(livePerformance.leader.portfolioReturnPct) >= 0 ? "positive" : "caution",
-      label: "Live MTM",
-      value: `${livePerformance.leader.label} ${percentageLabel(livePerformance.leader.portfolioReturnPct)}`,
-      detail: "not final",
+      label: "Open Portfolio Leader",
+      value: `${livePerformance.leader.label} currently leads at ${percentageLabel(livePerformance.leader.portfolioReturnPct)}`,
+      detail: "interim result, not yet scored",
       href: "/rounds"
     });
   }

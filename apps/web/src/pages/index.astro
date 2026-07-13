@@ -467,9 +467,7 @@ function riskWidth(value: number | null | undefined): string {
           <div class="live-risk-pulse-regime">
             <span>{riskPositioningDateLabel}</span>
             <strong>{currentRiskPulse.regime}</strong>
-            <small>
-              Combined monthly + weekly pulse from {currentRiskPulse.monthly?.round_id} and {currentRiskPulse.weekly?.round_id}.
-            </small>
+            <small>Combined view of monthly and weekly model portfolios for this date.</small>
           </div>
 
           <div class="live-risk-scale" aria-label={`Current AI Risk Appetite ${pulseScore(currentRiskPulse.score)} out of 100`}>

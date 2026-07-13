@@ -90,6 +90,7 @@ function revealOrigin(value?: number): string {
                 <span class="score-chart-benchmark-chip" aria-hidden="true">S&amp;P</span>
               )}
               <strong>{item.label}</strong>
+              {item.labelDetail && <small>{item.labelDetail}</small>}
             </div>
           ))}
         </div>

@@ -2515,10 +2515,10 @@ for (const [html, context] of [
   includes(html, "Model Agreement", `${context} agreement item`);
   includes(html, "Crowded Position", `${context} crowded position item`);
   includes(html, "Biggest Shift", `${context} positioning shift item`);
-  includes(html, "Live MTM", `${context} live mark-to-market item`);
+  includes(html, "Open Portfolio Leader", `${context} open portfolio leader item`);
   includes(html, "Latest Weekly", `${context} latest official item`);
   includes(html, "Full Weekly History", `${context} cumulative item`);
-  includes(html, "not final", `${context} live mark-to-market disclaimer`);
+  includes(html, "interim result, not yet scored", `${context} open portfolio disclaimer`);
   includes(html, "Data", `${context} data chip`);
   includes(html, "audited", `${context} audit coverage`);
   for (const item of benchmarkTicker.items) {
