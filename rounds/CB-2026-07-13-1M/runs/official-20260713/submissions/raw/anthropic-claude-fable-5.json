@@ -1,0 +1,52 @@
+{
+  "confidence": 0.5,
+  "is_official_score": true,
+  "key_risks": [
+    "Rapid de-escalation or negotiated Hormuz resolution could crater crude prices and reverse energy gains",
+    "A soft June/July CPI print could rally growth/tech and QQQ, causing this value/energy tilt to lag SPY",
+    "Demand destruction from an oil shock could hit energy equities alongside broad markets",
+    "USO futures roll and volatility can erode returns even if spot crude stays elevated"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "ENERGY",
+      "rationale": "Direct beneficiary of Hormuz blockade escalation and Brent at $83; equities lag spot crude and offer upside with less curve decay than USO."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "OIL",
+      "rationale": "Highest-torque exposure to supply disruption from the July 14 blockade; negative beta to SPY hedges equity drawdown."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value with energy/financials tilt outperforms growth when 10y yields rise to 4.61% and inflation runs 4.2%."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive equity holding up well (+2.8% 30d vs SPY) amid geopolitical stress and rate pressure; near-zero beta cushions selloff."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like yield with no duration risk while yields rise and rate-cut odds fade on hot CPI."
+    }
+  ],
+  "portfolio_rationale": "An escalating Hormuz blockade, oil supply shock, sticky 4.2% CPI, and rising yields favor energy and value over rate-sensitive growth/tech, which was already selling off into the entry. Defensive low-vol and T-bills buffer against a broad risk-off move over the month.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight energy and value for the oil supply shock and inflation backdrop, with low-vol and T-bill ballast against geopolitically driven equity weakness; underweight rate-sensitive growth.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-13-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 22124,
+    "latency_seconds": 16.973843061947264,
+    "output_tokens": 944,
+    "total_tokens": 23068
+  }
+}

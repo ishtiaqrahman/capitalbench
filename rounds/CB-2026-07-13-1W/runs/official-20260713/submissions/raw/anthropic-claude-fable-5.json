@@ -1,0 +1,52 @@
+{
+  "confidence": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Rapid de-escalation or negotiated Hormuz resolution collapses the oil risk premium, hitting XLE and USO hard",
+    "A soft June CPI sparks a broad risk-on rally where underweight tech/beta lags SPY",
+    "USO futures-curve backwardation/roll effects and its -22% recent drawdown history show extreme volatility",
+    "Dovish Warsh testimony weakens the dollar position and boosts growth equities we don't hold"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "option_id": "ENERGY",
+      "rationale": "Energy equities benefit directly from Brent at $83 and the announced US blockade of Iranian shipping resuming July 14, with unresolved Strait of Hormuz control keeping supply-risk premium elevated."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "OIL",
+      "rationale": "Direct crude exposure to further escalation; negative beta hedges equity downside from the geopolitical shock."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive equity with positive 30d benchmark-relative return; likely to outperform SPY if risk-off from war escalation or a hot June CPI persists."
+    },
+    {
+      "allocation_pct": 25,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like ballast amid rising yields (10y 4.61%), hot inflation data, and Waller flagging possible tightening \u2014 duration and equity beta both unattractive."
+    },
+    {
+      "allocation_pct": 10,
+      "option_id": "US_DOLLAR",
+      "rationale": "Dollar benefits from safe-haven flows and hawkish repricing if June CPI prints hot on energy pass-through."
+    }
+  ],
+  "portfolio_rationale": "Wartime energy supply shock with a blockade resuming July 14 and rising yields argues for energy/oil exposure plus defensive, low-duration ballast rather than broad equity beta into a hot CPI and Fed testimony week.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight energy and crude on Hormuz escalation, hedge with T-bills, low-vol equity, and the dollar given inflation and rate risks into CPI and Warsh testimony.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-13-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 21969,
+    "latency_seconds": 16.605759225902148,
+    "output_tokens": 917,
+    "total_tokens": 22886
+  }
+}
