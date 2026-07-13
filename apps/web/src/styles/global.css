@@ -5742,7 +5742,8 @@ a.snapshot-model-chip:hover {
 .score-vertical-value > [data-count-token],
 .score-mobile-rank-head > strong > [data-count-token],
 .track-scorecard-value > [data-count-token],
-.published-score-context span > [data-count-token] {
+.published-score-context span > [data-count-token],
+.market-regime-preview-return > [data-count-token] {
   display: inline;
   grid-area: auto;
   color: inherit;
@@ -34644,6 +34645,373 @@ html {
     margin-top: 0;
     font-size: 1.7rem;
     text-align: right;
+  }
+}
+
+/* Compact homepage preview for the market-environment benchmark. */
+.market-regime-preview {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.market-regime-preview-heading {
+  width: min(920px, 100%);
+}
+
+.market-regime-preview-context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.market-regime-preview-context span {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.market-regime-preview-context span:not(:last-child)::after {
+  width: 3px;
+  height: 3px;
+  margin: 0 9px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 48%, transparent);
+  content: "";
+}
+
+.market-regime-preview-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid rgb(15 23 42 / 12%);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 16px 34px rgb(17 24 39 / 7%);
+}
+
+.market-regime-preview-item {
+  --regime-preview-accent: var(--accent);
+  --regime-preview-soft: #edf8f4;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 76px 90px 108px 54px;
+  gap: 0;
+  padding: 18px 26px;
+  background: color-mix(in srgb, var(--regime-preview-soft) 58%, #ffffff);
+  text-align: center;
+}
+
+.market-regime-preview-item.is-down {
+  --regime-preview-accent: #a64b38;
+  --regime-preview-soft: #faeee9;
+}
+
+.market-regime-preview-item + .market-regime-preview-item {
+  border-left: 1px solid rgb(15 23 42 / 12%);
+}
+
+.market-regime-preview-item header {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 38px auto;
+  gap: 5px;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+.market-regime-preview-icon {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--regime-preview-accent) 22%, transparent);
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--regime-preview-accent);
+}
+
+.market-regime-preview-item header div {
+  min-width: 0;
+}
+
+.market-regime-preview-item header div > span,
+.market-regime-preview-item header small {
+  display: block;
+}
+
+.market-regime-preview-item header div > span {
+  color: var(--ink-strong);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.market-regime-preview-item header small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.market-regime-preview-leader {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 40px minmax(0, 1fr);
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.market-regime-preview-logo {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid rgb(15 23 42 / 12%);
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--ink-strong);
+  font-weight: 900;
+}
+
+.market-regime-preview-logo img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.market-regime-preview-logo.is-xai img {
+  opacity: 0.72;
+  filter: brightness(0) saturate(100%);
+}
+
+.market-regime-preview-leader > div {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+}
+
+.market-regime-preview-leader > div > span,
+.market-regime-preview-leader small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.market-regime-preview-leader strong {
+  color: var(--ink-strong);
+  font-family: var(--font-display);
+  font-size: 1.28rem;
+  line-height: 1.05;
+}
+
+.market-regime-preview-model-name {
+  min-height: 1.1em;
+  display: grid;
+  align-items: center;
+}
+
+.market-regime-preview-values {
+  display: grid;
+  grid-template-rows: 72px 36px;
+  border-top: 1px solid color-mix(in srgb, var(--regime-preview-accent) 18%, var(--line));
+  border-bottom: 1px solid color-mix(in srgb, var(--regime-preview-accent) 18%, var(--line));
+}
+
+.market-regime-preview-values > div {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-height: 0;
+  padding: 8px;
+  text-align: center;
+}
+
+.market-regime-preview-values > div + div {
+  grid-template-columns: auto auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--regime-preview-accent) 18%, var(--line));
+}
+
+.market-regime-preview-values span {
+  color: var(--muted-2);
+  font-size: 0.68rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.market-regime-preview-values strong {
+  margin-top: 4px;
+  color: var(--ink-strong);
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.market-regime-preview-values .market-regime-preview-return {
+  font-size: clamp(2rem, 3.2vw, 2.5rem);
+}
+
+.market-regime-preview-values > div + div strong {
+  margin-top: 0;
+}
+
+.market-regime-preview-values strong.is-negative {
+  color: #9b3f32;
+}
+
+.market-regime-preview-item footer {
+  align-self: end;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.market-regime-preview-item footer strong {
+  color: var(--regime-preview-accent);
+  font-size: 0.83rem;
+}
+
+.market-regime-preview-item footer span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+
+.market-regime-preview-empty {
+  min-height: 176px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 7px;
+  text-align: center;
+}
+
+.market-regime-preview-empty strong {
+  color: var(--ink-strong);
+  font-size: 1.05rem;
+}
+
+.market-regime-preview-empty span {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.market-regime-preview-actions {
+  margin-bottom: 0;
+}
+
+@media (max-width: 760px) {
+  .market-regime-preview {
+    width: min(100% - 24px, 560px);
+  }
+
+  .market-regime-preview-context {
+    row-gap: 5px;
+  }
+
+  .market-regime-preview-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .market-regime-preview-item {
+    grid-template-rows: 74px 92px 104px 56px;
+    padding: 12px 10px;
+  }
+
+  .market-regime-preview-item + .market-regime-preview-item {
+    border-top: 0;
+    border-left: 1px solid rgb(15 23 42 / 12%);
+  }
+
+  .market-regime-preview-item header {
+    grid-template-columns: 1fr;
+    grid-template-rows: 36px auto;
+    justify-items: center;
+  }
+
+  .market-regime-preview-leader {
+    grid-template-rows: 38px minmax(0, 1fr);
+    text-align: center;
+  }
+
+  .market-regime-preview-logo {
+    width: 38px;
+    height: 38px;
+  }
+
+  .market-regime-preview-leader strong {
+    font-size: 1rem;
+  }
+
+  .market-regime-preview-model-name {
+    min-height: 2.1em;
+  }
+
+  .market-regime-preview-leader small {
+    display: none;
+  }
+
+  .market-regime-preview-values > div {
+    min-height: 0;
+    padding: 7px 4px;
+  }
+
+  .market-regime-preview-values .market-regime-preview-return {
+    font-size: clamp(1.58rem, 8vw, 1.9rem);
+  }
+
+  .market-regime-preview-values > div + div {
+    gap: 5px;
+  }
+
+  .market-regime-preview-values span {
+    font-size: 0.61rem;
+  }
+
+  .market-regime-preview-values strong {
+    font-size: 0.92rem;
+  }
+
+  .market-regime-preview-item footer {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .market-regime-preview-item footer strong {
+    font-size: 0.76rem;
+  }
+
+  .market-regime-preview-item footer span {
+    font-size: 0.67rem;
+  }
+
+  .market-regime-preview-actions .home-primary-cta {
+    width: 100%;
+    min-height: 50px;
+    padding: 10px 14px;
+    font-size: 0.84rem;
+    line-height: 1.25;
+    text-align: center;
   }
 }
 

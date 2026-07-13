@@ -12,7 +12,8 @@ const countSelectors = [
   ".score-vertical-value",
   ".score-mobile-rank-head > strong",
   ".track-scorecard-value",
-  ".published-score-context span"
+  ".published-score-context span",
+  ".market-regime-preview-return"
 ].join(",");
 
 const groupSelectors = [
@@ -26,7 +27,8 @@ const groupSelectors = [
   ".benchmark-evidence-card",
   ".current-setup-panel",
   ".live-dashboard-promo",
-  ".published-score-context"
+  ".published-score-context",
+  ".market-regime-preview-panel"
 ].join(",");
 
 const skipNumberPattern = /\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec|January|February|March|April|June|July|August|September|October|November|December)\b/i;

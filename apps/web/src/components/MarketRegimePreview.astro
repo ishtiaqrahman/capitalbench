@@ -1,0 +1,140 @@
+---
+import { ArrowRight, Info, TrendingDown, TrendingUp } from "lucide-react";
+import { modelLabel } from "../data/fallback";
+import apiReadModel from "../generated/apiReadModel.js";
+import { buildMonthlyMarketRegimePreview } from "../lib/marketRegimePreview";
+import { providerLogoSrc } from "../lib/scoreReturnChart";
+
+const preview = buildMonthlyMarketRegimePreview(apiReadModel.market_environment);
+
+function finiteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function signedPercent(value: unknown): string {
+  if (!finiteNumber(value)) return "n/a";
+  const percent = value * 100;
+  const prefix = percent > 0 ? "+" : "";
+  return `${prefix}${percent.toFixed(2)}%`;
+}
+
+function evidenceLabel(value: string): string {
+  if (value === "high") return "More evidence";
+  if (value === "medium") return "Some evidence";
+  return "Early result";
+}
+
+function comparisonText(value: unknown): string {
+  if (!finiteNumber(value)) return "Comparison unavailable";
+  const points = Math.abs(value * 100).toFixed(2);
+  if (value > 0) return `+${points} pts vs S&P`;
+  if (value < 0) return `-${points} pts vs S&P`;
+  return "Matched S&P 500";
+}
+
+function comparisonLabel(value: unknown): string {
+  if (!finiteNumber(value)) return "S&P 500 comparison is not available yet.";
+  const points = Math.abs(value * 100).toFixed(2);
+  if (value > 0) return `${points} points better than the S&P 500`;
+  if (value < 0) return `${points} points behind the S&P 500`;
+  return "Matched the S&P 500";
+}
+
+function shortDate(value: string | undefined): string {
+  if (!value) return "Latest completed tests";
+  const parsed = new Date(`${value.slice(0, 10)}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC"
+  }).format(parsed);
+}
+---
+
+<section class="market-regime-preview" aria-labelledby="market-regime-preview-title">
+  <div class="home-question-heading market-regime-preview-heading">
+    <div>
+      <span class="panel-kicker">Performance by market</span>
+      <div class="home-question-title">
+        <h2 id="market-regime-preview-title">Who leads when markets <span class="no-orphan">rise or fall?</span></h2>
+        <span class="home-info-tip" tabindex="0" aria-label="Completed monthly tests are grouped by how much the S&P 500 moved. Models are compared using matching dates.">
+          <Info size={15} aria-hidden="true" />
+        </span>
+      </div>
+      <p>Monthly leaders vs. the S&amp;P 500.</p>
+      <div class="market-regime-preview-context" aria-label="Market environment preview context">
+        <span>Monthly snapshot</span>
+        <span>Updated {shortDate(preview.dataAsOf)}</span>
+        {preview.totalEnvironmentCount > 0 && (
+          <span>{preview.readyEnvironmentCount} of {preview.totalEnvironmentCount} market types comparable</span>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div class="market-regime-preview-panel" aria-label="Monthly market environment leaders">
+    {preview.items.map((item) => {
+      const Icon = item.direction === "down" ? TrendingDown : TrendingUp;
+      const logoSrc = item.provider ? providerLogoSrc(item.provider) : undefined;
+      const leaderLabel = item.modelLabel ?? (item.modelId ? modelLabel(item.modelId) : "More results needed");
+      return (
+        <article class:list={[`market-regime-preview-item is-${item.direction}`, !item.ready && "is-forming"]}>
+          <header>
+            <span class="market-regime-preview-icon" aria-hidden="true"><Icon size={22} /></span>
+            <div>
+              <span>{item.direction === "down" ? "Market fell" : "Market rose"}</span>
+              <small>{item.rangeLabel}</small>
+            </div>
+          </header>
+
+          {item.ready ? (
+            <>
+              <div class="market-regime-preview-leader">
+                <span class:list={["market-regime-preview-logo", item.provider && `is-${item.provider}`]}>
+                  {logoSrc ? <img src={logoSrc} alt="" width="38" height="38" loading="lazy" /> : <span>{leaderLabel.charAt(0)}</span>}
+                </span>
+                <div>
+                  <span>Leader</span>
+                  <strong class="market-regime-preview-model-name">{leaderLabel}</strong>
+                </div>
+              </div>
+
+              <div class="market-regime-preview-values">
+                <div>
+                  <span>Average return</span>
+                  <strong class:list={["market-regime-preview-return", finiteNumber(item.averageReturn) && item.averageReturn < 0 && "is-negative"]}>
+                    {signedPercent(item.averageReturn)}
+                  </strong>
+                </div>
+                <div>
+                  <span>S&amp;P 500</span>
+                  <strong class:list={[finiteNumber(item.averageSp500Return) && item.averageSp500Return < 0 && "is-negative"]}>
+                    {signedPercent(item.averageSp500Return)}
+                  </strong>
+                </div>
+              </div>
+
+              <footer>
+                <strong aria-label={comparisonLabel(item.averageAlpha)}>{comparisonText(item.averageAlpha)}</strong>
+                <span>{item.matchingResults} result{item.matchingResults === 1 ? "" : "s"} · {evidenceLabel(item.confidence)}</span>
+              </footer>
+            </>
+          ) : (
+            <div class="market-regime-preview-empty">
+              <strong>More completed results needed</strong>
+              <span>{item.availableResults} monthly result{item.availableResults === 1 ? " is" : "s are"} currently available.</span>
+            </div>
+          )}
+        </article>
+      );
+    })}
+  </div>
+
+  <div class="home-section-cta market-regime-preview-actions">
+    <a class="home-primary-cta" href="/leaderboards/market-regime-benchmark/">
+      Explore all market environments
+      <ArrowRight size={16} aria-hidden="true" />
+    </a>
+  </div>
+</section>
