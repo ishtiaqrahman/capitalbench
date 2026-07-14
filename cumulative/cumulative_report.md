@@ -8,12 +8,12 @@ Each round is a separate market decision with its own declared scoring window. O
 
 | Rank | Model | Provider | Resolved Rounds | Avg Return | Avg S&P Return | Avg Alpha | Hit Rate vs S&P | Avg Regret | Cumulative Return | Cumulative S&P Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | anthropic-claude-fable-5 | anthropic | 6 | 0.84% | 0.72% | 0.12% | 50.00% | 9.07% | 4.99% | 4.35% |
-| 2 | xai-grok-4-3 | xai | 26 | -0.24% | 0.08% | -0.32% | 46.15% | 9.05% | -7.45% | 1.71% |
-| 3 | anthropic-claude-opus-4-8 | anthropic | 24 | -0.45% | -0.03% | -0.42% | 37.50% | 8.97% | -11.07% | -0.94% |
-| 4 | anthropic-claude-opus-4-7 | anthropic | 26 | -0.37% | 0.08% | -0.45% | 38.46% | 9.18% | -10.49% | 1.71% |
-| 5 | openai-gpt-5-5 | openai | 26 | -1.02% | 0.08% | -1.10% | 26.92% | 9.83% | -25.39% | 1.71% |
-| 6 | google-gemini-3-1-pro | google | 26 | -1.29% | 0.08% | -1.36% | 30.77% | 10.09% | -30.25% | 1.71% |
+| 1 | anthropic-claude-fable-5 | anthropic | 7 | 0.61% | 0.69% | -0.08% | 42.86% | 9.35% | 4.23% | 4.93% |
+| 2 | xai-grok-4-3 | xai | 27 | -0.20% | 0.10% | -0.29% | 48.15% | 9.06% | -6.61% | 2.27% |
+| 3 | anthropic-claude-opus-4-8 | anthropic | 25 | -0.48% | -0.00% | -0.48% | 36.00% | 9.07% | -12.15% | -0.39% |
+| 4 | anthropic-claude-opus-4-7 | anthropic | 27 | -0.41% | 0.10% | -0.50% | 37.04% | 9.27% | -11.68% | 2.27% |
+| 5 | openai-gpt-5-5 | openai | 27 | -0.83% | 0.10% | -0.92% | 29.63% | 9.69% | -22.23% | 2.27% |
+| 6 | google-gemini-3-1-pro | google | 27 | -1.10% | 0.10% | -1.20% | 33.33% | 9.97% | -27.69% | 2.27% |
 
 ## Cumulative Stability Leaderboard
 
@@ -49,6 +49,7 @@ _No rows._
 | CB-2026-07-01-1W | official-20260701-with-fable |  | yes | no |  |
 | CB-2026-07-02-1W | official-20260702 |  | yes | no |  |
 | CB-2026-07-06-1W | official-20260706 |  | yes | no |  |
+| CB-2026-07-07-1W | official-20260707 |  | yes | no |  |
 
 ## Methodology
 
@@ -73,8 +74,8 @@ The official leaderboard measures the saved public model decision. The stability
 
 ## Warnings
 
-- Round CB-2026-07-07-1W has no scored official or stability runs.
 - Round CB-2026-07-08-1W has no scored official or stability runs.
 - Round CB-2026-07-09-1W has no scored official or stability runs.
 - Round CB-2026-07-10-1W has no scored official or stability runs.
 - Round CB-2026-07-13-1W has no scored official or stability runs.
+- Round CB-2026-07-14-1W has no scored official or stability runs.
