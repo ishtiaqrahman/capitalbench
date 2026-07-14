@@ -16560,38 +16560,15 @@ tbody tr:hover {
   }
 
   .freshness-status-inner {
-    grid-template-columns: max-content minmax(0, 1fr) max-content;
-    gap: 8px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
     min-height: 0;
     padding: 0;
   }
 
-  .benchmark-ticker-brand {
-    min-width: 42px;
-    padding-right: 8px;
-  }
-
-  .benchmark-ticker-brand span {
-    font-size: 0;
-  }
-
-  .benchmark-ticker-brand span::after {
-    content: "Live";
-    font-size: 0.64rem;
-  }
-
+  .benchmark-ticker-brand,
   .benchmark-ticker-data {
-    min-width: 72px;
-    padding-left: 8px;
-  }
-
-  .benchmark-ticker-data span,
-  .benchmark-ticker-data em {
     display: none;
-  }
-
-  .benchmark-ticker-data strong {
-    font-size: 0.68rem;
   }
 
   .benchmark-ticker-item {
