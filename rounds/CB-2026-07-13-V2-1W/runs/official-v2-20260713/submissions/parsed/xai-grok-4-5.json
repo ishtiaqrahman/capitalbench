@@ -1,0 +1,64 @@
+{
+  "benchmark_expected_return_pct": -0.3,
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 2.5,
+  "is_official_score": true,
+  "key_risks": [
+    "Sudden de-escalation of US-Iran tensions causing oil and energy prices to reverse sharply",
+    "Hotter-than-expected June CPI on July 14 triggering broader equity selloff and higher yields",
+    "Weaker-than-expected major bank earnings weighing on financials and value",
+    "Continued low positive-asset breadth and risk-off flows amplifying equity declines"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "De-escalation of US-Iran tensions or sharp reversal lower in oil prices",
+      "option_id": "ENERGY",
+      "rationale": "Energy equities benefit from elevated oil prices driven by geopolitical supply risks in the Middle East and the announced blockade.",
+      "time_window_catalyst": "US blockade of Iranian shipping resumes July 14 and unresolved Strait of Hormuz control disputes"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 4.0,
+      "invalidation_condition": "Rapid resolution of shipping disruptions or oil price collapse on de-escalation",
+      "option_id": "OIL",
+      "rationale": "Direct crude exposure positioned for further upside if Hormuz transit risks and blockade effects persist or intensify.",
+      "time_window_catalyst": "Blockade resumption July 14 and ongoing Hormuz control/transit uncertainties"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Disappointing bank earnings results or emerging credit quality concerns",
+      "option_id": "FINANCIALS",
+      "rationale": "Major bank Q2 results provide a concrete near-term catalyst; sector shows relative resilience and benefits from higher yields.",
+      "time_window_catalyst": "JPMorgan Chase and Wells Fargo Q2 earnings releases scheduled July 14"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "Broad risk-off equity selloff or sharp rotation back into growth/tech",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value tilt provides relative stability and indirect exposure to financials/energy-sensitive names amid rate and commodity volatility; recent active returns positive.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.2,
+  "portfolio_rationale": "Portfolio concentrates on energy and oil to capture the primary identifiable near-term catalyst from Hormuz/blockade developments while adding financials for the bank earnings event and large-value for relative resilience and diversification. This structure targets positive absolute return and alpha versus an expected flat-to-negative SPY amid mixed data and geopolitical uncertainty.",
+  "provider": "xai",
+  "rationale_summary": "Overweight energy complex for Middle East shipping risks starting July 14, financials for scheduled earnings, and large value for defensive relative strength; avoids high-vol tech/semis given recent weakness and lack of positive catalysts.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-13-V2-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15514,
+    "latency_seconds": 38.23400000017136,
+    "output_tokens": 805,
+    "reasoning_tokens": 4088,
+    "total_tokens": 20407
+  }
+}

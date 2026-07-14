@@ -218,6 +218,7 @@ def _load_valid_submissions(
                 require_run_metadata=run_type in {"official", "stability", "retrospective"},
                 submission_format=manifest.submission_format,
                 portfolio_constraints=manifest.portfolio_constraints,
+                methodology_version=manifest.methodology_version,
             )
         )
     return submissions

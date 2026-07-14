@@ -54,6 +54,7 @@ def _invalid_submission_summary(round_path: Path, run_paths: RunPaths) -> tuple[
                 require_run_metadata=run_type in {"official", "stability", "retrospective"},
                 submission_format=submission_format,
                 portfolio_constraints=portfolio_constraints,
+                methodology_version=manifest.methodology_version,
             )
         except Exception:
             invalid_files.append(raw_file.name)

@@ -1679,6 +1679,8 @@ def _build_snapshot(*, rounds_dir: Path, repo_root: Path, generated_at: str, run
 
 def _round_snapshot(round_path: Path, asset_risk: dict[str, Any]) -> dict[str, Any] | None:
     manifest = load_manifest(round_path)
+    if manifest.publication_stream != "primary":
+        return None
     selected_run_id = _select_official_run_id(round_path)
     if selected_run_id is None:
         return None

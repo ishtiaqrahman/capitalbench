@@ -74,6 +74,7 @@ def _count_invalid_raw_submissions(round_path: Path, run_paths: RunPaths) -> tup
                 require_run_metadata=run_type in {"official", "stability", "retrospective"},
                 submission_format=submission_format,
                 portfolio_constraints=portfolio_constraints,
+                methodology_version=manifest.methodology_version,
             )
         except Exception as exc:
             errors[raw_file.name] = [str(exc)]
@@ -106,6 +107,7 @@ def _count_valid_parsed_submissions(round_path: Path, run_paths: RunPaths) -> in
                 require_run_metadata=run_type in {"official", "stability", "retrospective"},
                 submission_format=submission_format,
                 portfolio_constraints=portfolio_constraints,
+                methodology_version=manifest.methodology_version,
             )
         except Exception:
             continue

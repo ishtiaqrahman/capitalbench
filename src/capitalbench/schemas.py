@@ -27,6 +27,9 @@ class RoundManifest(StrictModel):
     exit_date: str | None = None
     created_at: str | None = None
     methodology_version: str | None = None
+    publication_stream: Literal["primary", "pilot"] = "primary"
+    paired_round_id: str | None = None
+    experiment_doc: str | None = None
     universe_version: str | None = None
     submission_format: "SubmissionFormat" = "single_pick"
     portfolio_constraints: "PortfolioConstraints" = Field(default_factory=lambda: PortfolioConstraints())
@@ -298,6 +301,9 @@ class ModelSubmission(StrictModel):
     selected_option_id: str | None = None
     portfolio: list["PortfolioAllocation"] | None = None
     confidence: float = Field(ge=0, le=1)
+    benchmark_expected_return_pct: float | None = None
+    portfolio_expected_return_pct: float | None = None
+    expected_alpha_vs_sp500_pct: float | None = None
     rationale_summary: str
     portfolio_rationale: str | None = None
     key_risks: list[str]
@@ -344,6 +350,9 @@ class PortfolioAllocation(StrictModel):
     option_id: str
     allocation_pct: int = Field(ge=1, le=100)
     rationale: str
+    expected_return_pct: float | None = None
+    time_window_catalyst: str | None = None
+    invalidation_condition: str | None = None
 
     @field_validator("option_id", "rationale")
     @classmethod
@@ -352,6 +361,14 @@ class PortfolioAllocation(StrictModel):
         if not value:
             raise ValueError("field cannot be blank")
         return value
+
+    @field_validator("time_window_catalyst", "invalidation_condition")
+    @classmethod
+    def normalize_optional_holding_text(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip()
+        return normalized or None
 
 
 class PriceRecord(StrictModel):

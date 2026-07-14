@@ -151,6 +151,7 @@ def _load_parsed_submissions(
     replicate_count: int,
     submission_format,
     portfolio_constraints,
+    methodology_version: str | None,
 ) -> list[ModelSubmission]:
     submissions: list[ModelSubmission] = []
     for parsed_file in iter_submission_files(run_paths.parsed_dir):
@@ -166,6 +167,7 @@ def _load_parsed_submissions(
                     require_run_metadata=run_type in {"official", "stability", "retrospective"},
                     submission_format=submission_format,
                     portfolio_constraints=portfolio_constraints,
+                    methodology_version=methodology_version,
                 )
             )
         except Exception:
@@ -590,6 +592,7 @@ def score_round(round_path: Path, run_id: str | None = None) -> list[ScoreRecord
         replicate_count,
         submission_format,
         portfolio_constraints,
+        manifest.methodology_version,
     )
     entry_prices = read_price_records(round_path / "prices" / "entry_prices.csv")
     exit_prices = read_price_records(round_path / "prices" / "exit_prices.csv")

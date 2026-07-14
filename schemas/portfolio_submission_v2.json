@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://capitalbench.org/schemas/portfolio_submission_v2.json",
+  "title": "CapitalBench Portfolio V2 Submission",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "round_id": { "type": "string", "minLength": 1 },
+    "model_id": { "type": "string", "minLength": 1 },
+    "provider": { "enum": ["openai", "anthropic", "google", "xai"] },
+    "mode": { "const": "closed_capability" },
+    "portfolio": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "option_id": { "type": "string", "minLength": 1 },
+          "allocation_pct": { "type": "integer", "minimum": 5, "maximum": 100, "multipleOf": 5 },
+          "expected_return_pct": { "type": "number" },
+          "time_window_catalyst": { "type": "string", "minLength": 1 },
+          "invalidation_condition": { "type": "string", "minLength": 1 },
+          "rationale": { "type": "string", "minLength": 1 }
+        },
+        "required": [
+          "option_id",
+          "allocation_pct",
+          "expected_return_pct",
+          "time_window_catalyst",
+          "invalidation_condition",
+          "rationale"
+        ]
+      }
+    },
+    "benchmark_expected_return_pct": { "type": "number" },
+    "portfolio_expected_return_pct": { "type": "number" },
+    "expected_alpha_vs_sp500_pct": { "type": "number" },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "portfolio_rationale": { "type": "string", "minLength": 1 },
+    "rationale_summary": { "type": "string", "minLength": 1 },
+    "key_risks": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+  },
+  "required": [
+    "round_id",
+    "model_id",
+    "provider",
+    "mode",
+    "portfolio",
+    "benchmark_expected_return_pct",
+    "portfolio_expected_return_pct",
+    "expected_alpha_vs_sp500_pct",
+    "confidence",
+    "portfolio_rationale",
+    "rationale_summary",
+    "key_risks"
+  ]
+}

@@ -83,6 +83,9 @@ def smoke_provider(
             "replicate_index": None,
             "replicate_count": None,
             "is_official_score": False,
+            "submission_format": manifest.submission_format,
+            "portfolio_constraints": manifest.portfolio_constraints.model_dump(mode="json"),
+            "methodology_version": manifest.methodology_version,
         },
     )
     runtime_limits = RuntimeSettings(
@@ -157,7 +160,15 @@ def smoke_provider(
     try:
         if parsed_json is None:
             raise ValueError("provider response did not contain a JSON object")
-        validate_submission_payload(parsed_json, options, manifest.round_id, run_type="provider_smoke")
+        validate_submission_payload(
+            parsed_json,
+            options,
+            manifest.round_id,
+            run_type="provider_smoke",
+            submission_format=manifest.submission_format,
+            portfolio_constraints=manifest.portfolio_constraints,
+            methodology_version=manifest.methodology_version,
+        )
     except Exception as exc:
         validation_error = validation_error or str(exc)
     else:

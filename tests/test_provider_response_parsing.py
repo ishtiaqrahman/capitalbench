@@ -77,6 +77,26 @@ def test_provider_submission_schema_supports_portfolio_format() -> None:
     assert portfolio_schema["items"]["properties"]["allocation_pct"]["multipleOf"] == 5
 
 
+def test_provider_submission_schema_requires_v2_forecasts() -> None:
+    config = _portfolio_model_config().model_copy(
+        update={
+            "metadata": {
+                **_portfolio_model_config().metadata,
+                "methodology_version": "portfolio-v2.0-pilot",
+            }
+        }
+    )
+
+    schema = provider_submission_schema(config)
+
+    assert "benchmark_expected_return_pct" in schema["required"]
+    assert "portfolio_expected_return_pct" in schema["required"]
+    holding_required = schema["properties"]["portfolio"]["items"]["required"]
+    assert "expected_return_pct" in holding_required
+    assert "time_window_catalyst" in holding_required
+    assert "invalidation_condition" in holding_required
+
+
 def test_mock_provider_respects_portfolio_allocation_constraints() -> None:
     config = _portfolio_model_config().model_copy(
         update={

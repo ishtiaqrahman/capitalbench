@@ -91,7 +91,7 @@ function uniqueStrings(values) {
   return Array.from(new Set(values.filter(Boolean)));
 }
 
-const ROUND_ID_PATTERN = /\bCB-\d{4}-\d{2}-\d{2}-(?:1W|1M)\b/g;
+const ROUND_ID_PATTERN = /\bCB-\d{4}-\d{2}-\d{2}(?:-V\d+)?-(?:1W|1M)\b/g;
 
 export function roundReferenceTokens(value) {
   const text = String(value ?? "");
@@ -181,7 +181,7 @@ function dateValue(value) {
 }
 
 function roundIdDateValue(roundId) {
-  const match = /\bCB-(\d{4})-(\d{2})-(\d{2})-(?:1W|1M)\b/.exec(String(roundId ?? ""));
+  const match = /\bCB-(\d{4})-(\d{2})-(\d{2})(?:-V\d+)?-(?:1W|1M)\b/.exec(String(roundId ?? ""));
   return match ? dateValue(`${match[1]}-${match[2]}-${match[3]}`) : null;
 }
 

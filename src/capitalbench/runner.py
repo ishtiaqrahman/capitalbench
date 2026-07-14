@@ -109,6 +109,7 @@ def run_round(
                     is_official_score=selected_run_type == "official",
                     submission_format=submission_format,
                     portfolio_constraints=portfolio_constraints.model_dump(mode="json"),
+                    methodology_version=manifest.methodology_version,
                 )
                 started_at = _utc_now()
                 result = _run_one_model(
@@ -152,6 +153,7 @@ def run_round(
                         require_run_metadata=selected_run_type in {"official", "stability", "retrospective"},
                         submission_format=submission_format,
                         portfolio_constraints=portfolio_constraints,
+                        methodology_version=manifest.methodology_version,
                     )
                 except Exception as exc:
                     invalid_count += 1
@@ -321,6 +323,7 @@ def _with_round_metadata(
     is_official_score: bool,
     submission_format: str,
     portfolio_constraints: dict[str, Any],
+    methodology_version: str | None,
 ) -> ModelConfig:
     metadata = {
         **model_config.metadata,
@@ -332,6 +335,7 @@ def _with_round_metadata(
         "is_official_score": is_official_score,
         "submission_format": submission_format,
         "portfolio_constraints": portfolio_constraints,
+        "methodology_version": methodology_version,
     }
     return model_config.model_copy(update={"metadata": metadata})
 

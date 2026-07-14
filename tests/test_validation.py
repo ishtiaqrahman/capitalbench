@@ -1,10 +1,11 @@
 import json
 from pathlib import Path
 
+import pytest
 import yaml
 
 from capitalbench.schemas import MarketOption
-from capitalbench.validation import validate_submissions
+from capitalbench.validation import validate_submission_payload, validate_submissions
 
 
 def _write_round_base(round_path: Path) -> None:
@@ -236,3 +237,53 @@ def test_single_pick_round_rejects_portfolio_payload(tmp_path: Path) -> None:
 
     assert summary.invalid_count == 1
     assert "single_pick rounds require selected_option_id" in summary.errors["portfolio.json"][0]
+
+
+def test_portfolio_v2_requires_forecasts_and_validates_arithmetic(tmp_path: Path) -> None:
+    round_path = tmp_path / "round"
+    _write_round_base(round_path)
+    manifest_path = round_path / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest.update({"submission_format": "portfolio", "methodology_version": "portfolio-v2.0-pilot"})
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    payload = _valid_portfolio_payload()
+    payload.update(
+        {
+            "benchmark_expected_return_pct": 0.3,
+            "portfolio_expected_return_pct": 0.7,
+            "expected_alpha_vs_sp500_pct": 0.4,
+        }
+    )
+    payload["portfolio"] = [
+        {
+            "option_id": "sp500",
+            "allocation_pct": 60,
+            "expected_return_pct": 0.5,
+            "time_window_catalyst": "Scheduled release.",
+            "invalidation_condition": "Release misses expectations.",
+            "rationale": "Benchmark exposure.",
+        },
+        {
+            "option_id": "cash",
+            "allocation_pct": 40,
+            "expected_return_pct": 1.0,
+            "time_window_catalyst": "none identified",
+            "invalidation_condition": "Risk assets rally.",
+            "rationale": "Defensive exposure.",
+        },
+    ]
+    raw_path = round_path / "submissions" / "raw" / "v2.json"
+    raw_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    summary = validate_submissions(round_path, _options())
+
+    assert summary.valid_count == 1
+    payload["expected_alpha_vs_sp500_pct"] = 2.0
+    with pytest.raises(ValueError, match="expected_alpha_vs_sp500_pct"):
+        validate_submission_payload(
+            payload,
+            _options(),
+            "round-a",
+            submission_format="portfolio",
+            methodology_version="portfolio-v2.0-pilot",
+        )

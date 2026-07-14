@@ -1,5 +1,22 @@
 # CapitalBench Agent Notes
 
+## Active Methodology Experiment
+
+An active, weekly-only Portfolio V2 experiment is paired with the July 13,
+2026 V1 weekly round and must be resolved after the July 20, 2026 close.
+Before running, accepting, resolving, publishing, or changing methodology for
+either round, read:
+
+- `docs/experiments/portfolio-v2-2026-07-13.md`
+- `experiments/portfolio-v2-2026-07-13.yaml`
+
+The experiment document freezes the four participating models, input cutoff,
+paired comparison, July 20 decision rule, and resolution checklist. Do not add
+the pilot to primary latest, cumulative, market-environment, or insight data.
+Do not change its decision rule after observing outcomes. When it is resolved,
+record the accepted/rejected decision and evidence in that document; preserve
+both V1 and V2 round artifacts without retroactive edits.
+
 CapitalBench prompt and model-input changes affect benchmark fairness. Before
 editing round prompts, research import rules, market-data appendices, or model
 input assembly, read:

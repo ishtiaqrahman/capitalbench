@@ -1594,7 +1594,7 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
 function loadRound(row) {
   const roundPath = join(roundsRoot, row.name);
   const manifest = readYaml(join(roundPath, "manifest.yaml"), {});
-  if (!manifest.round_id) return null;
+  if (!manifest.round_id || manifest.publication_stream === "pilot") return null;
   const selectedRun = publicOfficialRuns(roundPath)[0];
   const resultsPath = selectedRun ? join(roundPath, "runs", selectedRun.run_id, "results", "leaderboard.csv") : "";
   const entryDate = String(manifest.entry_date ?? "");

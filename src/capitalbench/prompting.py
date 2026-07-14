@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from .decision_context import DECISION_CONTEXT_MD, DECISION_CONTEXT_TITLE
 from .io import load_manifest, load_options, read_yaml
 from .performance import MARKET_DATA_DIRNAME, UNIVERSE_PRICE_CONTEXT_TITLE, UNIVERSE_TRAILING_RETURNS_MD
 from .portfolio import constraints_from_manifest, submission_format_from_manifest
@@ -21,6 +22,7 @@ DISALLOWED_MODEL_INPUT_SNIPPETS = (
 UNIVERSE_CONTEXT_TITLE_ALIASES = (
     UNIVERSE_PRICE_CONTEXT_TITLE,
     "Full-Universe Trailing Returns",
+    DECISION_CONTEXT_TITLE,
 )
 
 
@@ -39,7 +41,13 @@ def build_prompt(round_path: Path) -> str:
     manifest = load_manifest(round_path)
     briefing = (round_path / "briefing.md").read_text(encoding="utf-8").strip()
     metadata = render_round_metadata(round_path, manifest)
-    universe_performance = None if _briefing_contains_universe_performance(briefing) else _universe_performance_section(round_path)
+    context_title, universe_performance = _market_context_section(round_path, manifest)
+    if str(manifest.methodology_version or "").startswith("portfolio-v2") and not universe_performance:
+        raise FileNotFoundError(
+            f"portfolio-v2 round requires market_data/{DECISION_CONTEXT_MD}"
+        )
+    if _briefing_contains_universe_performance(briefing):
+        universe_performance = None
     options = render_options_for_prompt(load_options(round_path))
     parts = [
         f"{prompt}\n\n"
@@ -47,7 +55,7 @@ def build_prompt(round_path: Path) -> str:
         f"## Briefing\n\n{briefing}"
     ]
     if universe_performance:
-        parts.append(f"## {UNIVERSE_PRICE_CONTEXT_TITLE}\n\n{universe_performance}")
+        parts.append(f"## {context_title}\n\n{universe_performance}")
     parts.append(f"## Options\n\n{options}\n")
     model_input = "\n\n".join(parts)
     validate_model_input_guardrails(model_input)
@@ -65,6 +73,7 @@ def render_round_metadata(round_path: Path, manifest) -> str:
         f"Horizon: {manifest.horizon}",
         f"Entry date: {manifest.entry_date or 'TBD'}",
         f"Exit date: {manifest.exit_date or 'TBD'}",
+        f"Methodology version: {manifest.methodology_version or 'TBD'}",
         (
             f"Scoring window: {manifest.entry_date or 'entry date'} to {manifest.exit_date or 'exit date'}; "
             f"optimize for this {manifest.horizon} window only."
@@ -103,6 +112,15 @@ def render_round_metadata(round_path: Path, manifest) -> str:
                 f"Portfolio total allocation: {constraints.max_total_allocation_pct}%",
             ]
         )
+    if str(manifest.methodology_version or "").startswith("portfolio-v2"):
+        lines.extend(
+            [
+                "Decision protocol: single-turn, non-agentic, with no tools or follow-up calls.",
+                "Forecast sequence: estimate SPY, estimate the selected holdings, then construct the portfolio.",
+                "Confidence meaning: probability from 0 to 1 that the submitted portfolio beats SPY over this scoring window.",
+                "Expected-return units: percentage points; 1.25 means an expected return of +1.25%.",
+            ]
+        )
     return "\n".join(f"- {line}" for line in lines)
 
 
@@ -130,6 +148,23 @@ def _universe_performance_section(round_path: Path) -> str | None:
         if text.startswith(heading):
             text = text.removeprefix(heading).strip()
             break
+    return text or None
+
+
+def _market_context_section(round_path: Path, manifest) -> tuple[str, str | None]:
+    if str(manifest.methodology_version or "").startswith("portfolio-v2"):
+        path = round_path / MARKET_DATA_DIRNAME / DECISION_CONTEXT_MD
+        return DECISION_CONTEXT_TITLE, _strip_context_heading(path, DECISION_CONTEXT_TITLE)
+    return UNIVERSE_PRICE_CONTEXT_TITLE, _universe_performance_section(round_path)
+
+
+def _strip_context_heading(path: Path, title: str) -> str | None:
+    if not path.exists():
+        return None
+    text = path.read_text(encoding="utf-8").strip()
+    heading = f"# {title}"
+    if text.startswith(heading):
+        text = text.removeprefix(heading).strip()
     return text or None
 
 

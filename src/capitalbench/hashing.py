@@ -11,6 +11,10 @@ OPTIONAL_HASHED_ROUND_FILES = [
     "market_data/universe_trailing_returns.csv",
     "market_data/universe_trailing_returns.md",
     "market_data/universe_trailing_returns.json",
+    "market_data/universe_decision_context.csv",
+    "market_data/universe_decision_context.md",
+    "market_data/universe_decision_context.json",
+    "market_data/decision_context_source_history.json",
 ]
 
 

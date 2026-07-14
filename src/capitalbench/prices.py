@@ -52,6 +52,7 @@ def selected_price_options(round_path: Path, run_id: str | None = None) -> list:
             require_run_metadata=run_type in {"official", "stability", "retrospective"},
             submission_format=submission_format,
             portfolio_constraints=portfolio_constraints,
+            methodology_version=manifest.methodology_version,
         )
         selected_ids.update(submission_selected_option_ids(submission))
 

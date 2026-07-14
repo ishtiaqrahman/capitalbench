@@ -59,6 +59,7 @@ def validate_submission_payload(
     require_run_metadata: bool = False,
     submission_format: SubmissionFormat = "single_pick",
     portfolio_constraints: PortfolioConstraints | None = None,
+    methodology_version: str | None = None,
 ) -> ModelSubmission:
     if not isinstance(payload, dict):
         raise ValueError("submission must be a JSON/YAML object")
@@ -78,6 +79,7 @@ def validate_submission_payload(
 
     _validate_submission_format(submission, submission_format)
     _validate_selected_options(submission, options, portfolio_constraints or PortfolioConstraints())
+    _validate_methodology_fields(submission, methodology_version)
     if round_id is not None and submission.round_id != round_id:
         raise ValueError(
             "submission round_id does not match manifest.yaml: "
@@ -90,6 +92,53 @@ def validate_submission_payload(
         require_run_metadata=require_run_metadata,
     )
     return submission
+
+
+def _validate_methodology_fields(submission: ModelSubmission, methodology_version: str | None) -> None:
+    if not str(methodology_version or "").startswith("portfolio-v2"):
+        return
+    required_forecasts = {
+        "benchmark_expected_return_pct": submission.benchmark_expected_return_pct,
+        "portfolio_expected_return_pct": submission.portfolio_expected_return_pct,
+        "expected_alpha_vs_sp500_pct": submission.expected_alpha_vs_sp500_pct,
+    }
+    missing = [name for name, value in required_forecasts.items() if value is None]
+    if missing:
+        raise ValueError(f"portfolio-v2 submissions require {', '.join(missing)}")
+    if submission.portfolio is None:
+        raise ValueError("portfolio-v2 submissions require portfolio allocations")
+    for allocation in submission.portfolio:
+        holding_missing = [
+            name
+            for name, value in {
+                "expected_return_pct": allocation.expected_return_pct,
+                "time_window_catalyst": allocation.time_window_catalyst,
+                "invalidation_condition": allocation.invalidation_condition,
+            }.items()
+            if value is None
+        ]
+        if holding_missing:
+            raise ValueError(
+                f"portfolio-v2 holding {allocation.option_id} requires {', '.join(holding_missing)}"
+            )
+
+    expected_alpha = float(submission.portfolio_expected_return_pct) - float(
+        submission.benchmark_expected_return_pct
+    )
+    if abs(expected_alpha - float(submission.expected_alpha_vs_sp500_pct)) > 0.10:
+        raise ValueError(
+            "portfolio-v2 expected_alpha_vs_sp500_pct must equal portfolio_expected_return_pct "
+            "minus benchmark_expected_return_pct within 0.10 percentage point"
+        )
+    weighted_return = sum(
+        float(allocation.expected_return_pct) * allocation.allocation_pct / 100.0
+        for allocation in submission.portfolio
+    )
+    if abs(weighted_return - float(submission.portfolio_expected_return_pct)) > 0.20:
+        raise ValueError(
+            "portfolio-v2 weighted holding expected returns must equal portfolio_expected_return_pct "
+            "within 0.20 percentage point"
+        )
 
 
 def _validate_submission_format(submission: ModelSubmission, submission_format: SubmissionFormat) -> None:
@@ -260,6 +309,7 @@ def validate_submissions(
                 require_run_metadata=require_run_metadata,
                 submission_format=submission_format,
                 portfolio_constraints=portfolio_constraints,
+                methodology_version=manifest.methodology_version,
             )
         except Exception as exc:
             errors[raw_file.name] = [str(exc)]

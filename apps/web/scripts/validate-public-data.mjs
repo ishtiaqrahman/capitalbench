@@ -697,6 +697,16 @@ for (const round of apiReadModel.rounds) {
   }
 }
 
+const generatedRoundIds = new Set(apiReadModel.rounds.map((round) => round.round_id));
+const roundsRoot = join(repoRoot, "rounds");
+for (const entry of readdirSync(roundsRoot, { withFileTypes: true })) {
+  if (!entry.isDirectory()) continue;
+  const manifest = readYaml(join(roundsRoot, entry.name, "manifest.yaml"), {}) ?? {};
+  if (manifest.publication_stream === "pilot" && generatedRoundIds.has(String(manifest.round_id ?? entry.name))) {
+    failures.push(`${entry.name} pilot round must not appear in the public API read model`);
+  }
+}
+
 for (const portfolio of apiReadModel.portfolios) {
   const context = portfolioKey(portfolio);
   const round = roundById.get(portfolio.round_id);

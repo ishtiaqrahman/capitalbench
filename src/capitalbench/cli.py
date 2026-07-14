@@ -15,6 +15,8 @@ from .automation import (
     retry_local_job,
 )
 from .cumulative import cumulative_status, publish_cumulative, publish_latest
+from .decision_context import fetch_universe_decision_context
+from .experiments import evaluate_experiment
 from .hashing import write_round_hashes
 from .insights import build_insights_input, generate_insights, validate_insights
 from .interim import DEFAULT_SNAPSHOTS_DIR, update_interim_performance
@@ -106,6 +108,28 @@ def _cmd_validate_submissions(args: argparse.Namespace) -> int:
     print(f"valid submissions: {summary.valid_count}")
     print(f"invalid submissions: {summary.invalid_count}")
     return 0 if summary.invalid_count == 0 else 1
+
+
+def _cmd_fetch_decision_context(args: argparse.Namespace) -> int:
+    output = fetch_universe_decision_context(
+        round_path=args.round,
+        as_of_date=args.as_of_date,
+        overwrite=args.overwrite_decision_context,
+    )
+    print(f"decision-context profile: {output.profile}")
+    print(f"options: {output.total_options}")
+    print(f"failed options: {len(output.failed_options)}")
+    print(f"wrote decision-context markdown: {output.markdown_path}")
+    print(f"wrote decision-context source history: {output.history_path}")
+    return 0 if not output.failed_options else 1
+
+
+def _cmd_evaluate_experiment(args: argparse.Namespace) -> int:
+    output = evaluate_experiment(config_path=args.config, rounds_dir=args.rounds_dir)
+    print(f"experiment decision: {output.decision}")
+    print(f"wrote experiment JSON: {output.json_path}")
+    print(f"wrote experiment report: {output.markdown_path}")
+    return 0
 
 
 def _cmd_validate_universe(args: argparse.Namespace) -> int:
@@ -599,6 +623,23 @@ def build_parser() -> argparse.ArgumentParser:
     fetch_performance_parser.add_argument("--as-of-date", required=True)
     fetch_performance_parser.add_argument("--overwrite-performance", action="store_true")
     fetch_performance_parser.set_defaults(func=_cmd_fetch_universe_performance)
+
+    fetch_decision_context_parser = subparsers.add_parser(
+        "fetch-universe-decision-context",
+        help="fetch horizon-specific price, volume, risk, and benchmark context for portfolio-v2 rounds",
+    )
+    fetch_decision_context_parser.add_argument("--round", type=Path, required=True)
+    fetch_decision_context_parser.add_argument("--as-of-date", required=True)
+    fetch_decision_context_parser.add_argument("--overwrite-decision-context", action="store_true")
+    fetch_decision_context_parser.set_defaults(func=_cmd_fetch_decision_context)
+
+    evaluate_experiment_parser = subparsers.add_parser(
+        "evaluate-experiment",
+        help="evaluate a resolved paired V1/V2 portfolio experiment against its frozen gates",
+    )
+    evaluate_experiment_parser.add_argument("--config", type=Path, required=True)
+    evaluate_experiment_parser.add_argument("--rounds-dir", type=Path, default=Path("rounds"))
+    evaluate_experiment_parser.set_defaults(func=_cmd_evaluate_experiment)
 
     score_parser = subparsers.add_parser("score-round", help="score parsed submissions")
     score_parser.add_argument("--round", type=Path, required=True)

@@ -62,18 +62,45 @@ class MockProvider:
                 allocations[cursor % len(allocations)] += step
                 remainder -= step
                 cursor += 1
+            v2 = str(model_config.metadata.get("methodology_version") or "").startswith("portfolio-v2")
+            holding_expected_returns = [round(0.4 + position * 0.1, 2) for position in range(len(selected))]
+            portfolio = []
+            for position, option_id in enumerate(selected):
+                holding = {
+                    "option_id": option_id,
+                    "allocation_pct": allocations[position],
+                    "rationale": f"Mock portfolio allocation to {option_id}.",
+                }
+                if v2:
+                    holding.update(
+                        {
+                            "expected_return_pct": holding_expected_returns[position],
+                            "time_window_catalyst": "none identified",
+                            "invalidation_condition": "Mock validation condition.",
+                        }
+                    )
+                portfolio.append(holding)
             payload = {
                 **base_payload,
-                "portfolio": [
-                    {
-                        "option_id": option_id,
-                        "allocation_pct": allocations[position],
-                        "rationale": f"Mock portfolio allocation to {option_id}.",
-                    }
-                    for position, option_id in enumerate(selected)
-                ],
+                "portfolio": portfolio,
                 "portfolio_rationale": "Mock dry-run portfolio built deterministically.",
             }
+            if v2:
+                portfolio_expected_return = sum(
+                    holding_expected_returns[position] * allocations[position] / 100.0
+                    for position in range(len(selected))
+                )
+                benchmark_expected_return = 0.25
+                payload.update(
+                    {
+                        "benchmark_expected_return_pct": benchmark_expected_return,
+                        "portfolio_expected_return_pct": round(portfolio_expected_return, 4),
+                        "expected_alpha_vs_sp500_pct": round(
+                            portfolio_expected_return - benchmark_expected_return,
+                            4,
+                        ),
+                    }
+                )
         else:
             payload = {
                 **base_payload,

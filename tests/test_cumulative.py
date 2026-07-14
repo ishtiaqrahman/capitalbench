@@ -255,6 +255,53 @@ def test_publish_cumulative_creates_outputs_and_calculates_official_metrics(tmp_
     }
 
 
+def test_pilot_round_is_excluded_from_primary_latest_and_cumulative(tmp_path: Path) -> None:
+    rounds_dir = tmp_path / "rounds"
+    primary = _create_round(
+        rounds_dir,
+        "round-primary",
+        model_alpha=0.01,
+        model_return=0.02,
+        sp500_return=0.01,
+        beats_sp500=True,
+        beats_cash=True,
+        stability_alpha=0.01,
+        stability_return=0.02,
+        consistency=1.0,
+        modal_alpha=0.01,
+        modal_return=0.02,
+        best_replicate=0.02,
+        worst_replicate=0.02,
+    )
+    pilot = _create_round(
+        rounds_dir,
+        "round-pilot",
+        model_alpha=0.50,
+        model_return=0.60,
+        sp500_return=0.01,
+        beats_sp500=True,
+        beats_cash=True,
+        stability_alpha=0.50,
+        stability_return=0.60,
+        consistency=1.0,
+        modal_alpha=0.50,
+        modal_return=0.60,
+        best_replicate=0.60,
+        worst_replicate=0.60,
+    )
+    manifest_path = pilot / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["publication_stream"] = "pilot"
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+
+    cumulative = publish_cumulative(rounds_dir, tmp_path / "cumulative")
+    latest = publish_latest(rounds_dir, tmp_path / "latest")
+
+    assert primary.exists()
+    assert {row["round_id"] for row in _read_csv(cumulative.round_index_path)} == {"round-primary"}
+    assert {row["round_id"] for row in _read_csv(latest.latest_leaderboard_path)} == {"round-primary"}
+
+
 def test_publish_cumulative_calculates_stability_metrics(tmp_path: Path) -> None:
     rounds_dir = tmp_path / "rounds"
     _create_round(

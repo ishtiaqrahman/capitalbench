@@ -10,6 +10,7 @@ from capitalbench.cli import main
 from capitalbench.hashing import write_round_hashes
 from capitalbench.scoring import score_round
 from capitalbench.web_sync import (
+    PILOT_SYNC_SKIP_MESSAGE,
     SUPABASE_SKIP_MESSAGE,
     _display_model_name,
     sync_cumulative_leaderboards,
@@ -157,6 +158,25 @@ def test_sync_round_publishes_pending_round_without_leaderboard(tmp_path: Path) 
     assert any(row["option_id"] == "SEMICONDUCTORS" and row["entry_price"] for row in sink.upserts["options"])
     assert any(row["path"] == "hashes.json" for row in sink.upserts["audit_artifacts"])
     assert sink.inserts["sync_events"][0]["status"] == "success"
+
+
+def test_sync_round_skips_pilot_publication_stream(tmp_path: Path) -> None:
+    round_path = tmp_path / "CB-2026-05-10-1M"
+    copytree(ROUND_1, round_path)
+    manifest_path = round_path / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["publication_stream"] = "pilot"
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    sink = FakeSink()
+
+    summary = sync_round(round_path, run_id="official-round-1-clean", sink=sink)
+
+    assert summary.status == "skipped"
+    assert summary.message == PILOT_SYNC_SKIP_MESSAGE
+    assert not sink.upserts
+    assert not sink.inserts
+    assert not sink.deletes
+    assert not sink.uploads
 
 
 def test_sync_round_publishes_resolved_single_pick_result_fields(tmp_path: Path) -> None:

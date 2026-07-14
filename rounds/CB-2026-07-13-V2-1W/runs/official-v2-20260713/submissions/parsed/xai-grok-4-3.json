@@ -1,0 +1,47 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 4.48,
+  "is_official_score": true,
+  "key_risks": [
+    "Sudden diplomatic resolution lowers oil prices",
+    "Hotter-than-expected July 14 CPI triggers broad risk-off",
+    "Bank earnings disappoint and pressure financials-linked sentiment"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 60,
+      "expected_return_pct": 4.8,
+      "invalidation_condition": "Rapid de-escalation or blockade reversal announced",
+      "option_id": "ENERGY",
+      "rationale": "Geopolitical blockade resumption July 14 sustains elevated oil prices after 9.6% Brent surge.",
+      "time_window_catalyst": "US-Iran Hormuz blockade starts July 14"
+    },
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 5.5,
+      "invalidation_condition": "Rapid de-escalation or blockade reversal announced",
+      "option_id": "OIL",
+      "rationale": "Direct crude exposure benefits from same supply-risk catalyst and 12.88% recent 5-day move.",
+      "time_window_catalyst": "US-Iran Hormuz blockade starts July 14"
+    }
+  ],
+  "portfolio_expected_return_pct": 5.08,
+  "portfolio_rationale": "Concentrated energy exposure captures the only clear intra-week catalyst from unresolved Hormuz blockade amid weak jobs data and rising yields.",
+  "provider": "xai",
+  "rationale_summary": "SPY forecast 0.60%; energy/oil holdings weighted to 5.08% portfolio return via sustained oil-price support.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-13-V2-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 14836,
+    "latency_seconds": 17.656000000191852,
+    "output_tokens": 411,
+    "reasoning_tokens": 726,
+    "total_tokens": 15973
+  }
+}

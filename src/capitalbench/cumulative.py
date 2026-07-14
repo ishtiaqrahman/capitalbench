@@ -146,6 +146,8 @@ def select_runs_for_round(
     selection: dict[str, dict[str, str]] | None = None,
 ) -> CumulativeRoundSelection | None:
     manifest = load_manifest(round_path)
+    if manifest.publication_stream != "primary":
+        return None
     round_id = manifest.round_id
     horizon_days = _horizon_days(manifest.entry_date, manifest.exit_date)
     explicit = selection.get(round_id) if selection else None
@@ -231,7 +233,11 @@ def cumulative_status(
     _validate_track(track)
     selection = load_selection(selection_path)
     round_paths = discover_rounds(rounds_dir)
-    round_paths_by_id = {load_manifest(path).round_id: path for path in round_paths}
+    round_paths_by_id = {
+        manifest.round_id: path
+        for path in round_paths
+        if (manifest := load_manifest(path)).publication_stream == "primary"
+    }
     selections: list[CumulativeRoundSelection] = []
     skipped_rounds: dict[str, list[str]] = {}
     warnings: list[str] = []
@@ -446,7 +452,11 @@ def latest_status(
     _validate_track(track)
     selection = load_selection(selection_path)
     round_paths = discover_rounds(rounds_dir)
-    round_paths_by_id = {load_manifest(path).round_id: path for path in round_paths}
+    round_paths_by_id = {
+        manifest.round_id: path
+        for path in round_paths
+        if (manifest := load_manifest(path)).publication_stream == "primary"
+    }
     selections: list[CumulativeRoundSelection] = []
     skipped_rounds: dict[str, list[str]] = {}
     warnings: list[str] = []
@@ -461,6 +471,8 @@ def latest_status(
         paths_to_scan = round_paths
 
     for round_path in paths_to_scan:
+        if load_manifest(round_path).publication_stream != "primary":
+            continue
         selected = _select_latest_run_for_round(round_path, selection)
         if not _selection_matches_track(selected, track):
             continue

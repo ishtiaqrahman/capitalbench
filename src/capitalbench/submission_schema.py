@@ -14,50 +14,82 @@ def provider_submission_schema(model_config: ModelConfig) -> dict[str, object]:
         max_holdings = int(constraints.get("max_holdings") or 5)
         increment = int(constraints.get("allocation_increment_pct") or 5)
         minimum = int(constraints.get("min_allocation_pct") or 5)
+        methodology_version = str(model_config.metadata.get("methodology_version") or "")
+        v2 = methodology_version.startswith("portfolio-v2")
+        holding_properties: dict[str, object] = {
+            "option_id": {"type": "string", "enum": option_ids},
+            "allocation_pct": {
+                "type": "integer",
+                "minimum": minimum,
+                "maximum": 100,
+                "multipleOf": increment,
+            },
+            "rationale": {"type": "string"},
+        }
+        holding_required = ["option_id", "allocation_pct", "rationale"]
+        if v2:
+            holding_properties.update(
+                {
+                    "expected_return_pct": {"type": "number"},
+                    "time_window_catalyst": {"type": "string"},
+                    "invalidation_condition": {"type": "string"},
+                }
+            )
+            holding_required.extend(
+                ["expected_return_pct", "time_window_catalyst", "invalidation_condition"]
+            )
+        properties: dict[str, object] = {
+            "round_id": {"type": "string", "enum": [str(model_config.metadata["round_id"])]},
+            "model_id": {"type": "string", "enum": [model_config.model_id]},
+            "provider": {"type": "string", "enum": [model_config.provider]},
+            "mode": {"type": "string", "enum": [model_config.mode]},
+            "portfolio": {
+                "type": "array",
+                "minItems": min_holdings,
+                "maxItems": max_holdings,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": holding_properties,
+                    "required": holding_required,
+                },
+            },
+            "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "portfolio_rationale": {"type": "string"},
+            "rationale_summary": {"type": "string"},
+            "key_risks": {"type": "array", "items": {"type": "string"}},
+        }
+        required = [
+            "round_id",
+            "model_id",
+            "provider",
+            "mode",
+            "portfolio",
+            "confidence",
+            "portfolio_rationale",
+            "rationale_summary",
+            "key_risks",
+        ]
+        if v2:
+            properties.update(
+                {
+                    "benchmark_expected_return_pct": {"type": "number"},
+                    "portfolio_expected_return_pct": {"type": "number"},
+                    "expected_alpha_vs_sp500_pct": {"type": "number"},
+                }
+            )
+            required.extend(
+                [
+                    "benchmark_expected_return_pct",
+                    "portfolio_expected_return_pct",
+                    "expected_alpha_vs_sp500_pct",
+                ]
+            )
         return {
             "type": "object",
             "additionalProperties": False,
-            "properties": {
-                "round_id": {"type": "string", "enum": [str(model_config.metadata["round_id"])]},
-                "model_id": {"type": "string", "enum": [model_config.model_id]},
-                "provider": {"type": "string", "enum": [model_config.provider]},
-                "mode": {"type": "string", "enum": [model_config.mode]},
-                "portfolio": {
-                    "type": "array",
-                    "minItems": min_holdings,
-                    "maxItems": max_holdings,
-                    "items": {
-                        "type": "object",
-                        "additionalProperties": False,
-                        "properties": {
-                            "option_id": {"type": "string", "enum": option_ids},
-                            "allocation_pct": {
-                                "type": "integer",
-                                "minimum": minimum,
-                                "maximum": 100,
-                                "multipleOf": increment,
-                            },
-                            "rationale": {"type": "string"},
-                        },
-                        "required": ["option_id", "allocation_pct", "rationale"],
-                    },
-                },
-                "confidence": {"type": "number", "minimum": 0, "maximum": 1},
-                "portfolio_rationale": {"type": "string"},
-                "rationale_summary": {"type": "string"},
-                "key_risks": {"type": "array", "items": {"type": "string"}},
-            },
-            "required": [
-                "round_id",
-                "model_id",
-                "provider",
-                "mode",
-                "portfolio",
-                "confidence",
-                "portfolio_rationale",
-                "rationale_summary",
-                "key_risks",
-            ],
+            "properties": properties,
+            "required": required,
         }
     return {
         "type": "object",
@@ -114,6 +146,16 @@ def prompt_for_model(prompt: str, model_config: ModelConfig) -> str:
     submission_format = str(model_config.metadata.get("submission_format") or "single_pick")
     if submission_format == "portfolio":
         constraints = dict(model_config.metadata.get("portfolio_constraints") or {})
+        methodology_version = str(model_config.metadata.get("methodology_version") or "")
+        v2_instructions = ""
+        if methodology_version.startswith("portfolio-v2"):
+            v2_instructions = (
+                f"- methodology_version: {methodology_version}\n"
+                "- confidence is your probability from 0 to 1 that this portfolio beats SPY over the scoring window\n"
+                "- expected return fields are percentage points, so 1.25 means +1.25%\n"
+                "- expected_alpha_vs_sp500_pct must equal portfolio_expected_return_pct minus benchmark_expected_return_pct\n"
+                "- each holding requires expected_return_pct, time_window_catalyst, and invalidation_condition\n"
+            )
         return (
             f"{prompt}\n\n"
             "For this specific call, return only JSON using exactly these identifiers and constraints:\n"
@@ -127,6 +169,7 @@ def prompt_for_model(prompt: str, model_config: ModelConfig) -> str:
             f"- allocation_increment_pct: {constraints.get('allocation_increment_pct', 5)}\n"
             f"- min_allocation_pct: {constraints.get('min_allocation_pct', 5)}\n"
             f"- total_allocation_pct: {constraints.get('max_total_allocation_pct', 100)}\n"
+            f"{v2_instructions}"
         )
     return (
         f"{prompt}\n\n"

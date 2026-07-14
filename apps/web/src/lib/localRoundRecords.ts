@@ -23,6 +23,7 @@ type RoundManifestYaml = {
   entry_date?: string;
   exit_date?: string;
   methodology_version?: string;
+  publication_stream?: "primary" | "pilot";
   universe_version?: string;
   submission_format?: "single_pick" | "portfolio";
   notes?: string;
@@ -266,7 +267,7 @@ function scoreEta(roundPath: string, manifest: RoundManifestYaml): { score_eta_u
 
 function discoverRoundRecord(roundPath: string): RoundRecord | null {
   const manifest = readYamlFile<RoundManifestYaml>(join(roundPath, "manifest.yaml"));
-  if (!manifest?.round_id) return null;
+  if (!manifest?.round_id || manifest.publication_stream === "pilot") return null;
   const fallback = rounds.find((item) => item.round_id === manifest.round_id);
   const entryDate = manifest.entry_date ?? fallback?.entry_date ?? "";
   const exitDate = manifest.exit_date ?? fallback?.exit_date ?? "";

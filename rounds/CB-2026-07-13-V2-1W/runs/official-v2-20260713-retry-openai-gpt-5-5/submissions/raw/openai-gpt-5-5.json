@@ -1,0 +1,63 @@
+{
+  "benchmark_expected_return_pct": -0.35,
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 2.85,
+  "is_official_score": true,
+  "key_risks": [
+    "A rapid U.S.-Iran de-escalation or uninterrupted Hormuz transit causes oil and energy positions to reverse sharply after their large five-session gains.",
+    "June CPI is cooler than expected and risk appetite rotates back into broad growth equities, allowing SPY to outperform the commodity/value tilt.",
+    "Bank earnings or guidance disappoint on credit quality, deposits, or loan growth, hurting financials despite higher yields.",
+    "TSMC results fail to reassure investors or high-beta semiconductor selling continues because of rates and Asia geopolitical risk."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 4.0,
+      "invalidation_condition": "Confirmed safe transit through Hormuz, de-escalation, or a sharp reversal in Brent crude below pre-spike levels",
+      "option_id": "OIL",
+      "rationale": "Crude has the clearest one-week catalyst: unresolved Strait of Hormuz control, the scheduled resumption of the U.S. blockade on July 14, and a sharp Brent move that could continue if transit or legal uncertainty worsens. This is a high-volatility position, but its negative recent correlation to SPY offers crisis-event alpha potential.",
+      "time_window_catalyst": "July 14 blockade resumption and unresolved Strait of Hormuz shipping-control dispute"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Oil prices fall materially or energy equities fail to respond to higher crude due to broad equity-risk selling",
+      "option_id": "ENERGY",
+      "rationale": "Energy equities should benefit if elevated oil prices persist, while offering less direct futures-curve risk than crude itself. The sector also has low/negative recent market beta in the briefing, making it a plausible SPY diversifier during an inflation/geopolitical shock week.",
+      "time_window_catalyst": "Sustained oil-price strength from Hormuz and blockade uncertainty during the scoring week"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Bank earnings reveal weak deposits, credit losses, commercial real-estate stress, or disappointing guidance",
+      "option_id": "FINANCIALS",
+      "rationale": "Major bank earnings on July 14 provide an immediate catalyst, and higher long yields may support net-interest-income sentiment if credit quality does not deteriorate. The sector had strong prior 16-session active return but only modest latest 5-session movement, reducing reliance on a one-week chase.",
+      "time_window_catalyst": "JPMorgan Chase and Wells Fargo Q2 results on July 14, plus rate-curve and credit commentary"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "TSMC guidance disappoints, margin outlook weakens, or rates/geopolitical risk continues to pressure high-beta tech",
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Semiconductors sold off sharply in the latest five sessions despite very strong TSMC June revenue and a scheduled TSMC Q2 earnings conference inside the window. A relief bounce is plausible if TSMC confirms guidance strength and AI-chip demand remains intact.",
+      "time_window_catalyst": "TSMC Q2 earnings conference on July 16 after strong unaudited June and first-half revenue data"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.5,
+  "portfolio_rationale": "The portfolio emphasizes the week\u2019s most concrete catalysts: Hormuz/blockade oil risk, early bank earnings, and TSMC results. It balances direct commodity exposure with energy equities, financials, and a smaller high-beta semiconductor rebound position rather than simply owning SPY beta.",
+  "provider": "openai",
+  "rationale_summary": "I estimate SPY at -0.35% over the week because oil-driven inflation risk, higher yields, CPI uncertainty, and geopolitical stress offset a strong earnings-growth backdrop. The selected portfolio forecasts +2.50%, implying +2.85 percentage points of expected alpha versus SPY.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-13-V2-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 14630,
+    "latency_seconds": 20.75,
+    "output_tokens": 1215,
+    "reasoning_tokens": 367,
+    "total_tokens": 15845
+  }
+}

@@ -26,6 +26,7 @@ from .schemas import ModelSubmission
 from .validation import iter_submission_files
 
 SUPABASE_SKIP_MESSAGE = "Supabase sync skipped: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured."
+PILOT_SYNC_SKIP_MESSAGE = "Public sync skipped: round publication_stream is pilot."
 PUBLIC_ARTIFACT_BUCKET = "capitalbench-public-artifacts"
 MODEL_DISPLAY_NAMES = {
     "anthropic-claude-fable-5": "Claude Fable 5",
@@ -119,6 +120,15 @@ def optional_sync_round(
     event_type: str = "sync_round",
     sink: WebSyncSink | None = None,
 ) -> SyncSummary:
+    manifest = load_manifest(round_path)
+    if manifest.publication_stream != "primary":
+        return SyncSummary(
+            event_type=event_type,
+            round_id=manifest.round_id,
+            run_id=run_id,
+            status="skipped",
+            message=PILOT_SYNC_SKIP_MESSAGE,
+        )
     configured_sink = sink or configured_sink_from_env()
     if configured_sink is None:
         print(SUPABASE_SKIP_MESSAGE)
@@ -176,6 +186,14 @@ def sync_round(
     sink: WebSyncSink,
 ) -> SyncSummary:
     manifest = load_manifest(round_path)
+    if manifest.publication_stream != "primary":
+        return SyncSummary(
+            event_type=event_type,
+            round_id=manifest.round_id,
+            run_id=run_id,
+            status="skipped",
+            message=PILOT_SYNC_SKIP_MESSAGE,
+        )
     selected_run_ids = [resolve_run_id(round_path, run_id)] if run_id else _public_run_ids(round_path)
     if run_id and not selected_run_ids:
         raise ValueError(f"run_id is not syncable public benchmark data: {run_id}")
