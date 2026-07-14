@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-07-06-1W / official-20260706
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-07-06-1W
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-20260706
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench CB-2026-07-06-1W
+- Description: One-week market allocation evaluation round.
+- Decision date: 2026-07-06
 - Decision deadline: 2026-07-07T07:30:00Z
 - Horizon: one week
-- Official run ID: official-20260706
-- Mock: no
+- Entry date: 2026-07-06
+- Exit date: 2026-07-13
+- Entry rule: Use the official entry prices supplied in prices/entry_prices.csv.
+- Exit rule: Use the official exit prices supplied in prices/exit_prices.csv.
+- Options: 70
 
 ## Model Decisions
 
@@ -94,28 +109,92 @@
 | SOLAR | Solar Energy | 57.54 | 53.119998931884766 | -0.07681614647402213 | 69 |
 | SOUTH_KOREA | South Korea Equities | 189.85 | 168.02000427246094 | -0.11498549237576539 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| xai-grok-4-3 | portfolio | SP500 | 4 | 0.55 | -0.0028085628392127138 | -0.016412622764596697 | -0.013604059925383983 | 0.1452099647668526 |  | False | False |
-| anthropic-claude-opus-4-7 | portfolio | FINANCIALS | 5 | 0.55 | -0.0012468882289949912 | -0.016602257610396853 | -0.01379369477118414 | 0.14539959961265275 |  | False | False |
-| anthropic-claude-opus-4-8 | portfolio | FINANCIALS | 5 | 0.58 | -0.0012468882289949912 | -0.02070151606431961 | -0.017892953225106895 | 0.1494988580665755 |  | False | False |
-| anthropic-claude-fable-5 | portfolio | FINANCIALS | 5 | 0.5 | -0.0012468882289949912 | -0.025611462840208436 | -0.022802900000995722 | 0.15440880484246433 |  | False | False |
-| google-gemini-3-1-pro | portfolio | SEMICONDUCTORS | 4 | 0.65 | -0.030911806855555946 | -0.03728176941652763 | -0.03447320657731492 | 0.16607911141878354 |  | False | False |
-| openai-gpt-5-5 | portfolio | SEMICONDUCTORS | 5 | 0.58 | -0.030911806855555946 | -0.03919866441805957 | -0.036390101578846853 | 0.16799600642031548 |  | False | False |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-fable-5 | FINANCIALS | 25.0 | -0.0012468882289949912 | -0.0003117220572487478 | Strong breadth (67% up days, low drawdown) with soft payrolls raising rate-cut odds ahead of FOMC minutes; low volatility relative to alpha generated recently, supported by steady economy and upcoming bank earnings anticipation. |
+| anthropic-claude-fable-5 | BIOTECH | 20.0 | -0.034015320329017995 | -0.0068030640658036 | Broad-based rally with 78% up days, at 52-week high, low 30d drawdown; weak jobs data supports lower rates which benefits long-duration biotech financing conditions beyond just momentum. |
+| anthropic-claude-fable-5 | AEROSPACE_DEFENSE | 20.0 | -0.06272428801436392 | -0.012544857602872784 | Persistent geopolitical demand backdrop, at 52-week high with strong breadth (72% up days) and moderate volatility; defense budgets provide fundamental support independent of price trend. |
+| anthropic-claude-fable-5 | SEMICONDUCTORS | 20.0 | -0.030911806855555946 | -0.0061823613711111895 | Broadcom-Apple silicon deal, Anthropic data-center deal, TSMC strong guidance and June sales report Friday July 10 are concrete near-term catalysts; recent 7d pullback offers entry after AI-driven strength. |
+| anthropic-claude-fable-5 | LARGE_VALUE | 15.0 | 0.0015369483788525429 | 0.00023054225682788142 | Rotation into value evident (+2.8% vs SPY 30d), at 52-week high with low volatility; soft labor data favoring rate-sensitive value sectors like financials embedded in IWD. |
+| anthropic-claude-opus-4-7 | FINANCIALS | 30.0 | -0.0012468882289949912 | -0.0003740664686984973 | Strongest sector momentum with soft payrolls supporting rate-cut hopes; ISM services employment turned positive, benign backdrop for banks. |
+| anthropic-claude-opus-4-7 | INDUSTRIALS | 20.0 | -0.027969416268659786 | -0.005593883253731957 | ISM Manufacturing still expansionary, broad sector strength, high up-day share. |
+| anthropic-claude-opus-4-7 | AEROSPACE_DEFENSE | 15.0 | -0.06272428801436392 | -0.009408643202154588 | Sustained defense spending and strong recent trend with high up-day share into a quiet catalyst week. |
+| anthropic-claude-opus-4-7 | HEALTHCARE | 15.0 | -0.003395877611080733 | -0.00050938164166211 | Defensive with improving 30d relative performance; low beta cushions if mega-cap tech wobbles. |
+| anthropic-claude-opus-4-7 | EQUAL_WEIGHT_SP500 | 20.0 | -0.0035814152207485073 | -0.0007162830441497015 | AP noted most stocks declined despite index near ATH; equal-weight captures broadening participation. |
+| anthropic-claude-opus-4-8 | FINANCIALS | 30.0 | -0.0012468882289949912 | -0.0003740664686984973 | Strong recent breadth with +4.5% 7d and +7.7% 30d, at 52w high; steepening curve context and healthy banking sector momentum with supporting sector rotation. |
+| anthropic-claude-opus-4-8 | INDUSTRIALS | 25.0 | -0.027969416268659786 | -0.0069923540671649465 | At 52w high with broad participation (72% up days), solid ISM manufacturing/production, and cyclical strength; beta near 1 offers benchmark-plus without extreme volatility. |
+| anthropic-claude-opus-4-8 | AEROSPACE_DEFENSE | 20.0 | -0.06272428801436392 | -0.012544857602872784 | Leading industry with +4.87% 7d, at 52w high, geopolitical tailwinds and defense budget support; positive relative strength beyond pure momentum. |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 15.0 | -0.003395877611080733 | -0.00050938164166211 | Defensive-cyclical mix with +6.3% 30d, at 52w high territory, low beta (0.36) cushions if market wobbles into FOMC minutes. |
+| anthropic-claude-opus-4-8 | SP500 | 10.0 | -0.0028085628392127138 | -0.0002808562839212714 | Core benchmark anchor to limit tracking error against the scoring benchmark over the one-week window. |
+| google-gemini-3-1-pro | SEMICONDUCTORS | 40.0 | -0.030911806855555946 | -0.012364722742222379 | Supported by strong TSMC guidance, Broadcom's new Apple agreement, and SK Hynix's capital raise plans. |
+| google-gemini-3-1-pro | AUTONOMOUS_ROBOTICS | 20.0 | -0.07232344210097474 | -0.01446468842019495 | Benefits from Tesla's strong Q2 vehicle delivery and energy storage deployment numbers. |
+| google-gemini-3-1-pro | BROAD_AI_TECH | 20.0 | -0.03978697936935238 | -0.007957395873870477 | Supported by ongoing AI infrastructure build-out, highlighted by TeraWulf's $19 billion data center deal with Anthropic. |
+| google-gemini-3-1-pro | TECHNOLOGY | 20.0 | -0.012474811901199145 | -0.002494962380239829 | Broad technology exposure captures the positive momentum from mega-cap AI and hardware catalysts. |
+| openai-gpt-5-5 | SEMICONDUCTORS | 30.0 | -0.030911806855555946 | -0.009273542056666783 | Direct exposure to the strongest near-term briefing catalysts: TSMC's July 10 monthly sales release, high Q2 guidance, AI/data-center chip demand, Broadcom's Apple silicon agreements, and reported shortages in electronic and memory components; recent weakness creates rebound potential but volatility is high. |
+| openai-gpt-5-5 | TAIWAN | 25.0 | -0.050247036061567996 | -0.012561759015391999 | Taiwan equities provide concentrated semiconductor supply-chain exposure with TSMC-specific catalyst support before the exit close, while recent 30-day strength is supported by supplied chip demand and margin guidance rather than price action alone. |
+| openai-gpt-5-5 | BIOTECH | 20.0 | -0.034015320329017995 | -0.0068030640658036 | Biotech has strong recent breadth and momentum near a 52-week high with moderate market beta, offering alpha potential in a risk-on week; independent catalyst support in the briefing is limited, so this is sized below the semiconductor complex. |
+| openai-gpt-5-5 | AEROSPACE_DEFENSE | 15.0 | -0.06272428801436392 | -0.009408643202154588 | Aerospace and defense shows strong short-term relative strength and broad up-day participation, with industrials also near highs; sector demand and geopolitical/defense-budget priors can support continued inflows over a short horizon. |
+| openai-gpt-5-5 | CYBERSECURITY | 10.0 | -0.011516560780425955 | -0.0011516560780425956 | Cybersecurity combines recent relative strength with a structural demand theme tied to enterprise technology spending, and software-related shortages in the briefing are consistent with firm IT demand, though direct catalyst support is limited. |
+| xai-grok-4-3 | SP500 | 40.0 | -0.0028085628392127138 | -0.0011234251356850855 | Broad large-cap exposure to capture any risk-on response to FOMC minutes and TSMC sales data within the window. |
+| xai-grok-4-3 | FINANCIALS | 20.0 | -0.0012468882289949912 | -0.00024937764579899827 | Sector positioned for potential rate policy signals and domestic growth sensitivity amid recent labor data. |
+| xai-grok-4-3 | TECHNOLOGY | 20.0 | -0.012474811901199145 | -0.002494962380239829 | Exposure to semiconductor and AI supply-chain names with company-specific agreements and TSMC guidance due mid-week. |
+| xai-grok-4-3 | AEROSPACE_DEFENSE | 20.0 | -0.06272428801436392 | -0.012544857602872784 | Defensive industrial exposure with stable budget visibility and limited sensitivity to the weak payroll print. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| xai-grok-4-3 | SP500 | 4 | 0.55 | -0.0028085628392127138 | -0.016412622764596697 | -0.013604059925383983 | 0.1452099647668526 |  | False | False |
+| anthropic-claude-opus-4-7 | FINANCIALS | 5 | 0.55 | -0.0012468882289949912 | -0.016602257610396853 | -0.01379369477118414 | 0.14539959961265275 |  | False | False |
+| anthropic-claude-opus-4-8 | FINANCIALS | 5 | 0.58 | -0.0012468882289949912 | -0.02070151606431961 | -0.017892953225106895 | 0.1494988580665755 |  | False | False |
+| anthropic-claude-fable-5 | FINANCIALS | 5 | 0.5 | -0.0012468882289949912 | -0.025611462840208436 | -0.022802900000995722 | 0.15440880484246433 |  | False | False |
+| google-gemini-3-1-pro | SEMICONDUCTORS | 4 | 0.65 | -0.030911806855555946 | -0.03728176941652763 | -0.03447320657731492 | 0.16607911141878354 |  | False | False |
+| openai-gpt-5-5 | SEMICONDUCTORS | 5 | 0.58 | -0.030911806855555946 | -0.03919866441805957 | -0.036390101578846853 | 0.16799600642031548 |  | False | False |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | 614ba1d539341546f7c5934bd991865225e8cee9c8b7e4cfe2231217f69419f2 |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | 66320ebc013af445c33450b3005ec684487d06b5bca45c52a3ff9e8e24373e4c |
+| manifest.yaml | cfa925eeb9e30a01ecb6d9abda66fc5ec3bdee16de5ce6b0b0a4817be6c1d697 |
+| market_data/universe_trailing_returns.csv | 529caec62ef157d30718a21c498f976e4d5a6c0b10f6c70a992916cb93ecfdf4 |
+| market_data/universe_trailing_returns.md | a1452a84ba42c5875aa782791e8f85ac371186ffe14471927800ab618337f8c6 |
+| market_data/universe_trailing_returns.json | 175081d6bc6081b386e09945f6c5a038522de8adcb86ecdb5fd940dcc7135213 |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | f98201443c62b5147116460ebb6681ffde2ed5bd068a6b425c093e7d3ffc9f9a | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | 530740ee6dc2fcd360a8331b3cfe4621982b9b06ead770387a90b149b9ce7a96 | yes |
+| Final briefing | research/final_briefing.md | model-facing | 614ba1d539341546f7c5934bd991865225e8cee9c8b7e4cfe2231217f69419f2 | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-07-07-1W has no scored official run.
-- Round CB-2026-07-08-1W has no scored official run.
-- Round CB-2026-07-09-1W has no scored official run.
-- Round CB-2026-07-10-1W has no scored official run.
-- Round CB-2026-07-13-1W has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.
