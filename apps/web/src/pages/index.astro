@@ -5,6 +5,7 @@ import GitHubLogo from "../components/GitHubLogo.astro";
 import InsightStrip from "../components/InsightStrip.astro";
 import LatestOfficialResultsTabs from "../components/LatestOfficialResultsTabs.astro";
 import MarketRegimePreview from "../components/MarketRegimePreview.astro";
+import ModelRiskBenchmark from "../components/ModelRiskBenchmark.astro";
 import TrackScorecardTabs from "../components/TrackScorecardTabs.astro";
 import {
   ArrowRight,
@@ -534,6 +535,8 @@ function riskWidth(value: number | null | undefined): string {
     </a>
     <a class="home-secondary-cta" href="/risk-appetite">View historical risk trend</a>
   </div>
+
+  <ModelRiskBenchmark modelBehavior={modelBehavior} variant="home" />
 
   <InsightStrip
     id="benchmark-insights"

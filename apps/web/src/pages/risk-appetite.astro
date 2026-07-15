@@ -1,9 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import InsightStrip from "../components/InsightStrip.astro";
+import ModelRiskBenchmark from "../components/ModelRiskBenchmark.astro";
 import PageHeader from "../components/PageHeader.astro";
 import RiskAppetiteHistoryChart from "../components/RiskAppetiteHistoryChart";
-import { modelLabel } from "../data/fallback";
 import apiReadModel from "../generated/apiReadModel.js";
 import { assetRiskModel } from "../lib/assetRisk";
 import { topInsightsByCategory } from "../lib/insights.js";
@@ -158,20 +158,9 @@ function width(value: number | null | undefined): string {
     scale={snapshot.scale}
   />
 
-  <section class="section risk-method-grid" aria-label="Current calculation inputs">
-    <article>
-      <span class="panel-kicker">Model inputs</span>
-      <h2>Current Model Scores</h2>
-      <div class="risk-method-model-list">
-        {pulse.models.map((model) => (
-          <div>
-            <span>{modelLabel(model.model_id)}</span>
-            <i><b style={`width: ${width(model.score)}`}></b></i>
-            <strong>{score(model.score)}</strong>
-          </div>
-        ))}
-      </div>
-    </article>
+  <ModelRiskBenchmark modelBehavior={modelBehavior} variant="full" />
+
+  <section class="section risk-method-grid risk-method-grid-two" aria-label="Current calculation inputs">
     <article>
       <span class="panel-kicker">Combined latest allocation</span>
       <h2>Largest Drivers</h2>

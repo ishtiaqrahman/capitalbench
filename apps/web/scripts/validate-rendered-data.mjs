@@ -2843,9 +2843,19 @@ if (latestOutstandingHistory && latestRenderedOutstandingHistory) {
 }
 expectEqual(riskHistoryProps.scale?.minimum, liveRisk.scale.minimum, "risk appetite chart scale minimum");
 expectEqual(riskHistoryProps.scale?.maximum, liveRisk.scale.maximum, "risk appetite chart scale maximum");
-for (const model of livePulse.models) {
-  includes(riskAppetiteHtml, modelLabel(model.model_id), `risk appetite current model ${model.model_id}`);
-  includes(riskAppetiteHtml, pulseScore(model.score), `risk appetite current model score ${model.model_id}`);
+includes(indexHtml, "Model Risk Benchmark", "homepage model risk benchmark title");
+includes(riskAppetiteHtml, "Model Risk Benchmark", "risk appetite model risk benchmark title");
+includes(riskAppetiteHtml, "Higher means more risk-seeking, not better.", "risk appetite benchmark direction note");
+for (const profile of apiReadModel.model_behavior?.profiles ?? []) {
+  const modelContext = `model risk benchmark ${profile.model_id}`;
+  const overallScore = pulseScore(profile.metrics?.average_risk_pulse);
+  const portfolioCount = String(profile.sample?.portfolio_count ?? 0);
+  includes(indexHtml, profile.label, `homepage ${modelContext} label`);
+  includes(indexHtml, overallScore, `homepage ${modelContext} score`);
+  includes(indexHtml, portfolioCount, `homepage ${modelContext} portfolio count`);
+  includes(riskAppetiteHtml, profile.label, `risk appetite ${modelContext} label`);
+  includes(riskAppetiteHtml, overallScore, `risk appetite ${modelContext} score`);
+  includes(riskAppetiteHtml, portfolioCount, `risk appetite ${modelContext} portfolio count`);
 }
 for (const asset of livePulse.top_assets.slice(0, 10)) {
   includesAny(riskAppetiteHtml, [asset.label, htmlText(asset.label)], `risk appetite driver ${asset.option_id}`);
