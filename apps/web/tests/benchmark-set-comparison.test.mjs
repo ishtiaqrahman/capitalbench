@@ -31,7 +31,11 @@ test("benchmark-set comparison separates roster and round-window changes", () =>
   assert.deepEqual(result.rounds.shared, comparison.comparison.comparison_round_ids);
   assert.equal(result.rounds.baseline_only.length, baseline.comparison.comparison_round_count - result.rounds.shared.length);
   assert.equal(result.rounds.comparison_only.length, 0);
-  assert.equal(result.ranking.top_three_overlap, 1);
+  const baselineTopThree = new Set(baseline.data.filter((row) => row.rank <= 3).map((row) => row.model_id));
+  const expectedTopThreeOverlap = comparison.data
+    .filter((row) => row.rank <= 3)
+    .filter((row) => baselineTopThree.has(row.model_id)).length;
+  assert.equal(result.ranking.top_three_overlap, expectedTopThreeOverlap);
   const expectedSimilarityLabel =
     result.ranking.similarity >= 0.8
       ? "Hardly changed"

@@ -1,0 +1,53 @@
+{
+  "confidence": 0.6,
+  "is_official_score": true,
+  "key_risks": [
+    "Hormuz de-escalation would reverse energy premium and hurt XLE overweight",
+    "Hawkish FOMC on July 29 could pressure financials and value cyclicals",
+    "Biotech recent strength may reverse without briefing-supported catalysts (momentum reversal risk)",
+    "Mega-cap tech earnings (Alphabet, Microsoft, Meta) surprise could drive SPY higher while portfolio underweights QQQ",
+    "Oil spike passthrough could re-accelerate CPI and pressure duration-sensitive equity sectors"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "option_id": "FINANCIALS",
+      "rationale": "Strong earnings momentum (BlackRock, BNY Mellon beats), best 30d sector performance +5.97%, benefiting from steep yield curve and stable credit quality per Beige Book."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "ENERGY",
+      "rationale": "Strait of Hormuz blockade and CENTCOM strikes create tangible supply risk; Brent at $85, oil +8% weekly. Hedge against geopolitical escalation over the window."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "BIOTECH",
+      "rationale": "Strong 30d momentum +14.6% with 70% up-day share suggests factor rotation; healthcare sector also +4% on month with defensive characteristics."
+    },
+    {
+      "allocation_pct": 20,
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value outperforming growth with lower volatility (11%) and beta 0.73; benefits from financials/energy tilt and defensive positioning into FOMC."
+    },
+    {
+      "allocation_pct": 15,
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Dry powder ahead of FOMC July 29, July CPI Aug 12, and geopolitical tail risk; yields ~4.5% annualized with minimal duration risk."
+    }
+  ],
+  "portfolio_rationale": "Tilt toward financials and value on confirmed earnings strength and sector leadership, hedge with energy for Hormuz risk, add biotech for defensive healthcare momentum with fundamental catalyst breadth, and hold short treasuries as dry powder into FOMC and CPI events within the window.",
+  "provider": "anthropic",
+  "rationale_summary": "Barbell of cyclical value (financials, energy) with defensive healthcare/biotech and short-duration cash, positioned for earnings-driven rotation away from crowded mega-cap tech which shows negative 30d returns and elevated drawdowns.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-15-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 22868,
+    "latency_seconds": 17.1958219059743,
+    "output_tokens": 913,
+    "total_tokens": 23781
+  }
+}
