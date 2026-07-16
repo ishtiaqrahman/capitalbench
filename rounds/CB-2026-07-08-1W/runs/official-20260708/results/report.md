@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-07-08-1W / official-20260708
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-07-08-1W
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-20260708
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench CB-2026-07-08-1W
+- Description: One-week market allocation evaluation round.
+- Decision date: 2026-07-08
 - Decision deadline: 2026-07-09T07:30:00Z
 - Horizon: one week
-- Official run ID: official-20260708
-- Mock: no
+- Entry date: 2026-07-08
+- Exit date: 2026-07-15
+- Entry rule: Use the official entry prices supplied in prices/entry_prices.csv.
+- Exit rule: Use the official exit prices supplied in prices/exit_prices.csv.
+- Options: 70
 
 ## Model Decisions
 
@@ -95,28 +110,96 @@
 | BIOTECH | Biotechnology | 162.97 | 156.22000122070312 | -0.041418658521794605 | 69 |
 | SOUTH_KOREA | South Korea Equities | 182.72 | 171.63999938964844 | -0.06063923276243188 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| google-gemini-3-1-pro | portfolio | OIL | 3 | 0.7 | 0.08172174720094438 | 0.046222283427739125 | 0.0335982221482479 | 0.06132923890358591 |  | True | True |
-| xai-grok-4-5 | portfolio | OIL | 5 | 0.42 | 0.08172174720094438 | 0.02546658092210483 | 0.012842519642613601 | 0.08208494140922021 |  | True | True |
-| openai-gpt-5-5 | portfolio | OIL | 5 | 0.36 | 0.08172174720094438 | 0.014364464131531612 | 0.0017404028520403847 | 0.09318705819979342 |  | True | True |
-| xai-grok-4-3 | portfolio | ENERGY | 3 | 0.55 | 0.016187078247813513 | 0.010421698274397033 | -0.0022023630050941947 | 0.097129824056928 |  | False | True |
-| anthropic-claude-opus-4-8 | portfolio | HEALTHCARE | 5 | 0.5 | -0.02470735043966099 | 0.003943656511371907 | -0.00868040476811932 | 0.10360786581995313 |  | False | True |
-| anthropic-claude-opus-4-7 | portfolio | HEALTHCARE | 5 | 0.55 | -0.02470735043966099 | 0.0019766288570671926 | -0.010647432422424035 | 0.10557489347425784 |  | False | True |
-| anthropic-claude-fable-5 | portfolio | HEALTHCARE | 5 | 0.5 | -0.02470735043966099 | -0.0016706699545067252 | -0.014294731233997953 | 0.10922219228583176 |  | False | False |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-fable-5 | HEALTHCARE | 25.0 | -0.02470735043966099 | -0.006176837609915248 | Strong recent relative strength, defensive against elevated inflation and rate risk into CPI, low beta. |
+| anthropic-claude-fable-5 | ENERGY | 20.0 | 0.016187078247813513 | 0.0032374156495627027 | Brent up 5% above $78 on Iran truce doubts; geopolitical tension likely supports energy equities through the week. |
+| anthropic-claude-fable-5 | FINANCIALS | 20.0 | 0.028924870243391076 | 0.005784974048678216 | JPMorgan and Wells Fargo Q2 earnings July 14; sector showing positive momentum and benefits from higher yields. |
+| anthropic-claude-fable-5 | BIOTECH | 15.0 | -0.041418658521794605 | -0.006212798778269191 | Strong persistent momentum (75% up days, near 52w high, +27% 30d) with modest drawdown risk. |
+| anthropic-claude-fable-5 | LARGE_VALUE | 20.0 | 0.008482883677183972 | 0.0016965767354367946 | Value outperforming amid rising yields and sticky inflation; lower beta cushion ahead of CPI. |
+| anthropic-claude-opus-4-7 | HEALTHCARE | 30.0 | -0.02470735043966099 | -0.007412205131898297 | Strong momentum (+6.8% 30d), defensive with low beta 0.36, outperforming SPY significantly. |
+| anthropic-claude-opus-4-7 | FINANCIALS | 25.0 | 0.028924870243391076 | 0.007231217560847769 | JPM/WFC earnings July 14 catalyst; sector +6.1% 30d with steepening curve support. |
+| anthropic-claude-opus-4-7 | ENERGY | 20.0 | 0.016187078247813513 | 0.0032374156495627027 | Brent +5% on Iran truce doubts; oil geopolitical premium likely persists through window. |
+| anthropic-claude-opus-4-7 | LOW_VOL | 15.0 | -0.005141057305743657 | -0.0007711585958615486 | Defensive tilt with CPI July 14 and Fed minutes flagging elevated inflation risks; low beta hedge. |
+| anthropic-claude-opus-4-7 | UTILITIES | 10.0 | -0.0030864062558343397 | -0.000308640625583434 | Defensive with AI power demand tailwind; strong 30d relative outperformance. |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 25.0 | -0.02470735043966099 | -0.006176837609915248 | Strong 30d relative outperformance (+5.7% vs SPY), defensive low-beta profile with momentum into a week featuring CPI and elevated inflation risk. |
+| anthropic-claude-opus-4-8 | FINANCIALS | 25.0 | 0.028924870243391076 | 0.007231217560847769 | JPM and WFC Q2 earnings July 14 are near-term catalysts; sector shows strong relative strength (+5% vs SPY 30d) and higher yields support net interest margins. |
+| anthropic-claude-opus-4-8 | ENERGY | 20.0 | 0.016187078247813513 | 0.0032374156495627027 | Brent up 5% above $78 on Iran truce doubts; energy led with +5.3% 7d momentum and low correlation to broad market provides diversification. |
+| anthropic-claude-opus-4-8 | UTILITIES | 15.0 | -0.0030864062558343397 | -0.0004629609383751509 | Defensive low-beta with strong 30d relative strength (+3.8% vs SPY) and high up-day share; hedge against elevated VIX and inflation surprises. |
+| anthropic-claude-opus-4-8 | SHORT_TREASURY | 15.0 | 0.0007654789950122254 | 0.0001148218492518338 | Cash-like buffer against rising yields near 4.60%, CPI risk, and geopolitical volatility while preserving allocation flexibility. |
+| google-gemini-3-1-pro | OIL | 40.0 | 0.08172174720094438 | 0.03268869888037775 | Brent crude surged 5% on renewed geopolitical tensions, providing a strong short-term catalyst for oil prices. |
+| google-gemini-3-1-pro | ENERGY | 30.0 | 0.016187078247813513 | 0.004856123474344054 | Energy equities are positioned to benefit directly from the spike in underlying crude oil prices. |
+| google-gemini-3-1-pro | FINANCIALS | 30.0 | 0.028924870243391076 | 0.008677461073017322 | Allocating to financials ahead of major Q2 earnings reports from JPMorgan Chase and Wells Fargo on July 14. |
+| openai-gpt-5-5 | OIL | 30.0 | 0.08172174720094438 | 0.024516524160283316 | Direct exposure to the sharp crude move after renewed Iran-truce doubts, with geopolitical and inflation catalysts capable of affecting prices within the one-week window. |
+| openai-gpt-5-5 | ENERGY | 20.0 | 0.016187078247813513 | 0.0032374156495627027 | Energy equities can benefit if the oil price spike persists, while offering less futures-specific volatility than direct crude exposure. |
+| openai-gpt-5-5 | BIOTECH | 25.0 | -0.041418658521794605 | -0.010354664630448651 | Biotech has strong short-term relative momentum, is near its 52-week high, and may be less directly hurt than broad growth equities by the CPI and rates catalyst. |
+| openai-gpt-5-5 | SEMICONDUCTORS | 15.0 | -0.003760506692664367 | -0.0005640760038996551 | TSMC June sales on July 10 provide a near-term AI supply-chain catalyst after a recent pullback in semiconductor shares. |
+| openai-gpt-5-5 | HEALTHCARE | 10.0 | -0.02470735043966099 | -0.0024707350439660994 | Healthcare has recent relative strength and defensive characteristics that may help if CPI or yields pressure broad equities. |
+| xai-grok-4-3 | ENERGY | 40.0 | 0.016187078247813513 | 0.006474831299125405 | Oil prices rose sharply on geopolitical supply concerns that can persist through the window; sector showed strongest 7d return. |
+| xai-grok-4-3 | FINANCIALS | 35.0 | 0.028924870243391076 | 0.010123704585186875 | Major bank earnings on July 14 provide direct catalysts; sector posted solid recent performance amid higher yields. |
+| xai-grok-4-3 | HEALTHCARE | 25.0 | -0.02470735043966099 | -0.006176837609915248 | Defensive characteristics and strong 7d/30d returns provide ballast ahead of CPI release. |
+| xai-grok-4-5 | OIL | 30.0 | 0.08172174720094438 | 0.024516524160283316 | Geopolitical premium from Iran truce doubts already lifting Brent above $78; short-window supply risk can sustain or extend the 7d surge into the exit close. |
+| xai-grok-4-5 | ENERGY | 25.0 | 0.016187078247813513 | 0.004046769561953378 | Direct equity beta to the same oil move plus sector leverage; recent 7d outperformance and elevated ISM prices support continuation versus broad equities. |
+| xai-grok-4-5 | BIOTECH | 20.0 | -0.041418658521794605 | -0.008283731704358921 | Strongest 30d and solid 7d relative strength with low drawdown; risk-on factor that can keep running absent a sharp market-wide risk-off before July 15. |
+| xai-grok-4-5 | FINANCIALS | 15.0 | 0.028924870243391076 | 0.004338730536508661 | JPM and WFC Q2 prints on July 14 provide a concrete near-term catalyst; higher yields and recent relative strength favor the sector over growth. |
+| xai-grok-4-5 | LARGE_VALUE | 10.0 | 0.008482883677183972 | 0.0008482883677183973 | Value tilt benefits from elevated inflation narrative in FOMC minutes and rate resilience; lower beta and positive 7d/30d relative returns versus SPY. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| google-gemini-3-1-pro | OIL | 3 | 0.7 | 0.08172174720094438 | 0.046222283427739125 | 0.0335982221482479 | 0.06132923890358591 |  | True | True |
+| xai-grok-4-5 | OIL | 5 | 0.42 | 0.08172174720094438 | 0.02546658092210483 | 0.012842519642613601 | 0.08208494140922021 |  | True | True |
+| openai-gpt-5-5 | OIL | 5 | 0.36 | 0.08172174720094438 | 0.014364464131531612 | 0.0017404028520403847 | 0.09318705819979342 |  | True | True |
+| xai-grok-4-3 | ENERGY | 3 | 0.55 | 0.016187078247813513 | 0.010421698274397033 | -0.0022023630050941947 | 0.097129824056928 |  | False | True |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 5 | 0.5 | -0.02470735043966099 | 0.003943656511371907 | -0.00868040476811932 | 0.10360786581995313 |  | False | True |
+| anthropic-claude-opus-4-7 | HEALTHCARE | 5 | 0.55 | -0.02470735043966099 | 0.0019766288570671926 | -0.010647432422424035 | 0.10557489347425784 |  | False | True |
+| anthropic-claude-fable-5 | HEALTHCARE | 5 | 0.5 | -0.02470735043966099 | -0.0016706699545067252 | -0.014294731233997953 | 0.10922219228583176 |  | False | False |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | f48dcdb60f6d674558873430c5c02cbd99b027c8367b957f8ab4b88f4cf877fc |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | 03b5e9792d4c6bade89526a62f43cbdf51184fe03753997a0637de246e708b81 |
+| manifest.yaml | 94b1ec9b73acb42e599deca3a3c9e3fbf6959aed6e8bdfdde339dd21592efb57 |
+| market_data/universe_trailing_returns.csv | 214b5d4c889a81e8b06cac9f4d7678919c1237d16ffd785e4952595e9a280d5d |
+| market_data/universe_trailing_returns.md | 74765a42d67967459eaa2ebe43e18bb98ef3504031393e19e404961760a3f4f5 |
+| market_data/universe_trailing_returns.json | fbdbb99aa8f75d9f4f56981b952b93392d035c88e01fd08e64450596f25e9208 |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | 4e31081d10525d7c7e7137ce4bdc21597427a98d5e19bc3da2f23bc1763bbc1f | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | f038f1d0d8943fc5d3ba539209faa3a0cc556ac6f24f33744301c1237f27bfbd | yes |
+| Final briefing | research/final_briefing.md | model-facing | f48dcdb60f6d674558873430c5c02cbd99b027c8367b957f8ab4b88f4cf877fc | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-07-09-1W has no scored official run.
-- Round CB-2026-07-10-1W has no scored official run.
-- Round CB-2026-07-13-1W has no scored official run.
-- Round CB-2026-07-14-1W has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.

@@ -8,12 +8,13 @@ Each round is a separate market decision with its own declared scoring window. O
 
 | Rank | Model | Provider | Resolved Rounds | Avg Return | Avg S&P Return | Avg Alpha | Hit Rate vs S&P | Avg Regret | Cumulative Return | Cumulative S&P Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | anthropic-claude-fable-5 | anthropic | 7 | 0.61% | 0.69% | -0.08% | 42.86% | 9.35% | 4.23% | 4.93% |
-| 2 | xai-grok-4-3 | xai | 27 | -0.20% | 0.10% | -0.29% | 48.15% | 9.06% | -6.61% | 2.27% |
-| 3 | anthropic-claude-opus-4-8 | anthropic | 25 | -0.48% | -0.00% | -0.48% | 36.00% | 9.07% | -12.15% | -0.39% |
-| 4 | anthropic-claude-opus-4-7 | anthropic | 27 | -0.41% | 0.10% | -0.50% | 37.04% | 9.27% | -11.68% | 2.27% |
-| 5 | openai-gpt-5-5 | openai | 27 | -0.83% | 0.10% | -0.92% | 29.63% | 9.69% | -22.23% | 2.27% |
-| 6 | google-gemini-3-1-pro | google | 27 | -1.10% | 0.10% | -1.20% | 33.33% | 9.97% | -27.69% | 2.27% |
+| 1 | xai-grok-4-5 | xai | 1 | 2.55% | 1.26% | 1.28% | 100.00% | 8.21% | 2.55% | 1.26% |
+| 2 | anthropic-claude-fable-5 | anthropic | 8 | 0.52% | 0.76% | -0.25% | 37.50% | 9.55% | 4.06% | 6.25% |
+| 3 | xai-grok-4-3 | xai | 28 | -0.15% | 0.14% | -0.29% | 46.43% | 9.09% | -5.63% | 3.56% |
+| 4 | anthropic-claude-opus-4-8 | anthropic | 26 | -0.45% | 0.05% | -0.49% | 34.62% | 9.12% | -11.80% | 0.87% |
+| 5 | anthropic-claude-opus-4-7 | anthropic | 28 | -0.39% | 0.14% | -0.52% | 35.71% | 9.32% | -11.51% | 3.56% |
+| 6 | openai-gpt-5-5 | openai | 28 | -0.75% | 0.14% | -0.88% | 32.14% | 9.68% | -21.11% | 3.56% |
+| 7 | google-gemini-3-1-pro | google | 28 | -0.90% | 0.14% | -1.04% | 35.71% | 9.83% | -24.35% | 3.56% |
 
 ## Cumulative Stability Leaderboard
 
@@ -50,6 +51,7 @@ _No rows._
 | CB-2026-07-02-1W | official-20260702 |  | yes | no |  |
 | CB-2026-07-06-1W | official-20260706 |  | yes | no |  |
 | CB-2026-07-07-1W | official-20260707 |  | yes | no |  |
+| CB-2026-07-08-1W | official-20260708 |  | yes | no |  |
 
 ## Methodology
 
@@ -74,7 +76,6 @@ The official leaderboard measures the saved public model decision. The stability
 
 ## Warnings
 
-- Round CB-2026-07-08-1W has no scored official or stability runs.
 - Round CB-2026-07-09-1W has no scored official or stability runs.
 - Round CB-2026-07-10-1W has no scored official or stability runs.
 - Round CB-2026-07-13-1W has no scored official or stability runs.
