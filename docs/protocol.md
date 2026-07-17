@@ -29,7 +29,8 @@ The public inputs are:
 - `options.yaml`: the only choices models may select
 - `prompt.md`: the exact task instruction
 - `submission_schema.json`, if present: the exact machine-readable response schema
-- `market_data/universe_trailing_returns.md`, if present: mechanical full-universe price, risk, and benchmark-relative context
+- `market_data/universe_trailing_returns.md`, for historical V1 rounds: mechanical full-universe price, risk, and benchmark-relative context
+- `market_data/universe_decision_context.md`, for Portfolio V2 rounds: compact horizon-specific full-universe decision context
 
 Before collecting submissions, run `capitalbench hash-round`. This freezes the
 input files by writing SHA256 hashes to `hashes.json`.
@@ -106,6 +107,19 @@ in option order, not by performance. CASH is shown as 0.00%.
 This artifact is factual prompt context. It is not used for scoring, it is not a
 leaderboard, and it should not include commentary. Re-run `hash-round` after
 generating it.
+
+Production `portfolio-v2.0` rounds instead use:
+
+```bash
+capitalbench fetch-universe-decision-context \
+  --round rounds/<id> \
+  --as-of-date YYYY-MM-DD
+```
+
+The V2 table is horizon-specific and compact. It separates the latest decision
+window from the preceding window, includes static economic-exposure clusters,
+and retains volatility, drawdown, volume, SPY correlation, SPY beta, and
+52-week position. It is complete and sorted in frozen option order.
 
 ## Runs
 
@@ -211,6 +225,15 @@ The exact constraints are stored under `portfolio_constraints` in the round
 manifest and are injected into the provider response schema and prompt. This
 keeps the public protocol auditable and lets future methodology versions adjust
 limits without rewriting old rounds.
+
+New portfolio rounds default to `portfolio-v2.0`. In addition to the final
+portfolio, V2 requires a 6-8 option candidate ledger that includes SP500 and at
+least four static economic-exposure clusters. Candidate rows retain low, base,
+and high forecasts; evidence; continuation and reversal cases; a catalyst; and
+an invalidation condition. Selected non-SP500, non-CASH holdings must have base
+forecasts above the SP500 base forecast, and no non-benchmark economic-exposure
+cluster may exceed 50%. These fields are validated and frozen, but only the
+final portfolio is scored.
 
 ## Submission Rule
 

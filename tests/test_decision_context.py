@@ -104,8 +104,36 @@ def test_monthly_decision_context_uses_monthly_profile_without_live_calls(tmp_pa
     )
 
     with output.csv_path.open("r", encoding="utf-8", newline="") as handle:
-        row = next(csv.DictReader(handle))
+        rows = list(csv.DictReader(handle))
+    row = rows[0]
+    cash = next(item for item in rows if item["option_id"] == "CASH")
     assert output.profile == "monthly"
     assert "active_return_21s" in row
+    assert cash["active_return_21s"] != ""
     assert "prior_105s_active_return" in row
     assert "active_return_5s" not in row
+
+
+def test_production_v2_decision_context_is_compact_and_clustered(tmp_path: Path) -> None:
+    round_path = _write_round(tmp_path)
+    manifest_path = round_path / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["methodology_version"] = "portfolio-v2.0"
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+
+    output = fetch_universe_decision_context(
+        round_path=round_path,
+        as_of_date="2026-01-30",
+        fetcher=_history,
+    )
+
+    with output.csv_path.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    row = rows[0]
+    cash = next(item for item in rows if item["option_id"] == "CASH")
+    assert len(row) == 12
+    assert "economic_exposure_cluster" in row
+    assert cash["economic_exposure_cluster"] == "capital_preservation"
+    assert "return_5s" not in row
+    assert "as_of_price_date" not in row
+    assert "status" not in row

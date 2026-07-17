@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad US large-cap equities could stabilize if softer CPI, PPI, and payroll data support rate-cut expectations and risk appetite.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY return was -0.13% over 5 sessions and -0.29% over 21 sessions.",
+        "SPY 21-session volatility was 12.42% with a -3.17% max drawdown.",
+        "SPY was 0.91% below its 52-week high."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.35,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "SPY breaks materially lower versus equal-weight and value exposures after the industrial production release.",
+      "option_id": "SP500",
+      "reversal_case": "Recent underperformance versus equal weight and value factors could continue if mega-cap growth remains weak.",
+      "time_window_catalyst": "July 17 industrial production and capacity utilization may affect broad equity risk sentiment."
+    },
+    {
+      "continuation_case": "Recent breadth and value leadership can persist if softer labor and inflation data ease financing concerns without triggering recession fears.",
+      "decision": "selected",
+      "evidence": [
+        "Small value returned 2.00% over 3 sessions and had 2.26% 5-session active return versus SPY.",
+        "Prior 16-session active return was 1.17%.",
+        "Distance to 52-week high was 0.00%, with 21-session volatility of 11.05%."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Small-cap value loses recent leadership with negative active return versus SPY over the first part of the window.",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Small-cap value could reverse if weak payroll data are interpreted as growth deterioration or risk appetite fades.",
+      "time_window_catalyst": "Continuation of breadth improvement into the July 23 close; no specific scheduled sector catalyst identified."
+    },
+    {
+      "continuation_case": "Positive active trend and value leadership can continue if credit conditions remain calm and yields do not move adversely.",
+      "decision": "selected",
+      "evidence": [
+        "Financials had 2.31% 5-session active return and 4.22% prior 16-session active return.",
+        "The sector was at a 52-week high with a -2.08% 21-session max drawdown.",
+        "Volume z-score was slightly positive at 0.022."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Financials reverse below SPY on widening credit concerns or an adverse yield-curve move.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Financials could reverse if weak payroll data increase credit-quality concerns or if the yield curve moves against bank profitability.",
+      "time_window_catalyst": "Continuation of value/cyclical leadership and stable yield-curve or credit sentiment before the exit close."
+    },
+    {
+      "continuation_case": "Rate-sensitive equities could extend gains if softer inflation and payroll data keep downward pressure on rate expectations.",
+      "decision": "selected",
+      "evidence": [
+        "Real estate had 1.70% 3-session return and 2.91% 5-session active return versus SPY.",
+        "Real estate was at a 52-week high, with -2.75% 21-session max drawdown.",
+        "June CPI decreased 0.4% month over month and core CPI was unchanged."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.9,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "Treasury yields rise materially or real estate posts negative active return versus SPY early in the scoring window.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "A back-up in yields or growth scare could quickly pressure real estate because its 21-session volatility was 18.80%.",
+      "time_window_catalyst": "Rate-sensitive equity bid following softer inflation and employment data before the July 23 close."
+    },
+    {
+      "continuation_case": "Recent energy strength could persist if oil stabilizes and the upcoming inventory report supports tighter supply-demand expectations.",
+      "decision": "selected",
+      "evidence": [
+        "Energy had 4.14% 5-session active return versus SPY.",
+        "Energy remained 8.20% below its 52-week high and had 21.23% 21-session volatility.",
+        "The EIA reported Brent averaged $85 in June and was below $70 on July 1, with a July forecast for a $70 fourth-quarter average."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Oil prices or energy equities fail to hold recent gains after the petroleum inventory update.",
+      "option_id": "ENERGY",
+      "reversal_case": "Energy could reverse if the recent oil rebound fades or the EIA report shows bearish inventory or demand signals.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report for the week ending July 17."
+    },
+    {
+      "continuation_case": "A short-term rebound can continue if investors respond favorably to positive China activity data and PMI above 50.",
+      "decision": "selected",
+      "evidence": [
+        "China equities had 3.06% 3-session return and 1.92% 5-session active return versus SPY.",
+        "China reported first-half real GDP growth of 4.7% year over year and June industrial value added up 5.3% year over year.",
+        "The official June manufacturing PMI was 50.3."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "China equities give back the recent rebound and underperform SPY during the first half of the window.",
+      "option_id": "CHINA",
+      "reversal_case": "The rebound could fail because prior 16-session active return was -3.01% and the fund remained 17.65% below its 52-week high.",
+      "time_window_catalyst": "Continuation of reaction to China first-half GDP, June industrial value added, and PMI data; no additional scheduled China catalyst identified."
+    },
+    {
+      "continuation_case": "Cash-like yield and low volatility can outperform if equities decline during the week.",
+      "decision": "rejected",
+      "evidence": [
+        "Short Treasury returned 0.03% over 3 sessions and had 0.21% 5-session active return versus SPY.",
+        "21-session volatility was 0.25% and max drawdown was -0.01%.",
+        "Three-month Treasury nominal yield was 3.84% on July 16."
+      ],
+      "forecast_base_pct": 0.04,
+      "forecast_high_pct": 0.08,
+      "forecast_low_pct": 0,
+      "invalidation_condition": "SPY rallies enough that cash-like carry cannot keep pace.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "It is unlikely to beat SPY in an equity rebound because its expected one-week return is mechanically small.",
+      "time_window_catalyst": "No specific catalyst identified beyond carry and any risk-off move before July 23."
+    },
+    {
+      "continuation_case": "The sharp recent rebound could extend if the EIA report indicates tighter inventories or firmer demand.",
+      "decision": "rejected",
+      "evidence": [
+        "Oil had 9.57% 5-session active return versus SPY but -9.91% prior 16-session active return.",
+        "Oil 21-session volatility was 49.69% and max drawdown was -14.80%.",
+        "The July 22 EIA petroleum status report is scheduled before the exit close."
+      ],
+      "forecast_base_pct": 0.05,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "Oil fails to sustain the recent rebound or sells off after the inventory data.",
+      "option_id": "OIL",
+      "reversal_case": "High volatility, large prior underperformance, and a 22.01% distance below the 52-week high increase whipsaw risk.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report for the week ending July 17."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.265,
+  "is_official_score": true,
+  "key_risks": [
+    "Recent factor leadership reverses and mega-cap growth resumes outperforming, causing SPY to beat the active basket.",
+    "Treasury yields rise despite softer inflation and labor data, pressuring real estate and broader value exposures.",
+    "The July 22 EIA petroleum report disappoints energy markets and reverses the recent energy rally.",
+    "China rebound fades because recent economic data are insufficient to offset prior underperformance and high country-specific risk."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "Small-cap value loses recent leadership with negative active return versus SPY over the first part of the window.",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Small-cap value has recent absolute and benchmark-relative strength, is at a 52-week high, and may benefit if softer inflation and payroll data support broader market participation.",
+      "time_window_catalyst": "Continuation of breadth improvement into the July 23 close; no specific scheduled sector catalyst identified."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "Financials reverse below SPY on widening credit concerns or an adverse yield-curve move.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials show positive 5-day and prior-window active returns, low drawdown, and a 52-week-high position, with less mega-cap growth dependence than SPY.",
+      "time_window_catalyst": "Continuation of value/cyclical leadership and stable yield-curve or credit sentiment before the exit close."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Treasury yields rise materially or real estate posts negative active return versus SPY early in the scoring window.",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Real estate has recent active strength and sits at a 52-week high, while softer CPI, PPI, and payroll data provide a plausible near-term rate-sensitive support case.",
+      "time_window_catalyst": "Rate-sensitive equity bid following softer inflation and employment data before the July 23 close."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Oil prices or energy equities fail to hold recent gains after the petroleum inventory update.",
+      "option_id": "ENERGY",
+      "rationale": "Energy has strong 5-day active return and a direct near-term catalyst from the scheduled EIA petroleum status report, though oil-related volatility keeps the allocation moderate.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report for the week ending July 17."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.25,
+      "invalidation_condition": "China equities give back the recent rebound and underperform SPY during the first half of the window.",
+      "option_id": "CHINA",
+      "rationale": "China equities have a positive 3-day and 5-day active rebound supported by supplied China GDP, industrial production, and PMI data, but remain high risk and far below highs.",
+      "time_window_catalyst": "Continuation of reaction to China first-half GDP, June industrial value added, and PMI data; no additional scheduled China catalyst identified."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.365,
+  "portfolio_rationale": "The portfolio tilts away from mega-cap growth toward recent breadth, value, financials, rate-sensitive real estate, energy, and China rebound exposures. Each active holding has a base forecast above SPY, and no non-SPY cluster exceeds 50%.",
+  "provider": "openai",
+  "rationale_summary": "SPY has been slightly negative over 5 and 21 sessions while equal-weight and several value/defensive/cyclical areas have shown positive active returns. Softer inflation and payroll data create a plausible one-week backdrop for broader participation, but forecasts remain modest because the horizon is short.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-16-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12317,
+    "latency_seconds": 41.60900000017136,
+    "output_tokens": 2762,
+    "reasoning_tokens": 296,
+    "total_tokens": 15079
+  }
+}

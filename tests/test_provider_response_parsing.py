@@ -97,6 +97,25 @@ def test_provider_submission_schema_requires_v2_forecasts() -> None:
     assert "invalidation_condition" in holding_required
 
 
+def test_provider_submission_schema_requires_production_v2_candidate_ledger() -> None:
+    config = _portfolio_model_config().model_copy(
+        update={
+            "metadata": {
+                **_portfolio_model_config().metadata,
+                "methodology_version": "portfolio-v2.0",
+            }
+        }
+    )
+
+    schema = provider_submission_schema(config)
+
+    assert "candidate_ledger" in schema["required"]
+    candidate_schema = schema["properties"]["candidate_ledger"]
+    assert candidate_schema["minItems"] == 6
+    assert candidate_schema["maxItems"] == 8
+    assert "forecast_base_pct" in candidate_schema["items"]["required"]
+
+
 def test_mock_provider_respects_portfolio_allocation_constraints() -> None:
     config = _portfolio_model_config().model_copy(
         update={

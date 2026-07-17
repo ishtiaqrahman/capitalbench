@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Soft data persists into exit",
+      "decision": "rejected",
+      "evidence": [
+        "June nonfarm payrolls +57k with downward revisions",
+        "CPI decreased 0.4% MoM"
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.3,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "SPY closes above entry by more than 1.5%",
+      "option_id": "SP500",
+      "reversal_case": "Strong industrial production print",
+      "time_window_catalyst": "July 22 EIA report"
+    },
+    {
+      "continuation_case": "Value outperformance continues on soft growth data",
+      "decision": "selected",
+      "evidence": [
+        "return_3s 2.00%",
+        "active_return_5s 2.26%"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -0.6,
+      "invalidation_condition": "SPY closes above entry by more than 1.5%",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Broad risk-on rotation into growth",
+      "time_window_catalyst": "July 22 EIA report"
+    },
+    {
+      "continuation_case": "Defensive rotation persists",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s 3.27%",
+        "CPI energy component down sharply"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "SPY closes above entry by more than 1.5%",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Stronger than expected retail sales follow-through",
+      "time_window_catalyst": "July 22 EIA report"
+    },
+    {
+      "continuation_case": "Financials benefit from stable rates",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s 2.31%",
+        "Fed held rates with lower 2026 median path"
+      ],
+      "forecast_base_pct": 0.85,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -0.7,
+      "invalidation_condition": "SPY closes above entry by more than 1.5%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield curve steepening accelerates",
+      "time_window_catalyst": "July 22 EIA report"
+    },
+    {
+      "continuation_case": "Oil stabilizes near current levels",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s 4.14%",
+        "Brent below $70 on July 1"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.9,
+      "forecast_low_pct": -1.1,
+      "invalidation_condition": "SPY closes above entry by more than 1.5%",
+      "option_id": "ENERGY",
+      "reversal_case": "July 22 inventory build surprises higher",
+      "time_window_catalyst": "July 22 EIA report"
+    },
+    {
+      "continuation_case": "Growth underperformance persists",
+      "decision": "rejected",
+      "evidence": [
+        "return_3s -0.81%",
+        "active_return_5s -2.27%"
+      ],
+      "forecast_base_pct": -0.4,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -3.2,
+      "invalidation_condition": "SPY closes above entry by more than 1.5%",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Tech earnings sentiment rebounds",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Rates remain range-bound",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_5s 2.91%",
+        "10y yield 4.57%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "SPY closes above entry by more than 1.5%",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Yield spike on stronger data",
+      "time_window_catalyst": "July 17 industrial production"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.69,
+  "is_official_score": true,
+  "key_risks": [
+    "Unexpected positive surprise in July 17 industrial production data",
+    "Reversal in recent commodity and value momentum",
+    "Higher than expected volatility around July 22 EIA release"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "SPY closes above entry by more than 1.5%",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Strong recent active return and value tilt supported by weak growth data favoring cyclicals.",
+      "time_window_catalyst": "July 22 EIA report"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "SPY closes above entry by more than 1.5%",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Defensive sector with positive recent performance amid cooling inflation and soft payrolls.",
+      "time_window_catalyst": "July 22 EIA report"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.85,
+      "invalidation_condition": "SPY closes above entry by more than 1.5%",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive recent active return and sensitivity to potential policy easing signals.",
+      "time_window_catalyst": "July 22 EIA report"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "SPY closes above entry by more than 1.5%",
+      "option_id": "ENERGY",
+      "rationale": "Recent outperformance amid oil price stabilization below $70.",
+      "time_window_catalyst": "July 22 EIA report"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.94,
+  "portfolio_rationale": "Selected holdings show base forecasts exceeding SPY with exposure across value, defensive, financials and energy clusters.",
+  "provider": "xai",
+  "rationale_summary": "Weak payrolls and cooling CPI favor value and defensive tilts over broad growth exposure for the one-week window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-16-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12563,
+    "latency_seconds": 14.233999999938533,
+    "output_tokens": 1569,
+    "reasoning_tokens": 591,
+    "total_tokens": 14723
+  }
+}

@@ -78,8 +78,8 @@ const earlierUniverseText = joinWithAnd(
     </div>
     <div>
       <span class="metric-label">Model task</span>
-      <strong>Submit one portfolio</strong>
-      <p>Each model submits one valid portfolio or single-allocation response, depending on the round rules.</p>
+      <strong>Compare, then allocate</strong>
+      <p>V2 models review a fixed candidate set, estimate each case, and then submit one frozen portfolio.</p>
     </div>
     <div>
       <span class="metric-label">Information rule</span>
@@ -96,6 +96,7 @@ const earlierUniverseText = joinWithAnd(
   <nav class="protocol-jump" aria-label="Methodology sections">
     <a href="#lifecycle">Steps</a>
     <a href="#single-turn">Protocol</a>
+    <a href="#portfolio-v2">V2 rules</a>
     <a href="#artifacts">Artifacts</a>
     <a href="#execution">Execution</a>
     <a href="#pricing">Scoring</a>
@@ -159,13 +160,40 @@ const earlierUniverseText = joinWithAnd(
         </p>
       </section>
 
+      <section id="portfolio-v2">
+        <h2>Portfolio V2.0 Decision Rules</h2>
+        <p>
+          New portfolio rounds use Portfolio V2.0. Before allocating, each model reviews 6 to 8 allowed assets. The
+          list must include the S&amp;P 500 and cover at least four predefined economic-exposure groups. Rejected
+          finalists stay in the audit record alongside selected assets.
+        </p>
+        <div class="leaderboard-defs">
+          <div>
+            <h3>Estimate Each Candidate</h3>
+            <p>Record low, base, and high return estimates plus supporting facts, a continuation case, and a reversal case.</p>
+          </div>
+          <div>
+            <h3>Use A Clear Hurdle</h3>
+            <p>An active holding must have a higher base return estimate than the model's S&amp;P 500 estimate for the same window.</p>
+          </div>
+          <div>
+            <h3>Limit Concentration</h3>
+            <p>One non-benchmark economic-exposure group cannot exceed 50% of the final portfolio.</p>
+          </div>
+        </div>
+        <p>
+          The final portfolio still contains 1 to 5 holdings in 5% increments and totals 100%. Only its realized return
+          is scored. Candidate estimates are saved for audit and forecast calibration; they do not create a second score.
+        </p>
+      </section>
+
       <section id="lifecycle">
         <h2>Test Steps</h2>
         <ol class="protocol-steps">
           <li><strong>Create the test directory.</strong> Each test lives under <code>rounds/&lt;round_id&gt;/</code> with its rules, prompt, briefing, asset list, price files, hashes, and run folders.</li>
           <li><strong>Prepare the model-facing material.</strong> Operators write or import the factual briefing, exact prompt, and saved asset list.</li>
           <li><strong>Validate the asset list.</strong> Non-cash ETF tickers must pass Tiingo EOD validation before a public test is saved.</li>
-          <li><strong>Add optional return context.</strong> A mechanical full-asset-list return table may be generated from adjusted closes and sorted by option order.</li>
+          <li><strong>Generate the decision context.</strong> V2 uses a complete horizon-specific table of returns, benchmark-relative movement, volatility, drawdown, volume, beta, correlation, and 52-week position, sorted by option order.</li>
           <li><strong>Save the inputs.</strong> <code>capitalbench hash-round</code> writes SHA-256 hashes for the test inputs before submissions are collected.</li>
           <li><strong>Collect model calls before the deadline.</strong> Public runs use one call per model. Consistency checks use repeated calls and a different <code>run_id</code>.</li>
           <li><strong>Validate submissions.</strong> Raw provider responses are preserved. Only schema-valid submissions move into parsed submissions and scoring.</li>
@@ -216,9 +244,9 @@ const earlierUniverseText = joinWithAnd(
                 <td data-label="Purpose">The machine-readable response contract for the round's declared submission format.</td>
               </tr>
               <tr>
-                <td data-label="Artifact"><code>market_data/universe_trailing_returns.*</code></td>
+                <td data-label="Artifact"><code>market_data/universe_decision_context.*</code></td>
                 <td data-label="Audience">Model-facing when present</td>
-                <td data-label="Purpose">Mechanical 7-day, 30-day, 6-month, and 1-year trailing returns from adjusted close data.</td>
+                <td data-label="Purpose">Complete horizon-specific V2 price, risk, volume, and S&amp;P 500 comparison context from adjusted-close history.</td>
               </tr>
               <tr>
                 <td data-label="Artifact"><code>hashes.json</code></td>
@@ -310,7 +338,7 @@ const earlierUniverseText = joinWithAnd(
           </div>
           <div>
             <h3>Portfolio</h3>
-            <p>Requires a <code>portfolio</code> array plus <code>portfolio_rationale</code>. The default protocol allows 1 to 5 holdings, 5% increments, and exactly 100% total allocation.</p>
+            <p>V2 requires a <code>candidate_ledger</code>, return forecasts, and a <code>portfolio</code> array. The final portfolio allows 1 to 5 holdings, 5% increments, and exactly 100% total allocation.</p>
           </div>
           <div>
             <h3>Round Constraints</h3>

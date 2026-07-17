@@ -12,7 +12,9 @@ from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
 
+from .exposures import economic_exposure_cluster
 from .io import load_manifest, load_options, write_json
+from .methodology import is_production_portfolio_v2
 from .scoring import _is_cash_option
 from .universe import TIINGO_API_KEY_ENV, fetch_tiingo_eod_prices
 
@@ -45,6 +47,7 @@ def fetch_universe_decision_context(
 ) -> DecisionContextOutput:
     manifest = load_manifest(round_path)
     profile = _profile_for_manifest(manifest)
+    compact = is_production_portfolio_v2(manifest.methodology_version)
     market_data_dir = round_path / "market_data"
     market_data_dir.mkdir(parents=True, exist_ok=True)
     csv_path = market_data_dir / DECISION_CONTEXT_CSV
@@ -71,7 +74,7 @@ def fetch_universe_decision_context(
 
     for option in options:
         if _is_cash_option(option):
-            internal_rows.append(_cash_row(option, as_of, profile))
+            internal_rows.append(_cash_row(option, as_of, profile, compact=compact))
             source_rows.append({"option_id": option.option_id, "symbol": "", "source": "cash", "rows": []})
             continue
         symbol = option.tiingo_symbol or option.symbol or ""
@@ -92,17 +95,17 @@ def fetch_universe_decision_context(
             sources.add(source)
         except Exception as exc:
             failed_options.append(option.option_id)
-            internal_rows.append(_failed_row(option, symbol, as_of, profile, str(exc)))
+            internal_rows.append(_failed_row(option, symbol, as_of, profile, str(exc), compact=compact))
             source_rows.append(
                 {"option_id": option.option_id, "symbol": symbol, "source": "unavailable", "rows": [], "error": str(exc)}
             )
 
     _add_benchmark_metrics(internal_rows, profile)
-    rows = [_public_row(row, profile) for row in internal_rows]
+    rows = [_public_row(row, profile, compact=compact) for row in internal_rows]
     market_state = _market_state(internal_rows)
     generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     report = {
-        "version": "capitalbench_decision_context_v1",
+        "version": "capitalbench_decision_context_v2" if compact else "capitalbench_decision_context_v1",
         "generated_at_utc": generated_at,
         "methodology_version": manifest.methodology_version,
         "profile": profile,
@@ -111,6 +114,7 @@ def fetch_universe_decision_context(
         "total_options": len(rows),
         "failed_options": failed_options,
         "market_state": market_state,
+        "columns": _metric_columns(profile, compact=compact),
         "rows": rows,
     }
     history_report = {
@@ -121,7 +125,7 @@ def fetch_universe_decision_context(
         "sources": sorted(sources),
         "options": source_rows,
     }
-    _write_csv(csv_path, rows, profile)
+    _write_csv(csv_path, rows, profile, compact=compact)
     write_json(json_path, report)
     write_json(history_path, history_report)
     markdown_path.write_text(_render_markdown(report), encoding="utf-8")
@@ -246,24 +250,39 @@ def _decision_row(option: Any, symbol: str, as_of: date, history: list[dict[str,
     return row
 
 
-def _cash_row(option: Any, as_of: date, profile: str) -> dict[str, Any]:
+def _cash_row(option: Any, as_of: date, profile: str, *, compact: bool = False) -> dict[str, Any]:
     row = _base_row(option, "", as_of, "cash")
     row.update({"as_of_price_date": as_of.isoformat(), "source": "cash", "_history": []})
-    metric_names = _metric_columns(profile)
+    metric_names = _metric_columns(profile, compact=compact)
     for name in metric_names:
-        if name not in {"option_id", "symbol", "option_group", "as_of_price_date", "status"}:
+        if name not in {
+            "option_id",
+            "symbol",
+            "option_group",
+            "economic_exposure_cluster",
+            "as_of_price_date",
+            "status",
+        }:
             row[name] = 0.0 if "corr" not in name and "distance" not in name else ""
     if profile == "weekly":
-        row.update({"return_21s": 0.0, "prior_16s_return": 0.0})
+        row.update({"return_5s": 0.0, "return_21s": 0.0, "prior_16s_return": 0.0})
     else:
-        row["prior_105s_return"] = 0.0
+        row.update({"return_21s": 0.0, "prior_105s_return": 0.0})
     return row
 
 
-def _failed_row(option: Any, symbol: str, as_of: date, profile: str, message: str) -> dict[str, Any]:
+def _failed_row(
+    option: Any,
+    symbol: str,
+    as_of: date,
+    profile: str,
+    message: str,
+    *,
+    compact: bool = False,
+) -> dict[str, Any]:
     row = _base_row(option, symbol, as_of, "fail")
     row.update({"as_of_price_date": "", "source": "unavailable", "message": message, "_history": []})
-    for name in _metric_columns(profile):
+    for name in _metric_columns(profile, compact=compact):
         row.setdefault(name, "")
     return row
 
@@ -273,6 +292,7 @@ def _base_row(option: Any, symbol: str, as_of: date, status: str) -> dict[str, A
         "option_id": option.option_id,
         "symbol": symbol,
         "option_group": option.option_group,
+        "economic_exposure_cluster": economic_exposure_cluster(option),
         "as_of_date_requested": as_of.isoformat(),
         "status": status,
     }
@@ -311,39 +331,45 @@ def _add_benchmark_metrics(rows: list[dict[str, Any]], profile: str) -> None:
         row[f"beta_spy_{observations}s"] = _beta(pairs)
 
 
-def _public_row(row: dict[str, Any], profile: str) -> dict[str, Any]:
-    return {column: row.get(column, "") for column in _metric_columns(profile)}
+def _public_row(row: dict[str, Any], profile: str, *, compact: bool = False) -> dict[str, Any]:
+    return {column: row.get(column, "") for column in _metric_columns(profile, compact=compact)}
 
 
-def _metric_columns(profile: str) -> list[str]:
-    identity = ["option_id", "symbol", "option_group", "as_of_price_date"]
+def _metric_columns(profile: str, *, compact: bool = False) -> list[str]:
+    identity = (
+        ["option_id", "symbol", "economic_exposure_cluster"]
+        if compact
+        else ["option_id", "symbol", "option_group", "as_of_price_date"]
+    )
     if profile == "weekly":
-        metrics = [
-            "return_3s",
-            "return_5s",
-            "active_return_5s",
-            "prior_16s_active_return",
-            "volatility_21s",
-            "max_drawdown_21s",
-            "volume_zscore_5v60",
-            "corr_spy_63s",
-            "beta_spy_63s",
-            "distance_52w_high",
+        metrics = ["return_3s", "active_return_5s", "prior_16s_active_return"] if compact else [
+            "return_3s", "return_5s", "active_return_5s", "prior_16s_active_return"
         ]
+        metrics.extend(
+            [
+                "volatility_21s",
+                "max_drawdown_21s",
+                "volume_zscore_5v60",
+                "corr_spy_63s",
+                "beta_spy_63s",
+                "distance_52w_high",
+            ]
+        )
     else:
-        metrics = [
-            "return_5s",
-            "return_21s",
-            "active_return_21s",
-            "prior_105s_active_return",
-            "volatility_63s",
-            "max_drawdown_63s",
-            "volume_zscore_20v120",
-            "corr_spy_252s",
-            "beta_spy_252s",
-            "distance_52w_high",
+        metrics = ["return_5s", "active_return_21s", "prior_105s_active_return"] if compact else [
+            "return_5s", "return_21s", "active_return_21s", "prior_105s_active_return"
         ]
-    return identity + metrics + ["status"]
+        metrics.extend(
+            [
+                "volatility_63s",
+                "max_drawdown_63s",
+                "volume_zscore_20v120",
+                "corr_spy_252s",
+                "beta_spy_252s",
+                "distance_52w_high",
+            ]
+        )
+    return identity + metrics + ([] if compact else ["status"])
 
 
 def _market_state(rows: list[dict[str, Any]]) -> dict[str, Any]:
@@ -474,8 +500,8 @@ def _number(value: Any) -> float | None:
         return None
 
 
-def _write_csv(path: Path, rows: list[dict[str, Any]], profile: str) -> None:
-    columns = _metric_columns(profile)
+def _write_csv(path: Path, rows: list[dict[str, Any]], profile: str, *, compact: bool = False) -> None:
+    columns = _metric_columns(profile, compact=compact)
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=columns, lineterminator="\n")
         writer.writeheader()
@@ -504,7 +530,7 @@ def _render_markdown(report: dict[str, Any]) -> str:
     ]
     for key, value in report["market_state"].items():
         lines.append(f"| {key} | {_format_cell(value, key)} |")
-    columns = _metric_columns(profile)
+    columns = list(report.get("columns") or _metric_columns(profile))
     lines.extend(
         [
             "",

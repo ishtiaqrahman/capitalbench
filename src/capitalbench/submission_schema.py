@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from .methodology import is_portfolio_v2, is_production_portfolio_v2
 from .schemas import ModelConfig
 
 
@@ -15,7 +16,8 @@ def provider_submission_schema(model_config: ModelConfig) -> dict[str, object]:
         increment = int(constraints.get("allocation_increment_pct") or 5)
         minimum = int(constraints.get("min_allocation_pct") or 5)
         methodology_version = str(model_config.metadata.get("methodology_version") or "")
-        v2 = methodology_version.startswith("portfolio-v2")
+        v2 = is_portfolio_v2(methodology_version)
+        production_v2 = is_production_portfolio_v2(methodology_version)
         holding_properties: dict[str, object] = {
             "option_id": {"type": "string", "enum": option_ids},
             "allocation_pct": {
@@ -85,6 +87,46 @@ def provider_submission_schema(model_config: ModelConfig) -> dict[str, object]:
                     "expected_alpha_vs_sp500_pct",
                 ]
             )
+        if production_v2:
+            properties["candidate_ledger"] = {
+                "type": "array",
+                "minItems": 6,
+                "maxItems": 8,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": {
+                        "option_id": {"type": "string", "enum": option_ids},
+                        "decision": {"type": "string", "enum": ["selected", "rejected"]},
+                        "forecast_low_pct": {"type": "number"},
+                        "forecast_base_pct": {"type": "number"},
+                        "forecast_high_pct": {"type": "number"},
+                        "evidence": {
+                            "type": "array",
+                            "minItems": 1,
+                            "maxItems": 3,
+                            "items": {"type": "string"},
+                        },
+                        "continuation_case": {"type": "string"},
+                        "reversal_case": {"type": "string"},
+                        "time_window_catalyst": {"type": "string"},
+                        "invalidation_condition": {"type": "string"},
+                    },
+                    "required": [
+                        "option_id",
+                        "decision",
+                        "forecast_low_pct",
+                        "forecast_base_pct",
+                        "forecast_high_pct",
+                        "evidence",
+                        "continuation_case",
+                        "reversal_case",
+                        "time_window_catalyst",
+                        "invalidation_condition",
+                    ],
+                },
+            }
+            required.append("candidate_ledger")
         return {
             "type": "object",
             "additionalProperties": False,
@@ -148,13 +190,20 @@ def prompt_for_model(prompt: str, model_config: ModelConfig) -> str:
         constraints = dict(model_config.metadata.get("portfolio_constraints") or {})
         methodology_version = str(model_config.metadata.get("methodology_version") or "")
         v2_instructions = ""
-        if methodology_version.startswith("portfolio-v2"):
+        if is_portfolio_v2(methodology_version):
             v2_instructions = (
                 f"- methodology_version: {methodology_version}\n"
                 "- confidence is your probability from 0 to 1 that this portfolio beats SPY over the scoring window\n"
                 "- expected return fields are percentage points, so 1.25 means +1.25%\n"
                 "- expected_alpha_vs_sp500_pct must equal portfolio_expected_return_pct minus benchmark_expected_return_pct\n"
                 "- each holding requires expected_return_pct, time_window_catalyst, and invalidation_condition\n"
+            )
+        if is_production_portfolio_v2(methodology_version):
+            v2_instructions += (
+                "- candidate_ledger must contain 6-8 unique options, include SP500, and span at least four economic-exposure clusters\n"
+                "- selected candidate_ledger entries must exactly match portfolio holdings\n"
+                "- every selected non-SP500, non-CASH candidate base forecast must exceed the SP500 base forecast\n"
+                f"- max_economic_exposure_pct outside SP500 and CASH: {constraints.get('max_economic_exposure_pct', 50)}\n"
             )
         return (
             f"{prompt}\n\n"

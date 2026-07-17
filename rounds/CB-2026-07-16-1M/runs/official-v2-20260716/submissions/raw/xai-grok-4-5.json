@@ -1,0 +1,185 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Modest growth and cooling inflation allow equities to grind higher with Fed on hold",
+      "decision": "rejected",
+      "evidence": [
+        "June nonfarm payrolls increased by 57,000 with April and May revised down by 74,000 combined",
+        "June CPI decreased 0.4% monthly and core was unchanged",
+        "spy_return_21s of -0.29% and distance_52w_high -0.91%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Unemployment rises sharply or core inflation reaccelerates in July CPI",
+      "option_id": "SP500",
+      "reversal_case": "Data surprises to the downside trigger recession fears or upside inflation forces hawkish pivot",
+      "time_window_catalyst": "FOMC meeting July 28-29 and BEA advance Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Equal-weight continues to outperform as market breadth improves and mega-cap concentration eases",
+      "decision": "selected",
+      "evidence": [
+        "rsp_return_21s 1.42% and rsp_minus_spy_21s 1.70%",
+        "rsp_return_5s 0.73% vs spy -0.13%",
+        "distance_52w_high 0.00%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Equal-weight underperforms market-cap SPY by over 2% or tech leadership returns",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Large-cap growth and tech rebound sharply on positive catalysts",
+      "time_window_catalyst": "FOMC statement and subsequent sector performance into August CPI"
+    },
+    {
+      "continuation_case": "Value factor and large-value stocks extend relative strength in a soft-landing or lower-growth regime",
+      "decision": "selected",
+      "evidence": [
+        "IWD return_5s 1.25% and active_return_21s 2.62%",
+        "distance_52w_high 0.00%",
+        "prior_105s_active_return 3.76%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Large value lags SPY significantly or growth factor surges",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Risk-on growth rally or higher rates pressure value cyclicals",
+      "time_window_catalyst": "July employment report August 7 and FOMC"
+    },
+    {
+      "continuation_case": "Financials maintain momentum from recent outperformance and stable-to-steeper yield curve support",
+      "decision": "selected",
+      "evidence": [
+        "XLF return_5s 2.18% and active_return_21s 6.62%",
+        "distance_52w_high 0.00%",
+        "Treasury 10-year yield at 4.57%"
+      ],
+      "forecast_base_pct": 2.1,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Financials sector drawdown exceeds 5% or yield curve flattens sharply",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weakening credit conditions or deposit outflows from soft economy reverse gains",
+      "time_window_catalyst": "FOMC July 29 and BLS employment August 7"
+    },
+    {
+      "continuation_case": "Healthcare defensive characteristics support outperformance amid macro uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "XLV active_return_21s 6.58%",
+        "max_drawdown_63s -4.01%",
+        "June CPI decreased 0.4% and nonfarm payrolls soft"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 4.2,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "Healthcare relative performance turns negative versus SPY by large amount",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Broad risk-on move or adverse policy/regulatory news for sector",
+      "time_window_catalyst": "Q2 GDP July 30 and July CPI August 12"
+    },
+    {
+      "continuation_case": "Energy equities hold gains if oil stabilizes near forecast and companies maintain capital discipline",
+      "decision": "selected",
+      "evidence": [
+        "XLE return_5s 4.01% and active_return_21s 3.67%",
+        "Brent crude below $70 on July 1 after $85 June average",
+        "EIA July forecast projects $70 Q4 average"
+      ],
+      "forecast_base_pct": 1.7,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Crude oil declines below $60 or large unexpected inventory builds",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil prices fall further on demand concerns or supply increase, pressuring sector",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Reports and August Short-Term Energy Outlook August 11"
+    },
+    {
+      "continuation_case": "Staples continue as defensive play with cautious consumer spending",
+      "decision": "rejected",
+      "evidence": [
+        "XLP return_5s 3.14% and active_return_21s 1.37%",
+        "June retail sales up only 0.2%",
+        "soft labor market data with payrolls +57k"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Staples underperform as market risk appetite increases markedly",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Improving growth data shifts preference to discretionary and cyclicals",
+      "time_window_catalyst": "Personal income and outlays with GDP July 30"
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 1.24,
+  "is_official_score": true,
+  "key_risks": [
+    "Sudden reversal of the value and financials rotation if mega-cap tech rebounds",
+    "Further decline in oil prices below EIA projections weighing on energy",
+    "Hawkish surprise at FOMC or hotter July CPI data",
+    "Broader equity market correction from weaker-than-expected GDP or jobs data"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Equal-weight underperforms market-cap SPY by over 2% or tech leadership returns",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Captures broader market participation and recent equal-weight outperformance versus concentrated SPY amid rotation.",
+      "time_window_catalyst": "FOMC statement and subsequent sector performance into August CPI"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Large value lags SPY significantly or growth factor surges",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Benefits from ongoing value rotation supported by soft growth data and relative strength at 52-week highs.",
+      "time_window_catalyst": "July employment report August 7 and FOMC"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.1,
+      "invalidation_condition": "Financials sector drawdown exceeds 5% or yield curve flattens sharply",
+      "option_id": "FINANCIALS",
+      "rationale": "Strongest recent active returns among major sectors with support from current yield levels and momentum.",
+      "time_window_catalyst": "FOMC July 29 and BLS employment August 7"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Healthcare relative performance turns negative versus SPY by large amount",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with solid 21-session active outperformance suitable for uncertain macro backdrop.",
+      "time_window_catalyst": "Q2 GDP July 30 and July CPI August 12"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.7,
+      "invalidation_condition": "Crude oil declines below $60 or large unexpected inventory builds",
+      "option_id": "ENERGY",
+      "rationale": "Recent price strength and potential stabilization of oil near EIA forecasts support continued relative gains.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Reports and August Short-Term Energy Outlook August 11"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.74,
+  "portfolio_rationale": "Allocates equally across equal-weight US equities, large value, financials, healthcare and energy to exploit recent relative strength and soft macro data favoring rotation and defensives over the concentrated S&P 500 over the one-month window.",
+  "provider": "xai",
+  "rationale_summary": "Soft inflation, weak payrolls and relative performance data support higher base-case returns for value, financials, equal-weight, healthcare and energy versus SPY.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-16-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 13476,
+    "latency_seconds": 115.93699999991804,
+    "output_tokens": 2417,
+    "reasoning_tokens": 7528,
+    "total_tokens": 23421
+  }
+}

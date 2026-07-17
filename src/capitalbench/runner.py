@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from .config import PricingTable, calculate_cost_usd, load_model_configs, load_pricing_config
+from .exposures import exposure_clusters_by_option
 from .io import load_manifest, load_options, write_json
 from .prompting import build_prompt
 from .providers import AnthropicProvider, GoogleProvider, MockProvider, OpenAIProvider, ProviderResult, XAIProvider
@@ -95,6 +96,9 @@ def run_round(
     invalid_count = 0
     validation_errors: dict[str, list[str]] = {}
     option_ids = [option.option_id for option in options]
+    exposure_clusters = exposure_clusters_by_option(options)
+    benchmark_option_id = next((option.option_id for option in options if option.is_benchmark), "SP500")
+    cash_option_ids = [option.option_id for option in options if option.is_cash]
 
     with run_paths.run_log_path.open("w", encoding="utf-8") as log_handle:
         for model_config in enabled_models:
@@ -110,6 +114,9 @@ def run_round(
                     submission_format=submission_format,
                     portfolio_constraints=portfolio_constraints.model_dump(mode="json"),
                     methodology_version=manifest.methodology_version,
+                    exposure_clusters=exposure_clusters,
+                    benchmark_option_id=benchmark_option_id,
+                    cash_option_ids=cash_option_ids,
                 )
                 started_at = _utc_now()
                 result = _run_one_model(
@@ -324,6 +331,9 @@ def _with_round_metadata(
     submission_format: str,
     portfolio_constraints: dict[str, Any],
     methodology_version: str | None,
+    exposure_clusters: dict[str, str],
+    benchmark_option_id: str,
+    cash_option_ids: list[str],
 ) -> ModelConfig:
     metadata = {
         **model_config.metadata,
@@ -336,6 +346,9 @@ def _with_round_metadata(
         "submission_format": submission_format,
         "portfolio_constraints": portfolio_constraints,
         "methodology_version": methodology_version,
+        "economic_exposure_clusters": exposure_clusters,
+        "benchmark_option_id": benchmark_option_id,
+        "cash_option_ids": cash_option_ids,
     }
     return model_config.model_copy(update={"metadata": metadata})
 

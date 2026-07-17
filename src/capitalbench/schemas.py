@@ -63,6 +63,7 @@ class PortfolioConstraints(StrictModel):
     max_total_allocation_pct: int = Field(default=100, ge=1, le=100)
     allow_cash: bool = True
     allow_benchmark_asset: bool = True
+    max_economic_exposure_pct: int | None = Field(default=None, ge=1, le=100)
 
     @model_validator(mode="after")
     def validate_constraints(self) -> "PortfolioConstraints":
@@ -304,6 +305,7 @@ class ModelSubmission(StrictModel):
     benchmark_expected_return_pct: float | None = None
     portfolio_expected_return_pct: float | None = None
     expected_alpha_vs_sp500_pct: float | None = None
+    candidate_ledger: list["CandidateAssessment"] | None = None
     rationale_summary: str
     portfolio_rationale: str | None = None
     key_risks: list[str]
@@ -369,6 +371,47 @@ class PortfolioAllocation(StrictModel):
             return None
         normalized = value.strip()
         return normalized or None
+
+
+class CandidateAssessment(StrictModel):
+    option_id: str
+    decision: Literal["selected", "rejected"]
+    forecast_low_pct: float
+    forecast_base_pct: float
+    forecast_high_pct: float
+    evidence: list[str] = Field(min_length=1, max_length=3)
+    continuation_case: str
+    reversal_case: str
+    time_window_catalyst: str
+    invalidation_condition: str
+
+    @field_validator(
+        "option_id",
+        "continuation_case",
+        "reversal_case",
+        "time_window_catalyst",
+        "invalidation_condition",
+    )
+    @classmethod
+    def require_candidate_text(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("field cannot be blank")
+        return normalized
+
+    @field_validator("evidence")
+    @classmethod
+    def normalize_evidence(cls, value: list[str]) -> list[str]:
+        normalized = [item.strip() for item in value]
+        if any(not item for item in normalized):
+            raise ValueError("evidence cannot contain blank items")
+        return normalized
+
+    @model_validator(mode="after")
+    def validate_forecast_range(self) -> "CandidateAssessment":
+        if not self.forecast_low_pct <= self.forecast_base_pct <= self.forecast_high_pct:
+            raise ValueError("candidate forecast must satisfy low <= base <= high")
+        return self
 
 
 class PriceRecord(StrictModel):

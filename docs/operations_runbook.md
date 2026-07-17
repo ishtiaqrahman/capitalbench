@@ -21,7 +21,7 @@ tokens, and raw provider responses.
    ```bash
    capitalbench init-round ...
    capitalbench import-research --round rounds/<round_id> ...
-   capitalbench fetch-universe-performance --round rounds/<round_id> ...
+   capitalbench fetch-universe-decision-context --round rounds/<round_id> ...
    capitalbench hash-round --round rounds/<round_id>
    ```
 
@@ -30,6 +30,7 @@ tokens, and raw provider responses.
    ```bash
    capitalbench run-round \
      --round rounds/<round_id> \
+     --models configs/models.v2.yaml \
      --run-id official-<yyyymmdd> \
      --run-type official \
      --allow-real-api-calls

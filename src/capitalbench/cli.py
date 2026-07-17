@@ -71,6 +71,7 @@ def _cmd_init_round(args: argparse.Namespace) -> int:
         universe_version=args.universe_version,
         submission_format=args.submission_format,
         horizon=args.horizon,
+        methodology_version=args.methodology_version,
     )
     print(f"initialized round: {round_path}")
     return 0
@@ -563,6 +564,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     init_parser.add_argument("--submission-format", choices=["single_pick", "portfolio"], default="single_pick")
     init_parser.add_argument("--horizon", default="one month", help='round horizon label, for example "one week"')
+    init_parser.add_argument(
+        "--methodology-version",
+        help="methodology label; portfolio rounds default to portfolio-v2.0",
+    )
     init_parser.set_defaults(func=_cmd_init_round)
 
     hash_parser = subparsers.add_parser("hash-round", help="hash round input files")

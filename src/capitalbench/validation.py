@@ -7,7 +7,9 @@ from typing import Any
 
 from pydantic import ValidationError
 
+from .exposures import exposure_clusters_by_option
 from .io import load_manifest, load_options, read_json, read_yaml, write_json
+from .methodology import is_portfolio_v2, is_production_portfolio_v2
 from .run_store import get_selected_run_paths, read_run_manifest
 from .portfolio import (
     allocation_increment_bps,
@@ -79,7 +81,12 @@ def validate_submission_payload(
 
     _validate_submission_format(submission, submission_format)
     _validate_selected_options(submission, options, portfolio_constraints or PortfolioConstraints())
-    _validate_methodology_fields(submission, methodology_version)
+    _validate_methodology_fields(
+        submission,
+        methodology_version,
+        options,
+        portfolio_constraints or PortfolioConstraints(),
+    )
     if round_id is not None and submission.round_id != round_id:
         raise ValueError(
             "submission round_id does not match manifest.yaml: "
@@ -94,8 +101,13 @@ def validate_submission_payload(
     return submission
 
 
-def _validate_methodology_fields(submission: ModelSubmission, methodology_version: str | None) -> None:
-    if not str(methodology_version or "").startswith("portfolio-v2"):
+def _validate_methodology_fields(
+    submission: ModelSubmission,
+    methodology_version: str | None,
+    options: list[MarketOption],
+    constraints: PortfolioConstraints,
+) -> None:
+    if not is_portfolio_v2(methodology_version):
         return
     required_forecasts = {
         "benchmark_expected_return_pct": submission.benchmark_expected_return_pct,
@@ -138,6 +150,91 @@ def _validate_methodology_fields(submission: ModelSubmission, methodology_versio
         raise ValueError(
             "portfolio-v2 weighted holding expected returns must equal portfolio_expected_return_pct "
             "within 0.20 percentage point"
+        )
+    if is_production_portfolio_v2(methodology_version):
+        _validate_v2_candidate_ledger(submission, options, constraints)
+
+
+def _validate_v2_candidate_ledger(
+    submission: ModelSubmission,
+    options: list[MarketOption],
+    constraints: PortfolioConstraints,
+) -> None:
+    ledger = submission.candidate_ledger
+    if ledger is None:
+        raise ValueError("portfolio-v2 production submissions require candidate_ledger")
+    if not 6 <= len(ledger) <= 8:
+        raise ValueError("candidate_ledger must contain between 6 and 8 candidates")
+
+    option_map = {option.option_id: option for option in options}
+    candidate_ids = [candidate.option_id for candidate in ledger]
+    if len(candidate_ids) != len(set(candidate_ids)):
+        raise ValueError("candidate_ledger option_id values must be unique")
+    unknown = sorted(set(candidate_ids) - set(option_map))
+    if unknown:
+        raise ValueError(f"candidate_ledger contains unknown option_id values: {', '.join(unknown)}")
+
+    benchmark = next((option for option in options if option.is_benchmark), None)
+    if benchmark is None:
+        benchmark = option_map.get("SP500")
+    if benchmark is None or benchmark.option_id not in candidate_ids:
+        raise ValueError("candidate_ledger must include the S&P 500 benchmark option")
+
+    clusters = exposure_clusters_by_option(options)
+    represented_clusters = {clusters[candidate_id] for candidate_id in candidate_ids}
+    if len(represented_clusters) < 4:
+        raise ValueError("candidate_ledger must span at least four economic-exposure clusters")
+
+    for candidate in ledger:
+        if any(
+            marker in evidence.lower()
+            for evidence in candidate.evidence
+            for marker in ("http://", "https://", "www.")
+        ):
+            raise ValueError("candidate_ledger evidence must not contain URLs")
+
+    portfolio_ids = {allocation.option_id for allocation in submission.portfolio or []}
+    selected_candidate_ids = {
+        candidate.option_id for candidate in ledger if candidate.decision == "selected"
+    }
+    if selected_candidate_ids != portfolio_ids:
+        raise ValueError("selected candidate_ledger entries must exactly match portfolio holdings")
+
+    by_id = {candidate.option_id: candidate for candidate in ledger}
+    benchmark_forecast = by_id[benchmark.option_id].forecast_base_pct
+    if abs(float(submission.benchmark_expected_return_pct) - benchmark_forecast) > 0.10:
+        raise ValueError(
+            "benchmark_expected_return_pct must equal the benchmark candidate base forecast "
+            "within 0.10 percentage point"
+        )
+
+    cash_ids = {option.option_id for option in options if option.is_cash}
+    exposure_allocations: dict[str, int] = {}
+    for allocation in submission.portfolio or []:
+        candidate = by_id[allocation.option_id]
+        if abs(float(allocation.expected_return_pct) - candidate.forecast_base_pct) > 0.10:
+            raise ValueError(
+                f"holding {allocation.option_id} expected_return_pct must equal its candidate "
+                "base forecast within 0.10 percentage point"
+            )
+        if allocation.option_id not in cash_ids and allocation.option_id != benchmark.option_id:
+            if candidate.forecast_base_pct <= benchmark_forecast:
+                raise ValueError(
+                    f"active holding {allocation.option_id} base forecast must exceed the benchmark base forecast"
+                )
+            cluster = clusters[allocation.option_id]
+            exposure_allocations[cluster] = exposure_allocations.get(cluster, 0) + allocation.allocation_pct
+
+    exposure_cap = constraints.max_economic_exposure_pct or 50
+    over_cap = {
+        cluster: allocation
+        for cluster, allocation in exposure_allocations.items()
+        if allocation > exposure_cap
+    }
+    if over_cap:
+        details = ", ".join(f"{cluster}={allocation}%" for cluster, allocation in sorted(over_cap.items()))
+        raise ValueError(
+            f"non-benchmark economic-exposure allocation exceeds {exposure_cap}%: {details}"
         )
 
 

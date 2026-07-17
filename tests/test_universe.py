@@ -595,15 +595,14 @@ def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
     prompt = (round_path / "prompt.md").read_text(encoding="utf-8")
     assert exit_code == 0
     assert manifest["submission_format"] == "portfolio"
-    assert manifest["methodology_version"] == "portfolio-v1.0"
+    assert manifest["methodology_version"] == "portfolio-v2.0"
+    assert manifest["portfolio_constraints"]["max_economic_exposure_pct"] == 50
+    assert (round_path / "submission_schema.json").exists()
     assert "portfolio" in prompt
-    assert "maximize expected one-month realized portfolio return" in prompt
+    assert "maximize expected realized portfolio return" in prompt
     assert "close-to-close one-month scoring window" in prompt
-    assert "calculated after regular trading ends on the exit date" in prompt
-    assert "Use longer-horizon facts only when they are likely to affect prices before the exit close." in prompt
-    assert "Briefing-bias discipline" in prompt
-    assert "row count, and price-context table order as context, not recommendation signals" in prompt
-    assert "Price-history discipline: trailing returns are descriptive data, not forecasts." in prompt
-    assert "Use price history as one input, not as a standalone reason to allocate to an option." in prompt
-    assert "state that support is limited" in prompt
-    assert "allocation_pct values must sum to exactly 100" in prompt
+    assert "candidate ledger of 6-8 unique options" in prompt
+    assert "span at least four listed economic-exposure clusters" in prompt
+    assert "base forecast is greater than SPY's base forecast" in prompt
+    assert "no economic-exposure cluster may exceed" in prompt
+    assert "sum to exactly 100" in prompt

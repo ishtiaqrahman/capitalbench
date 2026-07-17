@@ -3,7 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from .decision_context import DECISION_CONTEXT_MD, DECISION_CONTEXT_TITLE
+from .exposures import economic_exposure_cluster
 from .io import load_manifest, load_options, read_yaml
+from .methodology import is_portfolio_v2, is_production_portfolio_v2
 from .performance import MARKET_DATA_DIRNAME, UNIVERSE_PRICE_CONTEXT_TITLE, UNIVERSE_TRAILING_RETURNS_MD
 from .portfolio import constraints_from_manifest, submission_format_from_manifest
 from .schemas import MarketOption
@@ -42,13 +44,16 @@ def build_prompt(round_path: Path) -> str:
     briefing = (round_path / "briefing.md").read_text(encoding="utf-8").strip()
     metadata = render_round_metadata(round_path, manifest)
     context_title, universe_performance = _market_context_section(round_path, manifest)
-    if str(manifest.methodology_version or "").startswith("portfolio-v2") and not universe_performance:
+    if is_portfolio_v2(manifest.methodology_version) and not universe_performance:
         raise FileNotFoundError(
             f"portfolio-v2 round requires market_data/{DECISION_CONTEXT_MD}"
         )
     if _briefing_contains_universe_performance(briefing):
         universe_performance = None
-    options = render_options_for_prompt(load_options(round_path))
+    options = render_options_for_prompt(
+        load_options(round_path),
+        compact=is_production_portfolio_v2(manifest.methodology_version),
+    )
     parts = [
         f"{prompt}\n\n"
         f"## Round Metadata\n\n{metadata}\n\n"
@@ -112,13 +117,26 @@ def render_round_metadata(round_path: Path, manifest) -> str:
                 f"Portfolio total allocation: {constraints.max_total_allocation_pct}%",
             ]
         )
-    if str(manifest.methodology_version or "").startswith("portfolio-v2"):
+    if is_portfolio_v2(manifest.methodology_version):
         lines.extend(
             [
                 "Decision protocol: single-turn, non-agentic, with no tools or follow-up calls.",
                 "Forecast sequence: estimate SPY, estimate the selected holdings, then construct the portfolio.",
                 "Confidence meaning: probability from 0 to 1 that the submitted portfolio beats SPY over this scoring window.",
                 "Expected-return units: percentage points; 1.25 means an expected return of +1.25%.",
+            ]
+        )
+    if is_production_portfolio_v2(manifest.methodology_version):
+        constraints = constraints_from_manifest(manifest)
+        lines.extend(
+            [
+                "Candidate protocol: assess 6-8 unique options, include SP500, and span at least four economic-exposure clusters.",
+                "Forecast protocol: record low/base/high returns plus continuation, reversal, catalyst, and invalidation for every candidate.",
+                "Active-holding hurdle: every selected non-SP500, non-CASH holding must have a base forecast greater than SP500's base forecast.",
+                (
+                    "Economic-exposure cap: no non-SP500, non-CASH cluster may exceed "
+                    f"{constraints.max_economic_exposure_pct or 50}% of the portfolio."
+                ),
             ]
         )
     return "\n".join(f"- {line}" for line in lines)
@@ -152,7 +170,7 @@ def _universe_performance_section(round_path: Path) -> str | None:
 
 
 def _market_context_section(round_path: Path, manifest) -> tuple[str, str | None]:
-    if str(manifest.methodology_version or "").startswith("portfolio-v2"):
+    if is_portfolio_v2(manifest.methodology_version):
         path = round_path / MARKET_DATA_DIRNAME / DECISION_CONTEXT_MD
         return DECISION_CONTEXT_TITLE, _strip_context_heading(path, DECISION_CONTEXT_TITLE)
     return UNIVERSE_PRICE_CONTEXT_TITLE, _universe_performance_section(round_path)
@@ -172,7 +190,25 @@ def _briefing_contains_universe_performance(briefing: str) -> bool:
     return any(title in briefing for title in UNIVERSE_CONTEXT_TITLE_ALIASES)
 
 
-def render_options_for_prompt(options: list[MarketOption]) -> str:
+def render_options_for_prompt(options: list[MarketOption], *, compact: bool = False) -> str:
+    if compact:
+        lines = [
+            "| option_id | symbol | name | economic_exposure_cluster | risk | neutral_exposure |",
+            "| --- | --- | --- | --- | --- | --- |",
+        ]
+        for option in options:
+            if not option.include_in_universe:
+                continue
+            cells = [
+                option.id,
+                option.symbol or "N/A",
+                option.name,
+                economic_exposure_cluster(option),
+                option.risk_bucket,
+                option.exposure_description,
+            ]
+            lines.append("| " + " | ".join(str(cell).replace("|", "\\|") for cell in cells) + " |")
+        return "\n".join(lines)
     rendered: list[str] = []
     for option in options:
         if not option.include_in_universe:

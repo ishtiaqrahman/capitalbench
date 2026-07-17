@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Literal
 
 from .io import write_json, write_yaml
+from .methodology import PORTFOLIO_V2_VERSION, is_production_portfolio_v2
 
 ROUND_FILES = ["manifest.yaml", "briefing.md", "options.yaml", "prompt.md", "hashes.json"]
 ROUND_DIRS = ["prices", "runs"]
@@ -20,6 +21,7 @@ def init_round(
     universe_version: str | None = None,
     submission_format: SubmissionFormat = "single_pick",
     horizon: str = "one month",
+    methodology_version: str | None = None,
 ) -> Path:
     round_id = round_id.strip()
     if not round_id:
@@ -27,6 +29,11 @@ def init_round(
     if submission_format not in {"single_pick", "portfolio"}:
         raise ValueError("submission_format must be one of: single_pick, portfolio")
     horizon = _normalize_horizon(horizon)
+    resolved_methodology_version = (
+        methodology_version.strip()
+        if methodology_version
+        else (PORTFOLIO_V2_VERSION if submission_format == "portfolio" else "single_pick-v1.0")
+    )
     horizon_label = horizon.replace(" ", "-").capitalize()
     if universe_path is None and (default_universe_path := _default_universe_path()) is not None:
         universe_path = default_universe_path
@@ -48,7 +55,7 @@ def init_round(
                 "decision_date": None,
                 "decision_deadline": None,
                 "horizon": horizon,
-                "methodology_version": "portfolio-v1.0" if submission_format == "portfolio" else "single_pick-v1.0",
+                "methodology_version": resolved_methodology_version,
                 "universe_version": resolved_universe_version or None,
                 "submission_format": submission_format,
                 "portfolio_constraints": {
@@ -59,6 +66,9 @@ def init_round(
                     "max_total_allocation_pct": 100,
                     "allow_cash": True,
                     "allow_benchmark_asset": True,
+                    "max_economic_exposure_pct": (
+                        50 if is_production_portfolio_v2(resolved_methodology_version) else None
+                    ),
                 },
                 "entry_rule": "Use the official entry prices supplied in prices/entry_prices.csv.",
                 "exit_rule": "Use the official exit prices supplied in prices/exit_prices.csv.",
@@ -79,7 +89,7 @@ def init_round(
     prompt_path = round_path / "prompt.md"
     if not prompt_path.exists():
         prompt_path.write_text(
-            _default_prompt_text(submission_format, horizon),
+            _default_prompt_text(submission_format, horizon, resolved_methodology_version),
             encoding="utf-8",
         )
 
@@ -119,6 +129,13 @@ def init_round(
     if not hashes_path.exists():
         write_json(hashes_path, {})
 
+    submission_schema_path = round_path / "submission_schema.json"
+    if (
+        is_production_portfolio_v2(resolved_methodology_version)
+        and not submission_schema_path.exists()
+    ):
+        write_json(submission_schema_path, _portfolio_v2_submission_schema())
+
     return round_path
 
 
@@ -145,8 +162,104 @@ def _apply_horizon(prompt: str, horizon: str) -> str:
     return prompt.replace("one-month", horizon.replace(" ", "-")).replace("one month", horizon)
 
 
-def _default_prompt_text(submission_format: SubmissionFormat = "single_pick", horizon: str = "one month") -> str:
+def _portfolio_v2_submission_schema() -> dict[str, object]:
+    candidate_properties = {
+        "option_id": {"type": "string", "minLength": 1},
+        "decision": {"enum": ["selected", "rejected"]},
+        "forecast_low_pct": {"type": "number"},
+        "forecast_base_pct": {"type": "number"},
+        "forecast_high_pct": {"type": "number"},
+        "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {"type": "string", "minLength": 1},
+        },
+        "continuation_case": {"type": "string", "minLength": 1},
+        "reversal_case": {"type": "string", "minLength": 1},
+        "time_window_catalyst": {"type": "string", "minLength": 1},
+        "invalidation_condition": {"type": "string", "minLength": 1},
+    }
+    holding_properties = {
+        "option_id": {"type": "string", "minLength": 1},
+        "allocation_pct": {"type": "integer", "minimum": 5, "maximum": 100, "multipleOf": 5},
+        "expected_return_pct": {"type": "number"},
+        "time_window_catalyst": {"type": "string", "minLength": 1},
+        "invalidation_condition": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 1},
+    }
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://capitalbench.org/schemas/portfolio_submission_v2.json",
+        "title": "CapitalBench Portfolio V2.0 Submission",
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "round_id": {"type": "string", "minLength": 1},
+            "model_id": {"type": "string", "minLength": 1},
+            "provider": {"enum": ["openai", "anthropic", "google", "xai"]},
+            "mode": {"const": "closed_capability"},
+            "candidate_ledger": {
+                "type": "array",
+                "minItems": 6,
+                "maxItems": 8,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": candidate_properties,
+                    "required": list(candidate_properties),
+                },
+            },
+            "portfolio": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": holding_properties,
+                    "required": list(holding_properties),
+                },
+            },
+            "benchmark_expected_return_pct": {"type": "number"},
+            "portfolio_expected_return_pct": {"type": "number"},
+            "expected_alpha_vs_sp500_pct": {"type": "number"},
+            "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "portfolio_rationale": {"type": "string", "minLength": 1},
+            "rationale_summary": {"type": "string", "minLength": 1},
+            "key_risks": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 5,
+                "items": {"type": "string", "minLength": 1},
+            },
+        },
+        "required": [
+            "round_id",
+            "model_id",
+            "provider",
+            "mode",
+            "candidate_ledger",
+            "portfolio",
+            "benchmark_expected_return_pct",
+            "portfolio_expected_return_pct",
+            "expected_alpha_vs_sp500_pct",
+            "confidence",
+            "portfolio_rationale",
+            "rationale_summary",
+            "key_risks",
+        ],
+    }
+
+
+def _default_prompt_text(
+    submission_format: SubmissionFormat = "single_pick",
+    horizon: str = "one month",
+    methodology_version: str | None = None,
+) -> str:
     if submission_format == "portfolio":
+        if is_production_portfolio_v2(methodology_version):
+            return _portfolio_v2_prompt_text(horizon)
         return _apply_horizon("""# CapitalBench Task
 
 You are participating in an offline, time-resolved CapitalBench evaluation round.
@@ -207,6 +320,90 @@ Rules:
 - Do not include financial-advice disclaimers. This is a benchmark response, not advice to a person.
 - The JSON object must contain no extra fields.
 """, horizon)
+    return _single_pick_prompt_text(horizon)
+
+
+def _portfolio_v2_prompt_text(horizon: str) -> str:
+    return _apply_horizon("""# CapitalBench Portfolio V2.0 Task
+
+You are participating in an offline, time-resolved CapitalBench evaluation round. Every model receives the same frozen information and makes one single-turn, non-agentic decision without tools, browsing, retrieval, or follow-up.
+
+Your objective is to allocate 100% across the allowed options to maximize expected realized portfolio return over the close-to-close one-month scoring window. The official comparison is the S&P 500 (SPY): alpha equals portfolio return minus SPY return. A 100% SPY portfolio is valid when no active option has a stronger base-case forecast.
+
+Use only facts and mechanical market data supplied in this input. You may use internal learned knowledge and general priors, but do not intentionally rely on facts, prices, news, or events after the research cutoff. Treat section order, mention count, option order, and table order as neutral presentation choices rather than recommendation signals.
+
+Price history is descriptive, not a forecast. Test both continuation and reversal for every finalist. A recent winner needs independent support in the supplied briefing or an explicitly stated weak-evidence caveat. Optimize for the stated horizon only.
+
+Complete the decision in this order:
+
+1. Assess SPY and 5-7 additional finalists, for a total candidate ledger of 6-8 unique options.
+2. Include SPY in the ledger and span at least four listed economic-exposure clusters.
+3. Give every candidate a low, base, and high return forecast in percentage points, with low <= base <= high.
+4. Record concise supplied evidence, the continuation case, reversal case, time-window catalyst, and invalidation condition for every candidate. Keep rejected finalists in the ledger.
+5. Select only active holdings whose base forecast is greater than SPY's base forecast. CASH is not an active holding. If no active option clears that hurdle, use SPY and/or CASH.
+6. Construct the final 1-5 holding portfolio in the stated allocation increments. Outside SPY and CASH, no economic-exposure cluster may exceed the round's stated maximum.
+7. Set each holding's expected_return_pct equal to that candidate's base forecast. Calculate the weighted portfolio base return and expected alpha versus SPY.
+
+Return only valid JSON. Do not include markdown, citations, prose, or commentary outside the JSON.
+
+Required JSON format:
+
+{
+  "round_id": "<round_id>",
+  "model_id": "<model_id>",
+  "provider": "<provider>",
+  "mode": "closed_capability",
+  "candidate_ledger": [
+    {
+      "option_id": "<allowed option ID>",
+      "decision": "selected or rejected",
+      "forecast_low_pct": <number>,
+      "forecast_base_pct": <number>,
+      "forecast_high_pct": <number>,
+      "evidence": ["<1-3 concise facts from the supplied input>"],
+      "continuation_case": "<what supports continuation>",
+      "reversal_case": "<what could reverse the signal>",
+      "time_window_catalyst": "<catalyst before the exit close, or none identified>",
+      "invalidation_condition": "<observable condition that would invalidate the case>"
+    }
+  ],
+  "portfolio": [
+    {
+      "option_id": "<selected candidate option ID>",
+      "allocation_pct": <integer percentage>,
+      "expected_return_pct": <same number as candidate forecast_base_pct>,
+      "time_window_catalyst": "<same time-window catalyst>",
+      "invalidation_condition": "<same invalidation condition>",
+      "rationale": "<brief holding-level rationale>"
+    }
+  ],
+  "benchmark_expected_return_pct": <SPY base forecast>,
+  "portfolio_expected_return_pct": <weighted portfolio base forecast>,
+  "expected_alpha_vs_sp500_pct": <portfolio forecast minus SPY forecast>,
+  "confidence": <probability from 0 to 1 that the portfolio beats SPY>,
+  "portfolio_rationale": "<1-3 concise sentences>",
+  "rationale_summary": "<1-3 concise sentences>",
+  "key_risks": ["<risk 1>", "<risk 2>"]
+}
+
+Rules:
+- candidate_ledger must contain 6-8 unique allowed option IDs, include SPY, and span at least four economic-exposure clusters.
+- candidate forecasts are percentage points, so 1.25 means +1.25%.
+- candidate evidence must refer only to the supplied input and must not contain URLs.
+- portfolio must contain exactly the candidates marked selected; all other ledger candidates must be marked rejected.
+- portfolio allocations must be whole integers in the stated increment and sum to exactly 100.
+- selected non-SPY, non-CASH holdings must have a base forecast strictly greater than the SPY base forecast.
+- no non-SPY, non-CASH economic-exposure cluster may exceed the stated cap.
+- benchmark_expected_return_pct must equal the SPY candidate's base forecast.
+- portfolio_expected_return_pct must equal the allocation-weighted holding forecasts.
+- expected_alpha_vs_sp500_pct must equal portfolio_expected_return_pct minus benchmark_expected_return_pct.
+- confidence is the probability that the submitted portfolio beats SPY over this scoring window; do not use confidence to change allocation size.
+- key_risks must contain 2-5 concrete risks.
+- Do not include a second portfolio, backup allocation, financial-advice disclaimer, or extra field.
+""", horizon)
+
+
+def _single_pick_prompt_text(horizon: str) -> str:
     return _apply_horizon("""# CapitalBench Task
 
 You are participating in an offline, time-resolved CapitalBench evaluation round.

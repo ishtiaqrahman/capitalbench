@@ -1,0 +1,186 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Soft inflation data and stable policy rates support modest equity gains in a soft-landing scenario.",
+      "decision": "rejected",
+      "evidence": [
+        "spy_return_5s of -0.13%",
+        "June CPI decreased 0.4% on a seasonally adjusted monthly basis",
+        "June nonfarm payrolls increased by 57,000"
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SPY closes below its 21-session low or volatility spikes significantly",
+      "option_id": "SP500",
+      "reversal_case": "Further deterioration in growth indicators or unexpected hawkish policy signals could pressure equities.",
+      "time_window_catalyst": "Federal Reserve June industrial production and capacity utilization on July 17; EIA Weekly Petroleum Status Report on July 22"
+    },
+    {
+      "continuation_case": "Continued market breadth improvement and equal-weight outperformance as rotation away from concentrated growth persists.",
+      "decision": "selected",
+      "evidence": [
+        "rsp_minus_spy_5s of 0.86%",
+        "rsp_return_21s of 1.42%",
+        "distance_52w_high of 0.00%"
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "RSP underperforms SPY significantly or breaks recent support",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Reassertion of mega-cap leadership if technology rebounds strongly.",
+      "time_window_catalyst": "none identified beyond general market data releases"
+    },
+    {
+      "continuation_case": "Small-value strength continues amid domestic economic resilience and value rotation; limited independent non-price support in briefing.",
+      "decision": "selected",
+      "evidence": [
+        "return_3s of 2.00%",
+        "active_return_5s of 2.26%",
+        "distance_52w_high of 0.00%"
+      ],
+      "forecast_base_pct": 1.25,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "IWN falls more than 2% or relative strength vs SPY reverses",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Risk aversion rises or large-growth recovers, reversing the factor move.",
+      "time_window_catalyst": "Industrial production data on July 17"
+    },
+    {
+      "continuation_case": "Momentum in regional banks persists with stable yield curve and soft data reducing hard-landing fears; primarily price-based with weak additional briefing support.",
+      "decision": "selected",
+      "evidence": [
+        "return_3s of 3.73%",
+        "active_return_5s of 4.51%",
+        "distance_52w_high of 0.00%"
+      ],
+      "forecast_base_pct": 1.75,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "KRE reverses more than half of recent gains or underperforms financials broadly",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Renewed deposit or credit quality concerns emerge, or rates move adversely.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Recent energy rebound continues if oil prices stabilize above recent lows despite longer-term EIA forecast.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s of 4.14%",
+        "uso_return_5s of 9.44%",
+        "Brent crude averaged $85 per barrel in June and was below $70 on July 1"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLE or oil prices drop sharply on inventory data",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA report or further price declines toward $70 forecast reverse the bounce.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report for the week ending July 17 on July 22"
+    },
+    {
+      "continuation_case": "China equity rebound continues supported by expanding PMI and policy expectations after soft GDP.",
+      "decision": "selected",
+      "evidence": [
+        "return_3s of 3.06%",
+        "China's National Bureau of Statistics reported first-half real GDP growth of 4.7% year over year",
+        "The official June manufacturing PMI was 50.3"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "MCHI loses recent gains or falls on negative China news",
+      "option_id": "CHINA",
+      "reversal_case": "Disappointing follow-through data or external pressures reverse gains.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Rate-sensitive real estate continues to benefit from soft inflation and potential rate path.",
+      "decision": "rejected",
+      "evidence": [
+        "return_3s of 1.70%",
+        "active_return_5s of 2.91%",
+        "distance_52w_high of 0.00%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLRE underperforms or yields spike",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Yields rise or property concerns resurface.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 1.015,
+  "is_official_score": true,
+  "key_risks": [
+    "Momentum reversal in regional banks and small value after strong recent runs",
+    "Oil/energy pullback if EIA data confirms surplus or prices fall toward forecast",
+    "Broad equity decline if industrial production disappoints",
+    "China-specific negative catalyst reversing the bounce",
+    "Higher correlation in risk-off scenario reducing diversification"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "RSP underperforms SPY significantly or breaks recent support",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Equal-weight continues to outperform on improving breadth; base forecast exceeds SPY with support from recent active returns.",
+      "time_window_catalyst": "none identified beyond general market data releases"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.25,
+      "invalidation_condition": "IWN falls more than 2% or relative strength vs SPY reverses",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Small-value at 52w high with strong active returns; expected to extend value rotation under soft-landing macro.",
+      "time_window_catalyst": "Industrial production data on July 17"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.75,
+      "invalidation_condition": "KRE reverses more than half of recent gains or underperforms financials broadly",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "Strongest recent momentum and active return among candidates; soft data reduces recession risk for banks despite limited non-price evidence.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "XLE or oil prices drop sharply on inventory data",
+      "option_id": "ENERGY",
+      "rationale": "Energy sector active outperformance and oil rebound provide higher base return; monitored against EIA catalyst.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report for the week ending July 17 on July 22"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "MCHI loses recent gains or falls on negative China news",
+      "option_id": "CHINA",
+      "rationale": "Recent rebound with PMI expansion offers alpha potential over SPY despite soft GDP print.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.265,
+  "portfolio_rationale": "Portfolio tilts to recent relative strength in regional banks, small value, energy, China, and equal-weight equities, all with base forecasts exceeding SPY, capitalizing on value/breadth rotation and commodity bounce while spanning clusters under the 50% cap.",
+  "provider": "xai",
+  "rationale_summary": "Soft US inflation and labor data favor a soft-landing rotation into value, financials, and select cyclicals/international over mega-cap growth; selected holdings show stronger recent active returns and higher base expected returns than SPY for the one-week window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-16-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 13322,
+    "latency_seconds": 131.65600000019185,
+    "output_tokens": 2335,
+    "reasoning_tokens": 9150,
+    "total_tokens": 24807
+  }
+}

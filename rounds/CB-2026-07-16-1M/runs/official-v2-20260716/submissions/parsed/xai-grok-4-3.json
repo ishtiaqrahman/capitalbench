@@ -1,0 +1,170 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Stable Fed funds range supports equity multiples",
+      "decision": "rejected",
+      "evidence": [
+        "June nonfarm payrolls +57k with downward revisions",
+        "CPI -0.4% monthly"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Unemployment above 4.5%",
+      "option_id": "SP500",
+      "reversal_case": "Further payroll weakness triggers risk-off",
+      "time_window_catalyst": "FOMC July statement"
+    },
+    {
+      "continuation_case": "EIA reports confirm supply tightness",
+      "decision": "selected",
+      "evidence": [
+        "XLE 4.01% 5-day return",
+        "Brent averaged $85 in June"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Oil price reversal below $70 sustained",
+      "option_id": "ENERGY",
+      "reversal_case": "Demand weakness in China GDP data",
+      "time_window_catalyst": "EIA weekly petroleum reports"
+    },
+    {
+      "continuation_case": "Defensive flows amid soft growth data",
+      "decision": "selected",
+      "evidence": [
+        "XLP 3.14% 5-day return",
+        "Retail sales +0.2% monthly"
+      ],
+      "forecast_base_pct": 1.9,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "CPI above 3.8% year-over-year",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "CPI reacceleration",
+      "time_window_catalyst": "July CPI release"
+    },
+    {
+      "continuation_case": "Yield curve stability persists",
+      "decision": "selected",
+      "evidence": [
+        "KRE 4.38% 5-day return",
+        "Treasury 2-year yield 4.16%"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Unemployment rise above 4.5%",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Credit quality deterioration post-employment report",
+      "time_window_catalyst": "July employment report"
+    },
+    {
+      "continuation_case": "Defensive sector rotation continues",
+      "decision": "selected",
+      "evidence": [
+        "XLV 6.58% 21-day active return",
+        "PCE prices +0.4% monthly"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "PCE core above 3.7%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "PCE core inflation spike",
+      "time_window_catalyst": "July PPI release"
+    },
+    {
+      "continuation_case": "Rate environment supportive for banks",
+      "decision": "rejected",
+      "evidence": [
+        "XLF 2.18% 5-day return",
+        "Average hourly earnings +0.3%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yield curve flattening below 50bp",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Regional bank stress widens",
+      "time_window_catalyst": "FOMC July statement"
+    },
+    {
+      "continuation_case": "Commodity demand holds with China growth",
+      "decision": "rejected",
+      "evidence": [
+        "PDBC 3.29% 5-day return",
+        "China H1 GDP +4.7% YoY"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "China industrial production below 4%",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Global growth slowdown visible in GDP print",
+      "time_window_catalyst": "BEA Q2 GDP advance"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 1.25,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC policy surprise on July 29",
+    "July employment report volatility on August 7",
+    "Oil price reversal from EIA data"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Oil price reversal below $70 sustained through exit date",
+      "option_id": "ENERGY",
+      "rationale": "Recent 4.01% 5-day return and Brent price context support outperformance versus SPY.",
+      "time_window_catalyst": "EIA weekly petroleum reports and August Short-Term Energy Outlook"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.9,
+      "invalidation_condition": "CPI reacceleration above 3.8% year-over-year",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "3.14% recent 5-day return and defensive characteristics amid soft payroll data.",
+      "time_window_catalyst": "July CPI and employment releases"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Unemployment rise above 4.5%",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "4.38% recent 5-day return and yield-curve stability from Treasury data.",
+      "time_window_catalyst": "FOMC July statement and July employment report"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "PCE core inflation exceeding 3.7%",
+      "option_id": "HEALTHCARE",
+      "rationale": "6.58% 21-day active return and PCE price stability in briefing.",
+      "time_window_catalyst": "July PPI and second-quarter GDP release"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.05,
+  "portfolio_rationale": "Four holdings with base forecasts exceeding SPY selected from distinct clusters; 30-25-25-20 allocation respects 50% cluster cap.",
+  "provider": "xai",
+  "rationale_summary": "Energy, staples, regional banks, and healthcare show stronger recent performance and macro support than broad equity benchmark over the one-month window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-16-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12703,
+    "latency_seconds": 21.281999999890104,
+    "output_tokens": 1582,
+    "reasoning_tokens": 999,
+    "total_tokens": 15284
+  }
+}

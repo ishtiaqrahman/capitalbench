@@ -26,6 +26,27 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-07-17-portfolio-v2-production",
+    date: "2026-07-17",
+    title: "Portfolio V2.0 became the production protocol",
+    category: "Methodology",
+    status: "published",
+    summary:
+      "New portfolio rounds now require a structured candidate review before each model submits its final frozen portfolio.",
+    details: [
+      "Each model reviews 6 to 8 candidates, including the S&P 500 and at least four predefined economic-exposure groups.",
+      "Each candidate records a return range, supporting facts, continuation and reversal cases, a time-window catalyst, and an observable invalidation condition.",
+      "A selected active holding must have a higher base return forecast than the model's S&P 500 forecast, and one non-benchmark exposure group cannot exceed 50% of the portfolio.",
+      "Only the final frozen portfolio affects the official result. Candidate forecasts are retained for audit and future calibration.",
+      "The first official V2 weekly and monthly rounds each collected four valid model submissions and remain pending until their scheduled ending prices are available."
+    ],
+    links: [
+      { label: "Methodology", href: "/methodology" },
+      { label: "Weekly V2 round", href: "/rounds/CB-2026-07-16-1W" },
+      { label: "Monthly V2 round", href: "/rounds/CB-2026-07-16-1M" }
+    ]
+  },
+  {
     id: "2026-07-11-data-api-results-and-contracts",
     date: "2026-07-11",
     title: "Data API results and contracts expanded",

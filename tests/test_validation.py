@@ -54,6 +54,67 @@ def _options() -> list[MarketOption]:
     ]
 
 
+def _v2_options() -> list[MarketOption]:
+    return [
+        MarketOption(option_id="SP500", label="S&P 500", asset_symbol="SPY", is_benchmark=True),
+        MarketOption(option_id="CASH", label="Cash", asset_symbol="USD", is_cash=True),
+        MarketOption(option_id="TECHNOLOGY", label="Technology", asset_symbol="XLK"),
+        MarketOption(option_id="NASDAQ100", label="Nasdaq 100", asset_symbol="QQQ"),
+        MarketOption(option_id="ENERGY", label="Energy", asset_symbol="XLE"),
+        MarketOption(option_id="GOLD", label="Gold", asset_symbol="GLD"),
+        MarketOption(option_id="LONG_TREASURY", label="Long Treasury", asset_symbol="TLT"),
+    ]
+
+
+def _candidate(option_id: str, decision: str, base: float) -> dict[str, object]:
+    return {
+        "option_id": option_id,
+        "decision": decision,
+        "forecast_low_pct": base - 1.0,
+        "forecast_base_pct": base,
+        "forecast_high_pct": base + 1.0,
+        "evidence": ["Supplied mechanical and briefing context."],
+        "continuation_case": "The supplied signal continues.",
+        "reversal_case": "The supplied signal reverses.",
+        "time_window_catalyst": "none identified",
+        "invalidation_condition": "The base case no longer holds.",
+    }
+
+
+def _valid_production_v2_payload() -> dict[str, object]:
+    return {
+        "round_id": "round-a",
+        "model_id": "model-a",
+        "provider": "openai",
+        "mode": "closed_capability",
+        "candidate_ledger": [
+            _candidate("SP500", "selected", 0.5),
+            _candidate("CASH", "rejected", 0.0),
+            _candidate("TECHNOLOGY", "rejected", 0.8),
+            _candidate("ENERGY", "rejected", 0.7),
+            _candidate("GOLD", "rejected", 0.6),
+            _candidate("LONG_TREASURY", "rejected", 0.3),
+        ],
+        "portfolio": [
+            {
+                "option_id": "SP500",
+                "allocation_pct": 100,
+                "expected_return_pct": 0.5,
+                "time_window_catalyst": "none identified",
+                "invalidation_condition": "The base case no longer holds.",
+                "rationale": "Benchmark base case.",
+            }
+        ],
+        "benchmark_expected_return_pct": 0.5,
+        "portfolio_expected_return_pct": 0.5,
+        "expected_alpha_vs_sp500_pct": 0.0,
+        "confidence": 0.5,
+        "portfolio_rationale": "No active candidate clears the portfolio hurdle.",
+        "rationale_summary": "Benchmark allocation.",
+        "key_risks": ["The benchmark declines.", "A rejected candidate outperforms."],
+    }
+
+
 def test_invalid_selected_option_rejection(tmp_path: Path) -> None:
     round_path = tmp_path / "round"
     _write_round_base(round_path)
@@ -286,4 +347,87 @@ def test_portfolio_v2_requires_forecasts_and_validates_arithmetic(tmp_path: Path
             "round-a",
             submission_format="portfolio",
             methodology_version="portfolio-v2.0-pilot",
+        )
+
+
+def test_production_portfolio_v2_validates_candidate_ledger() -> None:
+    submission = validate_submission_payload(
+        _valid_production_v2_payload(),
+        _v2_options(),
+        "round-a",
+        submission_format="portfolio",
+        methodology_version="portfolio-v2.0",
+    )
+
+    assert submission.candidate_ledger is not None
+    assert len(submission.candidate_ledger) == 6
+
+
+def test_production_portfolio_v2_enforces_active_hurdle_and_exposure_cap() -> None:
+    payload = _valid_production_v2_payload()
+    payload["candidate_ledger"][0]["decision"] = "rejected"
+    payload["candidate_ledger"][2]["decision"] = "selected"
+    payload["candidate_ledger"][2]["forecast_base_pct"] = 0.4
+    payload["portfolio"] = [
+        {
+            "option_id": "TECHNOLOGY",
+            "allocation_pct": 100,
+            "expected_return_pct": 0.4,
+            "time_window_catalyst": "none identified",
+            "invalidation_condition": "The base case no longer holds.",
+            "rationale": "Technology case.",
+        }
+    ]
+    payload["portfolio_expected_return_pct"] = 0.4
+    payload["expected_alpha_vs_sp500_pct"] = -0.1
+
+    with pytest.raises(ValueError, match="must exceed the benchmark"):
+        validate_submission_payload(
+            payload,
+            _v2_options(),
+            "round-a",
+            submission_format="portfolio",
+            methodology_version="portfolio-v2.0",
+        )
+
+    payload = _valid_production_v2_payload()
+    payload["candidate_ledger"][0]["decision"] = "selected"
+    payload["candidate_ledger"][2]["decision"] = "selected"
+    payload["candidate_ledger"].insert(3, _candidate("NASDAQ100", "selected", 1.0))
+    payload["portfolio"] = [
+        {
+            "option_id": "SP500",
+            "allocation_pct": 40,
+            "expected_return_pct": 0.5,
+            "time_window_catalyst": "none identified",
+            "invalidation_condition": "The base case no longer holds.",
+            "rationale": "Benchmark case.",
+        },
+        {
+            "option_id": "TECHNOLOGY",
+            "allocation_pct": 30,
+            "expected_return_pct": 0.8,
+            "time_window_catalyst": "none identified",
+            "invalidation_condition": "The base case no longer holds.",
+            "rationale": "Technology case.",
+        },
+        {
+            "option_id": "NASDAQ100",
+            "allocation_pct": 30,
+            "expected_return_pct": 1.0,
+            "time_window_catalyst": "none identified",
+            "invalidation_condition": "The base case no longer holds.",
+            "rationale": "Growth case.",
+        },
+    ]
+    payload["portfolio_expected_return_pct"] = 0.74
+    payload["expected_alpha_vs_sp500_pct"] = 0.24
+
+    with pytest.raises(ValueError, match="exceeds 50%"):
+        validate_submission_payload(
+            payload,
+            _v2_options(),
+            "round-a",
+            submission_format="portfolio",
+            methodology_version="portfolio-v2.0",
         )
