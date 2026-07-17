@@ -535,8 +535,8 @@ test("round portfolios and current universe endpoints return real data", async (
   assert.equal(portfolios.status, 200);
   assert.equal(portfolios.body.round_id, latestWeeklyRoundId);
   assert.equal(portfolios.body.run_id, round.official_run_id);
+  assert.ok(expectedPortfolios.length > 0, "expected latest weekly round to publish portfolios");
   assert.deepEqual(portfolios.body.data, expectedPortfolios);
-  assert.ok(portfolios.body.data.length >= 5);
   assert.ok(portfolios.body.data[0].allocations.length > 0);
   assert.equal(universe.status, 200);
   assert.equal(universe.body.round_id, apiReadModel.current_universe_round_id);
@@ -664,11 +664,15 @@ test("paginated collections return totals and reject malformed pagination", asyn
 test("round concentration endpoint returns consensus and concentration data", async () => {
   const latestWeeklyRoundId = latestRoundId("weekly");
   const result = await apiGet(`/api/v1/rounds/${latestWeeklyRoundId}/concentration`);
+  const expectedModelCount = new Set(
+    officialRowsForRound(apiReadModel, apiReadModel.portfolios, latestWeeklyRoundId).map((row) => row.model_id)
+  ).size;
 
   assert.equal(result.status, 200);
   assert.equal(result.body.round_id, latestWeeklyRoundId);
   assert.equal(result.body.track, "weekly");
-  assert.ok(result.body.model_count >= 5);
+  assert.ok(expectedModelCount > 0, "expected latest weekly round to publish model portfolios");
+  assert.equal(result.body.model_count, expectedModelCount);
   assert.equal(result.body.portfolio_count, result.body.model_count);
   assert.ok(result.body.summary.top_asset_share_pct > 0);
   assert.ok(result.body.summary.top_three_share_pct >= result.body.summary.top_asset_share_pct);
