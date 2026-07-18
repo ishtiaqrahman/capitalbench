@@ -37899,6 +37899,253 @@ html.score-alert-modal-open body {
     text-transform: inherit;
     font-variant-numeric: tabular-nums;
   }
+
+  /* Keep mobile result charts dense: identity and value share one line. */
+  .score-mobile-rank-row {
+    justify-items: stretch;
+    gap: 7px;
+    padding: 10px 0;
+    text-align: left;
+  }
+
+  .score-mobile-rank-head {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    justify-content: stretch;
+    gap: 8px;
+  }
+
+  .score-mobile-rank-head > div,
+  .track-scorecard-score-chart .score-mobile-rank-head > div,
+  .latest-official-result-panel .score-mobile-rank-head > div {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    justify-content: stretch;
+    justify-items: stretch;
+    gap: 9px;
+    text-align: left;
+  }
+
+  .score-mobile-rank-head > div > span:last-child,
+  .track-scorecard-score-chart .score-mobile-rank-head > div > span:last-child,
+  .latest-official-result-panel .score-mobile-rank-head > div > span:last-child {
+    min-width: 0;
+    justify-items: start;
+    gap: 2px;
+    text-align: left;
+  }
+
+  .score-mobile-rank-head > div > span:last-child strong,
+  .track-scorecard-score-chart .score-mobile-rank-head > div > span:last-child strong,
+  .latest-official-result-panel .score-mobile-rank-head > div > span:last-child strong {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.14;
+    overflow-wrap: normal;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .score-mobile-rank-head em,
+  .latest-official-result-panel .score-mobile-rank-head em {
+    max-width: 100%;
+    overflow: hidden;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .score-mobile-rank-head > strong,
+  .latest-official-result-panel .score-mobile-rank-head > strong {
+    display: inline-grid;
+    min-width: 64px;
+    min-height: 30px;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 14%);
+    border-radius: 999px;
+    padding: 6px 9px;
+    background: linear-gradient(135deg, rgb(7 16 13 / 98%), rgb(13 42 39 / 96%));
+    color: #ffffff;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 900;
+    line-height: 1;
+    text-align: center;
+    box-shadow:
+      0 6px 14px rgb(7 16 13 / 14%),
+      inset 0 1px 0 rgb(255 255 255 / 12%);
+  }
+
+  .score-mobile-rank-row-winner .score-mobile-rank-head > strong {
+    border-color: rgb(167 234 220 / 30%);
+    background: linear-gradient(135deg, var(--accent-strong), #07100d 86%);
+  }
+
+  .score-mobile-rank-row-reference .score-mobile-rank-head > strong {
+    border-color: rgb(255 211 139 / 36%);
+    background: linear-gradient(135deg, #6f4600, #07100d 88%);
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-head > .score-mobile-rank-score {
+    min-width: 70px;
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 0.96rem;
+  }
+
+  .latest-official-result-panel .score-mobile-rank-row {
+    gap: 7px;
+    padding: 10px 0;
+  }
+
+  .latest-official-result-panel .score-mobile-rank-head {
+    gap: 8px;
+  }
+
+  .latest-official-result-panel .score-mobile-rank-head > div > span:last-child {
+    gap: 2px;
+  }
+
+  .latest-official-result-panel .score-mobile-rank-head > div > span:last-child strong {
+    font-size: 0.8rem;
+    line-height: 1.14;
+  }
+
+  .latest-official-result-panel .score-mobile-rank-head > strong {
+    font-size: 0.82rem;
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-head-reference {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: "identity info score";
+    gap: 8px;
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-head-reference > div {
+    grid-area: identity;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 9px;
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-head-reference > strong {
+    grid-area: score;
+    align-self: center;
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-info {
+    grid-area: info;
+    align-self: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-info > span,
+  .track-scorecard-return-chart .max-possible-info-inline > span {
+    width: 26px;
+    height: 26px;
+    display: inline-grid;
+    place-items: center;
+    border: 1px solid rgb(7 16 13 / 22%);
+    border-radius: 999px;
+    overflow: hidden;
+    color: transparent;
+    font-size: 0;
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-info > span::before,
+  .track-scorecard-return-chart .max-possible-info-inline > span::before {
+    color: var(--ink-strong);
+    content: "i";
+    font-family: var(--font-serif);
+    font-size: 0.72rem;
+    font-weight: 900;
+  }
+
+  .track-scorecard-return-chart .track-scorecard-row,
+  .track-scorecard-return-chart .track-scorecard-row-reference {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "label value"
+      "bar bar";
+    align-items: center;
+    justify-items: stretch;
+    gap: 7px 10px;
+    padding: 10px 0;
+    text-align: left;
+  }
+
+  .track-scorecard-return-chart .track-scorecard-row-reference {
+    margin: 6px 0 2px;
+    box-sizing: border-box;
+    border: 1px solid rgb(197 139 28 / 24%);
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  .track-scorecard-return-chart .track-scorecard-row-label,
+  .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-row-label {
+    grid-area: label;
+    width: 100%;
+    max-width: none;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    justify-content: stretch;
+    justify-items: stretch;
+    gap: 9px;
+    text-align: left;
+  }
+
+  .track-scorecard-return-chart .track-scorecard-row-label > span:last-child,
+  .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-row-label > span:last-child {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    justify-items: start;
+    gap: 6px;
+  }
+
+  .track-scorecard-return-chart .track-scorecard-row-label strong {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .track-scorecard-return-chart .track-scorecard-value,
+  .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-value {
+    grid-area: value;
+    justify-self: end;
+    text-align: center;
+  }
+
+  .track-scorecard-return-chart .track-scorecard-return-value {
+    min-width: 72px;
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 0.96rem;
+  }
+
+  .track-scorecard-return-chart .track-scorecard-bar-cell,
+  .track-scorecard-return-chart .track-scorecard-row-reference .track-scorecard-bar-cell {
+    grid-area: bar;
+    width: 100%;
+    height: 9px;
+  }
+
+  .track-scorecard-return-chart .track-scorecard-row-reference .max-possible-info-inline {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 @media (max-width: 540px) {
