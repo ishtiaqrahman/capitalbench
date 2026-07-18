@@ -1,0 +1,192 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Disinflation from energy plus stable Fed supports mild rebound after pullback.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY down 1.54% 5s, -0.68% 21s",
+        "June CPI -0.4% m/m, headline 3.5% y/y",
+        "Fed on hold at 3.5-3.75%, FOMC July 28-29"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Hawkish FOMC or hot July CPI print pushes SPY below recent support.",
+      "option_id": "SP500",
+      "reversal_case": "Sticky core PCE 3.4%, weakening payrolls (+57k), tech drawdown could deepen.",
+      "time_window_catalyst": "FOMC July 29, Q2 GDP July 30, July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Defensive rotation amid weakening labor data and tech drawdown; strong 21s active return.",
+      "decision": "selected",
+      "evidence": [
+        "XLV active_return_21s +6.48%",
+        "Low beta 0.327, defensive posture",
+        "Prior 105s active -11.70% suggests mean-reversion room"
+      ],
+      "forecast_base_pct": 3.0,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "XLV breaks 21-day trend; risk-on rotation restarts favoring tech.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Policy/drug-pricing headlines or risk-on rebound in growth could stall XLV.",
+      "time_window_catalyst": "Q2 earnings from large pharma/managed care through August"
+    },
+    {
+      "continuation_case": "Curve steepening and stable Fed support NIM; broadening leadership away from megacap tech.",
+      "decision": "selected",
+      "evidence": [
+        "XLF active_return_21s +4.56%, only -0.86% off 52w high",
+        "Steep curve: 3m 3.85% vs 10y 4.55%, 30y 5.06%",
+        "Low drawdown -3.34%"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "SLOOS shows sharp tightening or KRE breaks down on credit concerns.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit deterioration from weak payrolls; SLOOS Aug could show tightening.",
+      "time_window_catalyst": "Bank earnings continuation; SLOOS Aug 3-7; FOMC July 29"
+    },
+    {
+      "continuation_case": "Defensive factor leadership amid tech unwind and softening data.",
+      "decision": "selected",
+      "evidence": [
+        "SPLV active_return_21s +3.66%",
+        "Beta 0.039, near 52w high (-0.48%)",
+        "Prior 105s active -5.81% indicates fresh leadership"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "SPLV lags SPY by >2% over any 5-day stretch during window.",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Sharp risk-on reversal if FOMC dovish or CPI soft.",
+      "time_window_catalyst": "FOMC July 29, July jobs Aug 1, CPI Aug 12"
+    },
+    {
+      "continuation_case": "Oil spike momentum could persist short-term.",
+      "decision": "rejected",
+      "evidence": [
+        "XLE +5.63% active 21s, USO +14% 5s",
+        "EIA forecasts Brent falling to $74 Q3 from $85 June",
+        "Drawdown -13.21%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Brent reverts below $75 quickly.",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA explicitly forecasts lower Q3 Brent; extreme 5s move likely mean-reverts.",
+      "time_window_catalyst": "EIA weekly reports; OPEC headlines"
+    },
+    {
+      "continuation_case": "Rotation broadening supports small value.",
+      "decision": "rejected",
+      "evidence": [
+        "IWN active 21s +3.52%, near 52w high",
+        "Broadening beyond megacap tech",
+        "Beta 1.015"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Credit spreads widen or HYG breaks down.",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Weak payrolls and rising unemployment risk hits small caps.",
+      "time_window_catalyst": "Jobs report Aug 1; FOMC"
+    },
+    {
+      "continuation_case": "Disinflation and softening labor support duration; Fed likely on hold with dovish tilt possible.",
+      "decision": "selected",
+      "evidence": [
+        "June CPI -0.4% m/m; core unchanged",
+        "Payrolls softening (+57k, revisions -74k)",
+        "IEF low vol 5.07%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "10y yield breaks above 4.75% on hot inflation data.",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Sticky services inflation or hot PPI (5.1% core y/y) pushes yields higher.",
+      "time_window_catalyst": "FOMC July 29, Q2 ECI July 31, CPI/PPI Aug 12-13"
+    },
+    {
+      "continuation_case": "Oversold bounce possible if Fed dovish.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU -6.68% active 21s, -25.67% from 52w high",
+        "USD strength (UUP +1.43% 21s)",
+        "Drawdown -18.11%"
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "USD continues rallying.",
+      "option_id": "GOLD",
+      "reversal_case": "Strong dollar and disinflation pressure gold further.",
+      "time_window_catalyst": "FOMC July 29"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.6,
+  "is_official_score": true,
+  "key_risks": [
+    "Hawkish FOMC or hot July CPI reverses duration trade",
+    "Sharp risk-on tech rebound leaves defensive book behind SPY",
+    "Credit deterioration hits financials via SLOOS",
+    "Concentrated defensive tilt underperforms in melt-up scenario"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 3.0,
+      "invalidation_condition": "XLV breaks 21-day trend; risk-on rotation restarts favoring tech.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Leading defensive sector with +6.48% 21s active return and low beta.",
+      "time_window_catalyst": "Q2 earnings from large pharma/managed care through August"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "SPLV lags SPY by >2% over any 5-day stretch during window.",
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive factor leadership near 52w highs with minimal drawdown.",
+      "time_window_catalyst": "FOMC July 29, July jobs Aug 1, CPI Aug 12"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "SLOOS shows sharp tightening or KRE breaks down on credit concerns.",
+      "option_id": "FINANCIALS",
+      "rationale": "Curve steepening and broadening leadership; near 52w high.",
+      "time_window_catalyst": "Bank earnings continuation; SLOOS Aug 3-7; FOMC July 29"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "10y yield breaks above 4.75% on hot inflation data.",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "rationale": "Disinflation and softening labor support duration; portfolio hedge.",
+      "time_window_catalyst": "FOMC July 29, Q2 ECI July 31, CPI/PPI Aug 12-13"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.4,
+  "portfolio_rationale": "Defensive-tilted allocation exploits recent leadership in healthcare, low-vol, and financials while duration hedges via IEF benefit from disinflation and softening labor data.",
+  "provider": "anthropic",
+  "rationale_summary": "Tech drawdown and softening payrolls favor defensive equity factors; steep curve helps financials; falling CPI supports duration. All non-SPY holdings show positive 21s active returns.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 20694,
+    "latency_seconds": 46.41908750520088,
+    "output_tokens": 3461,
+    "total_tokens": 24155
+  }
+}

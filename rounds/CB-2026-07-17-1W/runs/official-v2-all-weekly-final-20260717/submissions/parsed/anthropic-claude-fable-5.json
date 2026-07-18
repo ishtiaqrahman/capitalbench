@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Mega-cap weakness persists, cap-weighted index lags equal-weight.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY -1.54% over 5 sessions, down 1.6% for week",
+        "Tech-heavy weighting dragged by SMH -16.8% drawdown and XLK -8.6% drawdown",
+        "RSP-SPY +1.64% over 21 sessions shows breadth rotation away from cap-weighted index"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Strong tech-led rebound restoring cap-weighted leadership.",
+      "option_id": "SP500",
+      "reversal_case": "Oversold tech bounce lifts index sharply.",
+      "time_window_catalyst": "None identified; light macro calendar through July 24."
+    },
+    {
+      "continuation_case": "Growth de-rating continues with high beta amplifying index weakness.",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ -3.38% over 3 sessions, -6.71% from 52w high",
+        "25.8% 21s volatility, 1.70 beta to SPY",
+        "Prior-window active return already negative (-1.36%)"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Broad tech reversal higher on strong earnings.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Oversold bounce in mega-cap tech could produce a sharp rally.",
+      "time_window_catalyst": "Mega-cap earnings season ramping."
+    },
+    {
+      "continuation_case": "Rotation to value persists as growth de-rates; supported in both recent and prior windows.",
+      "decision": "selected",
+      "evidence": [
+        "+0.67% 3s and +2.03% active 5s while SPY fell",
+        "Only -0.57% from 52w high with -1.06% max drawdown",
+        "Prior-window active return also positive (+0.72%)"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Sharp mega-cap tech rebound reversing the rotation into value.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth rebound pulls flows back out of value.",
+      "time_window_catalyst": "Continued rotation from mega-cap growth after weak payrolls and cooling CPI; no major macro release in-window."
+    },
+    {
+      "continuation_case": "Defensive flows continue amid weak breadth (37.7% positive assets 21s).",
+      "decision": "selected",
+      "evidence": [
+        "+0.87% 3s and +2.51% active 5s",
+        "Negative SPY beta (-0.27) and prior active return +1.12%",
+        "Only -0.48% from 52w high"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -0.6,
+      "invalidation_condition": "Strong broad risk-on rally lifting high-beta over low-vol.",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Risk-on rally favors high-beta over low-vol.",
+      "time_window_catalyst": "Ongoing risk-off with 43% positive asset share; defensive flows persist."
+    },
+    {
+      "continuation_case": "Multi-window relative strength with defensive character continues.",
+      "decision": "selected",
+      "evidence": [
+        "+1.77% 3s and +1.70% active 5s",
+        "Prior-window active return +4.75%, strongest sustained sector trend",
+        "Near-zero beta to SPY (-0.10)"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Sector-specific policy/pricing headline or sharp cyclical rotation away from defensives.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Rotation back to growth or adverse healthcare policy headline.",
+      "time_window_catalyst": "Defensive rotation continuation; sector earnings season underway."
+    },
+    {
+      "continuation_case": "Steep curve and consistent multi-window relative strength persist through earnings.",
+      "decision": "selected",
+      "evidence": [
+        "+2.53% active 5s and +1.99% prior-window active return",
+        "Positive volume z-score (0.52) confirming interest",
+        "2s10s Treasury spread +37bp (4.18% vs 4.55%) supports net interest margins"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Credit stress headlines or sharp curve flattening/rate rally.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Earnings misses or credit deterioration headlines.",
+      "time_window_catalyst": "Bank earnings season and steep yield curve through July 24."
+    },
+    {
+      "continuation_case": "Crude momentum plus negative index beta gives alpha if market stays weak.",
+      "decision": "selected",
+      "evidence": [
+        "Brent +4.6% in July 17 session; XLE +6.26% active 5s",
+        "USO +14% over 5 sessions with negative SPY correlation",
+        "EIA report July 22 is an in-window catalyst"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Crude reversing sharply lower toward the EIA $74 Q3 forecast path.",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil spike mean-reverts toward EIA $74 Q3 Brent forecast; prior-window active return was negative.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report."
+    },
+    {
+      "continuation_case": "Weak payrolls (57k) and soft CPI could extend the duration bid.",
+      "decision": "rejected",
+      "evidence": [
+        "TLT +0.52% 3s but -2.51% prior-window active return",
+        "30y at 5.06%, still elevated; core CPI unchanged m/m but 12m CPI 3.5%",
+        "Fed on hold at 3.5-3.75% with 3.8% year-end median"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Long-end yields rising on inflation or supply concerns.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky 3.4% core PCE and 5.5% PPI y/y keep long yields elevated.",
+      "time_window_catalyst": "None identified before July 24 close."
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 0.4,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp mega-cap tech rebound would leave the low-beta portfolio lagging SPY",
+    "Crude oil spike reverses, hurting the energy sleeve",
+    "Defensive/value crowding unwinds in a broad risk-on move",
+    "Bank earnings disappointments hit financials"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Sharp mega-cap tech rebound reversing the rotation into value.",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value showing positive absolute returns amid tech-led selloff; near 52w high with low drawdown; benefits from breadth rotation (RSP-SPY +1.64% 21s).",
+      "time_window_catalyst": "Continued rotation from mega-cap growth after weak payrolls and cooling CPI; no major macro release in-window."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Strong broad risk-on rally lifting high-beta over low-vol.",
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive factor with negative SPY beta (-0.27) and positive 3s return; hedges continued index weakness.",
+      "time_window_catalyst": "Ongoing risk-off with 43% positive asset share; defensive flows persist."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Sector-specific policy/pricing headline or sharp cyclical rotation away from defensives.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Positive prior-window active return (+4.75%) plus recent strength (+1.77% 3s); near-zero SPY beta cushions further drawdown.",
+      "time_window_catalyst": "Defensive rotation continuation; sector earnings season underway."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Credit stress headlines or sharp curve flattening/rate rally.",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive active return both windows (+2.53% 5s, +1.99% prior), positive volume z-score, steep curve (2s10s +37bp) supportive.",
+      "time_window_catalyst": "Bank earnings season and steep yield curve through July 24."
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Crude reversing sharply lower toward the EIA $74 Q3 forecast path.",
+      "option_id": "ENERGY",
+      "rationale": "Brent +4.6% July 17, oil momentum strong (USO +15.6% active 5s); XLE +6.26% active with negative SPY beta.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.6,
+  "portfolio_rationale": "Market internals show a clear rotation: SPY down 1.6% for the week driven by tech (SMH -7.3%, XLK -4.4%) while value, defensives, financials, and energy post positive absolute and active returns. Portfolio overweights low-beta value/defensive sectors plus a modest energy sleeve backed by the crude spike.",
+  "provider": "anthropic",
+  "rationale_summary": "Underweight mega-cap growth, overweight value/defensive/financials/energy to capture continued breadth rotation over the one-week window with reduced beta to a falling index.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 23703,
+    "latency_seconds": 44.644365698099136,
+    "output_tokens": 3818,
+    "total_tokens": 27521
+  }
+}

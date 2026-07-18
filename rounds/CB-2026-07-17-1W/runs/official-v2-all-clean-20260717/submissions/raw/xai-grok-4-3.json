@@ -1,0 +1,192 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Weak jobs data sustains defensive rotation",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.0% on July 17",
+        "June nonfarm payrolls +57k with downward revisions"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "S&P 500 closes above 7,550",
+      "option_id": "SP500",
+      "reversal_case": "Risk-on rebound on lower inflation prints",
+      "time_window_catalyst": "BLS state employment July 21"
+    },
+    {
+      "continuation_case": "Oil price strength persists into EIA report",
+      "decision": "selected",
+      "evidence": [
+        "XLE active return +6.26% over 5 sessions",
+        "USO return +15.58% over 5 sessions"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Brent crude falls below $80 on sustained basis",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA inventory surprise lifts supply outlook",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "continuation_case": "Defensive dividend names hold up on soft data",
+      "decision": "selected",
+      "evidence": [
+        "SCHD active return +3.12% over 5 sessions",
+        "June CPI ex-food-energy +2.6% y/y"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "S&P 500 rallies more than 2% on broad risk-on flows",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth rotation accelerates on risk appetite",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Low-vol equities benefit from rate stability",
+      "decision": "selected",
+      "evidence": [
+        "SPLV active return +2.51% over 5 sessions",
+        "June unemployment 4.2%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Unemployment falls below 4.0% in next release",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Volatility spike on geopolitical event",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Bank margins supported by stable rates",
+      "decision": "selected",
+      "evidence": [
+        "XLF active return +2.53% over 5 sessions",
+        "Treasury curve 2y-10y spread positive"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "2-year Treasury yield rises above 4.4%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit spreads widen on growth fears",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "REITs respond to contained rate volatility",
+      "decision": "selected",
+      "evidence": [
+        "XLRE active return +3.73% over 5 sessions",
+        "10-year Treasury yield 4.55%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "10-year Treasury yield rises above 4.8%",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Long-end yields rise sharply",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Bonds rally on soft growth data",
+      "decision": "rejected",
+      "evidence": [
+        "IEF return +1.77% over 5 sessions",
+        "Fed held funds rate at 3.5-3.75%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -0.3,
+      "invalidation_condition": "CPI ex-food-energy rises above 2.8% y/y",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Inflation reacceleration surprises",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Defensive healthcare holds relative value",
+      "decision": "rejected",
+      "evidence": [
+        "XLV active return +1.70% over 5 sessions",
+        "June PCE core +3.4% y/y"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "XLV underperforms SPY by more than 1%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Biotech rotation fails on financing conditions",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 1.07,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil price reversal on EIA inventory data",
+    "Broad equity rebound on dovish Fed signals",
+    "Duration extension risk if yields spike"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Brent crude falls below $80 on sustained basis",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent active return and oil price momentum support outperformance versus SPY.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "S&P 500 rallies more than 2% on broad risk-on flows",
+      "option_id": "DIVIDEND",
+      "rationale": "Defensive equity tilt with positive active return amid cooling inflation data.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Unemployment falls below 4.0% in next release",
+      "option_id": "LOW_VOL",
+      "rationale": "Lower volatility profile benefits from weak payrolls and rate stability.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "2-year Treasury yield rises above 4.4%",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive active return and curve steepness favor banks in short window.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "10-year Treasury yield rises above 4.8%",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Rate-sensitive sector shows recent strength with stable Fed policy.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.57,
+  "portfolio_rationale": "Energy and defensive equity factors selected for base forecasts exceeding SPY amid cooling CPI and soft payrolls.",
+  "provider": "xai",
+  "rationale_summary": "30% ENERGY, 20% DIVIDEND, 15% LOW_VOL, 15% FINANCIALS, 20% REAL_ESTATE yields 1.57% expected return and 1.07% alpha versus SPY.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12922,
+    "latency_seconds": 38.80065566813573,
+    "output_tokens": 1856,
+    "reasoning_tokens": 1062,
+    "total_tokens": 15840
+  }
+}

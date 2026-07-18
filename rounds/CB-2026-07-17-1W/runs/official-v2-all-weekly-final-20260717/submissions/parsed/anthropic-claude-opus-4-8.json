@@ -1,0 +1,191 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad market stabilizes after pullback",
+      "decision": "selected",
+      "evidence": [
+        "SPY closed 7,475.69 down 1.6% week",
+        "spy_return_5s -1.54%",
+        "beta 1.00 benchmark"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "VIX spikes and market breaks lower",
+      "option_id": "SP500",
+      "reversal_case": "Continued breadth deterioration, 1.76:1 decliners",
+      "time_window_catalyst": "July 21 employment, July 22 EIA"
+    },
+    {
+      "continuation_case": "Oil rally continues, energy defensive vs market",
+      "decision": "selected",
+      "evidence": [
+        "Brent +4.6% July 17 session",
+        "XLE active_return_5s 6.26%",
+        "negative beta -0.772"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Brent falls below June average",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA build reverses oil rally",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Defensive dividend leadership persists",
+      "decision": "selected",
+      "evidence": [
+        "SCHD 3s return +2.20%",
+        "beta 0.10",
+        "active_return_5s 3.12%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sharp risk-on rotation into growth",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth rebound pulls flows from defensives",
+      "time_window_catalyst": "July 21 employment data"
+    },
+    {
+      "continuation_case": "Financials steady with earnings support",
+      "decision": "selected",
+      "evidence": [
+        "XLF active_return_5s 2.53%",
+        "prior_16s active 1.99%",
+        "beta 0.189"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Credit spreads widen materially",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit stress hits banks",
+      "time_window_catalyst": "Financial data flow through July 24"
+    },
+    {
+      "continuation_case": "Growth bounce after oversold",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ 3s -3.38%",
+        "beta 1.695",
+        "drawdown -6.01%"
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Growth breaks lower",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Tech leads decline further",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Defensive flows continue",
+      "decision": "rejected",
+      "evidence": [
+        "XLP 3s +2.12%",
+        "beta -0.343",
+        "active_5s 2.82%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sharp risk-on move",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Risk-on rotation",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Duration bid on growth fears",
+      "decision": "rejected",
+      "evidence": [
+        "TLT 5s +0.06%",
+        "10y 4.55%",
+        "prior 21s -1.58%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yields rise sharply",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Inflation sticky at 3.5% CPI",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Safe haven demand",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 5s -2.28%",
+        "21s -7.36%",
+        "drawdown -8.22%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Gold breaks lower",
+      "option_id": "GOLD",
+      "reversal_case": "Continued gold weakness",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.385,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil reverses if EIA report shows large inventory build",
+    "Defensive rotation unwinds and growth rebounds sharply"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Brent crude reverses below June average with builds in inventories",
+      "option_id": "ENERGY",
+      "rationale": "Brent up 4.6% in July 17 session, strong 6.26% 5s active return, oil supply catalyst via EIA report supports energy continuation.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Defensive rotation reverses and high-beta growth rallies sharply",
+      "option_id": "DIVIDEND",
+      "rationale": "SCHD low beta 0.10, defensive tilt with +2.20% 3s return during broad market decline, low correlation cushions risk.",
+      "time_window_catalyst": "July 21 state employment data"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Credit spreads widen sharply, yield curve dynamics turn adverse",
+      "option_id": "FINANCIALS",
+      "rationale": "XLF positive 2.53% active 5s, strong prior-window active return 1.99%, low beta and steady momentum.",
+      "time_window_catalyst": "Regional bank/financial data flow into July 24"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Broad equity selloff accelerates with rising volatility",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure to limit tracking error while active tilts express views.",
+      "time_window_catalyst": "July 21 employment and July 22 EIA releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.685,
+  "portfolio_rationale": "Market is in a defensive drawdown with growth/tech leading declines and value, dividends, financials, energy showing positive active returns. We tilt to those defensive and cyclically-supported clusters while holding SPY core.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight energy on oil strength, dividends and financials on defensive rotation, retain SPY core.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 23709,
+    "latency_seconds": 30.32039238093421,
+    "output_tokens": 2354,
+    "total_tokens": 26063
+  }
+}

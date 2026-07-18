@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Soft data and recent breadth weakness keep large-cap index muted with limited upside over one week.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY closed down 1.0% on July 17 and 1.6% for the week",
+        "June nonfarm payrolls +57k with prior revisions down 74k; unemployment 4.2%",
+        "June CPI -0.4% m/m; core CPI unchanged m/m"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Strong broad-market rally reclaiming the week\u2019s losses before exit",
+      "option_id": "SP500",
+      "reversal_case": "Oversold bounce after down week if risk appetite returns or data is ignored.",
+      "time_window_catalyst": "July 21 BEA/BLS releases"
+    },
+    {
+      "continuation_case": "Recent crude strength and energy relative performance persist into the weekly petroleum report.",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY active_return_5s +6.26% vs SPY",
+        "Brent crude increased 4.6% in the July 17 session",
+        "EIA forecast Brent $74 average for Q3 after $85 June average"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Crude and XLE reverse lower on inventory/build news",
+      "option_id": "ENERGY",
+      "reversal_case": "Profit-taking after sharp oil move or bearish inventory data.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Momentum in crude continues short-term around the EIA catalyst.",
+      "decision": "selected",
+      "evidence": [
+        "USO return_5s +14.04% and active_return_5s +15.58%",
+        "Brent +4.6% on July 17",
+        "EIA Weekly Petroleum Status Report scheduled July 22"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "USO gives back a large share of recent gains pre-exit",
+      "option_id": "OIL",
+      "reversal_case": "Mean reversion after large multi-session gains or dovish supply signal.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Relative strength in banks continues if rates remain orderly and equity rotation favors financials.",
+      "decision": "selected",
+      "evidence": [
+        "KRE active_return_5s +3.77% and prior_16s_active_return +3.22%",
+        "FINANCIALS active_return_5s +2.53%",
+        "Treasury 2s/10s at 4.18%/4.55% on July 17"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "KRE underperforms SPY materially on risk-off or curve shock",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Credit or deposit fears re-emerge; beta to risk-off rises.",
+      "time_window_catalyst": "July 21 BLS state employment and earnings data"
+    },
+    {
+      "continuation_case": "Value and smaller-cap relative bid persists while mega-cap growth stays weak.",
+      "decision": "selected",
+      "evidence": [
+        "SMALL_VALUE active_return_5s +2.62%",
+        "rsp_minus_spy_5s +1.11% indicating equal-weight/value tilt strength",
+        "Russell 2000 down only 0.5% for the week vs larger SPY/Nasdaq declines"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "IWN loses relative strength as QQQ/XLK rebound hard",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Growth/tech bounce reasserts market-cap leadership.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Further de-risking in high-beta tech after weak week.",
+      "decision": "rejected",
+      "evidence": [
+        "TECHNOLOGY active_return_5s -3.94%; return_3s -4.37%",
+        "Nasdaq Composite down 2.9% for the week",
+        "distance_52w_high -11.31% for XLK"
+      ],
+      "forecast_base_pct": -0.4,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "XLK outperforms SPY decisively on renewed growth bid",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Sharp oversold bounce in growth/tech leadership.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Soft precious-metals trend continues with firmer real-rate backdrop.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU return_5s -2.28% and return_21s -7.36%",
+        "distance_52w_high -25.67%",
+        "US 10-year yield 4.55% on July 17"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Gold rallies sharply on risk-off or yield drop",
+      "option_id": "GOLD",
+      "reversal_case": "Safe-haven bid if equities extend losses.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Dividend factor keeps outperforming on soft growth data.",
+      "decision": "rejected",
+      "evidence": [
+        "DIVIDEND active_return_5s +3.12% and return_3s +2.20%",
+        "distance_52w_high only -0.39%",
+        "Defensive/value factors showed relative resilience vs SPY"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "SCHD relative strength fades versus SPY",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Cyclical risk-on rotation leaves dividend lagging.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.125,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil mean-reversion after large recent gains if EIA data disappoints",
+    "Broad equity risk-off extending SPY weakness into value and banks",
+    "Cluster concentration in energy if crude reverses sharply",
+    "Limited scheduled macro catalysts beyond EIA and state employment prints"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Sharp reversal in crude prices or ENERGY underperformance vs SPY on inventory/build news",
+      "option_id": "ENERGY",
+      "rationale": "Recent oil strength and energy outperformance vs SPY supported by EIA context and session move in Brent; base case exceeds SPY for the one-week window.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Brent/USO selloff or bearish inventory surprise reversing the July 17 session gain",
+      "option_id": "OIL",
+      "rationale": "Strong trailing oil returns and positive active return vs SPY; direct crude exposure for short-horizon continuation into the EIA print.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Risk-off equity selloff or curve/credit stress hitting regional banks",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "Positive recent active returns and relative strength in financials/regional banks versus broad market weakness.",
+      "time_window_catalyst": "July 21 BLS state employment and earnings data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Broad risk-off move or rotation back into large-growth/tech leadership",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Value/small-value relative strength and positive active return versus SPY amid mega-cap/tech weakness.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.325,
+  "portfolio_rationale": "SPY base case is modestly negative after a weak week and soft labor/inflation mix. Selected ENERGY, OIL, REGIONAL_BANKS, and SMALL_VALUE all carry higher base forecasts than SPY, spanning energy and equity-factor clusters within the 50% cluster cap.",
+  "provider": "xai",
+  "rationale_summary": "Favor short-horizon continuation in oil/energy and relative-value/financials strength over beaten-up growth/tech. Portfolio is fully active with no SPY/CASH because multiple options clear the SPY base hurdle.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 13554,
+    "latency_seconds": 27.675910882884637,
+    "output_tokens": 2491,
+    "reasoning_tokens": 16,
+    "total_tokens": 16061
+  }
+}

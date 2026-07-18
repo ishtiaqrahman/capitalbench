@@ -1,0 +1,191 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Oversold bounce after weekly decline; cooling CPI supports risk assets",
+      "decision": "rejected",
+      "evidence": [
+        "SPY down 1.6% for the week, down 1.0% Friday",
+        "CPI -0.4% m/m, cooling inflation",
+        "Fed funds held 3.5-3.75%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY breaks below prior week's low with expanding volume",
+      "option_id": "SP500",
+      "reversal_case": "Tech-led selloff continues; payrolls weak at 57k",
+      "time_window_catalyst": "State employment data July 21"
+    },
+    {
+      "continuation_case": "Oil breakout with strong sector momentum and negative SPY correlation provides both alpha and hedge",
+      "decision": "selected",
+      "evidence": [
+        "Brent +4.6% on July 17",
+        "XLE active_return_5s +6.26%",
+        "USO +15.58% active 5s"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent gives back >5% intraweek or bearish inventory build",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA forecasts Brent falling to $74 in Q3; profit-taking after sharp rally",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "continuation_case": "Rate-sensitive defensive benefiting from CPI miss and duration bid",
+      "decision": "selected",
+      "evidence": [
+        "XLRE active_return_5s +3.73%",
+        "Cooling CPI -0.4% m/m",
+        "10y at 4.55%, TLT +1.60% active 5s"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "10y yield rises above 4.70%",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Yields rebound; already extended near 52w high",
+      "time_window_catalyst": "Continued duration flows on soft data"
+    },
+    {
+      "continuation_case": "Defensive rotation from tech weakness; low correlation to SPY selloff",
+      "decision": "selected",
+      "evidence": [
+        "SCHD active_return_5s +3.12%",
+        "Low beta 0.10 to SPY",
+        "Near 52w high (-0.39%)"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sharp risk-on rotation back into growth/tech",
+      "option_id": "DIVIDEND",
+      "reversal_case": "If tech snaps back, defensives underperform",
+      "time_window_catalyst": "Continued rotation as tech remains weak"
+    },
+    {
+      "continuation_case": "Rotation into value/small persisting; low beta 0.82",
+      "decision": "selected",
+      "evidence": [
+        "IWN active_return_5s +2.62%",
+        "Prior 16s active +0.87%",
+        "CPI cooling supports rate-sensitive small caps"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Credit spreads widen materially (HYG breaks down)",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Weak payrolls signal economic slowdown hurting small caps",
+      "time_window_catalyst": "State employment July 21"
+    },
+    {
+      "continuation_case": "Stable yield accrual",
+      "decision": "rejected",
+      "evidence": [
+        "3m yield 3.85%",
+        "Cash-like proxy"
+      ],
+      "forecast_base_pct": 0.08,
+      "forecast_high_pct": 0.1,
+      "forecast_low_pct": 0.05,
+      "invalidation_condition": "n/a",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "n/a",
+      "time_window_catalyst": "None"
+    },
+    {
+      "continuation_case": "Oversold bounce possible",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ active_return_5s -2.62%",
+        "Nasdaq -2.9% for week",
+        "SMH -7.37% active 5s"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "QQQ makes new lows",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Tech leadership breaking down; semi weakness spreading",
+      "time_window_catalyst": "None specific"
+    },
+    {
+      "continuation_case": "Oversold; CPI-friendly for real rates",
+      "decision": "rejected",
+      "evidence": [
+        "IAU return_21s -7.36%",
+        "Distance from 52w high -25.67%",
+        "Softer CPI could support"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "IAU breaks recent lows",
+      "option_id": "GOLD",
+      "reversal_case": "Strong downtrend intact; USD firm",
+      "time_window_catalyst": "None specific"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.19,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp tech reversal rally lifts SPY while defensives lag",
+    "Oil rally unwinds on bearish EIA inventory data",
+    "Yields spike hurting rate-sensitive real estate and small-value"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Brent gives back >5% intraweek or bearish inventory build",
+      "option_id": "ENERGY",
+      "rationale": "Strongest momentum with negative SPY correlation; oil breakout and sector leadership",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "10y yield rises above 4.70%",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Rate-sensitive defensive benefiting from cooling CPI and duration bid",
+      "time_window_catalyst": "Continued duration flows on soft data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Sharp risk-on rotation back into growth/tech",
+      "option_id": "DIVIDEND",
+      "rationale": "Low-beta defensive with strong recent active return during broader market weakness",
+      "time_window_catalyst": "Continued defensive rotation from tech weakness"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "HYG breaks down signaling credit stress",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Value/small rotation with support from cooling inflation prints",
+      "time_window_catalyst": "State employment data July 21"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.49,
+  "portfolio_rationale": "Defensive rotation portfolio combining energy momentum (negative SPY correlation) with rate-sensitive defensives, dividend, and small-value factors that showed positive active returns during the recent tech-led selloff.",
+  "provider": "anthropic",
+  "rationale_summary": "With SPY under pressure from tech/semis weakness and CPI cooling, we tilt to sectors showing positive active returns: energy (oil breakout), real estate (duration bid), dividend (defensive), and small-value (rotation).",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 20235,
+    "latency_seconds": 34.901835387106985,
+    "output_tokens": 2566,
+    "total_tokens": 22801
+  }
+}

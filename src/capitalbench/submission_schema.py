@@ -196,13 +196,17 @@ def prompt_for_model(prompt: str, model_config: ModelConfig) -> str:
                 "- confidence is your probability from 0 to 1 that this portfolio beats SPY over the scoring window\n"
                 "- expected return fields are percentage points, so 1.25 means +1.25%\n"
                 "- expected_alpha_vs_sp500_pct must equal portfolio_expected_return_pct minus benchmark_expected_return_pct\n"
+                "- portfolio_expected_return_pct must equal the allocation-weighted sum of holding expected_return_pct values (allocation_pct / 100), within 0.20 percentage point\n"
                 "- each holding requires expected_return_pct, time_window_catalyst, and invalidation_condition\n"
             )
         if is_production_portfolio_v2(methodology_version):
             v2_instructions += (
                 "- candidate_ledger must contain 6-8 unique options, include SP500, and span at least four economic-exposure clusters\n"
+                "- each candidate_ledger entry must use exactly these keys: option_id, decision, forecast_low_pct, forecast_base_pct, forecast_high_pct, evidence, continuation_case, reversal_case, time_window_catalyst, invalidation_condition; additional keys, including any *_note key, are invalid\n"
                 "- selected candidate_ledger entries must exactly match portfolio holdings\n"
                 "- every selected non-SP500, non-CASH candidate base forecast must exceed the SP500 base forecast\n"
+                "- before submitting, sum portfolio allocations by the economic-exposure cluster shown in the option table; outside SP500 and CASH, every cluster total must stay at or below the cap, even when different option IDs share a cluster\n"
+                "- hard final checklist: selected ledger IDs equal portfolio IDs; ledger covers at least four clusters; OIL and ENERGY both count toward the same energy cluster; no non-benchmark cluster sum exceeds 50%; all allocation and forecast arithmetic passes\n"
                 f"- max_economic_exposure_pct outside SP500 and CASH: {constraints.get('max_economic_exposure_pct', 50)}\n"
             )
         return (

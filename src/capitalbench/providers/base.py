@@ -76,6 +76,14 @@ def parse_json_object(raw_text: str) -> dict[str, Any] | None:
     except json.JSONDecodeError:
         pass
 
+    repaired = _repair_single_missing_object_close(raw_text)
+    if repaired is not None:
+        try:
+            parsed = json.loads(repaired)
+            return parsed if isinstance(parsed, dict) else None
+        except json.JSONDecodeError:
+            pass
+
     start = raw_text.find("{")
     end = raw_text.rfind("}")
     if start == -1 or end == -1 or end <= start:
@@ -85,6 +93,42 @@ def parse_json_object(raw_text: str) -> dict[str, Any] | None:
     except json.JSONDecodeError:
         return None
     return parsed if isinstance(parsed, dict) else None
+
+
+def _repair_single_missing_object_close(raw_text: str) -> str | None:
+    candidate = raw_text.strip()
+    if not candidate.startswith("{") or candidate.endswith("}"):
+        return None
+
+    object_depth = 0
+    array_depth = 0
+    in_string = False
+    escaped = False
+    for character in candidate:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                in_string = False
+            continue
+        if character == '"':
+            in_string = True
+        elif character == "{":
+            object_depth += 1
+        elif character == "}":
+            object_depth -= 1
+        elif character == "[":
+            array_depth += 1
+        elif character == "]":
+            array_depth -= 1
+        if object_depth < 0 or array_depth < 0:
+            return None
+
+    if in_string or object_depth != 1 or array_depth != 0:
+        return None
+    return candidate + "}"
 
 
 def elapsed_usage(

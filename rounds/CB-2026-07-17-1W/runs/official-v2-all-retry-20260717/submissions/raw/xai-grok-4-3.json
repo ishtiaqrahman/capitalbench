@@ -1,0 +1,167 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Weak jobs and CPI print extend defensive rotation",
+      "decision": "rejected",
+      "evidence": [
+        "SPY closed down 1.0% on July 17 and 1.6% for the week",
+        "June nonfarm payrolls +57k with downward revisions"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "SPY closes above July 17 level on exit date",
+      "option_id": "SP500",
+      "reversal_case": "Positive July 21-22 data releases lift broad equities",
+      "time_window_catalyst": "July 21 BEA direct-investment data"
+    },
+    {
+      "continuation_case": "Oil momentum persists into EIA inventory report",
+      "decision": "selected",
+      "evidence": [
+        "XLE active return +6.26% over prior 5 sessions",
+        "USO return +14.04% over prior 5 sessions and Brent up 4.6% on July 17"
+      ],
+      "forecast_base_pct": 2.1,
+      "forecast_high_pct": 4.8,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Brent crude falls below $80 on the exit date close",
+      "option_id": "ENERGY",
+      "reversal_case": "Large crude inventory build on July 22 report",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Value and small-cap rotation continues on soft inflation",
+      "decision": "selected",
+      "evidence": [
+        "IWN active return +2.62% over prior 5 sessions",
+        "June CPI ex-food-energy unchanged"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "Russell 2000 value underperforms SPY by more than 1% on exit close",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Growth stocks rebound sharply on positive data",
+      "time_window_catalyst": "July 21 BEA direct-investment data"
+    },
+    {
+      "continuation_case": "Yield curve stability supports bank earnings outlook",
+      "decision": "selected",
+      "evidence": [
+        "XLF active return +2.53% over prior 5 sessions",
+        "KRE active return +3.77% over prior 5 sessions"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 2.9,
+      "forecast_low_pct": -1.1,
+      "invalidation_condition": "XLF closes below prior-week low on exit date",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Long-term Treasury yields spike above 5.2%",
+      "time_window_catalyst": "July 21 state employment releases"
+    },
+    {
+      "continuation_case": "Defensive healthcare flows persist amid macro uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "XLV active return +1.70% over prior 5 sessions",
+        "XLV prior 16-session active return +4.75%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -0.7,
+      "invalidation_condition": "XLV active return versus SPY turns negative by more than 1% on exit close",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Broad market rally reduces defensive premium",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Dividend tilt benefits from rate stability",
+      "decision": "rejected",
+      "evidence": [
+        "SCHD active return +3.12% over prior 5 sessions"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.6,
+      "invalidation_condition": "SCHD underperforms SPY by more than 1.5% on exit close",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth rotation accelerates on positive data",
+      "time_window_catalyst": "July 21 BEA direct-investment data"
+    },
+    {
+      "continuation_case": "Lower CPI supports rate-sensitive real estate",
+      "decision": "rejected",
+      "evidence": [
+        "XLRE active return +3.73% over prior 5 sessions"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "XLRE closes below July 17 level on exit date",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "10-year Treasury yield rises above 4.7%",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.93,
+  "is_official_score": true,
+  "key_risks": [
+    "Further downside in equity beta if July 21 data disappoints",
+    "Oil reversal on EIA inventory surprise",
+    "Rate volatility impacting financials and real estate"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.1,
+      "invalidation_condition": "Brent crude falls below $80 on the exit date close",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent energy price momentum and scheduled EIA report provide one-week support.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Russell 2000 value underperforms SPY by more than 1% on exit close",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Recent outperformance versus SPY and defensive tilt amid cooling inflation data.",
+      "time_window_catalyst": "July 21 BEA direct-investment data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "XLF closes below prior-week low on exit date",
+      "option_id": "FINANCIALS",
+      "rationale": "Regional bank strength and yield curve stability support near-term gains.",
+      "time_window_catalyst": "July 21 state employment releases"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "XLV active return versus SPY turns negative by more than 1% on exit close",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with positive prior active return and low correlation to recent equity weakness.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.43,
+  "portfolio_rationale": "Energy and value exposures selected for base-case outperformance driven by recent commodity strength and cooling inflation prints; diversified across four clusters with each under 50%.",
+  "provider": "xai",
+  "rationale_summary": "SPY base forecast modest at 0.5% given weak payrolls and session decline; four holdings exceed this hurdle with positive one-week catalysts.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12877,
+    "latency_seconds": 18.18955919286236,
+    "output_tokens": 1704,
+    "reasoning_tokens": 1011,
+    "total_tokens": 15592
+  }
+}

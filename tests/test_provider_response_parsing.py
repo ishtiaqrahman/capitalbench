@@ -1,5 +1,5 @@
 from capitalbench.providers.base import parse_json_object
-from capitalbench.providers.anthropic_provider import AnthropicProvider
+from capitalbench.providers.anthropic_provider import AnthropicProvider, _to_anthropic_output_schema
 from capitalbench.providers.google_provider import GoogleProvider, _to_google_response_schema
 from capitalbench.providers.mock_provider import MockProvider
 from capitalbench.providers.openai_provider import OpenAIProvider
@@ -28,6 +28,20 @@ def test_parse_malformed_json_returns_none() -> None:
 
 def test_parse_non_object_json_returns_none() -> None:
     assert parse_json_object('["SP500"]') is None
+
+
+def test_parse_json_repairs_exactly_one_missing_object_close() -> None:
+    raw = '{"portfolio":[{"option_id":"SP500"}],"key_risks":["Risk"]'
+
+    assert parse_json_object(raw) == {
+        "portfolio": [{"option_id": "SP500"}],
+        "key_risks": ["Risk"],
+    }
+
+
+def test_parse_json_does_not_repair_incomplete_string_or_array() -> None:
+    assert parse_json_object('{"key_risks":["Risk]') is None
+    assert parse_json_object('{"key_risks":["Risk"}') is None
 
 
 def _model_config() -> ModelConfig:
@@ -329,6 +343,40 @@ def test_anthropic_provider_disables_tools_in_payload(monkeypatch) -> None:
     assert captured_payload["tool_choice"] == {"type": "none"}
     assert "tools" not in captured_payload
     assert "thinking" not in captured_payload
+    assert captured_payload["output_config"]["format"]["type"] == "json_schema"
+
+
+def test_anthropic_schema_conversion_strips_unsupported_constraints() -> None:
+    schema = {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "portfolio": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": {
+                        "allocation_pct": {"type": "integer", "multipleOf": 5},
+                    },
+                    "required": ["allocation_pct"],
+                },
+            },
+        },
+        "required": ["confidence", "portfolio"],
+    }
+
+    converted = _to_anthropic_output_schema(schema)
+
+    assert converted["additionalProperties"] is False
+    assert "minimum" not in converted["properties"]["confidence"]
+    assert "maximum" not in converted["properties"]["confidence"]
+    assert "minItems" not in converted["properties"]["portfolio"]
+    assert "maxItems" not in converted["properties"]["portfolio"]
+    assert "multipleOf" not in converted["properties"]["portfolio"]["items"]["properties"]["allocation_pct"]
 
 
 def test_anthropic_provider_sets_low_output_effort_without_thinking(monkeypatch) -> None:
@@ -358,7 +406,8 @@ def test_anthropic_provider_sets_low_output_effort_without_thinking(monkeypatch)
         RuntimeSettings(timeout_seconds=1, max_output_tokens=500, temperature=0, reasoning_effort="low"),
     )
 
-    assert captured_payload["output_config"] == {"effort": "low"}
+    assert captured_payload["output_config"]["effort"] == "low"
+    assert captured_payload["output_config"]["format"]["type"] == "json_schema"
     assert "thinking" not in captured_payload
 
 
@@ -485,6 +534,40 @@ def test_google_provider_supports_low_thinking_budget(monkeypatch) -> None:
     assert generation_config["thinkingConfig"] == {"thinkingBudget": 512}
     assert captured_payload["tools"] == []
     assert captured_payload["toolConfig"] == {"functionCallingConfig": {"mode": "NONE"}}
+
+
+def test_google_provider_retries_without_native_schema_after_invalid_argument(monkeypatch) -> None:
+    monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
+    provider = GoogleProvider()
+    payloads = []
+    raw_json = (
+        '{"round_id":"example-round","model_id":"openai-smoke","provider":"openai",'
+        '"mode":"closed_capability","selected_option_id":"SP500","confidence":0.5,'
+        '"rationale_summary":"Test","key_risks":["Risk"]}'
+    )
+
+    def fake_post(url, headers, payload, timeout):
+        payloads.append(payload)
+        if len(payloads) == 1:
+            raise RuntimeError('google API request failed with HTTP 400: {"status":"INVALID_ARGUMENT"}')
+        return {
+            "candidates": [{"content": {"parts": [{"text": raw_json}]}}],
+            "usageMetadata": {"promptTokenCount": 1, "candidatesTokenCount": 1, "totalTokenCount": 2},
+        }
+
+    monkeypatch.setattr(provider, "_post_json", fake_post)
+
+    result = provider.run_model(
+        _model_config(),
+        "prompt",
+        provider_submission_schema(_model_config()),
+        RuntimeSettings(timeout_seconds=1, max_output_tokens=500, temperature=0),
+    )
+
+    assert result.parsed_json is not None
+    assert "responseSchema" in payloads[0]["generationConfig"]
+    assert "responseSchema" not in payloads[1]["generationConfig"]
+    assert "Required JSON schema:" in payloads[1]["contents"][0]["parts"][0]["text"]
 
 
 def test_google_provider_leaves_thinking_default_for_real_runs(monkeypatch) -> None:

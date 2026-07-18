@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.15,
+  "candidate_ledger": [
+    {
+      "continuation_case": "A short-term rebound could follow the one-week decline if lower inflation supports rate-sensitive equity valuations.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.0% for the session and 1.6% for the week.",
+        "SPY return_3s was -1.14% and 5-session return was -1.54%.",
+        "June CPI fell 0.4% month over month, but payrolls rose only 57,000 with downward revisions."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -1.6,
+      "invalidation_condition": "SPY breaks below its recent drawdown range with declining issues continuing to dominate advancers.",
+      "option_id": "SP500",
+      "reversal_case": "Weak breadth, Nasdaq underperformance, and soft labor data could keep broad market risk appetite under pressure.",
+      "time_window_catalyst": "July 21 labor-related releases and continued market digestion of CPI/PPI and Fed-rate expectations."
+    },
+    {
+      "continuation_case": "Soft inflation data and recent leadership support rate-sensitive real estate if yields stay contained.",
+      "decision": "selected",
+      "evidence": [
+        "XLRE active return_5s was 3.73%.",
+        "XLRE return_3s was 2.11% and distance to 52-week high was -0.09%.",
+        "June CPI declined 0.4% month over month while core CPI was unchanged."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "10-year Treasury yield rises materially above the July 17 level of 4.55% or XLRE loses its recent relative strength versus SPY.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "A backup in Treasury yields or profit-taking near a 52-week high could reverse the move.",
+      "time_window_catalyst": "Rates reaction to soft June CPI/PPI and incoming July 21 labor-related releases before exit close."
+    },
+    {
+      "continuation_case": "Financials could continue to benefit from value rotation and broader participation outside mega-cap technology.",
+      "decision": "selected",
+      "evidence": [
+        "XLF active return_5s was 2.53% and prior_16s_active_return was 1.99%.",
+        "XLF volatility_21s was 14.21%, close to SPY's 12.73%.",
+        "Large value and regional banks also showed positive recent active returns."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 1.7,
+      "forecast_low_pct": -1.1,
+      "invalidation_condition": "XLF underperforms SPY on expanding downside breadth or regional-bank/credit stress reappears.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit concerns, yield-curve pressure, or renewed risk aversion could offset relative strength.",
+      "time_window_catalyst": "Continuation of broadening/value leadership after SPY and Nasdaq weakness into the entry close."
+    },
+    {
+      "continuation_case": "Energy equities may extend if crude strength persists and the EIA report confirms supportive inventory or demand conditions.",
+      "decision": "selected",
+      "evidence": [
+        "XLE active return_5s was 6.26%.",
+        "Brent crude increased 4.6% in the July 17 session.",
+        "EIA Weekly Petroleum Status Report is scheduled for July 22."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Crude reverses sharply after the EIA report or energy equities fail to track oil strength.",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA forecast a lower third-quarter Brent average than June and the recent oil move may mean-revert.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report after Brent/USO strength into the entry date."
+    },
+    {
+      "continuation_case": "Broadening away from cap-weighted growth could support smaller value stocks for another week.",
+      "decision": "selected",
+      "evidence": [
+        "IWN active return_5s was 2.62% and prior_16s_active_return was 0.87%.",
+        "IWN return_3s was 1.25%.",
+        "RSP outperformed SPY by 1.11% over 5 sessions and 1.64% over 21 sessions."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Market breadth deteriorates and small-value active return turns negative versus SPY.",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Soft payrolls and weaker risk appetite could hurt smaller companies if investors seek liquidity and quality.",
+      "time_window_catalyst": "Continuation of equal-weight/value breadth after RSP outperformed SPY over 5 and 21 sessions."
+    },
+    {
+      "continuation_case": "Defensive rotation can persist if equity breadth remains weak and growth concerns rise.",
+      "decision": "selected",
+      "evidence": [
+        "XLP active return_5s was 2.82% and return_3s was 2.12%.",
+        "XLP had negative 63-session correlation and beta to SPY in the supplied table.",
+        "June payrolls rose only 57,000 and prior months were revised down by 74,000."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Risk appetite rotates sharply back into high-beta growth and XLP underperforms SPY.",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "A risk-on rebound led by growth and cyclicals could leave staples behind.",
+      "time_window_catalyst": "Defensive rotation if equity weakness persists before the July 24 close."
+    },
+    {
+      "continuation_case": "A bullish July 22 EIA petroleum report could extend the sharp crude rally.",
+      "decision": "rejected",
+      "evidence": [
+        "USO active return_5s was 15.58% and 3-day return was 3.15%.",
+        "Brent crude increased 4.6% in the July 17 session.",
+        "EIA forecast Brent to average $74 in the third quarter after $85 in June."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "USO fails to hold its recent breakout or crude sells off after the EIA report.",
+      "option_id": "OIL",
+      "reversal_case": "The very large 5-session move and EIA's lower third-quarter forecast create high mean-reversion risk.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report."
+    },
+    {
+      "continuation_case": "Soft inflation and slower payroll growth could support duration if yields drift lower.",
+      "decision": "rejected",
+      "evidence": [
+        "IEF active return_5s was 1.77% and return_3s was 0.31%.",
+        "June CPI decreased 0.4% month over month and core CPI was unchanged.",
+        "The 10-year Treasury yield was 4.55% on July 17."
+      ],
+      "forecast_base_pct": 0.12,
+      "forecast_high_pct": 0.8,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "10-year Treasury yield rises materially above 4.55%, pushing IEF below its recent range.",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Still-elevated year-over-year PCE and import-price inflation could keep yields firm.",
+      "time_window_catalyst": "Rates reaction to July 21 labor-related releases and inflation-data digestion."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.3325,
+  "is_official_score": true,
+  "key_risks": [
+    "Mega-cap growth rebounds sharply, causing SPY to outperform the active tilts.",
+    "Treasury yields rise despite soft CPI/PPI, pressuring real estate and other rate-sensitive assets.",
+    "Oil reverses after the EIA petroleum report, dragging energy equities lower.",
+    "Recent relative winners mean-revert over the one-week horizon."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "10-year Treasury yield rises materially above the July 17 level of 4.55% or XLRE loses its recent relative strength versus SPY.",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Rate-sensitive real estate showed strong recent relative performance, is near a 52-week high, and could benefit if soft inflation and payroll data support lower-rate expectations over the week.",
+      "time_window_catalyst": "Rates reaction to soft June CPI/PPI and incoming July 21 labor-related releases before exit close."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "XLF underperforms SPY on expanding downside breadth or regional-bank/credit stress reappears.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials have positive recent and prior active returns, moderate volatility, and may continue to benefit from value/cyclical rotation away from mega-cap growth.",
+      "time_window_catalyst": "Continuation of broadening/value leadership after SPY and Nasdaq weakness into the entry close."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Crude reverses sharply after the EIA report or energy equities fail to track oil strength.",
+      "option_id": "ENERGY",
+      "rationale": "Energy has an explicit near-term petroleum catalyst and recent oil-price support, while avoiding the more volatile pure oil product.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report after Brent/USO strength into the entry date."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "Market breadth deteriorates and small-value active return turns negative versus SPY.",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Small value has positive 3-day, 5-day active, and prior active returns with lower drawdown than broad small caps, fitting the recent broadening away from capitalization-weighted growth.",
+      "time_window_catalyst": "Continuation of equal-weight/value breadth after RSP outperformed SPY over 5 and 21 sessions."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Risk appetite rotates sharply back into high-beta growth and XLP underperforms SPY.",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Staples offer defensive equity exposure with strong short-term active performance during a weak SPY/Nasdaq tape, supported by soft payroll and mixed consumption data.",
+      "time_window_catalyst": "Defensive rotation if equity weakness persists before the July 24 close."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.4825,
+  "portfolio_rationale": "The portfolio tilts away from mega-cap growth toward rate-sensitive, value, defensive, and energy exposures that have near-term support in the supplied data. It keeps each non-SPY cluster at or below 50% and uses only holdings with base forecasts above SPY's base forecast.",
+  "provider": "openai",
+  "rationale_summary": "SPY and Nasdaq entered the window weak, while value, defensives, financials, real estate, and energy showed relative strength. Soft CPI/PPI and weak payrolls support duration-sensitive and defensive rotations, while the July 22 EIA report gives energy a clear weekly catalyst.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12685,
+    "latency_seconds": 33.29346391791478,
+    "output_tokens": 2688,
+    "reasoning_tokens": 334,
+    "total_tokens": 15373
+  }
+}

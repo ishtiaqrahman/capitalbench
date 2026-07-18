@@ -1,0 +1,191 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Oversold bounce after 1.6% weekly decline with cooling CPI supporting Fed cut expectations",
+      "decision": "rejected",
+      "evidence": [
+        "SPY -1.6% for week, closed 7475.69",
+        "CPI -0.4% MoM, cooling inflation",
+        "Fed funds held 3.5-3.75%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "SPY breaks below 7400 on rising volatility",
+      "option_id": "SP500",
+      "reversal_case": "Tech weakness and weak payrolls (+57k) suggest growth slowdown; breadth negative",
+      "time_window_catalyst": "State employment data July 21, EIA petroleum July 22"
+    },
+    {
+      "continuation_case": "Oil momentum with Brent surge and XLE breakout; EIA report catalyst mid-week",
+      "decision": "selected",
+      "evidence": [
+        "Brent +4.6% on July 17",
+        "XLE active_return_5s +6.26%",
+        "USO 5s return +15.58%"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent falls back below $80 or bearish inventory build",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA Q3 forecast $74 Brent implies mean reversion lower",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "continuation_case": "Rate-sensitive defensive benefiting from cooling CPI and softer payrolls",
+      "decision": "selected",
+      "evidence": [
+        "XLRE active_return_5s +3.73%",
+        "CPI cooling supports rate relief",
+        "Distance from 52w high only -0.09%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "10Y yield spikes above 4.70%",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Long yields at 5.06% still elevated; if yields spike, REITs fall",
+      "time_window_catalyst": "Continued disinflation narrative into next Fed meeting"
+    },
+    {
+      "continuation_case": "Defensive rotation amid growth slowdown signals and tech weakness",
+      "decision": "selected",
+      "evidence": [
+        "XLP active_return_5s +2.82%",
+        "Weak payrolls favors defensives",
+        "Low correlation to SPY -0.273"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sharp equity rally led by growth sectors",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Risk-on rebound could leave staples behind",
+      "time_window_catalyst": "State employment July 21 confirming labor softness"
+    },
+    {
+      "continuation_case": "Curve steepening and earnings season tailwind for banks",
+      "decision": "selected",
+      "evidence": [
+        "XLF active_return_5s +2.53%",
+        "KRE +3.77% active 5s",
+        "Steep curve 2s-10s ~37bp"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "HYG spreads widen sharply",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit concerns if labor deteriorates further",
+      "time_window_catalyst": "Bank earnings continuing through window"
+    },
+    {
+      "continuation_case": "Oversold bounce possible",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ -2.9% weekly",
+        "SMH -7.37% active 5s",
+        "Distance from 52w high -6.71%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Further breakdown below recent lows",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Semi weakness and momentum unwind still in progress",
+      "time_window_catalyst": "None specific"
+    },
+    {
+      "continuation_case": "Oversold rebound possible",
+      "decision": "rejected",
+      "evidence": [
+        "IAU -7.36% 21s return",
+        "Distance 52w high -25.67%",
+        "Dollar strength UUP +1.43% 21s"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Break to new lows",
+      "option_id": "GOLD",
+      "reversal_case": "Downtrend intact with dollar firm",
+      "time_window_catalyst": "None"
+    },
+    {
+      "continuation_case": "Cash proxy stable yield",
+      "decision": "rejected",
+      "evidence": [
+        "3M yield 3.85%",
+        "Low volatility 0.25%"
+      ],
+      "forecast_base_pct": 0.08,
+      "forecast_high_pct": 0.1,
+      "forecast_low_pct": 0.05,
+      "invalidation_condition": "N/A",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "N/A minimal risk",
+      "time_window_catalyst": "None"
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 1.305,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil reverses if inventory build surprises",
+    "Long yields spike hurting REITs and staples",
+    "Tech-led risk-on rebound leaves defensives behind"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Brent falls back below $80 or bearish inventory build",
+      "option_id": "ENERGY",
+      "rationale": "Strongest momentum with oil surge and EIA catalyst mid-window",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "HYG spreads widen sharply",
+      "option_id": "FINANCIALS",
+      "rationale": "Steep curve and positive active return with earnings tailwind",
+      "time_window_catalyst": "Bank earnings continuing through window"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "10Y yield spikes above 4.70%",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Rate-sensitive defensive benefiting from cooling CPI",
+      "time_window_catalyst": "Continued disinflation narrative"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Sharp risk-on rally in growth sectors",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Defensive ballast amid growth slowdown signals",
+      "time_window_catalyst": "State employment July 21"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.605,
+  "portfolio_rationale": "Barbell of energy momentum with defensive rate-sensitive and staples exposure, plus financials for curve steepening. Avoids weak tech/growth cluster.",
+  "provider": "anthropic",
+  "rationale_summary": "Cooling CPI and soft payrolls favor defensives and rate-sensitives, while oil breakout supports energy overweight. Diversified across four clusters within 50% cap.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 20396,
+    "latency_seconds": 34.32870491500944,
+    "output_tokens": 2509,
+    "total_tokens": 22905
+  }
+}

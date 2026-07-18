@@ -1,0 +1,183 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad market could rebound after a soft week with cooling CPI",
+      "decision": "rejected",
+      "evidence": [
+        "SPY down 1.6% for the week and 1.0% on July 17",
+        "Equal-weight outperformed cap-weight by 1.64% over 21 sessions, showing mega-cap weakness"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Broad rally led by mega-cap tech reversing rotation",
+      "option_id": "SP500",
+      "reversal_case": "Mega-cap growth drag continues, pressuring cap-weighted index",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Sustained rotation from growth to value with low beta (0.65) cushions downside",
+      "decision": "selected",
+      "evidence": [
+        "IWD +0.67% over 3 sessions and +2.03% active vs SPY over 5 sessions",
+        "Prior-window active return also positive (+0.72%), near 52-week high (-0.57%)"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Growth sharply outperforms value early in the week",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Sharp growth rebound pulls flows back from value",
+      "time_window_catalyst": "Rotation dynamics amid mega-cap weakness through July 24"
+    },
+    {
+      "continuation_case": "Defensive flows persist as breadth stays negative (37.68% positive share 21s)",
+      "decision": "selected",
+      "evidence": [
+        "SPLV +2.51% active vs SPY over 5 sessions with positive prior-window active return (+1.12%)",
+        "Negative beta to SPY (-0.27) in a falling tape"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Broad risk-on rally with tech leadership resumes",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Strong risk-on rebound would make low-vol lag",
+      "time_window_catalyst": "Defensive positioning amid weak breadth through July 24"
+    },
+    {
+      "continuation_case": "Crude strength feeds through to energy equities; XLE still -7.14% from 52-week high leaving room",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude rose 4.6% on July 17; USO +14.04% over 5 sessions",
+        "XLE +6.26% active vs SPY over 5 sessions"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Brent gives back the recent gain early in the week",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil spike unwinds; EIA forecasts lower Q3 Brent average ($74)",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "continuation_case": "Multi-week relative strength trend with defensive characteristics",
+      "decision": "selected",
+      "evidence": [
+        "XLV +1.70% active over 5 sessions and +4.75% prior-window active return",
+        "Near-zero beta to SPY (-0.10), defensive in weak tape"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "XLV relative strength breaks with sharp underperformance vs SPY",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Rotation back to growth pulls flows from defensives",
+      "time_window_catalyst": "Sector earnings season underway through July 24"
+    },
+    {
+      "continuation_case": "Oversold bounce possible in mega-cap growth",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ -3.38% over 3 sessions, -2.62% active over 5 sessions, -6.71% from 52-week high"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Strong mega-cap earnings-driven rebound",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Growth de-rating continues with negative prior-window trend",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Cooling CPI could pull long yields down",
+      "decision": "rejected",
+      "evidence": [
+        "June CPI -0.4% m/m; TLT flat over 5 sessions but -1.58% over 21 sessions",
+        "30-year yield 5.06% remains elevated"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Long yields rise on renewed inflation concern",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "PPI +5.5% y/y and import prices +7.1% y/y keep inflation risk elevated",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Momentum could extend on supply concerns",
+      "decision": "rejected",
+      "evidence": [
+        "USO +15.58% active over 5 sessions but 48% volatility",
+        "EIA forecasts $74 Q3 Brent average vs $85 June average"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Crude retraces the spike",
+      "option_id": "OIL",
+      "reversal_case": "Mean reversion after 14% weekly spike; EIA forecast points lower",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 0.5,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp mega-cap tech rebound would cause the value/defensive tilt to lag SPY",
+    "Oil spike unwinds, dragging the energy sleeve",
+    "Hot inflation-adjacent data (PPI 5.5% y/y trend) triggers rate-driven volatility in defensives"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Growth sharply outperforms value early in the week",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value leading with positive prior and recent active returns, low beta near 52-week high.",
+      "time_window_catalyst": "Rotation dynamics amid mega-cap weakness through July 24"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Broad risk-on rally with tech leadership resumes",
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive factor with negative SPY beta well suited to weak breadth tape.",
+      "time_window_catalyst": "Defensive positioning amid weak breadth through July 24"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Brent gives back the recent gain early in the week",
+      "option_id": "ENERGY",
+      "rationale": "Crude up 4.6% July 17 with strong equity follow-through; equities lag oil move leaving room.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "XLV relative strength breaks with sharp underperformance vs SPY",
+      "option_id": "HEALTHCARE",
+      "rationale": "Persistent multi-week relative strength with near-zero market beta.",
+      "time_window_catalyst": "Sector earnings season underway through July 24"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.7,
+  "portfolio_rationale": "Weak breadth and mega-cap growth drawdowns favor a value/defensive/energy tilt over cap-weighted SPY, with each sleeve showing independent recent and prior-window relative strength or a supplied macro catalyst.",
+  "provider": "anthropic",
+  "rationale_summary": "Rotation from growth to value and defensives plus crude strength supports value, low-vol, healthcare, and energy over SPY for one week; clusters are capped and diversified.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 20387,
+    "latency_seconds": 36.16710237506777,
+    "output_tokens": 3086,
+    "total_tokens": 23473
+  }
+}

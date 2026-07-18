@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued risk-off sentiment after weak jobs data",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.0% on July 17",
+        "June nonfarm payrolls +57k with downward revisions"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Stronger than expected retail sales",
+      "option_id": "SP500",
+      "reversal_case": "Bargain buying after sharp weekly decline",
+      "time_window_catalyst": "BLS state employment data July 21"
+    },
+    {
+      "continuation_case": "Oil price momentum persists into EIA report",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude increased 4.6% on July 17",
+        "June CPI energy component down 5.7%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Brent crude falls below recent session close",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA inventory build surprises to upside",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "continuation_case": "Value and small-cap rotation continues on lower inflation",
+      "decision": "selected",
+      "evidence": [
+        "SMALL_VALUE active_return_5s +2.62%",
+        "June CPI decreased 0.4%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Unemployment rises above 4.3%",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Growth stocks rebound on rate-cut hopes",
+      "time_window_catalyst": "BLS state employment data July 21"
+    },
+    {
+      "continuation_case": "Defensive rotation amid soft growth data",
+      "decision": "rejected",
+      "evidence": [
+        "CONSUMER_STAPLES active_return_5s +2.82%",
+        "Retail sales up only 0.2% month-over-month"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -0.4,
+      "invalidation_condition": "Retail sales exceed 0.6% month-over-month",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Consumer spending accelerates",
+      "time_window_catalyst": "BEA direct-investment data July 21"
+    },
+    {
+      "continuation_case": "Bank sector benefits from stable rates and curve",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS active_return_5s +2.53%",
+        "Fed maintained funds rate at 3.5-3.75%"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.1,
+      "forecast_low_pct": -0.6,
+      "invalidation_condition": "Yield curve steepens sharply",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit spreads widen on growth concerns",
+      "time_window_catalyst": "BEA direct-investment data July 21"
+    },
+    {
+      "continuation_case": "Defensive healthcare holds up in soft data environment",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE active_return_5s +1.70%",
+        "Core PCE up 3.4% year-over-year"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 2.9,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "CPI ex-food-energy rises above 2.8%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Biotech rotation accelerates",
+      "time_window_catalyst": "BLS state employment data July 21"
+    },
+    {
+      "continuation_case": "Rate-sensitive sector benefits from stable policy",
+      "decision": "rejected",
+      "evidence": [
+        "REAL_ESTATE active_return_5s +3.73%",
+        "10-year Treasury yield at 4.55%"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 2.7,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "10-year yield exceeds 4.70%",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Longer-term yields rise on inflation concerns",
+      "time_window_catalyst": "BLS state employment data July 21"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.93,
+  "is_official_score": true,
+  "key_risks": [
+    "Further downside in equity markets if data disappoints",
+    "Reversal in recent energy price gains",
+    "Higher than expected inflation reading"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Brent crude falls below recent session close",
+      "option_id": "ENERGY",
+      "rationale": "Recent Brent strength and weak macro data support relative outperformance.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Unemployment rises above 4.3%",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Positive recent active returns and defensive tilt amid cooling inflation.",
+      "time_window_catalyst": "BLS state employment data July 21"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Yield curve steepens sharply",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive prior active returns and rate environment supportive.",
+      "time_window_catalyst": "BEA direct-investment data July 21"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "CPI ex-food-energy rises above 2.8%",
+      "option_id": "HEALTHCARE",
+      "rationale": "Positive recent active returns and defensive characteristics.",
+      "time_window_catalyst": "BLS state employment data July 21"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.53,
+  "portfolio_rationale": "Selected holdings show base forecasts exceeding SPY with exposure across energy, diversified equity value, financials and healthcare clusters.",
+  "provider": "xai",
+  "rationale_summary": "Weak June payrolls and cooling CPI favor relative strength in energy and defensive value sectors over the one-week window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12788,
+    "latency_seconds": 31.91043861908838,
+    "output_tokens": 1601,
+    "reasoning_tokens": 965,
+    "total_tokens": 15354
+  }
+}

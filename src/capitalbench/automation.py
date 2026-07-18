@@ -11,7 +11,8 @@ from .hashing import round_hashes_match
 from .io import load_manifest, read_json, read_yaml, write_yaml
 from .prices import fetch_selected_prices
 from .report import publish_report
-from .run_store import get_run_paths, read_run_manifest, update_run_manifest
+from .roster import validate_official_portfolio_v2_run_manifest
+from .run_store import get_run_paths, list_run_ids, read_run_manifest, update_run_manifest
 from .scoring import score_round
 from .web_sync import (
     SUPABASE_SKIP_MESSAGE,
@@ -101,6 +102,13 @@ def accept_run(
 
     accepted_at_utc = _utc_now()
     due_at = due_at_utc or _default_due_at_utc(manifest.exit_date)
+    selected_store = store if store is not None else configured_automation_store_from_env()
+    _supersede_previous_accepted_runs(
+        round_path,
+        selected_run_id=run_id,
+        superseded_at_utc=accepted_at_utc,
+        store=selected_store,
+    )
     updates: dict[str, Any] = {
         "operator_selected_official": True,
         "accepted_at_utc": accepted_at_utc,
@@ -123,7 +131,6 @@ def accept_run(
         )
         job_id = str(row["job_id"])
         write_yaml(_local_job_path(round_path), _local_job_file(row))
-        selected_store = store if store is not None else configured_automation_store_from_env()
         if selected_store is None:
             print(SUPABASE_SKIP_MESSAGE)
         else:
@@ -442,6 +449,7 @@ def _automation_run_local(
 
 
 def _validate_acceptance_gate(round_path: Path, run_manifest: dict[str, Any]) -> None:
+    manifest = load_manifest(round_path)
     if str(run_manifest.get("run_type") or "") != "official":
         raise ValueError("only official runs can be accepted for automated resolution")
     if run_manifest.get("mock") is True:
@@ -457,11 +465,46 @@ def _validate_acceptance_gate(round_path: Path, run_manifest: dict[str, Any]) ->
         raise ValueError(f"valid submissions do not match model_count: {valid_submissions} != {model_count}")
     if invalid_submissions != 0:
         raise ValueError(f"run has invalid submissions: {invalid_submissions}")
+    validate_official_portfolio_v2_run_manifest(manifest.methodology_version, run_manifest)
     if not round_hashes_match(round_path):
         raise ValueError("round hashes do not match current round files")
     for filename in ["manifest.yaml", "briefing.md", "options.yaml", "prompt.md", "hashes.json"]:
         if not (round_path / filename).exists():
             raise FileNotFoundError(f"missing required round file: {filename}")
+
+
+def _supersede_previous_accepted_runs(
+    round_path: Path,
+    *,
+    selected_run_id: str,
+    superseded_at_utc: str,
+    store: AutomationStore | None,
+) -> None:
+    for previous_run_id in list_run_ids(round_path):
+        if previous_run_id == selected_run_id:
+            continue
+        previous_paths = get_run_paths(round_path, previous_run_id)
+        previous_manifest = read_run_manifest(previous_paths)
+        if not bool(previous_manifest.get("operator_selected_official")):
+            continue
+        if store is not None:
+            store.update_job(
+                f"{load_manifest(round_path).round_id}:{previous_run_id}:{AUTOMATION_JOB_TYPE}",
+                {
+                    "status": "cancelled",
+                    "locked_at_utc": None,
+                    "locked_by": None,
+                    "last_error": f"superseded by accepted run {selected_run_id}",
+                },
+            )
+        update_run_manifest(
+            previous_paths,
+            {
+                "operator_selected_official": False,
+                "superseded_by_run_id": selected_run_id,
+                "superseded_at_utc": superseded_at_utc,
+            },
+        )
 
 
 def _validate_resolution_gate(round_path: Path, run_manifest: dict[str, Any]) -> None:

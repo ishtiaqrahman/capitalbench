@@ -1,0 +1,192 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Disinflation supports multiples; earnings resilient",
+      "decision": "selected",
+      "evidence": [
+        "SPY -1.54% 5s, -0.68% 21s",
+        "Fed on hold at 3.5-3.75%",
+        "June CPI -0.4% m/m, core unchanged"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "SPY closes below -3% on FOMC or CPI",
+      "option_id": "SP500",
+      "reversal_case": "Tech momentum unwind broadens into full correction",
+      "time_window_catalyst": "July 29 FOMC, Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Defensive rotation continues as growth stalls",
+      "decision": "selected",
+      "evidence": [
+        "XLV +6.48% 21s active",
+        "Low beta 0.33, drawdown only -4.01%",
+        "Near 52w high -2.04%"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "XLV -4% breakdown",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Biotech-led weakness or drug-price policy shock",
+      "time_window_catalyst": "Q2 earnings, defensive flows"
+    },
+    {
+      "continuation_case": "Earnings beats, NIM support from steep curve",
+      "decision": "selected",
+      "evidence": [
+        "XLF +4.56% 21s active",
+        "KRE +7.10% 21s active",
+        "Steep curve 3.85%-5.06%"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "XLF breaks below -3%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit deterioration or Fed dovish surprise flattens curve",
+      "time_window_catalyst": "Bank earnings, FOMC"
+    },
+    {
+      "continuation_case": "Defensive factor leadership persists",
+      "decision": "selected",
+      "evidence": [
+        "SPLV +3.66% 21s active",
+        "Prior 105s active -5.81% (mean reversion working)",
+        "Low beta 0.04"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "SPLV underperforms SPY by 2%+",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Sharp risk-on tech rebound",
+      "time_window_catalyst": "CPI/FOMC volatility"
+    },
+    {
+      "continuation_case": "Oversold bounce",
+      "decision": "rejected",
+      "evidence": [
+        "XLK -5.48% 5s",
+        "-11.31% drawdown 63s",
+        "Prior 105s +20% active - momentum unwinding"
+      ],
+      "forecast_base_pct": -1.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "XLK makes new lows",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Momentum unwind continues, valuations reset",
+      "time_window_catalyst": "Mega-cap earnings"
+    },
+    {
+      "continuation_case": "Oil spike momentum",
+      "decision": "rejected",
+      "evidence": [
+        "XLE +5.63% 21s active",
+        "USO +14% 5s",
+        "EIA Q3 Brent forecast $74 (below June $85)"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Brent breaks below $75",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA forecasts Q3 price decline",
+      "time_window_catalyst": "EIA weekly reports"
+    },
+    {
+      "continuation_case": "Growth scare bid",
+      "decision": "rejected",
+      "evidence": [
+        "10y 4.55%, 30y 5.06%",
+        "TLT -1.58% 21s",
+        "Fed dot 3.8% year-end"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "30y breaks above 5.20%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky core inflation 2.6%",
+      "time_window_catalyst": "FOMC, CPI"
+    },
+    {
+      "continuation_case": "Safe haven bid on FOMC dovish",
+      "decision": "rejected",
+      "evidence": [
+        "IAU -7.36% 21s",
+        "-25.67% from 52w high",
+        "-18.11% drawdown 63s"
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "IAU makes new lows",
+      "option_id": "GOLD",
+      "reversal_case": "Real rates elevated, dollar firm",
+      "time_window_catalyst": "FOMC"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.38,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC surprise hawkish tilt hits rate-sensitive defensives",
+    "Tech mean-reversion bounce leaves defensive tilt behind SPY",
+    "Hot CPI on Aug 12 causes broad equity selloff"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "SPY breaks below recent support with credit spreads widening",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure amid tech-led pullback",
+      "time_window_catalyst": "July 29 FOMC and Aug 12-13 CPI/PPI"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "XLV breaks down more than 4% or biotech-led selloff",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong 21s active return (+6.48%), defensive, low beta, near highs",
+      "time_window_catalyst": "Q2 earnings and defensive rotation"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "KRE/XLF break down on credit deterioration",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive momentum (+4.56% 21s), steep curve, resilient in weak tape",
+      "time_window_catalyst": "Bank earnings and FOMC"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Sharp risk-on tech rally reverses defensive leadership",
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive factor showing +3.66% active return, low drawdown",
+      "time_window_catalyst": "Volatility persistence through CPI"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.18,
+  "portfolio_rationale": "Tilt defensively into leaders (healthcare, financials, low-vol) that outperformed during the recent tech-led drawdown, while retaining core SPY exposure ahead of FOMC and CPI catalysts.",
+  "provider": "anthropic",
+  "rationale_summary": "Tech/semis just suffered severe drawdowns (SMH -8.9%, AIQ -7.5%) while defensives and financials showed positive active returns. Overweight the leadership rotation rather than chasing broken momentum.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 23917,
+    "latency_seconds": 42.76404638891108,
+    "output_tokens": 2521,
+    "total_tokens": 26438
+  }
+}

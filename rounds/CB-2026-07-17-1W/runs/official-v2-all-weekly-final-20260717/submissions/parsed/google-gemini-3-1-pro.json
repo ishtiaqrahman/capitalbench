@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": -0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Recent negative momentum and weak breadth continue to weigh on the broad market.",
+      "decision": "rejected",
+      "evidence": [
+        "The S&P 500 closed at 7,475.69, down 1.0% for the session and 1.6% for the week.",
+        "Declining issues outnumbered advancers by 1.76 to 1 on the NYSE."
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 1.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "S&P 500 closes above 7,550.",
+      "option_id": "SP500",
+      "reversal_case": "A sudden shift in sentiment or strong earnings could reverse the recent downtrend.",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Strong recent momentum in oil prices continues, supported by the 4.6% jump in Brent crude on July 17.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude increased 4.6% in the July 17 market session.",
+        "USO returned 14.04% over the last 5 sessions."
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "EIA reports a massive unexpected build in crude inventories.",
+      "option_id": "OIL",
+      "reversal_case": "A surprise build in inventories or a sudden de-escalation of geopolitical tensions could cause a sharp pullback.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "continuation_case": "Energy equities follow the strong upward move in underlying crude oil prices.",
+      "decision": "selected",
+      "evidence": [
+        "XLE returned 6.26% active return over the last 5 sessions.",
+        "Brent crude increased 4.6% in the July 17 market session."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Oil prices drop sharply, dragging XLE down.",
+      "option_id": "ENERGY",
+      "reversal_case": "A drop in oil prices or broader market selloff drags down energy stocks.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "continuation_case": "Recent outperformance in regional banks continues as investors rotate into value and financials.",
+      "decision": "selected",
+      "evidence": [
+        "KRE returned 3.77% active return over the last 5 sessions.",
+        "KRE returned 2.25% over the last 3 sessions."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "KRE drops below its recent support level.",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "A sudden steepening of the yield curve or negative credit news could reverse the trend.",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Defensive rotation continues amid broader market weakness, supporting consumer staples.",
+      "decision": "selected",
+      "evidence": [
+        "XLP returned 2.82% active return over the last 5 sessions.",
+        "XLP returned 2.12% over the last 3 sessions."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Broader market rallies strongly, leading to underperformance of defensive sectors.",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "A strong risk-on rally causes investors to rotate out of defensive sectors.",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Yields remain elevated, keeping pressure on long-duration bonds.",
+      "decision": "rejected",
+      "evidence": [
+        "TLT returned 0.06% over the last 5 sessions.",
+        "Treasury nominal constant-maturity yields were 4.55% at ten years and 5.06% at 30 years."
+      ],
+      "forecast_base_pct": -0.2,
+      "forecast_high_pct": 1.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "10-year Treasury yield drops below 4.40%.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "A sudden flight to safety or weaker-than-expected economic data could drive yields down and bond prices up.",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Recent negative momentum in gold continues amid elevated real yields.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU returned -2.28% over the last 5 sessions.",
+        "IAU returned -7.36% over the last 21 sessions."
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 1.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Gold prices rally sharply on safe-haven demand.",
+      "option_id": "GOLD",
+      "reversal_case": "A sudden drop in real yields or a spike in geopolitical risk could boost gold.",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 1.75,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden reversal in oil prices could negatively impact the 50% allocation to energy and oil.",
+    "A strong broad market rally could lead to underperformance of the defensive consumer staples allocation.",
+    "Unexpected negative news in the banking sector could hurt the regional banks position."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "EIA reports a massive unexpected build in crude inventories.",
+      "option_id": "OIL",
+      "rationale": "Strong recent momentum and a 4.6% jump in Brent crude support a short-term continuation.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Oil prices drop sharply, dragging XLE down.",
+      "option_id": "ENERGY",
+      "rationale": "Energy equities are well-positioned to benefit from the recent surge in oil prices.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "KRE drops below its recent support level.",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "Recent outperformance suggests a rotation into financials that may persist over the short horizon.",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Broader market rallies strongly, leading to underperformance of defensive sectors.",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Provides defensive exposure amid broader market weakness, supported by recent positive active returns.",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.25,
+  "portfolio_rationale": "The portfolio overweights energy and oil to capitalize on recent strong momentum in crude prices. It balances this cyclical exposure with regional banks and consumer staples, which have shown recent relative strength against a weak broad market. This combination aims to generate alpha through sector rotation while managing downside risk.",
+  "provider": "google",
+  "rationale_summary": "Overweight energy and oil for momentum, balanced with regional banks and consumer staples for relative strength.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15042,
+    "latency_seconds": 18.064061888027936,
+    "output_tokens": 2210,
+    "total_tokens": 17252
+  }
+}

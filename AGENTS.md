@@ -20,9 +20,12 @@ exposure clusters, low/base/high forecasts, the active-holding SPY hurdle, and
 the 50% non-benchmark economic-exposure cap. Score only the final frozen
 portfolio; retain the candidate ledger for calibration and audit.
 
-The tracked default four-model roster is `configs/models.v2.yaml`. Model keys
-must come from local environment files or environment variables and must never
-be committed.
+The tracked production roster is the complete eight-model roster in
+`configs/models.v2.yaml`. Every official `portfolio-v2.0` run must use all
+enabled models in that canonical file. The runner and acceptance gate reject
+partial rosters; never substitute the four-model pilot roster. Model keys must
+come from local environment files or environment variables and must never be
+committed.
 
 The first official production V2 rounds are:
 

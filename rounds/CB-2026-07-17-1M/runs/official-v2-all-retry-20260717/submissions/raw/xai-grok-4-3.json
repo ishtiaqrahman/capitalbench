@@ -1,0 +1,164 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad equity weakness persists into August",
+      "decision": "rejected",
+      "evidence": [
+        "SPY closed down 1.0% on July 17",
+        "June nonfarm payrolls +57k with downward revisions"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY closes above 7600",
+      "option_id": "SP500",
+      "reversal_case": "Inflation cooling prompts dovish FOMC tilt",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "continuation_case": "Oil prices remain supported near current levels",
+      "decision": "selected",
+      "evidence": [
+        "XLE +4.72% over last 5 sessions",
+        "Brent crude averaged $85 in June"
+      ],
+      "forecast_base_pct": 3.0,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Brent crude falls below $80 sustained",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA reports show rising inventories",
+      "time_window_catalyst": "EIA weekly petroleum reports"
+    },
+    {
+      "continuation_case": "Domestic growth data supports small caps",
+      "decision": "selected",
+      "evidence": [
+        "IWN +1.08% over last 5 sessions and +3.52 active 21s"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Unemployment rises above 4.5%",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Payroll revisions signal deeper slowdown",
+      "time_window_catalyst": "July employment situation"
+    },
+    {
+      "continuation_case": "Rate environment remains supportive for banks",
+      "decision": "selected",
+      "evidence": [
+        "XLF +0.99% over last 5 sessions and +4.56 active 21s"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Yield curve inverts further by more than 50bp",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Loan demand weakens in SLOOS survey",
+      "time_window_catalyst": "FOMC July meeting"
+    },
+    {
+      "continuation_case": "Regional bank outperformance continues on domestic data",
+      "decision": "selected",
+      "evidence": [
+        "KRE +2.23% over last 5 sessions and +7.10 active 21s"
+      ],
+      "forecast_base_pct": 3.5,
+      "forecast_high_pct": 7.5,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Credit spreads widen by 50bp or more",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "CRE concerns resurface in earnings",
+      "time_window_catalyst": "BLS state labor-market data"
+    },
+    {
+      "continuation_case": "Defensive equity flows persist",
+      "decision": "rejected",
+      "evidence": [
+        "SCHD +1.57% over last 5 sessions"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "SCHD underperforms SPY by 2% over window",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth rotation accelerates post-FOMC",
+      "time_window_catalyst": "Q2 GDP release"
+    },
+    {
+      "continuation_case": "Defensive rotation continues",
+      "decision": "rejected",
+      "evidence": [
+        "SPLV +0.96% over last 5 sessions and +3.66 active 21s"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "VIX drops below 15",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Risk appetite rebounds sharply",
+      "time_window_catalyst": "July CPI release"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 1.98,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC policy surprise on July 29",
+    "Weaker than expected Q2 GDP print",
+    "Further equity market rotation away from cyclicals"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 3.0,
+      "invalidation_condition": "Brent crude falls below $80 sustained",
+      "option_id": "ENERGY",
+      "rationale": "Recent energy price strength and sector outperformance amid supply dynamics.",
+      "time_window_catalyst": "EIA weekly petroleum reports and FOMC statement"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Unemployment rises above 4.5%",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Recent outperformance in small-value equities with domestic growth sensitivity.",
+      "time_window_catalyst": "July employment situation and Q2 GDP release"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Yield curve inverts further by more than 50bp",
+      "option_id": "FINANCIALS",
+      "rationale": "Sector showing positive active returns with rate environment support.",
+      "time_window_catalyst": "FOMC July meeting and Senior Loan Officer Survey"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 3.5,
+      "invalidation_condition": "Credit spreads widen by 50bp or more",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "Strong recent performance in regional banks with domestic focus.",
+      "time_window_catalyst": "BLS state labor-market data and JOLTS release"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.78,
+  "portfolio_rationale": "Value, energy, and financials clusters show recent positive active returns and macro tailwinds from cooling inflation data.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings have base forecasts exceeding SPY with diversification across four clusters and total under 50% per cluster.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 13048,
+    "latency_seconds": 15.881720336154103,
+    "output_tokens": 1549,
+    "reasoning_tokens": 962,
+    "total_tokens": 15559
+  }
+}

@@ -1,0 +1,204 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Soft inflation supports modest bounce after weekly pullback",
+      "decision": "rejected",
+      "evidence": [
+        "SPY down 1.6% for the week, -1.0% Friday session",
+        "spy_return_5s -1.54%, breadth negative 1.76:1 decliners",
+        "June CPI -0.4% m/m, core unchanged"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Continued tech-led selloff pushing SPY below recent lows",
+      "option_id": "SP500",
+      "reversal_case": "Mega-cap tech weakness continues dragging the cap-weighted index",
+      "reversal_case_note": null,
+      "time_window_catalyst": "None major scheduled; light data week"
+    },
+    {
+      "continuation_case": "Established rotation from growth to value with prior-window and recent confirmation",
+      "decision": "selected",
+      "evidence": [
+        "IWD +2.03% active vs SPY over 5 sessions with +0.72% prior-window active",
+        "Only -0.57% from 52w high, low 11.32% volatility",
+        "RSP outperforming SPY by 1.64% over 21 sessions signals rotation to value/breadth"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "QQQ sharply outperforms IWD early in the week",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Sharp growth rebound reverses factor rotation",
+      "reversal_case_note": null,
+      "time_window_catalyst": "Ongoing rotation amid earnings season; no single event"
+    },
+    {
+      "continuation_case": "Persistent small-value leadership across both windows amid disinflation",
+      "decision": "selected",
+      "evidence": [
+        "IWN +2.62% active 5s and +0.87% prior-window active",
+        "Russell 2000 fell only 0.5% vs SPY -1.6% for the week",
+        "Soft CPI supports rate-cut hopes benefiting small caps"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Small caps underperform SPY over first two sessions on growth fears",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Weak payrolls (57k, negative revisions) could hit domestic cyclicals",
+      "reversal_case_note": null,
+      "time_window_catalyst": "Rate-cut expectations building into next FOMC"
+    },
+    {
+      "continuation_case": "Fresh oil price spike still feeding into energy equities; XLE still -7.14% from 52w high",
+      "decision": "selected",
+      "evidence": [
+        "XLE +6.26% active 5s; Brent +4.6% in July 17 session",
+        "USO +15.58% active 5s on oil supply shock",
+        "EIA Weekly Petroleum Status Report July 22"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent gives back the July 17 gain within the window",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil spike unwinds quickly; EIA forecasts lower Q3 Brent average ($74)",
+      "reversal_case_note": null,
+      "time_window_catalyst": "July 22 EIA petroleum inventory report"
+    },
+    {
+      "continuation_case": "Multi-week healthcare leadership independent of tech selloff",
+      "decision": "selected",
+      "evidence": [
+        "XLV +1.70% active 5s and +4.75% prior-window active \u2014 consistent uptrend",
+        "Low correlation to SPY (-0.07) provides defensive alpha ballast"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "XLV lags SPY meaningfully in first half of the week",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Rotation back to growth pulls flows out of defensives",
+      "reversal_case_note": null,
+      "time_window_catalyst": "Earnings season continues; none specific"
+    },
+    {
+      "continuation_case": "Oversold bounce possible in mega-cap tech",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ -2.9% for the week, -2.62% active 5s, -6.71% from high",
+        "SMH -16.8% drawdown suggests broad tech de-risking"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Tech stabilizes and reclaims leadership",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Momentum unwind (MTUM -12.5% drawdown) continues punishing growth",
+      "reversal_case_note": null,
+      "time_window_catalyst": "Mega-cap earnings season"
+    },
+    {
+      "continuation_case": "Falling rates could stabilize gold",
+      "decision": "rejected",
+      "evidence": [
+        "IAU -7.36% over 21 sessions, -25.67% from 52w high",
+        "Prior-window active -6.08% shows persistent downtrend"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Sharp risk-off flight to safe havens",
+      "option_id": "GOLD",
+      "reversal_case": "Ongoing downtrend and dollar strength (UUP +1.43% 21s) pressure gold",
+      "reversal_case_note": null,
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Disinflation prints could pull long yields down",
+      "decision": "rejected",
+      "evidence": [
+        "TLT -1.58% over 21 sessions despite soft CPI",
+        "30y at 5.06% with sticky import prices (+7.1% y/y)"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Yields rise on inflation concerns",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Supply and sticky services inflation keep long end pressured",
+      "reversal_case_note": null,
+      "time_window_catalyst": "None major before exit"
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 0.455,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp mega-cap tech rebound reverses the value/defensive rotation",
+    "Oil spike unwinds, dragging XLE below entry",
+    "Weak labor data (57k payrolls) hits small-cap cyclicals",
+    "Factor crowding unwind causes correlated losses across value tilts"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "QQQ sharply outperforms IWD early in the week",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Confirmed multi-window value rotation with low volatility and near-high positioning.",
+      "time_window_catalyst": "Ongoing rotation amid earnings season; no single event"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Small caps underperform SPY over first two sessions on growth fears",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Strongest recent and prior-window active returns among equity factors amid disinflation.",
+      "time_window_catalyst": "Rate-cut expectations building into next FOMC"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Brent gives back the July 17 gain within the window",
+      "option_id": "ENERGY",
+      "rationale": "Fresh oil supply shock (Brent +4.6% Friday) with XLE still well below highs; negative SPY beta hedges tech weakness.",
+      "time_window_catalyst": "July 22 EIA petroleum inventory report"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "XLV lags SPY meaningfully in first half of the week",
+      "option_id": "HEALTHCARE",
+      "rationale": "Persistent defensive leadership with near-zero SPY correlation.",
+      "time_window_catalyst": "Earnings season continues; none specific"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.2,
+      "invalidation_condition": "Continued tech-led selloff pushing SPY below recent lows",
+      "option_id": "SP500",
+      "rationale": "Benchmark ballast to reduce tracking error.",
+      "time_window_catalyst": "None major scheduled; light data week"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.655,
+  "portfolio_rationale": "Tilt toward value, small-value, energy, and healthcare \u2014 all showing supported outperformance amid a momentum/tech unwind and an oil price shock \u2014 with a small SPY ballast.",
+  "provider": "anthropic",
+  "rationale_summary": "Breadth rotation (RSP-SPY +1.64% 21s) and the tech drawdown favor value and defensives; the July 17 Brent spike and EIA report support energy over the one-week window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 20226,
+    "latency_seconds": 38.383206692989916,
+    "output_tokens": 3323,
+    "total_tokens": 23549
+  }
+}

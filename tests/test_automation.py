@@ -17,6 +17,7 @@ ROUND_1 = PROJECT_ROOT / "rounds" / "CB-2026-05-10-1M"
 class FakeAutomationStore:
     def __init__(self) -> None:
         self.jobs: list[dict[str, Any]] = []
+        self.updates: list[tuple[str, dict[str, Any]]] = []
 
     def upsert_job(self, row: dict[str, Any]) -> None:
         self.jobs.append(row)
@@ -25,7 +26,7 @@ class FakeAutomationStore:
         return None
 
     def update_job(self, job_id: str, updates: dict[str, Any]) -> None:
-        raise AssertionError("not used")
+        self.updates.append((job_id, updates))
 
 
 def _copy_due_round(tmp_path: Path) -> Path:
@@ -91,6 +92,42 @@ def test_accept_run_rejects_invalid_official_run(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="not official_score_eligible"):
         accept_run(round_path, run_id="official-round-1-clean", sync_pending=False)
+
+
+def test_accept_run_supersedes_previous_selected_run_and_cancels_job(tmp_path: Path) -> None:
+    round_path = _copy_due_round(tmp_path)
+    original_path = round_path / "runs" / "official-round-1-clean"
+    replacement_path = round_path / "runs" / "official-round-1-replacement"
+    copytree(original_path, replacement_path)
+    replacement_manifest_path = replacement_path / "run_manifest.yaml"
+    replacement_manifest = yaml.safe_load(replacement_manifest_path.read_text(encoding="utf-8"))
+    replacement_manifest["run_id"] = "official-round-1-replacement"
+    replacement_manifest["operator_selected_official"] = False
+    replacement_manifest_path.write_text(yaml.safe_dump(replacement_manifest, sort_keys=False), encoding="utf-8")
+    store = FakeAutomationStore()
+
+    accept_run(
+        round_path,
+        run_id="official-round-1-replacement",
+        due_at_utc="2026-05-11T23:30:00+00:00",
+        store=store,
+        sync_pending=False,
+    )
+
+    original_manifest = yaml.safe_load((original_path / "run_manifest.yaml").read_text(encoding="utf-8"))
+    assert original_manifest["operator_selected_official"] is False
+    assert original_manifest["superseded_by_run_id"] == "official-round-1-replacement"
+    assert store.updates == [
+        (
+            "CB-2026-05-10-1M:official-round-1-clean:resolve_round",
+            {
+                "status": "cancelled",
+                "locked_at_utc": None,
+                "locked_by": None,
+                "last_error": "superseded by accepted run official-round-1-replacement",
+            },
+        )
+    ]
 
 
 def test_resolve_accepted_round_scores_publishes_and_marks_job(tmp_path: Path) -> None:

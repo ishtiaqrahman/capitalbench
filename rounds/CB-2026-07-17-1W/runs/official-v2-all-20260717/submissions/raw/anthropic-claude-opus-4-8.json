@@ -1,0 +1,190 @@
+{
+  "benchmark_expected_return_pct": -0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad breadth weakness and mega-cap tech pullback could persist into next week.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY closed down 1.0% session and 1.6% for the week",
+        "spy_return_5s -1.54%; distance_52w_high -1.89%",
+        "Declining issues outnumbered advancers 1.76 to 1 on NYSE"
+      ],
+      "forecast_base_pct": -0.2,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY closes above 7,600 with broadening breadth.",
+      "option_id": "SP500",
+      "reversal_case": "Cooling June CPI (-0.4% m/m) supports rate-cut hopes and equity rebound.",
+      "time_window_catalyst": "July 21 state employment data and macro flows"
+    },
+    {
+      "continuation_case": "Oil-price surge and sector momentum with negative SPY beta provide defensive upside.",
+      "decision": "selected",
+      "evidence": [
+        "Brent increased 4.6% in the July 17 session",
+        "XLE active_return_5s 6.26%",
+        "EIA forecast $74 Q3 average vs $85 June"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Brent gives back the July 17 gain and XLE falls below prior week close.",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA weekly petroleum report July 22 could show builds and reverse oil rally.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Cooling CPI and lower rate expectations support rate-sensitive real estate near highs.",
+      "decision": "selected",
+      "evidence": [
+        "XLRE return_3s 2.11%; active_return_5s 3.73%",
+        "distance_52w_high only -0.09%",
+        "corr_spy_63s -0.059 (low beta)"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "10yr yield rises above 4.75% and XLRE breaks below week's low.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "10yr yield at 4.55% could back up on strong data, pressuring REITs.",
+      "time_window_catalyst": "Rate path following soft CPI data"
+    },
+    {
+      "continuation_case": "Steady active outperformance and low correlation provide resilient carry.",
+      "decision": "selected",
+      "evidence": [
+        "XLF active_return_5s 2.53%; prior_16s_active 1.99%",
+        "volume_zscore 0.524 positive",
+        "corr_spy_63s 0.189 low beta"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLF falls below prior week close with credit spread widening.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit spread widening or bank earnings disappointment could reverse.",
+      "time_window_catalyst": "Bank earnings season flows"
+    },
+    {
+      "continuation_case": "Defensive dividend leadership persists in weak-breadth tape.",
+      "decision": "rejected",
+      "evidence": [
+        "SCHD return_3s 2.20%; active_return_5s 3.12%",
+        "corr_spy_63s 0.110 very low",
+        "distance_52w_high -0.39%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Growth stocks lead and SCHD lags SPY.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Risk-on rotation back to growth could leave dividends behind.",
+      "time_window_catalyst": "Macro data July 21"
+    },
+    {
+      "continuation_case": "Defensive rotation supports staples in cautious tape.",
+      "decision": "rejected",
+      "evidence": [
+        "XLP return_3s 2.12%; active_return_5s 2.82%",
+        "corr_spy_63s -0.273 defensive",
+        "distance_52w_high -4.16%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLP underperforms SPY as risk appetite returns.",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Equity rebound rotates out of defensives.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Mega-cap tech weakness and high volatility could persist.",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ return_3s -3.38%; active_return_5s -2.62%",
+        "volatility_21s 25.77%; max_drawdown -6.01%",
+        "distance_52w_high -6.71%"
+      ],
+      "forecast_base_pct": -1.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "QQQ recovers above prior week high.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Soft CPI supports growth rebound on lower rates.",
+      "time_window_catalyst": "Tech earnings flows"
+    },
+    {
+      "continuation_case": "Stable low-risk carry hedges equity drawdown risk.",
+      "decision": "selected",
+      "evidence": [
+        "BIL volatility_21s 0.25%; max_drawdown -0.01%",
+        "3-month yield 3.85%",
+        "cash-like low-risk proxy"
+      ],
+      "forecast_base_pct": 0.08,
+      "forecast_high_pct": 0.12,
+      "forecast_low_pct": 0.02,
+      "invalidation_condition": "Equities rally strongly making cash-like return a drag.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Strong equity rally would leave BIL far behind SPY.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 1.232,
+  "is_official_score": true,
+  "key_risks": [
+    "EIA petroleum report shows builds reversing oil rally and energy leadership",
+    "Rate backup on strong data pressures rate-sensitive REITs and financials"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Brent gives back the July 17 gain and XLE falls below prior week close.",
+      "option_id": "ENERGY",
+      "rationale": "Oil-price surge and negative SPY beta provide defensive upside.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "10yr yield rises above 4.75% and XLRE breaks below week's low.",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Rate-sensitive sector near highs benefiting from cooling CPI.",
+      "time_window_catalyst": "Rate path following soft CPI data"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "XLF falls below prior week close with credit spread widening.",
+      "option_id": "FINANCIALS",
+      "rationale": "Steady active outperformance with low beta resilience.",
+      "time_window_catalyst": "Bank earnings season flows"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.08,
+      "invalidation_condition": "Equities rally strongly making cash-like return a drag.",
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Low-risk carry hedges equity drawdown risk in weak-breadth tape.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.032,
+  "portfolio_rationale": "Tilt toward low-correlation sectors (energy, real estate, financials) showing positive active returns amid weak SPY breadth, with short Treasuries as a hedge.",
+  "provider": "anthropic",
+  "rationale_summary": "SPY faces breadth weakness; energy has oil-driven momentum, REITs and financials have positive active returns with low beta.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 20230,
+    "latency_seconds": 32.82810407015495,
+    "output_tokens": 2768,
+    "total_tokens": 22998
+  }
+}

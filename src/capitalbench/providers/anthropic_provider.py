@@ -39,9 +39,15 @@ class AnthropicProvider(BaseProvider):
                     ),
                 }
             ],
+            "output_config": {
+                "format": {
+                    "type": "json_schema",
+                    "schema": _to_anthropic_output_schema(json_schema),
+                }
+            },
         }
         if runtime_limits.reasoning_effort:
-            payload["output_config"] = {"effort": runtime_limits.reasoning_effort}
+            payload["output_config"]["effort"] = runtime_limits.reasoning_effort
         response = self._post_anthropic(payload, runtime_limits.timeout_seconds)
         raw_text = _extract_anthropic_text(response)
         usage_data = response.get("usage") or {}
@@ -93,3 +99,32 @@ def _extract_anthropic_text(response: dict[str, Any]) -> str:
         if isinstance(text, str):
             parts.append(text)
     return "\n".join(parts)
+
+
+def _to_anthropic_output_schema(schema: dict[str, Any]) -> dict[str, Any]:
+    unsupported = {
+        "maximum",
+        "maxItems",
+        "maxLength",
+        "minimum",
+        "minItems",
+        "minLength",
+        "multipleOf",
+        "pattern",
+    }
+    converted: dict[str, Any] = {}
+    for key, value in schema.items():
+        if key in unsupported:
+            continue
+        if key == "properties" and isinstance(value, dict):
+            converted[key] = {
+                property_name: _to_anthropic_output_schema(property_schema)
+                for property_name, property_schema in value.items()
+                if isinstance(property_schema, dict)
+            }
+            continue
+        if key == "items" and isinstance(value, dict):
+            converted[key] = _to_anthropic_output_schema(value)
+            continue
+        converted[key] = value
+    return converted

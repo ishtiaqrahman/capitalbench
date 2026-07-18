@@ -1,0 +1,145 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Recent weakness continues as inflation data and Fed hold weigh on sentiment.",
+      "decision": "rejected",
+      "evidence": [
+        "The S&P 500 closed at 7,475.69, down 1.0% for the session and 1.6% for the week.",
+        "June CPI decreased 0.4% on a seasonally adjusted monthly basis and increased 3.5% over 12 months."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A sharp rally in mega-cap tech stocks.",
+      "option_id": "SP500",
+      "reversal_case": "Market digests inflation data and rebounds on underlying economic resilience.",
+      "time_window_catalyst": "None identified."
+    },
+    {
+      "continuation_case": "Strong recent momentum in oil prices continues into the next week.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude increased 4.6% in the July 17 market session.",
+        "USO returned 14.04% over the last 5 sessions."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant drop in crude prices below recent support levels.",
+      "option_id": "OIL",
+      "reversal_case": "Profit-taking or a surprise build in EIA inventories.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "continuation_case": "Energy equities follow the strong momentum in underlying crude prices.",
+      "decision": "selected",
+      "evidence": [
+        "XLE returned 6.26% active return over the last 5 sessions.",
+        "Brent crude increased 4.6% in the July 17 market session."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A sharp decline in oil prices.",
+      "option_id": "ENERGY",
+      "reversal_case": "A pullback in oil prices or broader market selloff.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "continuation_case": "Stable rates and recent positive momentum support regional banks.",
+      "decision": "selected",
+      "evidence": [
+        "KRE returned 3.77% active return over the last 5 sessions.",
+        "The Federal Reserve maintained the federal-funds target range at 3.5% to 3.75%."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant drop in Treasury yields.",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Concerns over commercial real estate or deposit flight resurface.",
+      "time_window_catalyst": "None identified."
+    },
+    {
+      "continuation_case": "Value rotation continues as investors seek cheaper segments of the market.",
+      "decision": "rejected",
+      "evidence": [
+        "IWN returned 2.62% active return over the last 5 sessions.",
+        "June nonfarm payrolls increased by 57,000, unemployment was 4.2%."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A sharp reversal in the recent value outperformance.",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Economic slowdown fears disproportionately impact small caps.",
+      "time_window_catalyst": "None identified."
+    },
+    {
+      "continuation_case": "Yields remain elevated, keeping bond returns muted.",
+      "decision": "rejected",
+      "evidence": [
+        "On July 17, Treasury nominal constant-maturity yields were 4.55% at ten years, and 5.06% at 30 years.",
+        "TLT returned 0.06% over the last 5 sessions."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A significant drop in the 30-year Treasury yield.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "A sudden flight to safety drives yields down and bond prices up.",
+      "time_window_catalyst": "None identified."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 1.1,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden reversal in oil prices due to geopolitical or macroeconomic factors.",
+    "A broader market selloff that drags down energy equities despite strong commodity prices.",
+    "Renewed concerns over regional bank stability."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "A significant drop in crude prices below recent support levels.",
+      "option_id": "OIL",
+      "rationale": "Strong recent momentum in crude prices and a supportive EIA report catalyst.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "A sharp decline in oil prices.",
+      "option_id": "ENERGY",
+      "rationale": "Energy equities should benefit from the strong momentum in underlying crude prices.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "A significant drop in Treasury yields.",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "Stable rates and recent positive momentum support regional banks.",
+      "time_window_catalyst": "None identified."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.3,
+  "portfolio_rationale": "The portfolio is heavily tilted towards the energy sector, capitalizing on the recent strong momentum in crude oil prices. Regional banks are included for diversification and their recent positive active return.",
+  "provider": "google",
+  "rationale_summary": "Overweight energy and oil based on strong recent price action. Diversify with regional banks.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 14948,
+    "latency_seconds": 19.539197778096423,
+    "output_tokens": 1797,
+    "total_tokens": 16745
+  }
+}

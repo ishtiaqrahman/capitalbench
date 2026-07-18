@@ -1,0 +1,177 @@
+{
+  "benchmark_expected_return_pct": 0.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Weak breadth, soft payroll growth, and continued growth-stock pressure could extend the decline.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY fell 1.54% over five sessions and 0.68% over 21 sessions.",
+        "Decliners outnumbered advancers on both the NYSE and Nasdaq on July 17.",
+        "June core CPI was unchanged, but core PCE inflation was 3.4% year over year."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -2.4,
+      "invalidation_condition": "A broad advance with improving breadth and SPY recovering its latest weekly loss would invalidate the cautious forecast.",
+      "option_id": "SP500",
+      "reversal_case": "Benign monthly CPI and a modestly oversold entry could produce a broad relief rebound.",
+      "time_window_catalyst": "July 21 state employment releases and market digestion of inflation and labor data."
+    },
+    {
+      "continuation_case": "Defensive rotation can persist if investors continue reducing growth concentration amid softer labor conditions.",
+      "decision": "selected",
+      "evidence": [
+        "Dividend equities gained 2.20% over three sessions and outperformed SPY by 3.12% over five sessions.",
+        "The fund was only 0.39% below its 52-week high.",
+        "June payrolls rose only 57,000 and prior months were revised down by 74,000."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Dividend equities underperform SPY for two consecutive sessions while growth leadership and market breadth recover.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "A forceful rebound in mega-cap growth could reverse factor leadership and leave dividend stocks behind.",
+      "time_window_catalyst": "Continued rotation away from growth concentration as markets digest soft payrolls and benign June core CPI."
+    },
+    {
+      "continuation_case": "Persistent relative strength and a positively sloped two-to-ten-year curve can sustain sector leadership.",
+      "decision": "selected",
+      "evidence": [
+        "Financials outperformed SPY by 2.53% over five sessions and 1.99% over the preceding 16 sessions.",
+        "Financials were 0.86% below their 52-week high.",
+        "The two-year Treasury yield was 4.18% and the ten-year yield was 4.55%."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "The Treasury curve flattens materially or financials surrender their latest relative gains and close below the recent drawdown low.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak employment could raise credit concerns, while falling long yields could reduce curve support.",
+      "time_window_catalyst": "July 21 state employment releases and continued interpretation of the 4.55% ten-year versus 4.18% two-year Treasury curve."
+    },
+    {
+      "continuation_case": "Cooling monthly inflation and weaker labor data could stabilize yields and sustain demand for rate-sensitive equities.",
+      "decision": "selected",
+      "evidence": [
+        "Real estate gained 2.11% over three sessions and outperformed SPY by 3.73% over five sessions.",
+        "The sector was only 0.09% below its 52-week high.",
+        "June core CPI was unchanged on a monthly basis."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -2,
+      "invalidation_condition": "Ten-year Treasury yields rise materially above 4.55% and real estate reverses its latest three-session advance.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "High year-over-year PCE inflation or rising import prices could push yields higher and reverse the advance.",
+      "time_window_catalyst": "Further bond-market response to unchanged core CPI and weak payroll growth before the exit close."
+    },
+    {
+      "continuation_case": "Soft labor data and benign monthly core CPI can support a modest decline in intermediate yields.",
+      "decision": "selected",
+      "evidence": [
+        "Intermediate Treasuries gained 0.31% over three sessions and outperformed SPY by 1.77% over five sessions.",
+        "June payroll growth was 57,000 with downward revisions totaling 74,000.",
+        "June core CPI was unchanged for the month."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 0.9,
+      "forecast_low_pct": -0.7,
+      "invalidation_condition": "The ten-year Treasury yield rises materially above 4.55% as inflation concerns dominate growth concerns.",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Elevated core PCE, import-price inflation, or renewed inflation fears could lift yields despite weaker employment.",
+      "time_window_catalyst": "Continued rate repricing from weak payroll growth, downward revisions, and unchanged June core CPI."
+    },
+    {
+      "continuation_case": "Further crude strength or a supportive weekly inventory report could extend energy-sector gains.",
+      "decision": "rejected",
+      "evidence": [
+        "Energy outperformed SPY by 6.26% over five sessions.",
+        "Brent crude rose 4.6% in the July 17 session.",
+        "The EIA forecast a $74 third-quarter Brent average versus an observed $85 June average."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3,
+      "forecast_low_pct": -3.2,
+      "invalidation_condition": "Crude reverses the July 17 surge or the EIA report indicates a materially looser petroleum balance.",
+      "option_id": "ENERGY",
+      "reversal_case": "The sharp oil move may mean-revert, and the EIA forecast implies lower prices than June's average.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report for the week ending July 17."
+    },
+    {
+      "continuation_case": "Persistent growth-stock deleveraging and elevated rate sensitivity could extend underperformance.",
+      "decision": "rejected",
+      "evidence": [
+        "The Nasdaq Composite fell 2.9% for the week.",
+        "NASDAQ100 underperformed SPY by 2.62% over five sessions and by 1.36% over the preceding 16 sessions.",
+        "Its 21-session volatility was 25.77% and drawdown was 6.01%."
+      ],
+      "forecast_base_pct": -0.1,
+      "forecast_high_pct": 3.4,
+      "forecast_low_pct": -4.2,
+      "invalidation_condition": "NASDAQ100 regains relative strength versus SPY with improving Nasdaq breadth and a sustained rebound from the recent drawdown.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "The sizable drawdown and benign monthly core CPI could trigger a high-beta relief rally.",
+      "time_window_catalyst": "No option-specific scheduled catalyst identified; broad rate and risk-sentiment repricing is the principal driver."
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 0.34,
+  "is_official_score": true,
+  "key_risks": [
+    "A sharp mega-cap technology rebound could cause the defensive portfolio to underperform SPY.",
+    "Import-price and PCE inflation concerns could push Treasury yields higher, hurting real estate and bonds.",
+    "Unexpected credit-quality concerns could reverse financial-sector strength.",
+    "Factor rotation signals may reverse abruptly over the one-week horizon."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Dividend equities underperform SPY for two consecutive sessions while growth leadership and market breadth recover.",
+      "option_id": "DIVIDEND",
+      "rationale": "Dividend equities combine defensive characteristics with strong recent relative performance while broad US equities remain weak.",
+      "time_window_catalyst": "Continued rotation away from growth concentration as markets digest soft payrolls and benign June core CPI."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "The Treasury curve flattens materially or financials surrender their latest relative gains and close below the recent drawdown low.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials have persistent benchmark-relative strength, and the steep Treasury curve may support the sector despite softer employment.",
+      "time_window_catalyst": "July 21 state employment releases and continued interpretation of the 4.55% ten-year versus 4.18% two-year Treasury curve."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Ten-year Treasury yields rise materially above 4.55% and real estate reverses its latest three-session advance.",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Real estate offers rate-sensitive exposure supported by cooling monthly inflation and recent strength near its 52-week high.",
+      "time_window_catalyst": "Further bond-market response to unchanged core CPI and weak payroll growth before the exit close."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.25,
+      "invalidation_condition": "The ten-year Treasury yield rises materially above 4.55% as inflation concerns dominate growth concerns.",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "rationale": "Intermediate Treasuries provide low-volatility exposure to weaker labor data and flat monthly core CPI without the larger duration risk of long bonds.",
+      "time_window_catalyst": "Continued rate repricing from weak payroll growth, downward revisions, and unchanged June core CPI."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.44,
+  "portfolio_rationale": "The portfolio favors the recent broadening toward dividend, financial, and rate-sensitive assets while adding intermediate-duration protection. Each active holding has a higher one-week base forecast than SPY, and no capped economic-exposure cluster exceeds 30%.",
+  "provider": "openai",
+  "rationale_summary": "Cooling monthly inflation and weak payroll growth support defensives and intermediate duration, while financials retain independent relative-strength and curve support. The allocation avoids chasing the sharp oil move and the high-volatility technology selloff.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12687,
+    "latency_seconds": 45.04237427096814,
+    "output_tokens": 2726,
+    "reasoning_tokens": 716,
+    "total_tokens": 15413
+  }
+}

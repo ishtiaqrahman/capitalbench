@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Soft landing data and stable funds rate support modest grind higher from oversold weekly levels.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY return_5s -1.54% and return_21s -0.68% with distance_52w_high -1.89%",
+        "June CPI -0.4% m/m and soft payrolls +57k with downward revisions",
+        "FOMC scheduled July 28-29 with participant inflation uncertainty elevated"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Close below recent weekly lows with rising vol",
+      "option_id": "SP500",
+      "reversal_case": "Further breadth deterioration or hawkish FOMC drives extension of recent weekly decline.",
+      "time_window_catalyst": "FOMC July 29 and Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Supply tightness and momentum persist through summer data and FOMC window.",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY return_5s +4.72% and active_return_21s +5.63%; OIL return_5s +14.04%",
+        "Brent averaged $85 in June and rose 4.6% on July 17 session",
+        "EIA weekly petroleum reports scheduled before exit"
+      ],
+      "forecast_base_pct": 2.8,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "USO/XLE give back majority of 5s gains on rising inventories",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA Q3 Brent forecast $74 materializes via inventory builds or demand soft patch.",
+      "time_window_catalyst": "EIA weekly petroleum and FOMC inflation commentary"
+    },
+    {
+      "continuation_case": "Stable curve and non-recession labor data sustain financials relative bid.",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS active_return_21s +4.56% and REGIONAL_BANKS +7.10%",
+        "Fed held 3.5-3.75% range; Treasury 10y at 4.55% on July 17",
+        "June payrolls soft but unemployment 4.2% and earnings +0.3% m/m"
+      ],
+      "forecast_base_pct": 2.3,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLF underperforms SPY by >2% on rising HYG spreads",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit widening or deposit/CRE concerns re-emerge around loan officer survey.",
+      "time_window_catalyst": "FOMC July 29 and Senior Loan Officer Survey early August"
+    },
+    {
+      "continuation_case": "Defensive bid and relative strength continue if growth data mixed and inflation cools.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE active_return_21s +6.48% with max_drawdown_63s only -4.01%",
+        "June core CPI unchanged m/m; core PCE 3.4% y/y",
+        "July CPI/PPI scheduled August 12-13"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLV loses relative strength vs SPY on strong risk appetite",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation back to growth or policy surprise hits defensives.",
+      "time_window_catalyst": "July CPI August 12-13 and Q2 GDP"
+    },
+    {
+      "continuation_case": "Value and smaller-cap leadership persists with domestic data not collapsing.",
+      "decision": "selected",
+      "evidence": [
+        "SMALL_VALUE return_5s +1.08% and active_return_21s +3.52%",
+        "rsp_minus_spy_21s +1.64% showing equal-weight/value leadership",
+        "Soft but positive industrial production and retail sales data"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "IWN active return turns negative vs SPY by >2%",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Rates spike or recession scare hits high-beta small value.",
+      "time_window_catalyst": "FOMC and employment situation early August"
+    },
+    {
+      "continuation_case": "Momentum from prior 21s extends if rates stable and risk appetite holds.",
+      "decision": "rejected",
+      "evidence": [
+        "BIOTECH active_return_21s +14.77% but return_5s -3.00% and vol_63s 30.26%",
+        "distance_52w_high -6.10% with max_drawdown_63s -8.57%",
+        "High sensitivity to risk appetite and financing conditions"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "XBI breaks below recent 5s lows with rising correlation to risk-off",
+      "option_id": "BIOTECH",
+      "reversal_case": "Volatility spike or growth scare triggers sharp mean reversion given high vol.",
+      "time_window_catalyst": "FOMC and any biotech-specific flows around data"
+    },
+    {
+      "continuation_case": "Continued preference for value over growth into FOMC.",
+      "decision": "rejected",
+      "evidence": [
+        "LARGE_VALUE return_5s +0.48% and active_return_21s +2.77%",
+        "distance_52w_high only -0.57% and lower vol than growth",
+        "Value leadership vs NASDAQ100/TECH which posted large negative 5s/21s"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "IWD lags SPY as QQQ/XLK reverse higher",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth rebound on dovish pivot or AI narrative revival.",
+      "time_window_catalyst": "FOMC July 29"
+    },
+    {
+      "continuation_case": "Idiosyncratic strength continues independent of mega-cap tech.",
+      "decision": "rejected",
+      "evidence": [
+        "CYBERSECURITY active_return_21s +9.33% but technology_and_growth cluster mixed",
+        "vol_63s 32.46% and corr_spy 0.534",
+        "Recent 5s only +0.52% amid broader tech weakness"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "CIBR correlates fully with XLK/SMH downside",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High-vol growth factor selloff engulfs cybersecurity.",
+      "time_window_catalyst": "None specific beyond broad tech sentiment around FOMC"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.8,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC hawkish surprise or upside inflation reprint reversing value/energy leadership",
+    "Oil price mean-reversion per EIA Q3 forecast undercutting energy",
+    "Growth scare from weak payrolls/GDP hitting small-value and financials",
+    "Broad equity drawdown from high starting levels despite sector tilts"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.8,
+      "invalidation_condition": "Brent or USO sharp reversal below recent session gains with inventory builds",
+      "option_id": "ENERGY",
+      "rationale": "Recent oil strength and energy outperformance supported by supply dynamics into FOMC and data window.",
+      "time_window_catalyst": "EIA weekly petroleum reports and any FOMC energy/inflation commentary by July 29"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.3,
+      "invalidation_condition": "Sharp steepening or credit stress signals in HYG or bank underperformance vs SPY",
+      "option_id": "FINANCIALS",
+      "rationale": "Relative strength in financials and regional banks amid stable rates and soft but non-recession labor data.",
+      "time_window_catalyst": "FOMC statement July 29 and July employment/JOLTS releases early August"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Broad risk-off rotation or underperformance vs low-vol/defensives on weak data",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong 21-session active return and defensive characteristics with upcoming inflation and GDP data.",
+      "time_window_catalyst": "July CPI/PPI August 12-13 and Q2 GDP July 30"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Renewed large-growth leadership or small-cap relative drawdown exceeding 3%",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Positive recent active returns and value tilt favored in equal-weight/value leadership vs mega-cap growth.",
+      "time_window_catalyst": "FOMC and advance GDP/personal income data late July"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.4,
+  "portfolio_rationale": "Portfolio concentrates in clusters showing positive active returns and relative resilience amid soft inflation prints, modest growth, and pre-FOMC positioning, avoiding recently weak tech/growth. All selected bases exceed SPY base while respecting 50% cluster cap.",
+  "provider": "xai",
+  "rationale_summary": "SPY base modest given recent weakness and mixed data; energy, financials, healthcare and small-value offer higher base forecasts from supplied relative strength and macro schedule. Equal 25% weights balance exposures.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 13893,
+    "latency_seconds": 45.49888648907654,
+    "output_tokens": 2621,
+    "reasoning_tokens": 706,
+    "total_tokens": 17220
+  }
+}

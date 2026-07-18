@@ -1,0 +1,177 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Cooling monthly inflation and resilient consumption could support equities through the scheduled macro releases.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY returned -1.54% over five sessions and -0.68% over 21 sessions.",
+        "June payrolls rose only 57,000, while core CPI was unchanged for the month.",
+        "Core PCE inflation remained 3.4% year over year and the 10-year Treasury yield was 4.55%."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 6,
+      "forecast_low_pct": -5.5,
+      "invalidation_condition": "SPY breaks to a new 52-week high with improving breadth and declining Treasury yields.",
+      "option_id": "SP500",
+      "reversal_case": "Sticky underlying inflation, elevated long yields, or further labor deterioration could extend the decline.",
+      "time_window_catalyst": "The July FOMC meeting, advance second-quarter GDP, July employment report, and July CPI and PPI releases."
+    },
+    {
+      "continuation_case": "Broader participation persists as investors rotate away from concentrated growth exposure toward less rate-sensitive constituents.",
+      "decision": "selected",
+      "evidence": [
+        "RSP outperformed SPY by 1.11 percentage points over five sessions and 1.64 points over 21 sessions.",
+        "RSP's 63-session volatility was 11.01%, below SPY's 13.13%.",
+        "RSP was 0.79% below its 52-week high with a 63-session maximum drawdown of 2.04%."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 6.2,
+      "forecast_low_pct": -4.2,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points during the window as mega-cap leadership reasserts itself.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap growth rebounds sharply and restores narrow cap-weighted index leadership.",
+      "time_window_catalyst": "Second-quarter GDP, July employment, and inflation releases could reinforce rotation toward broader market participation."
+    },
+    {
+      "continuation_case": "A positively sloped curve, stable unemployment, and continued rotation toward value-sensitive equities support bank margins and sentiment.",
+      "decision": "selected",
+      "evidence": [
+        "KRE outperformed SPY by 7.10 percentage points over 21 sessions and gained 2.23% over five sessions.",
+        "The two-year Treasury yield was 4.18% versus 4.55% at ten years.",
+        "KRE remained only 1.58% below its 52-week high."
+      ],
+      "forecast_base_pct": 1.9,
+      "forecast_high_pct": 9.5,
+      "forecast_low_pct": -7.5,
+      "invalidation_condition": "The yield curve flattens materially or the loan survey signals abrupt tightening and worsening credit quality.",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Weak payrolls develop into credit deterioration, deposit pressure, or renewed commercial-real-estate concerns.",
+      "time_window_catalyst": "The July FOMC meeting and August Senior Loan Officer Opinion Survey can clarify the rate, deposit, and credit outlook."
+    },
+    {
+      "continuation_case": "Soft labor data and uncertain growth sustain rotation toward defensive earnings while recent relative strength persists.",
+      "decision": "selected",
+      "evidence": [
+        "XLV outperformed SPY by 6.48 percentage points over 21 sessions.",
+        "XLV gained 0.16% over five sessions while SPY declined 1.54%.",
+        "Its 252-session SPY beta was 0.327."
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 7,
+      "forecast_low_pct": -5,
+      "invalidation_condition": "Healthcare loses its one-month relative-strength trend and underperforms SPY by more than 2 percentage points.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk appetite broadens into high-beta cyclicals or healthcare's sharp one-month relative move mean-reverts.",
+      "time_window_catalyst": "July employment, GDP, and inflation data could sustain demand for defensive earnings exposure if growth remains soft."
+    },
+    {
+      "continuation_case": "Cooling inflation and softer employment reduce expected rate pressure and sustain demand for rate-sensitive property equities.",
+      "decision": "selected",
+      "evidence": [
+        "XLRE gained 2.18% over five sessions and outperformed SPY by 2.28 percentage points over 21 sessions.",
+        "June core CPI was unchanged month over month and payroll growth slowed to 57,000.",
+        "XLRE was 0.09% below its 52-week high."
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 7.5,
+      "forecast_low_pct": -6,
+      "invalidation_condition": "The 10-year Treasury yield rises above 4.85% or XLRE falls more than 5% from entry.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Elevated core PCE or renewed inflation pressure pushes long-term yields higher and compresses real-estate valuations.",
+      "time_window_catalyst": "The FOMC decision and July CPI and PPI releases could lower rate expectations before the exit close."
+    },
+    {
+      "continuation_case": "Oil-price strength and supply concerns continue to lift energy-company cash-flow expectations.",
+      "decision": "rejected",
+      "evidence": [
+        "XLE gained 4.72% over five sessions and outperformed SPY by 5.63 percentage points over 21 sessions.",
+        "Brent crude rose 4.6% during the July 17 session.",
+        "EIA forecast a $74 third-quarter Brent average versus $85 in June."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 11,
+      "forecast_low_pct": -9,
+      "invalidation_condition": "Brent retreats toward or below the EIA's $74 third-quarter forecast and XLE loses its 21-session relative gain.",
+      "option_id": "ENERGY",
+      "reversal_case": "The EIA's forecast decline in Brent materializes after the recent surge, producing a rapid commodity reversal.",
+      "time_window_catalyst": "Weekly EIA petroleum reports before the exit close could confirm tighter inventories or weakening demand."
+    },
+    {
+      "continuation_case": "An unchanged policy rate allows Treasury-bill carry to accrue with minimal price volatility.",
+      "decision": "rejected",
+      "evidence": [
+        "The three-month Treasury yield was 3.85% on July 17.",
+        "BIL gained 0.05% over five sessions and had 0.21% 63-session volatility.",
+        "The Federal Reserve target range remained 3.5% to 3.75%."
+      ],
+      "forecast_base_pct": 0.32,
+      "forecast_high_pct": 0.4,
+      "forecast_low_pct": 0.25,
+      "invalidation_condition": "The Federal Reserve unexpectedly cuts rates materially or Treasury-bill pricing ceases to track short-term government yields.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "A sudden policy-rate reduction lowers prospective carry, though one-month downside remains limited.",
+      "time_window_catalyst": "The July 28-29 FOMC meeting determines whether the current policy-rate range is maintained."
+    }
+  ],
+  "confidence": 0.59,
+  "expected_alpha_vs_sp500_pct": 0.985,
+  "is_official_score": true,
+  "key_risks": [
+    "Sticky core PCE, import prices, or July CPI could drive Treasury yields higher.",
+    "A sharper labor slowdown could weaken bank credit quality and cyclical equities.",
+    "Mega-cap technology leadership could resume, causing equal-weight exposure to lag SPY.",
+    "Regional-bank commercial-real-estate or deposit concerns could overwhelm the favorable yield curve."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 45,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points during the window as mega-cap leadership reasserts itself.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broader US equity participation has outperformed cap-weighted SPY while carrying lower recent volatility and drawdown.",
+      "time_window_catalyst": "Second-quarter GDP, July employment, and inflation releases could reinforce rotation toward broader market participation."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.9,
+      "invalidation_condition": "The yield curve flattens materially or the loan survey signals abrupt tightening and worsening credit quality.",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "A positively sloped 2-to-10-year Treasury curve and strong recent benchmark-relative performance support regional-bank earnings sensitivity.",
+      "time_window_catalyst": "The July FOMC meeting and August Senior Loan Officer Opinion Survey can clarify the rate, deposit, and credit outlook."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Healthcare loses its one-month relative-strength trend and underperforms SPY by more than 2 percentage points.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare offers defensive exposure after substantial one-month outperformance, with lower market beta than SPY.",
+      "time_window_catalyst": "July employment, GDP, and inflation data could sustain demand for defensive earnings exposure if growth remains soft."
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "The 10-year Treasury yield rises above 4.85% or XLRE falls more than 5% from entry.",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Cooling monthly inflation and weak payroll growth provide a potential duration tailwind, while recent relative strength remains positive.",
+      "time_window_catalyst": "The FOMC decision and July CPI and PPI releases could lower rate expectations before the exit close."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.585,
+  "portfolio_rationale": "The portfolio emphasizes the observed rotation from concentrated mega-cap exposure toward equal-weight equities, regional banks, healthcare, and real estate. Its exposures span cyclical, defensive, and rate-sensitive clusters while respecting the 50% cluster cap.",
+  "provider": "openai",
+  "rationale_summary": "Cooling monthly inflation and weak hiring favor broader and rate-sensitive exposures, although elevated annual inflation limits conviction. Every active holding has a base forecast above SPY's 0.6% forecast.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12866,
+    "latency_seconds": 52.52626054803841,
+    "output_tokens": 3472,
+    "reasoning_tokens": 1415,
+    "total_tokens": 16338
+  }
+}

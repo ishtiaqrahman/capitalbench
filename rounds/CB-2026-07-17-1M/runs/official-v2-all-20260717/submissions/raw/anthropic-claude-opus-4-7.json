@@ -1,0 +1,191 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Disinflation and steady Fed support equities",
+      "decision": "rejected",
+      "evidence": [
+        "SPY -1.0% session, -1.6% week",
+        "Fed on hold at 3.5-3.75%",
+        "June CPI -0.4% m/m, core unchanged"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "CPI reaccelerates or FOMC hawkish surprise",
+      "option_id": "SP500",
+      "reversal_case": "Weak payrolls (+57k) and tech pullback signal slowdown",
+      "time_window_catalyst": "July 29 FOMC, July 30 GDP, Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Defensive leadership as growth wobbles; strong active return persisting",
+      "decision": "selected",
+      "evidence": [
+        "XLV active 21s +6.48%",
+        "Low beta 0.327, defensive",
+        "Low drawdown -4.01%"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLV breaks below recent support or biotech rolls over",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Rotation back into tech; drug pricing headlines",
+      "time_window_catalyst": "Q2 earnings from healthcare majors"
+    },
+    {
+      "continuation_case": "Steep curve and steady Fed support NIMs; earnings tailwind",
+      "decision": "selected",
+      "evidence": [
+        "XLF active 21s +4.56%",
+        "Curve steep: 2y 4.18% vs 10y 4.55%",
+        "KRE regional banks +7.10% active"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Credit spreads widen sharply or curve flattens",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit stress or FOMC dovish shift flattens curve",
+      "time_window_catalyst": "Bank Q2 earnings continuing, July 29 FOMC"
+    },
+    {
+      "continuation_case": "Defensive factor outperforms in equity pullback",
+      "decision": "selected",
+      "evidence": [
+        "SPLV active 21s +3.66%",
+        "Beta 0.039, near 52w high (-0.48%)",
+        "Broad market rolling over"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Momentum/tech snaps back strongly",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Sharp risk-on rally lifts high-beta",
+      "time_window_catalyst": "FOMC, CPI releases"
+    },
+    {
+      "continuation_case": "Oil spike momentum",
+      "decision": "rejected",
+      "evidence": [
+        "XLE +4.72% 5s, +5.63% 21s active",
+        "Brent +4.6% July 17",
+        "EIA Q3 forecast $74 vs $85 June avg"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Oil reverses below $80",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA forecasts lower Brent; large drawdown -13.21%",
+      "time_window_catalyst": "EIA weekly reports"
+    },
+    {
+      "continuation_case": "Mega-cap earnings rebound",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ -4.16% 5s, -3.94% active 21s",
+        "SMH -8.92%, high vol 24.27%",
+        "Tech leadership breaking"
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Semis continue breaking down",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Momentum reversal in progress; extended valuations",
+      "time_window_catalyst": "Big tech Q2 earnings late July"
+    },
+    {
+      "continuation_case": "Steady carry with no duration risk",
+      "decision": "selected",
+      "evidence": [
+        "3m yield 3.85%",
+        "BIL vol 0.21%",
+        "Capital preservation"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 0.5,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "N/A",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Opportunity cost if equities rally",
+      "time_window_catalyst": "None material"
+    },
+    {
+      "continuation_case": "Soft payrolls and CPI decline support duration",
+      "decision": "rejected",
+      "evidence": [
+        "IEF +0.29% active 21s",
+        "10y at 4.55%",
+        "Disinflation trend"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Yields break above 4.75%",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Sticky core PCE 3.4%; Fed on hold",
+      "time_window_catalyst": "July 29 FOMC, Aug CPI"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.3025,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp reversal higher in tech/momentum would lift SPY faster than defensive tilt",
+    "Hawkish FOMC surprise pressures financials via curve flattening",
+    "Healthcare-specific policy or drug-pricing headline risk"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "XLV breaks recent support or biotech reverses",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive leadership with strong active return; low beta cushion",
+      "time_window_catalyst": "Q2 healthcare earnings"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Credit spreads widen sharply",
+      "option_id": "FINANCIALS",
+      "rationale": "Steep curve, positive earnings momentum, strong 21s active",
+      "time_window_catalyst": "Bank earnings, July 29 FOMC"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Strong risk-on rotation to high-beta",
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive factor near 52w high with positive active return",
+      "time_window_catalyst": "CPI Aug 12, FOMC"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "N/A",
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like carry ballast given tech drawdown risk",
+      "time_window_catalyst": "None"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.8025,
+  "portfolio_rationale": "Tilt toward defensively-led sectors (healthcare, low-vol) with strong 21-session active returns, add financials for curve/earnings, and hold short Treasury bills as ballast against ongoing tech/momentum drawdown.",
+  "provider": "anthropic",
+  "rationale_summary": "Momentum and tech are breaking down while healthcare, financials, and low-vol lead. Portfolio overweights the leaders and holds T-bills for stability.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 20533,
+    "latency_seconds": 35.21583663718775,
+    "output_tokens": 2539,
+    "total_tokens": 23072
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "benchmark_expected_return_pct": 1.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Modest equity gains amid stable rates",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7475.69 on July 17 down 1.0%",
+        "June nonfarm payrolls +57k with downward revisions"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "CPI rises above 4%",
+      "option_id": "SP500",
+      "reversal_case": "Further labor market softening",
+      "time_window_catalyst": "FOMC July 29"
+    },
+    {
+      "continuation_case": "Oil price momentum persists",
+      "decision": "selected",
+      "evidence": [
+        "XLE +4.72% over 5 sessions",
+        "USO +14.04% over 5 sessions"
+      ],
+      "forecast_base_pct": 3.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Brent crude falls below $80 sustained",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA reports show inventory builds",
+      "time_window_catalyst": "EIA weekly petroleum reports"
+    },
+    {
+      "continuation_case": "Stable rate environment supports banks",
+      "decision": "selected",
+      "evidence": [
+        "XLF +0.99% over 5 sessions",
+        "XLF +4.56 active return over 21 sessions"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Unemployment rises above 4.5%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield curve steepens sharply",
+      "time_window_catalyst": "FOMC meeting July 29"
+    },
+    {
+      "continuation_case": "Regional bank outperformance continues",
+      "decision": "selected",
+      "evidence": [
+        "KRE +2.23% over 5 sessions",
+        "KRE +7.10 active return over 21 sessions"
+      ],
+      "forecast_base_pct": 2.8,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Yield curve inverts further",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Credit quality concerns emerge",
+      "time_window_catalyst": "July Employment Situation report"
+    },
+    {
+      "continuation_case": "Commodity strength from industrial data",
+      "decision": "selected",
+      "evidence": [
+        "PDBC +4.93% over 5 sessions",
+        "PDBC +4.16 active return over 21 sessions"
+      ],
+      "forecast_base_pct": 3.5,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": 1.0,
+      "invalidation_condition": "Industrial production contracts",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Global growth data disappoints",
+      "time_window_catalyst": "BEA advance Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Value rotation persists",
+      "decision": "rejected",
+      "evidence": [
+        "IWN +1.08% over 5 sessions",
+        "IWN +3.52 active return over 21 sessions"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Russell 2000 underperforms by 3%",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Growth stocks rebound",
+      "time_window_catalyst": "BLS July CPI August 12"
+    },
+    {
+      "continuation_case": "Defensive equity demand",
+      "decision": "rejected",
+      "evidence": [
+        "SCHD +1.57% over 5 sessions",
+        "SCHD +2.66 active return over 21 sessions"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "SPY rallies more than 3%",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Risk appetite improves sharply",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 1.46,
+  "is_official_score": true,
+  "key_risks": [
+    "Weaker than expected Q2 GDP",
+    "Further decline in energy prices",
+    "Higher than anticipated CPI reading"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 3.0,
+      "invalidation_condition": "Brent crude falls below $80 sustained",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent performance and commodity price support within scoring window",
+      "time_window_catalyst": "EIA weekly petroleum reports and FOMC statement"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Unemployment rises above 4.5%",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive recent returns and rate environment stability",
+      "time_window_catalyst": "FOMC meeting July 29"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.8,
+      "invalidation_condition": "Yield curve inverts further",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "Recent outperformance in financials cluster",
+      "time_window_catalyst": "July Employment Situation report"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 3.5,
+      "invalidation_condition": "Industrial production contracts",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Recent gains in non-energy commodities",
+      "time_window_catalyst": "BEA advance Q2 GDP July 30"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.96,
+  "portfolio_rationale": "Selected holdings with base forecasts exceeding SPY based on recent price action and macro data releases scheduled in window.",
+  "provider": "xai",
+  "rationale_summary": "Energy and financials exposure favored due to observed returns and scheduled data points before August 17 exit.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12959,
+    "latency_seconds": 13.607550692046061,
+    "output_tokens": 1526,
+    "reasoning_tokens": 729,
+    "total_tokens": 15214
+  }
+}

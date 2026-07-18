@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Soft inflation and payroll data support modest rebound in broad equities",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.0% on July 17 and 1.6% for the week",
+        "June CPI decreased 0.4% monthly with core unchanged",
+        "spy_return_5s of -1.54% and distance_52w_high of -1.89%"
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "Break below recent weekly lows on rising volume",
+      "option_id": "SP500",
+      "reversal_case": "Continued tech-led selling or weaker growth data extends the weekly decline",
+      "time_window_catalyst": "July 21 BEA and BLS releases"
+    },
+    {
+      "continuation_case": "Oil strength and energy outperformance persist into the EIA report window",
+      "decision": "selected",
+      "evidence": [
+        "XLE active_return_5s of 6.26% and return_3s of 1.28%",
+        "Brent crude increased 4.6% in the July 17 session",
+        "EIA reported June Brent average $85 with production forecasts"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "XLE underperforms SPY on falling oil prices",
+      "option_id": "ENERGY",
+      "reversal_case": "Inventory builds or lower demand forecasts reverse crude gains",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Short-term crude momentum continues ahead of inventory data",
+      "decision": "selected",
+      "evidence": [
+        "USO return_3s of 3.15% and active_return_5s of 15.58%",
+        "uso_return_5s of 14.04% in mechanical state",
+        "Brent up 4.6% on July 17"
+      ],
+      "forecast_base_pct": 2.1,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "USO drops more than 3% on inventory surprise",
+      "option_id": "OIL",
+      "reversal_case": "EIA report shows builds or EIA Q3 forecast pressure materializes",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Defensive dividend tilt continues to attract flows amid growth weakness",
+      "decision": "selected",
+      "evidence": [
+        "SCHD return_3s of 2.20% and active_return_5s of 3.12%",
+        "distance_52w_high of only -0.39%",
+        "Positive relative performance versus SPY in recent windows"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "SCHD active return turns negative versus SPY",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Risk appetite returns and growth stocks rebound sharply",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Stable yields and relative strength in banks persist",
+      "decision": "selected",
+      "evidence": [
+        "KRE return_3s of 2.25% and active_return_5s of 3.77%",
+        "prior_16s_active_return of 3.22%",
+        "Financials showing resilience with low corr to SPY"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "KRE underperforms on rising deposit or CRE worries",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Curve or credit concerns hit regional names",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Small-value relative strength continues as mega-cap growth lags",
+      "decision": "selected",
+      "evidence": [
+        "IWN return_3s of 1.25% and active_return_5s of 2.62%",
+        "distance_52w_high of -0.82%",
+        "Value factors outperforming growth recently"
+      ],
+      "forecast_base_pct": 0.85,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "IWN beta-adjusted underperformance versus SPY",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Broad risk-off hits small caps harder than large caps",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Defensive healthcare bid continues on soft macro",
+      "decision": "rejected",
+      "evidence": [
+        "XLV return_3s of 1.77% and active_return_5s of 1.70%",
+        "prior_16s_active_return of 4.75%",
+        "Low correlation to SPY at -0.071"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "XLV gives back recent relative gains",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Profit-taking after strong prior active returns",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Equal-weight continues to benefit from reduced mega-cap drag",
+      "decision": "rejected",
+      "evidence": [
+        "RSP active_return_5s of 1.11% and rsp_minus_spy_5s of 1.11%",
+        "return_3s near flat at -0.04%",
+        "Lower volatility_21s than SPY"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.7,
+      "forecast_low_pct": -1.1,
+      "invalidation_condition": "RSP active return turns negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Cap-weighted rebound led by tech restores SPY leadership",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.05,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil price reversal on EIA data or demand concerns",
+    "Sudden risk-on rotation favoring Nasdaq/tech over value and energy",
+    "Broader equity drawdown from weak growth data",
+    "High volatility in OIL amplifying downside"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Sharp reversal in crude prices or inventory build exceeding expectations",
+      "option_id": "ENERGY",
+      "rationale": "Oil price strength and energy sector outperformance vs broad market support higher base return than SPY over one week.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.1,
+      "invalidation_condition": "Brent/WTI decline on higher inventories or demand weakness signal",
+      "option_id": "OIL",
+      "rationale": "Direct crude exposure with strong recent session gains and elevated momentum relative to equities.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Broad risk-on rotation back into growth/tech leadership",
+      "option_id": "DIVIDEND",
+      "rationale": "Recent relative strength, defensive tilt, and lower drawdown support outperformance vs cap-weighted SPY.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Sudden steepening or credit stress signals in bank names",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "Strong active returns and financials resilience amid stable rates backdrop.",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.85,
+      "invalidation_condition": "Renewed large-growth leadership or risk-off small-cap selloff",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Positive active return and value tilt outperforming recent mega-cap weakness.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.3,
+  "portfolio_rationale": "Portfolio concentrates in energy exposure and relative-strength value/defensive equity factors that have shown positive active returns versus SPY, with base cases exceeding the benchmark. Allocations respect the 50% cluster cap while targeting one-week alpha from oil-related catalysts and factor rotation.",
+  "provider": "xai",
+  "rationale_summary": "SPY base case is modest given recent declines and mixed macro data. Selected holdings clear the active hurdle via energy momentum and value/dividend relative strength. Equal-weight and pure growth options rejected for weaker or negative bases.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 13663,
+    "latency_seconds": 29.55325108091347,
+    "output_tokens": 2445,
+    "reasoning_tokens": 513,
+    "total_tokens": 16621
+  }
+}

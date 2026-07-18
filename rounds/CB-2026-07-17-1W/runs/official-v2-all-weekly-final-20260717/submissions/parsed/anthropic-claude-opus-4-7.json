@@ -1,0 +1,190 @@
+{
+  "benchmark_expected_return_pct": 0.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Oversold bounce plus cool CPI supports mean reversion",
+      "decision": "selected",
+      "evidence": [
+        "SPY -1.6% week, -1.0% on 7/17",
+        "10y yield 4.55%",
+        "June CPI -0.4% m/m, cool inflation"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "SPY closes below 7,400",
+      "option_id": "SP500",
+      "reversal_case": "Tech-led selling continues, breadth deteriorates",
+      "time_window_catalyst": "Q2 earnings peak week"
+    },
+    {
+      "continuation_case": "Oil momentum plus supply catalyst",
+      "decision": "selected",
+      "evidence": [
+        "Brent +4.6% on 7/17 session",
+        "XLE active_return_5s +6.26%",
+        "EIA report scheduled July 22"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent falls below pre-surge level",
+      "option_id": "ENERGY",
+      "reversal_case": "Profit-taking after 7% weekly surge",
+      "time_window_catalyst": "EIA July 22"
+    },
+    {
+      "continuation_case": "Direct oil exposure captures momentum",
+      "decision": "rejected",
+      "evidence": [
+        "USO +15.58% active 5s",
+        "Brent +4.6%",
+        "EIA report July 22"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "USO drops 5%+",
+      "option_id": "OIL",
+      "reversal_case": "Contango and mean reversion after huge move",
+      "time_window_catalyst": "EIA July 22"
+    },
+    {
+      "continuation_case": "NIM benefit + bank earnings",
+      "decision": "selected",
+      "evidence": [
+        "KRE active_return_5s +3.77%",
+        "Prior 16s active +3.22%",
+        "Steep curve 2y-30y ~88bp"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "HYG breaks down >1%",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Credit quality concerns resurface",
+      "time_window_catalyst": "Regional bank earnings"
+    },
+    {
+      "continuation_case": "Defensive bid continues amid tech weakness",
+      "decision": "selected",
+      "evidence": [
+        "XLP active_return_5s +2.82%",
+        "Defensive rotation with breadth 43% positive",
+        "Low corr to SPY -0.27"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLP -2% in session",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Risk-on rally rotates out of defensives",
+      "time_window_catalyst": "Continued market volatility"
+    },
+    {
+      "continuation_case": "Rate-sensitive rebound",
+      "decision": "rejected",
+      "evidence": [
+        "XLRE active 5s +3.73%",
+        "Long yields still elevated at 5.06%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "TLT drops >1%",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Long yields rise further",
+      "time_window_catalyst": "None"
+    },
+    {
+      "continuation_case": "Oversold bounce in mega-cap tech",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ -2.9% week",
+        "Active 5s -2.62%",
+        "SMH -7.37% active"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "QQQ new lows",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Semi weakness spreads",
+      "time_window_catalyst": "Mega-cap earnings"
+    },
+    {
+      "continuation_case": "Safe haven bid if equity selloff resumes",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 21s -7.36%",
+        "Distance from 52w high -25.67%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "IAU new 52w low",
+      "option_id": "GOLD",
+      "reversal_case": "Downtrend intact, DXY firm",
+      "time_window_catalyst": "None"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil reversal if EIA shows large build",
+    "Tech snap-back rally lifts SPY faster than defensives",
+    "Bank earnings disappointment"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Brent reverses more than 5% or EIA shows large inventory build",
+      "option_id": "ENERGY",
+      "rationale": "Brent +4.6% on 7/17 and XLE +6.26% active 5s; oil momentum with EIA inventory catalyst.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Credit spread widening or curve flattening",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "KRE +3.77% active 5s with steep curve (30y 5.06%, 2y 4.18%) supportive.",
+      "time_window_catalyst": "Regional bank Q2 earnings cluster next week"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Sharp risk-on rebound in tech",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Defensive with +2.82% active 5s amid broad market weakness.",
+      "time_window_catalyst": "Defensive rotation continuation"
+    },
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "Break below prior week low with expanding volume",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure; oversold bounce potential after -1.6% week.",
+      "time_window_catalyst": "Earnings season peak week"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.95,
+  "portfolio_rationale": "Overweight energy on strong oil momentum with EIA catalyst, add defensive staples and yield-curve-benefiting regional banks, anchor with SPY.",
+  "provider": "anthropic",
+  "rationale_summary": "SPY weak (-1.6% wk) led by tech drawdown; rotation into energy, defensives, financials evident. Portfolio tilts to these leaders while keeping SPY core.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 23714,
+    "latency_seconds": 32.165760876843706,
+    "output_tokens": 2375,
+    "total_tokens": 26089
+  }
+}

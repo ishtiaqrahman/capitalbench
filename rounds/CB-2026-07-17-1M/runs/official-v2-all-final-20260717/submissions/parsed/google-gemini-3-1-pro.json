@@ -1,0 +1,147 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Economic growth remains positive, supporting corporate earnings.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7,475.69, down 1.0% for the session and 1.6% for the week.",
+        "First-quarter real GDP growth of 2.1% at an annual rate."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "S&P 500 breaks below recent support levels on high volume.",
+      "option_id": "SP500",
+      "reversal_case": "Inflation re-accelerates, forcing the Fed to hike rates.",
+      "time_window_catalyst": "FOMC meeting on July 28-29."
+    },
+    {
+      "continuation_case": "Strong momentum and tight supply keep oil prices elevated.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude increased 4.6% in the July 17 market session.",
+        "USO returned 14.04% over the last 5 sessions."
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Brent crude falls below $80 per barrel.",
+      "option_id": "OIL",
+      "reversal_case": "Global growth slows significantly, reducing oil demand.",
+      "time_window_catalyst": "EIA weekly petroleum report on July 21-22."
+    },
+    {
+      "continuation_case": "Stable interest rates and positive economic growth support bank lending and margins.",
+      "decision": "selected",
+      "evidence": [
+        "KRE returned 2.23% over the last 5 sessions and 7.10% active return over 21 sessions.",
+        "Federal Reserve maintained the federal-funds target range at 3.5% to 3.75%."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Significant increase in loan loss provisions reported by major regional banks.",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Commercial real estate defaults increase, hitting regional bank balance sheets.",
+      "time_window_catalyst": "Federal Reserve Senior Loan Officer Opinion Survey on August 3-7."
+    },
+    {
+      "continuation_case": "Defensive rotation continues amid market volatility.",
+      "decision": "selected",
+      "evidence": [
+        "XLV returned 6.48% active return over the last 21 sessions.",
+        "Healthcare is a defensive sector that can perform well in uncertain macroeconomic environments."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLV underperforms the broader market for two consecutive weeks.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Market shifts back to high-beta growth stocks.",
+      "time_window_catalyst": "Second-quarter GDP release on July 30-31."
+    },
+    {
+      "continuation_case": "Fed holds rates steady, providing consistent yield.",
+      "decision": "rejected",
+      "evidence": [
+        "Three-month Treasury yield was 3.85%.",
+        "BIL returned 0.05% over the last 5 sessions."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 0.5,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "Three-month yield drops below 3.5%.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Fed unexpectedly cuts rates significantly.",
+      "time_window_catalyst": "FOMC meeting on July 28-29."
+    },
+    {
+      "continuation_case": "Inflation cools, reducing the appeal of gold as an inflation hedge.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU returned -2.28% over the last 5 sessions.",
+        "June CPI decreased 0.4% on a seasonally adjusted monthly basis."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Gold prices break above recent highs.",
+      "option_id": "GOLD",
+      "reversal_case": "Geopolitical tensions escalate, driving safe-haven demand.",
+      "time_window_catalyst": "July CPI release on August 12-13."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.81,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden economic downturn could negatively impact oil demand and regional bank loan portfolios.",
+    "Unexpectedly hawkish Fed policy could pressure equity valuations across all sectors.",
+    "A rapid rotation back into mega-cap technology stocks could cause this portfolio to underperform the S&P 500."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Brent crude falls below $80 per barrel.",
+      "option_id": "OIL",
+      "rationale": "Strong recent momentum and tight supply dynamics support continued outperformance.",
+      "time_window_catalyst": "EIA weekly petroleum report on July 21-22."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Significant increase in loan loss provisions reported by major regional banks.",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "Stable rates and positive economic growth provide a favorable environment for regional banks.",
+      "time_window_catalyst": "Federal Reserve Senior Loan Officer Opinion Survey on August 3-7."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "XLV underperforms the broader market for two consecutive weeks.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive characteristics offer downside protection while maintaining positive expected returns.",
+      "time_window_catalyst": "Second-quarter GDP release on July 30-31."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.81,
+  "portfolio_rationale": "The portfolio overweights energy and regional banks to capture recent momentum and favorable macroeconomic conditions, while using healthcare as a defensive anchor. This combination aims to generate alpha over the S&P 500 in a potentially volatile environment.",
+  "provider": "google",
+  "rationale_summary": "Overweight energy and financials for growth, with healthcare for defense.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15226,
+    "latency_seconds": 19.727421188959852,
+    "output_tokens": 1856,
+    "reasoning_tokens": 534,
+    "total_tokens": 17616
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Disinflation and resilient retail sales support broad equities into the FOMC.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY down 1.6% for the week, 5-session return -1.54%",
+        "June CPI fell 0.4% m/m, core 2.6% y/y, supportive disinflation",
+        "FOMC July 28-29 with year-end median funds rate 3.8% implying possible easing path"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Hot July CPI or hawkish FOMC surprise driving yields higher",
+      "option_id": "SP500",
+      "reversal_case": "Weak payrolls (57k) and downward revisions raise growth concerns; mega-cap concentration selling off.",
+      "reversal_case_note": null,
+      "time_window_catalyst": "FOMC July 29, July CPI Aug 12, July jobs report Aug 7"
+    },
+    {
+      "continuation_case": "Persistent rotation from expensive tech into value with independent trend support both recent and prior window.",
+      "decision": "selected",
+      "evidence": [
+        "IWD +2.77% active vs SPY over 21 sessions with +3.08% prior-window active return",
+        "Only -0.57% from 52w high with low 11.88% volatility and -2.40% drawdown",
+        "RSP minus SPY +1.64% over 21 sessions shows broadening away from mega-caps"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Growth/value spread reverses sharply with QQQ outperforming SPY by >3%",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Sharp tech rebound reverses rotation flows back to growth.",
+      "time_window_catalyst": "FOMC July 29 and Q2 GDP July 30 supporting cyclical value"
+    },
+    {
+      "continuation_case": "Consistent multi-window relative strength plus rate-cut expectations favor small value.",
+      "decision": "selected",
+      "evidence": [
+        "IWN +3.52% active over 21 sessions and +3.34% prior-window active return",
+        "+1.08% over last 5 sessions while SPY fell 1.54%",
+        "Fed year-end median 3.8% funds rate suggests easing bias helping small caps"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Credit spreads widen materially (HYG drawdown) or hawkish FOMC",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Weak payrolls signal slowing domestic growth hitting small caps hardest.",
+      "time_window_catalyst": "FOMC July 29 and August jobs/CPI prints shaping rate-cut odds"
+    },
+    {
+      "continuation_case": "Rotation into laggard defensives with strong recent relative strength off a depressed base.",
+      "decision": "selected",
+      "evidence": [
+        "XLV +6.48% active vs SPY over 21 sessions",
+        "Low beta 0.327 and modest -4.01% drawdown",
+        "Prior 105s active return -11.70% suggests recovery from depressed base"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLV underperforms SPY by >2% in first two weeks of window",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Rotation is short-lived if growth stocks rebound; policy headlines can hit pharma.",
+      "time_window_catalyst": "Ongoing defensive rotation into FOMC and August data"
+    },
+    {
+      "continuation_case": "Steep yield curve and value rotation support banks and insurers.",
+      "decision": "selected",
+      "evidence": [
+        "XLF +4.56% active over 21 sessions, only -0.86% from 52w high",
+        "Steep curve: 2y 4.18% vs 30y 5.06% supports net interest margins",
+        "KRE +7.10% active over 21 sessions confirms sector breadth"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Curve inverts or credit spreads widen sharply",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit deterioration or rate volatility around FOMC.",
+      "time_window_catalyst": "FOMC July 29 and Senior Loan Officer Survey Aug 3-7"
+    },
+    {
+      "continuation_case": "Geopolitical/supply-driven oil spike could persist.",
+      "decision": "rejected",
+      "evidence": [
+        "USO +14.04% in 5 sessions, Brent +4.6% on July 17",
+        "EIA forecasts Brent averaging $74 in Q3 vs $85 June average, implying mean reversion",
+        "XLE +4.72% in 5 sessions but -13.21% 63-session drawdown"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Oil retraces spike; already partly priced against EIA forecast",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA forecasts lower Q3 Brent; spike likely to fade absent new supply shock.",
+      "time_window_catalyst": "Weekly EIA petroleum reports"
+    },
+    {
+      "continuation_case": "Dip-buying in mega-cap tech could rebound sharply if FOMC dovish.",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ -4.16% over 5 sessions, -3.94% active over 21 sessions, -6.71% from 52w high",
+        "SMH -8.92% in 5 sessions after +49.64% prior active run, signaling unwind",
+        "High beta 1.385 with 24.27% volatility"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Tech resumes leadership with QQQ reclaiming highs",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Momentum unwind (MTUM -6.12%) suggests crowded growth positioning still deleveraging.",
+      "time_window_catalyst": "Mega-cap earnings and FOMC in window"
+    },
+    {
+      "continuation_case": "Dovish FOMC could lift gold.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU -6.68% active over 21 sessions and -25.67% from 52w high",
+        "Dollar +1.43% over 21 sessions pressuring gold",
+        "Downtrend across both recent and prior windows"
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Dollar weakens sharply and real yields fall",
+      "option_id": "GOLD",
+      "reversal_case": "Persistent downtrend, dollar strength, elevated real yields keep gold weak.",
+      "time_window_catalyst": "FOMC July 29"
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 0.835,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp mega-cap tech rebound reverses the rotation and SPY outperforms value tilts",
+    "Hawkish FOMC surprise or hot July CPI lifts yields and hurts small caps and financials",
+    "Weak August payrolls trigger growth scare hitting small-cap value and banks",
+    "Healthcare policy headline risk"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Growth/value spread reverses sharply with QQQ outperforming SPY by >3%",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Consistent multi-window outperformance, low drawdown, near highs amid rotation from growth.",
+      "time_window_catalyst": "FOMC July 29 and Q2 GDP July 30 supporting cyclical value"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Credit spreads widen materially (HYG drawdown) or hawkish FOMC",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Strong persistent relative strength and rate-cut sensitivity; positive in down tape.",
+      "time_window_catalyst": "FOMC July 29 and August jobs/CPI prints shaping rate-cut odds"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "XLV underperforms SPY by >2% in first two weeks of window",
+      "option_id": "HEALTHCARE",
+      "rationale": "Best 21-session active return among sectors, recovering off depressed base with low beta.",
+      "time_window_catalyst": "Ongoing defensive rotation into FOMC and August data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Curve inverts or credit spreads widen sharply",
+      "option_id": "FINANCIALS",
+      "rationale": "Steep 2y-30y curve and confirmed breadth (KRE strength) support financials.",
+      "time_window_catalyst": "FOMC July 29 and Senior Loan Officer Survey Aug 3-7"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.635,
+  "portfolio_rationale": "Positioned for continued rotation out of stretched mega-cap growth into value, healthcare, and financials, all showing independent relative strength across recent and prior windows with catalyst support from a likely dovish-leaning FOMC and steep curve.",
+  "provider": "anthropic",
+  "rationale_summary": "Momentum unwind in tech (SMH, MTUM, QQQ weakness) alongside broad value/defensive outperformance and disinflation data argues for a value-and-defensive tilt versus cap-weighted SPY over the one-month window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 20524,
+    "latency_seconds": 43.72943671885878,
+    "output_tokens": 3721,
+    "total_tokens": 24245
+  }
+}

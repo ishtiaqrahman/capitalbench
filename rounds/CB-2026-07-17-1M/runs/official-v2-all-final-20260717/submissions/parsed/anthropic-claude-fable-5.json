@@ -1,0 +1,190 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Disinflation and resilient GDP support modest gains",
+      "decision": "rejected",
+      "evidence": [
+        "SPY down 1.6% for the week, -1.54% over 5 sessions",
+        "Soft June CPI (-0.4% m/m) but core PCE 3.4% keeps Fed cautious",
+        "Mega-cap tech weakness dragging the cap-weighted index (QQQ -4.16% 5s)"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "n/a - benchmark",
+      "option_id": "SP500",
+      "reversal_case": "Tech concentration unwind continues to weigh on cap-weighted index",
+      "time_window_catalyst": "July 29 FOMC, Aug 12-13 CPI"
+    },
+    {
+      "continuation_case": "Persistent rotation out of stretched growth into value with independent trend in prior window",
+      "decision": "selected",
+      "evidence": [
+        "+2.77% active return over 21 sessions, prior-window active +3.08%",
+        "Only -0.57% from 52-week high with lowest equity drawdown (-2.40%)",
+        "Soft CPI and weak payrolls (57k) support rate-relief for value sectors"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "IWD active 21s return turns negative",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth rebound on strong mega-cap earnings would reverse rotation",
+      "time_window_catalyst": "FOMC July 29, CPI Aug 12"
+    },
+    {
+      "continuation_case": "Breadth broadening as mega-cap tech corrects",
+      "decision": "selected",
+      "evidence": [
+        "RSP-SPY spread +1.11% (5s) and +1.64% (21s)",
+        "Lowest volatility (11.01%) and drawdown (-2.04%) among equity options"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "RSP-SPY 21s spread turns negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Renewed mega-cap leadership flips spread negative",
+      "time_window_catalyst": "Q2 earnings breadth through mid-August"
+    },
+    {
+      "continuation_case": "Defensive rotation with room to recover after prior weakness",
+      "decision": "selected",
+      "evidence": [
+        "+6.48% active over 21 sessions, best major sector",
+        "Low beta 0.33 and modest -4.01% drawdown",
+        "Prior-window underperformance (-11.7%) suggests early-stage recovery, not extended trend"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLV lags SPY >2% during window",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Policy headlines or risk-on growth rebound halt recovery",
+      "time_window_catalyst": "Defensive flows into FOMC and August macro data"
+    },
+    {
+      "continuation_case": "Curve steepness and value rotation support banks and insurers",
+      "decision": "selected",
+      "evidence": [
+        "+4.56% active over 21 sessions, -0.86% from 52w high",
+        "Steep curve: 2y 4.18% vs 30y 5.06% supports margins",
+        "KRE also +7.10% active confirming sector breadth"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Sharp curve flattening or negative SLOOS credit shock",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit deterioration or hawkish Fed surprise",
+      "time_window_catalyst": "July 29 FOMC, SLOOS Aug 3-7"
+    },
+    {
+      "continuation_case": "Geopolitical or supply-driven oil strength persists",
+      "decision": "rejected",
+      "evidence": [
+        "XLE +5.63% active 21s; Brent +4.6% July 17 session",
+        "EIA forecasts Q3 Brent at $74 vs $85 June average, implying mean reversion",
+        "USO +14% in 5 sessions signals possible spike, not durable trend"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Brent falls back below $75",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA's lower Q3 forecast plays out; oil spike fades",
+      "time_window_catalyst": "Weekly EIA petroleum reports"
+    },
+    {
+      "continuation_case": "Strong mega-cap earnings could reignite growth leadership",
+      "decision": "rejected",
+      "evidence": [
+        "-4.16% in 5 sessions, -6.71% from 52w high",
+        "High beta 1.385 amid tech-led selloff; SMH -8.92% 5s"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "QQQ reclaims 52-week high",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Concentration unwind and factor rotation continue",
+      "time_window_catalyst": "Q2 mega-cap earnings late July"
+    },
+    {
+      "continuation_case": "Weak payrolls and soft CPI could pull yields lower",
+      "decision": "rejected",
+      "evidence": [
+        "30y at 5.06%, TLT -0.89% active 21s",
+        "Core PCE 3.4% and upside inflation risk per Fed keeps duration challenged"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "10y yield rises above 4.8%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky services inflation and upside PCE risk push yields higher",
+      "time_window_catalyst": "FOMC July 29, CPI Aug 12"
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 1.0,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp mega-cap tech rebound would reverse the rotation and cause underperformance vs SPY",
+    "Hawkish July 29 FOMC or hot August CPI could hit all equity holdings",
+    "Healthcare policy headlines could derail XLV strength",
+    "Oil-driven inflation resurgence (Brent +4.6% on Jul 17) pressuring rate-sensitive value"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Sharp mega-cap tech rebound reversing value leadership over multiple sessions",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value rotation underway: +2.77% active over 21 sessions, low drawdown, near 52w high, supported by soft CPI and cooling labor data favoring lower-beta value.",
+      "time_window_catalyst": "July 29 FOMC and Aug 12-13 CPI/PPI; continued rotation out of stretched tech"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "RSP-SPY 21-session spread turning negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth broadening: RSP-SPY spread +1.64% over 21 sessions with lowest volatility among equity options; benefits from concentration unwind.",
+      "time_window_catalyst": "Q2 earnings season broadening beyond mega-caps; July 29 FOMC"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "XLV underperforms SPY by more than 2% intra-window as risk appetite returns to growth",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strongest sector active return (+6.48% over 21s) with low beta (0.33) and modest drawdown; defensive rotation beneficiary after prior underperformance.",
+      "time_window_catalyst": "Ongoing defensive rotation through FOMC (Jul 29) and August data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Credit deterioration in SLOOS or sharp curve flattening",
+      "option_id": "FINANCIALS",
+      "rationale": "+4.56% active over 21 sessions, near 52w high, supported by steep 2s/30s curve (4.18%/5.06%) benefiting net interest margins.",
+      "time_window_catalyst": "July 29 FOMC; SLOOS Aug 3-7; curve steepness persistence"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.5,
+  "portfolio_rationale": "Momentum in the market has rotated from stretched tech (QQQ -6.7% from highs, SMH -16.8%) toward value, healthcare, financials, and equal-weight breadth. Soft June CPI and weak payrolls support a defensive-value tilt with a steep curve helping financials, while avoiding high-beta growth ahead of FOMC and CPI catalysts.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight value, equal-weight, healthcare, and financials to capture the ongoing rotation out of concentrated tech, staying within the 50% cluster cap on diversified US equity.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 23906,
+    "latency_seconds": 47.29607821488753,
+    "output_tokens": 3574,
+    "total_tokens": 27480
+  }
+}

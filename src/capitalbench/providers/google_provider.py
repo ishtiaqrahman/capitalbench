@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import time
 import urllib.parse
 from typing import Any
@@ -43,7 +44,30 @@ class GoogleProvider(BaseProvider):
             "tools": [],
             "toolConfig": {"functionCallingConfig": {"mode": "NONE"}},
         }
-        response = self._post_json(url, {"x-goog-api-key": api_key}, payload, runtime_limits.timeout_seconds)
+        headers = {"x-goog-api-key": api_key}
+        try:
+            response = self._post_json(url, headers, payload, runtime_limits.timeout_seconds)
+        except RuntimeError as exc:
+            if not _is_response_schema_rejection(exc):
+                raise
+            retry_payload = dict(payload)
+            retry_generation_config = dict(generation_config)
+            retry_generation_config.pop("responseSchema", None)
+            retry_payload["generationConfig"] = retry_generation_config
+            retry_payload["contents"] = [
+                {
+                    "role": "user",
+                    "parts": [
+                        {
+                            "text": (
+                                f"{prompt}\n\nRequired JSON schema:\n"
+                                f"{json.dumps(json_schema, sort_keys=True)}"
+                            )
+                        }
+                    ],
+                }
+            ]
+            response = self._post_json(url, headers, retry_payload, runtime_limits.timeout_seconds)
         raw_text = _extract_google_text(response)
         usage_data = response.get("usageMetadata") or {}
         usage = elapsed_usage(
@@ -86,6 +110,11 @@ def _google_thinking_config(reasoning_effort: str | None) -> dict[str, int] | No
     if budget is None:
         return None
     return {"thinkingBudget": budget}
+
+
+def _is_response_schema_rejection(exc: RuntimeError) -> bool:
+    message = str(exc).lower()
+    return "http 400" in message and ("invalid_argument" in message or "invalid argument" in message)
 
 
 def _to_google_response_schema(schema: dict[str, Any]) -> dict[str, Any]:

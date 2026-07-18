@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "If broad earnings and risk appetite stabilize after the one-week decline, SPY could recover into scheduled macro releases.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.0% for the July 17 session and down 1.6% for the week.",
+        "SPY return_5s was -1.54% and return_21s was -0.68%.",
+        "SPY volatility_63s was 13.13% and distance_52w_high was -1.89%."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "SPY fails to recover relative to equal-weight and defensive sectors while breadth remains negative.",
+      "option_id": "SP500",
+      "reversal_case": "Recent weak breadth, soft payroll growth, and mega-cap/growth weakness could continue to weigh on cap-weighted SPY.",
+      "time_window_catalyst": "FOMC on July 28-29, Q2 GDP/PCE/ECI on July 30-31, July employment, and July CPI/PPI before exit."
+    },
+    {
+      "continuation_case": "Lower-beta healthcare leadership can persist if weaker payroll data and lower monthly CPI support defensive rotation and lower rate pressure.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE active_return_21s was 6.48%.",
+        "HEALTHCARE return_5s was 0.16% while SPY return_5s was -1.54%.",
+        "HEALTHCARE beta_spy_252s was 0.327 and distance_52w_high was -2.04%."
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.8,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLV loses recent relative strength versus SPY or breaks materially below its 63-session drawdown range before exit.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A broad risk-on rebound led by high-beta technology could leave healthcare behind despite recent relative strength.",
+      "time_window_catalyst": "July 30-31 PCE/ECI, August 3-7 labor data, and August 12-13 CPI/PPI could reinforce lower-rate and defensive-equity demand."
+    },
+    {
+      "continuation_case": "Recent relative strength can continue if the yield backdrop supports net interest income and upcoming credit data do not show deterioration.",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS active_return_21s was 4.56% and return_5s was 0.99%.",
+        "FINANCIALS distance_52w_high was -0.86%.",
+        "The 10-year Treasury yield was 4.55% and the 30-year yield was 5.06% on July 17."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "A sharp renewed flattening of the curve, adverse SLOOS credit signal, or XLF underperforming SPY over the next week invalidates the case.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak payrolls, loan tightening, or recession concerns could pressure banks and insurers despite recent performance.",
+      "time_window_catalyst": "FOMC on July 28-29, Senior Loan Officer Survey, July employment data, and July CPI/PPI can affect yield-curve and credit expectations."
+    },
+    {
+      "continuation_case": "Recent strength near a 52-week high can persist if disinflation and soft labor data reduce upward pressure on rates.",
+      "decision": "selected",
+      "evidence": [
+        "REAL_ESTATE return_5s was 2.18% and active_return_21s was 2.28%.",
+        "REAL_ESTATE distance_52w_high was -0.09%.",
+        "June CPI decreased 0.4% month over month and core CPI was unchanged for the month."
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 4.3,
+      "forecast_low_pct": -2.7,
+      "invalidation_condition": "10-year Treasury yields push materially above the July 17 level or XLRE reverses below recent support and underperforms SPY.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Long yields could rise on inflation releases or Fed messaging, pressuring rate-sensitive real estate.",
+      "time_window_catalyst": "FOMC communication, PCE/ECI, employment, and CPI/PPI releases before exit can move rate expectations and REIT valuations."
+    },
+    {
+      "continuation_case": "Sector relative strength can continue if crude-price momentum and EIA petroleum data keep supply-risk or inventory concerns elevated.",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY return_5s was 4.72% and active_return_21s was 5.63%.",
+        "Brent crude increased 4.6% in the July 17 market session.",
+        "EIA forecast Brent crude at a $74 third-quarter average after averaging $85 in June."
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Crude oil gives back the July 17 surge or EIA data show bearish inventory/supply signals that reverse energy-sector relative strength.",
+      "option_id": "ENERGY",
+      "reversal_case": "The EIA forecast for a lower third-quarter Brent average and high volatility create risk that the recent oil move reverses.",
+      "time_window_catalyst": "Weekly EIA petroleum reports before exit and follow-through after Brent rose 4.6% in the July 17 session."
+    },
+    {
+      "continuation_case": "Breadth improvement and lower mega-cap concentration can help if market leadership broadens beyond technology growth.",
+      "decision": "selected",
+      "evidence": [
+        "EQUAL_WEIGHT_SP500 return_5s was -0.43% versus SPY at -1.54%.",
+        "EQUAL_WEIGHT_SP500 active_return_21s was 1.64%.",
+        "EQUAL_WEIGHT_SP500 volatility_63s was 11.01%, below SPY volatility_63s of 13.13%."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "Market-cap-weighted SPY reclaims leadership versus RSP or breadth deteriorates with declining issues persistently overwhelming advancers.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "If mega-cap growth rebounds sharply, cap-weighted SPY may outperform equal weight.",
+      "time_window_catalyst": "FOMC, GDP/PCE/ECI, July employment, and CPI/PPI releases may sustain breadth improvement if rates and growth expectations stabilize."
+    },
+    {
+      "continuation_case": "Strong recent relative strength and proximity to highs could persist if growth-stock sentiment stabilizes.",
+      "decision": "rejected",
+      "evidence": [
+        "CYBERSECURITY active_return_21s was 9.33% and prior_105s_active_return was 8.70%.",
+        "CYBERSECURITY volatility_63s was 32.46%.",
+        "CYBERSECURITY distance_52w_high was -2.50%."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -5.5,
+      "invalidation_condition": "CIBR loses positive relative strength or technology-and-growth weakness broadens further.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High volatility and broader technology-and-growth weakness could trigger mean reversion over the one-month horizon.",
+      "time_window_catalyst": "Macro releases and FOMC communication affecting growth-stock rates sensitivity; no sector-specific catalyst supplied."
+    },
+    {
+      "continuation_case": "Cash-like Treasury bill exposure should remain stable if short rates stay near current levels.",
+      "decision": "rejected",
+      "evidence": [
+        "SHORT_TREASURY return_5s was 0.05% and volatility_63s was 0.21%.",
+        "Three-month Treasury yield was 3.85% on July 17.",
+        "SHORT_TREASURY distance_52w_high was 0.00%."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 0.5,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "A sharp unexpected shift in short-rate expectations or liquidity stress causes BIL to underperform its cash-like profile.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Low volatility also limits upside relative to equities if risk assets recover during the scoring window.",
+      "time_window_catalyst": "FOMC on July 28-29 can affect expectations for short-term rates, though one-month price sensitivity is limited."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.74,
+  "is_official_score": true,
+  "key_risks": [
+    "Mega-cap technology rebounds sharply and SPY outperforms the sector/value/defensive tilt.",
+    "July CPI/PPI or PCE/ECI data reaccelerate inflation and lift yields, hurting real estate and equities.",
+    "Labor or credit data weaken enough to pressure financials, cyclicals, and broad risk appetite.",
+    "Oil reverses after its sharp July 17 gain, dragging energy holdings."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "XLV loses recent relative strength versus SPY or breaks materially below its 63-session drawdown range before exit.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare has strong 21-session active performance with lower beta than SPY and can benefit if weak labor data and disinflation support defensive rotation.",
+      "time_window_catalyst": "July 30-31 PCE/ECI, August 3-7 labor data, and August 12-13 CPI/PPI could reinforce lower-rate and defensive-equity demand."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "A sharp renewed flattening of the curve, adverse SLOOS credit signal, or XLF underperforming SPY over the next week invalidates the case.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials show positive recent breadth/relative strength, low distance from 52-week high, and may benefit from a still-positive nominal-rate backdrop if credit fears do not rise.",
+      "time_window_catalyst": "FOMC on July 28-29, Senior Loan Officer Survey, July employment data, and July CPI/PPI can affect yield-curve and credit expectations."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "10-year Treasury yields push materially above the July 17 level or XLRE reverses below recent support and underperforms SPY.",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Real estate is near a 52-week high and has positive 5- and 21-session active returns; softer inflation and payroll data could support rate-sensitive assets.",
+      "time_window_catalyst": "FOMC communication, PCE/ECI, employment, and CPI/PPI releases before exit can move rate expectations and REIT valuations."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Crude oil gives back the July 17 surge or EIA data show bearish inventory/supply signals that reverse energy-sector relative strength.",
+      "option_id": "ENERGY",
+      "rationale": "Energy has strong 5- and 21-session active returns and supplied oil-market facts include a sharp Brent move, but position size is limited by volatility and reversal risk.",
+      "time_window_catalyst": "Weekly EIA petroleum reports before exit and follow-through after Brent rose 4.6% in the July 17 session."
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Market-cap-weighted SPY reclaims leadership versus RSP or breadth deteriorates with declining issues persistently overwhelming advancers.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Equal-weight S&P 500 has outperformed SPY over 5 and 21 sessions, consistent with rotation away from mega-cap weakness while retaining broad US equity exposure.",
+      "time_window_catalyst": "FOMC, GDP/PCE/ECI, July employment, and CPI/PPI releases may sustain breadth improvement if rates and growth expectations stabilize."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.24,
+  "portfolio_rationale": "The portfolio tilts toward areas with supplied evidence of recent relative strength and plausible one-month catalysts from rates, inflation, labor, and energy data. It avoids concentrated mega-cap technology after recent weakness and diversifies across healthcare, financials, rate-sensitive real estate, energy, and equal-weight US equities.",
+  "provider": "openai",
+  "rationale_summary": "Base forecasts favor active holdings over SPY because SPY and Nasdaq entered the window weak while several non-mega-cap sectors showed positive relative strength. Allocation is capped by cluster and volatility risk, with no non-SPY cluster above 50%.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12864,
+    "latency_seconds": 34.57712538796477,
+    "output_tokens": 2870,
+    "reasoning_tokens": 192,
+    "total_tokens": 15734
+  }
+}

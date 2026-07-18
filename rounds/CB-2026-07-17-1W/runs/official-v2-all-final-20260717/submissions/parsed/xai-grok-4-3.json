@@ -1,0 +1,172 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Stabilization after 1.6% weekly decline",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7475.69 on July 17",
+        "June nonfarm payrolls +57k with downward revisions"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Sustained equity selling pressure exceeding 2% from entry close",
+      "option_id": "SP500",
+      "reversal_case": "Further downside on weak growth data",
+      "time_window_catalyst": "July 22 EIA Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Oil momentum persists into EIA report",
+      "decision": "selected",
+      "evidence": [
+        "XLE active return 6.26% over 5 sessions",
+        "USO 5-session return 14.04%"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Brent crude reversal below $80 sustained through exit",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA inventory data disappoints",
+      "time_window_catalyst": "July 22 EIA Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Defensive rotation continues on soft jobs",
+      "decision": "selected",
+      "evidence": [
+        "SCHD 5-session return +3.12% active",
+        "June retail sales +0.2%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Broad equity rally exceeding 3% from entry close",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth rebound lifts cyclicals",
+      "time_window_catalyst": "July 21 BLS state employment releases"
+    },
+    {
+      "continuation_case": "Yield curve support for banks",
+      "decision": "rejected",
+      "evidence": [
+        "XLF active return 2.53% over 5 sessions"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Regional bank underperformance exceeding 3%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit spread widening on growth concerns",
+      "time_window_catalyst": "July 21 BLS state employment releases"
+    },
+    {
+      "continuation_case": "Defensive characteristics hold",
+      "decision": "rejected",
+      "evidence": [
+        "XLV active return 1.70% over 5 sessions"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Healthcare sector drawdown exceeding 2%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Rotation out of defensives",
+      "time_window_catalyst": "July 21 BEA direct-investment data"
+    },
+    {
+      "continuation_case": "Rate-sensitive rebound",
+      "decision": "rejected",
+      "evidence": [
+        "XLRE active return 3.73% over 5 sessions"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "10-year Treasury yield above 4.7%",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Longer duration yields rise",
+      "time_window_catalyst": "July 21 BLS state employment releases"
+    },
+    {
+      "continuation_case": "Value rotation persists",
+      "decision": "rejected",
+      "evidence": [
+        "IWN active return 2.62% over 5 sessions"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Russell 2000 underperformance exceeding 2%",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Growth leadership returns",
+      "time_window_catalyst": "July 21 BLS state employment releases"
+    },
+    {
+      "continuation_case": "Commodity momentum extends",
+      "decision": "rejected",
+      "evidence": [
+        "USO 5-session return 14.04%"
+      ],
+      "forecast_base_pct": 3.0,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Crude futures contango steepens sharply",
+      "option_id": "OIL",
+      "reversal_case": "EIA data signals oversupply",
+      "time_window_catalyst": "July 22 EIA Petroleum Status Report"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.725,
+  "is_official_score": true,
+  "key_risks": [
+    "Weak payrolls may extend equity pressure",
+    "Oil price reversal on EIA report",
+    "Rate-sensitive sectors underperform on curve steepening"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Sustained equity selling pressure exceeding 2% from entry close",
+      "option_id": "SP500",
+      "rationale": "Broad market exposure with base forecast exceeding alternatives after testing continuation and reversal cases.",
+      "time_window_catalyst": "July 22 EIA Petroleum Status Report"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Brent crude reversal below $80 sustained through exit",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent active return supported by oil price move and sector data.",
+      "time_window_catalyst": "July 22 EIA Petroleum Status Report"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Broad equity rally exceeding 3% from entry close",
+      "option_id": "DIVIDEND",
+      "rationale": "Positive recent performance and defensive tilt amid weak payroll data.",
+      "time_window_catalyst": "July 21 BLS state employment releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.525,
+  "portfolio_rationale": "Allocates to SPY plus two holdings with base forecasts above SPY after ledger review across four clusters.",
+  "provider": "xai",
+  "rationale_summary": "Energy and dividend exposures selected for higher base-case returns within one-week horizon and cluster limits.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12922,
+    "latency_seconds": 17.9009104850702,
+    "output_tokens": 1581,
+    "reasoning_tokens": 694,
+    "total_tokens": 15197
+  }
+}

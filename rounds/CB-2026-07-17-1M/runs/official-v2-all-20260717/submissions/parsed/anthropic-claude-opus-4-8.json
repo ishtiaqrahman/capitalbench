@@ -1,0 +1,183 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Disinflation and steady growth support broad large-cap equity into FOMC",
+      "decision": "rejected",
+      "evidence": [
+        "SPY closed 7,475.69, down 1.0% session and 1.6% week",
+        "Cooling June CPI -0.4% m/m, core flat supports rate relief",
+        "FOMC July 29 and payrolls Aug 1 as catalysts"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "SPY breaks below recent range with widening credit spreads",
+      "option_id": "SP500",
+      "reversal_case": "Weak payrolls (57k) and negative breadth signal slowdown risk",
+      "time_window_catalyst": "FOMC July 29 statement and July jobs report Aug 1"
+    },
+    {
+      "continuation_case": "Defensive leadership with strongest recent relative strength as breadth narrows",
+      "decision": "selected",
+      "evidence": [
+        "XLV active_return_21s +6.48%, strong relative trend",
+        "Low beta 0.327, defensive with positive momentum",
+        "Small drawdown -4.01% over 63s"
+      ],
+      "forecast_base_pct": 2.4,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "XLV active return turns negative vs SPY",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Prior 105s active return -11.70% shows this is a rebound that may fade",
+      "time_window_catalyst": "Defensive rotation into FOMC and softer labor data"
+    },
+    {
+      "continuation_case": "Steady yield curve and near-high value leadership continues",
+      "decision": "selected",
+      "evidence": [
+        "XLF active_return_21s +4.56%, positive session +0.99%",
+        "Low drawdown -3.34%, beta 0.65",
+        "Near 52w high, distance -0.86%"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Credit stress or yield curve inversion re-emerges",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Prior 105s active -8.10% shows recent recovery could revert",
+      "time_window_catalyst": "Senior Loan Officer Survey Aug 3-7 and FOMC"
+    },
+    {
+      "continuation_case": "Defensive factor outperforms as breadth deteriorates 1.76:1 decliners",
+      "decision": "selected",
+      "evidence": [
+        "SPLV active_return_21s +3.66%, near 52w high -0.48%",
+        "Beta 0.039, defensive positioning",
+        "Positive session +0.96%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Broad risk-on rally resumes lifting high-beta",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Prior 105s active -5.81% shows earlier underperformance",
+      "time_window_catalyst": "Risk-off rotation before FOMC July 29"
+    },
+    {
+      "continuation_case": "Mega-cap tech could rebound on rate relief",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ return_5s -4.16%, active_return_21s -3.94%",
+        "High volatility 24.27%, beta 1.385",
+        "Distance -6.71% from 52w high"
+      ],
+      "forecast_base_pct": -1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Tech breaks lower on weak earnings",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Sharp recent selloff and negative momentum, high beta risk",
+      "time_window_catalyst": "Big-tech earnings late July"
+    },
+    {
+      "continuation_case": "Oil spike and positive active return support energy",
+      "decision": "rejected",
+      "evidence": [
+        "XLE return_5s +4.72%, Brent +4.6% on July 17",
+        "EIA forecasts Q3 Brent $74 vs June $85",
+        "High drawdown -13.21%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Brent reverts toward $74 forecast",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA forecasts lower Q3 oil price, high volatility",
+      "time_window_catalyst": "EIA weekly petroleum reports"
+    },
+    {
+      "continuation_case": "Stable low-risk yield in uncertain window",
+      "decision": "rejected",
+      "evidence": [
+        "BIL cash-like, 3m yield 3.85%",
+        "Volatility 0.21%, minimal risk",
+        "Positive active 21s +1.01%"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 0.5,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "Fed signals imminent cuts compressing bill yields",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Equity rally would leave BIL behind",
+      "time_window_catalyst": "FOMC July 29 rate decision"
+    },
+    {
+      "continuation_case": "Very strong recent relative momentum in biotech",
+      "decision": "rejected",
+      "evidence": [
+        "XBI active_return_21s +14.77%, strongest relative trend",
+        "High volatility 30.26%, volume z-score 0.427",
+        "Beta 1.005"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Biotech momentum breaks down sharply",
+      "option_id": "BIOTECH",
+      "reversal_case": "High volatility, event-driven reversals common",
+      "time_window_catalyst": "Clinical data and M&A flow"
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 1.8,
+  "is_official_score": true,
+  "key_risks": [
+    "Recent defensive leadership is a rebound from prior underperformance and may fade",
+    "A broad risk-on rally on dovish FOMC could favor high-beta tech over defensives"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 2.4,
+      "invalidation_condition": "XLV active return turns negative vs SPY",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strongest defensive relative strength with low beta and small drawdown",
+      "time_window_catalyst": "Defensive rotation into FOMC and softer labor data"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Credit stress or yield curve inversion re-emerges",
+      "option_id": "FINANCIALS",
+      "rationale": "Value leadership near 52w high with positive active return and low drawdown",
+      "time_window_catalyst": "Senior Loan Officer Survey Aug 3-7 and FOMC"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Broad risk-on rally resumes lifting high-beta",
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive factor to buffer deteriorating breadth while positive active",
+      "time_window_catalyst": "Risk-off rotation before FOMC July 29"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.1,
+  "portfolio_rationale": "Overweight defensive and value clusters showing strong recent relative strength while breadth narrows and high-beta tech sells off into FOMC.",
+  "provider": "anthropic",
+  "rationale_summary": "Rotate to healthcare, financials, and low-vol which lead on relative strength with low drawdowns, aiming for positive alpha over SPY in a choppy window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 20528,
+    "latency_seconds": 33.31054699490778,
+    "output_tokens": 2617,
+    "total_tokens": 23145
+  }
+}

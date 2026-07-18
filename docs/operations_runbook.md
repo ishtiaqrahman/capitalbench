@@ -36,6 +36,12 @@ tokens, and raw provider responses.
      --allow-real-api-calls
    ```
 
+   `configs/models.v2.yaml` is the canonical complete production roster. The
+   runner rejects an official `portfolio-v2.0` call before provider invocation
+   if any enabled canonical participant is missing, and `accept-run` repeats
+   the roster check before publication. The four-model experiment roster must
+   never be used for a production V2 round.
+
 3. Validate the run.
 
    ```bash

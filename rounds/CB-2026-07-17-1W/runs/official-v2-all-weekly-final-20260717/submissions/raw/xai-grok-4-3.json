@@ -1,0 +1,181 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad equity participation stabilizes after CPI and jobs data",
+      "decision": "selected",
+      "evidence": [
+        "SPY closed down 1.6% for the week",
+        "Declining issues outnumbered advancers 1.76:1"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "NYSE decliners exceed 1.8:1 ratio",
+      "option_id": "SP500",
+      "reversal_case": "Further downside if industrial production misses",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Oil price strength persists into EIA report",
+      "decision": "selected",
+      "evidence": [
+        "XLE active return 6.26%",
+        "USO active return 15.58%",
+        "Brent up 4.6% in session"
+      ],
+      "forecast_base_pct": 2.8,
+      "forecast_high_pct": 5.9,
+      "forecast_low_pct": 0.4,
+      "invalidation_condition": "Brent crude falls below recent session gains",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA inventory surprise reverses gains",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "continuation_case": "Defensive flows continue on soft growth prints",
+      "decision": "selected",
+      "evidence": [
+        "XLP active return 2.82%",
+        "CPI ex-food-energy unchanged"
+      ],
+      "forecast_base_pct": 1.9,
+      "forecast_high_pct": 3.4,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "CPI reacceleration above 3.5% YoY",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Retail sales accelerate beyond 0.2%",
+      "time_window_catalyst": "July 21 BLS state employment data"
+    },
+    {
+      "continuation_case": "Yield curve and bank data support sector",
+      "decision": "selected",
+      "evidence": [
+        "XLF active return 2.53%",
+        "KRE active return 3.77%"
+      ],
+      "forecast_base_pct": 1.7,
+      "forecast_high_pct": 3.6,
+      "forecast_low_pct": -0.3,
+      "invalidation_condition": "Unemployment rises above 4.3%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Unemployment revision worsens further",
+      "time_window_catalyst": "July 21 BEA direct-investment data"
+    },
+    {
+      "continuation_case": "Dividend tilt holds in low-volatility regime",
+      "decision": "rejected",
+      "evidence": [
+        "SCHD active return 3.12%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 2.9,
+      "forecast_low_pct": 0.1,
+      "invalidation_condition": "Equal-weight RSP underperforms SPY by >1%",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Value rotation stalls on growth rebound",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Small-value outperformance continues",
+      "decision": "rejected",
+      "evidence": [
+        "IWN active return 2.62%"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Small-cap drawdown exceeds 3%",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Russell 2000 lags further on risk-off",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Rate-sensitive defensive holds after TLT stability",
+      "decision": "rejected",
+      "evidence": [
+        "XLRE active return 3.73%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -0.4,
+      "invalidation_condition": "TLT drawdown exceeds 2%",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "10-year yield rises above 4.6%",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Crude futures maintain upward slope",
+      "decision": "rejected",
+      "evidence": [
+        "USO active return 15.58%"
+      ],
+      "forecast_base_pct": 3.1,
+      "forecast_high_pct": 6.8,
+      "forecast_low_pct": 0.9,
+      "invalidation_condition": "USO closes below prior-week low",
+      "option_id": "OIL",
+      "reversal_case": "EIA report shows inventory build",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 1.615,
+  "is_official_score": true,
+  "key_risks": [
+    "Weak payrolls and downward revisions pressure growth outlook",
+    "Tech and growth drawdowns may spill into broader market",
+    "Oil volatility from EIA inventory data"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 2.8,
+      "invalidation_condition": "Brent crude falls below recent session gains",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent active returns and oil price momentum within scoring window",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.9,
+      "invalidation_condition": "CPI reacceleration above 3.5% YoY",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Defensive sector with positive active returns amid weak growth data",
+      "time_window_catalyst": "July 21 BLS state employment data"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.7,
+      "invalidation_condition": "Unemployment rises above 4.3%",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive active returns and regional bank strength in supplied data",
+      "time_window_catalyst": "July 21 BEA direct-investment data"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "NYSE decliners exceed 1.8:1 ratio",
+      "option_id": "SP500",
+      "rationale": "Benchmark exposure with base forecast cleared by selected actives",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.215,
+  "portfolio_rationale": "Energy leads on oil momentum; staples and financials add defensive and cyclical support above SPY base; 15% SPY anchors benchmark.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings have base forecasts exceeding SPY; energy cluster at cap; four clusters represented.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12969,
+    "latency_seconds": 17.19622253300622,
+    "output_tokens": 1664,
+    "reasoning_tokens": 698,
+    "total_tokens": 15331
+  }
+}

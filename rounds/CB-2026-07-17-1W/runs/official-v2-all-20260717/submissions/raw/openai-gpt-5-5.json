@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.15,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad market could stabilize after a modest weekly pullback if soft CPI and PPI support rate expectations and risk appetite.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.0% on July 17 and down 1.6% for the week.",
+        "SPY return_3s was -1.14%, 21-session volatility was 12.73%, and max drawdown was -2.59%.",
+        "Declining issues outnumbered advancers on both NYSE and Nasdaq."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SPY breaks materially lower with worsening breadth or renewed growth-stock weakness.",
+      "option_id": "SP500",
+      "reversal_case": "Recent market breadth weakness and Nasdaq-led selling could continue, keeping SPY under pressure through the scoring week.",
+      "time_window_catalyst": "July 21 labor-related releases and July 22 EIA data may influence macro risk appetite; no major SPY-specific catalyst identified."
+    },
+    {
+      "continuation_case": "Rotation toward lower-beta value exposure can continue if investors keep reducing high-growth and Nasdaq exposure.",
+      "decision": "selected",
+      "evidence": [
+        "LARGE_VALUE had 5-day active return of 2.03% and prior 16-session active return of 0.72%.",
+        "It was only 0.57% below its 52-week high.",
+        "Its 63-session beta to SPY was 0.651, below broad-market beta."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "LARGE_VALUE underperforms SPY on broad risk-on growth rebound or loses its recent relative-strength pattern.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "A sharp rebound in mega-cap growth could reverse value leadership and pull capital back toward SPY-like growth exposure.",
+      "time_window_catalyst": "Follow-through from defensive/value rotation after SPY and Nasdaq weekly declines; no specific scheduled sector catalyst identified."
+    },
+    {
+      "continuation_case": "Recent relative strength may persist if markets view employment and rates as consistent with stable credit and net-interest conditions.",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS had 5-day active return of 2.53% and prior 16-session active return of 1.99%.",
+        "Volume z-score was 0.524, above recent baseline.",
+        "Distance from 52-week high was -0.86%."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1,
+      "invalidation_condition": "FINANCIALS loses relative strength versus SPY or rate/credit concerns widen before the exit close.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Any renewed concern about slowing payrolls, credit quality, or yield volatility could reverse the sector's relative gains.",
+      "time_window_catalyst": "BLS state employment data and usual weekly earnings releases on July 21 may affect views on labor strength, credit, and rates."
+    },
+    {
+      "continuation_case": "Soft inflation data can support rate-sensitive assets if yields stabilize or fall, while recent price action shows strong active performance.",
+      "decision": "selected",
+      "evidence": [
+        "REAL_ESTATE had 5-day active return of 3.73%.",
+        "It was only 0.09% below its 52-week high.",
+        "June CPI decreased 0.4% month over month and core CPI was unchanged."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.7,
+      "forecast_low_pct": -1.1,
+      "invalidation_condition": "10-year and 30-year Treasury yields rise sharply or REAL_ESTATE breaks below recent relative-performance gains.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Long-end yields remain elevated, with 10-year at 4.55% and 30-year at 5.06%, and a yield rise could pressure real estate valuations.",
+      "time_window_catalyst": "Continuation of lower CPI/PPI implications for rate-sensitive assets; no direct real-estate release identified before exit."
+    },
+    {
+      "continuation_case": "Low market correlation and established relative strength may help if broad equity breadth remains weak.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE had 5-day active return of 1.70% and prior 16-session active return of 4.75%.",
+        "Its 63-session correlation to SPY was -0.071 and beta was -0.099.",
+        "It was 2.04% below its 52-week high."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "HEALTHCARE fails to maintain positive active return versus SPY or broad cyclicals/growth leadership resumes.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Healthcare could lag if investors rotate aggressively back into cyclicals or high-beta growth after the selloff.",
+      "time_window_catalyst": "Defensive rotation after broad-equity weakness; no specific healthcare catalyst identified before exit."
+    },
+    {
+      "continuation_case": "Energy equities can extend if crude strength persists and the EIA report reinforces tight or improving petroleum balances.",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY had 5-day active return of 6.26%.",
+        "Brent crude increased 4.6% in the July 17 market session.",
+        "EIA Weekly Petroleum Status Report is scheduled for July 22."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Crude oil reverses its July 17 surge or the EIA report points to weaker balances than expected.",
+      "option_id": "ENERGY",
+      "reversal_case": "The sector's move may be vulnerable because EIA forecast a $74 third-quarter Brent average versus $85 in June, and recent oil strength was abrupt.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22 after Brent/energy strength into the entry close."
+    },
+    {
+      "continuation_case": "Crude could continue higher if the July 22 EIA petroleum report shows supportive inventories or supply-demand tightness.",
+      "decision": "rejected",
+      "evidence": [
+        "OIL had 5-day active return of 15.58% and return_3s of 3.15%.",
+        "USO 21-session volatility was 48.38% and max drawdown was -10.57%.",
+        "EIA forecast Brent at a $74 third-quarter average after Brent averaged $85 in June."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 4,
+      "forecast_low_pct": -4,
+      "invalidation_condition": "USO fails to hold recent gains or petroleum data indicates weaker demand or looser inventories.",
+      "option_id": "OIL",
+      "reversal_case": "After a very large weekly gain, high volatility and the lower EIA third-quarter Brent forecast increase mean-reversion risk.",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report for the week ending July 17."
+    },
+    {
+      "continuation_case": "Cash-like Treasury bills should deliver small positive carry with very low volatility if risk assets remain weak.",
+      "decision": "rejected",
+      "evidence": [
+        "SHORT_TREASURY return_3s was 0.04% and active return_5s was 1.60% because SPY declined.",
+        "Three-month Treasury yield was 3.85% on July 17.",
+        "Volatility_21s was 0.25% and max drawdown_21s was -0.01%."
+      ],
+      "forecast_base_pct": 0.07,
+      "forecast_high_pct": 0.09,
+      "forecast_low_pct": 0.03,
+      "invalidation_condition": "Risk assets rally strongly enough that capital-preservation exposure is no longer competitive with SPY.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Because expected one-week carry is small, any SPY rebound would make this exposure lag equities materially.",
+      "time_window_catalyst": "No specific catalyst beyond short-term Treasury carry over the scoring week."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.2275,
+  "is_official_score": true,
+  "key_risks": [
+    "A broad risk-on rebound led by technology and growth causes SPY to outperform the selected value/defensive mix.",
+    "Treasury yields rise despite soft CPI/PPI, pressuring real estate and other rate-sensitive equities.",
+    "Oil reverses sharply after the recent surge or the EIA petroleum report disappoints energy bulls.",
+    "The recent relative-strength signals reverse because one-week price moves were short-covering rather than durable rotation."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "LARGE_VALUE underperforms SPY on broad risk-on growth rebound or loses its recent relative-strength pattern.",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value equities have positive short-term and prior active returns with lower beta than SPY, offering continuation if the market keeps rotating away from high-growth exposure.",
+      "time_window_catalyst": "Follow-through from defensive/value rotation after SPY and Nasdaq weekly declines; no specific scheduled sector catalyst identified."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "FINANCIALS loses relative strength versus SPY or rate/credit concerns widen before the exit close.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials show strong recent and prior relative performance with only modest SPY correlation and beta, and may benefit if the yield curve and risk appetite stabilize.",
+      "time_window_catalyst": "BLS state employment data and usual weekly earnings releases on July 21 may affect views on labor strength, credit, and rates."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "10-year and 30-year Treasury yields rise sharply or REAL_ESTATE breaks below recent relative-performance gains.",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Real estate has strong 5-day active return and is near a 52-week high, with disinflationary CPI/PPI data supporting rate-sensitive exposures if yields ease.",
+      "time_window_catalyst": "Continuation of lower CPI/PPI implications for rate-sensitive assets; no direct real-estate release identified before exit."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "HEALTHCARE fails to maintain positive active return versus SPY or broad cyclicals/growth leadership resumes.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare combines positive recent active return with very strong prior 16-session active return and low correlation to SPY, offering defensive equity exposure.",
+      "time_window_catalyst": "Defensive rotation after broad-equity weakness; no specific healthcare catalyst identified before exit."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Crude oil reverses its July 17 surge or the EIA report points to weaker balances than expected.",
+      "option_id": "ENERGY",
+      "rationale": "Energy has the strongest sector-level recent active return and a near-term oil inventory catalyst, but allocation is limited due to oil-price reversal risk after a sharp move.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22 after Brent/energy strength into the entry close."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.3775,
+  "portfolio_rationale": "The portfolio avoids recent high-beta growth underperformance and diversifies across value, financials, rate-sensitive real estate, healthcare, and energy. All selected holdings have base forecasts above the SPY base forecast, with no non-SPY cluster above the 50% cap.",
+  "provider": "openai",
+  "rationale_summary": "Base case is continued one-week rotation away from mega-cap growth toward value, defensive, financial, and selected commodity-linked exposures. Energy is included at a limited weight because it has a clear scheduled catalyst but elevated reversal risk after a sharp move.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12548,
+    "latency_seconds": 34.53501366986893,
+    "output_tokens": 2701,
+    "reasoning_tokens": 232,
+    "total_tokens": 15249
+  }
+}

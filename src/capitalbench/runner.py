@@ -13,6 +13,7 @@ from .exposures import exposure_clusters_by_option
 from .io import load_manifest, load_options, write_json
 from .prompting import build_prompt
 from .providers import AnthropicProvider, GoogleProvider, MockProvider, OpenAIProvider, ProviderResult, XAIProvider
+from .roster import validate_official_portfolio_v2_roster
 from .portfolio import constraints_from_manifest, submission_format_from_manifest
 from .run_store import (
     create_run_paths,
@@ -73,6 +74,9 @@ def run_round(
     pricing = load_pricing_config(pricing_path)
     enabled_models, skipped_reasons = _filter_eligible_models(model_configs, manifest.round_id, manifest.decision_deadline, mode)
     skipped_models = len(model_configs) - len(enabled_models)
+
+    if selected_run_type == "official" and not mock:
+        validate_official_portfolio_v2_roster(manifest.methodology_version, enabled_models)
 
     if not mock:
         _preflight_real_api_keys(enabled_models)
@@ -213,6 +217,7 @@ def run_round(
     )
     manifest_updates: dict[str, Any] = {
         "model_count": len(enabled_models),
+        "model_ids": [config.model_id for config in enabled_models],
         "loaded_models": len(model_configs),
         "skipped_models": skipped_models,
         "valid_submissions": valid_count,
