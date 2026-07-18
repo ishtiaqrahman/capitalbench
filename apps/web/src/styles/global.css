@@ -38023,33 +38023,65 @@ html.score-alert-modal-open body {
   .track-scorecard-score-chart .score-mobile-rank-head-reference {
     grid-template-columns: minmax(0, 1fr) auto auto;
     grid-template-areas: "identity info score";
-    gap: 8px;
+    gap: 6px;
   }
 
   .track-scorecard-score-chart .score-mobile-rank-head-reference > div {
     grid-area: identity;
+    min-width: 0;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 9px;
+    gap: 7px;
+    overflow: hidden;
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-head-reference .score-chart-reference-chip {
+    width: 42px;
+    min-width: 42px;
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-head-reference > div > span:last-child {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .track-scorecard-score-chart .score-mobile-rank-head-reference > div > span:last-child em {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .track-scorecard-score-chart .score-mobile-rank-head-reference > strong {
     grid-area: score;
+    min-width: 64px;
+    padding-right: 8px;
+    padding-left: 8px;
     align-self: center;
   }
 
   .track-scorecard-score-chart .score-mobile-rank-info {
     grid-area: info;
+    width: 26px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    justify-self: center;
     align-self: center;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
   }
 
   .track-scorecard-score-chart .score-mobile-rank-info > span,
   .track-scorecard-return-chart .max-possible-info-inline > span {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
     display: inline-grid;
     place-items: center;
+    box-sizing: border-box;
     border: 1px solid rgb(7 16 13 / 22%);
     border-radius: 999px;
     overflow: hidden;
