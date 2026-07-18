@@ -1,0 +1,162 @@
+{
+  "benchmark_expected_return_pct": 0.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Weak breadth, slowing employment, and recent technology-led losses could extend the market decline.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY declined 1.54% over five sessions and 0.68% over 21 sessions.",
+        "June payrolls rose only 57,000 and prior months were revised down by 74,000.",
+        "June core CPI was unchanged, but core PCE inflation remained 3.4% year over year."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "SPY recovers its latest weekly loss with improving breadth early in the scoring week.",
+      "option_id": "SP500",
+      "reversal_case": "Cool monthly CPI and the recent 1.54% decline could produce a broad relief rebound.",
+      "time_window_catalyst": "July 21 state employment and unemployment releases; otherwise no major broad-market catalyst identified before the exit close."
+    },
+    {
+      "continuation_case": "Weak growth signals and poor breadth sustain rotation toward mature, income-oriented equities.",
+      "decision": "selected",
+      "evidence": [
+        "Dividend equities outperformed SPY by 3.12 percentage points over five sessions.",
+        "The option gained 2.20% over the latest three sessions with a positive volume z-score of 0.311.",
+        "June payroll growth was 57,000 and declining issues materially outnumbered advancers on July 17."
+      ],
+      "forecast_base_pct": 0.65,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Dividend equities surrender their recent relative strength and underperform SPY through the first half of the scoring week.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Its proximity to a 52-week high and weak prior-window active return create profit-taking risk if growth stocks rebound.",
+      "time_window_catalyst": "Continuation of defensive rotation following cool June CPI, weak payrolls, and deteriorating equity breadth; no sector-specific scheduled release identified."
+    },
+    {
+      "continuation_case": "The established relative trend continues as investors favor defensive earnings exposure amid slowing employment.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare outperformed SPY by 1.70 percentage points over five sessions.",
+        "Prior 16-session active return was positive 4.75%, providing support beyond the latest move.",
+        "Healthcare gained 1.77% over the latest three sessions despite broad-market weakness."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Healthcare reverses its established relative trend and underperforms SPY through the first half of the scoring week.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "High 21-session volatility and a broad risk-on rebound could overwhelm the defensive rotation.",
+      "time_window_catalyst": "Continued defensive positioning following weak payroll data and negative market breadth; no sector-specific scheduled release identified."
+    },
+    {
+      "continuation_case": "Soft employment and cool monthly inflation pull intermediate yields lower.",
+      "decision": "rejected",
+      "evidence": [
+        "Intermediate Treasuries gained 0.31% over three sessions and outperformed SPY by 1.77 percentage points over five sessions.",
+        "June core CPI was unchanged and payroll growth slowed to 57,000.",
+        "The 10-year Treasury yield remained elevated at 4.55%."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.1,
+      "forecast_low_pct": -0.7,
+      "invalidation_condition": "The 10-year Treasury yield rises materially above its July 17 level of 4.55%.",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Elevated PCE and import-price inflation could push yields higher and reverse the bond gain.",
+      "time_window_catalyst": "July 21 state employment and unemployment data may alter near-term growth and rate expectations."
+    },
+    {
+      "continuation_case": "The positive trend persists independently of broad equity weakness, though briefing support is limited to mechanical market data.",
+      "decision": "rejected",
+      "evidence": [
+        "Agriculture outperformed SPY by 1.80 percentage points over five sessions.",
+        "Prior 16-session active return was positive 3.29%.",
+        "Its 63-session SPY correlation was approximately zero, but no agriculture-specific catalyst was supplied."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Agriculture posts consecutive sessions of negative absolute and SPY-relative returns early in the scoring week.",
+      "option_id": "AGRICULTURE",
+      "reversal_case": "Absent a supplied fundamental catalyst, recent commodity strength could mean-revert.",
+      "time_window_catalyst": "No agriculture-specific scheduled catalyst identified before the exit close."
+    },
+    {
+      "continuation_case": "Persistent relative momentum and an upward-sloping yield curve support bank earnings sentiment.",
+      "decision": "rejected",
+      "evidence": [
+        "Regional banks outperformed SPY by 3.77 percentage points over five sessions.",
+        "Prior 16-session active return was positive 3.22%.",
+        "The Treasury curve was upward sloping from 3.85% at three months to 5.06% at 30 years."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "Regional banks lose their recent relative momentum and underperform SPY after the July 21 labor releases.",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Weak payrolls and high long-term yields may increase credit concerns, while 21-session volatility was 21.12%.",
+      "time_window_catalyst": "July 21 state employment and unemployment data may influence credit-quality and domestic-growth expectations."
+    },
+    {
+      "continuation_case": "Another supportive petroleum inventory reading could extend the abrupt oil-price rally into energy equities.",
+      "decision": "rejected",
+      "evidence": [
+        "Energy outperformed SPY by 6.26 percentage points over five sessions.",
+        "Brent crude rose 4.6% on July 17, while oil exposure gained 14.04% over five sessions.",
+        "EIA forecast a $74 third-quarter Brent average versus an observed $85 June average."
+      ],
+      "forecast_base_pct": -0.45,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Crude oil reverses the July 17 surge or the EIA report shows a materially bearish inventory and supply balance.",
+      "option_id": "ENERGY",
+      "reversal_case": "The sharp recent surge is vulnerable to profit-taking, and EIA's quarterly price forecast is below June's observed average.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22 at 10:30 a.m. ET."
+    }
+  ],
+  "confidence": 0.59,
+  "expected_alpha_vs_sp500_pct": 0.525,
+  "is_official_score": true,
+  "key_risks": [
+    "A sharp broad-market rebound led by technology could cause defensive equities to lag SPY.",
+    "Recent dividend-equity gains could reverse after reaching within 0.39% of their 52-week high.",
+    "Elevated PCE inflation and long-term Treasury yields could revive rate pressure across equities.",
+    "The absence of holding-specific scheduled catalysts makes the forecast dependent on factor rotation persisting."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.65,
+      "invalidation_condition": "Dividend equities surrender their recent relative strength and underperform SPY through the first half of the scoring week.",
+      "option_id": "DIVIDEND",
+      "rationale": "Dividend equities combine strong recent relative performance with a defensive tilt as payroll growth weakens and broad-market breadth deteriorates.",
+      "time_window_catalyst": "Continuation of defensive rotation following cool June CPI, weak payrolls, and deteriorating equity breadth; no sector-specific scheduled release identified."
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Healthcare reverses its established relative trend and underperforms SPY through the first half of the scoring week.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare has sustained benchmark-relative strength across both the latest and prior windows and offers defensive exposure during growth uncertainty.",
+      "time_window_catalyst": "Continued defensive positioning following weak payroll data and negative market breadth; no sector-specific scheduled release identified."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.625,
+  "portfolio_rationale": "The portfolio concentrates equally in two defensive equity exposures with base forecasts above SPY. Dividend equities have strong near-term relative strength, while healthcare adds a longer-running relative trend and separate economic exposure.",
+  "provider": "openai",
+  "rationale_summary": "Cooling monthly inflation, weak payroll growth, and deteriorating breadth favor defensive leadership over concentrated growth exposure for the one-week window. Both holdings must retain their benchmark-relative strength for the thesis to remain valid.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12550,
+    "latency_seconds": 55.6424778138753,
+    "output_tokens": 2852,
+    "reasoning_tokens": 1034,
+    "total_tokens": 15402
+  }
+}

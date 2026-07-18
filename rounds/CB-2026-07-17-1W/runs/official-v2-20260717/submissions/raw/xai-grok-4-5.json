@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Recent weakness extends on soft labor data and growth concerns",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7475.69, down 1.0% for the session and 1.6% for the week",
+        "June CPI decreased 0.4% monthly while core was unchanged",
+        "June nonfarm payrolls rose 57,000 with April-May revisions down 74,000 combined"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.75,
+      "forecast_low_pct": -1.75,
+      "invalidation_condition": "Strong upside reclaiming the weekly loss on improved sentiment",
+      "option_id": "SP500",
+      "reversal_case": "Soft inflation supports risk appetite and a bounce from the down week",
+      "time_window_catalyst": "July 21 BLS state employment data; July 22 EIA petroleum report"
+    },
+    {
+      "continuation_case": "Oil-linked momentum and sector relative strength persist",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY active_return_5s of 6.26% and return_3s of 1.28%",
+        "Brent crude increased 4.6% in the July 17 session",
+        "EIA June Brent average $85 with Q3 forecast average $74"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Crude oil declines sharply or energy underperforms broad market significantly",
+      "option_id": "ENERGY",
+      "reversal_case": "Mean reversion after gains if inventories or the lower EIA forecast weigh on prices",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Defensive dividend profile retains bid under soft growth signals",
+      "decision": "selected",
+      "evidence": [
+        "DIVIDEND return_3s 2.20% and active_return_5s 3.12%",
+        "distance_52w_high of -0.39%",
+        "June retail sales up 0.2% alongside soft CPI"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Dividend sector lags as risk appetite returns strongly",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Broad risk-on rotation into growth reduces demand for yield defensives",
+      "time_window_catalyst": "July 21 BEA and BLS releases"
+    },
+    {
+      "continuation_case": "Rate-sensitive strength continues as soft inflation eases financial-condition concerns",
+      "decision": "selected",
+      "evidence": [
+        "REAL_ESTATE return_3s 2.11% and active_return_5s 3.73%",
+        "distance_52w_high of -0.09%",
+        "10-year Treasury at 4.55% with June CPI soft"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Treasury yields rise materially or XLRE breaks recent gains",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Yield backup or growth scare reverses the recent outperformance",
+      "time_window_catalyst": "July 21 data releases potentially affecting rate expectations"
+    },
+    {
+      "continuation_case": "Bank momentum holds with stable labor backdrop and relative financial strength",
+      "decision": "selected",
+      "evidence": [
+        "REGIONAL_BANKS return_3s 2.25% and active_return_5s 3.77%",
+        "prior_16s_active_return of 3.22%",
+        "Unemployment at 4.2% with soft but positive payrolls"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "KRE declines on negative banking or macro headlines",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Soft data raises credit-quality fears that reverse regional-bank gains",
+      "time_window_catalyst": "July 21 BLS state employment and unemployment data"
+    },
+    {
+      "continuation_case": "Defensive healthcare bid persists amid mixed macro signals",
+      "decision": "rejected",
+      "evidence": [
+        "HEALTHCARE return_3s 1.77% and active_return_5s 1.70%",
+        "prior_16s_active_return of 4.75%",
+        "Core CPI at 2.6% year-over-year"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Healthcare lags SPY on broad market strength",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation reduces preference for defensive sectors",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Crude momentum extends on near-term supply-demand dynamics",
+      "decision": "rejected",
+      "evidence": [
+        "OIL return_5s 14.04% and active_return_5s 15.58%",
+        "Brent crude increased 4.6% on July 17",
+        "EIA forecasts Q3 Brent average $74 after June $85 average"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "USO drops on bearish inventory or demand data",
+      "option_id": "OIL",
+      "reversal_case": "High volatility and lower EIA price path trigger profit-taking after the large run-up",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Staples defensive characteristics retain support under soft inflation and mixed consumer data",
+      "decision": "rejected",
+      "evidence": [
+        "CONSUMER_STAPLES return_3s 2.12% and active_return_5s 2.82%",
+        "distance_52w_high of -4.16%",
+        "June retail and food-services sales up 0.2% month-over-month"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "XLP underperforms on rotation away from defensives",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Stronger risk appetite or consumer rebound reduces staples premium",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 1.01,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp oil price reversal on the July 22 EIA report hitting energy allocation",
+    "Broad risk-on rebound rotating back into growth and away from value/defensives",
+    "Treasury yield spike reversing rate-sensitive real estate gains",
+    "Credit or labor-data disappointment pressuring regional banks"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Crude oil declines sharply or energy underperforms broad market significantly",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent active returns and oil price strength support higher base-case weekly return than SPY amid pending petroleum data",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "KRE declines on negative banking or macro headlines",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "Persistent active outperformance and financial sector resilience with soft but stable labor data",
+      "time_window_catalyst": "July 21 BLS state employment and unemployment data"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Treasury yields rise materially or XLRE breaks recent gains",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Near 52-week highs with rate-sensitive tailwinds from soft CPI reading",
+      "time_window_catalyst": "July 21 data releases potentially affecting rate expectations"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Dividend sector lags as risk appetite returns strongly",
+      "option_id": "DIVIDEND",
+      "rationale": "Defensive dividend strength and low distance to highs favored by soft growth signals",
+      "time_window_catalyst": "July 21 BEA and BLS releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.31,
+  "portfolio_rationale": "Portfolio overweights recent relative strength in energy, regional banks, real estate and dividends, which carry base forecasts above SPY amid soft inflation and labor data that favor rotation from growth; one-week catalysts are limited and support continuation cases.",
+  "provider": "xai",
+  "rationale_summary": "Soft US CPI, mixed growth signals and recent active outperformance favor energy plus defensive/value exposures over market-cap SPY for the scoring week.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 13554,
+    "latency_seconds": 131.55971586005762,
+    "output_tokens": 2435,
+    "reasoning_tokens": 6666,
+    "total_tokens": 22655
+  }
+}

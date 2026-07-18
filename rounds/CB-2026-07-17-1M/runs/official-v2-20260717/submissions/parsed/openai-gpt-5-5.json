@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.7,
+  "candidate_ledger": [
+    {
+      "continuation_case": "A modest rebound could follow if soft June CPI and stable retail sales support expectations for easier policy without recessionary data.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.0% on July 17 and down 1.6% for the week.",
+        "SPY return was -1.54% over 5 sessions and -0.68% over 21 sessions.",
+        "SPY volatility over 63 sessions was 13.13% with a -4.49% 63-session max drawdown."
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Reject the base case if SP500 breaks materially below recent drawdown levels or if July data show both hotter inflation and weaker growth.",
+      "option_id": "SP500",
+      "reversal_case": "Weak payroll growth, downward revisions, and negative breadth could persist and keep pressure on market-cap-weighted equities.",
+      "time_window_catalyst": "FOMC meeting, Q2 GDP, July employment, and July CPI/PPI before the exit close."
+    },
+    {
+      "continuation_case": "Relative strength in smaller value names can continue if softer CPI and upcoming Fed communication support broader participation beyond mega-cap growth.",
+      "decision": "selected",
+      "evidence": [
+        "SMALL_VALUE returned 1.08% over 5 sessions and had 3.52% active return over 21 sessions.",
+        "Prior 105-session active return was 3.34%.",
+        "Distance from 52-week high was -0.82%, with beta to SPY of 1.015."
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 5.2,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Reject if July employment or credit data show clear domestic growth deterioration or if small value loses its recent relative strength versus SP500.",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Domestic growth concerns from payrolls or credit conditions could disproportionately hurt smaller companies.",
+      "time_window_catalyst": "FOMC meeting, Q2 GDP, July employment, and July CPI/PPI before the exit close could support broader cyclical participation if growth holds and inflation cools."
+    },
+    {
+      "continuation_case": "Low-beta dividend exposure may keep attracting flows if market breadth remains weak and inflation data reduce rate pressure.",
+      "decision": "selected",
+      "evidence": [
+        "DIVIDEND returned 1.57% over 5 sessions and had 2.66% active return over 21 sessions.",
+        "Prior 105-session active return was 3.98%.",
+        "SPY correlation was 0.315 and beta was 0.276, with distance from 52-week high at -0.39%."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Reject if Treasury yields rise sharply after FOMC or inflation releases and dividend equities break below recent relative strength.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "A sharp risk-on rebound in high-beta growth could leave dividend stocks lagging SP500.",
+      "time_window_catalyst": "FOMC communication and July CPI/PPI could support lower-volatility, income-oriented equities if rate pressure eases."
+    },
+    {
+      "continuation_case": "Recent relative rebound can continue if investors rotate toward defensive sectors amid softer labor data and uncertain growth.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE had 6.48% active return over 21 sessions.",
+        "It returned 0.16% over 5 sessions while SPY declined over the same period.",
+        "SPY beta was 0.327 and distance from 52-week high was -2.04%."
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.6,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "Reject if healthcare reverses its 21-session outperformance or broad risk appetite rotates decisively back into high-beta growth.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "The 21-session outperformance may mean near-term gains are extended, especially if risk appetite shifts back to growth stocks.",
+      "time_window_catalyst": "July employment, CPI/PPI, and broader risk rotation before exit could favor lower-beta sectors if growth uncertainty persists."
+    },
+    {
+      "continuation_case": "Stable growth, decent retail sales, and a still-elevated rate structure can support financial earnings sentiment if credit concerns do not worsen.",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS returned 0.99% over 5 sessions and had 4.56% active return over 21 sessions.",
+        "Distance from 52-week high was -0.86%.",
+        "SPY beta was 0.650 with 63-session volatility of 13.17%."
+      ],
+      "forecast_base_pct": 1.25,
+      "forecast_high_pct": 4.8,
+      "forecast_low_pct": -3.2,
+      "invalidation_condition": "Reject if loan survey or labor data point to material credit deterioration or if the yield curve/rate outlook turns sharply adverse for financials.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak labor data, loan tightening, or adverse rate-curve moves could quickly reverse the recent financials rally.",
+      "time_window_catalyst": "FOMC, Q2 GDP, Senior Loan Officer Survey, and July labor data are direct near-term catalysts for banks and financial conditions."
+    },
+    {
+      "continuation_case": "Oil-linked strength can persist if crude prices and inventory data continue to surprise positively over the scoring window.",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY returned 4.72% over 5 sessions and had 5.63% active return over 21 sessions.",
+        "Prior 105-session active return was 6.96%.",
+        "Brent crude increased 4.6% in the July 17 market session, while EIA forecast a lower third-quarter average than June."
+      ],
+      "forecast_base_pct": 1.15,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -5.5,
+      "invalidation_condition": "Reject if crude oil gives back the recent breakout or inventory/supply data confirm the EIA forecast of lower third-quarter Brent prices.",
+      "option_id": "ENERGY",
+      "reversal_case": "The EIA forecast for lower third-quarter Brent and high energy volatility create risk that the recent move fades.",
+      "time_window_catalyst": "EIA weekly petroleum reports and oil price follow-through after Brent and crude-related strength before the exit close."
+    },
+    {
+      "continuation_case": "Softer monthly CPI and FOMC communication could support rate-sensitive real estate if yields ease.",
+      "decision": "rejected",
+      "evidence": [
+        "REAL_ESTATE returned 2.18% over 5 sessions and had 2.28% active return over 21 sessions.",
+        "Distance from 52-week high was -0.09%.",
+        "SPY beta was 0.285, but the exposure is rate sensitive."
+      ],
+      "forecast_base_pct": 1.05,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Reject if long yields rise materially or real estate falls back from its near-52-week-high level.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "The 10-year Treasury yield at 4.55% and 30-year yield at 5.06% leave real estate vulnerable to renewed rate pressure.",
+      "time_window_catalyst": "FOMC statement, July CPI/PPI, and Treasury yield moves before the exit close."
+    },
+    {
+      "continuation_case": "Niche growth leadership could continue if cybersecurity maintains relative strength while broader technology stabilizes.",
+      "decision": "rejected",
+      "evidence": [
+        "CYBERSECURITY had 9.33% active return over 21 sessions and 8.70% prior 105-session active return.",
+        "It returned 0.52% over 5 sessions while many technology-and-growth exposures fell.",
+        "63-session volatility was 32.46%, and beta to SPY was 1.091."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.5,
+      "invalidation_condition": "Reject if cybersecurity loses its 21-session relative strength or broader technology drawdowns deepen.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High volatility and weakness across technology-and-growth peers raise the risk of a growth-sector reversal or catch-down.",
+      "time_window_catalyst": "Broad risk appetite around FOMC, employment, CPI/PPI, and technology-sector sentiment before exit."
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.57,
+  "is_official_score": true,
+  "key_risks": [
+    "A rapid rebound in mega-cap technology and growth stocks could make SP500 outperform the selected value and defensive tilts.",
+    "July CPI/PPI or FOMC communication could lift yields and pressure dividend, healthcare, financial, and small-value exposures.",
+    "Energy could reverse sharply if EIA inventory data or demand expectations validate the forecast for lower third-quarter Brent prices.",
+    "Weak July employment, GDP, or loan survey data could hurt cyclical small-value and financial holdings."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Reject if July employment or credit data show clear domestic growth deterioration or if small value loses its recent relative strength versus SP500.",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Small-cap value has positive short-term and medium-term active performance versus SP500, lower drawdown than several high-beta growth areas, and can benefit if softer CPI supports broader market breadth.",
+      "time_window_catalyst": "FOMC meeting, Q2 GDP, July employment, and July CPI/PPI before the exit close could support broader cyclical participation if growth holds and inflation cools."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Reject if Treasury yields rise sharply after FOMC or inflation releases and dividend equities break below recent relative strength.",
+      "option_id": "DIVIDEND",
+      "rationale": "Dividend equities show resilient recent gains, low beta to SP500, and near-52-week-high price context, offering defensive equity participation in a choppy one-month window.",
+      "time_window_catalyst": "FOMC communication and July CPI/PPI could support lower-volatility, income-oriented equities if rate pressure eases."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Reject if healthcare reverses its 21-session outperformance or broad risk appetite rotates decisively back into high-beta growth.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare has strong 21-session active return and moderate SP500 beta, giving defensive sector exposure with improving short-term relative performance.",
+      "time_window_catalyst": "July employment, CPI/PPI, and broader risk rotation before exit could favor lower-beta sectors if growth uncertainty persists."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.25,
+      "invalidation_condition": "Reject if loan survey or labor data point to material credit deterioration or if the yield curve/rate outlook turns sharply adverse for financials.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials have positive recent absolute and active returns, are close to their 52-week high, and can benefit from stable growth and a still-positive rate environment.",
+      "time_window_catalyst": "FOMC, Q2 GDP, Senior Loan Officer Survey, and July labor data are direct near-term catalysts for banks and financial conditions."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.15,
+      "invalidation_condition": "Reject if crude oil gives back the recent breakout or inventory/supply data confirm the EIA forecast of lower third-quarter Brent prices.",
+      "option_id": "ENERGY",
+      "rationale": "Energy has strong recent and prior-window active performance, independent correlation characteristics versus SP500, and near-term oil-market catalysts, while capped due to volatility and reversal risk.",
+      "time_window_catalyst": "EIA weekly petroleum reports and oil price follow-through after Brent and crude-related strength before the exit close."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.27,
+  "portfolio_rationale": "The portfolio avoids the recently weak mega-cap growth complex and emphasizes value, dividend, healthcare, financials, and energy exposures with bases above the SP500 forecast. It spans multiple clusters and keeps diversified US equity exposure below the 50% non-SP500 cap.",
+  "provider": "openai",
+  "rationale_summary": "SP500 has pulled back with weak breadth and softer labor data, while value, dividend, healthcare, financials, and energy show better recent relative performance with identifiable one-month catalysts. The portfolio targets breadth continuation and sector rotation rather than a rebound in the most crowded technology leaders.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12727,
+    "latency_seconds": 36.64360399893485,
+    "output_tokens": 2933,
+    "reasoning_tokens": 331,
+    "total_tokens": 15660
+  }
+}

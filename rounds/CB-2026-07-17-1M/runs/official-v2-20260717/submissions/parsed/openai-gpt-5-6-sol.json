@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.45,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Flat monthly core CPI and resilient retail sales could stabilize valuations and permit a broad-market rebound after the weekly decline.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY returned -1.54% over five sessions and -0.68% over 21 sessions.",
+        "Equal-weight SPY outperformed by 1.64 percentage points over 21 sessions, indicating rotation away from cap-weight concentration.",
+        "June payrolls rose only 57,000 and prior months were revised down by 74,000."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "SPY regains its prior high with improving breadth and begins outperforming equal-weight and defensive equities.",
+      "option_id": "SP500",
+      "reversal_case": "Weak breadth, slowing employment, elevated PCE inflation, and high long-term yields could extend the decline.",
+      "time_window_catalyst": "The July 29 FOMC meeting, advance second-quarter GDP, July employment report, and August CPI/PPI releases fall before exit."
+    },
+    {
+      "continuation_case": "Defensive rotation can persist if softer labor conditions coexist with gradual inflation improvement.",
+      "decision": "selected",
+      "evidence": [
+        "Dividend equities outperformed SPY by 2.66 percentage points over 21 sessions and rose 1.57% over five sessions.",
+        "Observed 63-session volatility was 11.92%, below SPY's 13.13%.",
+        "June payroll growth was 57,000 with downward revisions totaling 74,000."
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.8,
+      "invalidation_condition": "Dividend equities begin underperforming SPY while July inflation or employment data materially revive expectations for tighter policy.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "A sharp risk-on rebound led by mega-cap growth could leave mature dividend companies behind.",
+      "time_window_catalyst": "The July 29 FOMC decision and August 12-13 CPI/PPI releases could sustain rotation toward defensive, income-oriented equities."
+    },
+    {
+      "continuation_case": "A positively sloped Treasury curve and stable policy rates can support net-interest-margin expectations and continued rotation into financials.",
+      "decision": "selected",
+      "evidence": [
+        "Regional banks outperformed SPY by 7.10 percentage points over 21 sessions and gained 2.23% over five sessions.",
+        "The 10-year Treasury yield was 4.55%, above the 3.85% three-month yield.",
+        "The Fed held its target range at 3.5% to 3.75%."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "The yield curve flattens materially or the loan-officer survey and credit data indicate a sharp deterioration in lending or asset quality.",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Weak payrolls may foreshadow credit deterioration, deposit pressure, or weaker loan demand that overwhelms curve benefits.",
+      "time_window_catalyst": "The July 29 FOMC meeting and August Senior Loan Officer Opinion Survey can reprice net-interest-margin and credit expectations."
+    },
+    {
+      "continuation_case": "Slower employment growth and weak market breadth can maintain demand for defensive healthcare earnings.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare outperformed SPY by 6.48 percentage points over 21 sessions.",
+        "Its five-session return remained positive at 0.16% despite SPY's 1.54% decline.",
+        "Prior 105-session active return was -11.70%, leaving both catch-up potential and reversal uncertainty."
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Healthcare loses its positive active trend and materially underperforms SPY following the scheduled macro releases.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "The sharp 21-session outperformance may mean-revert, especially if growth equities rebound after their selloff.",
+      "time_window_catalyst": "The July 29 FOMC meeting and August labor and inflation releases could reinforce demand for defensive earnings exposure."
+    },
+    {
+      "continuation_case": "Further evidence of monthly disinflation could lower expected rates and extend demand for rate-sensitive real estate.",
+      "decision": "selected",
+      "evidence": [
+        "Real estate gained 2.18% over five sessions and outperformed SPY by 2.28 percentage points over 21 sessions.",
+        "It was only 0.09% below its 52-week high.",
+        "Core CPI was unchanged in June, although the 10-year Treasury yield remained elevated at 4.55%."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "The 10-year Treasury yield rises materially above 4.55% and real estate breaks its recent benchmark-relative uptrend.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Sticky PCE inflation or an upside CPI surprise could push long yields higher and reverse the near-high breakout.",
+      "time_window_catalyst": "The July 29 FOMC decision and August 12 CPI release can lower rate expectations and support rate-sensitive real estate equities."
+    },
+    {
+      "continuation_case": "Recent crude-price strength and positive medium-term energy momentum could persist if weekly data show tight supply or inventories.",
+      "decision": "selected",
+      "evidence": [
+        "Energy rose 4.72% over five sessions and outperformed SPY by 5.63 percentage points over 21 sessions.",
+        "Brent crude increased 4.6% in the July 17 session.",
+        "The EIA forecast a $74 third-quarter Brent average versus $85 in June."
+      ],
+      "forecast_base_pct": 0.95,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -10.0,
+      "invalidation_condition": "Crude reverses its July surge and moves toward the EIA's $74 third-quarter Brent forecast while energy begins underperforming SPY.",
+      "option_id": "ENERGY",
+      "reversal_case": "The EIA's substantially lower quarterly price forecast creates a clear risk that the latest oil surge reverses.",
+      "time_window_catalyst": "Weekly EIA petroleum reports through the scoring window can confirm tight inventories or continued crude-price strength."
+    },
+    {
+      "continuation_case": "Weak payrolls and benign monthly CPI could pull long yields lower and produce duration gains.",
+      "decision": "rejected",
+      "evidence": [
+        "Long Treasuries lost 0.89 percentage points relative to SPY over 21 sessions and were 5.19% below their 52-week high.",
+        "The 30-year Treasury yield was 5.06%.",
+        "Monthly core CPI was unchanged, but core PCE inflation was 3.4% year over year."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "The 30-year yield rises above 5.06% after the scheduled inflation or policy releases.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated PCE inflation and the Fed's upside inflation-risk assessment could keep term yields high or push them higher.",
+      "time_window_catalyst": "The July 29 FOMC meeting, advance GDP, July employment report, and August CPI/PPI releases can materially move long yields."
+    },
+    {
+      "continuation_case": "Positive short-, medium-, and prior-period relative performance could continue if growth risk appetite stabilizes.",
+      "decision": "rejected",
+      "evidence": [
+        "Cybersecurity outperformed SPY by 9.33 percentage points over 21 sessions and had an 8.70% prior 105-session active return.",
+        "Its five-session return was 0.52%.",
+        "Observed 63-session volatility was elevated at 32.46%; no independent cybersecurity catalyst was supplied."
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Cybersecurity loses its positive five-session trend and its 21-session active return falls sharply toward zero.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High volatility and the absence of a supplied fundamental catalyst leave the strong active return vulnerable to profit-taking.",
+      "time_window_catalyst": "No sector-specific catalyst was identified; broad sensitivity centers on the July 29 FOMC meeting and scheduled macro releases."
+    }
+  ],
+  "confidence": 0.59,
+  "expected_alpha_vs_sp500_pct": 0.7725,
+  "is_official_score": true,
+  "key_risks": [
+    "A renewed inflation surprise could lift long yields and pressure dividend, healthcare, and real-estate exposures.",
+    "Weak July employment, lending, or credit data could reverse regional-bank gains.",
+    "Crude oil could rapidly retrace toward the EIA's lower third-quarter forecast.",
+    "Mega-cap technology could rebound sharply, causing SPY to outperform the portfolio's defensive and value tilts."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Dividend equities begin underperforming SPY while July inflation or employment data materially revive expectations for tighter policy.",
+      "option_id": "DIVIDEND",
+      "rationale": "Defensive equity exposure combines positive relative momentum with lower observed volatility amid weakening labor data and narrow market breadth.",
+      "time_window_catalyst": "The July 29 FOMC decision and August 12-13 CPI/PPI releases could sustain rotation toward defensive, income-oriented equities."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "The yield curve flattens materially or the loan-officer survey and credit data indicate a sharp deterioration in lending or asset quality.",
+      "option_id": "REGIONAL_BANKS",
+      "rationale": "Strong benchmark-relative momentum and a positively sloped Treasury curve provide a favorable one-month setup, with lending conditions offering a direct catalyst.",
+      "time_window_catalyst": "The July 29 FOMC meeting and August Senior Loan Officer Opinion Survey can reprice net-interest-margin and credit expectations."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Healthcare loses its positive active trend and materially underperforms SPY following the scheduled macro releases.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare offers defensive exposure supported by recent broad outperformance, while the modest allocation recognizes reversal risk after a sharp monthly move.",
+      "time_window_catalyst": "The July 29 FOMC meeting and August labor and inflation releases could reinforce demand for defensive earnings exposure."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "The 10-year Treasury yield rises materially above 4.55% and real estate breaks its recent benchmark-relative uptrend.",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Near-high price behavior and positive active return could extend if flat monthly core CPI leads markets to discount lower future rates.",
+      "time_window_catalyst": "The July 29 FOMC decision and August 12 CPI release can lower rate expectations and support rate-sensitive real estate equities."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.95,
+      "invalidation_condition": "Crude reverses its July surge and moves toward the EIA's $74 third-quarter Brent forecast while energy begins underperforming SPY.",
+      "option_id": "ENERGY",
+      "rationale": "Energy has positive short- and medium-term relative momentum supported by the latest Brent surge, balanced against a bearish quarterly oil forecast.",
+      "time_window_catalyst": "Weekly EIA petroleum reports through the scoring window can confirm tight inventories or continued crude-price strength."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.2225,
+  "portfolio_rationale": "The portfolio favors defensive equity, financial, rate-sensitive, and energy exposures that have recently outperformed a weakening cap-weighted benchmark. Five distinct clusters limit dependence on any single macro outcome while every active holding has a base forecast above SPY.",
+  "provider": "openai",
+  "rationale_summary": "Soft payrolls and flat monthly core CPI favor defensive and rate-sensitive rotation, while the upward-sloping Treasury curve supports banks. Energy adds a lower-correlation continuation position, but its allocation is limited because the EIA forecasts lower crude prices.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12729,
+    "latency_seconds": 63.67793530295603,
+    "output_tokens": 3871,
+    "reasoning_tokens": 1361,
+    "total_tokens": 16600
+  }
+}

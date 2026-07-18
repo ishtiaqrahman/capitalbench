@@ -1,0 +1,177 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Weak jobs data sustains equity pressure",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.0% on July 17",
+        "June nonfarm payrolls +57k with downward revisions"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "S&P 500 closes above 7550",
+      "option_id": "SP500",
+      "reversal_case": "Lower CPI supports risk-on rotation",
+      "time_window_catalyst": "July 22 EIA report"
+    },
+    {
+      "continuation_case": "Oil inventory data supports further gains",
+      "decision": "selected",
+      "evidence": [
+        "XLE active return 6.26% over 5 sessions",
+        "Brent crude up 4.6% on July 17"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Brent crude falls below $80 per barrel",
+      "option_id": "ENERGY",
+      "reversal_case": "Demand concerns from weak retail sales",
+      "time_window_catalyst": "July 22 EIA Weekly Petroleum Status Report"
+    },
+    {
+      "continuation_case": "Value and small-cap rotation persists",
+      "decision": "selected",
+      "evidence": [
+        "IWN active return 2.62% over 5 sessions",
+        "June CPI ex-food/energy unchanged"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Russell 2000 underperforms SPY by more than 1% intraday",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Growth stocks rebound on soft data",
+      "time_window_catalyst": "July 21 BLS state employment releases"
+    },
+    {
+      "continuation_case": "Defensive tilt benefits from macro softening",
+      "decision": "selected",
+      "evidence": [
+        "SCHD active return 3.12% over 5 sessions",
+        "June CPI down 0.4% monthly"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -0.3,
+      "invalidation_condition": "S&P 500 rallies more than 2% on the week",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Broad market rally on Fed signals",
+      "time_window_catalyst": "July 21 BEA direct-investment data"
+    },
+    {
+      "continuation_case": "Supply tightness persists into July",
+      "decision": "rejected",
+      "evidence": [
+        "USO return 14.04% over 5 sessions",
+        "EIA June Brent average $85"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "USO closes below prior-week low",
+      "option_id": "OIL",
+      "reversal_case": "Weak industrial production signals demand drop",
+      "time_window_catalyst": "July 22 EIA report"
+    },
+    {
+      "continuation_case": "Yield curve steepening aids banks",
+      "decision": "rejected",
+      "evidence": [
+        "XLF active return 2.53% over 5 sessions",
+        "June unemployment 4.2%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLF underperforms SPY by 1.5%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit spreads widen on growth fears",
+      "time_window_catalyst": "July 21 state employment data"
+    },
+    {
+      "continuation_case": "Defensive healthcare holds up",
+      "decision": "rejected",
+      "evidence": [
+        "XLV active return 1.70% over 5 sessions",
+        "Core PCE up 3.4% YoY"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "XLV closes below 200-day moving average",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Biotech rotation accelerates",
+      "time_window_catalyst": "July 21 BLS earnings release"
+    },
+    {
+      "continuation_case": "Lower duration sensitivity aids REITs",
+      "decision": "rejected",
+      "evidence": [
+        "XLRE active return 3.73% over 5 sessions",
+        "10-year Treasury yield 4.55%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLRE drawdown exceeds 2%",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Rates rise on inflation reacceleration",
+      "time_window_catalyst": "July 22 EIA data"
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 1.2,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil price reversal on inventory data",
+    "Broad equity rebound on rate-cut expectations",
+    "Higher-than-expected CPI reacceleration"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Brent crude falls below $80 per barrel",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent active returns and oil price momentum support outperformance versus SPY over the one-week window.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Russell 2000 underperforms SPY by more than 1% intraday",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Positive recent active returns and value tilt benefit from lower CPI and weak payroll data.",
+      "time_window_catalyst": "July 21 BLS state employment releases"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "S&P 500 rallies more than 2% on the week",
+      "option_id": "DIVIDEND",
+      "rationale": "Defensive equity exposure with positive recent active returns amid softening growth data.",
+      "time_window_catalyst": "July 21 BEA direct-investment data"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.7,
+  "portfolio_rationale": "Energy and defensive value exposures show base forecasts exceeding SPY amid recent commodity strength and soft macro data.",
+  "provider": "xai",
+  "rationale_summary": "Allocations favor sectors with highest recent active returns that exceed SPY base case while respecting cluster caps.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12788,
+    "latency_seconds": 27.700554992072284,
+    "output_tokens": 1672,
+    "reasoning_tokens": 748,
+    "total_tokens": 15208
+  }
+}

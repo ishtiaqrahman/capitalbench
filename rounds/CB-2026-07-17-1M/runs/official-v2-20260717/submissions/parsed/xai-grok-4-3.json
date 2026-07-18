@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 1.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Stable growth data supports modest equity gains into August",
+      "decision": "selected",
+      "evidence": [
+        "June CPI -0.4% m/m and 3.5% y/y",
+        "Fed held funds rate at 3.5-3.75%",
+        "SPY closed 7475.69 on July 17"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.1,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "CPI print above 3.8% on August 12",
+      "option_id": "SP500",
+      "reversal_case": "Weaker payroll revisions and rising unemployment pressure risk-off flows",
+      "time_window_catalyst": "FOMC statement July 29 and advance Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Oil price momentum and production data sustain sector outperformance",
+      "decision": "selected",
+      "evidence": [
+        "XLE +4.72% 5-day and +5.63% 21-day active return",
+        "Brent averaged $85 in June with $74 Q3 forecast",
+        "USO +14.04% 5-day return"
+      ],
+      "forecast_base_pct": 3.2,
+      "forecast_high_pct": 5.9,
+      "forecast_low_pct": 0.8,
+      "invalidation_condition": "Brent crude falls below $78",
+      "option_id": "ENERGY",
+      "reversal_case": "Sharp inventory build or demand slowdown reverses gains",
+      "time_window_catalyst": "EIA weekly petroleum report July 22 and Brent price stability"
+    },
+    {
+      "continuation_case": "Stable rate environment supports bank net interest margins",
+      "decision": "selected",
+      "evidence": [
+        "XLF +0.99% 5-day and +4.56% 21-day active return",
+        "KRE +2.23% 5-day return",
+        "Average hourly earnings +3.5% y/y"
+      ],
+      "forecast_base_pct": 2.4,
+      "forecast_high_pct": 4.3,
+      "forecast_low_pct": 0.4,
+      "invalidation_condition": "Unemployment rises above 4.5%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit spread widening or regional bank stress emerges",
+      "time_window_catalyst": "FOMC July 29 and Employment Cost Index July 31"
+    },
+    {
+      "continuation_case": "Defensive sector benefits from cooling inflation data",
+      "decision": "selected",
+      "evidence": [
+        "XLV +0.16% 5-day and +6.48% 21-day active return",
+        "June retail sales +0.2% m/m",
+        "Core PCE +3.4% y/y"
+      ],
+      "forecast_base_pct": 2.1,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "Core PCE exceeds 3.6%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Regulatory or reimbursement pressure intensifies",
+      "time_window_catalyst": "JOLTS and productivity data August 5-7"
+    },
+    {
+      "continuation_case": "Dividend equities hold up in mixed growth environment",
+      "decision": "rejected",
+      "evidence": [
+        "SCHD +1.57% 5-day return",
+        "June industrial production +0.1%",
+        "Q1 GDP 2.1% annualized"
+      ],
+      "forecast_base_pct": 1.9,
+      "forecast_high_pct": 3.4,
+      "forecast_low_pct": 0.1,
+      "invalidation_condition": "Russell 2000 underperforms by more than 3%",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Value rotation stalls on growth reacceleration",
+      "time_window_catalyst": "BEA advance Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Lower duration sensitivity aids REITs if rates stabilize",
+      "decision": "rejected",
+      "evidence": [
+        "XLRE +2.18% 5-day return",
+        "10-year Treasury yield 4.55% on July 17",
+        "Capacity utilization 76.1%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "30-year Treasury yield exceeds 5.2%",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Longer-term yields rise on inflation upside surprise",
+      "time_window_catalyst": "July 28-29 FOMC meeting"
+    },
+    {
+      "continuation_case": "Broad commodity basket benefits from energy strength",
+      "decision": "rejected",
+      "evidence": [
+        "PDBC +4.93% 5-day return",
+        "June import prices +0.3%",
+        "EIA natural gas forecast $3.67"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 4.1,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "US dollar index rises above 105",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Global growth data disappoints and demand falls",
+      "time_window_catalyst": "BEA direct-investment data July 21"
+    },
+    {
+      "continuation_case": "Equal-weight benefits from value and small-cap rotation",
+      "decision": "rejected",
+      "evidence": [
+        "RSP -0.43% 5-day return but +1.64% 21-day active",
+        "June nonfarm payrolls +57k with downward revisions",
+        "Labor force participation 61.5%"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "SPY outperforms RSP by more than 2%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap concentration returns on tech rebound",
+      "time_window_catalyst": "BLS July Employment Situation August 7"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.75,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC policy surprise on July 29",
+    "Hotter-than-expected July CPI on August 12",
+    "Energy price reversal if inventories rise sharply"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "CPI print above 3.8% on August 12",
+      "option_id": "SP500",
+      "rationale": "Broad diversified US equity exposure with base forecast exceeding alternatives after hurdle check.",
+      "time_window_catalyst": "FOMC statement July 29 and advance Q2 GDP July 30"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 3.2,
+      "invalidation_condition": "Brent crude falls below $78",
+      "option_id": "ENERGY",
+      "rationale": "Energy sector shows strongest recent momentum and commodity price support within one-month window.",
+      "time_window_catalyst": "EIA weekly petroleum report July 22 and Brent price stability"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 2.4,
+      "invalidation_condition": "Unemployment rises above 4.5%",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials benefit from stable rates and positive regional bank performance.",
+      "time_window_catalyst": "FOMC July 29 and Employment Cost Index July 31"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 2.1,
+      "invalidation_condition": "Core PCE exceeds 3.6%",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare provides defensive tilt with positive 21-day active return.",
+      "time_window_catalyst": "JOLTS and productivity data August 5-7"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.25,
+  "portfolio_rationale": "Portfolio tilts toward energy and financials with higher base forecasts than SPY while maintaining diversification across four clusters.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings clear the SPY base-forecast hurdle; allocations respect 50% cluster cap and 5% increments.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-17-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 12959,
+    "latency_seconds": 23.294400113867596,
+    "output_tokens": 1968,
+    "reasoning_tokens": 661,
+    "total_tokens": 15588
+  }
+}
