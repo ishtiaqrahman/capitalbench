@@ -137,7 +137,9 @@ def accept_run(
             selected_store.upsert_job(row)
 
     if sync_pending:
-        optional_sync_round(round_path, run_id=run_id, event_type="accept_run")
+        # Sync the round selection rather than only the new run so stale rows
+        # from a superseded official run are cleared atomically.
+        optional_sync_round(round_path, event_type="accept_run")
 
     return AutomationSummary(
         status="scheduled" if schedule_resolution else "accepted",

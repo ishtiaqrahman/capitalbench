@@ -82,6 +82,28 @@ def test_accept_run_schedules_resolution_job(tmp_path: Path) -> None:
     assert run_manifest["resolution_due_at_utc"] == "2026-05-11T23:30:00+00:00"
 
 
+def test_accept_run_syncs_round_selection_to_clear_superseded_rows(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    round_path = _copy_due_round(tmp_path)
+    calls: list[tuple[Path, dict[str, Any]]] = []
+
+    def fake_sync(path: Path, **kwargs: Any) -> None:
+        calls.append((path, kwargs))
+
+    monkeypatch.setattr("capitalbench.automation.optional_sync_round", fake_sync)
+
+    accept_run(
+        round_path,
+        run_id="official-round-1-clean",
+        store=FakeAutomationStore(),
+        sync_pending=True,
+    )
+
+    assert calls == [(round_path, {"event_type": "accept_run"})]
+
+
 def test_accept_run_rejects_invalid_official_run(tmp_path: Path) -> None:
     round_path = _copy_due_round(tmp_path)
     run_manifest_path = round_path / "runs" / "official-round-1-clean" / "run_manifest.yaml"
