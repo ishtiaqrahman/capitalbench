@@ -21,23 +21,35 @@ the 50% non-benchmark economic-exposure cap. Score only the final frozen
 portfolio; retain the candidate ledger for calibration and audit.
 
 The tracked production roster is the complete eight-model roster in
-`configs/models.v2.yaml`. Every official `portfolio-v2.0` run must use all
-enabled models in that canonical file. The runner and acceptance gate reject
-partial rosters; never substitute the four-model pilot roster. Model keys must
-come from local environment files or environment variables and must never be
-committed.
+`configs/models.v2.yaml`: GPT-5.5, GPT-5.6 SOL, Grok 4.3, Grok 4.5, Gemini
+3.1 Pro, Claude Opus 4.8, Claude Opus 4.7, and Claude Fable 5. Every official
+`portfolio-v2.0` run must use all enabled models in that canonical file. The
+runner and acceptance gate reject partial rosters, and a production round is
+incomplete unless every enabled model has one valid submission. Never
+substitute or reuse the separate July 13 four-model pilot roster. Model keys
+must come from local environment files or environment variables and must never
+be committed.
 
-The first official production V2 rounds are:
+The first complete official production V2 rounds are:
 
-- `CB-2026-07-16-1W`, accepted run `official-v2-20260716`, due for resolution
-  after the July 23, 2026 close.
-- `CB-2026-07-16-1M`, accepted run `official-v2-20260716`, due for resolution
-  after the August 14, 2026 close.
+- `CB-2026-07-17-1W`, accepted run
+  `official-v2-all-weekly-final-20260717`, due for resolution after the July
+  24, 2026 close.
+- `CB-2026-07-17-1M`, accepted run `official-v2-all-final-20260717`, due for
+  resolution after the August 17, 2026 close.
 
-Both are primary-stream unresolved rounds. Preserve their frozen research,
-decision context, candidate ledgers, forecasts, portfolios, entry prices, and
-hashes. Resolve them with the normal pricing and scoring pipeline; do not rerun
-or revise them after observing market outcomes.
+Both are primary-stream unresolved rounds and contain all eight production
+models. Preserve their frozen research, decision context, candidate ledgers,
+forecasts, portfolios, entry prices, and hashes. Resolve them with the normal
+pricing and scoring pipeline; do not rerun or revise them after observing
+market outcomes.
+
+The July 16 weekly and monthly V2 runs contain only four of the eight required
+models. They are retained as audit artifacts but are not official-score
+eligible and must not enter latest, cumulative, market-environment, or insight
+calculations. Their resolution jobs are cancelled. Do not add retrospective
+submissions or otherwise repair those partial rounds after their decision
+window.
 
 ## Active Historical Experiment
 

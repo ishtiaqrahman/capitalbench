@@ -467,6 +467,21 @@ def test_google_schema_conversion_strips_unsupported_keywords() -> None:
     assert "additionalProperties" not in converted["properties"]["key_risks"]["items"]
 
 
+def test_google_schema_conversion_omits_only_oversized_enums() -> None:
+    schema = {
+        "type": "object",
+        "properties": {
+            "option_id": {"type": "string", "enum": [f"OPTION_{index}" for index in range(70)]},
+            "decision": {"type": "string", "enum": ["selected", "rejected"]},
+        },
+    }
+
+    converted = _to_google_response_schema(schema)
+
+    assert "enum" not in converted["properties"]["option_id"]
+    assert converted["properties"]["decision"]["enum"] == ["selected", "rejected"]
+
+
 def test_google_provider_disables_thinking_when_requested(monkeypatch) -> None:
     monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
     provider = GoogleProvider()
@@ -568,6 +583,36 @@ def test_google_provider_retries_without_native_schema_after_invalid_argument(mo
     assert "responseSchema" in payloads[0]["generationConfig"]
     assert "responseSchema" not in payloads[1]["generationConfig"]
     assert "Required JSON schema:" in payloads[1]["contents"][0]["parts"][0]["text"]
+
+
+def test_google_provider_uses_thinking_level_for_gemini_3(monkeypatch) -> None:
+    monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
+    provider = GoogleProvider()
+    captured_payload = {}
+    config = _model_config().model_copy(update={"api_model_name": "gemini-3.1-pro-preview"})
+    raw_json = (
+        '{"round_id":"example-round","model_id":"openai-smoke","provider":"openai",'
+        '"mode":"closed_capability","selected_option_id":"SP500","confidence":0.5,'
+        '"rationale_summary":"Test","key_risks":["Risk"]}'
+    )
+
+    def fake_post(url, headers, payload, timeout):
+        captured_payload.update(payload)
+        return {
+            "candidates": [{"content": {"parts": [{"text": raw_json}]}}],
+            "usageMetadata": {"promptTokenCount": 1, "candidatesTokenCount": 1, "totalTokenCount": 2},
+        }
+
+    monkeypatch.setattr(provider, "_post_json", fake_post)
+
+    provider.run_model(
+        config,
+        "prompt",
+        provider_submission_schema(config),
+        RuntimeSettings(timeout_seconds=1, max_output_tokens=500, temperature=0, reasoning_effort="low"),
+    )
+
+    assert captured_payload["generationConfig"]["thinkingConfig"] == {"thinkingLevel": "low"}
 
 
 def test_google_provider_leaves_thinking_default_for_real_runs(monkeypatch) -> None:

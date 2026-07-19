@@ -55,22 +55,22 @@ test("benchmark-set comparison separates roster and round-window changes", () =>
 
   const gpt = result.models.rows.find((row) => row.model_id === "openai-gpt-5-5");
   assert.ok(gpt.baseline.score < 0);
-  assert.ok(gpt.comparison.score > 0);
+  assert.ok(gpt.comparison.score > gpt.baseline.score);
   assert.equal(gpt.windows.same_rounds.round_count, result.rounds.shared.length);
   assert.equal(gpt.windows.baseline_only.round_count, result.rounds.baseline_only.length);
 });
 
-test("waiting sets expose roster progress without pretending performance exists", () => {
+test("forming sets expose early performance without presenting it as established", () => {
   const baseline = benchmarkSets.find((set) => set.set_id === "weekly-set-2026-05-28");
   const waiting = benchmarkSets.find((set) => set.set_id === "weekly-set-2026-07-10");
   const result = buildBenchmarkSetComparison(apiReadModel, baseline, waiting);
   const swapped = buildBenchmarkSetComparison(apiReadModel, waiting, baseline);
 
-  assert.equal(result.comparison.status, "waiting");
-  assert.equal(result.comparison.shared_round_count, 0);
-  assert.equal(result.ranking.similarity, null);
-  assert.match(result.summary, /but not performance/);
-  assert.match(swapped.summary, /but not performance/);
+  assert.equal(result.comparison.status, "forming");
+  assert.equal(result.comparison.shared_round_count, 1);
+  assert.equal(result.comparison.is_qualified, false);
+  assert.match(result.trust_guidance, /more reliable ranking/);
+  assert.match(result.trust_guidance, /needs 5 more/);
   assert.match(swapped.trust_guidance, new RegExp(`Use ${baseline.short_label}`));
   assert.doesNotMatch(swapped.trust_guidance, /established ranking/);
 });

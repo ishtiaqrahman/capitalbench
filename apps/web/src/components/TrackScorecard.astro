@@ -6,6 +6,7 @@ import type {
   TrackScorecardNormalizedRow
 } from "../lib/trackScorecard";
 import { pct } from "../lib/format";
+import { orderedComparableBarWidth } from "../lib/orderedBarScale.js";
 
 interface Props {
   scorecard: TrackScorecardData;
@@ -55,19 +56,10 @@ const averageComparableValues = rankedAverageRows
   .filter(finiteNumber);
 const averageComparableMin = averageComparableValues.length ? Math.min(...averageComparableValues) : 0;
 const averageComparableMax = averageComparableValues.length ? Math.max(...averageComparableValues) : 0;
-const averageComparableRange = averageComparableMax - averageComparableMin;
 
 function averageBarStyle(row: TrackScorecardAverageRow): string {
   if (row.kind === "reference") return "--bar-width: 100%;";
-  if (averageComparableRange <= 0.0001) {
-    const fallbackWidth = row.averageReturn > 0 ? 64 : row.averageReturn < 0 ? 30 : 38;
-    return `--bar-width: ${fallbackWidth.toFixed(2)}%;`;
-  }
-
-  const normalized = valueCoordinate(row.averageReturn, averageComparableMin, averageComparableMax);
-  const minimumWidth = 10;
-  const maximumWidth = averageComparableMax <= 0 ? 48 : averageComparableMin >= 0 ? 88 : 78;
-  const width = minimumWidth + (normalized / 100) * (maximumWidth - minimumWidth);
+  const width = orderedComparableBarWidth(row.averageReturn, averageComparableMin, averageComparableMax);
   return `--bar-width: ${width.toFixed(2)}%;`;
 }
 
@@ -146,7 +138,6 @@ const scoreMobileComparableScores = scoreRows
   .filter(finiteNumber);
 const scoreMobileComparableMin = scoreMobileComparableScores.length ? Math.min(...scoreMobileComparableScores) : 0;
 const scoreMobileComparableMax = scoreMobileComparableScores.length ? Math.max(...scoreMobileComparableScores) : 0;
-const scoreMobileComparableRange = scoreMobileComparableMax - scoreMobileComparableMin;
 
 function scoreVerticalBarStyle(value: number): string {
   const endpoint = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
@@ -167,15 +158,7 @@ function scoreValueStyle(value: number): string {
 
 function scoreMobileBarStyle(row: TrackScorecardNormalizedRow): string {
   if (row.kind === "reference") return "width: 100%;";
-  if (scoreMobileComparableRange <= 0.0001) {
-    const fallbackWidth = row.averageScore > 0 ? 64 : row.averageScore < 0 ? 30 : 38;
-    return `width: ${fallbackWidth.toFixed(2)}%;`;
-  }
-
-  const normalized = valueCoordinate(row.averageScore, scoreMobileComparableMin, scoreMobileComparableMax);
-  const minimumWidth = 10;
-  const maximumWidth = scoreMobileComparableMax <= 0 ? 48 : scoreMobileComparableMin >= 0 ? 88 : 78;
-  const width = minimumWidth + (normalized / 100) * (maximumWidth - minimumWidth);
+  const width = orderedComparableBarWidth(row.averageScore, scoreMobileComparableMin, scoreMobileComparableMax);
   return `width: ${width.toFixed(2)}%;`;
 }
 

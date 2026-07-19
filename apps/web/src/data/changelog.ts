@@ -38,12 +38,12 @@ export const changelogEntries: ChangelogEntry[] = [
       "Each candidate records a return range, supporting facts, continuation and reversal cases, a time-window catalyst, and an observable invalidation condition.",
       "A selected active holding must have a higher base return forecast than the model's S&P 500 forecast, and one non-benchmark exposure group cannot exceed 50% of the portfolio.",
       "Only the final frozen portfolio affects the official result. Candidate forecasts are retained for audit and future calibration.",
-      "The first official V2 weekly and monthly rounds each collected four valid model submissions and remain pending until their scheduled ending prices are available."
+      "The partial July 16 runs are retained for audit but excluded from official scoring. The July 17 weekly and monthly rounds are the first complete V2 rounds and each includes all eight production models."
     ],
     links: [
       { label: "Methodology", href: "/methodology" },
-      { label: "Weekly V2 round", href: "/rounds/CB-2026-07-16-1W" },
-      { label: "Monthly V2 round", href: "/rounds/CB-2026-07-16-1M" }
+      { label: "Weekly V2 round", href: "/rounds/CB-2026-07-17-1W" },
+      { label: "Monthly V2 round", href: "/rounds/CB-2026-07-17-1M" }
     ]
   },
   {

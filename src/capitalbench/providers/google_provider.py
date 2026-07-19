@@ -30,7 +30,10 @@ class GoogleProvider(BaseProvider):
             "responseMimeType": "application/json",
             "responseSchema": _to_google_response_schema(json_schema),
         }
-        thinking_config = _google_thinking_config(runtime_limits.reasoning_effort)
+        thinking_config = _google_thinking_config(
+            model_config.api_model_name,
+            runtime_limits.reasoning_effort,
+        )
         if thinking_config is not None:
             generation_config["thinkingConfig"] = thinking_config
         payload = {
@@ -96,9 +99,21 @@ def _extract_google_text(response: dict[str, Any]) -> str:
     return "\n".join(parts)
 
 
-def _google_thinking_config(reasoning_effort: str | None) -> dict[str, int] | None:
+def _google_thinking_config(
+    api_model_name: str,
+    reasoning_effort: str | None,
+) -> dict[str, int | str] | None:
     if reasoning_effort is None:
         return None
+    if api_model_name.lower().startswith("gemini-3"):
+        levels = {
+            "minimal": "minimal",
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+        }
+        level = levels.get(reasoning_effort)
+        return {"thinkingLevel": level} if level is not None else None
     budgets = {
         "none": 0,
         "minimal": 128,
@@ -122,6 +137,11 @@ def _to_google_response_schema(schema: dict[str, Any]) -> dict[str, Any]:
     converted: dict[str, Any] = {}
     for key, value in schema.items():
         if key in unsupported:
+            continue
+        # Gemini rejects otherwise valid schemas when repeated option enums make
+        # the structured-output grammar too large. CapitalBench validates these
+        # identifiers against the frozen universe after generation.
+        if key == "enum" and isinstance(value, list) and len(value) > 50:
             continue
         if key == "properties" and isinstance(value, dict):
             converted[key] = {

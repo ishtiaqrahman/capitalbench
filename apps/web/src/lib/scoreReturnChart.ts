@@ -7,6 +7,7 @@ import {
 import { allocationThemeClass, formatAllocationPct, optionDisplayName } from "./allocations";
 import { pct } from "./format";
 import type { ResultAllocationRecord, ResultReturnRecord } from "./localRoundRecords";
+import { orderedComparableBarWidth } from "./orderedBarScale.js";
 
 export type ScoreReturnChartRowKind = "model" | "benchmark" | "reference";
 
@@ -217,11 +218,15 @@ export function buildScoreReturnChartData({
   };
   const valueLabelStyle = (value: number | null | undefined) =>
     `bottom: min(calc(${yPosition(value)} + 8px), calc(100% - 22px));`;
+  const comparableValues = [
+    ...leaderboard.map(leaderboardReturn).filter(finiteNumber),
+    ...(finiteNumber(benchmarkReturn) ? [benchmarkReturn] : [])
+  ];
+  const comparableMin = comparableValues.length ? Math.min(...comparableValues) : 0;
+  const comparableMax = comparableValues.length ? Math.max(...comparableValues) : 0;
   const mobileBarStyle = (value: number | null | undefined) => {
     if (!finiteNumber(value)) return "width: 0%;";
-    const zero = coordinate(0);
-    const endpoint = coordinate(value);
-    return `width: ${Math.max(2, Math.abs(endpoint - zero)).toFixed(2)}%;`;
+    return `width: ${orderedComparableBarWidth(value, comparableMin, comparableMax).toFixed(2)}%;`;
   };
   const ticks =
     domainMin < 0
@@ -324,7 +329,7 @@ export function buildScoreReturnChartData({
             : "n/a",
         barStyle: verticalBarStyle(bestResultAsset.return),
         valueStyle: valueLabelStyle(bestResultAsset.return),
-        mobileBarStyle: mobileBarStyle(bestResultAsset.return),
+        mobileBarStyle: "width: 100%;",
         barClass: "score-bar-best-asset",
         columnClass: "score-vertical-column-best-asset",
         holdings: []
