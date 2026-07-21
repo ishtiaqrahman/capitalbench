@@ -1,0 +1,52 @@
+experiment_id: model-quality-hybrid-screen-2026-07-21
+date: 2026-07-21
+status: frozen
+official_score_eligible: false
+publication_stream: private_research
+production_impact: none
+rounds_dir: rounds
+feature_panel: output/historical_decision_context_backfill/feature_panel.csv
+round_summary: output/model_performance_predictability/round_summary.csv
+output_dir: output/model_quality_hybrid_screen
+quality_signal:
+  recent_active_reversal_rank: 0.30
+  prior_active_rank: 0.45
+  low_volatility_rank: 0.15
+  shallow_drawdown_rank: 0.10
+selection:
+  assets: 5
+  weighting: equal
+transformations:
+  quality_sleeve_25:
+    original_weight: 0.75
+    quality_weight: 0.25
+  conviction_quality_union:
+    model_conviction_rank: 0.50
+    quality_rank: 0.50
+    candidates: union_of_model_holdings_and_quality_top5
+    assets: 5
+    weighting: equal
+  within_holdings_quality_tilt:
+    minimum_multiplier: 0.50
+    quality_multiplier: 1.00
+    cash_multiplier: 1.00
+gate:
+  eligible_track: weekly
+  minimum_mean_return_improvement: 0.0075
+  minimum_resulting_alpha: 0.0
+  minimum_pair_improvement_rate: 0.60
+  minimum_positive_model_share: 0.60
+  minimum_holdout_improvement: 0.0
+  minimum_nonoverlap_improvement: 0.0
+  minimum_leave_best_round_out_improvement: 0.0
+  minimum_nonoverlap_rounds: 6
+attribution:
+  spy_regimes:
+    down_max: 0.0
+    up_min: 0.0
+  overlap_buckets: [0, 1, 2, 3, 4, 5]
+interpretation:
+  historical_reuse_can_reject_only: true
+  monthly_diagnostic_only: true
+  passing_hybrid_authorizes: bounded_private_prompt_replay
+  production_change_authorized: false

@@ -1,6 +1,8 @@
 # CapitalBench Portfolio V2.0 Methodology
 
-Status: production default for new portfolio rounds beginning July 17, 2026.
+Status: historical production methodology for rounds initialized from July 17
+through July 20, 2026. New rounds use `portfolio-v2.2`; frozen V2.0 rounds
+retain this methodology unchanged.
 
 ## Adoption Record
 

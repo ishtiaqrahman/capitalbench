@@ -1,0 +1,50 @@
+experiment_id: vnext-symmetric-coverage-replay-2026-07-21
+status: frozen
+official_score_eligible: false
+publication_stream: private_research
+protocol: docs/experiments/vnext-symmetric-coverage-replay-2026-07-21.md
+control_experiment: experiments/vnext-event-ranking-replay-2026-07-21.yaml
+control_output_dir: output/vnext-event-ranking-replay-2026-07-21
+output_dir: output/vnext-symmetric-coverage-replay-2026-07-21
+canonical_report: docs/vnext_symmetric_coverage_replay_report.md
+canonical_summary: research/results/vnext-symmetric-coverage-replay-2026-07-21.json
+models:
+  - google-gemini-3-1-pro
+  - xai-grok-4-5
+  - openai-gpt-5-6-sol
+api_model_overrides:
+  google-gemini-3-1-pro: gemini-3.5-flash
+episodes:
+  - replay_id: V1
+    phase: historical_development
+    round_id: CB-2026-06-17-1W
+    event_register: research/event_registers/CB-2026-06-17-1W.yaml
+  - replay_id: V2
+    phase: historical_development
+    round_id: CB-2026-06-25-1W
+    event_register: research/event_registers/CB-2026-06-25-1W.yaml
+  - replay_id: V3
+    phase: historical_development
+    round_id: CB-2026-07-06-1W
+    event_register: research/event_registers/CB-2026-07-06-1W.yaml
+  - replay_id: V4
+    phase: historical_development
+    round_id: CB-2026-07-13-1W
+    event_register: research/event_registers/CB-2026-07-13-1W.yaml
+treatment: H9
+control_treatment: H4
+max_h9_calls: 12
+max_control_repair_calls: 3
+max_calls: 15
+max_output_tokens: 6000
+transport_retries: 1
+gate:
+  minimum_valid_pairs: 10
+  minimum_mean_effective_return_improvement: 0.005
+  require_positive_treatment_alpha: true
+  minimum_positive_pairs: 7
+  minimum_positive_models: 3
+  minimum_positive_episodes: 3
+  minimum_relative_shortlist_regret_reduction: 0.20
+  require_nonnegative_top3_capture_change: true
+  minimum_worst_episode_alpha_change: 0.0

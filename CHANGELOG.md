@@ -2,6 +2,20 @@
 
 ## 2026-07-21
 
+### Portfolio V2.2 production adoption
+
+- Made `portfolio-v2.2` the default methodology for newly initialized
+  portfolio rounds by explicit operator direction; existing V2.0 rounds stay
+  frozen under their original manifests.
+- Added the Q1 cutoff-safe option-level evidence table with fixed 45/30/15/10
+  prior-trend, recent-pullback, low-volatility, and shallow-drawdown weights.
+- Kept model judgment intact: V2.2 adds information but does not impose Q2's
+  rejected high-score candidate or holding quotas.
+- Added a 90% evidence-coverage guard, separate frozen JSON and Markdown input
+  artifacts, and round hashing for both files.
+- Recorded that the 8-of-9 development result motivated operator adoption but
+  is not prospective validation; V2.2 must be evaluated on fresh resolutions.
+
 ### Durable return-research record
 
 - Added `research/registry.yaml`, a human research index, a recording protocol,
@@ -16,6 +30,18 @@
   and the H8 pairwise stage was not run.
 - Set the no-call July 17 complete-ledger decomposition after the July 24 close
   as the next research gate. Production Portfolio V2.0 remains unchanged.
+- Rejected symmetric fixed-lane coverage after it produced -0.43% treatment
+  alpha, improved only 3 of 8 valid pairs, and worsened shortlist regret by
+  81%.
+- Backfilled V2-style cutoff-safe price features for all 69 symbols and 46
+  resolved rounds. Weekly quality-pullback was the only frozen rule to pass,
+  with +0.28% non-overlapping alpha and a 62.5% beat rate; it is retained only
+  as a fragile private-shadow candidate.
+- Tested compact quality evidence inside four research LLM calls rather than
+  altering portfolios afterward. Q2 initially improved every valid OpenAI/xAI
+  development pair, but unchanged confirmation improved only 3 of 8 valid
+  pairs and 1 of 3 periods, so the treatment was rejected with no production
+  change.
 
 ### July 13 V2 pilot resolution
 

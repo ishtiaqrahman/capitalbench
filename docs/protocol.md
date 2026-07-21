@@ -31,6 +31,7 @@ The public inputs are:
 - `submission_schema.json`, if present: the exact machine-readable response schema
 - `market_data/universe_trailing_returns.md`, for historical V1 rounds: mechanical full-universe price, risk, and benchmark-relative context
 - `market_data/universe_decision_context.md`, for Portfolio V2 rounds: compact horizon-specific full-universe decision context
+- `market_data/universe_quality_evidence.md`, for Portfolio V2.2 rounds: the complete cutoff-safe Q1 option-level evidence table
 
 Before collecting submissions, run `capitalbench hash-round`. This freezes the
 input files by writing SHA256 hashes to `hashes.json`.
@@ -108,7 +109,7 @@ This artifact is factual prompt context. It is not used for scoring, it is not a
 leaderboard, and it should not include commentary. Re-run `hash-round` after
 generating it.
 
-Production `portfolio-v2.0` rounds instead use:
+Production `portfolio-v2.2` rounds use:
 
 ```bash
 capitalbench fetch-universe-decision-context \
@@ -120,6 +121,12 @@ The V2 table is horizon-specific and compact. It separates the latest decision
 window from the preceding window, includes static economic-exposure clusters,
 and retains volatility, drawdown, volume, SPY correlation, SPY beta, and
 52-week position. It is complete and sorted in frozen option order.
+
+V2.2 also generates `market_data/universe_quality_evidence.md` and `.json`.
+That complete option-level Q1 table contains cutoff-safe percentile ranks for
+prior active trend, recent active pullback, low volatility, and shallow
+drawdown plus their fixed 45/30/15/10 score. It is evidence rather than a
+recommendation; models are not required to select high-scoring options.
 
 ## Runs
 
@@ -226,14 +233,19 @@ manifest and are injected into the provider response schema and prompt. This
 keeps the public protocol auditable and lets future methodology versions adjust
 limits without rewriting old rounds.
 
-New portfolio rounds default to `portfolio-v2.0`. In addition to the final
-portfolio, V2 requires a 6-8 option candidate ledger that includes SP500 and at
+New portfolio rounds default to `portfolio-v2.2`. In addition to the final
+portfolio, V2.2 supplies the Q1 option-level evidence table and requires a 6-8
+option candidate ledger that includes SP500 and at
 least four static economic-exposure clusters. Candidate rows retain low, base,
 and high forecasts; evidence; continuation and reversal cases; a catalyst; and
 an invalidation condition. Selected non-SP500, non-CASH holdings must have base
 forecasts above the SP500 base forecast, and no non-benchmark economic-exposure
 cluster may exceed 50%. These fields are validated and frozen, but only the
 final portfolio is scored.
+
+See `docs/portfolio_v2_2_methodology.md` for the current input contract.
+Frozen V2.0 rounds retain the historical contract in
+`docs/portfolio_v2_methodology.md`.
 
 ## Submission Rule
 

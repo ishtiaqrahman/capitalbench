@@ -1,11 +1,14 @@
 import csv
+import json
 from datetime import date, timedelta
 from pathlib import Path
 
+import pytest
 import yaml
 
 from capitalbench.decision_context import (
     DECISION_CONTEXT_TITLE,
+    QUALITY_EVIDENCE_TITLE,
     fetch_universe_decision_context,
 )
 from capitalbench.prompting import build_prompt
@@ -137,3 +140,67 @@ def test_production_v2_decision_context_is_compact_and_clustered(tmp_path: Path)
     assert "return_5s" not in row
     assert "as_of_price_date" not in row
     assert "status" not in row
+
+
+def test_portfolio_v2_2_adds_q1_evidence_without_forcing_selection(tmp_path: Path) -> None:
+    round_path = _write_round(tmp_path)
+    manifest_path = round_path / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["methodology_version"] = "portfolio-v2.2"
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+
+    output = fetch_universe_decision_context(
+        round_path=round_path,
+        as_of_date="2026-01-30",
+        fetcher=_history,
+    )
+
+    assert output.quality_json_path is not None
+    assert output.quality_markdown_path is not None
+    report = json.loads(output.quality_json_path.read_text(encoding="utf-8"))
+    assert report["coverage"] == 1.0
+    assert report["weights"] == {
+        "low_volatility_rank": 0.15,
+        "prior_active_rank": 0.45,
+        "recent_active_reversal_rank": 0.30,
+        "shallow_drawdown_rank": 0.10,
+    }
+    assert len(report["rows"]) == 1
+    assert report["rows"][0]["option_id"] == "ASSET"
+    assert report["rows"][0]["quality_evidence_score"] == 0.5
+
+    prompt = build_prompt(round_path)
+    assert prompt.count(QUALITY_EVIDENCE_TITLE) == 1
+    assert prompt.index(QUALITY_EVIDENCE_TITLE) < prompt.index("## Briefing")
+    assert "Use or reject this evidence as you judge appropriate." in prompt
+    assert "ten highest scores" not in prompt
+    assert "final five must include at least two" not in prompt
+
+
+def test_portfolio_v2_2_rejects_incomplete_q1_evidence_at_prompt_time(tmp_path: Path) -> None:
+    round_path = _write_round(tmp_path)
+    manifest_path = round_path / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["methodology_version"] = "portfolio-v2.2"
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    options_path = round_path / "options.yaml"
+    options = yaml.safe_load(options_path.read_text(encoding="utf-8"))
+    options["options"].insert(
+        1,
+        {"option_id": "ASSET_B", "label": "Asset B", "asset_symbol": "BBB"},
+    )
+    options_path.write_text(yaml.safe_dump(options, sort_keys=False), encoding="utf-8")
+
+    def partial_history(symbol: str, start: date, end: date):
+        if symbol == "BBB":
+            raise ValueError("fixture unavailable")
+        return _history(symbol, start, end)
+
+    fetch_universe_decision_context(
+        round_path=round_path,
+        as_of_date="2026-01-30",
+        fetcher=partial_history,
+    )
+
+    with pytest.raises(ValueError, match="coverage is below"):
+        build_prompt(round_path)

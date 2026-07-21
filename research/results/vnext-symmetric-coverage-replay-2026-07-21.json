@@ -1,0 +1,125 @@
+{
+  "decision": "rejected",
+  "experiment_id": "vnext-symmetric-coverage-replay-2026-07-21",
+  "gate": {
+    "abstentions": 1,
+    "mean_effective_return_improvement": 0.000833021030418938,
+    "mean_treatment_alpha_vs_spy": -0.004252116898711364,
+    "passes_gate": false,
+    "positive_episodes": 1,
+    "positive_models": 1,
+    "positive_pairs": 3,
+    "relative_shortlist_regret_reduction": -0.8124126233921052,
+    "scored_at_utc": "2026-07-21T18:27:29+00:00",
+    "top3_capture_change": -1,
+    "valid_pairs": 8,
+    "worst_episode_alpha_change": -0.011551651480645941
+  },
+  "generated_at_utc": "2026-07-21T18:27:30+00:00",
+  "lane_diagnostic": [
+    {
+      "final_selection_share": 0.25,
+      "lane": "alternatives_currencies",
+      "mapped_evidence_share": 1.0,
+      "mean_realized_alpha": 0.003971006538047744,
+      "observations": 8,
+      "positive_alpha_share": 0.75,
+      "top3_capture_count": 0
+    },
+    {
+      "final_selection_share": 0.25,
+      "lane": "benchmark",
+      "mapped_evidence_share": 1.0,
+      "mean_realized_alpha": 0.0,
+      "observations": 8,
+      "positive_alpha_share": 0.0,
+      "top3_capture_count": 0
+    },
+    {
+      "final_selection_share": 1.0,
+      "lane": "domestic_cyclicals",
+      "mapped_evidence_share": 1.0,
+      "mean_realized_alpha": -0.002526820628035581,
+      "observations": 8,
+      "positive_alpha_share": 0.5,
+      "top3_capture_count": 0
+    },
+    {
+      "final_selection_share": 0.5,
+      "lane": "growth_technology",
+      "mapped_evidence_share": 0.75,
+      "mean_realized_alpha": -0.007540253784233716,
+      "observations": 8,
+      "positive_alpha_share": 0.125,
+      "top3_capture_count": 1
+    },
+    {
+      "final_selection_share": 0.0,
+      "lane": "health_defensive",
+      "mapped_evidence_share": 0.5,
+      "mean_realized_alpha": 0.016536651613786743,
+      "observations": 8,
+      "positive_alpha_share": 0.75,
+      "top3_capture_count": 0
+    },
+    {
+      "final_selection_share": 0.25,
+      "lane": "international_equity",
+      "mapped_evidence_share": 0.5,
+      "mean_realized_alpha": -0.02757915648590689,
+      "observations": 8,
+      "positive_alpha_share": 0.125,
+      "top3_capture_count": 0
+    },
+    {
+      "final_selection_share": 0.25,
+      "lane": "rates_credit",
+      "mapped_evidence_share": 1.0,
+      "mean_realized_alpha": -0.0016019677545222322,
+      "observations": 8,
+      "positive_alpha_share": 0.5,
+      "top3_capture_count": 0
+    },
+    {
+      "final_selection_share": 0.75,
+      "lane": "real_assets",
+      "mapped_evidence_share": 1.0,
+      "mean_realized_alpha": -0.010130879674261337,
+      "observations": 8,
+      "positive_alpha_share": 0.5,
+      "top3_capture_count": 0
+    },
+    {
+      "final_selection_share": 0.75,
+      "lane": "us_core_style",
+      "mapped_evidence_share": 1.0,
+      "mean_realized_alpha": 0.0010319392873942845,
+      "observations": 8,
+      "positive_alpha_share": 0.5,
+      "top3_capture_count": 0
+    },
+    {
+      "final_selection_share": 1.0,
+      "lane": "wildcard",
+      "mapped_evidence_share": 1.0,
+      "mean_realized_alpha": 0.02356064194866958,
+      "observations": 8,
+      "positive_alpha_share": 0.5,
+      "top3_capture_count": 4
+    }
+  ],
+  "limitations": [
+    "All four periods are historical development data previously used by related experiments.",
+    "Current models may remember historical outcomes.",
+    "A pass authorizes only a prospective private shadow, not a production change."
+  ],
+  "official_score_eligible": false,
+  "production_impact": "none",
+  "usage": {
+    "calls": 15,
+    "input_tokens": 51362,
+    "output_tokens": 19443,
+    "reasoning_tokens": 11639,
+    "valid_calls": 8
+  }
+}

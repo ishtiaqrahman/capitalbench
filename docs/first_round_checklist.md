@@ -7,7 +7,7 @@ Use this checklist before running a public CapitalBench round.
 - Choose a `round_id`.
 - Create a production portfolio round with
   `capitalbench init-round --round-id <id> --submission-format portfolio`.
-  This defaults to `portfolio-v2.0`; do not downgrade it for a new round.
+  This defaults to `portfolio-v2.2`; do not downgrade it for a new round.
 - Fill in `manifest.yaml`, including decision deadline, horizon, entry rule, and exit rule.
 - Write the briefing using only information available before the deadline.
 - Define the complete option list in `options.yaml`. `capitalbench init-round` defaults to the latest future-round universe, currently `configs/universes/capitalbench_universe_v2_1.yaml`; pass `--universe` only when intentionally using an older or custom universe.
@@ -25,6 +25,9 @@ Use this checklist before running a public CapitalBench round.
 - Confirm `market_data/universe_decision_context.md` is sorted by option order,
   covers all options, uses the horizon-specific profile, and contains no
   recommendations, rankings, or interpretive commentary.
+- Confirm `market_data/universe_quality_evidence.md` and `.json` cover at least
+  90% of active options, use the frozen 45/30/15/10 Q1 formula, remain in
+  option order, and contain no Q2-style selection quotas.
 - Write the exact model prompt in `prompt.md`.
 - Confirm the prompt allows internal learned knowledge and general market priors, while forbidding browsing, tools, live data retrieval, and intentional use of post-cutoff facts.
 - Run `capitalbench hash-round --round rounds/<id>`.
@@ -34,8 +37,9 @@ Use this checklist before running a public CapitalBench round.
 
 - Use the same prompt and round files for every model.
 - Require `mode: closed_capability`.
-- For Portfolio V2, require the 6-8 option candidate ledger and the final 1-5
-  holding portfolio defined in `docs/portfolio_v2_methodology.md`.
+- For Portfolio V2.2, require the Q1 evidence table, 6-8 option candidate
+  ledger, and final 1-5 holding portfolio defined in
+  `docs/portfolio_v2_2_methodology.md`.
 - Choose a unique `run_id` for each collection attempt.
 - Decide which run will be the official public run.
 - Use `--run-type official` for the public leaderboard.

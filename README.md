@@ -457,9 +457,10 @@ ledgers, URLs, and audit material should remain outside `briefing.md`.
 
 Use [`docs/research_prompt_workflow.md`](docs/research_prompt_workflow.md) for
 the Prompt 1, Prompt 2, and Prompt 3 research workflow. Prompt 3 must not paste
-selected mechanical return rows into `final_briefing.md`; the complete
-full-universe price-context appendix is generated separately and appended by the
-prompt builder.
+selected mechanical return rows or V2.2 Q1 quality ranks into
+`final_briefing.md`; the complete Q1 evidence table and full-universe
+price-context appendix are generated separately and inserted by the prompt
+builder.
 
 The final briefing should contain facts, dates, values, forecasts labeled as
 forecasts, scheduled catalysts, and explicit uncertainties from the source

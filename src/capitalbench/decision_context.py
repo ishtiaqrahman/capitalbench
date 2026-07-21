@@ -14,7 +14,7 @@ from typing import Any, Callable
 
 from .exposures import economic_exposure_cluster
 from .io import load_manifest, load_options, write_json
-from .methodology import is_production_portfolio_v2
+from .methodology import is_portfolio_v2_2, is_production_portfolio_v2
 from .scoring import _is_cash_option
 from .universe import TIINGO_API_KEY_ENV, fetch_tiingo_eod_prices
 
@@ -23,6 +23,16 @@ DECISION_CONTEXT_JSON = "universe_decision_context.json"
 DECISION_CONTEXT_MD = "universe_decision_context.md"
 DECISION_CONTEXT_HISTORY_JSON = "decision_context_source_history.json"
 DECISION_CONTEXT_TITLE = "Full-Universe Horizon-Specific Decision Context"
+QUALITY_EVIDENCE_JSON = "universe_quality_evidence.json"
+QUALITY_EVIDENCE_MD = "universe_quality_evidence.md"
+QUALITY_EVIDENCE_TITLE = "Complete Option-Level Quality Evidence"
+QUALITY_EVIDENCE_MINIMUM_COVERAGE = 0.90
+QUALITY_EVIDENCE_WEIGHTS = {
+    "prior_active_rank": 0.45,
+    "recent_active_reversal_rank": 0.30,
+    "low_volatility_rank": 0.15,
+    "shallow_drawdown_rank": 0.10,
+}
 
 HistoryFetcher = Callable[[str, date, date], tuple[list[dict[str, Any]], str]]
 
@@ -36,6 +46,8 @@ class DecisionContextOutput:
     profile: str
     total_options: int
     failed_options: list[str]
+    quality_json_path: Path | None = None
+    quality_markdown_path: Path | None = None
 
 
 def fetch_universe_decision_context(
@@ -54,7 +66,12 @@ def fetch_universe_decision_context(
     json_path = market_data_dir / DECISION_CONTEXT_JSON
     markdown_path = market_data_dir / DECISION_CONTEXT_MD
     history_path = market_data_dir / DECISION_CONTEXT_HISTORY_JSON
+    quality_json_path = market_data_dir / QUALITY_EVIDENCE_JSON
+    quality_markdown_path = market_data_dir / QUALITY_EVIDENCE_MD
+    include_quality_evidence = is_portfolio_v2_2(manifest.methodology_version)
     output_paths = [csv_path, json_path, markdown_path, history_path]
+    if include_quality_evidence:
+        output_paths.extend([quality_json_path, quality_markdown_path])
     if not overwrite:
         existing = [str(path) for path in output_paths if path.exists()]
         if existing:
@@ -101,6 +118,11 @@ def fetch_universe_decision_context(
             )
 
     _add_benchmark_metrics(internal_rows, profile)
+    quality_evidence = (
+        _quality_evidence_report(internal_rows, profile, as_of)
+        if include_quality_evidence
+        else None
+    )
     rows = [_public_row(row, profile, compact=compact) for row in internal_rows]
     market_state = _market_state(internal_rows)
     generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -129,6 +151,12 @@ def fetch_universe_decision_context(
     write_json(json_path, report)
     write_json(history_path, history_report)
     markdown_path.write_text(_render_markdown(report), encoding="utf-8")
+    if quality_evidence is not None:
+        write_json(quality_json_path, quality_evidence)
+        quality_markdown_path.write_text(
+            _render_quality_evidence_markdown(quality_evidence),
+            encoding="utf-8",
+        )
     return DecisionContextOutput(
         csv_path=csv_path,
         json_path=json_path,
@@ -137,6 +165,8 @@ def fetch_universe_decision_context(
         profile=profile,
         total_options=len(rows),
         failed_options=failed_options,
+        quality_json_path=quality_json_path if include_quality_evidence else None,
+        quality_markdown_path=quality_markdown_path if include_quality_evidence else None,
     )
 
 
@@ -295,6 +325,10 @@ def _base_row(option: Any, symbol: str, as_of: date, status: str) -> dict[str, A
         "economic_exposure_cluster": economic_exposure_cluster(option),
         "as_of_date_requested": as_of.isoformat(),
         "status": status,
+        "_is_benchmark": bool(getattr(option, "is_benchmark", False))
+        or str(option.option_id).upper() == "SP500"
+        or str(symbol).upper() == "SPY",
+        "_is_cash": bool(getattr(option, "is_cash", False)),
     }
 
 
@@ -329,6 +363,97 @@ def _add_benchmark_metrics(rows: list[dict[str, Any]], profile: str) -> None:
         pairs = _aligned_return_pairs(_returns_by_date(row.get("_history") or []), benchmark_returns, observations)
         row[f"corr_spy_{observations}s"] = _correlation(pairs)
         row[f"beta_spy_{observations}s"] = _beta(pairs)
+
+
+def _quality_evidence_report(
+    rows: list[dict[str, Any]],
+    profile: str,
+    as_of: date,
+) -> dict[str, Any]:
+    if profile == "weekly":
+        component_fields = {
+            "prior_active_rank": "prior_16s_active_return",
+            "recent_active_reversal_rank": "active_return_5s",
+            "low_volatility_rank": "volatility_21s",
+            "shallow_drawdown_rank": "max_drawdown_21s",
+        }
+    else:
+        component_fields = {
+            "prior_active_rank": "prior_105s_active_return",
+            "recent_active_reversal_rank": "active_return_21s",
+            "low_volatility_rank": "volatility_63s",
+            "shallow_drawdown_rank": "max_drawdown_63s",
+        }
+
+    active_rows = [
+        row
+        for row in rows
+        if not bool(row.get("_is_benchmark")) and not bool(row.get("_is_cash"))
+    ]
+    complete_rows = [
+        row
+        for row in active_rows
+        if row.get("status") == "pass"
+        and all(_number(row.get(field)) is not None for field in component_fields.values())
+    ]
+    ranks = {
+        component: _percentile_ranks(complete_rows, field)
+        for component, field in component_fields.items()
+    }
+    evidence_rows: list[dict[str, Any]] = []
+    for index, row in enumerate(complete_rows):
+        components = {
+            "prior_active_rank": ranks["prior_active_rank"][index],
+            "recent_active_reversal_rank": 1.0 - ranks["recent_active_reversal_rank"][index],
+            "low_volatility_rank": 1.0 - ranks["low_volatility_rank"][index],
+            "shallow_drawdown_rank": ranks["shallow_drawdown_rank"][index],
+        }
+        quality_score = sum(
+            QUALITY_EVIDENCE_WEIGHTS[name] * value
+            for name, value in components.items()
+        )
+        evidence_rows.append(
+            {
+                "option_id": row["option_id"],
+                **components,
+                "quality_evidence_score": quality_score,
+            }
+        )
+    total_active = len(active_rows)
+    coverage = len(evidence_rows) / total_active if total_active else 0.0
+    return {
+        "version": "capitalbench_quality_evidence_v1",
+        "methodology_version": "portfolio-v2.2",
+        "profile": profile,
+        "as_of_date_requested": as_of.isoformat(),
+        "total_active_options": total_active,
+        "complete_options": len(evidence_rows),
+        "coverage": coverage,
+        "minimum_required_coverage": QUALITY_EVIDENCE_MINIMUM_COVERAGE,
+        "weights": QUALITY_EVIDENCE_WEIGHTS,
+        "rows": evidence_rows,
+    }
+
+
+def _percentile_ranks(rows: list[dict[str, Any]], field: str) -> list[float]:
+    if not rows:
+        return []
+    ordered = sorted(
+        ((index, float(row[field])) for index, row in enumerate(rows)),
+        key=lambda item: item[1],
+    )
+    output = [0.0] * len(rows)
+    denominator = max(len(rows) - 1, 1)
+    cursor = 0
+    while cursor < len(ordered):
+        end = cursor + 1
+        while end < len(ordered) and ordered[end][1] == ordered[cursor][1]:
+            end += 1
+        rank = ((cursor + end - 1) / 2.0) / denominator if len(rows) > 1 else 0.5
+        for original_index, _value in ordered[cursor:end]:
+            output[original_index] = rank
+        cursor = end
+    return output
 
 
 def _public_row(row: dict[str, Any], profile: str, *, compact: bool = False) -> dict[str, Any]:
@@ -542,6 +667,52 @@ def _render_markdown(report: dict[str, Any]) -> str:
     )
     for row in report["rows"]:
         lines.append("| " + " | ".join(_format_cell(row.get(column), column) for column in columns) + " |")
+    return "\n".join(lines) + "\n"
+
+
+def _render_quality_evidence_markdown(report: dict[str, Any]) -> str:
+    lines = [
+        f"# {QUALITY_EVIDENCE_TITLE}",
+        "",
+        (
+            "Additional entry-time information follows. This is a complete cross-sectional "
+            "evidence table, not a recommendation or reduced universe."
+        ),
+        "",
+        (
+            "A higher quality evidence score combines a stronger prior relative trend, a deeper "
+            "recent relative pullback, lower volatility, and shallower drawdown. Use or reject "
+            "this evidence as you judge appropriate."
+        ),
+        "",
+        (
+            "All values are entry-date percentile ranks from 0 to 1. The score is frozen at "
+            "45% prior active rank, 30% recent active pullback rank, 15% low-volatility rank, "
+            "and 10% shallow-drawdown rank. No outcome data is included."
+        ),
+        "",
+        f"- Profile: {report['profile']}",
+        f"- As-of date requested: {report['as_of_date_requested']}",
+        f"- Coverage: {int(report['complete_options'])}/{int(report['total_active_options'])}",
+        "",
+        "| option_id | prior active rank | recent pullback rank | low volatility rank | shallow drawdown rank | quality evidence score |",
+        "| --- | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for row in report["rows"]:
+        lines.append(
+            "| "
+            + " | ".join(
+                [
+                    str(row["option_id"]),
+                    f"{float(row['prior_active_rank']):.3f}",
+                    f"{float(row['recent_active_reversal_rank']):.3f}",
+                    f"{float(row['low_volatility_rank']):.3f}",
+                    f"{float(row['shallow_drawdown_rank']):.3f}",
+                    f"{float(row['quality_evidence_score']):.3f}",
+                ]
+            )
+            + " |"
+        )
     return "\n".join(lines) + "\n"
 
 

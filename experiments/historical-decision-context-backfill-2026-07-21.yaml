@@ -1,0 +1,73 @@
+experiment_id: historical-decision-context-backfill-2026-07-21
+date: 2026-07-21
+status: frozen
+official_score_eligible: false
+publication_stream: private_research
+production_impact: none
+input_dataset: output/model_performance_predictability/asset_dataset.csv
+round_dataset: output/model_performance_predictability/round_summary.csv
+output_dir: output/historical_decision_context_backfill
+price_source:
+  preferred: tiingo_eod_adjusted_price_and_volume
+  fallback: yahoo_chart_adjusted_close_and_reported_volume
+  fetch_once_per_symbol: true
+  history_start: 2025-03-01
+  history_end: 2026-07-11
+coverage:
+  minimum_asset_share_per_round: 0.90
+  minimum_round_share_per_track: 0.90
+selection:
+  assets: 5
+  weighting: equal
+  include_sp500_as_candidate: true
+signals:
+  horizon_trend:
+    recent_active_rank: 0.40
+    prior_active_rank: 0.60
+  risk_adjusted_trend:
+    recent_active_rank: 0.25
+    prior_active_rank: 0.45
+    low_volatility_rank: 0.20
+    shallow_drawdown_rank: 0.10
+  quality_pullback:
+    recent_active_reversal_rank: 0.30
+    prior_active_rank: 0.45
+    low_volatility_rank: 0.15
+    shallow_drawdown_rank: 0.10
+  volume_confirmed_trend:
+    recent_active_rank: 0.25
+    prior_active_rank: 0.50
+    volume_rank: 0.15
+    shallow_drawdown_rank: 0.10
+  low_beta_active_strength:
+    recent_active_rank: 0.20
+    prior_active_rank: 0.50
+    low_beta_rank: 0.20
+    shallow_drawdown_rank: 0.10
+weekly_metrics:
+  recent_sessions: 5
+  prior_sessions: 16
+  volatility_sessions: 21
+  correlation_sessions: 63
+  volume_recent_sessions: 5
+  volume_baseline_sessions: 60
+monthly_metrics:
+  recent_sessions: 21
+  prior_sessions: 105
+  volatility_sessions: 63
+  correlation_sessions: 252
+  volume_recent_sessions: 20
+  volume_baseline_sessions: 120
+gate:
+  eligible_track: weekly
+  minimum_feature_coverage: 0.90
+  minimum_nonoverlap_rounds: 6
+  minimum_nonoverlap_alpha: 0.0
+  minimum_nonoverlap_beat_rate: 0.50
+  minimum_discovery_alpha: 0.0
+  minimum_holdout_alpha: 0.0
+  minimum_leave_best_out_alpha: 0.0
+interpretation:
+  historical_replay_can_reject_only: true
+  monthly_diagnostic_only: true
+  pass_authorizes: prospective_private_shadow_only

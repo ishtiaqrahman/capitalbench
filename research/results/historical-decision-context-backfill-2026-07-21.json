@@ -1,0 +1,515 @@
+{
+  "config_sha256": "94fac2067917d59ff79e0c7bc26eaea59676e18d1d65055cd3748ba54feaa349",
+  "coverage": {
+    "monthly": {
+      "eligible_rounds": 16,
+      "round_coverage": 1.0,
+      "total_rounds": 16
+    },
+    "weekly": {
+      "eligible_rounds": 30,
+      "round_coverage": 1.0,
+      "total_rounds": 30
+    }
+  },
+  "decision": "accepted_for_shadow",
+  "experiment_id": "historical-decision-context-backfill-2026-07-21",
+  "generated_at_utc": "2026-07-21T18:37:48+00:00",
+  "official_score_eligible": false,
+  "passing_signals": [
+    "weekly:quality_pullback"
+  ],
+  "production_impact": "none",
+  "results": [
+    {
+      "coverage": {
+        "eligible_rounds": 30,
+        "round_coverage": 1.0,
+        "total_rounds": 30
+      },
+      "discovery": {
+        "beat_rate": 0.38095238095238093,
+        "leave_best_out_alpha": -0.0125772337605,
+        "mean_alpha": -0.009131356875714286,
+        "mean_regret": 0.0940802778852381,
+        "rounds": 21,
+        "top3_capture": 0.42857142857142855
+      },
+      "holdout": {
+        "beat_rate": 0.2222222222222222,
+        "leave_best_out_alpha": -0.01804583864,
+        "mean_alpha": -0.013303308066666667,
+        "mean_regret": 0.1166497795111111,
+        "rounds": 9,
+        "top3_capture": 0.0
+      },
+      "nonoverlap": {
+        "beat_rate": 0.25,
+        "leave_best_out_alpha": -0.01757098076,
+        "mean_alpha": -0.007901335562500002,
+        "mean_regret": 0.097382239975,
+        "rounds": 8,
+        "top3_capture": 0.5
+      },
+      "nonoverlap_round_ids": [
+        "CB-2026-05-24-1W",
+        "CB-2026-05-29-1W",
+        "CB-2026-06-05-1W",
+        "CB-2026-06-13-1W",
+        "CB-2026-06-18-1W",
+        "CB-2026-06-25-1W",
+        "CB-2026-07-02-1W",
+        "CB-2026-07-09-1W"
+      ],
+      "overall": {
+        "beat_rate": 0.3333333333333333,
+        "leave_best_out_alpha": -0.01280256716586207,
+        "mean_alpha": -0.010382942233,
+        "mean_regret": 0.100851128373,
+        "rounds": 30,
+        "top3_capture": 0.3
+      },
+      "passes_gate": false,
+      "signal": "horizon_trend",
+      "track": "weekly"
+    },
+    {
+      "coverage": {
+        "eligible_rounds": 30,
+        "round_coverage": 1.0,
+        "total_rounds": 30
+      },
+      "discovery": {
+        "beat_rate": 0.38095238095238093,
+        "leave_best_out_alpha": -0.0072720146165,
+        "mean_alpha": -0.005802487882380952,
+        "mean_regret": 0.09075140889190476,
+        "rounds": 21,
+        "top3_capture": 0.14285714285714285
+      },
+      "holdout": {
+        "beat_rate": 0.4444444444444444,
+        "leave_best_out_alpha": -0.00843394182,
+        "mean_alpha": -0.005715062195555556,
+        "mean_regret": 0.10906153364,
+        "rounds": 9,
+        "top3_capture": 0.0
+      },
+      "nonoverlap": {
+        "beat_rate": 0.375,
+        "leave_best_out_alpha": -0.009448769117142857,
+        "mean_alpha": -0.0067977306424999995,
+        "mean_regret": 0.09627863505499999,
+        "rounds": 8,
+        "top3_capture": 0.0
+      },
+      "nonoverlap_round_ids": [
+        "CB-2026-05-24-1W",
+        "CB-2026-05-29-1W",
+        "CB-2026-06-05-1W",
+        "CB-2026-06-13-1W",
+        "CB-2026-06-18-1W",
+        "CB-2026-06-25-1W",
+        "CB-2026-07-02-1W",
+        "CB-2026-07-09-1W"
+      ],
+      "overall": {
+        "beat_rate": 0.4,
+        "leave_best_out_alpha": -0.006788822485862069,
+        "mean_alpha": -0.005776260176333333,
+        "mean_regret": 0.09624444631633333,
+        "rounds": 30,
+        "top3_capture": 0.1
+      },
+      "passes_gate": false,
+      "signal": "risk_adjusted_trend",
+      "track": "weekly"
+    },
+    {
+      "coverage": {
+        "eligible_rounds": 30,
+        "round_coverage": 1.0,
+        "total_rounds": 30
+      },
+      "discovery": {
+        "beat_rate": 0.6190476190476191,
+        "leave_best_out_alpha": 0.0024517306671666675,
+        "mean_alpha": 0.004782476996349207,
+        "mean_regret": 0.0801664440131746,
+        "rounds": 21,
+        "top3_capture": 0.6190476190476191
+      },
+      "holdout": {
+        "beat_rate": 0.6666666666666666,
+        "leave_best_out_alpha": -0.0008190661687499998,
+        "mean_alpha": 0.0009112020655555558,
+        "mean_regret": 0.10243526937888889,
+        "rounds": 9,
+        "top3_capture": 0.2222222222222222
+      },
+      "nonoverlap": {
+        "beat_rate": 0.625,
+        "leave_best_out_alpha": -0.003086118392857142,
+        "mean_alpha": 0.002797761138750001,
+        "mean_regret": 0.08668314327375,
+        "rounds": 8,
+        "top3_capture": 0.625
+      },
+      "nonoverlap_round_ids": [
+        "CB-2026-05-24-1W",
+        "CB-2026-05-29-1W",
+        "CB-2026-06-05-1W",
+        "CB-2026-06-13-1W",
+        "CB-2026-06-18-1W",
+        "CB-2026-06-25-1W",
+        "CB-2026-07-02-1W",
+        "CB-2026-07-09-1W"
+      ],
+      "overall": {
+        "beat_rate": 0.6333333333333333,
+        "leave_best_out_alpha": 0.0019736355839080465,
+        "mean_alpha": 0.003621094517111112,
+        "mean_regret": 0.0868470916228889,
+        "rounds": 30,
+        "top3_capture": 0.5
+      },
+      "passes_gate": true,
+      "signal": "quality_pullback",
+      "track": "weekly"
+    },
+    {
+      "coverage": {
+        "eligible_rounds": 30,
+        "round_coverage": 1.0,
+        "total_rounds": 30
+      },
+      "discovery": {
+        "beat_rate": 0.5238095238095238,
+        "leave_best_out_alpha": -0.008462943906999998,
+        "mean_alpha": -0.005996183688571427,
+        "mean_regret": 0.09094510469809523,
+        "rounds": 21,
+        "top3_capture": 0.5714285714285714
+      },
+      "holdout": {
+        "beat_rate": 0.1111111111111111,
+        "leave_best_out_alpha": -0.0138049099225,
+        "mean_alpha": -0.011489892493333334,
+        "mean_regret": 0.11483636393777778,
+        "rounds": 9,
+        "top3_capture": 0.0
+      },
+      "nonoverlap": {
+        "beat_rate": 0.25,
+        "leave_best_out_alpha": -0.015777253914285715,
+        "mean_alpha": -0.008595082927499999,
+        "mean_regret": 0.09807598734,
+        "rounds": 8,
+        "top3_capture": 0.375
+      },
+      "nonoverlap_round_ids": [
+        "CB-2026-05-24-1W",
+        "CB-2026-05-29-1W",
+        "CB-2026-06-05-1W",
+        "CB-2026-06-13-1W",
+        "CB-2026-06-18-1W",
+        "CB-2026-06-25-1W",
+        "CB-2026-07-02-1W",
+        "CB-2026-07-09-1W"
+      ],
+      "overall": {
+        "beat_rate": 0.4,
+        "leave_best_out_alpha": -0.00940234174413793,
+        "mean_alpha": -0.007644296329999999,
+        "mean_regret": 0.09811248247,
+        "rounds": 30,
+        "top3_capture": 0.4
+      },
+      "passes_gate": false,
+      "signal": "volume_confirmed_trend",
+      "track": "weekly"
+    },
+    {
+      "coverage": {
+        "eligible_rounds": 30,
+        "round_coverage": 1.0,
+        "total_rounds": 30
+      },
+      "discovery": {
+        "beat_rate": 0.47619047619047616,
+        "leave_best_out_alpha": -0.010249475202,
+        "mean_alpha": -0.0077988344142857135,
+        "mean_regret": 0.09274775542380953,
+        "rounds": 21,
+        "top3_capture": 0.3333333333333333
+      },
+      "holdout": {
+        "beat_rate": 0.4444444444444444,
+        "leave_best_out_alpha": -0.0075756484575,
+        "mean_alpha": -0.004249091882222222,
+        "mean_regret": 0.10759556332666667,
+        "rounds": 9,
+        "top3_capture": 0.0
+      },
+      "nonoverlap": {
+        "beat_rate": 0.5,
+        "leave_best_out_alpha": -0.00916360974,
+        "mean_alpha": -0.0054248387024999995,
+        "mean_regret": 0.094905743115,
+        "rounds": 8,
+        "top3_capture": 0.125
+      },
+      "nonoverlap_round_ids": [
+        "CB-2026-05-24-1W",
+        "CB-2026-05-29-1W",
+        "CB-2026-06-05-1W",
+        "CB-2026-06-13-1W",
+        "CB-2026-06-18-1W",
+        "CB-2026-06-25-1W",
+        "CB-2026-07-02-1W",
+        "CB-2026-07-09-1W"
+      ],
+      "overall": {
+        "beat_rate": 0.4666666666666667,
+        "leave_best_out_alpha": -0.008387287275172413,
+        "mean_alpha": -0.006733911654666667,
+        "mean_regret": 0.09720209779466667,
+        "rounds": 30,
+        "top3_capture": 0.23333333333333334
+      },
+      "passes_gate": false,
+      "signal": "low_beta_active_strength",
+      "track": "weekly"
+    },
+    {
+      "coverage": {
+        "eligible_rounds": 16,
+        "round_coverage": 1.0,
+        "total_rounds": 16
+      },
+      "discovery": {
+        "beat_rate": 0.18181818181818182,
+        "leave_best_out_alpha": -0.037124807553999994,
+        "mean_alpha": -0.03253241923090909,
+        "mean_regret": 0.22271621202181818,
+        "rounds": 11,
+        "top3_capture": 0.45454545454545453
+      },
+      "holdout": {
+        "beat_rate": 0.0,
+        "leave_best_out_alpha": -0.089249031565,
+        "mean_alpha": -0.08426332284,
+        "mean_regret": 0.21824423374,
+        "rounds": 5,
+        "top3_capture": 0.0
+      },
+      "nonoverlap": {
+        "beat_rate": 0.5,
+        "leave_best_out_alpha": -0.06889258866,
+        "mean_alpha": -0.03011701978,
+        "mean_regret": 0.14765126388000002,
+        "rounds": 2,
+        "top3_capture": 0.5
+      },
+      "nonoverlap_round_ids": [
+        "CB-2026-05-10-1M",
+        "CB-2026-06-12-1M"
+      ],
+      "overall": {
+        "beat_rate": 0.125,
+        "leave_best_out_alpha": -0.052837645982666666,
+        "mean_alpha": -0.048698326608749995,
+        "mean_regret": 0.22131871880875,
+        "rounds": 16,
+        "top3_capture": 0.3125
+      },
+      "passes_gate": false,
+      "signal": "horizon_trend",
+      "track": "monthly"
+    },
+    {
+      "coverage": {
+        "eligible_rounds": 16,
+        "round_coverage": 1.0,
+        "total_rounds": 16
+      },
+      "discovery": {
+        "beat_rate": 0.36363636363636365,
+        "leave_best_out_alpha": -0.0041044000889999994,
+        "mean_alpha": -0.0008117572609090909,
+        "mean_regret": 0.19099555005181817,
+        "rounds": 11,
+        "top3_capture": 0.18181818181818182
+      },
+      "holdout": {
+        "beat_rate": 0.0,
+        "leave_best_out_alpha": -0.051366077734999994,
+        "mean_alpha": -0.043814804852,
+        "mean_regret": 0.177795715752,
+        "rounds": 5,
+        "top3_capture": 0.0
+      },
+      "nonoverlap": {
+        "beat_rate": 0.5,
+        "leave_best_out_alpha": -0.01360971332,
+        "mean_alpha": 0.0009492112000000011,
+        "mean_regret": 0.11658503290000001,
+        "rounds": 2,
+        "top3_capture": 0.5
+      },
+      "nonoverlap_round_ids": [
+        "CB-2026-05-10-1M",
+        "CB-2026-06-12-1M"
+      ],
+      "overall": {
+        "beat_rate": 0.25,
+        "leave_best_out_alpha": -0.017341201676666664,
+        "mean_alpha": -0.014250209633124998,
+        "mean_regret": 0.186870601833125,
+        "rounds": 16,
+        "top3_capture": 0.125
+      },
+      "passes_gate": false,
+      "signal": "risk_adjusted_trend",
+      "track": "monthly"
+    },
+    {
+      "coverage": {
+        "eligible_rounds": 16,
+        "round_coverage": 1.0,
+        "total_rounds": 16
+      },
+      "discovery": {
+        "beat_rate": 0.2727272727272727,
+        "leave_best_out_alpha": -0.039733903663,
+        "mean_alpha": -0.03202216001545455,
+        "mean_regret": 0.22220595280636363,
+        "rounds": 11,
+        "top3_capture": 0.2727272727272727
+      },
+      "holdout": {
+        "beat_rate": 0.2,
+        "leave_best_out_alpha": -0.03419617597,
+        "mean_alpha": -0.017824124376,
+        "mean_regret": 0.151805035276,
+        "rounds": 5,
+        "top3_capture": 0.4
+      },
+      "nonoverlap": {
+        "beat_rate": 0.5,
+        "leave_best_out_alpha": -0.0641010125,
+        "mean_alpha": -0.02072894741,
+        "mean_regret": 0.13826319151,
+        "rounds": 2,
+        "top3_capture": 1.0
+      },
+      "nonoverlap_round_ids": [
+        "CB-2026-05-10-1M",
+        "CB-2026-06-12-1M"
+      ],
+      "overall": {
+        "beat_rate": 0.25,
+        "leave_best_out_alpha": -0.03260189760333333,
+        "mean_alpha": -0.027585273878125,
+        "mean_regret": 0.200205666078125,
+        "rounds": 16,
+        "top3_capture": 0.3125
+      },
+      "passes_gate": false,
+      "signal": "quality_pullback",
+      "track": "monthly"
+    },
+    {
+      "coverage": {
+        "eligible_rounds": 16,
+        "round_coverage": 1.0,
+        "total_rounds": 16
+      },
+      "discovery": {
+        "beat_rate": 0.45454545454545453,
+        "leave_best_out_alpha": -0.014576514774000002,
+        "mean_alpha": -0.010250831500000002,
+        "mean_regret": 0.20043462429090908,
+        "rounds": 11,
+        "top3_capture": 0.45454545454545453
+      },
+      "holdout": {
+        "beat_rate": 0.0,
+        "leave_best_out_alpha": -0.09426599972,
+        "mean_alpha": -0.089191317508,
+        "mean_regret": 0.223172228408,
+        "rounds": 5,
+        "top3_capture": 0.0
+      },
+      "nonoverlap": {
+        "beat_rate": 0.5,
+        "leave_best_out_alpha": -0.06889258866,
+        "mean_alpha": -0.02623132365,
+        "mean_regret": 0.14376556775000002,
+        "rounds": 2,
+        "top3_capture": 0.5
+      },
+      "nonoverlap_round_ids": [
+        "CB-2026-05-10-1M",
+        "CB-2026-06-12-1M"
+      ],
+      "overall": {
+        "beat_rate": 0.3125,
+        "leave_best_out_alpha": -0.03944811568533333,
+        "mean_alpha": -0.0349197333775,
+        "mean_regret": 0.2075401255775,
+        "rounds": 16,
+        "top3_capture": 0.3125
+      },
+      "passes_gate": false,
+      "signal": "volume_confirmed_trend",
+      "track": "monthly"
+    },
+    {
+      "coverage": {
+        "eligible_rounds": 16,
+        "round_coverage": 1.0,
+        "total_rounds": 16
+      },
+      "discovery": {
+        "beat_rate": 0.09090909090909091,
+        "leave_best_out_alpha": -0.053249114911,
+        "mean_alpha": -0.04612753889363636,
+        "mean_regret": 0.23631133168454546,
+        "rounds": 11,
+        "top3_capture": 0.2727272727272727
+      },
+      "holdout": {
+        "beat_rate": 0.0,
+        "leave_best_out_alpha": -0.047593308405,
+        "mean_alpha": -0.042840913656,
+        "mean_regret": 0.176821824556,
+        "rounds": 5,
+        "top3_capture": 0.2
+      },
+      "nonoverlap": {
+        "beat_rate": 0.5,
+        "leave_best_out_alpha": -0.03838832792,
+        "mean_alpha": -0.006650053319999998,
+        "mean_regret": 0.12418429742,
+        "rounds": 2,
+        "top3_capture": 1.0
+      },
+      "nonoverlap_round_ids": [
+        "CB-2026-05-10-1M",
+        "CB-2026-06-12-1M"
+      ],
+      "overall": {
+        "beat_rate": 0.0625,
+        "leave_best_out_alpha": -0.04977971449266667,
+        "mean_alpha": -0.045100468506875,
+        "mean_regret": 0.217720860706875,
+        "rounds": 16,
+        "top3_capture": 0.25
+      },
+      "passes_gate": false,
+      "signal": "low_beta_active_strength",
+      "track": "monthly"
+    }
+  ]
+}

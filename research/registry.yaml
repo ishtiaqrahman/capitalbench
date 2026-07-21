@@ -1,11 +1,11 @@
 schema_version: 1
 last_updated: 2026-07-21
 current_program:
-  experiment_id: v2-july17-ledger-diagnostic-2026-07-24
-  objective: Use the complete July 17 V2 candidate ledgers to separate search, ranking, and construction regret after resolution.
-  production_impact: none
-  production_methodology: portfolio-v2.0
-  next_gate: Resolve after the July 24 close, run the frozen no-call decomposition, and let the dominant loss stage determine any later treatment.
+  experiment_id: llm-quality-input-replay-2026-07-21
+  objective: Evaluate operator-adopted Portfolio V2.2 prospectively while preserving the rejected Q2 result and the unconfirmed status of Q1.
+  production_impact: Q1 information-only evidence adopted by explicit operator direction; no Q2 quotas and no retrospective round changes.
+  production_methodology: portfolio-v2.2
+  next_gate: Resolve fresh complete eight-model V2.2 rounds and evaluate return, SPY alpha, model breadth, candidate coverage, and calibration without tuning the fixed evidence formula.
 
 experiments:
   - id: model-performance-predictability-2026-07-20
@@ -249,3 +249,146 @@ experiments:
       - scripts/analyze_v2_resolution_diagnostics.py
     related: [v2-july13-resolution-diagnostic-2026-07-21, vnext-event-ranking-replay-2026-07-21]
     next_action: After the July 24 close, fetch one frozen adjusted-close snapshot, resolve CB-2026-07-17-1W, and run the existing diagnostic script.
+
+  - id: vnext-symmetric-coverage-replay-2026-07-21
+    date: 2026-07-21
+    status: complete
+    decision: rejected
+    question: Can symmetric option-level evidence, exhaustive fixed-lane search, and a hard evidence gate improve weekly returns over H4?
+    method: Twelve single-turn H9 historical development calls paired with H4 controls across four non-overlapping weekly periods; up to three exact H4 control repairs are allowed for prior transport failures.
+    sample: Four already-adaptive weekly periods V1-V4; three model families and 12 paired cells.
+    models: [google-gemini-3-1-pro, xai-grok-4-5, openai-gpt-5-6-sol]
+    calls: 15
+    gates: Positive H9 alpha, at least 0.50-point paired gain, 7 positive pairs, all 3 models, 3 episodes, 20% regret reduction, nonnegative capture change, and no worse worst episode.
+    findings:
+      - Eight valid paired cells produced mean H9 alpha of -0.43% versus SPY and only a 0.08-point mean gain over H4.
+      - Only 3 of 8 pairs, 1 of 2 valid models, and 1 of 4 episodes improved; shortlist regret worsened by 81.24% and top-three capture fell by one.
+      - The unrestricted wildcard produced four top-three captures, more than all fixed lanes combined; seven Gemini operations failed with quota or availability errors.
+    lessons:
+      - Forced lane quotas dilute the shortlist, and broad macro-to-asset mappings are not discriminative enough to support a hard evidence gate.
+      - Symmetric coverage by itself does not solve candidate ranking or improve realized return.
+    limitations:
+      - Reused historical development periods cannot establish prospective skill.
+      - Gemini produced no valid paired cells, leaving eight valid pairs across GPT-5.6 SOL and Grok 4.5.
+    canonical_artifacts:
+      - docs/experiments/vnext-symmetric-coverage-replay-2026-07-21.md
+      - experiments/vnext-symmetric-coverage-replay-2026-07-21.yaml
+      - docs/vnext_symmetric_coverage_replay_report.md
+      - research/results/vnext-symmetric-coverage-replay-2026-07-21.json
+    related: [vnext-event-ranking-replay-2026-07-21, vnext-historical-replay-stage1b-2026-07-21, v2-july17-ledger-diagnostic-2026-07-24]
+    next_action: Stop H9 and test richer mechanical decision-context features without model calls; do not change production.
+
+  - id: historical-decision-context-backfill-2026-07-21
+    date: 2026-07-21
+    status: complete
+    decision: accepted
+    question: Do richer horizon-specific price features contain a stable cross-sectional signal that improves equal-weight top-five returns over SPY?
+    method: Fetch one cutoff-safe daily adjusted-price history per symbol, reconstruct weekly and monthly V2-style features at each entry date, and evaluate five frozen ranking rules without model calls.
+    sample: "The 46 resolved V1 rounds from the canonical predictability dataset: 30 weekly and 16 monthly, with purged non-overlapping and chronological split diagnostics."
+    models: []
+    calls: 0
+    gates: Weekly only may advance; require positive non-overlapping alpha, beat rate above 50%, positive discovery and holdout alpha, positive leave-best-round-out alpha, and at least 90% feature coverage. Monthly is diagnostic because too few independent windows exist.
+    findings:
+      - All 69 symbols and all 46 rounds had sufficient cutoff-safe Yahoo adjusted-price and volume history.
+      - Weekly quality-pullback cleared the frozen gate with 0.36% all-round alpha, 0.48% discovery alpha, 0.09% holdout alpha, and 0.28% alpha with a 62.5% beat rate across eight non-overlapping weeks.
+      - The other four weekly rules had negative non-overlapping alpha; no monthly rule advanced.
+      - The positive signal remains fragile because removing the best non-overlapping week changes that subset to -0.31% alpha.
+    lessons:
+      - A medium-horizon active trend combined with a recent relative pullback and modest low-volatility and drawdown preferences is the first frozen mechanical rule to clear the historical weekly screen.
+      - Plain trend, volume confirmation, and low-beta active strength do not improve returns in this sample.
+    limitations:
+      - Historical outcomes are reused and can reject weak rules but cannot establish prospective skill.
+      - Yahoo adjusted-price history is the fallback source because no Tiingo credential is present locally.
+      - Holdout alpha is only 0.09%, and non-overlapping leave-best-round-out alpha is negative.
+    canonical_artifacts:
+      - docs/experiments/historical-decision-context-backfill-2026-07-21.md
+      - experiments/historical-decision-context-backfill-2026-07-21.yaml
+      - docs/historical_decision_context_backfill_report.md
+      - research/results/historical-decision-context-backfill-2026-07-21.json
+    related: [model-performance-predictability-2026-07-20, mechanical-candidate-screen-2026-07-21, vnext-symmetric-coverage-replay-2026-07-21]
+    next_action: Run quality-pullback unchanged as a zero-call private weekly shadow; do not alter production unless prospective evidence passes a separately frozen gate.
+
+  - id: model-quality-hybrid-screen-2026-07-21
+    date: 2026-07-21
+    status: complete
+    decision: rejected
+    question: Can the frozen weekly quality-pullback signal materially improve the returns of CapitalBench model portfolios at zero additional model-call cost?
+    method: Reconstruct every eligible historical model allocation and compare the original portfolio with a 25% quality sleeve, a conviction-quality union rerank, and a within-holdings quality tilt.
+    sample: All eligible model decisions in the 46-round predictability dataset; weekly is gated and monthly is diagnostic only.
+    models: [historical_official_roster]
+    calls: 0
+    gates: A weekly hybrid must improve mean return by at least 0.75 points, produce positive alpha versus SPY, improve over 60% of model-round pairs and 60% of models, remain positive in holdout and non-overlapping rounds, and remain positive after removing its best round.
+    findings:
+      - The 25% quality sleeve improved mean weekly return by 0.32 points but still produced -0.60% alpha versus SPY, below the 0.75-point improvement gate.
+      - The conviction-quality union improved return by 0.16 points, while reweighting only existing holdings reduced return by 0.02 points.
+      - The 25% sleeve improved future down-market periods by 0.93 points but reduced return by 0.16 points in future up-market periods; that outcome state is not known at entry.
+    lessons:
+      - The quality signal adds some candidates that models missed, but post-response blending is too weak to solve underperformance and is not the target research direction.
+      - Reweighting the model's existing holdings does not help; any useful intervention must improve the information or instructions used inside the LLM call.
+    limitations:
+      - The quality signal was discovered on the same historical sample, so this screen can reject combinations but cannot confirm prospective skill.
+      - Future SPY direction is an outcome-only attribution and cannot be used as a live router.
+    canonical_artifacts:
+      - docs/experiments/model-quality-hybrid-screen-2026-07-21.md
+      - experiments/model-quality-hybrid-screen-2026-07-21.yaml
+      - docs/model_quality_hybrid_screen_report.md
+      - research/results/model-quality-hybrid-screen-2026-07-21.json
+    related: [historical-decision-context-backfill-2026-07-21, model-performance-predictability-2026-07-20, v2-july17-ledger-diagnostic-2026-07-24]
+    next_action: Stop post-response overlays and test whether the four LLMs use compact quality evidence when it is supplied and explicitly audited inside the call.
+
+  - id: llm-quality-input-replay-2026-07-21
+    date: 2026-07-21
+    status: complete
+    decision: rejected
+    question: Can compact option-level quality evidence, with or without an explicit evidence-challenge instruction, improve weekly candidate returns across all four research LLMs?
+    method: Pair two single-turn treatments against saved H4 controls across three historical weekly periods; Q1 adds only the evidence table, while Q2 also requires high-evidence candidates to be considered in the model's own shortlist and final ranking. Repair two exact Gemini controls that previously failed with HTTP 503.
+    sample: Twelve paired cells per treatment across V1-V3 and Gemini 3.5 Flash, Grok 4.3, Grok 4.5, and GPT-5.6 SOL.
+    models: [google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5, openai-gpt-5-6-sol]
+    calls: 26
+    gates: Each treatment must have 10 valid pairs, at least 0.75-point mean return improvement, positive treatment alpha versus SPY, 8 positive pairs, all 4 models positive, 2 of 3 periods positive, nonnegative regret reduction, and no worse worst-period alpha.
+    findings:
+      - Q1 improved 8 of 9 valid pairs across all three valid models and all three periods, with 1.59-point mean improvement and 0.13% treatment alpha.
+      - Q2 improved all 8 valid pairs across all three valid models and all three periods, with 2.90-point mean improvement and 1.50% treatment alpha.
+      - Both treatments failed the frozen gate because Google quota errors left no valid Gemini pairs; Q2 also worsened mean shortlist regret by 1.40 points.
+    lessons:
+      - Compact option-level evidence can materially change the LLMs' own selections; explicit consideration requirements were stronger than information alone.
+      - Q2 appears to improve final ranking more than oracle candidate capture, so realized return must remain the primary confirmation endpoint.
+    limitations:
+      - The evidence score was discovered on reused historical data, and current models may remember historical outcomes.
+      - Gemini 3.5 Flash exhausted its free-tier request quota, and one Grok 4.5 Q2 response violated the frozen evidence-use requirement.
+    canonical_artifacts:
+      - docs/experiments/llm-quality-input-replay-2026-07-21.md
+      - experiments/llm-quality-input-replay-2026-07-21.yaml
+      - docs/llm_quality_input_replay_report.md
+      - research/results/llm-quality-input-replay-2026-07-21.json
+    related: [historical-decision-context-backfill-2026-07-21, model-quality-hybrid-screen-2026-07-21, vnext-historical-replay-stage1b-2026-07-21]
+    next_action: The operator adopted Q1's information-only table as Portfolio V2.2 despite the failed research gate. Preserve the fixed formula and evaluate it prospectively; do not describe adoption as confirmation.
+
+  - id: llm-quality-input-confirmation-2026-07-21
+    date: 2026-07-21
+    status: complete
+    decision: rejected
+    question: Does unchanged Q2 retain its return improvement across three different historical periods and all four research LLMs?
+    method: Twelve single-turn Q2 calls on D1-D3 paired with twelve previously saved valid H4 controls; use the configured Gemini 3.1 Pro preview endpoint instead of the exhausted Flash override.
+    sample: Twelve paired cells across CB-2026-05-24-1W, CB-2026-06-02-1W, and CB-2026-06-09-1W.
+    models: [google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5, openai-gpt-5-6-sol]
+    calls: 12
+    gates: Require 10 valid pairs, at least 1.00-point mean return improvement, positive treatment alpha, 8 positive pairs, all 4 models positive, 2 of 3 periods positive, and no more than 0.50-point deterioration in the worst period. Capture and regret are diagnostics, not gates.
+    findings:
+      - Eight valid OpenAI and xAI pairs produced 1.25-point mean improvement but remained at -0.42% treatment alpha versus SPY.
+      - Only 3 of 8 valid pairs, 3 of 4 represented models, and 1 of 3 periods improved; all valid models improved in D2 and all valid models declined in D1 and D3.
+      - Gemini 3.1 Pro Preview returned quota errors in all three periods, and one Grok 4.3 response was invalid JSON.
+    lessons:
+      - Mandatory quality-candidate quotas are episode-dependent and do not generalize across historical periods.
+      - Compact evidence remains a plausible input aid, but forcing its candidates into the final five over-anchors models when the useful return driver is elsewhere.
+    limitations:
+      - These periods were used by earlier H4 development, although Q2 itself was not tuned on them.
+      - Historical replay cannot establish prospective skill.
+      - Google quota errors prevented a four-model confirmation, but the valid-model breadth gate already failed.
+    canonical_artifacts:
+      - docs/experiments/llm-quality-input-confirmation-2026-07-21.md
+      - experiments/llm-quality-input-confirmation-2026-07-21.yaml
+      - docs/llm_quality_input_confirmation_report.md
+      - research/results/llm-quality-input-confirmation-2026-07-21.json
+    related: [llm-quality-input-replay-2026-07-21, vnext-historical-replay-stage1b-2026-07-21]
+    next_action: Stop Q2. Preserve Q1 unchanged for a four-model confirmation after Google capacity returns; do not alter production.

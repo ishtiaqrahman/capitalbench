@@ -170,6 +170,16 @@ def validate_final_briefing(path: Path) -> list[str]:
             "final_briefing.md contains selected mechanical return context; keep mechanical price context "
             "in market_data/universe_trailing_returns.md so every option gets the same price-history interpretation."
         )
+    if re.search(
+        r"\b(quality evidence score|prior active rank|recent pullback rank|"
+        r"low volatility rank|shallow drawdown rank)\b",
+        text,
+        flags=re.IGNORECASE,
+    ):
+        raise ValueError(
+            "final_briefing.md contains V2.2 Q1 quality evidence; keep the complete mechanically generated "
+            "table in market_data/universe_quality_evidence.md"
+        )
     if len(text.split()) > 8000:
         warnings.append("final_briefing.md is very long; confirm the model-facing briefing is concise enough for the target models.")
     return warnings

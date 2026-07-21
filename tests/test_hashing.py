@@ -19,6 +19,8 @@ def test_hashing_determinism(tmp_path: Path) -> None:
     market_data_dir = round_path / "market_data"
     market_data_dir.mkdir()
     (market_data_dir / "universe_trailing_returns.md").write_text("returns\n", encoding="utf-8")
+    (market_data_dir / "universe_quality_evidence.md").write_text("quality\n", encoding="utf-8")
+    (market_data_dir / "universe_quality_evidence.json").write_text("{}\n", encoding="utf-8")
 
     first = compute_round_hashes(round_path)
     second = compute_round_hashes(round_path)
@@ -29,3 +31,5 @@ def test_hashing_determinism(tmp_path: Path) -> None:
     expected_briefing_hash = hashlib.sha256((round_path / "briefing.md").read_bytes()).hexdigest()
     assert first["files"]["briefing.md"] == expected_briefing_hash
     assert "market_data/universe_trailing_returns.md" in first["files"]
+    assert "market_data/universe_quality_evidence.md" in first["files"]
+    assert "market_data/universe_quality_evidence.json" in first["files"]

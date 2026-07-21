@@ -2,10 +2,17 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .decision_context import DECISION_CONTEXT_MD, DECISION_CONTEXT_TITLE
+from .decision_context import (
+    DECISION_CONTEXT_MD,
+    DECISION_CONTEXT_TITLE,
+    QUALITY_EVIDENCE_JSON,
+    QUALITY_EVIDENCE_MD,
+    QUALITY_EVIDENCE_MINIMUM_COVERAGE,
+    QUALITY_EVIDENCE_TITLE,
+)
 from .exposures import economic_exposure_cluster
-from .io import load_manifest, load_options, read_yaml
-from .methodology import is_portfolio_v2, is_production_portfolio_v2
+from .io import load_manifest, load_options, read_json, read_yaml
+from .methodology import is_portfolio_v2, is_portfolio_v2_2, is_production_portfolio_v2
 from .performance import MARKET_DATA_DIRNAME, UNIVERSE_PRICE_CONTEXT_TITLE, UNIVERSE_TRAILING_RETURNS_MD
 from .portfolio import constraints_from_manifest, submission_format_from_manifest
 from .schemas import MarketOption
@@ -54,11 +61,11 @@ def build_prompt(round_path: Path) -> str:
         load_options(round_path),
         compact=is_production_portfolio_v2(manifest.methodology_version),
     )
-    parts = [
-        f"{prompt}\n\n"
-        f"## Round Metadata\n\n{metadata}\n\n"
-        f"## Briefing\n\n{briefing}"
-    ]
+    quality_evidence = _quality_evidence_section(round_path, manifest)
+    parts = [f"{prompt}\n\n## Round Metadata\n\n{metadata}"]
+    if quality_evidence:
+        parts.append(f"## {QUALITY_EVIDENCE_TITLE}\n\n{quality_evidence}")
+    parts.append(f"## Briefing\n\n{briefing}")
     if universe_performance:
         parts.append(f"## {context_title}\n\n{universe_performance}")
     parts.append(f"## Options\n\n{options}\n")
@@ -174,6 +181,27 @@ def _market_context_section(round_path: Path, manifest) -> tuple[str, str | None
         path = round_path / MARKET_DATA_DIRNAME / DECISION_CONTEXT_MD
         return DECISION_CONTEXT_TITLE, _strip_context_heading(path, DECISION_CONTEXT_TITLE)
     return UNIVERSE_PRICE_CONTEXT_TITLE, _universe_performance_section(round_path)
+
+
+def _quality_evidence_section(round_path: Path, manifest) -> str | None:
+    if not is_portfolio_v2_2(manifest.methodology_version):
+        return None
+    market_data = round_path / MARKET_DATA_DIRNAME
+    markdown_path = market_data / QUALITY_EVIDENCE_MD
+    json_path = market_data / QUALITY_EVIDENCE_JSON
+    if not markdown_path.exists() or not json_path.exists():
+        raise FileNotFoundError(
+            "portfolio-v2.2 round requires "
+            f"market_data/{QUALITY_EVIDENCE_MD} and market_data/{QUALITY_EVIDENCE_JSON}"
+        )
+    report = read_json(json_path)
+    coverage = float(report.get("coverage") or 0.0)
+    if coverage < QUALITY_EVIDENCE_MINIMUM_COVERAGE:
+        raise ValueError(
+            "portfolio-v2.2 quality-evidence coverage is below the required "
+            f"{QUALITY_EVIDENCE_MINIMUM_COVERAGE:.0%}: {coverage:.1%}"
+        )
+    return _strip_context_heading(markdown_path, QUALITY_EVIDENCE_TITLE)
 
 
 def _strip_context_heading(path: Path, title: str) -> str | None:

@@ -595,7 +595,7 @@ def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
     prompt = (round_path / "prompt.md").read_text(encoding="utf-8")
     assert exit_code == 0
     assert manifest["submission_format"] == "portfolio"
-    assert manifest["methodology_version"] == "portfolio-v2.0"
+    assert manifest["methodology_version"] == "portfolio-v2.2"
     assert manifest["portfolio_constraints"]["max_economic_exposure_pct"] == 50
     assert (round_path / "submission_schema.json").exists()
     assert "portfolio" in prompt
@@ -606,3 +606,4 @@ def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
     assert "base forecast is greater than SPY's base forecast" in prompt
     assert "no economic-exposure cluster may exceed" in prompt
     assert "sum to exactly 100" in prompt
+    assert "CapitalBench portfolio-v2.2 Task" in prompt

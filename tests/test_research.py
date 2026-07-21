@@ -193,6 +193,23 @@ def test_import_research_fails_on_selected_mechanical_return_context(tmp_path: P
         )
 
 
+def test_import_research_fails_on_embedded_v2_2_quality_evidence(tmp_path: Path) -> None:
+    round_path = _copy_example_round(tmp_path)
+    market, audit, final = _write_research_files(
+        tmp_path,
+        final_text="# Briefing\n\n| option | quality evidence score |\n| --- | ---: |\n| SP500 | 0.8 |\n",
+    )
+
+    with pytest.raises(ValueError, match="V2.2 Q1 quality evidence"):
+        import_research_artifacts(
+            round_path=round_path,
+            market_fact_report=market,
+            audit_report=audit,
+            final_briefing=final,
+            research_cutoff_utc="2026-05-09T21:00:00Z",
+        )
+
+
 def test_import_research_cli_prints_url_warning(tmp_path: Path, capsys) -> None:
     round_path = _copy_example_round(tmp_path)
     market, audit, final = _write_research_files(

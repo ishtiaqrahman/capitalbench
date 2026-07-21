@@ -2,19 +2,23 @@
 
 ## Current Production Methodology
 
-All newly initialized portfolio rounds use `portfolio-v2.0` by default. This
-production adoption was explicitly directed by the operator on July 17, 2026;
-it is not an evidence-based acceptance of the unresolved July 13 pilot. Before
-creating, running, resolving, or changing a new portfolio round, read:
+All newly initialized portfolio rounds use `portfolio-v2.2` by default. The
+operator explicitly directed V2.2 adoption on July 21, 2026 after Q1 improved
+8 of 9 valid historical development pairs. This is not evidence-based
+confirmation: Gemini was unavailable, the periods were historical, and Q1 has
+not passed an unchanged confirmation. Before creating, running, resolving, or
+changing a new portfolio round, read:
 
+- `docs/portfolio_v2_2_methodology.md`
 - `docs/portfolio_v2_methodology.md`
 - `docs/research_prompt_workflow.md`
 - `docs/protocol.md`
 - `docs/first_round_checklist.md`
 
 Use `capitalbench init-round --submission-format portfolio`. Do not manually
-downgrade the generated manifest to `portfolio-v1.0`. Production V2 requires a
-single-turn, non-agentic call, the complete compact decision-context table, a
+downgrade the generated manifest to `portfolio-v1.0`. Production V2.2 requires
+a single-turn, non-agentic call, the complete compact decision-context table,
+a complete Q1 option-level quality evidence table, a
 6-8 option candidate ledger including SP500 and at least four economic
 exposure clusters, low/base/high forecasts, the active-holding SPY hurdle, and
 the 50% non-benchmark economic-exposure cap. Score only the final frozen
@@ -23,14 +27,14 @@ portfolio; retain the candidate ledger for calibration and audit.
 The tracked production roster is the complete eight-model roster in
 `configs/models.v2.yaml`: GPT-5.5, GPT-5.6 SOL, Grok 4.3, Grok 4.5, Gemini
 3.1 Pro, Claude Opus 4.8, Claude Opus 4.7, and Claude Fable 5. Every official
-`portfolio-v2.0` run must use all enabled models in that canonical file. The
+`portfolio-v2.2` run must use all enabled models in that canonical file. The
 runner and acceptance gate reject partial rosters, and a production round is
 incomplete unless every enabled model has one valid submission. Never
 substitute or reuse the separate July 13 four-model pilot roster. Model keys
 must come from local environment files or environment variables and must never
 be committed.
 
-The first complete official production V2 rounds are:
+The first complete official production V2.0 rounds are:
 
 - `CB-2026-07-17-1W`, accepted run
   `official-v2-all-weekly-final-20260717`, due for resolution after the July
@@ -43,6 +47,11 @@ models. Preserve their frozen research, decision context, candidate ledgers,
 forecasts, portfolios, entry prices, and hashes. Resolve them with the normal
 pricing and scoring pipeline; do not rerun or revise them after observing
 market outcomes.
+
+Do not convert those V2.0 rounds to V2.2. V2.2 applies only to newly
+initialized rounds and must generate and hash
+`market_data/universe_quality_evidence.json` and
+`market_data/universe_quality_evidence.md` before model calls.
 
 The July 16 weekly and monthly V2 runs contain only four of the eight required
 models. They are retained as audit artifacts but are not official-score
@@ -101,8 +110,35 @@ mean top-five alpha over balanced H4 by 0.16 percentage points, improved 8 of
 13 valid pairs and 2 of 4 episodes, increased top-three capture by 2, but
 worsened mean shortlist regret by 0.48 points. H8 pairwise ranking was not run
 because the frozen search gate failed. Do not resume or reframe this branch as
-a pass. The current next program is the no-call July 17 complete-ledger
-diagnostic after the July 24 close, as recorded in `research/registry.yaml`.
+a pass. The no-call July 17 complete-ledger diagnostic remains scheduled after
+the July 24 close; the current production program is prospective V2.2
+evaluation as recorded in `research/registry.yaml`.
+
+Two additional July 21 branches are now complete. Symmetric option evidence
+with fixed lane quotas was rejected: valid H9 cells produced -0.43% mean alpha,
+only 3 of 8 improved over H4, and shortlist regret worsened by 81%. Do not
+resume that branch. A zero-call historical backfill of V2-style price features
+found one weekly rule that cleared its frozen screen: quality-pullback, defined
+as 45% prior active-return rank, 30% reverse recent active-return rank, 15%
+low-volatility rank, and 10% shallow-drawdown rank. It produced +0.36% all-round
+alpha and +0.28% alpha across eight non-overlapping weeks, but holdout alpha
+was only +0.09% and non-overlapping leave-best-round-out alpha was negative.
+The mechanical portfolio rule remains only a private-shadow candidate and must
+not alter a submitted portfolio. The same cutoff-safe components are now
+exposed as neutral model input in operator-adopted V2.2; the LLM remains free
+to use or reject them.
+
+The July 21 model-call follow-up tested that evidence inside the LLM input.
+Q1 added the complete compact table without forcing use. Q2 additionally
+required at least three quality top-ten names in the shortlist and two in the
+final five. Q2 initially improved all eight valid OpenAI/xAI development pairs
+by 2.90 points with +1.50% alpha, but its unchanged confirmation failed: only
+3 of 8 valid pairs and 1 of 3 periods improved, and treatment alpha was -0.42%.
+Gemini calls were unavailable because of Google quota errors, but the valid
+models already failed the breadth gate. Q2 is rejected. Do not tune or resume
+it. Q1 remains unconfirmed, but the operator subsequently adopted its
+information-only table as production V2.2. This adoption must not be described
+as a passed research gate; evaluate it prospectively on fresh rounds.
 
 CapitalBench prompt and model-input changes affect benchmark fairness. Before
 editing round prompts, research import rules, market-data appendices, or model
@@ -126,11 +162,18 @@ The effective production V2 model input is assembled by
 
 - `prompt.md`
 - round metadata
+- `market_data/universe_quality_evidence.md`, generated mechanically for V2.2
+  and placed before the briefing
 - `briefing.md`, copied from Prompt 3's `final_briefing.md`
 - `market_data/universe_decision_context.md`, generated mechanically and kept
   complete in frozen option order
 - `options.yaml`, rendered as a compact neutral table with static economic
   exposure clusters
+
+Prompt 1 must not calculate or summarize the Q1 evidence table. Prompt 2 must
+audit its coverage, fixed formula, single inclusion, and lack of Q2 quotas.
+Prompt 3 must not reproduce or interpret Q1 ranks or scores; the prompt builder
+adds the complete frozen table separately.
 
 The mechanical price-context appendix is generated by:
 
@@ -160,12 +203,18 @@ research.
 ## Hard Rules
 
 - Do not paste selected mechanical return rows into `final_briefing.md`.
+- Do not paste, summarize, or selectively quote V2.2 Q1 ranks or quality
+  evidence scores into `market_fact_report.md` or `final_briefing.md`.
 - Do not use model APIs or model search features to prepare research reports.
 - Do use the pricing pipeline/API when mechanical price context is required.
 - Do not manually rank, recommend, or map allowed options in model-facing briefing text.
 - For production V2, enforce the neutral SPY forecast hurdle defined in
   `docs/portfolio_v2_methodology.md`; do not reintroduce the old V1 benchmark
   allocation wording.
+- For production V2.2, generate the complete Q1 evidence files with the
+  decision-context command. Do not manually edit, rank, or reorder their rows.
+- Do not add Q2-style minimum high-score quotas. V2.2 models remain free to
+  reject the Q1 evidence.
 - Keep source URLs, citations, and source ledgers out of `final_briefing.md`.
 - Treat price history as descriptive context, not as a forecast.
 - Keep the price-context appendix complete, mechanically generated, and sorted by option order rather than performance.

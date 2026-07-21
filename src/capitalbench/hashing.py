@@ -15,6 +15,8 @@ OPTIONAL_HASHED_ROUND_FILES = [
     "market_data/universe_decision_context.md",
     "market_data/universe_decision_context.json",
     "market_data/decision_context_source_history.json",
+    "market_data/universe_quality_evidence.md",
+    "market_data/universe_quality_evidence.json",
 ]
 
 

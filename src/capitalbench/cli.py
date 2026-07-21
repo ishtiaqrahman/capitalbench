@@ -122,6 +122,10 @@ def _cmd_fetch_decision_context(args: argparse.Namespace) -> int:
     print(f"failed options: {len(output.failed_options)}")
     print(f"wrote decision-context markdown: {output.markdown_path}")
     print(f"wrote decision-context source history: {output.history_path}")
+    if output.quality_markdown_path is not None:
+        print(f"wrote quality-evidence markdown: {output.quality_markdown_path}")
+    if output.quality_json_path is not None:
+        print(f"wrote quality-evidence json: {output.quality_json_path}")
     return 0 if not output.failed_options else 1
 
 
@@ -566,7 +570,7 @@ def build_parser() -> argparse.ArgumentParser:
     init_parser.add_argument("--horizon", default="one month", help='round horizon label, for example "one week"')
     init_parser.add_argument(
         "--methodology-version",
-        help="methodology label; portfolio rounds default to portfolio-v2.0",
+        help="methodology label; portfolio rounds default to portfolio-v2.2",
     )
     init_parser.set_defaults(func=_cmd_init_round)
 

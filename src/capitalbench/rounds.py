@@ -134,7 +134,10 @@ def init_round(
         is_production_portfolio_v2(resolved_methodology_version)
         and not submission_schema_path.exists()
     ):
-        write_json(submission_schema_path, _portfolio_v2_submission_schema())
+        write_json(
+            submission_schema_path,
+            _portfolio_v2_submission_schema(resolved_methodology_version),
+        )
 
     return round_path
 
@@ -162,7 +165,7 @@ def _apply_horizon(prompt: str, horizon: str) -> str:
     return prompt.replace("one-month", horizon.replace(" ", "-")).replace("one month", horizon)
 
 
-def _portfolio_v2_submission_schema() -> dict[str, object]:
+def _portfolio_v2_submission_schema(methodology_version: str = PORTFOLIO_V2_VERSION) -> dict[str, object]:
     candidate_properties = {
         "option_id": {"type": "string", "minLength": 1},
         "decision": {"enum": ["selected", "rejected"]},
@@ -191,7 +194,7 @@ def _portfolio_v2_submission_schema() -> dict[str, object]:
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": "https://capitalbench.org/schemas/portfolio_submission_v2.json",
-        "title": "CapitalBench Portfolio V2.0 Submission",
+        "title": f"CapitalBench {methodology_version} Submission",
         "type": "object",
         "additionalProperties": False,
         "properties": {
@@ -259,7 +262,7 @@ def _default_prompt_text(
 ) -> str:
     if submission_format == "portfolio":
         if is_production_portfolio_v2(methodology_version):
-            return _portfolio_v2_prompt_text(horizon)
+            return _portfolio_v2_prompt_text(horizon, methodology_version)
         return _apply_horizon("""# CapitalBench Task
 
 You are participating in an offline, time-resolved CapitalBench evaluation round.
@@ -323,8 +326,9 @@ Rules:
     return _single_pick_prompt_text(horizon)
 
 
-def _portfolio_v2_prompt_text(horizon: str) -> str:
-    return _apply_horizon("""# CapitalBench Portfolio V2.0 Task
+def _portfolio_v2_prompt_text(horizon: str, methodology_version: str | None = None) -> str:
+    version = methodology_version or PORTFOLIO_V2_VERSION
+    template = """# CapitalBench __METHODOLOGY_VERSION__ Task
 
 You are participating in an offline, time-resolved CapitalBench evaluation round. Every model receives the same frozen information and makes one single-turn, non-agentic decision without tools, browsing, retrieval, or follow-up.
 
@@ -400,7 +404,8 @@ Rules:
 - confidence is the probability that the submitted portfolio beats SPY over this scoring window; do not use confidence to change allocation size.
 - key_risks must contain 2-5 concrete risks.
 - Do not include a second portfolio, backup allocation, financial-advice disclaimer, or extra field.
-""", horizon)
+"""
+    return _apply_horizon(template.replace("__METHODOLOGY_VERSION__", version), horizon)
 
 
 def _single_pick_prompt_text(horizon: str) -> str:
