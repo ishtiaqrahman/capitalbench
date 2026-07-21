@@ -51,25 +51,58 @@ calculations. Their resolution jobs are cancelled. Do not add retrospective
 submissions or otherwise repair those partial rounds after their decision
 window.
 
-## Active Historical Experiment
+## Resolved Historical Experiment
 
-An active, weekly-only Portfolio V2 experiment is paired with the July 13,
-2026 V1 weekly round and must be resolved after the July 20, 2026 close.
-Before running, accepting, resolving, publishing, or changing methodology for
-either round, read:
+The weekly-only Portfolio V2 pilot paired with the July 13, 2026 V1 weekly
+round was resolved and **rejected** under its frozen acceptance rule on July
+21. Before interpreting, publishing, or changing either round, read:
 
 - `docs/experiments/portfolio-v2-2026-07-13.md`
 - `experiments/portfolio-v2-2026-07-13.yaml`
 
-The experiment document freezes the four participating models, input cutoff,
-paired comparison, July 20 decision rule, and resolution checklist. Do not add
-the pilot to primary latest, cumulative, market-environment, or insight data.
-Do not change its decision rule after observing outcomes. When it is resolved,
-record the accepted/rejected decision and evidence in that document; preserve
-both V1 and V2 round artifacts without retroactive edits. Resolve and report
-the pilot's frozen acceptance rule even though production V2 was separately
-adopted by operator direction; do not rewrite the pilot as having caused that
-adoption.
+V2 beat SPY but underperformed paired V1 by 2.13 percentage points on average,
+and 0 of 4 models improved. Preserve both V1 and V2 artifacts without
+retroactive edits. Do not add the four-model pilot to primary latest,
+cumulative, market-environment, or insight data. Production V2 remains active
+because it was separately adopted by operator direction; do not rewrite the
+rejected pilot as having caused or reversed that adoption.
+
+## Active V2 Diagnostics
+
+The zero-cost diagnostic program is frozen in:
+
+- `docs/experiments/v2-next-research-2026-07-21.md`
+- `experiments/v2-next-research-2026-07-21.yaml`
+
+The July 13 pilot lacked candidate ledgers. Its selected sets captured strong
+assets, but equal-weight and holding-cap counterfactuals did not improve mean
+return. Do not create a retrospective ledger. The complete July 17 production
+weekly round remains the next clean production-ledger diagnostic after the
+July 24 close.
+
+On July 21, the operator separately authorized private historical research on
+balanced candidate search, structured event evidence, pairwise ranking, and
+abstention. This does not alter production V2 or official scores. Before
+continuing return-improvement research, read:
+
+- `research/README.md`
+- `research/registry.yaml`
+- `research/PROTOCOL.md`
+
+The registry is the canonical cross-session memory. Raw `output/` files are
+not canonical. Before paid calls, register and freeze the experiment. After
+scoring, save a tracked report and machine-readable summary, update the
+registry with the result and next action, and run
+`python scripts/validate_research_registry.py`. Never describe adaptive
+development episodes as sealed confirmation data.
+
+That event-register search was completed and rejected on July 21. H7 improved
+mean top-five alpha over balanced H4 by 0.16 percentage points, improved 8 of
+13 valid pairs and 2 of 4 episodes, increased top-three capture by 2, but
+worsened mean shortlist regret by 0.48 points. H8 pairwise ranking was not run
+because the frozen search gate failed. Do not resume or reframe this branch as
+a pass. The current next program is the no-call July 17 complete-ledger
+diagnostic after the July 24 close, as recorded in `research/registry.yaml`.
 
 CapitalBench prompt and model-input changes affect benchmark fairness. Before
 editing round prompts, research import rules, market-data appendices, or model
@@ -165,4 +198,11 @@ For broader behavior changes, run:
 
 ```bash
 pytest
+```
+
+For return-improvement research records, also run:
+
+```bash
+python scripts/validate_research_registry.py
+pytest tests/test_research_registry.py
 ```

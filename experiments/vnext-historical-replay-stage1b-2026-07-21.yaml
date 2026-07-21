@@ -1,0 +1,52 @@
+experiment_id: vnext-historical-replay-stage1b-2026-07-21
+status: frozen
+official_score_eligible: false
+publication_stream: private_research
+protocol: docs/experiments/vnext-historical-replay-stage1b-2026-07-21.md
+base_experiment: experiments/vnext-historical-replay-2026-07-20.yaml
+control_output_dir: output/vnext-historical-replay-2026-07-20
+output_dir: output/vnext-historical-replay-stage1b-2026-07-21
+models:
+  - google-gemini-3-1-pro
+  - xai-grok-4-3
+  - xai-grok-4-5
+  - openai-gpt-5-6-sol
+api_model_overrides:
+  google-gemini-3-1-pro: gemini-3.5-flash
+episodes:
+  - replay_id: D1
+    phase: discovery
+    round_id: CB-2026-05-24-1W
+  - replay_id: D2
+    phase: discovery
+    round_id: CB-2026-06-02-1W
+  - replay_id: D3
+    phase: discovery
+    round_id: CB-2026-06-09-1W
+  - replay_id: C1
+    phase: confirmation
+    round_id: CB-2026-06-17-1W
+  - replay_id: C2
+    phase: confirmation
+    round_id: CB-2026-06-25-1W
+  - replay_id: C3
+    phase: confirmation
+    round_id: CB-2026-07-06-1W
+primary_treatments: [H4, H5]
+fallback_treatment: H6
+treatments: [H0, H4, H5, H6]
+max_primary_calls: 24
+max_fallback_calls: 12
+max_confirmation_calls: 24
+max_total_new_calls: 60
+max_output_tokens: 3600
+transport_retries: 1
+gates:
+  minimum_valid_pairs: 10
+  minimum_capture_episodes: 2
+  minimum_capture_models: 2
+  minimum_positive_pairs: 7
+  minimum_positive_models: 3
+  minimum_positive_episodes: 2
+  minimum_mean_alpha_improvement: 0.005
+  minimum_relative_regret_reduction: 0.30

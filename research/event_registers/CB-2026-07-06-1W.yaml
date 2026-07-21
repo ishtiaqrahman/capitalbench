@@ -1,0 +1,38 @@
+round_id: CB-2026-07-06-1W
+research_cutoff_utc: 2026-07-07T06:30:00Z
+window: 2026-07-06 close to 2026-07-13 close
+source_artifact: rounds/CB-2026-07-06-1W/research/final_briefing.md
+neutrality: Facts and static mappings only; no direction, ranking, or recommendation.
+events:
+  - id: EMPLOYMENT_JUN
+    timing: 2026-07-02
+    status: released
+    fact: June payrolls rose 57000, unemployment was 4.2%, participation was 61.5%, and hourly earnings rose 3.5% year over year.
+    comparison: No consensus comparison was provided in the frozen source.
+    affected_options: [SP500, TOTAL_US_MARKET, SMALL_CAP, CONSUMER_DISCRETIONARY, REGIONAL_BANKS, INTERMEDIATE_TREASURY, LONG_TREASURY, US_DOLLAR, GOLD]
+    directness: macro_indirect
+    market_already_moved: yes; released before the entry close.
+  - id: ISM_JUN
+    timing: 2026-07-01 to 2026-07-06
+    status: released
+    fact: June manufacturing PMI was 53.3 and services PMI was 54.0; prices indexes were 73.0 and 67.7.
+    comparison: Manufacturing and services were 0.7 and 0.5 points below May.
+    affected_options: [SP500, INDUSTRIALS, MATERIALS, TECHNOLOGY, CONSUMER_DISCRETIONARY, INTERMEDIATE_TREASURY, LONG_TREASURY]
+    directness: macro_indirect
+    market_already_moved: yes; released by the entry close.
+  - id: FOMC_MINUTES_JUL8
+    timing: 2026-07-08 14:00 ET
+    status: scheduled
+    fact: Minutes from the June 16-17 FOMC meeting were scheduled inside the window.
+    comparison: Content was unknown at the research cutoff.
+    affected_options: [SP500, NASDAQ100, LARGE_GROWTH, SMALL_CAP, INTERMEDIATE_TREASURY, LONG_TREASURY, TIPS, INVESTMENT_GRADE_CREDIT, HIGH_YIELD_CREDIT, US_DOLLAR, GOLD]
+    directness: macro_indirect
+    market_already_moved: no
+  - id: TSMC_SALES_JUL10
+    timing: 2026-07-10
+    status: scheduled
+    fact: TSMC scheduled publication of June monthly sales inside the window.
+    comparison: Outcome was unknown; frozen Q2 guidance was $39.0-$40.2 billion revenue.
+    affected_options: [SEMICONDUCTORS, TECHNOLOGY, NASDAQ100, LARGE_GROWTH, TAIWAN, SOUTH_KOREA]
+    directness: direct_exposure
+    market_already_moved: no

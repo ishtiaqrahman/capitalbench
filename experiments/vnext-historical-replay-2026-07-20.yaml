@@ -1,0 +1,45 @@
+experiment_id: vnext-historical-replay-2026-07-20
+status: frozen
+official_score_eligible: false
+publication_stream: private_research
+protocol: docs/experiments/vnext-historical-replay-2026-07-20.md
+output_dir: output/vnext-historical-replay-2026-07-20
+models:
+  - google-gemini-3-1-pro
+  - xai-grok-4-3
+  - xai-grok-4-5
+  - openai-gpt-5-6-sol
+api_model_overrides:
+  # The recovered AuraDNA key is free-tier. Gemini Pro endpoints have no quota
+  # on that project, so this private replay uses the current free-tier Flash.
+  google-gemini-3-1-pro: gemini-3.5-flash
+episodes:
+  - replay_id: D1
+    phase: discovery
+    round_id: CB-2026-05-24-1W
+  - replay_id: D2
+    phase: discovery
+    round_id: CB-2026-06-02-1W
+  - replay_id: D3
+    phase: discovery
+    round_id: CB-2026-06-09-1W
+  - replay_id: C1
+    phase: confirmation
+    round_id: CB-2026-06-17-1W
+  - replay_id: C2
+    phase: confirmation
+    round_id: CB-2026-06-25-1W
+  - replay_id: C3
+    phase: confirmation
+    round_id: CB-2026-07-06-1W
+discovery_assignment:
+  google-gemini-3-1-pro: [H1, H2, H3]
+  xai-grok-4-3: [H2, H3, H1]
+  xai-grok-4-5: [H3, H1, H2]
+  openai-gpt-5-6-sol: [H1, H2, H3]
+treatments: [H0, H1, H2, H3]
+max_discovery_calls: 24
+max_confirmation_calls: 24
+max_total_calls: 48
+max_output_tokens: 3600
+transport_retries: 1

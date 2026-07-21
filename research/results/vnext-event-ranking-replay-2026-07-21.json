@@ -1,0 +1,136 @@
+{
+  "decision": "rejected",
+  "event_evidence_diagnostic": {
+    "by_event_status": [
+      {
+        "candidates": 79,
+        "final_selection_share": 0.4810126582278481,
+        "group": "none",
+        "mean_realized_alpha": -0.005686032901592772,
+        "positive_alpha_share": 0.4050632911392405,
+        "realized_top3_share": 0.08860759493670886
+      },
+      {
+        "candidates": 15,
+        "final_selection_share": 0.6,
+        "group": "released",
+        "mean_realized_alpha": -0.011701935608276074,
+        "positive_alpha_share": 0.3333333333333333,
+        "realized_top3_share": 0.0
+      },
+      {
+        "candidates": 11,
+        "final_selection_share": 0.5454545454545454,
+        "group": "released+scheduled",
+        "mean_realized_alpha": -0.009636113218693388,
+        "positive_alpha_share": 0.18181818181818182,
+        "realized_top3_share": 0.18181818181818182
+      },
+      {
+        "candidates": 25,
+        "final_selection_share": 0.48,
+        "group": "scheduled",
+        "mean_realized_alpha": -0.004677008147870736,
+        "positive_alpha_share": 0.48,
+        "realized_top3_share": 0.12
+      }
+    ],
+    "by_evidence_strength": [
+      {
+        "candidates": 28,
+        "final_selection_share": 0.5714285714285714,
+        "group": "moderate",
+        "mean_realized_alpha": -0.00634639019908271,
+        "positive_alpha_share": 0.35714285714285715,
+        "realized_top3_share": 0.14285714285714285
+      },
+      {
+        "candidates": 79,
+        "final_selection_share": 0.4810126582278481,
+        "group": "none",
+        "mean_realized_alpha": -0.005686032901592772,
+        "positive_alpha_share": 0.4050632911392405,
+        "realized_top3_share": 0.08860759493670886
+      },
+      {
+        "candidates": 9,
+        "final_selection_share": 0.7777777777777778,
+        "group": "strong",
+        "mean_realized_alpha": -0.004006964503385878,
+        "positive_alpha_share": 0.4444444444444444,
+        "realized_top3_share": 0.1111111111111111
+      },
+      {
+        "candidates": 14,
+        "final_selection_share": 0.2857142857142857,
+        "group": "weak",
+        "mean_realized_alpha": -0.013192134080124858,
+        "positive_alpha_share": 0.35714285714285715,
+        "realized_top3_share": 0.0
+      }
+    ],
+    "by_timing_fit": [
+      {
+        "candidates": 12,
+        "final_selection_share": 0.5,
+        "group": "already_released",
+        "mean_realized_alpha": -0.016119070286356757,
+        "positive_alpha_share": 0.3333333333333333,
+        "realized_top3_share": 0.0
+      },
+      {
+        "candidates": 39,
+        "final_selection_share": 0.5384615384615384,
+        "group": "inside_window",
+        "mean_realized_alpha": -0.005256990763852711,
+        "positive_alpha_share": 0.38461538461538464,
+        "realized_top3_share": 0.1282051282051282
+      },
+      {
+        "candidates": 79,
+        "final_selection_share": 0.4810126582278481,
+        "group": "no_direct_event",
+        "mean_realized_alpha": -0.005686032901592772,
+        "positive_alpha_share": 0.4050632911392405,
+        "realized_top3_share": 0.08860759493670886
+      }
+    ],
+    "candidate_observations": 130,
+    "event_linked_share": 0.3923076923076923,
+    "interpretation_limit": "Candidate observations repeat options across models and are descriptive, not independent.",
+    "other_candidate_mean_alpha": -0.006815983616640613,
+    "timely_supported_candidates": 37,
+    "timely_supported_mean_alpha": -0.005777340705534832,
+    "valid_h7_records": 13
+  },
+  "experiment_id": "vnext-event-ranking-replay-2026-07-21",
+  "final": {
+    "passes_gate": false,
+    "skipped": "search gate failed"
+  },
+  "generated_at_utc": "2026-07-21T17:14:39+00:00",
+  "limitations": [
+    "Four historical periods are insufficient to prove prospective skill.",
+    "Current models may remember historical outcomes.",
+    "The equal-weight top-five basket is a selection diagnostic, not the production portfolio."
+  ],
+  "official_score_eligible": false,
+  "search": {
+    "mean_regret_reduction": -0.004756887485201345,
+    "mean_top5_alpha_improvement": 0.001631705893187554,
+    "passes_gate": false,
+    "positive_episodes": 2,
+    "positive_models": 3,
+    "positive_pairs": 8,
+    "scored_at_utc": "2026-07-21T17:10:26+00:00",
+    "top3_capture_change": 2,
+    "valid_pairs": 13
+  },
+  "usage": {
+    "calls": 32,
+    "input_tokens": 156006,
+    "output_tokens": 31918,
+    "reasoning_tokens": 16105,
+    "valid_calls": 26
+  }
+}

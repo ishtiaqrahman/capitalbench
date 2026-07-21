@@ -1,7 +1,8 @@
 ---
 experiment_id: portfolio-v2-2026-07-13
-status: active
+status: rejected
 decision_date: 2026-07-20
+decision_at_utc: 2026-07-21T08:35:28Z
 decision_after_utc: 2026-07-20T20:00:00Z
 paired_v1_round_id: CB-2026-07-13-1W
 v2_round_id: CB-2026-07-13-V2-1W
@@ -31,7 +32,8 @@ primary publication stream before that decision.
 
 The canonical V2 run `official-v2-20260713` was accepted at
 `2026-07-14T02:44:29.056058+00:00` with four valid submissions and no invalid
-canonical submissions. Resolution is scheduled for `2026-07-20T23:30:00Z`.
+canonical submissions. It was resolved from the same 70-option adjusted-close
+price snapshot as its V1 control and evaluated on `2026-07-21`.
 
 The initial GPT-5.5 request was rejected by the provider before inference
 because `reasoning_effort: minimal` was unsupported. The one transport/config
@@ -46,6 +48,21 @@ normalized to the repository-required LF format. This byte-only publication
 normalization did not change any model-facing text or data. The original
 pre-run hashes and the post-normalization hashes are both preserved under the
 V2 round's `experiment/` directory.
+
+## Resolution Decision
+
+The frozen acceptance rule **rejected** this pilot. V2 averaged 3.34% alpha
+versus SPY, but V1 averaged 5.46%; mean paired V2 improvement was -2.13
+percentage points, and 0 of 4 models improved. The gates requiring V2 to beat
+V1 on average and at least three models to improve both failed. All other
+gates passed, including positive V2 alpha and controlled-input matching.
+
+This result does not reverse the separately directed production adoption of
+Portfolio V2.0. It also does not make this four-model pilot part of the primary
+publication stream. The complete decision evidence is preserved in:
+
+- `rounds/CB-2026-07-13-V2-1W/experiment/paired_v1_v2_evaluation.json`
+- `rounds/CB-2026-07-13-V2-1W/experiment/paired_v1_v2_evaluation.md`
 
 ## Participants
 

@@ -1,0 +1,57 @@
+experiment_id: vnext-event-ranking-replay-2026-07-21
+status: frozen
+official_score_eligible: false
+publication_stream: private_research
+protocol: docs/experiments/vnext-event-ranking-replay-2026-07-21.md
+output_dir: output/vnext-event-ranking-replay-2026-07-21
+canonical_report: docs/vnext_event_ranking_replay_report.md
+canonical_summary: research/results/vnext-event-ranking-replay-2026-07-21.json
+models:
+  - google-gemini-3-1-pro
+  - xai-grok-4-3
+  - xai-grok-4-5
+  - openai-gpt-5-6-sol
+api_model_overrides:
+  google-gemini-3-1-pro: gemini-3.5-flash
+episodes:
+  - replay_id: V1
+    phase: historical_validation
+    round_id: CB-2026-06-17-1W
+    event_register: research/event_registers/CB-2026-06-17-1W.yaml
+  - replay_id: V2
+    phase: historical_validation
+    round_id: CB-2026-06-25-1W
+    event_register: research/event_registers/CB-2026-06-25-1W.yaml
+  - replay_id: V3
+    phase: historical_validation
+    round_id: CB-2026-07-06-1W
+    event_register: research/event_registers/CB-2026-07-06-1W.yaml
+  - replay_id: V4
+    phase: historical_validation
+    round_id: CB-2026-07-13-1W
+    event_register: research/event_registers/CB-2026-07-13-1W.yaml
+treatments: [H0, H4, H7, H8]
+search_treatments: [H4, H7]
+final_treatments: [H0, H8]
+max_search_calls: 32
+max_final_calls: 32
+max_total_calls: 64
+max_output_tokens: 6000
+transport_retries: 1
+search_gate:
+  minimum_valid_pairs: 14
+  minimum_mean_alpha_improvement: 0.003
+  minimum_positive_pairs: 9
+  minimum_positive_models: 3
+  minimum_positive_episodes: 3
+  require_nonnegative_top3_capture_change: true
+  require_nonnegative_regret_reduction: true
+final_gate:
+  minimum_valid_pairs: 14
+  minimum_mean_effective_return_improvement: 0.005
+  require_positive_treatment_alpha: true
+  minimum_positive_pairs: 9
+  minimum_positive_models: 3
+  minimum_positive_episodes: 3
+  require_improved_capture_or_regret: true
+  maximum_worst_episode_deterioration: 0.0

@@ -1,0 +1,251 @@
+schema_version: 1
+last_updated: 2026-07-21
+current_program:
+  experiment_id: v2-july17-ledger-diagnostic-2026-07-24
+  objective: Use the complete July 17 V2 candidate ledgers to separate search, ranking, and construction regret after resolution.
+  production_impact: none
+  production_methodology: portfolio-v2.0
+  next_gate: Resolve after the July 24 close, run the frozen no-call decomposition, and let the dominant loss stage determine any later treatment.
+
+experiments:
+  - id: model-performance-predictability-2026-07-20
+    date: 2026-07-20
+    status: complete
+    decision: inconclusive
+    question: Can entry-time mechanical features predict the highest-returning weekly or monthly assets?
+    method: Leakage-audited feature screen with purged holdout and leave-best-out diagnostics.
+    sample: 46 rounds (30 weekly, 16 monthly) and 241 model decisions.
+    models: []
+    calls: 0
+    gates: Diagnostic screening only; no production adoption was permitted.
+    findings:
+      - Weekly 1-year reversal was the only loose survivor, with holdout rank IC 0.262 and purged top-three alpha 0.89%.
+      - It also had discovery alpha -2.77%, full-history alpha -0.99%, exact-winner capture 0%, and a wide interval.
+    lessons:
+      - Simple mechanical features are not reliable enough to replace model selection.
+      - Exact-winner prediction is too noisy to be the primary target.
+    limitations:
+      - Small overlapping sample with multiple-hypothesis risk.
+    canonical_artifacts: [docs/model_performance_predictability_report.md]
+    related: []
+    next_action: Target positive portfolio alpha versus SPY and use mechanical features only as neutral context.
+
+  - id: v2-improvement-research-2026-07-20
+    date: 2026-07-20
+    status: complete
+    decision: diagnostic_only
+    question: Is V2 underperformance mainly caused by candidate search, ranking, or construction?
+    method: Historical regret decomposition, selected-set counterfactuals, and prompt/input audit.
+    sample: Resolved weekly and monthly benchmark results available by 2026-07-20.
+    models: []
+    calls: 0
+    gates: Diagnostic only; recommendations required independent validation.
+    findings:
+      - Historical model alpha averaged -0.93% weekly and -1.91% monthly.
+      - Search regret averaged about 65.6% weekly and 69.3% monthly.
+      - Equal weighting selected assets still produced negative alpha.
+    lessons:
+      - Candidate search and ranking are the primary bottlenecks.
+      - Compact timely evidence is higher value than more unstructured prose.
+    limitations:
+      - Aggregated diagnosis does not identify a causal prompt treatment.
+    canonical_artifacts: [docs/v2_improvement_research_report.md]
+    related: [model-performance-predictability-2026-07-20]
+    next_action: Test candidate-coverage and ranking treatments in private replay.
+
+  - id: vnext-historical-replay-stage1-2026-07-20
+    date: 2026-07-20
+    status: complete
+    decision: rejected
+    question: Do rank-first, cross-sectional, or robustness prompts improve historical top-five selection?
+    method: Paired single-turn replay across frozen weekly development episodes and four model families.
+    sample: Three adaptive development episodes.
+    models: [google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5, openai-gpt-5-6-sol]
+    calls: 24
+    gates: Positive paired alpha, broad model/episode gains, and improved top-asset capture.
+    findings:
+      - Rank-first improved mean top-five alpha 1.62 percentage points in four cells but did not improve capture.
+      - Cross-sectional prompting improved mean alpha 1.00 point in 3 of 4 pairs but did not improve capture.
+      - The robustness treatment reduced mean alpha 1.12 points.
+    lessons:
+      - Ranking instructions alone lacked breadth and capture evidence.
+    limitations:
+      - Very small adaptive sample; no treatment reached confirmation.
+    canonical_artifacts:
+      - docs/experiments/vnext-historical-replay-2026-07-20.md
+      - docs/vnext_historical_replay_report.md
+      - experiments/vnext-historical-replay-2026-07-20.yaml
+    related: [v2-improvement-research-2026-07-20]
+    next_action: Improve candidate coverage before another ranking treatment.
+
+  - id: vnext-historical-replay-stage1b-2026-07-21
+    date: 2026-07-21
+    status: complete
+    decision: rejected
+    question: Do balanced candidate lanes, regime routing, or omitted-candidate challenge improve coverage and alpha?
+    method: Paired replay of H4 balanced lanes, H5 regime routing, and H6 omitted-candidate challenge.
+    sample: Three adaptive development episodes and four model families.
+    models: [google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5, openai-gpt-5-6-sol]
+    calls: 36
+    gates: 10 valid pairs, 0.50-point mean gain, 7 positive pairs, 3 positive models, 2 positive episodes, and 30% regret reduction.
+    findings:
+      - H4 captured a top-two asset in 6 pairs versus 0 and reduced regret 60.74%, but mean alpha rose only 0.23 points and 5 of 12 pairs were positive.
+      - H5 improved mean alpha 0.12 points; H6 reduced it 0.11 points.
+    lessons:
+      - Balanced lanes are the strongest search lead, but ranking and period conditioning remain weak.
+    limitations:
+      - D1-D3 are adaptive and cannot be used as sealed confirmation.
+    canonical_artifacts:
+      - docs/experiments/vnext-historical-replay-stage1b-2026-07-21.md
+      - docs/vnext_historical_replay_stage1b_report.md
+      - experiments/vnext-historical-replay-stage1b-2026-07-21.yaml
+    related: [vnext-historical-replay-stage1-2026-07-20]
+    next_action: Test ranking among balanced-lane finalists on new periods.
+
+  - id: vnext-historical-replay-stage1c-2026-07-21
+    date: 2026-07-21
+    status: complete
+    decision: rejected
+    question: Can pairwise ranking convert H4 shortlist coverage into stronger final selections?
+    method: One-call pairwise reranking diagnostic over H4 finalist sets.
+    sample: Three already-adaptive periods; 11 valid model-period cells.
+    models: [google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5, openai-gpt-5-6-sol]
+    calls: 12
+    gates: Broad positive paired improvement and stable episode effects.
+    findings:
+      - Pairwise reranking added four final-five top-two captures but mean alpha rose only 0.12 points and 6 of 11 cells were positive.
+      - It worsened D1, was mixed on D2, and improved D3.
+    lessons:
+      - Pairwise comparison needs stronger timely evidence and new periods.
+    limitations:
+      - Adaptive periods and only 11 valid cells; no confirmatory inference.
+    canonical_artifacts:
+      - docs/experiments/vnext-historical-replay-stage1c-2026-07-21.md
+      - docs/vnext_historical_replay_stage1c_report.md
+      - experiments/vnext-historical-replay-stage1c-2026-07-21.yaml
+    related: [vnext-historical-replay-stage1b-2026-07-21]
+    next_action: Stop adapting on D1-D3 and use new episode blocks with event evidence.
+
+  - id: mechanical-candidate-screen-2026-07-21
+    date: 2026-07-21
+    status: complete
+    decision: rejected
+    question: Can simple mechanical candidate rules cheaply identify stronger weekly assets?
+    method: Screen of continuation, reversal, quality-pullback, and regime-router rules.
+    sample: Frozen resolved weekly episodes in the experiment protocol.
+    models: []
+    calls: 0
+    gates: Robust alpha, capture, and stability rather than a single-period win.
+    findings:
+      - All four mechanical strategies failed their frozen criteria.
+    lessons:
+      - Mechanical lanes can diversify search but should not dictate the portfolio.
+    limitations:
+      - Rules used only available mechanical features.
+    canonical_artifacts:
+      - docs/experiments/mechanical-candidate-screen-2026-07-21.md
+      - docs/mechanical_candidate_strategy_report.md
+      - experiments/mechanical-candidate-screen-2026-07-21.yaml
+    related: [model-performance-predictability-2026-07-20]
+    next_action: Keep lane references neutral and require model evidence.
+
+  - id: portfolio-v2-pilot-2026-07-13
+    date: 2026-07-21
+    status: complete
+    decision: rejected
+    question: Did the four-model July 13 V2 pilot improve returns over paired V1?
+    method: Same-snapshot paired resolution and per-model comparison under the frozen pilot gate.
+    sample: Four models over the July 13 to July 20 weekly window.
+    models: [google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5, openai-gpt-5-6-sol]
+    calls: 0
+    gates: Positive average paired improvement and broad per-model improvement.
+    findings:
+      - V1 average alpha versus SPY was 5.46%; V2 average alpha was 3.34%.
+      - V2 trailed V1 by 2.13 points and 0 of 4 models improved; both versions beat SPY 4 of 4.
+    lessons:
+      - The pilot rejected V2 under its gate; production V2 is active only by separate operator decision.
+    limitations:
+      - One weekly period, four models, and no V2 candidate ledgers.
+    canonical_artifacts:
+      - docs/experiments/portfolio-v2-2026-07-13.md
+      - experiments/portfolio-v2-2026-07-13.yaml
+      - rounds/CB-2026-07-13-V2-1W/experiment/paired_v1_v2_evaluation.md
+      - rounds/CB-2026-07-13-V2-1W/experiment/paired_v1_v2_evaluation.json
+    related: [v2-improvement-research-2026-07-20]
+    next_action: Preserve the pilot and use later complete ledgers for regret diagnosis.
+
+  - id: v2-july13-resolution-diagnostic-2026-07-21
+    date: 2026-07-21
+    status: complete
+    decision: diagnostic_only
+    question: Could construction-only counterfactuals repair the rejected July 13 V2 pilot?
+    method: Equal-selected, 50% cap-to-SPY, and 35% cap-to-SPY no-call counterfactuals.
+    sample: Four-model July 13 V2 weekly pilot.
+    models: []
+    calls: 0
+    gates: Diagnostic only; retrospective changes could not alter the pilot.
+    findings:
+      - Equal-selected changed average return -0.22 points; 50% and 35% caps changed it -0.08 and -0.28 points.
+      - Measurable construction share was 86.92%, but no ledger existed to measure search regret honestly.
+    lessons:
+      - Caps and SPY sleeves do not create missing selection skill; never invent a retrospective ledger.
+    limitations:
+      - Diagnostics were limited to assets the models selected.
+    canonical_artifacts:
+      - docs/experiments/v2-next-research-2026-07-21.md
+      - docs/v2_next_research_july13_diagnostic.md
+      - experiments/v2-next-research-2026-07-21.yaml
+    related: [portfolio-v2-pilot-2026-07-13]
+    next_action: Resolve July 17 weekly V2 after July 24 for clean ledger diagnostics.
+
+  - id: vnext-event-ranking-replay-2026-07-21
+    date: 2026-07-21
+    status: complete
+    decision: rejected
+    question: Do timestamped event evidence, pairwise candidate-vs-SPY ranking, and abstention improve weekly portfolio alpha?
+    method: Sequential private replay with control, balanced lanes, event evidence, and pairwise ranking plus abstention.
+    sample: Weekly development, validation, and sealed-confirmation blocks with non-overlapping windows where data permits.
+    models: [google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5, openai-gpt-5-6-sol]
+    calls: 32
+    gates: Mean gain at least 0.50 points, positive alpha versus SPY, 3 of 4 models and 4 of 6 periods improved, better capture/regret, and no worse worst period.
+    findings:
+      - H7 improved mean top-five alpha over H4 by only 0.16 percentage points; 8 of 13 valid pairs, 3 model families, and 2 episodes improved.
+      - Top-three shortlist capture increased by 2, but mean shortlist regret worsened by 0.48 percentage points.
+      - Episode effects decayed from +1.01 and +0.39 points in V1-V2 to 0.00 and -1.03 points in V3-V4.
+      - Timely strong/moderate candidates averaged -0.58% realized alpha versus SPY; other candidates averaged -0.68%.
+      - H8 was not run because H7 failed the frozen search gate; six Gemini records failed for temporary provider availability, leaving 13 valid pairs.
+    lessons:
+      - Event structuring increased capture in some periods without reliably improving candidate quality or returns.
+      - Do not spend on pairwise ranking or force broader event coverage from this result.
+    limitations:
+      - Historical replay is reject-only evidence because models may remember outcomes.
+    canonical_artifacts:
+      - docs/experiments/vnext-event-ranking-replay-2026-07-21.md
+      - experiments/vnext-event-ranking-replay-2026-07-21.yaml
+      - docs/vnext_event_ranking_replay_report.md
+      - research/results/vnext-event-ranking-replay-2026-07-21.json
+    related: [vnext-historical-replay-stage1b-2026-07-21, vnext-historical-replay-stage1c-2026-07-21]
+    next_action: Stop this branch and use the complete July 17 production ledger to diagnose the dominant loss stage after July 24.
+
+  - id: v2-july17-ledger-diagnostic-2026-07-24
+    date: 2026-07-21
+    status: active
+    decision: active
+    question: In the first complete eight-model production V2 weekly round, is return lost mainly in candidate search, candidate ranking, or portfolio construction?
+    method: Resolve one frozen shared price snapshot, then decompose oracle regret and audit candidate forecasts, rejected candidates, SPY hurdle decisions, and construction counterfactuals.
+    sample: CB-2026-07-17-1W after the July 24 close; eight frozen production models with complete candidate ledgers.
+    models: [openai-gpt-5-5, openai-gpt-5-6-sol, google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5, anthropic-claude-opus-4-7, anthropic-claude-opus-4-8, anthropic-claude-fable-5]
+    calls: 0
+    gates: No model calls. A loss stage is dominant only if its aggregate share exceeds 50%; the result authorizes design work only, not production adoption.
+    findings:
+      - No result yet; the frozen weekly round resolves after the July 24 close.
+    lessons:
+      - This is the first clean opportunity to inspect complete prospective V2 candidate ledgers rather than reconstructing them retrospectively.
+    limitations:
+      - One weekly period and overlap with earlier July windows limit independence.
+    canonical_artifacts:
+      - docs/experiments/v2-next-research-2026-07-21.md
+      - experiments/v2-next-research-2026-07-21.yaml
+      - scripts/analyze_v2_resolution_diagnostics.py
+    related: [v2-july13-resolution-diagnostic-2026-07-21, vnext-event-ranking-replay-2026-07-21]
+    next_action: After the July 24 close, fetch one frozen adjusted-close snapshot, resolve CB-2026-07-17-1W, and run the existing diagnostic script.

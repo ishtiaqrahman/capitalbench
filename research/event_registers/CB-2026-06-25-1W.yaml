@@ -1,0 +1,30 @@
+round_id: CB-2026-06-25-1W
+research_cutoff_utc: 2026-06-26T01:30:00Z
+window: 2026-06-25 close to 2026-07-02 close
+source_artifact: rounds/CB-2026-06-25-1W/research/final_briefing.md
+neutrality: Facts and static mappings only; no direction, ranking, or recommendation.
+events:
+  - id: GDP_Q1_THIRD
+    timing: 2026-06-25
+    status: released
+    fact: Q1 real GDP was revised to 2.1% annualized from 1.6%; real GDI rose 1.2%.
+    comparison: Revision comparison only; consensus was not provided.
+    affected_options: [SP500, TOTAL_US_MARKET, SMALL_CAP, CONSUMER_DISCRETIONARY, INDUSTRIALS, FINANCIALS, INTERMEDIATE_TREASURY, LONG_TREASURY]
+    directness: macro_indirect
+    market_already_moved: unknown
+  - id: CLAIMS_JUN25
+    timing: 2026-06-25
+    status: released
+    fact: Initial claims were 215000, down 12000 from the revised prior week.
+    comparison: Prior-week comparison only; consensus was not provided.
+    affected_options: [SP500, SMALL_CAP, CONSUMER_DISCRETIONARY, REGIONAL_BANKS, INTERMEDIATE_TREASURY, LONG_TREASURY]
+    directness: macro_indirect
+    market_already_moved: unknown
+  - id: EMPLOYMENT_JUL2
+    timing: 2026-07-02 08:30 ET
+    status: scheduled
+    fact: The June U.S. Employment Situation was scheduled before the exit close.
+    comparison: Outcome was unknown at the research cutoff.
+    affected_options: [SP500, TOTAL_US_MARKET, SMALL_CAP, CONSUMER_DISCRETIONARY, REGIONAL_BANKS, INTERMEDIATE_TREASURY, LONG_TREASURY, US_DOLLAR, GOLD]
+    directness: macro_indirect
+    market_already_moved: no

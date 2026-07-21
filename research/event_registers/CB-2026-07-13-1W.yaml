@@ -1,0 +1,78 @@
+round_id: CB-2026-07-13-1W
+research_cutoff_utc: 2026-07-14T06:30:00Z
+window: 2026-07-13 close to 2026-07-20 close
+source_artifact: rounds/CB-2026-07-13-1W/research/final_briefing.md
+neutrality: Facts and static mappings only; no direction, ranking, or recommendation.
+events:
+  - id: EMPLOYMENT_JUN
+    timing: 2026-07-02
+    status: released
+    fact: June payrolls rose 57000; April and May were revised down 74000 combined; unemployment was 4.2%.
+    comparison: Revision and prior-period facts only; consensus was not provided.
+    affected_options: [SP500, TOTAL_US_MARKET, SMALL_CAP, CONSUMER_DISCRETIONARY, REGIONAL_BANKS, INTERMEDIATE_TREASURY, LONG_TREASURY]
+    directness: macro_indirect
+    market_already_moved: yes; released before the entry close.
+  - id: TSMC_SALES_JUN
+    timing: 2026-07-10
+    status: released
+    fact: TSMC reported June revenue up 67.9% year over year and first-half revenue up 35.6%.
+    comparison: Year-over-year comparison only; consensus was not provided.
+    affected_options: [SEMICONDUCTORS, TECHNOLOGY, NASDAQ100, LARGE_GROWTH, TAIWAN, SOUTH_KOREA]
+    directness: direct_exposure
+    market_already_moved: yes; the briefing reports TSMC +1.0% in Taiwan and -2.9% in U.S. trading on July 13.
+  - id: CPI_JUL14
+    timing: 2026-07-14 08:30 ET
+    status: scheduled
+    fact: June CPI and real earnings were scheduled inside the window.
+    comparison: Outcome was unknown at the research cutoff.
+    affected_options: [SP500, NASDAQ100, SMALL_CAP, INTERMEDIATE_TREASURY, LONG_TREASURY, TIPS, US_DOLLAR, GOLD, ENERGY]
+    directness: macro_indirect
+    market_already_moved: no
+  - id: BANK_EARNINGS_JUL14
+    timing: 2026-07-14
+    status: scheduled
+    fact: JPMorgan Chase and Wells Fargo Q2 results were scheduled; other major banks were also due that day.
+    comparison: Outcomes were unknown at the research cutoff.
+    affected_options: [FINANCIALS, REGIONAL_BANKS, LARGE_VALUE, SP500]
+    directness: direct_exposure
+    market_already_moved: no
+  - id: FED_COMMUNICATION_JUL14_15
+    timing: 2026-07-14 to 2026-07-15
+    status: scheduled
+    fact: House and Senate monetary-policy testimony and the Federal Reserve Beige Book were scheduled.
+    comparison: Content was unknown at the research cutoff.
+    affected_options: [SP500, NASDAQ100, SMALL_CAP, INTERMEDIATE_TREASURY, LONG_TREASURY, TIPS, INVESTMENT_GRADE_CREDIT, HIGH_YIELD_CREDIT, US_DOLLAR, GOLD]
+    directness: macro_indirect
+    market_already_moved: no
+  - id: RETAIL_JUL16
+    timing: 2026-07-16 08:30 ET
+    status: scheduled
+    fact: June U.S. retail sales were scheduled inside the window.
+    comparison: Outcome was unknown at the research cutoff.
+    affected_options: [CONSUMER_DISCRETIONARY, CONSUMER_STAPLES, SMALL_CAP, REGIONAL_BANKS, SP500]
+    directness: macro_indirect
+    market_already_moved: no
+  - id: TSMC_EARNINGS_JUL16
+    timing: 2026-07-16
+    status: scheduled
+    fact: TSMC Q2 results were scheduled; frozen guidance was $39.0-$40.2 billion revenue and 65.5%-67.5% gross margin.
+    comparison: Outcome was unknown at the research cutoff.
+    affected_options: [SEMICONDUCTORS, TECHNOLOGY, NASDAQ100, LARGE_GROWTH, TAIWAN, SOUTH_KOREA]
+    directness: direct_exposure
+    market_already_moved: no
+  - id: HOUSING_INDUSTRY_JUL17
+    timing: 2026-07-17
+    status: scheduled
+    fact: June housing starts, permits, industrial production, and capacity utilization were scheduled.
+    comparison: Outcomes were unknown at the research cutoff.
+    affected_options: [REAL_ESTATE, MORTGAGE_BACKED_BONDS, REGIONAL_BANKS, INDUSTRIALS, MATERIALS, UTILITIES, SP500]
+    directness: macro_indirect
+    market_already_moved: no
+  - id: IRAN_SHIPPING_JUL14
+    timing: 2026-07-14 16:00 ET
+    status: scheduled
+    fact: The announced U.S. resumption time for an Iran shipping blockade was inside the window.
+    comparison: Implementation and market effects were unknown at the cutoff.
+    affected_options: [ENERGY, OIL, BROAD_COMMODITIES, INDUSTRIALS, AEROSPACE_DEFENSE, GOLD, US_DOLLAR]
+    directness: direct_exposure
+    market_already_moved: partially; the announcement was known, implementation was not.

@@ -1,7 +1,8 @@
 experiment_id: portfolio-v2-2026-07-13
-status: active
-run_status: scheduled_for_resolution
+status: rejected
+run_status: resolved_rejected
 decision_date: '2026-07-20'
+decision_at_utc: '2026-07-21T08:35:28Z'
 paired_v1_round_id: CB-2026-07-13-1W
 paired_v1_run_id: official-20260713
 v2_round_id: CB-2026-07-13-V2-1W
@@ -25,6 +26,20 @@ execution:
       retry_count: 1
       source_run_id: official-v2-20260713-retry-openai-gpt-5-5
       initial_attempt_artifacts: rounds/CB-2026-07-13-V2-1W/runs/official-v2-20260713/attempts/openai-gpt-5-5-initial-transport-failure
+result:
+  average_v1_alpha_vs_sp500: 0.054630503278140216
+  average_v2_alpha_vs_sp500: 0.033359078667931856
+  average_paired_improvement: -0.02127142461020836
+  models_improved: 0
+  models_compared: 4
+  v1_beat_sp500_count: 4
+  v2_beat_sp500_count: 4
+  failed_gates:
+    - average_v2_alpha_above_v1
+    - at_least_three_models_improved
+  evidence:
+    - rounds/CB-2026-07-13-V2-1W/experiment/paired_v1_v2_evaluation.json
+    - rounds/CB-2026-07-13-V2-1W/experiment/paired_v1_v2_evaluation.md
 acceptance_rule:
   require_all_v2_submissions_valid: true
   require_average_v2_alpha_above_zero: true

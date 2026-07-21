@@ -1,0 +1,38 @@
+experiment_id: v2-next-research-2026-07-21
+status: waiting_for_july17_resolution
+official_score_eligible: false
+publication_stream: private_research
+protocol: docs/experiments/v2-next-research-2026-07-21.md
+output_dir: output/v2-next-research-2026-07-21
+minimum_dominant_regret_share: 0.50
+pairs:
+  july13_pilot:
+    status: resolved_rejected
+    v2_round_id: CB-2026-07-13-V2-1W
+    v2_run_id: official-v2-20260713
+    control_round_id: CB-2026-07-13-1W
+    control_run_id: official-20260713
+    entry_date: '2026-07-13'
+    exit_date: '2026-07-20'
+    report_copy: docs/v2_next_research_july13_diagnostic.md
+    diagnostic_branch: test_equal_weight_and_cap_counterfactuals_without_calls
+    branch_result: no_aggregate_improvement
+  july17_production:
+    status: not_due
+    v2_round_id: CB-2026-07-17-1W
+    v2_run_id: official-v2-all-weekly-final-20260717
+    entry_date: '2026-07-17'
+    exit_date: '2026-07-24'
+    report_copy: docs/v2_next_research_july17_diagnostic.md
+paid_shadow:
+  authorized: false
+  first_stage_models:
+    - openai-gpt-5-6-sol
+    - xai-grok-4-5
+    - google-gemini-3-1-pro
+  calls_per_round: 3
+  initial_rounds: 2
+  maximum_rounds_before_new_approval: 4
+  maximum_incremental_calls: 12
+  monthly_calls: 0
+  anthropic_calls: 0

@@ -20,10 +20,10 @@ The recommended V2.1 treatment is one single-turn call with a compact nonredunda
 
 | Track | Decisions | Model alpha | Total regret | Search regret | Sizing regret | Search share | Top-5 capture |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Weekly | 154 | -0.75% | 9.58% | 6.29% | 3.29% | 65.70% | 41.56% |
-| Monthly | 74 | -1.42% | 19.39% | 13.63% | 5.76% | 70.29% | 32.43% |
+| Weekly | 162 | -0.93% | 10.09% | 6.62% | 3.47% | 65.61% | 40.74% |
+| Monthly | 79 | -1.91% | 19.39% | 13.44% | 5.95% | 69.30% | 31.65% |
 
-The selected holdings themselves do not show positive discrimination: equal-weighting each submitted selected set produced -0.72% weekly alpha and -1.46% monthly alpha. Relative to equal weight across the whole risky universe, the selected sets added -0.36% weekly and -0.83% monthly. This is why weight optimization alone cannot repair V2.
+The selected holdings themselves do not show positive discrimination: equal-weighting each submitted selected set produced -0.84% weekly alpha and -1.87% monthly alpha. Relative to equal weight across the whole risky universe, the selected sets added -0.53% weekly and -1.21% monthly. This is why weight optimization alone cannot repair V2.
 
 The 29 weekly and 15 monthly rounds overlap, and several model decisions share each market episode. These averages are stage diagnostics rather than independent observations or evidence that the hindsight-best option was knowable.
 
@@ -33,12 +33,12 @@ These rules reuse the exact submitted candidate set. They diagnose weighting and
 
 | Rule | Weekly alpha | Weekly change | Monthly alpha | Monthly change |
 | --- | --- | --- | --- | --- |
-| Submitted | -0.75% | 0.00% | -1.42% | 0.00% |
-| Equal selected | -0.72% | 0.03% | -1.46% | -0.04% |
-| 50% holding cap | -0.75% | 0.00% | -1.49% | -0.07% |
-| 35% holding cap | -0.72% | 0.03% | -1.53% | -0.10% |
-| 25% SPY reserve | -0.56% | 0.19% | -1.07% | 0.36% |
-| 50% SPY reserve | -0.37% | 0.37% | -0.71% | 0.71% |
+| Submitted | -0.93% | 0.00% | -1.91% | 0.00% |
+| Equal selected | -0.84% | 0.08% | -1.87% | 0.04% |
+| 50% holding cap | -0.92% | 0.00% | -1.97% | -0.06% |
+| 35% holding cap | -0.88% | 0.05% | -2.00% | -0.08% |
+| 25% SPY reserve | -0.70% | 0.23% | -1.43% | 0.48% |
+| 50% SPY reserve | -0.46% | 0.46% | -0.96% | 0.96% |
 
 A fixed SPY sleeve predictably moves a negative-alpha portfolio closer to zero, but it cannot create selection skill: its alpha is exactly a scaled version of submitted alpha. Holding caps and equal weighting are useful controls only if their paired improvements are stable; the moving-block intervals in `portfolio_rule_summary.csv` show the uncertainty.
 
@@ -97,7 +97,7 @@ The compact variant is not yet a benchmark input. It demonstrates that V2 can re
 
 | Hypothesis | Verdict | Evidence | Limit |
 | --- | --- | --- | --- |
-| candidate search is primary bottleneck | supported as diagnosis | Search accounts for 65.7% of weekly and 70.3% of monthly oracle regret; equal-selected alpha remains negative. | Oracle regret uses hindsight and does not prove the winner was predictable. |
+| candidate search is primary bottleneck | supported as diagnosis | Search accounts for 65.6% of weekly and 69.3% of monthly oracle regret; equal-selected alpha remains negative. | Oracle regret uses hindsight and does not prove the winner was predictable. |
 | flat context encourages selective use | partially supported | V2 added 3.7% input tokens, allocated 66.2% to latest-window top-quintile assets, and explicitly referenced several supplied fields rarely or never. | No paid order-permutation experiment was run, so positional causality is unproven. |
 | relative spy hurdle is too weak | contract gap confirmed | V2 requires a portfolio-level SPY comparison but no finalist or holding is required to clear SPY. | The return effect of a hard holding-level hurdle requires prospective forecasts and outcomes. |
 | forecast confidence is not ready for sizing | instrument first | Only four unresolved probabilities exist and their cross-model standard deviation is 0.018. | No resolved V2 confidence history exists yet. |
@@ -108,7 +108,7 @@ The compact variant is not yet a benchmark input. It demonstrates that V2 can re
 
 | Priority | Intervention | Rating | Why |
 | --- | --- | --- | --- |
-| 1 | auditable full universe candidate ledger | implement | Search regret is 65.7% of weekly and 70.3% of monthly total oracle regret; current V2 records only selected holdings. |
+| 1 | auditable full universe candidate ledger | implement | Search regret is 65.6% of weekly and 69.3% of monthly total oracle regret; current V2 records only selected holdings. |
 | 2 | compact nonredundant decision table | prospective_test | The current table is dense and contains fields that do not add within-round ordering information; long-context and table-reference errors are established LLM failure modes. |
 | 3 | holding level spy hurdle | prospective_test | V2 asks for portfolio-level comparison but does not enforce a holding-level relative-return condition. |
 | 4 | economic exposure clusters and cap | prospective_test | V2 pairwise allocation overlap averages 62.5%; one valid portfolio used only ENERGY and OIL despite the soft correlation instruction. |

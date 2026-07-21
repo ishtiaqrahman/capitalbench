@@ -1,0 +1,38 @@
+round_id: CB-2026-06-17-1W
+research_cutoff_utc: 2026-06-18T01:28:00Z
+window: 2026-06-17 close to 2026-06-24 close
+source_artifact: rounds/CB-2026-06-17-1W/research/final_briefing.md
+neutrality: Facts and static mappings only; no direction, ranking, or recommendation.
+events:
+  - id: FOMC_JUN17
+    timing: 2026-06-17
+    status: released
+    fact: FOMC held 3.50%-3.75%; its 2026 medians were 2.2% GDP, 4.3% unemployment, 3.6% PCE inflation, and 3.8% federal funds.
+    comparison: No consensus comparison was provided in the frozen source.
+    affected_options: [SP500, NASDAQ100, LARGE_GROWTH, LARGE_VALUE, SMALL_CAP, INTERMEDIATE_TREASURY, LONG_TREASURY, TIPS, INVESTMENT_GRADE_CREDIT, HIGH_YIELD_CREDIT, US_DOLLAR, GOLD]
+    directness: macro_indirect
+    market_already_moved: yes; the frozen briefing reports yields climbed after the projections.
+  - id: RETAIL_MAY
+    timing: 2026-06-17
+    status: released
+    fact: May retail and food services sales rose 0.9% month over month and 6.9% year over year.
+    comparison: No consensus comparison was provided in the frozen source.
+    affected_options: [SP500, CONSUMER_DISCRETIONARY, CONSUMER_STAPLES, SMALL_CAP, REGIONAL_BANKS]
+    directness: macro_indirect
+    market_already_moved: unknown
+  - id: CLAIMS_JUN18
+    timing: 2026-06-18
+    status: scheduled
+    fact: Weekly U.S. unemployment insurance claims were scheduled inside the scoring window.
+    comparison: Outcome was unknown at the research cutoff.
+    affected_options: [SP500, SMALL_CAP, CONSUMER_DISCRETIONARY, REGIONAL_BANKS, INTERMEDIATE_TREASURY, LONG_TREASURY]
+    directness: macro_indirect
+    market_already_moved: no
+  - id: HOLIDAY_JUN19
+    timing: 2026-06-19
+    status: scheduled
+    fact: U.S. equity markets were scheduled to close for Juneteenth.
+    comparison: Calendar fact only.
+    affected_options: [SP500]
+    directness: market_timing
+    market_already_moved: not_applicable

@@ -1,0 +1,51 @@
+experiment_id: mechanical-candidate-screen-2026-07-21
+status: frozen
+official_score_eligible: false
+publication_stream: private_research
+protocol: docs/experiments/mechanical-candidate-screen-2026-07-21.md
+output_dir: output/mechanical-candidate-screen-2026-07-21
+report_copy: docs/mechanical_candidate_strategy_report.md
+rounds_dir: rounds
+minimum_non_overlapping_rounds: 6
+minimum_mean_top5_alpha: 0.005
+minimum_sp500_beat_rate: 0.60
+minimum_prior_purged_rounds: 8
+strategies:
+  continuation:
+    description: Favor recent and medium-term leaders.
+    weights:
+      return_7d: 0.40
+      return_30d: 0.30
+      return_6m: 0.20
+      return_1y: 0.10
+  reversal:
+    description: Favor long-run and medium-run laggards, with less weight on the latest week.
+    weights:
+      return_7d: 0.10
+      return_30d: 0.20
+      return_6m: 0.30
+      return_1y: 0.40
+  quality_pullback:
+    description: Favor established trends undergoing a recent pullback with a comparatively orderly price path.
+    component_weights:
+      established_trend: 0.35
+      recent_pullback: 0.35
+      path_quality: 0.30
+    trend_weights:
+      return_6m: 0.40
+      return_1y: 0.60
+    pullback_weights:
+      return_7d: 0.60
+      return_30d: 0.40
+    path_fields:
+      - volatility_30d
+      - max_drawdown_30d
+      - up_day_share_30d
+      - distance_from_52w_high
+      - distance_from_52w_low
+  regime_router:
+    description: Route to continuation, reversal, or trend-pullback using only entry-time S&P 500 trend and market breadth.
+    positive_breadth_threshold: 0.50
+    bullish_rule: spy_return_30d_nonnegative_and_breadth_at_or_above_threshold
+    bearish_rule: spy_return_30d_negative_and_breadth_below_threshold
+    mixed_rule: equal_weight_established_trend_and_recent_pullback
