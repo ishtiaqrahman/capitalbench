@@ -166,6 +166,12 @@ function loadMarketEnvironment() {
 
 const assetRiskModel = readYaml(join(repoRoot, "configs", "asset_risk_model.yaml"), {});
 const assetRiskDefinitions = assetRiskModel.assets ?? {};
+const productionModelConfig = readYaml(join(repoRoot, "configs", "models.v2.yaml"), {});
+const productionModelConfigById = new Map(
+  (Array.isArray(productionModelConfig.models) ? productionModelConfig.models : [])
+    .filter((model) => model?.model_id)
+    .map((model) => [String(model.model_id), model])
+);
 const benchmarkSetConfig = readYaml(join(repoRoot, "benchmark_sets.yaml"), {
   version: "benchmark_sets_v1",
   qualification_thresholds: { weekly: 6, monthly: 3 },
@@ -180,6 +186,12 @@ function normalizeModelIds(modelIds) {
 function rosterContains(definition, modelIds) {
   const definitionIds = new Set(definition.model_ids ?? []);
   return modelIds.every((modelId) => definitionIds.has(modelId));
+}
+
+function rosterEquals(definition, modelIds) {
+  const definitionIds = normalizeModelIds(definition.model_ids ?? []);
+  const normalizedModelIds = normalizeModelIds(modelIds);
+  return definitionIds.length === normalizedModelIds.length && definitionIds.every((modelId, index) => modelId === normalizedModelIds[index]);
 }
 
 function roundSortValue(round) {
@@ -229,6 +241,8 @@ function configuredBenchmarkSetDefinitions() {
           short_label: String(set.short_label ?? set.label ?? set.set_id ?? ""),
           description: String(set.description ?? ""),
           started_round_id: String(set.started_round_id ?? ""),
+          roster_policy: String(set.roster_policy ?? "contains"),
+          model_roster_version: set.model_roster_version ? String(set.model_roster_version) : null,
           model_ids: normalizeModelIds(Array.isArray(set.model_ids) ? set.model_ids : [])
         }))
         .filter((set) => set.set_id && ["weekly", "monthly"].includes(set.track) && set.model_ids.length > 0)
@@ -261,8 +275,11 @@ function buildBenchmarkSetDefinitions({ rounds, portfolios }) {
     if (modelIds.length === 0) continue;
 
     const trackDefinitions = definitionsByTrack.get(round.track) ?? [];
+    const hasFrozenRoster = Boolean(round.model_roster_version);
     const coveredByStartedSet = trackDefinitions.some(
-      (definition) => definitionStartsAtOrBeforeRound(definition, roundById, round) && rosterContains(definition, modelIds)
+      (definition) =>
+        definitionStartsAtOrBeforeRound(definition, roundById, round) &&
+        (hasFrozenRoster ? rosterEquals(definition, modelIds) : rosterContains(definition, modelIds))
     );
     if (coveredByStartedSet) continue;
 
@@ -276,6 +293,8 @@ function buildBenchmarkSetDefinitions({ rounds, portfolios }) {
       short_label: `${shortMonthDay(round.decision_date)} ${trackLabel(round.track)}`,
       description: autoBenchmarkSetDescription(round, modelIds),
       started_round_id: round.round_id,
+      roster_policy: hasFrozenRoster ? "frozen" : "contains",
+      model_roster_version: round.model_roster_version || null,
       model_ids: modelIds
     };
     definitions.push(definition);
@@ -1615,6 +1634,8 @@ function loadRound(row) {
     horizon: String(manifest.horizon ?? ""),
     horizon_days: horizonDays(entryDate, exitDate),
     methodology_version: selectedRun?.manifest.methodology_version ?? manifest.methodology_version ?? "",
+    model_roster_version: String(manifest.model_roster_version ?? ""),
+    expected_model_ids: normalizeModelIds(Array.isArray(manifest.expected_model_ids) ? manifest.expected_model_ids : []),
     universe_version: inferUniverseVersion(roundPath, manifest.universe_version),
     submission_format: manifest.submission_format ?? "single_pick",
     official_run_id: selectedRun?.run_id ?? "",
@@ -1904,6 +1925,9 @@ function buildReadModel() {
   for (const portfolio of portfolios) {
     const existing = modelMap.get(portfolio.model_id);
     const modelRounds = portfolios.filter((row) => row.model_id === portfolio.model_id);
+    const config = productionModelConfigById.get(portfolio.model_id) ?? {};
+    const retiredAtUtc = config.retired_at_utc ? String(config.retired_at_utc) : null;
+    const isRetired = Boolean(retiredAtUtc && Date.parse(retiredAtUtc) <= Date.now());
     modelMap.set(portfolio.model_id, {
       model_id: portfolio.model_id,
       label: modelLabel(portfolio.model_id),
@@ -1911,6 +1935,10 @@ function buildReadModel() {
       provider_label: PROVIDER_LABELS[portfolio.provider] ?? portfolio.provider,
       logo_src: PROVIDER_LOGOS[portfolio.provider],
       active: modelRounds.some((row) => row.status === "active"),
+      lifecycle_status: isRetired ? "retired" : "active",
+      retired_at_utc: retiredAtUtc,
+      retirement_reason: config.retirement_reason ? String(config.retirement_reason) : null,
+      successor_model_id: config.successor_model_id ? String(config.successor_model_id) : null,
       first_round_id:
         existing?.first_round_id ??
         [...modelRounds].sort((a, b) => a.round_id.localeCompare(b.round_id))[0]?.round_id ??

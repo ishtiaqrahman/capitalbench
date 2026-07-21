@@ -86,9 +86,12 @@ function scoreValue(value: number | null | undefined): string {
                   <small>{profile.modelId}</small>
                 </span>
               </a>
-              <span class:list={["model-live-indicator", live.portfolioCount > 0 ? "is-live" : "is-idle"]}>
+              <span class:list={[
+                "model-live-indicator",
+                profile.lifecycleStatus === "retired" ? "is-retired" : live.portfolioCount > 0 ? "is-live" : "is-idle"
+              ]}>
                 <i aria-hidden="true"></i>
-                {live.portfolioCount > 0 ? "Live" : "No live"}
+                {profile.lifecycleStatus === "retired" ? "Retired" : live.portfolioCount > 0 ? "Live" : "No live"}
               </span>
             </div>
 

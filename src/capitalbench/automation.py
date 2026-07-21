@@ -467,7 +467,11 @@ def _validate_acceptance_gate(round_path: Path, run_manifest: dict[str, Any]) ->
         raise ValueError(f"valid submissions do not match model_count: {valid_submissions} != {model_count}")
     if invalid_submissions != 0:
         raise ValueError(f"run has invalid submissions: {invalid_submissions}")
-    validate_official_portfolio_v2_run_manifest(manifest.methodology_version, run_manifest)
+    validate_official_portfolio_v2_run_manifest(
+        manifest.methodology_version,
+        run_manifest,
+        manifest.expected_model_ids,
+    )
     if not round_hashes_match(round_path):
         raise ValueError("round hashes do not match current round files")
     for filename in ["manifest.yaml", "briefing.md", "options.yaml", "prompt.md", "hashes.json"]:

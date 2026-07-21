@@ -2,6 +2,21 @@
 
 ## 2026-07-21
 
+### Forward-only model retirement
+
+- Retired Claude Opus 4.7 from all newly initialized weekly and monthly
+  production rounds while preserving its historical submissions, results,
+  model profile, and benchmark comparison sets.
+- Added explicit model lifecycle metadata and date-aware runner eligibility;
+  retrospective research can still replay retired models without making those
+  calls official.
+- New Portfolio V2 round manifests now freeze an immutable roster version and
+  exact expected model IDs. Execution and acceptance both validate that
+  snapshot, including V2.2, instead of reading a mutable current roster.
+- Updated benchmark-set discovery so the first accepted run after a permanent
+  retirement opens a successor comparison set, while temporary smaller rosters
+  continue to be treated as outages.
+
 ### Portfolio V2.2 production adoption
 
 - Made `portfolio-v2.2` the default methodology for newly initialized

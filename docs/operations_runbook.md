@@ -36,11 +36,17 @@ tokens, and raw provider responses.
      --allow-real-api-calls
    ```
 
-   `configs/models.v2.yaml` is the canonical complete production roster. The
-   runner rejects an official `portfolio-v2.0` call before provider invocation
-   if any enabled canonical participant is missing, and `accept-run` repeats
-   the roster check before publication. The four-model experiment roster must
+   `configs/models.v2.yaml` is the production model registry. Each new
+   Portfolio V2 round freezes the active model IDs in its own manifest. The
+   runner rejects an official call before provider invocation if that exact
+   frozen roster is incomplete or has unexpected models, and `accept-run`
+   repeats the check before publication. The four-model experiment roster must
    never be used for a production V2 round.
+
+   Claude Opus 4.7 is retired from new rounds effective July 21, 2026. It
+   remains in the registry and in historical data. Do not remove it from old
+   manifests or results. Anthropic credentials are still required while Claude
+   Opus 4.8 or Claude Fable 5 remains in the active frozen roster.
 
 3. Validate the run.
 

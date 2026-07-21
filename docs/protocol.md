@@ -36,6 +36,31 @@ The public inputs are:
 Before collecting submissions, run `capitalbench hash-round`. This freezes the
 input files by writing SHA256 hashes to `hashes.json`.
 
+## Model Roster And Retirement
+
+Every newly initialized production Portfolio V2 round freezes three roster
+fields in `manifest.yaml`:
+
+- `model_roster_version`: a deterministic identifier for the exact model list;
+- `model_roster_frozen_at_utc`: when the list was captured;
+- `expected_model_ids`: every model required for that round.
+
+The official runner must produce one valid submission for every frozen model
+and no others. `accept-run` repeats the same check. Editing
+`configs/models.v2.yaml` after round initialization therefore cannot alter the
+round's required roster.
+
+To retire a model, keep its config entry and add `retired_at_utc`, a concise
+`retirement_reason`, and an optional `successor_model_id`. Retirement applies
+only to newly initialized rounds at or after the effective timestamp. Do not
+delete or rewrite historical submissions, results, accepted run manifests, or
+comparison sets. Retired models remain available only for explicitly labeled
+retrospective research runs, which are never official-score eligible.
+
+A temporary provider failure is not a retirement. Preserve the failed attempt
+and retry only for transport, provider, or schema failure under the normal
+rules. Do not change lifecycle metadata merely to make a partial run pass.
+
 ## Research Artifacts And Model-Facing Briefing
 
 Deep Research outputs should be stored as round research artifacts, not pasted

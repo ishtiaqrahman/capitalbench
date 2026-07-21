@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from datetime import datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -27,6 +28,9 @@ class RoundManifest(StrictModel):
     exit_date: str | None = None
     created_at: str | None = None
     methodology_version: str | None = None
+    model_roster_version: str | None = None
+    model_roster_frozen_at_utc: str | None = None
+    expected_model_ids: list[str] = Field(default_factory=list)
     publication_stream: Literal["primary", "pilot"] = "primary"
     paired_round_id: str | None = None
     experiment_doc: str | None = None
@@ -42,6 +46,30 @@ class RoundManifest(StrictModel):
         if not value:
             raise ValueError("round_id is required")
         return value
+
+    @field_validator("expected_model_ids")
+    @classmethod
+    def normalize_expected_model_ids(cls, value: list[str]) -> list[str]:
+        normalized = [str(model_id).strip() for model_id in value]
+        if any(not model_id for model_id in normalized):
+            raise ValueError("expected_model_ids cannot contain blank values")
+        if len(normalized) != len(set(normalized)):
+            raise ValueError("expected_model_ids cannot contain duplicates")
+        return normalized
+
+    @model_validator(mode="after")
+    def validate_frozen_model_roster(self) -> "RoundManifest":
+        roster_fields_present = bool(
+            self.model_roster_version or self.model_roster_frozen_at_utc or self.expected_model_ids
+        )
+        roster_fields_complete = bool(
+            self.model_roster_version and self.model_roster_frozen_at_utc and self.expected_model_ids
+        )
+        if roster_fields_present and not roster_fields_complete:
+            raise ValueError(
+                "model_roster_version, model_roster_frozen_at_utc, and expected_model_ids must be set together"
+            )
+        return self
 
 
 def _none_if_blank(value: object) -> str | None:
@@ -231,6 +259,9 @@ class ModelConfig(StrictModel):
     first_eligible_round: str | None = None
     first_eligible_date_utc: str | None = None
     model_release_date: str | None = None
+    retired_at_utc: str | None = None
+    retirement_reason: str | None = None
+    successor_model_id: str | None = None
     notes: str = ""
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -242,12 +273,37 @@ class ModelConfig(StrictModel):
             raise ValueError("field cannot be blank")
         return value
 
-    @field_validator("first_eligible_round", "first_eligible_date_utc", "model_release_date", "notes")
+    @field_validator(
+        "first_eligible_round",
+        "first_eligible_date_utc",
+        "model_release_date",
+        "retired_at_utc",
+        "retirement_reason",
+        "successor_model_id",
+        "notes",
+    )
     @classmethod
     def normalize_optional_text(cls, value: str | None) -> str | None:
         if value is None:
             return value
         return value.strip()
+
+    @model_validator(mode="after")
+    def validate_retirement_metadata(self) -> "ModelConfig":
+        if self.retired_at_utc:
+            try:
+                retired_at = datetime.fromisoformat(self.retired_at_utc.replace("Z", "+00:00"))
+            except ValueError as exc:
+                raise ValueError("retired_at_utc must be an ISO 8601 timestamp") from exc
+            if retired_at.tzinfo is None:
+                raise ValueError("retired_at_utc must include a timezone")
+            if not self.retirement_reason:
+                raise ValueError("retirement_reason is required when retired_at_utc is set")
+        elif self.retirement_reason or self.successor_model_id:
+            raise ValueError("retired_at_utc is required when retirement metadata is set")
+        if self.successor_model_id == self.model_id:
+            raise ValueError("successor_model_id must differ from model_id")
+        return self
 
 
 class Usage(StrictModel):

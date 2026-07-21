@@ -127,6 +127,8 @@ def write_initial_run_manifest(
     replicates: int,
     allow_real_api_calls: bool,
     official_score_eligible: bool,
+    model_roster_version: str | None = None,
+    expected_model_ids: list[str] | None = None,
 ) -> None:
     write_yaml(
         paths.run_manifest_path,
@@ -143,6 +145,8 @@ def write_initial_run_manifest(
             "replicates": replicates,
             "allow_real_api_calls": allow_real_api_calls,
             "official_score_eligible": official_score_eligible,
+            "model_roster_version": model_roster_version,
+            "expected_model_ids": list(expected_model_ids or []),
             "model_count": None,
             "valid_submissions": None,
             "invalid_submissions": None,

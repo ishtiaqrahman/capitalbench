@@ -345,6 +345,61 @@ def test_first_eligible_date_utc_is_respected(tmp_path: Path) -> None:
     assert any("not eligible until 2026-05-01T00:00:00Z" in reason for reason in summary.skipped_reasons)
 
 
+def test_retired_model_is_skipped_from_new_runs(tmp_path: Path) -> None:
+    round_path = _copy_example_round(tmp_path)
+    manifest_path = round_path / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["decision_deadline"] = "2026-07-22T20:00:00Z"
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    retired_model = _model(model_id="retired-model")
+    retired_model["retired_at_utc"] = "2026-07-21T00:00:00Z"
+    retired_model["retirement_reason"] = "Superseded in future rounds."
+    models_path = _write_models(tmp_path / "models.yaml", [retired_model])
+
+    summary = run_round(round_path, models_path, mock=True)
+
+    assert summary.attempted_models == 0
+    assert any("retired at 2026-07-21T00:00:00Z" in reason for reason in summary.skipped_reasons)
+
+
+def test_retired_model_remains_available_for_retrospective_replay(tmp_path: Path) -> None:
+    round_path = _copy_example_round(tmp_path)
+    manifest_path = round_path / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["decision_deadline"] = "2026-07-22T20:00:00Z"
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    retired_model = _model(model_id="retired-model")
+    retired_model["retired_at_utc"] = "2026-07-21T00:00:00Z"
+    retired_model["retirement_reason"] = "Superseded in future rounds."
+    models_path = _write_models(tmp_path / "models.yaml", [retired_model])
+
+    summary = run_round(round_path, models_path, mock=True, run_type="retrospective")
+
+    assert summary.attempted_models == 1
+    assert summary.skipped_reasons == []
+
+
+def test_frozen_roster_is_not_changed_by_later_retirement(tmp_path: Path) -> None:
+    round_path = _copy_example_round(tmp_path)
+    manifest_path = round_path / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["decision_deadline"] = "2026-07-22T20:00:00Z"
+    manifest["model_roster_version"] = "test-roster"
+    manifest["model_roster_frozen_at_utc"] = "2026-07-20T20:00:00Z"
+    manifest["expected_model_ids"] = ["retired-model"]
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    retired_model = _model(model_id="retired-model")
+    retired_model["retired_at_utc"] = "2026-07-21T00:00:00Z"
+    retired_model["retirement_reason"] = "Superseded in future rounds."
+    unlisted_model = _model(model_id="unlisted-model")
+    models_path = _write_models(tmp_path / "models.yaml", [retired_model, unlisted_model])
+
+    summary = run_round(round_path, models_path, mock=True)
+
+    assert summary.attempted_models == 1
+    assert any("not included in the round's frozen model roster" in reason for reason in summary.skipped_reasons)
+
+
 def test_retrospective_run_is_never_official_score_eligible(tmp_path: Path) -> None:
     round_path = _copy_example_round(tmp_path)
     models_path = _write_models(tmp_path / "models.yaml", [_model()])

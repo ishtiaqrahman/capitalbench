@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-07-21-claude-opus-4-7-retired",
+    date: "2026-07-21",
+    title: "Claude Opus 4.7 retired from new benchmark rounds",
+    category: "Operations",
+    status: "updated",
+    summary:
+      "New weekly and monthly rounds now use a seven-model production roster while preserving Claude Opus 4.7's complete historical record.",
+    details: [
+      "Claude Opus 4.7 remains visible in historical portfolios, scored results, model profiles, and comparison sets.",
+      "Every new Portfolio V2 round freezes its exact expected model IDs and roster version at initialization.",
+      "Execution and acceptance reject missing or unexpected models against that frozen roster, so later registry changes cannot alter an existing round.",
+      "The first accepted weekly and monthly rounds on the successor roster will open new comparison sets; a temporary provider outage still does not create a smaller set."
+    ],
+    links: [
+      { label: "Models", href: "/models" },
+      { label: "Benchmark sets", href: "/leaderboards/benchmark-sets" },
+      { label: "Protocol", href: "/methodology" }
+    ]
+  },
+  {
     id: "2026-07-17-portfolio-v2-production",
     date: "2026-07-17",
     title: "Portfolio V2.0 became the production protocol",

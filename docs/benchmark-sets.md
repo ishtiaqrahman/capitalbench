@@ -43,8 +43,9 @@ rosters. During the site-data build, each weekly and monthly official run is
 checked in chronological order:
 
 1. Read the accepted model roster from the operator-selected official run.
-2. Check whether that roster is already contained in an existing set for the
-   same track.
+2. If the round has a frozen roster version, check for an existing set with the
+   exact same roster. Older rounds without a frozen version keep the historical
+   contained-roster rule.
 3. If yes, do not create a new set.
 4. If no, create a new set starting at that round.
 
@@ -53,6 +54,27 @@ six-model set already exists and one model is unavailable for several weekly or
 monthly runs, those smaller rosters are already covered by the larger set, so no
 new set is created. Resolved rounds where a required set model is missing are
 excluded from that set for everyone.
+
+A permanent model retirement is different. The first accepted round whose
+manifest freezes the smaller active roster opens a successor comparison set,
+even when an older set contains those models plus the retired model. Historical
+sets continue to accumulate any later shared rounds that still contain every
+model in those sets; they are never rewritten to remove the retired model.
+
+## Retiring A Model
+
+1. Keep the model in `configs/models.v2.yaml`.
+2. Add `retired_at_utc`, `retirement_reason`, and optionally
+   `successor_model_id`.
+3. Do not edit any existing round, accepted run, result, or configured set.
+4. Initialize the next weekly and monthly rounds normally; each freezes the
+   active roster without the retired model.
+5. Run and accept the exact frozen roster.
+6. Build site data. The first accepted frozen-roster round in each track opens
+   the successor comparison set automatically.
+
+If a model is merely unavailable for one run, do not retire it. The incomplete
+round remains excluded from the existing set under the missed-round rule.
 
 ## Configuration Overrides
 

@@ -177,6 +177,11 @@ function alphaBarStyle(row: ModelResultRow): string {
         <h1 id="model-title">{profile.label}</h1>
       </div>
       <p class="mono">{profile.modelId}</p>
+      {profile.lifecycleStatus === "retired" && (
+        <p class="model-retirement-note">
+          Retired from new benchmark rounds. Historical portfolios and scores remain part of the public record.
+        </p>
+      )}
       {behavior && (
         <a class="model-hero-pattern" href="#model-fingerprint">
           <span>Portfolio pattern</span>
@@ -185,9 +190,12 @@ function alphaBarStyle(row: ModelResultRow): string {
         </a>
       )}
       <div class="round-meta-row compact">
-        <span class:list={["model-live-indicator", profile.live.all.portfolioCount > 0 ? "is-live" : "is-idle"]}>
+        <span class:list={[
+          "model-live-indicator",
+          profile.lifecycleStatus === "retired" ? "is-retired" : profile.live.all.portfolioCount > 0 ? "is-live" : "is-idle"
+        ]}>
           <i aria-hidden="true"></i>
-          {profile.live.all.portfolioCount > 0 ? "Live portfolios" : "No live portfolios"}
+          {profile.lifecycleStatus === "retired" ? "Retired from new rounds" : profile.live.all.portfolioCount > 0 ? "Live portfolios" : "No live portfolios"}
         </span>
         {profile.tracksEntered.map((track) => <span>{track === "weekly" ? "Weekly" : "Monthly"}</span>)}
         {profile.firstDecisionDate && <span>First run {profile.firstDecisionDate}</span>}

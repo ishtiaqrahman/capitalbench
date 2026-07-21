@@ -1463,6 +1463,10 @@ for (const track of ["weekly", "monthly"]) {
     const covered = sets.some((set) => {
       const startRound = roundByIdForSets.get(set.started_round_id);
       if (!startRound || roundSortValue(startRound) > roundSortValue(round)) return false;
+      if (round.model_roster_version) {
+        const setRoster = [...set.model_ids].sort();
+        return setRoster.length === roster.length && setRoster.every((modelId, index) => modelId === roster[index]);
+      }
       const setModels = new Set(set.model_ids);
       return roster.every((modelId) => setModels.has(modelId));
     });
@@ -1484,7 +1488,7 @@ for (const set of benchmarkSets.sets) {
     if (!startRound || !earlierStart || roundSortValue(earlierStart) >= roundSortValue(startRound)) continue;
     const earlierModels = new Set(earlierSet.model_ids);
     const redundant = set.model_ids.every((modelId) => earlierModels.has(modelId));
-    if (redundant) {
+    if (redundant && set.roster_policy !== "frozen") {
       failures.push(
         `${context} is redundant: earlier ${earlierSet.set_id} already covers this ${set.track} roster or a larger roster`
       );

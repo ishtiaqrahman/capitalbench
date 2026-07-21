@@ -24,15 +24,26 @@ exposure clusters, low/base/high forecasts, the active-holding SPY hurdle, and
 the 50% non-benchmark economic-exposure cap. Score only the final frozen
 portfolio; retain the candidate ledger for calibration and audit.
 
-The tracked production roster is the complete eight-model roster in
-`configs/models.v2.yaml`: GPT-5.5, GPT-5.6 SOL, Grok 4.3, Grok 4.5, Gemini
-3.1 Pro, Claude Opus 4.8, Claude Opus 4.7, and Claude Fable 5. Every official
-`portfolio-v2.2` run must use all enabled models in that canonical file. The
-runner and acceptance gate reject partial rosters, and a production round is
-incomplete unless every enabled model has one valid submission. Never
-substitute or reuse the separate July 13 four-model pilot roster. Model keys
-must come from local environment files or environment variables and must never
-be committed.
+The active production roster has seven models: GPT-5.5, GPT-5.6 SOL, Grok 4.3,
+Grok 4.5, Gemini 3.1 Pro, Claude Opus 4.8, and Claude Fable 5. Claude Opus 4.7
+was retired from new rounds effective July 21, 2026; preserve all of its
+historical submissions, results, profiles, and comparison sets. Never delete a
+retired model from `configs/models.v2.yaml`. New production round manifests
+freeze `model_roster_version`, `model_roster_frozen_at_utc`, and
+`expected_model_ids` at initialization. The runner and acceptance gate require
+the exact frozen roster, so later config edits cannot silently change an
+existing round. Never substitute or reuse the separate July 13 four-model
+pilot roster. Model keys must come from local environment files or environment
+variables and must never be committed.
+
+For future retirements, add `retired_at_utc`, `retirement_reason`, and, when
+applicable, `successor_model_id` to the model config. Retirement is forward
+only: do not rewrite old round manifests, accepted run manifests, benchmark
+sets, or results. Create the next round normally so it freezes the new active
+roster. Retrospective runs may still use retired models for research, but they
+remain ineligible for official scoring. A permanent retirement opens a new
+comparison set when the first accepted frozen-roster run is published; a
+temporary provider outage does not.
 
 The first complete official production V2.0 rounds are:
 

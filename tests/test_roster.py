@@ -4,7 +4,9 @@ import pytest
 
 from capitalbench.config import load_model_configs
 from capitalbench.roster import (
+    active_portfolio_v2_model_ids,
     canonical_portfolio_v2_model_ids,
+    portfolio_v2_roster_version,
     validate_official_portfolio_v2_roster,
     validate_official_portfolio_v2_run_manifest,
 )
@@ -21,17 +23,52 @@ EXPECTED_PORTFOLIO_V2_MODEL_IDS = {
     "xai-grok-4-3",
     "xai-grok-4-5",
 }
+EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS = EXPECTED_PORTFOLIO_V2_MODEL_IDS - {
+    "anthropic-claude-opus-4-7"
+}
 
 
 def test_canonical_portfolio_v2_roster_contains_all_eight_models() -> None:
     assert set(canonical_portfolio_v2_model_ids()) == EXPECTED_PORTFOLIO_V2_MODEL_IDS
 
 
+def test_active_portfolio_v2_roster_excludes_models_after_retirement() -> None:
+    assert set(active_portfolio_v2_model_ids("2026-07-20T23:59:59Z")) == EXPECTED_PORTFOLIO_V2_MODEL_IDS
+    assert set(active_portfolio_v2_model_ids("2026-07-21T00:00:00Z")) == EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS
+
+
+def test_roster_version_is_order_independent() -> None:
+    model_ids = list(EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS)
+    assert portfolio_v2_roster_version(model_ids) == portfolio_v2_roster_version(reversed(model_ids))
+
+
 def test_official_portfolio_v2_rejects_partial_roster() -> None:
     configs = load_model_configs(PROJECT_ROOT / "configs" / "models.v2.yaml")
 
-    with pytest.raises(ValueError, match="complete canonical model roster"):
+    with pytest.raises(ValueError, match="complete frozen model roster"):
         validate_official_portfolio_v2_roster("portfolio-v2.0", configs[:4])
+
+
+def test_official_portfolio_v2_2_accepts_exact_frozen_roster() -> None:
+    configs = load_model_configs(PROJECT_ROOT / "configs" / "models.v2.yaml")
+    active_configs = [
+        config for config in configs if config.model_id in EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS
+    ]
+
+    actual_ids = validate_official_portfolio_v2_roster(
+        "portfolio-v2.2",
+        active_configs,
+        EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS,
+    )
+
+    assert set(actual_ids) == EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS
+
+
+def test_official_portfolio_v2_2_requires_frozen_roster() -> None:
+    configs = load_model_configs(PROJECT_ROOT / "configs" / "models.v2.yaml")
+
+    with pytest.raises(ValueError, match="freeze expected_model_ids"):
+        validate_official_portfolio_v2_roster("portfolio-v2.2", configs)
 
 
 def test_official_portfolio_v2_acceptance_rejects_wrong_count() -> None:
@@ -40,3 +77,13 @@ def test_official_portfolio_v2_acceptance_rejects_wrong_count() -> None:
             "portfolio-v2.0",
             {"model_count": 4, "model_ids": sorted(EXPECTED_PORTFOLIO_V2_MODEL_IDS)[:4]},
         )
+
+
+def test_official_portfolio_v2_2_acceptance_uses_frozen_roster() -> None:
+    model_ids = sorted(EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS)
+
+    validate_official_portfolio_v2_run_manifest(
+        "portfolio-v2.2",
+        {"model_count": len(model_ids), "model_ids": model_ids},
+        model_ids,
+    )

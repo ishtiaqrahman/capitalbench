@@ -185,6 +185,10 @@ export type ModelProfile = {
   logoSrc?: string;
   iconSrc?: string;
   firstDecisionDate?: string;
+  lifecycleStatus: "active" | "retired";
+  retiredAtUtc?: string;
+  retirementReason?: string;
+  successorModelId?: string;
   tracksEntered: BenchmarkTrack[];
   live: Record<ModelScopeKey, ModelLiveScope>;
   scorecards: Record<BenchmarkTrack, ModelTrackScore>;
@@ -591,6 +595,9 @@ export function staticModelProfiles(): ModelProfile[] {
     (((apiReadModel as any).model_behavior?.profiles ?? []) as ModelBehaviorProfile[]).map((profile) => [profile.model_id, profile])
   );
   const modelProviders = new Map<string, string>();
+  const modelMetadata = new Map<string, any>(
+    ((apiReadModel as any).models ?? []).map((model: any) => [model.model_id, model])
+  );
   for (const context of contexts) {
     for (const submission of context.submissions) {
       if (!modelProviders.has(submission.model_id)) modelProviders.set(submission.model_id, submission.provider);
@@ -599,6 +606,7 @@ export function staticModelProfiles(): ModelProfile[] {
 
   return Array.from(modelProviders.entries())
     .map(([modelId, provider]) => {
+      const metadata = modelMetadata.get(modelId) ?? {};
       const modelContexts = contexts.filter((context) => context.submissions.some((submission) => submission.model_id === modelId));
       const results = buildResults(modelId, modelContexts);
       const history = buildHistory(modelId, modelContexts, results);
@@ -612,6 +620,10 @@ export function staticModelProfiles(): ModelProfile[] {
         logoSrc: PROVIDER_LOGOS[provider],
         iconSrc: PROVIDER_ICONS[provider],
         firstDecisionDate: [...modelContexts].sort((a, b) => a.round.decision_date.localeCompare(b.round.decision_date))[0]?.round.decision_date,
+        lifecycleStatus: metadata.lifecycle_status === "retired" ? "retired" : "active",
+        retiredAtUtc: metadata.retired_at_utc || undefined,
+        retirementReason: metadata.retirement_reason || undefined,
+        successorModelId: metadata.successor_model_id || undefined,
         tracksEntered,
         live: {
           all: buildLiveScope(modelId, modelContexts, "all"),

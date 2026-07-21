@@ -9,6 +9,9 @@ Use this checklist before running a public CapitalBench round.
   `capitalbench init-round --round-id <id> --submission-format portfolio`.
   This defaults to `portfolio-v2.2`; do not downgrade it for a new round.
 - Fill in `manifest.yaml`, including decision deadline, horizon, entry rule, and exit rule.
+- Confirm `model_roster_version`, `model_roster_frozen_at_utc`, and
+  `expected_model_ids` are present. Do not edit the frozen roster after
+  initialization.
 - Write the briefing using only information available before the deadline.
 - Define the complete option list in `options.yaml`. `capitalbench init-round` defaults to the latest future-round universe, currently `configs/universes/capitalbench_universe_v2_1.yaml`; pass `--universe` only when intentionally using an older or custom universe.
 - Confirm one option is the S&P 500 benchmark.
@@ -46,6 +49,11 @@ Use this checklist before running a public CapitalBench round.
 - Use `--run-type stability --replicates 5` only for secondary stability analysis.
 - Do not combine the official leaderboard and stability table into one score.
 - If adding a newly released model, set `first_eligible_round` or `first_eligible_date_utc` so it starts with a future round.
+- If retiring a model, retain its config entry and set `retired_at_utc`,
+  `retirement_reason`, and optionally `successor_model_id` before initializing
+  the next round. Never back-edit an existing round's frozen roster.
+- Confirm the official run's `model_ids` and `model_count` exactly match the
+  round manifest's `expected_model_ids` before acceptance.
 - Do not run new models on old rounds for official scoring.
 - Do not change the option universe after seeing model picks just to force more variety. Any universe change belongs in a future round.
 - Use `--run-type retrospective` for any manual old-round exploration; retrospective runs are excluded from public leaderboards.

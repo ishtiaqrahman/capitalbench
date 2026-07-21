@@ -6,6 +6,7 @@ from typing import Literal
 
 from .io import write_json, write_yaml
 from .methodology import PORTFOLIO_V2_VERSION, is_production_portfolio_v2
+from .roster import active_portfolio_v2_model_ids, portfolio_v2_roster_version
 
 ROUND_FILES = ["manifest.yaml", "briefing.md", "options.yaml", "prompt.md", "hashes.json"]
 ROUND_DIRS = ["prices", "runs"]
@@ -46,6 +47,12 @@ def init_round(
 
     manifest_path = round_path / "manifest.yaml"
     if not manifest_path.exists():
+        created_at = datetime.now(timezone.utc)
+        expected_model_ids: tuple[str, ...] = ()
+        model_roster_version: str | None = None
+        if is_production_portfolio_v2(resolved_methodology_version):
+            expected_model_ids = active_portfolio_v2_model_ids(created_at, round_id)
+            model_roster_version = portfolio_v2_roster_version(expected_model_ids)
         write_yaml(
             manifest_path,
             {
@@ -56,6 +63,9 @@ def init_round(
                 "decision_deadline": None,
                 "horizon": horizon,
                 "methodology_version": resolved_methodology_version,
+                "model_roster_version": model_roster_version,
+                "model_roster_frozen_at_utc": created_at.isoformat() if model_roster_version else None,
+                "expected_model_ids": list(expected_model_ids),
                 "universe_version": resolved_universe_version or None,
                 "submission_format": submission_format,
                 "portfolio_constraints": {
@@ -74,7 +84,7 @@ def init_round(
                 "exit_rule": "Use the official exit prices supplied in prices/exit_prices.csv.",
                 "entry_date": None,
                 "exit_date": None,
-                "created_at": datetime.now(timezone.utc).isoformat(),
+                "created_at": created_at.isoformat(),
                 "notes": "",
             },
         )

@@ -5,7 +5,7 @@ import json
 import mimetypes
 import os
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -610,6 +610,7 @@ def _model_rows(run_paths: Any) -> list[dict[str, Any]]:
         model_id = str(payload["model_id"])
         provider = str(payload["provider"])
         config = configs.get(model_id, {})
+        lifecycle = _model_lifecycle(config)
         rows[model_id] = {
             "model_id": model_id,
             "provider": provider,
@@ -619,10 +620,34 @@ def _model_rows(run_paths: Any) -> list[dict[str, Any]]:
             "first_eligible_date_utc": config.get("first_eligible_date_utc"),
             "model_release_date": config.get("model_release_date"),
             "official_score_eligible": None,
-            "metadata": _jsonable(config.get("metadata") or {}),
+            "metadata": _jsonable(
+                {
+                    **(config.get("metadata") or {}),
+                    "lifecycle": lifecycle,
+                }
+            ),
             "published": True,
         }
     return list(rows.values())
+
+
+def _model_lifecycle(config: dict[str, Any]) -> dict[str, Any]:
+    retired_at_raw = config.get("retired_at_utc")
+    is_retired = False
+    if retired_at_raw:
+        try:
+            retired_at = datetime.fromisoformat(str(retired_at_raw).replace("Z", "+00:00"))
+            if retired_at.tzinfo is None:
+                retired_at = retired_at.replace(tzinfo=timezone.utc)
+            is_retired = datetime.now(timezone.utc) >= retired_at.astimezone(timezone.utc)
+        except ValueError:
+            pass
+    return {
+        "status": "retired" if is_retired else "active",
+        "retired_at_utc": retired_at_raw,
+        "retirement_reason": config.get("retirement_reason"),
+        "successor_model_id": config.get("successor_model_id"),
+    }
 
 
 def _model_configs_by_id(run_paths: Any) -> dict[str, dict[str, Any]]:

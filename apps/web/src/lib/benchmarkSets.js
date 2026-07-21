@@ -239,6 +239,8 @@ function buildBenchmarkSet(readModel, definition, currentSetIds = new Set()) {
     short_label: definition.short_label || definition.label,
     description: definition.description || "",
     started_round_id: definition.started_round_id,
+    roster_policy: definition.roster_policy || "contains",
+    model_roster_version: definition.model_roster_version || null,
     started_at: startRound?.decision_date ?? null,
     model_ids: definition.model_ids,
     models: modelRoster,

@@ -72,11 +72,22 @@ def run_round(
     prompt = build_prompt(round_path)
     model_configs = load_model_configs(models_path)
     pricing = load_pricing_config(pricing_path)
-    enabled_models, skipped_reasons = _filter_eligible_models(model_configs, manifest.round_id, manifest.decision_deadline, mode)
+    enabled_models, skipped_reasons = _filter_eligible_models(
+        model_configs,
+        manifest.round_id,
+        manifest.decision_deadline,
+        mode,
+        selected_run_type,
+        manifest.expected_model_ids,
+    )
     skipped_models = len(model_configs) - len(enabled_models)
 
     if selected_run_type == "official" and not mock:
-        validate_official_portfolio_v2_roster(manifest.methodology_version, enabled_models)
+        validate_official_portfolio_v2_roster(
+            manifest.methodology_version,
+            enabled_models,
+            manifest.expected_model_ids,
+        )
 
     if not mock:
         _preflight_real_api_keys(enabled_models)
@@ -94,6 +105,8 @@ def run_round(
         replicates=selected_replicates,
         allow_real_api_calls=allow_real_api_calls,
         official_score_eligible=False,
+        model_roster_version=manifest.model_roster_version,
+        expected_model_ids=manifest.expected_model_ids,
     )
 
     valid_count = 0
@@ -275,11 +288,20 @@ def _filter_eligible_models(
     round_id: str,
     decision_deadline: str | None,
     mode: str,
+    run_type: str,
+    expected_model_ids: list[str] | None = None,
 ) -> tuple[list[ModelConfig], list[str]]:
     enabled: list[ModelConfig] = []
     skipped: list[str] = []
     for config in model_configs:
-        reason = _model_skip_reason(config, round_id, decision_deadline, mode)
+        reason = _model_skip_reason(
+            config,
+            round_id,
+            decision_deadline,
+            mode,
+            run_type,
+            expected_model_ids,
+        )
         if reason is not None:
             skipped.append(reason)
             continue
@@ -292,11 +314,17 @@ def _model_skip_reason(
     round_id: str,
     decision_deadline: str | None,
     mode: str,
+    run_type: str,
+    expected_model_ids: list[str] | None = None,
 ) -> str | None:
     if not model_config.enabled:
         return f"Skipping {model_config.model_id}: disabled."
     if model_config.mode != mode:
         return f"Skipping {model_config.model_id}: mode {model_config.mode} does not match requested {mode}."
+    if expected_model_ids and run_type != "retrospective":
+        if model_config.model_id not in set(expected_model_ids):
+            return f"Skipping {model_config.model_id}: not included in the round's frozen model roster."
+        return None
     if model_config.first_eligible_round and round_id < model_config.first_eligible_round:
         return f"Skipping {model_config.model_id}: not eligible until {model_config.first_eligible_round}."
     if model_config.first_eligible_date_utc and decision_deadline:
@@ -304,12 +332,18 @@ def _model_skip_reason(
         eligible_at = _parse_utc_datetime(model_config.first_eligible_date_utc)
         if deadline is not None and eligible_at is not None and deadline < eligible_at:
             return f"Skipping {model_config.model_id}: not eligible until {model_config.first_eligible_date_utc}."
+    if model_config.retired_at_utc and run_type != "retrospective":
+        round_time = _parse_utc_datetime(decision_deadline) if decision_deadline else datetime.now(timezone.utc)
+        retired_at = _parse_utc_datetime(model_config.retired_at_utc)
+        if round_time is not None and retired_at is not None and round_time >= retired_at:
+            return f"Skipping {model_config.model_id}: retired at {model_config.retired_at_utc}."
     return None
 
 
 def _parse_utc_datetime(value: str) -> datetime | None:
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return parsed if parsed.tzinfo is not None else parsed.replace(tzinfo=timezone.utc)
     except ValueError:
         return None
 

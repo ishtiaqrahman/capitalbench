@@ -67,10 +67,13 @@ test("forming sets expose early performance without presenting it as established
   const swapped = buildBenchmarkSetComparison(apiReadModel, waiting, baseline);
 
   assert.equal(result.comparison.status, "forming");
-  assert.equal(result.comparison.shared_round_count, 1);
+  assert.equal(result.comparison.shared_round_count, waiting.comparison.comparison_round_count);
   assert.equal(result.comparison.is_qualified, false);
   assert.match(result.trust_guidance, /more reliable ranking/);
-  assert.match(result.trust_guidance, /needs 5 more/);
+  assert.match(
+    result.trust_guidance,
+    new RegExp(`needs ${waiting.qualification_threshold - waiting.comparison.comparison_round_count} more`)
+  );
   assert.match(swapped.trust_guidance, new RegExp(`Use ${baseline.short_label}`));
   assert.doesNotMatch(swapped.trust_guidance, /established ranking/);
 });
