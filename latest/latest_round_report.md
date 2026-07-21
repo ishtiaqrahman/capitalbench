@@ -2,112 +2,112 @@
 
 ## Round
 
-- Round ID: CB-2026-07-10-1W
-- Decision deadline: 2026-07-11T07:30:00Z
+- Round ID: CB-2026-07-13-1W
+- Decision deadline: 2026-07-14T07:30:00Z
 - Horizon: one week
-- Official run ID: official-20260710
+- Official run ID: official-20260713
 - Mock: no
 
 ## Model Decisions
 
 | model_id | provider | submission_format | selected_option_id | holding_count | confidence | rationale_summary | key_risks |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| anthropic-claude-opus-4-7 | anthropic | portfolio | SEMICONDUCTORS | 5 | 0.55 | Catalyst-driven overweight to semis and Taiwan (TSMC earnings), financials (bank earnings week), with biotech and cyber momentum. | Hot June CPI print July 14 could lift yields and hit high-beta semis/growth; Bank earnings disappointment or weak NII guidance; TSMC Q2 miss or cautious guide undermines semis and Taiwan; Iran/Strait of Hormuz escalation spikes oil and hurts risk assets; Biotech momentum reversal after +23% month |
-| anthropic-claude-opus-4-8 | anthropic | portfolio | SEMICONDUCTORS | 5 | 0.55 | Overweight AI-semiconductor complex and financials into concrete earnings catalysts, balanced by broad-market and industrial cyclical exposure. | Hot June CPI on July 14 could lift yields and pressure high-beta semis and Taiwan; Bank earnings disappointment or weak guidance drags financials; TSMC Q2 results/guidance miss or FX headwinds hit Taiwan and semis; High volatility/drawdown profile of SMH and EWT amplifies downside if risk sentiment reverses |
-| xai-grok-4-3 | xai | portfolio | SEMICONDUCTORS | 3 | 0.55 | AI demand and recent semiconductor outperformance plus Middle East energy risks favor overweight in SEMICONDUCTORS, TECHNOLOGY, and ENERGY over the one-week window. | June CPI release on July 14 could trigger rate volatility and growth-stock rotation; Bank earnings on July 14 may disappoint and pressure FINANCIALS-linked sentiment; Geopolitical de-escalation in Strait of Hormuz could reverse energy gains |
-| openai-gpt-5-6-sol | openai | portfolio | SEMICONDUCTORS | 5 | 0.61 | Semiconductors have the strongest combination of fundamentals, momentum, and a scheduled catalyst before the exit close. Financials, biotech, and energy diversify the catalyst set while retaining substantial upside sensitivity. | TSMC guidance or margins disappoint after a large semiconductor rally, triggering a sharp reversal.; June CPI exceeds expectations and pushes yields higher, compressing technology valuations.; Bank earnings reveal weaker credit quality, deposits, or loan demand than expected.; Iran negotiations restore shipping confidence and rapidly unwind the geopolitical premium in energy.; A broad momentum reversal disproportionately hurts semiconductors and biotech. |
-| anthropic-claude-fable-5 | anthropic | portfolio | SEMICONDUCTORS | 5 | 0.5 | Overweight semis/tech and Taiwan into TSMC earnings, add financials for July 14 bank results, with SPY ballast. | Hot June CPI on July 14 or hawkish Warsh testimony could hit high-beta tech hardest; TSMC results or guidance disappoint, hurting SMH/EWT/XLK concurrently; Iran/Strait of Hormuz escalation spikes oil and pressures risk assets not held here; Bank earnings show weak NII or credit deterioration, dragging XLF |
-| xai-grok-4-5 | xai | portfolio | SEMICONDUCTORS | 5 | 0.58 | One-week window favors TSMC results, bank earnings, and AI chip demand over defensive or rate-sensitive assets given sticky inflation and no near-term Fed cuts. | Hotter-than-expected June CPI on July 14 could pressure growth/tech valuations and rates; Middle East/Hormuz escalation raising oil and inflation uncertainty; Profit-taking or reversal after strong recent semis/tech gains and high 30d volatility; Hawkish Fed speaker or Beige Book comments reinforcing higher-for-longer rates |
-| google-gemini-3-1-pro | google | portfolio | SEMICONDUCTORS | 4 | 0.75 | Overweighting semiconductors and related Asian markets to capture potential upside from TSMC's earnings and ongoing AI hardware demand. | TSMC's Q2 results or forward guidance could fall short of elevated expectations, triggering a selloff in semiconductor and Asian equities.; The June CPI report on July 14 could show stickier-than-expected inflation, leading to higher yields and pressure on growth-oriented technology stocks.; Hawkish commentary from Fed Chair Warsh during his congressional testimony could negatively impact risk assets.; Escalation in Middle East geopolitical tensions could disrupt markets and drive a flight to safety. |
-| openai-gpt-5-5 | openai | portfolio | SEMICONDUCTORS | 5 | 0.62 | Overweight semiconductors, Taiwan, and Korea to target AI hardware momentum and imminent TSMC earnings. Keep modest technology and financials exposure for breadth around market leadership and bank-report catalysts. | June CPI or Fed testimony pushes Treasury yields higher and triggers a one-week rotation out of high-beta growth and semiconductor stocks.; TSMC earnings or guidance disappoints relative to elevated AI-supply-chain expectations, pressuring Taiwan and semiconductor ETFs.; Recent Nvidia, SK Hynix, Korea, and Taiwan strength reverses on profit-taking after crowded momentum positioning.; Bank earnings reveal weaker credit, deposits, or net-interest-margin trends, hurting the financials sleeve and broader risk appetite.; Middle East energy-price volatility lifts inflation expectations and undermines equity multiples before the exit close. |
+| xai-grok-4-3 | xai | portfolio | OIL | 1 | 0.65 | Geopolitical supply risk dominates the short scoring window; oil exposure offers the clearest path to outperformance versus SPX. | Rapid diplomatic de-escalation reversing oil gains; Higher-than-expected OPEC supply response; Weaker global demand data released during the window |
+| openai-gpt-5-5 | openai | portfolio | OIL | 3 | 0.58 | Position for continued geopolitical risk premium in crude oil through the July 14 blockade resumption and related uncertainty, with energy equities as secondary beneficiaries. Avoid rate-sensitive bonds and growth-heavy equities given rising yields, CPI risk, and recent semiconductor weakness. | A rapid diplomatic de-escalation or uninterrupted Strait of Hormuz shipping could erase the oil geopolitical premium and cause a sharp crude reversal.; June CPI could come in benign, boosting growth equities and the S&P 500 while reducing the relative appeal of oil and the dollar.; Energy equities may lag crude if investors focus on demand destruction, windfall-tax risk, or broader equity-market weakness.; Oil futures exposure can be hurt by curve movements, inventory data, or position unwinds even if spot geopolitical risk remains elevated. |
+| xai-grok-4-5 | xai | portfolio | OIL | 4 | 0.62 | Allocate heavily to oil and energy equities for Hormuz/blockade risk premium, add broad commodities for spillover, and keep a smaller financials sleeve for July 14 bank results and higher yields. | Rapid de-escalation or free transit restoration in the Strait of Hormuz could reverse the oil premium before July 20; USO futures roll and high volatility can produce large drawdowns even if spot crude stays elevated; June CPI or Fed-related testimony could reprice rates and risk assets, pressuring financials and equity energy names; Bank earnings misses on July 14 would undercut the FINANCIALS allocation |
+| google-gemini-3-1-pro | google | portfolio | OIL | 3 | 0.85 | Allocating to oil, energy, and defense to capture the upside from the Strait of Hormuz blockade and rising geopolitical tensions. | A rapid diplomatic resolution or lifting of the blockade could cause a sharp reversal in oil prices.; Broader market sell-offs driven by rising Treasury yields and inflation fears could drag down energy equities despite high commodity prices.; Scheduled bank earnings or CPI data could shift market focus away from geopolitical events, reducing momentum in defense and energy. |
+| openai-gpt-5-6-sol | openai | portfolio | OIL | 5 | 0.58 | Geopolitical supply risk favors oil-linked assets, while elevated inflation and yields favor the dollar over duration-sensitive assets. Diversifying with financials and Treasury bills reduces dependence on a single commodity outcome. | Rapid de-escalation or uninterrupted Hormuz transit could reverse crude's geopolitical premium after its sharp weekly gain.; A softer-than-expected CPI report could lower yields and weaken the dollar while reducing the relative appeal of value and financial exposures.; Weak JPMorgan or Wells Fargo results, especially on credit quality or net interest income, could pressure financials.; A broad risk-off selloff caused by military escalation could outweigh higher oil prices for energy equities.; Oil's high recent volatility and futures-curve effects could produce a sharp reversal even if geopolitical uncertainty persists. |
+| anthropic-claude-opus-4-7 | anthropic | portfolio | ENERGY | 5 | 0.6 | Energy/oil tilt for geopolitical supply shock, defensive equity ballast, and short-duration cash to manage event risk over the one-week window. | Sudden Iran de-escalation or blockade reversal collapses oil premium; Hot June CPI print triggers broad risk-off including energy equities; Healthcare/defensive rotation reverses if bank earnings drive cyclical rally; Oil ETF contango drag if front-month futures roll unfavorably |
+| anthropic-claude-fable-5 | anthropic | portfolio | ENERGY | 5 | 0.55 | Overweight energy and crude on Hormuz escalation, hedge with T-bills, low-vol equity, and the dollar given inflation and rate risks into CPI and Warsh testimony. | Rapid de-escalation or negotiated Hormuz resolution collapses the oil risk premium, hitting XLE and USO hard; A soft June CPI sparks a broad risk-on rally where underweight tech/beta lags SPY; USO futures-curve backwardation/roll effects and its -22% recent drawdown history show extreme volatility; Dovish Warsh testimony weakens the dollar position and boosts growth equities we don't hold |
+| anthropic-claude-opus-4-8 | anthropic | portfolio | ENERGY | 5 | 0.6 | Overweight energy on Hormuz blockade catalyst, balanced with low-beta defensives (healthcare, utilities), financials for earnings, and dollar hedge. | De-escalation in the Strait of Hormuz could reverse the oil and energy rally sharply; Bank earnings disappointment July 14 could drag financials lower; Hot June CPI could pressure rate-sensitive utilities and broad equities |
 
 ## Realized Returns
 
 | option_id | label | entry_price | exit_price | return | rank |
 | --- | --- | --- | --- | --- | --- |
-| OIL | Crude Oil | 108.7 | 123.96 | 0.14038638454461805 | 1 |
-| BROAD_COMMODITIES | Broad Commodities | 16.440000534057617 | 17.25 | 0.0492700389068943 | 2 |
-| ENERGY | Energy Sector | 55.08000183105469 | 57.68 | 0.047204031999131146 | 3 |
-| ETHEREUM_ETF | Ethereum ETF | 13.53 | 13.91 | 0.028085735402808565 | 4 |
-| REGIONAL_BANKS | Regional Banks | 75.02 | 76.69 | 0.022260730471874268 | 5 |
-| REAL_ESTATE | Real Estate Sector | 44.45000076293945 | 45.42 | 0.021822254677423825 | 6 |
-| DIVIDEND | US Dividend Equities | 32.400001525878906 | 32.91 | 0.015740692904404385 | 7 |
-| CANADA | Canada Equities | 58.65 | 59.45 | 0.01364023870417741 | 8 |
-| CONSUMER_STAPLES | Consumer Staples Sector | 84.12000274658203 | 85.19 | 0.01271989085213665 | 9 |
-| SMALL_VALUE | US Small-Cap Value | 219.97000122070312 | 222.34 | 0.010774190872140599 | 10 |
-| AUSTRALIA | Australia Equities | 28.45 | 28.75 | 0.010544815465729274 | 11 |
-| FINANCIALS | Financials Sector | 55.709999084472656 | 56.26 | 0.009872570895098631 | 12 |
-| LOW_VOL | US Low Volatility Equities | 75.83999633789062 | 76.57 | 0.009625576178260653 | 13 |
-| UNITED_KINGDOM | United Kingdom Equities | 46.6 | 46.94 | 0.007296137339055653 | 14 |
-| CYBERSECURITY | Cybersecurity | 91.87999725341797 | 92.36 | 0.005224235534728061 | 15 |
-| LARGE_VALUE | US Large-Cap Value | 246.83999633789062 | 248.03 | 0.0048209515466060004 | 16 |
-| SOFTWARE | Software | 92.41000366210938 | 92.8 | 0.004220282679747722 | 17 |
-| MEXICO | Mexico Equities | 74.86 | 75.11 | 0.003339567192091941 | 18 |
-| BITCOIN_ETF | Bitcoin ETF | 36.23 | 36.35 | 0.003312172232956323 | 19 |
-| EURO | Euro | 105.3 | 105.61 | 0.0029439696106363655 | 20 |
-| AGRICULTURE | Agriculture Commodities | 27.77 | 27.84 | 0.0025207057976233127 | 21 |
-| INTERMEDIATE_TREASURY | Intermediate-Term US Treasury Bonds | 93.62999725341797 | 93.84 | 0.0022429002749368987 | 22 |
-| HEALTHCARE | Healthcare Sector | 160.83999633789062 | 161.09 | 0.0015543625205274303 | 23 |
-| TIPS | Treasury Inflation-Protected Securities | 108.12999725341797 | 108.27 | 0.0012947632492203986 | 24 |
-| AGGREGATE_BONDS | US Aggregate Bond Market | 98.08000183105469 | 98.2 | 0.0012234723358999222 | 25 |
-| INVESTMENT_GRADE_CREDIT | Investment Grade Corporate Bonds | 107.45999908447266 | 107.56 | 0.0009305873476579407 | 26 |
-| MORTGAGE_BACKED_BONDS | Agency Mortgage-Backed Bonds | 93.72 | 93.78 | 0.000640204865556937 | 27 |
-| LONG_TREASURY | Long-Term US Treasury Bonds | 84.47000122070312 | 84.52 | 0.0005919116677437497 | 28 |
-| SHORT_TREASURY | Short-Term Treasury Bills | 91.5 | 91.55 | 0.0005464480874317612 | 29 |
-| EUROPE | Europe Equities | 88.56999969482422 | 88.59 | 0.00022581354007789045 | 30 |
-| CASH | Cash / Do Not Invest | 1.0 | 1.0 | 0.0 | 31 |
-| HIGH_YIELD_CREDIT | High Yield Corporate Bonds | 79.70999908447266 | 79.65 | -0.0007527171642426334 | 32 |
-| MID_CAP | US Mid-Cap Stocks | 75.66999816894531 | 75.54 | -0.0017179618354828952 | 33 |
-| COPPER | Copper | 37.99 | 37.92 | -0.0018425901553040802 | 34 |
-| US_DOLLAR | US Dollar | 28.39 | 28.33 | -0.0021134202183867856 | 35 |
-| INTERNATIONAL_BONDS | International Aggregate Bonds | 48.08 | 47.93 | -0.0031198003327786994 | 36 |
-| CHINA | China Equities | 53.130001068115234 | 52.95 | -0.0033879364670906797 | 37 |
-| MUNICIPAL_BONDS | Municipal Bonds | 107.01 | 106.58 | -0.004018316045229509 | 38 |
-| YEN | Japanese Yen | 56.74 | 56.51 | -0.0040535777229468994 | 39 |
-| EQUAL_WEIGHT_SP500 | Equal-Weight S&P 500 | 214.3000030517578 | 213.37 | -0.004339724864741101 | 40 |
-| EMERGING_MARKET_BONDS | Emerging Market USD Bonds | 95.99 | 95.53 | -0.004792165850609376 | 41 |
-| UTILITIES | Utilities Sector | 45.40999984741211 | 45.17 | -0.005285176133419056 | 42 |
-| SMALL_CAP | US Small-Cap Stocks | 295.989990234375 | 294.04 | -0.00658802763171451 | 43 |
-| MATERIALS | Materials Sector | 50.88999938964844 | 50.53 | -0.007074069443232522 | 44 |
-| INDIA | India Equities | 49.29999923706055 | 48.91 | -0.007910735154076365 | 45 |
-| COMMUNICATIONS | Communication Services Sector | 111.63999938964844 | 110.65 | -0.008867783904164206 | 46 |
-| INDUSTRIALS | Industrials Sector | 181.9199981689453 | 179.41 | -0.013797263600532461 | 47 |
-| TOTAL_US_MARKET | Total US Stock Market | 372.69000244140625 | 367.01 | -0.015240554896020497 | 48 |
-| CONSUMER_DISCRETIONARY | Consumer Discretionary Sector | 117.23999786376953 | 115.44 | -0.015353103860178297 | 49 |
-| SP500 | S&P 500 | 754.9500122070312 | 743.29 | -0.015444747358761224 | 50 |
-| DEVELOPED_EX_US | Developed Markets ex-US | 70.98999786376953 | 69.7 | -0.018171543915877386 | 51 |
-| SOLAR | Solar Energy | 54.959999084472656 | 53.9 | -0.01928673766612432 | 52 |
-| BRAZIL | Brazil Equities | 35.93 | 35.23 | -0.01948232674645156 | 53 |
-| GOLD | Gold | 77.26000213623047 | 75.5 | -0.02278024964492109 | 54 |
-| SOUTH_AFRICA | South Africa Equities | 63.82 | 62.36 | -0.022876841115637703 | 55 |
-| BIOTECH | Biotechnology | 159.03 | 154.26 | -0.029994340690435828 | 56 |
-| EMERGING_MARKETS | Emerging Markets | 59.88999938964844 | 57.84 | -0.034229410762070644 | 57 |
-| AEROSPACE_DEFENSE | Aerospace and Defense | 239.06 | 230.73 | -0.03484480883460228 | 58 |
-| LARGE_GROWTH | US Large-Cap Growth | 123.94999694824219 | 119.38 | -0.036869681813308075 | 59 |
-| NASDAQ100 | Nasdaq 100 | 725.510009765625 | 695.33 | -0.041598336838074235 | 60 |
-| JAPAN | Japan Equities | 94.55000305175781 | 90.49 | -0.04294027414822321 | 61 |
-| METALS_MINING | Metals and Mining | 103.69000244140625 | 98.35 | -0.051499684788066435 | 62 |
-| TECHNOLOGY | Technology Sector | 185.77999877929688 | 175.59 | -0.054849816160255194 | 63 |
-| SILVER | Silver | 53.95 | 50.78 | -0.05875810936051906 | 64 |
-| MOMENTUM | US Momentum Equities | 321.7699890136719 | 302.09 | -0.06116166729531669 | 65 |
-| AUTONOMOUS_ROBOTICS | Autonomous Technology and Robotics | 123.98999786376953 | 116.14 | -0.0633115412454035 | 66 |
-| BROAD_AI_TECH | Broad AI Technology | 63.439998626708984 | 58.7 | -0.07471624730952287 | 67 |
-| TAIWAN | Taiwan Equities | 106.19 | 97.33 | -0.08343535172803462 | 68 |
-| SEMICONDUCTORS | Semiconductors | 611.030029296875 | 556.53 | -0.08919370028276574 | 69 |
-| SOUTH_KOREA | South Korea Equities | 183.52 | 162.54 | -0.11431996512641684 | 70 |
+| ETHEREUM_ETF | Ethereum ETF | 13.37 | 14.33 | 0.0718025430067315 | 1 |
+| OIL | Crude Oil | 117.79 | 125.51 | 0.06554036845233036 | 2 |
+| BITCOIN_ETF | Bitcoin ETF | 35.22 | 36.89 | 0.047416240772288454 | 3 |
+| CHINA | China Equities | 52.53 | 54.08 | 0.029506948410432 | 4 |
+| BROAD_COMMODITIES | Broad Commodities | 16.9 | 17.38 | 0.028402366863905293 | 5 |
+| ENERGY | Energy Sector | 56.74 | 57.94 | 0.021149101163200568 | 6 |
+| MEXICO | Mexico Equities | 74.15 | 75.09 | 0.012677006068779528 | 7 |
+| COPPER | Copper | 37.94 | 38.42 | 0.01265155508697946 | 8 |
+| REAL_ESTATE | Real Estate Sector | 44.7 | 45.23 | 0.011856823266219063 | 9 |
+| AGRICULTURE | Agriculture Commodities | 27.72 | 28.02 | 0.010822510822510845 | 10 |
+| REGIONAL_BANKS | Regional Banks | 75.12 | 75.89 | 0.010250266240681594 | 11 |
+| AUSTRALIA | Australia Equities | 28.35 | 28.52 | 0.005996472663139185 | 12 |
+| DIVIDEND | US Dividend Equities | 32.56 | 32.75 | 0.005835380835380821 | 13 |
+| SMALL_VALUE | US Small-Cap Value | 219.78 | 220.85 | 0.004868504868504875 | 14 |
+| EURO | Euro | 105.01 | 105.37 | 0.003428244929054358 | 15 |
+| MORTGAGE_BACKED_BONDS | Agency Mortgage-Backed Bonds | 93.26 | 93.57 | 0.003324040317392196 | 16 |
+| CONSUMER_STAPLES | Consumer Staples Sector | 84.59 | 84.86 | 0.003191866650904318 | 17 |
+| SOFTWARE | Software | 92.7 | 92.98 | 0.0030204962243798317 | 18 |
+| INTERMEDIATE_TREASURY | Intermediate-Term US Treasury Bonds | 93.29 | 93.54 | 0.0026798156286846897 | 19 |
+| BRAZIL | Brazil Equities | 35.39 | 35.48 | 0.002543091268719877 | 20 |
+| AGGREGATE_BONDS | US Aggregate Bond Market | 97.71 | 97.95 | 0.002456248081056378 | 21 |
+| HIGH_YIELD_CREDIT | High Yield Corporate Bonds | 79.52 | 79.68 | 0.00201207243460777 | 22 |
+| INVESTMENT_GRADE_CREDIT | Investment Grade Corporate Bonds | 106.96 | 107.15 | 0.0017763649962603267 | 23 |
+| GOLD | Gold | 75.25 | 75.35 | 0.0013289036544850141 | 24 |
+| TIPS | Treasury Inflation-Protected Securities | 107.91 | 108.05 | 0.0012973774441664698 | 25 |
+| SHORT_TREASURY | Short-Term Treasury Bills | 91.5 | 91.56 | 0.0006557377049181135 | 26 |
+| UNITED_KINGDOM | United Kingdom Equities | 46.36 | 46.39 | 0.000647109577221805 | 27 |
+| CASH | Cash / Do Not Invest | 1.0 | 1.0 | 0.0 | 28 |
+| YEN | Japanese Yen | 56.46 | 56.46 | 0.0 | 28 |
+| EMERGING_MARKET_BONDS | Emerging Market USD Bonds | 95.38 | 95.37 | -0.00010484378276354178 | 30 |
+| FINANCIALS | Financials Sector | 56.07 | 56.04 | -0.0005350454788657366 | 31 |
+| CYBERSECURITY | Cybersecurity | 91.84 | 91.79 | -0.000544425087107947 | 32 |
+| LONG_TREASURY | Long-Term US Treasury Bonds | 83.97 | 83.89 | -0.0009527212099559312 | 33 |
+| INTERNATIONAL_BONDS | International Aggregate Bonds | 47.89 | 47.82 | -0.0014616830235957279 | 34 |
+| CANADA | Canada Equities | 58.73 | 58.62 | -0.0018729780350758007 | 35 |
+| EUROPE | Europe Equities | 87.86 | 87.69 | -0.0019348964261325374 | 36 |
+| LOW_VOL | US Low Volatility Equities | 76.2683187429 | 76.09 | -0.0023380447588087216 | 37 |
+| LARGE_VALUE | US Large-Cap Value | 247.62 | 246.96 | -0.0026653743639447613 | 38 |
+| US_DOLLAR | US Dollar | 28.5 | 28.39 | -0.0038596491228070073 | 39 |
+| SMALL_CAP | US Small-Cap Stocks | 293.48 | 292.31 | -0.003986643042115379 | 40 |
+| MID_CAP | US Mid-Cap Stocks | 75.24 | 74.93 | -0.004120148856990857 | 41 |
+| MUNICIPAL_BONDS | Municipal Bonds | 106.9 | 106.4 | -0.004677268475210439 | 42 |
+| INDIA | India Equities | 48.79 | 48.55 | -0.004919040787046525 | 43 |
+| COMMUNICATIONS | Communication Services Sector | 111.59 | 110.8 | -0.007079487409266116 | 44 |
+| DEVELOPED_EX_US | Developed Markets ex-US | 69.76 | 69.23 | -0.007597477064220204 | 45 |
+| SOLAR | Solar Energy | 53.12 | 52.69 | -0.008094879518072307 | 46 |
+| EQUAL_WEIGHT_SP500 | Equal-Weight S&P 500 | 214.23 | 212.42 | -0.008448863371143145 | 47 |
+| SP500 | S&P 500 | 749.17 | 742.09 | -0.009450458507414772 | 48 |
+| TOTAL_US_MARKET | Total US Stock Market | 369.78 | 366.25 | -0.009546216669370944 | 49 |
+| MATERIALS | Materials Sector | 50.58 | 50.03 | -0.01087386318703043 | 50 |
+| CONSUMER_DISCRETIONARY | Consumer Discretionary Sector | 116.04 | 114.61 | -0.012323336780420635 | 51 |
+| INDUSTRIALS | Industrials Sector | 180.37 | 178.12 | -0.012474358263569352 | 52 |
+| HEALTHCARE | Healthcare Sector | 161.41 | 159.25 | -0.013382070503686228 | 53 |
+| EMERGING_MARKETS | Emerging Markets | 58.79 | 57.93 | -0.014628338152747111 | 54 |
+| UTILITIES | Utilities Sector | 45.72 | 44.94 | -0.017060367454068248 | 55 |
+| LARGE_GROWTH | US Large-Cap Growth | 121.59 | 119.47 | -0.01743564437864964 | 56 |
+| SOUTH_AFRICA | South Africa Equities | 62.76 | 61.63 | -0.018005098789037555 | 57 |
+| NASDAQ100 | Nasdaq 100 | 711.74 | 696.06 | -0.02203051676173895 | 58 |
+| SILVER | Silver | 52.16 | 50.98 | -0.022622699386503076 | 59 |
+| AEROSPACE_DEFENSE | Aerospace and Defense | 235.05 | 229.27 | -0.024590512656881502 | 60 |
+| JAPAN | Japan Equities | 92.72 | 90.43 | -0.02469801553062978 | 61 |
+| BIOTECH | Biotechnology | 155.34 | 150.94 | -0.0283249645937943 | 62 |
+| SOUTH_KOREA | South Korea Equities | 168.02 | 162.86 | -0.030710629686942048 | 63 |
+| TECHNOLOGY | Technology Sector | 181.28 | 175.71 | -0.030725948808473014 | 64 |
+| AUTONOMOUS_ROBOTICS | Autonomous Technology and Robotics | 120.7 | 116.63 | -0.03371996685998346 | 65 |
+| BROAD_AI_TECH | Broad AI Technology | 61.3 | 59.14 | -0.03523654159869494 | 66 |
+| MOMENTUM | US Momentum Equities | 314.63 | 302.64 | -0.03810825413978325 | 67 |
+| METALS_MINING | Metals and Mining | 102.09 | 97.74 | -0.04260946223920081 | 68 |
+| SEMICONDUCTORS | Semiconductors | 585.62 | 558.83 | -0.045746388443017594 | 69 |
+| TAIWAN | Taiwan Equities | 101.88 | 95.94 | -0.05830388692579502 | 70 |
 
 ## Official Leaderboard
 
 | model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| anthropic-claude-opus-4-7 | portfolio | SEMICONDUCTORS | 5 | 0.55 | -0.08919370028276574 | -0.044953765256754555 | -0.02950901789799333 | 0.1853401498013726 |  | False | False |
-| anthropic-claude-opus-4-8 | portfolio | SEMICONDUCTORS | 5 | 0.55 | -0.08919370028276574 | -0.04593934208322241 | -0.030494594724461185 | 0.18632572662784047 |  | False | False |
-| xai-grok-4-3 | portfolio | SEMICONDUCTORS | 3 | 0.55 | -0.08919370028276574 | -0.05161098858963319 | -0.03616624123087197 | 0.19199737313425125 |  | False | False |
-| openai-gpt-5-6-sol | portfolio | SEMICONDUCTORS | 5 | 0.61 | -0.08919370028276574 | -0.05362238070771719 | -0.038177633348955964 | 0.19400876525233524 |  | False | False |
-| anthropic-claude-fable-5 | portfolio | SEMICONDUCTORS | 5 | 0.5 | -0.08919370028276574 | -0.055538887559773625 | -0.0400941402010124 | 0.19592527210439167 |  | False | False |
-| xai-grok-4-5 | portfolio | SEMICONDUCTORS | 5 | 0.58 | -0.08919370028276574 | -0.060124499947779624 | -0.0446797525890184 | 0.20051088449239768 |  | False | False |
-| google-gemini-3-1-pro | portfolio | SEMICONDUCTORS | 4 | 0.75 | -0.08919370028276574 | -0.08025149181943148 | -0.06480674446067025 | 0.22063787636404952 |  | False | False |
-| openai-gpt-5-5 | portfolio | SEMICONDUCTORS | 5 | 0.62 | -0.08919370028276574 | -0.08216695508504036 | -0.06672220772627914 | 0.2225533396296584 |  | False | False |
+| xai-grok-4-3 | portfolio | OIL | 1 | 0.65 | 0.06554036845233036 | 0.06554036845233036 | 0.07499082695974513 | 0.006262174554401145 |  | True | True |
+| openai-gpt-5-5 | portfolio | OIL | 3 | 0.58 | 0.06554036845233036 | 0.047502549872534175 | 0.05695300837994895 | 0.024299993134197326 |  | True | True |
+| xai-grok-4-5 | portfolio | OIL | 4 | 0.62 | 0.06554036845233036 | 0.036740975937648246 | 0.04619143444506302 | 0.035061567069083255 |  | True | True |
+| google-gemini-3-1-pro | portfolio | OIL | 3 | 0.85 | 0.06554036845233036 | 0.03419681204374905 | 0.043647270551163825 | 0.03760573096298245 |  | True | True |
+| openai-gpt-5-6-sol | portfolio | OIL | 5 | 0.58 | 0.06554036845233036 | 0.030936544525916473 | 0.040387003033331245 | 0.04086599848081503 |  | True | True |
+| anthropic-claude-opus-4-7 | portfolio | ENERGY | 5 | 0.6 | 0.021149101163200568 | 0.017548712053519527 | 0.0269991705609343 | 0.05425383095321197 |  | True | True |
+| anthropic-claude-fable-5 | portfolio | ENERGY | 5 | 0.55 | 0.021149101163200568 | 0.01666050347509727 | 0.026110961982512042 | 0.05514203953163423 |  | True | True |
+| anthropic-claude-opus-4-8 | portfolio | ENERGY | 5 | 0.6 | 0.021149101163200568 | 0.00042330466591848984 | 0.009873763173333262 | 0.07137923834081301 |  | True | True |
 
 ## Notes
 
@@ -118,7 +118,8 @@
 
 ## Warnings
 
-- Round CB-2026-07-13-1W has no scored official run.
 - Round CB-2026-07-14-1W has no scored official run.
 - Round CB-2026-07-15-1W has no scored official run.
 - Round CB-2026-07-16-1W has no scored official run.
+- Round CB-2026-07-17-1W has no scored official run.
+- Round CB-2026-07-20-1W has no scored official run.
