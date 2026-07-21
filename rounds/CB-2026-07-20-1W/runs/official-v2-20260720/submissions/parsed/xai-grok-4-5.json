@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Soft inflation and steady consumption allow modest equity stabilization",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7,443.28, down 0.2%",
+        "June CPI decreased 0.4% monthly with core unchanged",
+        "June nonfarm payrolls increased by only 57,000 with prior revisions down"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "SPY closes below recent 21s drawdown low with rising volume",
+      "option_id": "SP500",
+      "reversal_case": "Oil spike or weak earnings drive further risk-off",
+      "time_window_catalyst": "Alphabet earnings on July 22"
+    },
+    {
+      "continuation_case": "Reduced Hormuz flows sustain supply premium into the week",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $89.22, up 1.3% on July 20",
+        "S&P Global counted 127 vessels transiting Hormuz, nearly 50% fewer",
+        "USO return_3s at 3.40% and active_return_5s at 7.50%"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent falls below 85 or vessel counts normalize",
+      "option_id": "OIL",
+      "reversal_case": "Transit recovery or bearish EIA print collapses the premium",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22"
+    },
+    {
+      "continuation_case": "Equity energy captures persistent crude strength",
+      "decision": "selected",
+      "evidence": [
+        "XLE return_3s 2.55% and active_return_5s 3.06%",
+        "Brent up 1.3% with Hormuz transit sharply lower",
+        "prior_16s_active_return positive at 3.17%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLE active return turns negative while oil drops >3%",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil mean-reversion or broader equity selloff hits beta",
+      "time_window_catalyst": "EIA report July 22 plus oil price path"
+    },
+    {
+      "continuation_case": "Commodity complex momentum and volume support follow-through",
+      "decision": "selected",
+      "evidence": [
+        "PDBC return_3s 1.22% and active_return_5s 3.79%",
+        "volume_zscore_5v60 elevated at 3.866",
+        "USO and energy complex strength on July 20"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "PDBC reverses full 3s gain on rising UUP",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Dollar rebound or demand scare hits non-energy legs",
+      "time_window_catalyst": "EIA petroleum data and energy price continuation"
+    },
+    {
+      "continuation_case": "Positive local tape and growth print sustain relative bid",
+      "decision": "selected",
+      "evidence": [
+        "Hong Kong rose 2.4% and Shanghai rose 0.9% on July 20",
+        "MCHI active_return_5s 3.90%",
+        "China H1 real GDP growth 4.7% y/y, June PMI 50.3"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "MCHI underperforms SPY by >2% with HK weakness",
+      "option_id": "CHINA",
+      "reversal_case": "Global risk-off or renewed policy disappointment",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Relative strength persists in lower-beta dividend names",
+      "decision": "selected",
+      "evidence": [
+        "SCHD return_3s 1.27% and active_return_5s 1.53%",
+        "prior_16s_active_return 1.42%",
+        "soft June payrolls and cooler CPI favor defensive yield"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "SCHD active return turns negative on Nasdaq strength",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Sharp growth-stock rebound crowds out defensives",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Defensive bid continues after soft labor data",
+      "decision": "rejected",
+      "evidence": [
+        "XLP return_3s 1.67% and active_return_5s 1.26%",
+        "June retail sales up 0.2%",
+        "cooler CPI energy component"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "XLP loses 3s gains while SPY rises",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Risk-on rotation or margin pressure headlines",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Recent active outperformance extends on risk appetite",
+      "decision": "rejected",
+      "evidence": [
+        "IBIT active_return_5s 5.69%",
+        "return_3s only 0.22%",
+        "distance_52w_high -48.25%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "IBIT drops >5% on rising real yields or equity weakness",
+      "option_id": "BITCOIN_ETF",
+      "reversal_case": "High volatility and deep drawdown invite mean reversion",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.46,
+  "is_official_score": true,
+  "key_risks": [
+    "Rapid Hormuz de-escalation or large EIA inventory build reverses oil",
+    "Alphabet earnings spark broad tech-led risk-on that leaves energy behind",
+    "Geopolitical headline volatility spikes correlations and drawdowns",
+    "Cluster concentration in energy amplifies single-factor reversal"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Brent settles below 85 or Hormuz transit normalizes sharply",
+      "option_id": "OIL",
+      "rationale": "Hormuz transit drop supports near-term crude strength over the one-week window.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "XLE underperforms as oil reverses more than 5% intraday",
+      "option_id": "ENERGY",
+      "rationale": "Equity energy levered to oil upside with recent relative strength.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22 and oil price persistence"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "PDBC gives back 3s gains on risk-off equity move",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Broad commodity momentum and elevated volume support continuation.",
+      "time_window_catalyst": "Continued energy complex strength into July 22 EIA data"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "MCHI breaks below recent lows with HK/Shanghai weakness",
+      "option_id": "CHINA",
+      "rationale": "Positive China equity tape and H1 GDP print offer relative bounce potential.",
+      "time_window_catalyst": "None identified beyond ongoing China data follow-through"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "SCHD loses relative bid if growth stocks reverse sharply higher",
+      "option_id": "DIVIDEND",
+      "rationale": "Defensive dividend equities show positive 3s/5s relative strength amid soft macro.",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.66,
+  "portfolio_rationale": "Portfolio concentrates in energy and commodities where supplied Hormuz disruption and price momentum provide the clearest one-week edge over SPY, capped at cluster limits, with diversifying China and dividend sleeves.",
+  "provider": "xai",
+  "rationale_summary": "SPY base is muted after soft CPI/payrolls and negative 3s return. Active holdings clear the SPY base hurdle via oil supply facts and recent commodity/China relative strength.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-20-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 13768,
+    "latency_seconds": 28.14597637602128,
+    "output_tokens": 2441,
+    "reasoning_tokens": 1632,
+    "total_tokens": 17841
+  }
+}

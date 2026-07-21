@@ -1,0 +1,188 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Cooling CPI (-0.4% m/m) supports eventual easing and equity stabilization",
+      "decision": "rejected",
+      "evidence": [
+        "SPY -0.95% over 5 sessions, majority of stocks fell July 20",
+        "June payrolls +57k with -74k revisions; unemployment 4.2%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Broad rally with breadth improvement above recent highs",
+      "option_id": "SP500",
+      "reversal_case": "Weak breadth and soft labor data extend the pullback; oil spike pressures margins",
+      "time_window_catalyst": "Alphabet earnings July 22"
+    },
+    {
+      "continuation_case": "Sustained supply-risk premium lifts energy earnings expectations",
+      "decision": "selected",
+      "evidence": [
+        "Brent $89.22, up 1.3% on July 20",
+        "Hormuz transits down ~50% week over week",
+        "XLE +2.55% 3-session, +3.06% 5s active return"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Brent below ~$82 or normalized shipping traffic",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation and EIA's $74 Q3 Brent forecast reasserting",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22; Hormuz developments"
+    },
+    {
+      "continuation_case": "Halved strait transits keep supply-risk premium bid",
+      "decision": "selected",
+      "evidence": [
+        "USO +6.55% over 5 sessions on Hormuz disruption",
+        "Brent settled $89.22 up 1.3% July 20"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Hormuz transit volumes recover to prior-week levels",
+      "option_id": "OIL",
+      "reversal_case": "Quick geopolitical resolution; EIA forecasts $74 Q3 Brent average",
+      "time_window_catalyst": "July 22 EIA inventory report; Hormuz shipping data"
+    },
+    {
+      "continuation_case": "Defensive flows persist amid soft labor data and weak breadth",
+      "decision": "selected",
+      "evidence": [
+        "XLP +1.67% 3-session with negative SPY beta (-0.38)",
+        "Majority of US stocks fell July 20; weak payrolls print"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "SPY rallies >2% on renewed growth leadership",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Tech-led risk-on rally rotates money out of defensives",
+      "time_window_catalyst": "Defensive rotation through the week; Alphabet earnings as risk pivot"
+    },
+    {
+      "continuation_case": "Low-beta quality dividend names keep outperforming in choppy tape",
+      "decision": "selected",
+      "evidence": [
+        "SCHD +1.27% 3-session, +1.53% 5s active return, near-zero SPY beta (0.09)",
+        "Value/defensive factors outperforming: IWD and SPLV positive active returns"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Growth factors lead by >2% early in the week",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth rebound post-Alphabet earnings reverses factor rotation",
+      "time_window_catalyst": "Continued value rotation into July 27"
+    },
+    {
+      "continuation_case": "Alphabet beat could spark oversold bounce",
+      "decision": "rejected",
+      "evidence": [
+        "XLK -3.23% 3-session, -8.62% 21s drawdown, beta 2.14",
+        "Nasdaq underperforming; semis -5.41% 3-session"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Strong Alphabet results reversing the tech drawdown",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "High-beta tech continues correcting; momentum breakdown (MTUM -12% drawdown)",
+      "time_window_catalyst": "Alphabet earnings July 22"
+    },
+    {
+      "continuation_case": "Improving China data and local market strength continue",
+      "decision": "rejected",
+      "evidence": [
+        "Hong Kong +2.4%, Shanghai +0.9% on July 20; MCHI +3.90% 5s active",
+        "H1 GDP +4.7% y/y, June PMI 50.3"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Hang Seng reversal or renewed policy disappointment",
+      "option_id": "CHINA",
+      "reversal_case": "Q2 growth slowed to 4.3%; recent bounce may fade; high volatility",
+      "time_window_catalyst": "None identified beyond ongoing data flow"
+    },
+    {
+      "continuation_case": "Disinflation and soft labor market pull yields lower",
+      "decision": "rejected",
+      "evidence": [
+        "June CPI -0.4% m/m; core flat; payrolls weak at +57k",
+        "10y at 4.60%, 30y 5.11%; TLT -2.47% over 21 sessions"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "10y yield rising above 4.75%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Oil spike reigniting inflation fears keeps long-end pressured",
+      "time_window_catalyst": "None identified before exit"
+    }
+  ],
+  "confidence": 0.6,
+  "cost_usd": 0.40432999999999997,
+  "expected_alpha_vs_sp500_pct": 1.05,
+  "is_official_score": true,
+  "key_risks": [
+    "Rapid Hormuz de-escalation could crater oil and energy equities",
+    "Strong Alphabet earnings could spark a tech rally that SPY captures and this portfolio misses",
+    "EIA forecast of $74 Q3 Brent suggests supply-risk premium may deflate quickly",
+    "USO futures-curve structure can erode spot-price gains"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Brent falls back below ~$82 or Hormuz transit normalizes",
+      "option_id": "ENERGY",
+      "rationale": "Hormuz transit disruption (127 vessels, ~50% fewer) and Brent at $89.22 with positive sector momentum support energy equities over the week.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report July 22; ongoing Hormuz supply risk"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "De-escalation restoring Hormuz shipping volumes; Brent below $84",
+      "option_id": "OIL",
+      "rationale": "Direct crude exposure to the supply shock; Brent up 1.3% on July 20 amid halved Hormuz transits.",
+      "time_window_catalyst": "EIA inventory data July 22 and Strait of Hormuz developments"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Broad risk-on rally led by tech reversing defensive flows",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Defensive sector outperforming in risk-off tape (+1.67% 3-session, negative SPY beta) with weak payrolls and majority of stocks declining.",
+      "time_window_catalyst": "Continued defensive rotation into July 27 close"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Strong tech-led rally after Alphabet earnings pulling flows from value",
+      "option_id": "DIVIDEND",
+      "rationale": "Low-beta dividend equities showing positive absolute and active returns; insulated from tech drawdown risk around Alphabet earnings.",
+      "time_window_catalyst": "Value/defensive rotation persists through the week"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.25,
+  "portfolio_rationale": "Energy supply shock (Hormuz transits halved, Brent $89) plus a defensive rotation amid weak payrolls and soft breadth favors energy and low-beta dividend/staples exposure over cap-weighted SPY, which is tech-heavy into an uncertain Alphabet print.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight energy on geopolitical supply risk and tilt remaining equity exposure to defensive dividend/staples factors that are outperforming in the current risk-off tape.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-20-1W",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.40432999999999997,
+    "input_tokens": 23753,
+    "latency_seconds": 46.61400429089554,
+    "output_tokens": 3336,
+    "total_tokens": 27089
+  }
+}

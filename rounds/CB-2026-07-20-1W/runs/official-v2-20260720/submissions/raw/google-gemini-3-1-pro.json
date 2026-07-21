@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Steady economic growth and stable inflation support a gradual grind higher.",
+      "decision": "rejected",
+      "evidence": [
+        "The S&P 500 closed at 7,443.28, down 0.2% on July 20.",
+        "First-quarter real GDP growth was 2.1%."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A significant miss in major tech earnings.",
+      "option_id": "SP500",
+      "reversal_case": "A sudden macroeconomic shock or earnings disappointment from major components.",
+      "time_window_catalyst": "Alphabet earnings on July 22."
+    },
+    {
+      "continuation_case": "Ongoing geopolitical tensions in the Middle East restrict supply routes.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $89.22 per barrel on July 20, up 1.3%.",
+        "S&P Global counted 127 vessels transiting the Strait of Hormuz, nearly 50% fewer than the prior week."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A sudden resolution to Middle East tensions or a massive unexpected build in EIA inventories.",
+      "option_id": "OIL",
+      "reversal_case": "A sudden resolution to tensions or a massive inventory build.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "continuation_case": "Higher oil prices translate to stronger earnings expectations for energy companies.",
+      "decision": "selected",
+      "evidence": [
+        "Energy sector had a 2.55% return over the last 3 days.",
+        "Energy sector had a 3.06% active return over the last 5 days."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A sharp drop in crude oil prices or broader market selloff.",
+      "option_id": "ENERGY",
+      "reversal_case": "A drop in underlying commodity prices.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "continuation_case": "Market rotation away from mega-cap tech continues to favor undervalued smaller companies.",
+      "decision": "selected",
+      "evidence": [
+        "Small value had a 1.43% active return over the last 5 days.",
+        "Small value had a 1.48% prior 16s active return."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A flight to safety or a resurgence in mega-cap tech dominance.",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "A flight to safety or a resurgence in mega-cap tech dominance.",
+      "time_window_catalyst": "Continued market rotation during the week."
+    },
+    {
+      "continuation_case": "Geopolitical uncertainty and stable real rates support gold prices.",
+      "decision": "selected",
+      "evidence": [
+        "Gold had a 1.08% active return over the last 5 days.",
+        "June CPI decreased 0.4% on a seasonally adjusted monthly basis."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A sharp rise in real interest rates or a strong US dollar rally.",
+      "option_id": "GOLD",
+      "reversal_case": "A sharp rise in real interest rates or a strong US dollar rally.",
+      "time_window_catalyst": "Geopolitical developments or shifts in real yields."
+    },
+    {
+      "continuation_case": "Defensive positioning supports healthcare stocks.",
+      "decision": "rejected",
+      "evidence": [
+        "Healthcare had a 0.61% return over the last 3 days.",
+        "Healthcare had a 6.20% prior 16s active return."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A strong rotation into high-beta sectors.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A strong risk-on rally favoring cyclical sectors.",
+      "time_window_catalyst": "None identified."
+    },
+    {
+      "continuation_case": "Yields remain stable, providing a steady, low-risk return.",
+      "decision": "rejected",
+      "evidence": [
+        "Short treasury had a 0.04% return over the last 3 days.",
+        "Treasury nominal constant-maturity yields were 3.86% at three months."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.15,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "A sudden, massive drop in short-term rates.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "A sudden, massive drop in short-term rates.",
+      "time_window_catalyst": "None identified."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.83,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden de-escalation in the Middle East could cause a sharp reversal in oil prices.",
+    "A broader market selloff could drag down energy equities and small caps.",
+    "A resurgence in mega-cap tech could reverse the recent rotation into small value."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "A sudden resolution to Middle East tensions or a massive unexpected build in EIA inventories.",
+      "option_id": "OIL",
+      "rationale": "Oil prices are supported by a significant drop in vessels transiting the Strait of Hormuz and positive recent momentum.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "A sharp drop in crude oil prices or broader market selloff.",
+      "option_id": "ENERGY",
+      "rationale": "Energy equities benefit from the same tailwinds as crude oil, showing strong recent active returns.",
+      "time_window_catalyst": "EIA Weekly Petroleum Status Report on July 22."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "A flight to safety or a resurgence in mega-cap tech dominance.",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Small value has shown positive active returns recently, potentially benefiting from a rotation out of mega-cap tech.",
+      "time_window_catalyst": "Continued market rotation during the week."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "A sharp rise in real interest rates or a strong US dollar rally.",
+      "option_id": "GOLD",
+      "rationale": "Gold provides a hedge against geopolitical risks and has shown positive recent active returns.",
+      "time_window_catalyst": "Geopolitical developments or shifts in real yields."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.03,
+  "portfolio_rationale": "The portfolio is tilted towards energy and value, capitalizing on recent momentum in oil prices driven by geopolitical tensions and a potential market rotation. Gold is included as a geopolitical hedge.",
+  "provider": "google",
+  "rationale_summary": "Overweight energy and small value based on recent momentum and geopolitical factors, with gold as a hedge.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-20-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 13486,
+    "latency_seconds": 22.31417179107666,
+    "output_tokens": 2183,
+    "reasoning_tokens": 892,
+    "total_tokens": 16561
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "benchmark_expected_return_pct": 0.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Mild pullback in uptrend, earnings catalyst supportive",
+      "decision": "selected",
+      "evidence": [
+        "SPY -0.2% on July 20, -0.95% 5s",
+        "21s return +0.41%",
+        "Alphabet earnings July 22"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "SPY breaks below -3% intraweek",
+      "option_id": "SP500",
+      "reversal_case": "Tech weakness deepens, credit spreads widen",
+      "time_window_catalyst": "Alphabet earnings July 22"
+    },
+    {
+      "continuation_case": "Supply disruption sustains oil bid",
+      "decision": "selected",
+      "evidence": [
+        "Brent $89.22 +1.3%",
+        "Hormuz transits ~50% lower",
+        "XLE 5s active return +3.06%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Brent falls below $82",
+      "option_id": "ENERGY",
+      "reversal_case": "Hormuz normalizes, EIA shows builds",
+      "time_window_catalyst": "EIA petroleum status July 22"
+    },
+    {
+      "continuation_case": "Rate-sensitive defensives bid amid growth wobble",
+      "decision": "selected",
+      "evidence": [
+        "XLRE 5s active return +2.13%",
+        "Low drawdown -2.67%",
+        "Distance to 52w high only -0.51%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "10y yield above 4.75%",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Long yields jump on inflation surprise",
+      "time_window_catalyst": "Treasury auctions, yield stability"
+    },
+    {
+      "continuation_case": "Defensive rotation persists",
+      "decision": "selected",
+      "evidence": [
+        "SCHD 3s return +1.27%",
+        "5s active +1.53%",
+        "Low beta 0.088"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "SCHD active return turns sharply negative",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Risk-on snap-back to growth",
+      "time_window_catalyst": "Continued factor rotation"
+    },
+    {
+      "continuation_case": "Alphabet beat sparks tech rebound",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ 3s -3.02%",
+        "5s active -1.26%",
+        "Drawdown -6.01%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "QQQ fails to reclaim recent support",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Semi weakness deepens",
+      "time_window_catalyst": "Alphabet earnings"
+    },
+    {
+      "continuation_case": "Oversold bounce possible",
+      "decision": "rejected",
+      "evidence": [
+        "SMH 3s -5.41%",
+        "Drawdown -16.8%",
+        "Vol 56%"
+      ],
+      "forecast_base_pct": -1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "SMH breaks below recent lows",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Downtrend continues, Korea Kospi -4.5%",
+      "time_window_catalyst": "Chip earnings"
+    },
+    {
+      "continuation_case": "Flight to quality if equities crack",
+      "decision": "rejected",
+      "evidence": [
+        "TLT 21s -2.47%",
+        "5s +0.85%",
+        "30y at 5.11%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "30y above 5.25%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Inflation stays sticky, curve steepens",
+      "time_window_catalyst": "Yield stability"
+    },
+    {
+      "continuation_case": "Safe-haven bid on Hormuz risk",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 21s -5.39%",
+        "Distance 52w high -25.8%",
+        "5s +1.08%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Gold breaks recent lows",
+      "option_id": "GOLD",
+      "reversal_case": "Real yields rise, USD strength",
+      "time_window_catalyst": "Geopolitical headlines"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.345,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil reverses if Hormuz transit normalizes",
+    "Tech rebound on Alphabet earnings lifts SPY faster than defensives",
+    "Long-end yields spike hurting REITs"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-7",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "SPY breaks below recent support with credit widening",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure after mild pullback.",
+      "time_window_catalyst": "Alphabet earnings July 22"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Brent falls below $82",
+      "option_id": "ENERGY",
+      "rationale": "Brent up on Hormuz disruption; XLE strong recent active return.",
+      "time_window_catalyst": "EIA petroleum status July 22"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "10y yield spikes above 4.75%",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Rate-sensitive defensive with positive momentum and low drawdown.",
+      "time_window_catalyst": "10y yield stability"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Sharp risk-on rotation back to growth",
+      "option_id": "DIVIDEND",
+      "rationale": "Defensive dividend tilt with strong recent active return and low drawdown.",
+      "time_window_catalyst": "Continued value/defensive rotation"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.745,
+  "portfolio_rationale": "Blend SPY core with energy (Hormuz disruption, oil momentum), rate-sensitive real estate, and defensive dividend equities that have shown positive active returns amid the recent tech-led pullback.",
+  "provider": "anthropic",
+  "rationale_summary": "Modest tilt away from tech-heavy indexes given semis/AI weakness; overweight energy on supply catalyst and defensives showing positive active returns.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-20-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 23764,
+    "latency_seconds": 37.20455102599226,
+    "output_tokens": 2352,
+    "total_tokens": 26116
+  }
+}
