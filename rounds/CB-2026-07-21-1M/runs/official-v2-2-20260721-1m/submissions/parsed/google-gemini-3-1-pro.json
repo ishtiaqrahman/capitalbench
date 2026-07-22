@@ -1,0 +1,162 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued economic resilience and positive earnings reports support steady market gains.",
+      "decision": "rejected",
+      "evidence": [
+        "The S&P 500 rose 0.9% to 7,509.20 on July 21.",
+        "First-quarter real GDP rose at a 2.1% annual rate."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant miss in mega-cap tech earnings or hawkish Fed surprise.",
+      "option_id": "SP500",
+      "reversal_case": "Inflation re-accelerates, prompting fears of further rate hikes.",
+      "time_window_catalyst": "FOMC meeting and major tech earnings in late July."
+    },
+    {
+      "continuation_case": "Tight supply and resilient demand keep crude prices elevated above $90.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $91.01 per barrel, up 2.0%.",
+        "USO returned 7.22% over the last 5 days."
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A sharp drop in Brent crude prices below $85 per barrel.",
+      "option_id": "OIL",
+      "reversal_case": "A sudden increase in OPEC+ production or a severe global demand shock.",
+      "time_window_catalyst": "EIA weekly petroleum data releases and ongoing supply/demand dynamics."
+    },
+    {
+      "continuation_case": "Energy companies report strong earnings and maintain capital discipline amid high oil prices.",
+      "decision": "selected",
+      "evidence": [
+        "XLE returned 2.72% over the last 5 days.",
+        "Energy sector equities benefit from rising crude prices."
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "A significant decline in oil prices or broader market sell-off.",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil prices collapse, dragging down energy sector earnings expectations.",
+      "time_window_catalyst": "Upcoming earnings reports from major energy companies."
+    },
+    {
+      "continuation_case": "Investors seek defensive exposure amid macroeconomic uncertainty, supporting healthcare valuations.",
+      "decision": "selected",
+      "evidence": [
+        "XLV returned 1.24% over the last 5 days.",
+        "Healthcare sector showed 7.53% active return over 21 days."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A sharp rotation back into high-beta growth sectors.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A strong risk-on rally leads to underperformance of defensive sectors.",
+      "time_window_catalyst": "Sector rotation into defensive areas amid economic uncertainty."
+    },
+    {
+      "continuation_case": "Safe-haven demand increases due to geopolitical tensions or economic fears.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU returned 0.72% over the last 5 days.",
+        "The 10-year U.S. Treasury yield rose to 4.63%."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A sharp increase in real interest rates.",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields and a stronger US dollar pressure gold prices.",
+      "time_window_catalyst": "FOMC statement and inflation data releases."
+    },
+    {
+      "continuation_case": "Short-term rates remain stable, providing steady yield.",
+      "decision": "rejected",
+      "evidence": [
+        "Federal Reserve maintained the federal-funds target range at 3.50% to 3.75%.",
+        "BIL returned 0.05% over the last 5 days."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 0.5,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "A sudden shift in Fed policy expectations.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "An unexpected rate cut by the Fed.",
+      "time_window_catalyst": "FOMC meeting decision."
+    },
+    {
+      "continuation_case": "Mega-cap tech companies report strong earnings, driving sector outperformance.",
+      "decision": "rejected",
+      "evidence": [
+        "The technology sector rose 2.3% on July 21.",
+        "XLK returned -1.55% over the last 5 days."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Significant earnings misses from key technology leaders.",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Rising interest rates pressure high-valuation tech stocks.",
+      "time_window_catalyst": "Earnings reports from major tech companies like Microsoft and Alphabet."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.875,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden reversal in oil prices due to geopolitical de-escalation or demand shocks.",
+    "Broader market volatility impacting equity allocations.",
+    "Underperformance of defensive sectors if risk appetite surges."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "A sharp drop in Brent crude prices below $85 per barrel.",
+      "option_id": "OIL",
+      "rationale": "Strong recent momentum in crude prices and positive active return trends support further upside.",
+      "time_window_catalyst": "EIA weekly petroleum data releases and ongoing supply/demand dynamics."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "A significant decline in oil prices or broader market sell-off.",
+      "option_id": "ENERGY",
+      "rationale": "Energy sector equities are well-positioned to benefit from rising crude prices and strong recent active returns.",
+      "time_window_catalyst": "Upcoming earnings reports from major energy companies."
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "A sharp rotation back into high-beta growth sectors.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare offers defensive characteristics with strong recent active performance, providing balance to the portfolio.",
+      "time_window_catalyst": "Sector rotation into defensive areas amid economic uncertainty."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.875,
+  "portfolio_rationale": "The portfolio is positioned to capture upside in the energy complex while balancing risk with a defensive allocation to healthcare. Strong recent momentum in oil prices and the energy sector provides a compelling tactical opportunity. Healthcare offers stability and has shown positive recent active returns.",
+  "provider": "google",
+  "rationale_summary": "Overweight energy and healthcare to balance cyclical upside with defensive stability.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-21-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17255,
+    "latency_seconds": 19.57720644795336,
+    "output_tokens": 2014,
+    "reasoning_tokens": 831,
+    "total_tokens": 20100
+  }
+}

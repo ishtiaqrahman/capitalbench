@@ -1,0 +1,178 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Stable macro data supports modest equity gains",
+      "decision": "selected",
+      "evidence": [
+        "SPY closed at 7509.20 on July 21",
+        "June nonfarm payrolls +57k"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "SPY closes below 7400 on August 21",
+      "option_id": "SP500",
+      "reversal_case": "Higher unemployment or inflation surprise",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Oil supply tightness persists into August",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude at $91.01 up 2.0%",
+        "USO return_21s +11.96%"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Brent crude falls below $85",
+      "option_id": "ENERGY",
+      "reversal_case": "Demand weakness from slower global growth",
+      "time_window_catalyst": "EIA weekly petroleum data July 22"
+    },
+    {
+      "continuation_case": "Value rotation continues on rate stability",
+      "decision": "selected",
+      "evidence": [
+        "IWN return_21s +2.58%",
+        "Small value quality evidence score 0.591"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "Unemployment rate rises above 4.5%",
+      "option_id": "SMALL_VALUE",
+      "reversal_case": "Growth stocks rebound sharply",
+      "time_window_catalyst": "July employment data August 7"
+    },
+    {
+      "continuation_case": "Defensive flows support sector outperformance",
+      "decision": "selected",
+      "evidence": [
+        "XLV active_return_21s +7.53%",
+        "Healthcare quality evidence score 0.248"
+      ],
+      "forecast_base_pct": 1.9,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": 0.4,
+      "invalidation_condition": "Sector underperforms SPY by more than 3%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation into cyclicals",
+      "time_window_catalyst": "Q2 earnings season continuation"
+    },
+    {
+      "continuation_case": "Stable rates support bank margins",
+      "decision": "selected",
+      "evidence": [
+        "XLF active_return_21s +4.90%",
+        "Regional banks positive recent performance"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": 0.1,
+      "invalidation_condition": "10-year Treasury yield exceeds 4.8%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield curve flattens further",
+      "time_window_catalyst": "Bank of England decision July 30"
+    },
+    {
+      "continuation_case": "European and Japanese recovery",
+      "decision": "rejected",
+      "evidence": [
+        "VEA return_21s -2.75%",
+        "IMF global growth forecast 3.0%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Developed ex-US underperforms SPY by 4%",
+      "option_id": "DEVELOPED_EX_US",
+      "reversal_case": "Stronger USD pressures international equities",
+      "time_window_catalyst": "ECB decision July 23"
+    },
+    {
+      "continuation_case": "Yen stabilization aids exporters",
+      "decision": "rejected",
+      "evidence": [
+        "EWJ return_21s -3.86%",
+        "Bank of Japan policy rate 1.0%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Nikkei falls more than 5% from July 21 close",
+      "option_id": "JAPAN",
+      "reversal_case": "Yen strengthens sharply",
+      "time_window_catalyst": "Bank of Japan statement July 31"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.69,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC policy surprise on July 29",
+    "Oil price reversal below $85",
+    "Weaker than expected Q2 GDP"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "SPY closes below 7400 on August 21",
+      "option_id": "SP500",
+      "rationale": "Broad diversified US equity exposure as core holding.",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Brent crude falls below $85",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent oil price momentum and sector outperformance.",
+      "time_window_catalyst": "EIA weekly petroleum data July 22"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Unemployment rate rises above 4.5%",
+      "option_id": "SMALL_VALUE",
+      "rationale": "Positive recent relative performance in value segment.",
+      "time_window_catalyst": "July employment data August 7"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.9,
+      "invalidation_condition": "Sector underperforms SPY by more than 3%",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong active returns and defensive characteristics.",
+      "time_window_catalyst": "Q2 earnings season continuation"
+    },
+    {
+      "allocation_pct": 5,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "10-year Treasury yield exceeds 4.8%",
+      "option_id": "FINANCIALS",
+      "rationale": "Modest positive active return in recent window.",
+      "time_window_catalyst": "Bank of England decision July 30"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.49,
+  "portfolio_rationale": "Mix of SPY core with higher-forecast cyclical and defensive sectors exceeding SPY base case.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings have base forecasts above SPY while respecting cluster caps and allocation rules.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-21-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15825,
+    "latency_seconds": 29.45393769000657,
+    "output_tokens": 1630,
+    "reasoning_tokens": 724,
+    "total_tokens": 18179
+  }
+}

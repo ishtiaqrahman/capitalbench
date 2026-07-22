@@ -1,0 +1,183 @@
+{
+  "benchmark_expected_return_pct": 0.35,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Earnings momentum and tech strength support further gains",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 rose 0.9% to 7,509.20",
+        "245 constituents advancing"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Broad market breaks below prior week lows",
+      "option_id": "SP500",
+      "reversal_case": "Heavy earnings/FOMC week could trigger volatility",
+      "time_window_catalyst": "Mega-cap earnings and FOMC start Jul 28"
+    },
+    {
+      "continuation_case": "Oil momentum and geopolitical supply tightness",
+      "decision": "selected",
+      "evidence": [
+        "Brent settled $91.01 up 2.0%",
+        "Energy active_return_5s +3.19%, prior active +6.00%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Brent falls below $86",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA build or demand concerns reverse crude",
+      "time_window_catalyst": "EIA petroleum data Jul 22"
+    },
+    {
+      "continuation_case": "Strong prior trend, earnings tailwind",
+      "decision": "selected",
+      "evidence": [
+        "Quality score 0.698, prior active rank 0.910",
+        "Low volatility 13.56%, drawdown -2.08%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Regional bank stress reappears",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit stress or curve inversion",
+      "time_window_catalyst": "Ongoing bank earnings"
+    },
+    {
+      "continuation_case": "Defensive rotation into uncertain week",
+      "decision": "selected",
+      "evidence": [
+        "Prior 16s active return +5.74%",
+        "Low beta -0.128, defensive"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Sharp risk-on rally away from defensives",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation leaves defensives behind",
+      "time_window_catalyst": "FOMC week defensive flows"
+    },
+    {
+      "continuation_case": "Crude momentum persists",
+      "decision": "rejected",
+      "evidence": [
+        "USO active_return_5s +7.70%",
+        "Volatility 48.75%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Crude reverses below key support",
+      "option_id": "OIL",
+      "reversal_case": "High volatility and contango decay",
+      "time_window_catalyst": "EIA data Jul 22"
+    },
+    {
+      "continuation_case": "Safe-haven demand",
+      "decision": "rejected",
+      "evidence": [
+        "IAU return_3s +2.70%",
+        "Prior active -4.54%, drawdown -5.71%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "10Y yield rises further",
+      "option_id": "GOLD",
+      "reversal_case": "Rising yields pressure gold",
+      "time_window_catalyst": "FOMC start Jul 28"
+    },
+    {
+      "continuation_case": "Defensive rate-sensitive bid",
+      "decision": "rejected",
+      "evidence": [
+        "Quality score 0.760",
+        "Recent active -1.21%"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yields spike higher",
+      "option_id": "UTILITIES",
+      "reversal_case": "Rising 10Y yield to 4.63% pressures utilities",
+      "time_window_catalyst": "FOMC week"
+    },
+    {
+      "continuation_case": "Stable cash-like yield",
+      "decision": "rejected",
+      "evidence": [
+        "Quality score 0.615",
+        "Volatility 0.23%"
+      ],
+      "forecast_base_pct": 0.08,
+      "forecast_high_pct": 0.15,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "n/a",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Equities outperform cash",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.53,
+  "expected_alpha_vs_sp500_pct": 0.2625,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil reversal erasing energy gains",
+    "Mega-cap earnings disappointment dragging broad index and financials"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Brent crude falls below $86 or oil reverses sharply",
+      "option_id": "ENERGY",
+      "rationale": "Brent up 2% to $91, energy strongest recent active return; oil momentum continues.",
+      "time_window_catalyst": "EIA petroleum data Jul 22, Brent near $92"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Yield curve inverts further or credit stress emerges",
+      "option_id": "FINANCIALS",
+      "rationale": "High quality score (0.698), strong prior active return, low volatility, positive earnings season backdrop.",
+      "time_window_catalyst": "Bank earnings season continuing"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Major earnings miss or hawkish surprise",
+      "option_id": "SP500",
+      "rationale": "Broad benchmark core exposure; market rose 0.9% with tech leadership.",
+      "time_window_catalyst": "Big-tech earnings (Alphabet, Tesla, Microsoft) and FOMC start Jul 28"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Sharp risk-on rotation away from defensives",
+      "option_id": "HEALTHCARE",
+      "rationale": "Very strong prior active rank (5.74%), defensive tilt, low beta, recent pullback offers value.",
+      "time_window_catalyst": "Defensive rotation into earnings/FOMC week"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.6125,
+  "portfolio_rationale": "Barbell of energy momentum plus quality financials and defensive healthcare around an SP500 core, diversifying across four clusters ahead of heavy earnings and FOMC start.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt toward energy strength and quality defensives while keeping SP500 core given uncertain earnings-and-Fed week.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-21-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27751,
+    "latency_seconds": 33.87829780508764,
+    "output_tokens": 2314,
+    "total_tokens": 30065
+  }
+}

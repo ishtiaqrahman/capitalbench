@@ -1,0 +1,188 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Earnings beats from Alphabet/Tesla sustain rally",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 rose 0.9% to 7,509 on July 21, ~1.2% below 52w high",
+        "spy_return_5s -0.47%; FOMC starts July 28"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "n/a benchmark",
+      "option_id": "SP500",
+      "reversal_case": "Sticky inflation and rising yields cap upside into FOMC",
+      "time_window_catalyst": "Mega-cap earnings July 22; FOMC begins July 28"
+    },
+    {
+      "continuation_case": "Oil uptrend and inflation backdrop keep energy leadership",
+      "decision": "selected",
+      "evidence": [
+        "Brent settled $91.01, up 2.0%, approaching $92",
+        "XLE +3.19% active 5d and +6.0% prior 16d active",
+        "Energy CPI component +15.7% y/y"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Brent below $85",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil pullback after sharp run; deep pullback rank 0.045 signals extension",
+      "time_window_catalyst": "EIA weekly petroleum data July 22"
+    },
+    {
+      "continuation_case": "Inflation momentum and volume-confirmed breakout continue",
+      "decision": "selected",
+      "evidence": [
+        "PDBC +3.81% active 5d with volume z-score 3.77",
+        "PPI +5.5% y/y; global disinflation stalled per IMF"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Commodity index -2% early in window",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Mean reversion after strong week; dollar strength headwind",
+      "time_window_catalyst": "EIA data July 22; inflation narrative into FOMC"
+    },
+    {
+      "continuation_case": "Defensive trend persists into FOMC uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "XLV +1.71% active 5d, +5.74% prior 16d active",
+        "Prior active rank 0.925, near-zero SPY beta"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Tech-led breakout to new SPY highs",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation drains defensive flows",
+      "time_window_catalyst": "Positioning ahead of July 28-29 FOMC"
+    },
+    {
+      "continuation_case": "Rising yields and value rotation support banks",
+      "decision": "selected",
+      "evidence": [
+        "XLF +4.56% prior 16d active, prior active rank 0.910",
+        "10y Treasury yield rose to 4.63%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "10y below 4.4%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Growth-scare data drops yields and hits banks",
+      "time_window_catalyst": "Rate positioning into July 28 FOMC start"
+    },
+    {
+      "continuation_case": "Alphabet/Tesla beats reignite growth rally",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ -1.02% active 5d, -3.40% prior 16d active, -4.88% from high",
+        "Semis +5.4% on July 21 suggests volatile bounce"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "n/a rejected",
+      "option_id": "NASDAQ100",
+      "reversal_case": "High beta into FOMC with sticky inflation; recent trend negative",
+      "time_window_catalyst": "Alphabet/Tesla earnings July 22"
+    },
+    {
+      "continuation_case": "Inflation hedge demand if FOMC hawkish",
+      "decision": "rejected",
+      "evidence": [
+        "IAU -3.16% over 21d, -24% from 52w high",
+        "Dollar firming (UUP +0.64% 21d) and yields rising"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "n/a rejected",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields and strong dollar pressure gold",
+      "time_window_catalyst": "None before exit; FOMC statement after exit close"
+    },
+    {
+      "continuation_case": "Breadth rotation away from mega-caps continues",
+      "decision": "rejected",
+      "evidence": [
+        "RSP outperformed SPY by 1.52% over 21d",
+        "Only 245 of 500 constituents advanced July 21"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "n/a rejected",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap earnings restore cap-weighted leadership",
+      "time_window_catalyst": "Earnings breadth through the week"
+    }
+  ],
+  "confidence": 0.58,
+  "cost_usd": 0.43624999999999997,
+  "expected_alpha_vs_sp500_pct": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil reverses sharply on inventory build or supply news",
+    "Strong Alphabet/Tesla earnings drive tech-led SPY rally that our low-beta portfolio lags",
+    "Yields fall on soft data, hurting financials",
+    "Healthcare-specific policy headlines"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Brent falls back below $85 or EIA shows large inventory build",
+      "option_id": "ENERGY",
+      "rationale": "Oil rallying hard (Brent $91, USO +7.7% active 5d), energy shows strong prior 16d active return (+6.0%) and negative SPY beta gives diversification.",
+      "time_window_catalyst": "EIA petroleum data July 22; ongoing energy price strength into exit"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Broad commodity index reverses more than 2% early in window",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Broad commodities +3.8% active with huge volume z-score 3.77; inflation prints (PPI +5.5% y/y) support commodity complex.",
+      "time_window_catalyst": "Energy/commodity momentum plus EIA data July 22"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Sharp risk-on rotation back into mega-cap tech leadership",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong prior trend (+5.7% prior 16d active), low SPY correlation, cushions FOMC-eve risk.",
+      "time_window_catalyst": "Defensive rotation into July 28-29 FOMC"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "10y yield drops sharply below 4.4% or credit stress emerges",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials show +4.6% prior 16d active trend, rising 10y yield (4.63%) supportive, low beta to SPY drawdown.",
+      "time_window_catalyst": "Yields rising into FOMC meeting starting July 28"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.85,
+  "portfolio_rationale": "Sticky inflation (CPI 3.5%, PPI 5.5%), Brent near $92, and rising yields favor energy, commodities, financials and defensive healthcare over the momentum-tech complex that just retraced ahead of the FOMC.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt toward energy/commodity momentum with confirmed macro support and low-beta sectors with strong prior trends; avoid extended tech into earnings and FOMC risk.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-21-1W",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.43624999999999997,
+    "input_tokens": 27745,
+    "latency_seconds": 35.94069664203562,
+    "output_tokens": 3176,
+    "total_tokens": 30921
+  }
+}

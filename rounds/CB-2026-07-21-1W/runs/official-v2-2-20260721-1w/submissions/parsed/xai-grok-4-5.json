@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Modest positive drift if earnings and soft landing narrative hold",
+      "decision": "rejected",
+      "evidence": [
+        "SPY return_5s -0.47% and return_21s +0.21%",
+        "S&P 500 rose 0.9% on July 21 close to 7509.20",
+        "245 advancers and equal-weight lag on the day"
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "SPY closes below recent 21-session lows on volume",
+      "option_id": "SP500",
+      "reversal_case": "Pre-FOMC caution or weak data prints reverse the July 21 bounce",
+      "time_window_catalyst": "Alphabet/Tesla earnings July 22 and new-home sales July 24"
+    },
+    {
+      "continuation_case": "Oil momentum and energy outperformance persist on supply tightness",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY prior_16s_active_return +6.00% and active_return_5s +3.19%",
+        "Brent crude settled at $91.01 up 2.0%",
+        "quality evidence score 0.552 with high prior active rank 0.940"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLE underperforms SPY by more than 2% or oil falls sharply",
+      "option_id": "ENERGY",
+      "reversal_case": "Inventory build or demand concerns trigger profit-taking",
+      "time_window_catalyst": "EIA weekly petroleum data July 22"
+    },
+    {
+      "continuation_case": "Commodity complex strength continues with energy and metals support",
+      "decision": "selected",
+      "evidence": [
+        "BROAD_COMMODITIES return_3s +4.07% and active_return_5s +3.81%",
+        "prior_16s_active_return +2.83%",
+        "volume_zscore_5v60 elevated at 3.773"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "PDBC reverses more than half of recent 5-session gain",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Dollar rally or growth scare hits broad commodities",
+      "time_window_catalyst": "EIA data and commodity price follow-through"
+    },
+    {
+      "continuation_case": "Strong prior trend and quality metrics support relative strength",
+      "decision": "selected",
+      "evidence": [
+        "CYBERSECURITY quality evidence score 0.817 highest in table",
+        "prior_16s_active_return +11.47%",
+        "prior active rank 1.000 and recent pullback rank 1.000"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "CIBR active return turns sharply negative versus SPY",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High recent levels invite mean-reversion on tech weakness",
+      "time_window_catalyst": "Tech earnings spillover from Alphabet and Tesla"
+    },
+    {
+      "continuation_case": "Commodity linkage and high quality score sustain outperformance",
+      "decision": "selected",
+      "evidence": [
+        "BRAZIL quality evidence score 0.782",
+        "prior_16s_active_return +6.14%",
+        "prior active rank 0.955"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "EWZ declines more than 3% on broad EM weakness",
+      "option_id": "BRAZIL",
+      "reversal_case": "EM risk-off or commodity pullback hits Brazil",
+      "time_window_catalyst": "Commodity price action and EM flows"
+    },
+    {
+      "continuation_case": "Prior strength and rate backdrop support modest gains",
+      "decision": "rejected",
+      "evidence": [
+        "FINANCIALS prior_16s_active_return +4.56%",
+        "quality evidence score 0.698",
+        "active_return_5s +0.35%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "XLF underperforms on rising credit stress signals",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield moves or credit concerns reverse financials",
+      "time_window_catalyst": "Limited direct catalysts before July 28"
+    },
+    {
+      "continuation_case": "Quality and prior active trend allow recovery",
+      "decision": "rejected",
+      "evidence": [
+        "SOFTWARE quality evidence score 0.737",
+        "prior_16s_active_return +4.41%",
+        "recent pullback rank 0.910"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "IGV fails to hold recent levels post-earnings",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High distance to 52w high and vol invite further pressure",
+      "time_window_catalyst": "Tech earnings July 22"
+    },
+    {
+      "continuation_case": "Strong momentum continues if inventories tighten",
+      "decision": "rejected",
+      "evidence": [
+        "OIL return_3s +8.01% and active_return_5s +7.70%",
+        "USO return_5s +7.22% and return_21s +12.17%",
+        "Brent at $91.01"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "USO drops more than 4% on inventory or demand news",
+      "option_id": "OIL",
+      "reversal_case": "Extreme recent move and high vol raise sharp reversal risk",
+      "time_window_catalyst": "EIA petroleum data July 22"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.085,
+  "is_official_score": true,
+  "key_risks": [
+    "Sudden oil inventory build or demand scare reverses energy/commodities",
+    "Risk-off equity move hits high-beta international and tech sleeves",
+    "Pre-FOMC positioning volatility into July 28 close",
+    "Dollar strength pressures EM and commodity exposures"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Brent crude settles below $88 or sharp energy sector reversal on inventory build",
+      "option_id": "ENERGY",
+      "rationale": "Strong prior active trend and oil price momentum support outperformance versus SPY over the one-week window.",
+      "time_window_catalyst": "EIA weekly petroleum data July 22 and continued crude strength near $91-92"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Broad commodity complex reverses more than 3% on demand or dollar strength",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Elevated recent returns and commodity complex strength provide higher base case than SPY.",
+      "time_window_catalyst": "EIA data and ongoing energy/ag commodity momentum into July 28"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Cybersecurity relative underperformance exceeds 2% versus SPY on risk-off move",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Highest quality evidence score with strong prior active return supports continuation above SPY base.",
+      "time_window_catalyst": "Tech earnings flow-through from Alphabet/Tesla and sector resilience"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "EWZ drops more than 3% on commodity or EM flow reversal",
+      "option_id": "BRAZIL",
+      "rationale": "High quality score and positive prior active return with commodity linkage favor higher expected return.",
+      "time_window_catalyst": "Commodity price support and EM risk appetite into week end"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.335,
+  "portfolio_rationale": "Portfolio concentrates in energy, commodities, cybersecurity, and Brazil where base forecasts exceed SPY on supplied momentum, quality scores, and near-term catalysts while respecting the 50% cluster cap.",
+  "provider": "xai",
+  "rationale_summary": "SPY base is modest given mixed macro and recent flat-to-negative returns; selected sleeves show stronger prior active trends and catalysts within the July 22-28 window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-21-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16691,
+    "latency_seconds": 37.76482709986158,
+    "output_tokens": 2366,
+    "reasoning_tokens": 525,
+    "total_tokens": 19582
+  }
+}

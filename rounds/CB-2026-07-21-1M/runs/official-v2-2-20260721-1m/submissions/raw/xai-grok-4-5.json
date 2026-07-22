@@ -1,0 +1,177 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Mild positive 21s return and broad advance on July 21 continue if soft-landing data holds",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 rose 0.9% on July 21 to 7509.20",
+        "spy_return_21s 0.21% and distance_52w_high -1.23%",
+        "June CPI down 0.4% mom but up 3.5% yoy"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "SPY closes below recent 21s low after FOMC",
+      "option_id": "SP500",
+      "reversal_case": "Elevated core inflation readings or hawkish FOMC reverse the modest gain",
+      "time_window_catalyst": "July 29 FOMC statement and July 30 GDP/PCE"
+    },
+    {
+      "continuation_case": "Oil price strength and energy sector leadership persist into August on supply tightness",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s 9.38% and prior_105s_active_return 4.95%",
+        "Brent crude settled at $91.01 up 2.0%",
+        "XLE return_5s 2.72%"
+      ],
+      "forecast_base_pct": 3.5,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Brent below $85 or XLE active return turns negative vs SPY",
+      "option_id": "ENERGY",
+      "reversal_case": "Inventory builds or demand slowdown reverse the 21s outperformance",
+      "time_window_catalyst": "EIA weekly petroleum July 22"
+    },
+    {
+      "continuation_case": "Elevated crude prices and positive volume context sustain gains",
+      "decision": "selected",
+      "evidence": [
+        "uso_return_21s 12.17% and active_return_21s 11.96%",
+        "prior_105s_active_return 51.78%",
+        "Brent at $91.01 approaching $92"
+      ],
+      "forecast_base_pct": 4.0,
+      "forecast_high_pct": 15.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "USO max drawdown extends beyond -32% or settles 10% below entry",
+      "option_id": "OIL",
+      "reversal_case": "Geopolitical de-escalation or recession signals crush the futures curve",
+      "time_window_catalyst": "EIA data July 22 and any OPEC-related headlines"
+    },
+    {
+      "continuation_case": "Recent active outperformance continues if risk appetite holds post-earnings",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s 9.69% and prior_105s_active_return 4.78%",
+        "return_5s -0.61% with volatility_63s 30.59%",
+        "quality evidence score 0.453"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "XBI underperforms SPY by >5% on consecutive sessions",
+      "option_id": "BIOTECH",
+      "reversal_case": "Financing stress or broad equity pullback hits high-beta biotech",
+      "time_window_catalyst": "Post-July 29 FOMC risk sentiment into August"
+    },
+    {
+      "continuation_case": "Broad commodity momentum from energy and metals extends",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s 6.76% and prior_105s_active_return 11.64%",
+        "return_5s 3.34%",
+        "Brent strength and positive commodity share"
+      ],
+      "forecast_base_pct": 2.8,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "PDBC gives back more than 50% of 21s gain",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Stronger USD or growth disappointment reverses PDBC",
+      "time_window_catalyst": "Industrial production follow-through and oil data"
+    },
+    {
+      "continuation_case": "Defensive dividend tilt holds if rates stabilize",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s 3.63% and return_5s 1.93%",
+        "distance_52w_high -0.67%",
+        "quality evidence score 0.587"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SCHD active return turns negative vs SPY",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Value rotation fades on growth rebound",
+      "time_window_catalyst": "July 30 GDP and August employment"
+    },
+    {
+      "continuation_case": "Yield curve and credit stabilization support banks",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s 6.35% and return_5s 1.31%",
+        "prior_105s_active_return -2.22%",
+        "10-year yield at 4.63%"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "KRE draws down more than 5% post-FOMC",
+      "option_id": "REGIONAL_BANKS",
+      "reversal_case": "Deposit or CRE stress reaccelerates",
+      "time_window_catalyst": "FOMC July 29 and July employment"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 2.4,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp oil price reversal on inventory or demand data",
+    "FOMC July 29 hawkish surprise triggering risk-off",
+    "High volatility in energy and biotech amplifying drawdowns",
+    "USD strength pressuring commodities"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 3.5,
+      "invalidation_condition": "Brent crude settles below $85 or sharp reversal in XLE on inventory builds",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent active returns and oil price support outweigh near-term volatility for the one-month window.",
+      "time_window_catalyst": "EIA weekly petroleum data July 22 and continued Brent strength near $91"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 4.0,
+      "invalidation_condition": "USO drops more than 10% from entry on demand destruction signals",
+      "option_id": "OIL",
+      "rationale": "Direct crude exposure with elevated prior active trend and positive 5s/21s returns supports higher base case than SPY.",
+      "time_window_catalyst": "EIA data July 22 and any supply headlines before August 21 close"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "XBI underperforms SPY by more than 5% or broad risk-off after July 29 FOMC",
+      "option_id": "BIOTECH",
+      "rationale": "Positive 21s active return and biotech momentum provide edge over broad market base case.",
+      "time_window_catalyst": "Post-FOMC risk appetite and any sector-specific financing or data flow into mid-August"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.8,
+      "invalidation_condition": "PDBC reverses more than half its 21s gain on stronger USD or growth scare",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Diversified commodity strength with solid 21s active return and energy/ag support exceeds SPY forecast.",
+      "time_window_catalyst": "Commodity price follow-through from oil and industrial data through early August"
+    }
+  ],
+  "portfolio_expected_return_pct": 3.2,
+  "portfolio_rationale": "Portfolio concentrates in energy and commodity exposures showing superior recent active returns and quality-supported momentum relative to SPY, capped at cluster limits, with biotech for diversification. All selected bases exceed SPY base for expected alpha over the one-month window.",
+  "provider": "xai",
+  "rationale_summary": "Energy/oil leadership and commodity breadth offer the clearest one-month edge given supplied price context and oil settlement strength, while avoiding pure tech pullback names. Equal weights balance cluster caps and forecast dispersion.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-21-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16687,
+    "latency_seconds": 39.321873049018905,
+    "output_tokens": 2273,
+    "reasoning_tokens": 886,
+    "total_tokens": 19846
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued positive sentiment and strong earnings reports.",
+      "decision": "rejected",
+      "evidence": [
+        "The S&P 500 rose 0.9% to 7,509.20 on July 21."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A significant drop in major tech earnings.",
+      "option_id": "SP500",
+      "reversal_case": "Disappointing earnings or hawkish Fed signals.",
+      "time_window_catalyst": "FOMC meeting on July 28-29."
+    },
+    {
+      "continuation_case": "Tight supply and strong demand expectations.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $91.01 per barrel, up 2.0%."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant unexpected build in crude inventories.",
+      "option_id": "OIL",
+      "reversal_case": "Unexpected inventory builds or demand destruction.",
+      "time_window_catalyst": "EIA weekly petroleum data on July 22."
+    },
+    {
+      "continuation_case": "Safe-haven demand and potential for a weaker dollar.",
+      "decision": "selected",
+      "evidence": [
+        "Gold has a quality evidence score of 0.212."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A sharp rise in real interest rates or a stronger dollar.",
+      "option_id": "GOLD",
+      "reversal_case": "A sharp rise in real interest rates or a stronger dollar.",
+      "time_window_catalyst": "U.S. advance second-quarter GDP on July 30."
+    },
+    {
+      "continuation_case": "Stable short-term rates.",
+      "decision": "rejected",
+      "evidence": [
+        "The 10-year U.S. Treasury yield rose to 4.63%."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.2,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "A sudden shift in Fed policy expectations.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Unexpected Fed rate cuts.",
+      "time_window_catalyst": "FOMC meeting on July 28-29."
+    },
+    {
+      "continuation_case": "Improving European economic data.",
+      "decision": "rejected",
+      "evidence": [
+        "The ECB raised its deposit, main-refinancing, and marginal-lending rates by 25 basis points."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A significant negative surprise in European economic data.",
+      "option_id": "EUROPE",
+      "reversal_case": "Worsening energy crisis or economic slowdown.",
+      "time_window_catalyst": "ECB monetary-policy decision on July 23."
+    },
+    {
+      "continuation_case": "Higher interest rates boosting net interest margins.",
+      "decision": "rejected",
+      "evidence": [
+        "Financials have a quality evidence score of 0.698."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A significant increase in loan loss provisions.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Rising loan defaults or economic slowdown.",
+      "time_window_catalyst": "Visa fiscal third-quarter results on July 28."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.85,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden reversal in commodity prices.",
+    "Unexpectedly strong economic data leading to higher interest rates.",
+    "A stronger US dollar negatively impacting commodity prices."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "A significant unexpected build in crude inventories.",
+      "option_id": "OIL",
+      "rationale": "Strong recent momentum and tight supply dynamics support continued outperformance.",
+      "time_window_catalyst": "EIA weekly petroleum data on July 22."
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "A sharp rise in real interest rates or a stronger dollar.",
+      "option_id": "GOLD",
+      "rationale": "Safe-haven demand and potential for a weaker dollar support gold.",
+      "time_window_catalyst": "U.S. advance second-quarter GDP on July 30."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.35,
+  "portfolio_rationale": "The portfolio is allocated equally between oil and gold to capture strong momentum in commodities while balancing risk. Oil benefits from tight supply, while gold offers a hedge against potential economic uncertainty.",
+  "provider": "google",
+  "rationale_summary": "Equal allocation to oil and gold for momentum and hedging.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-21-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17213,
+    "latency_seconds": 12.269728960935026,
+    "output_tokens": 1522,
+    "total_tokens": 18735
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.15,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad index is near its 52-week high and July 21 price action was positive, with upcoming mega-cap earnings potentially supporting large-cap sentiment.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 rose 0.9% on July 21 to 7,509.20 while the Nasdaq Composite rose 1.3%.",
+        "SPY return_5s was -0.47% and return_21s was 0.21%.",
+        "SPY 21-session volatility was 11.75% with max drawdown of -2.38% and distance from 52-week high of -1.23%."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -1.6,
+      "invalidation_condition": "SPY loses July 21 gains and breadth deteriorates, or mega-cap earnings cause index-level downside.",
+      "option_id": "SP500",
+      "reversal_case": "Weak breadth versus mega-cap gains, soft payroll revisions, and FOMC-related caution could limit follow-through or trigger mean reversion.",
+      "time_window_catalyst": "Alphabet and Tesla results on July 22 and the first day of the FOMC meeting on July 28 before the exit close."
+    },
+    {
+      "continuation_case": "Strong recent oil momentum has a same-week fundamental data catalyst, and the supplied briefing shows crude already breaking higher into the window.",
+      "decision": "selected",
+      "evidence": [
+        "USO return_3s was 8.01%, active_return_5s was 7.70%, and prior_16s_active_return was 3.93%.",
+        "Brent crude settled at $91.01 per barrel, up 2.0%, after approaching $92 on July 21.",
+        "EIA weekly petroleum data are scheduled for July 22 at 10:30 a.m. ET."
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 5.2,
+      "forecast_low_pct": -3.2,
+      "invalidation_condition": "Crude gives back the July 21 breakout, Brent falls materially below the recent $91 area, or EIA data show a bearish inventory/supply surprise.",
+      "option_id": "OIL",
+      "reversal_case": "The move is extended, USO has 48.75% 21-session volatility and a -10.10% max drawdown, so a bearish inventory surprise could quickly reverse gains.",
+      "time_window_catalyst": "EIA weekly petroleum data on July 22 and crude-inventory/supply interpretation before the July 28 exit close."
+    },
+    {
+      "continuation_case": "Energy equities have both prior relative strength and current oil-price support into an identifiable inventory-data catalyst.",
+      "decision": "selected",
+      "evidence": [
+        "Energy active_return_5s was 3.19% and prior_16s_active_return was 6.00%.",
+        "Energy quality evidence included prior active rank of 0.940.",
+        "Brent crude settled at $91.01 per barrel, up 2.0%, and EIA petroleum data are scheduled July 22."
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Oil reverses sharply or energy equities fail to hold positive relative performance versus SPY after the EIA release.",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil-price momentum may be overextended, and energy equities could lag if higher crude is viewed as demand-destructive or if market risk appetite weakens.",
+      "time_window_catalyst": "Follow-through from Brent near $92 and July 22 EIA petroleum data during the scoring week."
+    },
+    {
+      "continuation_case": "Recent commodity strength is broad enough to be confirmed by high relative volume and can persist if oil-led inflation and supply concerns remain in focus.",
+      "decision": "selected",
+      "evidence": [
+        "Broad commodities return_3s was 4.07%, active_return_5s was 3.81%, and prior_16s_active_return was 2.83%.",
+        "Volume_zscore_5v60 was 3.773, the highest reported among assessed finalists.",
+        "June CPI and PPI energy components showed notable energy-related inflation pressures over 12 months."
+      ],
+      "forecast_base_pct": 0.65,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Broad commodity exposure loses its recent relative breakout or crude and cyclical commodities reverse together.",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Commodity exposure could fall if the recent move was a short squeeze or if energy prices reverse after scheduled EIA data.",
+      "time_window_catalyst": "Commodity-price follow-through after the July 21 crude move and July 22 EIA petroleum data."
+    },
+    {
+      "continuation_case": "The combination of very strong prior trend and maximum pullback rank supports a one-week rebound if tech earnings sentiment stabilizes.",
+      "decision": "selected",
+      "evidence": [
+        "Cybersecurity had the highest quality evidence score at 0.817, with prior active rank and recent pullback rank both 1.000.",
+        "CIBR prior_16s_active_return was 11.47% but active_return_5s was -3.91%.",
+        "Alphabet and Tesla second-quarter results are scheduled after the July 22 U.S. close, a potential technology sentiment catalyst."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 3.4,
+      "forecast_low_pct": -2.4,
+      "invalidation_condition": "Tech earnings trigger a broad growth-stock selloff or cybersecurity remains weak relative to SPY despite a favorable tech tape.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "Recent weakness may represent trend failure rather than a healthy pullback, and high 27.53% volatility increases downside risk.",
+      "time_window_catalyst": "Large-cap technology earnings on July 22 may influence software and security sentiment before the exit close."
+    },
+    {
+      "continuation_case": "Financials have strong prior relative trend, moderate volatility versus many equity sectors, and may benefit if higher yields support net-interest-margin expectations.",
+      "decision": "selected",
+      "evidence": [
+        "Financials quality evidence score was 0.698 with prior active rank of 0.910.",
+        "XLF prior_16s_active_return was 4.56% and active_return_5s was 0.35%.",
+        "The 10-year U.S. Treasury yield rose to 4.63% from 4.60% on July 20."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.9,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "Rates fall sharply, credit-risk concerns rise, or financials break below recent relative-performance support versus SPY.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak payroll data, credit concerns, or lower yields could reverse the sector's relative strength.",
+      "time_window_catalyst": "Continuation of higher 10-year yield backdrop and Visa results after the July 28 close shaping pre-close financial-sector sentiment."
+    },
+    {
+      "continuation_case": "Equal weight has outperformed SPY over both 5- and 21-session windows and offers lower concentration risk if breadth broadens.",
+      "decision": "rejected",
+      "evidence": [
+        "RSP return_5s was -0.32% versus SPY return_5s of -0.47%, and RSP return_21s was 1.73% versus SPY return_21s of 0.21%.",
+        "RSP prior_16s_active_return was 1.37%, active_return_5s was 0.15%, and 21-session volatility was 9.80%.",
+        "Quality evidence score was 0.699 with shallow drawdown rank of 0.836."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Equal weight underperforms SPY on continued mega-cap dominance or fails to hold its 21-session relative advantage.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "July 21 breadth showed only 245 S&P 500 advancers while cap-weighted SPY outpaced equal weight on the day, so mega-cap leadership could persist.",
+      "time_window_catalyst": "Alphabet and Tesla earnings on July 22 may determine whether market-cap-weighted leadership continues or breadth improves."
+    },
+    {
+      "continuation_case": "Cash-like Treasury bills can outperform if equities reverse or investors de-risk into the FOMC meeting start.",
+      "decision": "rejected",
+      "evidence": [
+        "Short Treasury return_3s was 0.03% and active_return_5s was 0.53% because SPY declined over that window.",
+        "Low-volatility rank and shallow-drawdown rank were both 1.000.",
+        "BIL had 0.23% 21-session volatility and 0.00% distance from 52-week high."
+      ],
+      "forecast_base_pct": 0.05,
+      "forecast_high_pct": 0.08,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Equities and commodities continue advancing with stable yields and no flight-to-quality demand.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "The one-week return ceiling is low and risk assets can easily outperform if July 21 equity and commodity momentum continues.",
+      "time_window_catalyst": "None identified beyond risk management into the July 28 first day of the FOMC meeting."
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.5675,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil and broad commodities reverse after bearish EIA inventory data or geopolitical risk premium fades.",
+    "Large-cap technology earnings disappoint and pressure cybersecurity and growth-adjacent sentiment.",
+    "A broad risk-off move around the upcoming FOMC meeting start lifts defensive assets and hurts equities and commodities.",
+    "The recent commodity and energy strength proves overextended over a one-week horizon."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Crude gives back the July 21 breakout, Brent falls materially below the recent $91 area, or EIA data show a bearish inventory/supply surprise.",
+      "option_id": "OIL",
+      "rationale": "Crude has the clearest near-window catalyst and strongest supplied short-term price impulse, while position size is capped for volatility.",
+      "time_window_catalyst": "EIA weekly petroleum data on July 22 and crude-inventory/supply interpretation before the July 28 exit close."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "Oil reverses sharply or energy equities fail to hold positive relative performance versus SPY after the EIA release.",
+      "option_id": "ENERGY",
+      "rationale": "Energy equities offer oil-linked upside with somewhat less direct commodity-ETP volatility and strong prior relative trend evidence.",
+      "time_window_catalyst": "Follow-through from Brent near $92 and July 22 EIA petroleum data during the scoring week."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.65,
+      "invalidation_condition": "Broad commodity exposure loses its recent relative breakout or crude and cyclical commodities reverse together.",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Broad commodities diversify the energy overweight and show strong recent active performance, high volume confirmation, and positive prior trend evidence.",
+      "time_window_catalyst": "Commodity-price follow-through after the July 21 crude move and July 22 EIA petroleum data."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Tech earnings trigger a broad growth-stock selloff or cybersecurity remains weak relative to SPY despite a favorable tech tape.",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Cybersecurity has the highest quality evidence score and the strongest prior active rank, with recent pullback creating a rebound setup into tech earnings week.",
+      "time_window_catalyst": "Large-cap technology earnings on July 22 may influence software and security sentiment before the exit close."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Rates fall sharply, credit-risk concerns rise, or financials break below recent relative-performance support versus SPY.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials provide a non-commodity equity diversifier with strong prior active trend, moderate volatility, and support from higher Treasury yields.",
+      "time_window_catalyst": "Continuation of higher 10-year yield backdrop and Visa results after the July 28 close shaping pre-close financial-sector sentiment."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.7175,
+  "portfolio_rationale": "The portfolio emphasizes near-term commodity and energy momentum with identifiable EIA data risk, balanced by cybersecurity and financials to avoid a single-cluster bet. All selected active holdings have base forecasts above the SPY base forecast, and the combined energy cluster is kept below the 50% cap.",
+  "provider": "openai",
+  "rationale_summary": "SPY has modest positive base-case return, but several supplied cross-sectional signals show stronger one-week setups. The highest-conviction active views are oil/energy continuation, broad commodity follow-through, cybersecurity rebound after pullback, and financials trend persistence.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-21-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15610,
+    "latency_seconds": 37.56996782706119,
+    "output_tokens": 2968,
+    "reasoning_tokens": 256,
+    "total_tokens": 18578
+  }
+}

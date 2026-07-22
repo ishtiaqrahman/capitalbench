@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued positive sentiment and strong earnings reports.",
+      "decision": "rejected",
+      "evidence": [
+        "The S&P 500 rose 0.9% to 7,509.20 on July 21.",
+        "Market coverage reported 245 S&P 500 constituents advancing."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A sharp decline in mega-cap technology stocks.",
+      "option_id": "SP500",
+      "reversal_case": "Disappointing mega-cap tech earnings or hawkish Fed surprises.",
+      "time_window_catalyst": "Alphabet and Tesla earnings on July 22."
+    },
+    {
+      "continuation_case": "Tight supply and strong demand data in the EIA report.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $91.01 per barrel, up 2.0%.",
+        "USO returned 7.22% over the last 5 days."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant unexpected build in crude inventories.",
+      "option_id": "OIL",
+      "reversal_case": "Unexpected inventory builds or demand destruction signals.",
+      "time_window_catalyst": "EIA weekly petroleum data on July 22."
+    },
+    {
+      "continuation_case": "Sustained high oil prices translating to strong sector earnings.",
+      "decision": "selected",
+      "evidence": [
+        "XLE returned 2.60% over the last 3 days.",
+        "Energy sector has a high prior active rank of 0.940."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A sharp reversal in crude oil prices.",
+      "option_id": "ENERGY",
+      "reversal_case": "A drop in underlying commodity prices.",
+      "time_window_catalyst": "EIA weekly petroleum data on July 22."
+    },
+    {
+      "continuation_case": "Persistent inflation concerns or geopolitical tensions.",
+      "decision": "selected",
+      "evidence": [
+        "IAU returned 2.70% over the last 3 days.",
+        "Gold provides a hedge against potential equity volatility."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A sudden spike in real interest rates or a surging US dollar.",
+      "option_id": "GOLD",
+      "reversal_case": "A strong US dollar or rising real yields.",
+      "time_window_catalyst": "PCE inflation data on July 30."
+    },
+    {
+      "continuation_case": "Defensive rotation amid broader market uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare has a prior active rank of 0.925.",
+        "XLV returned 1.71% active return over the last 5 days."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Broad market sell-off disproportionately affecting defensive sectors.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A strong risk-on rally favoring cyclical sectors.",
+      "time_window_catalyst": "Ongoing Q2 earnings reports."
+    },
+    {
+      "continuation_case": "Rates remain steady in the near term.",
+      "decision": "rejected",
+      "evidence": [
+        "BIL has a low volatility rank of 1.000.",
+        "Short-term yields remain elevated."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.15,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "A sudden shift in Fed policy expectations.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Unexpected rate cuts.",
+      "time_window_catalyst": "FOMC meeting starting July 28."
+    },
+    {
+      "continuation_case": "Steepening yield curve and strong bank earnings.",
+      "decision": "rejected",
+      "evidence": [
+        "Financials have a prior active rank of 0.910.",
+        "XLF returned -1.13% over the last 3 days."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Significant deterioration in credit quality metrics.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit concerns or a flattening yield curve.",
+      "time_window_catalyst": "Visa earnings on July 28."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.45,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden reversal in commodity prices, particularly crude oil.",
+    "Unexpectedly hawkish signals from central banks impacting gold and equities.",
+    "Broader market contagion dragging down defensive sectors."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "A significant unexpected build in crude inventories.",
+      "option_id": "OIL",
+      "rationale": "Strong recent momentum and tight supply dynamics support continued outperformance.",
+      "time_window_catalyst": "EIA weekly petroleum data on July 22."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "A sharp reversal in crude oil prices.",
+      "option_id": "ENERGY",
+      "rationale": "High quality evidence score and strong recent returns align with the oil price trend.",
+      "time_window_catalyst": "EIA weekly petroleum data on July 22."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "A sudden spike in real interest rates or a surging US dollar.",
+      "option_id": "GOLD",
+      "rationale": "Safe-haven demand and recent price strength provide a hedge against equity volatility.",
+      "time_window_catalyst": "PCE inflation data on July 30."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Broad market sell-off disproportionately affecting defensive sectors.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive characteristics and high prior active rank offer stability.",
+      "time_window_catalyst": "Ongoing Q2 earnings reports."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.95,
+  "portfolio_rationale": "The portfolio is positioned to capture ongoing strength in the energy complex while balancing risk with defensive allocations to gold and healthcare. This barbell approach aims to outperform the broader market by overweighting sectors with strong recent momentum and high quality evidence scores.",
+  "provider": "google",
+  "rationale_summary": "Overweight energy and defensive assets to capture momentum and hedge against volatility.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-21-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17213,
+    "latency_seconds": 22.78457089397125,
+    "output_tokens": 2033,
+    "reasoning_tokens": 917,
+    "total_tokens": 20163
+  }
+}

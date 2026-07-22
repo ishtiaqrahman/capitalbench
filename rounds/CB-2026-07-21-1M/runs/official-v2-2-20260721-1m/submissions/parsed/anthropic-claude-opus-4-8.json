@@ -1,0 +1,179 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad advance continues with disinflation and stable growth.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 rose 0.9% to 7,509.20 on July 21",
+        "spy_return_21s 0.21%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "SPY closes below key support with deteriorating breadth",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish FOMC or weak payrolls trigger pullback.",
+      "time_window_catalyst": "FOMC July 29, Q2 GDP, CPI"
+    },
+    {
+      "continuation_case": "Defensive rotation and strong relative strength persist.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +7.53%",
+        "max_drawdown_63s -3.74%",
+        "low beta 0.334"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "XLV active return turns negative",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Growth re-leads, healthcare gives back gains.",
+      "time_window_catalyst": "Defensive flows around macro events"
+    },
+    {
+      "continuation_case": "Quality dividend tilt outperforms in choppy tape.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +3.63%",
+        "return_5s +1.93%",
+        "low beta 0.274"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "SCHD lags SPY two consecutive weeks",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Rate spike hurts dividend payers.",
+      "time_window_catalyst": "FOMC and GDP releases"
+    },
+    {
+      "continuation_case": "AI capex and chip strength resume.",
+      "decision": "rejected",
+      "evidence": [
+        "volatility_63s 52.86%",
+        "active_return_21s -11.69%",
+        "PHLX Semi +5.4% on July 21"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 14.0,
+      "forecast_low_pct": -12.0,
+      "invalidation_condition": "SMH extends drawdown below recent lows",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "High vol and recent active drawdown signal exhaustion.",
+      "time_window_catalyst": "Microsoft/Qualcomm earnings late July"
+    },
+    {
+      "continuation_case": "Oil strength continues supporting energy.",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s +9.38%",
+        "Brent $91.01 up 2.0%",
+        "max_drawdown -13.21%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Brent falls back below $85",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil pullback reverses gains.",
+      "time_window_catalyst": "EIA data, OPEC dynamics"
+    },
+    {
+      "continuation_case": "Dovish FOMC or weak data rallies bonds.",
+      "decision": "rejected",
+      "evidence": [
+        "tlt_return_21s -3.21%",
+        "10yr yield rose to 4.63%"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "10yr yield breaks above 4.75%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky inflation keeps yields elevated.",
+      "time_window_catalyst": "FOMC July 29, CPI Aug 12"
+    },
+    {
+      "continuation_case": "Steady financials on stable rates.",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s +4.90%",
+        "low drawdown -3.34%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "XLF turns down with regional bank stress",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit stress or yield curve shift.",
+      "time_window_catalyst": "Bank earnings, FOMC"
+    },
+    {
+      "continuation_case": "Safe-haven demand on volatility.",
+      "decision": "rejected",
+      "evidence": [
+        "iau_return_21s -3.16%",
+        "max_drawdown -17.41%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Gold breaks below recent support",
+      "option_id": "GOLD",
+      "reversal_case": "Strong dollar and higher real rates weigh.",
+      "time_window_catalyst": "FOMC, dollar moves"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.3,
+  "is_official_score": true,
+  "key_risks": [
+    "Hawkish FOMC or hot CPI triggers broad equity selloff",
+    "Defensive rotation reverses as growth/tech re-leads"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "S&P 500 breaks below recent support with broad-market breakdown",
+      "option_id": "SP500",
+      "rationale": "Core broad exposure; benchmark anchor amid mixed macro and pre-FOMC uncertainty.",
+      "time_window_catalyst": "FOMC July 29, Q2 GDP July 30, July CPI Aug 12"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "XLV active return turns sharply negative",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong relative strength (+7.53% active 21s), low drawdown, defensive tilt into event-heavy window.",
+      "time_window_catalyst": "Sector earnings and defensive rotation through August"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "SCHD underperforms SPY over two consecutive weeks",
+      "option_id": "DIVIDEND",
+      "rationale": "Positive recent momentum (+3.63% active 21s), low beta, defensive quality tilt.",
+      "time_window_catalyst": "Defensive flows around FOMC and GDP releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.1,
+  "portfolio_rationale": "Balanced core-plus-defensive stance: SPY anchor with quality defensive tilts (healthcare, dividend) showing strong recent relative strength and shallow drawdowns into an event-heavy window.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight defensive quality sectors with positive relative momentum while anchoring to SPY ahead of FOMC and key data.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-21-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27745,
+    "latency_seconds": 36.733780675102025,
+    "output_tokens": 2352,
+    "total_tokens": 30097
+  }
+}

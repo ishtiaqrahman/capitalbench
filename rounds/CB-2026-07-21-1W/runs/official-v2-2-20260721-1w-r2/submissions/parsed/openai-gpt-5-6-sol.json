@@ -1,0 +1,178 @@
+{
+  "benchmark_expected_return_pct": 0.18,
+  "candidate_ledger": [
+    {
+      "continuation_case": "The July 21 rebound can continue if Alphabet and Tesla results sustain mega-cap growth optimism.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY returned -0.47% over five sessions and 0.21% over 21 sessions.",
+        "The S&P 500 rose 0.9% on July 21, but only 245 constituents advanced.",
+        "SPY was 1.23% below its 52-week high with 11.75% 21-session volatility."
+      ],
+      "forecast_base_pct": 0.18,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -2.4,
+      "invalidation_condition": "A close below the entry-date 21-session drawdown low alongside deteriorating breadth.",
+      "option_id": "SP500",
+      "reversal_case": "Narrow breadth, elevated yields, or disappointing earnings could reverse the one-day advance.",
+      "time_window_catalyst": "Alphabet and Tesla report after the July 22 close; the FOMC meeting begins on the July 28 exit date."
+    },
+    {
+      "continuation_case": "The strong prior relative trend resumes after an unusually deep short-term pullback.",
+      "decision": "selected",
+      "evidence": [
+        "Cybersecurity had the highest quality evidence score at 0.817.",
+        "Its prior 16-session active return was 11.47%, while five-session active return fell to -3.91%.",
+        "It was 4.38% below its 52-week high with a -4.38% 21-session maximum drawdown."
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Further underperformance versus SPY accompanied by a break below the entry-date 21-session drawdown low.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "The pullback may represent a persistent growth-sector rotation rather than temporary mean reversion.",
+      "time_window_catalyst": "No direct scheduled catalyst identified; technology earnings on July 22 may improve growth-sector sentiment before exit."
+    },
+    {
+      "continuation_case": "Persistent benchmark-relative strength continues as investors favor defensive earnings exposure.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare's prior active rank was 0.925.",
+        "It posted 5.74% prior 16-session active return and 1.71% five-session active return.",
+        "Its quality evidence score was 0.568."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Healthcare shifts to negative five-session active return and exceeds its entry-date 21-session drawdown.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A strong risk-on response to technology earnings could rotate capital away from healthcare.",
+      "time_window_catalyst": "No direct scheduled catalyst identified; softer growth concerns or equity rotation before July 28 could favor defensive healthcare."
+    },
+    {
+      "continuation_case": "Established relative strength persists if elevated yields support financial-sector earnings expectations.",
+      "decision": "selected",
+      "evidence": [
+        "Financials had a 0.698 quality evidence score and 0.910 prior active rank.",
+        "Prior 16-session active return was 4.56%, while five-session active return remained positive at 0.35%.",
+        "The 10-year Treasury yield rose to 4.63% on July 21."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "The 10-year yield falls sharply while financials underperform SPY and breach the entry-date 21-session drawdown.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Falling yields, weaker growth expectations, or credit concerns could reverse the trend.",
+      "time_window_catalyst": "The first day of the FOMC meeting on July 28 and movements in the 10-year Treasury yield may affect financials before the exit close."
+    },
+    {
+      "continuation_case": "Positive short- and prior-window momentum continues independently of broad equity direction.",
+      "decision": "selected",
+      "evidence": [
+        "Agriculture gained 2.03% over three sessions and outperformed SPY by 2.35% over five sessions.",
+        "Its prior 16-session active return was 3.07%.",
+        "Its 63-session correlation with SPY was 0.004 and 21-session volatility was 14.69%."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.7,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "The recent advance reverses and agriculture falls below its entry-date 21-session drawdown level.",
+      "option_id": "AGRICULTURE",
+      "reversal_case": "The recent gain lacks a supplied fundamental catalyst and may unwind through commodity mean reversion.",
+      "time_window_catalyst": "No specific scheduled catalyst identified; commodity positioning and supply expectations may move prices before exit."
+    },
+    {
+      "continuation_case": "EIA inventory data or persistent supply concerns could extend the strong oil advance.",
+      "decision": "rejected",
+      "evidence": [
+        "Oil gained 8.01% over three sessions and outperformed SPY by 7.70% over five sessions.",
+        "Brent settled at $91.01, up 2.0%, after approaching $92.",
+        "Oil had 48.75% 21-session volatility and a -10.10% maximum drawdown."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -7.0,
+      "invalidation_condition": "A bearish EIA surprise followed by a reversal below the pre-July-21 breakout area.",
+      "option_id": "OIL",
+      "reversal_case": "The rapid gain, high volatility, and weak recent-pullback rank create substantial profit-taking risk.",
+      "time_window_catalyst": "EIA weekly petroleum data are released July 22 at 10:30 a.m. ET."
+    },
+    {
+      "continuation_case": "Accrued bill yield provides a small positive return with minimal price volatility.",
+      "decision": "rejected",
+      "evidence": [
+        "Short Treasury had the lowest-risk profile with 0.23% 21-session volatility and no drawdown beyond -0.01%.",
+        "Its quality evidence score was 0.615.",
+        "The federal-funds target range was 3.50% to 3.75%."
+      ],
+      "forecast_base_pct": 0.07,
+      "forecast_high_pct": 0.12,
+      "forecast_low_pct": -0.03,
+      "invalidation_condition": "An unexpected price decline large enough to offset the expected weekly bill accrual.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "A one-week holding period limits accrual, leaving returns below likely equity upside.",
+      "time_window_catalyst": "No material catalyst identified before exit; the FOMC statement occurs after the scoring window."
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.43,
+  "is_official_score": true,
+  "key_risks": [
+    "Alphabet or Tesla results trigger a broad growth-stock selloff that overwhelms the cybersecurity rebound case.",
+    "The recent agriculture advance reverses without a supplied fundamental or scheduled catalyst.",
+    "A sharp decline in Treasury yields pressures financials and signals weaker growth expectations.",
+    "A broad risk-off move overwhelms the portfolio's cross-cluster diversification."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "Further underperformance versus SPY accompanied by a break below the entry-date 21-session drawdown low.",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Highest quality evidence score, combining the strongest prior active rank with the deepest recent relative pullback, supports a one-week rebound position.",
+      "time_window_catalyst": "No direct scheduled catalyst identified; technology earnings on July 22 may improve growth-sector sentiment before exit."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Healthcare shifts to negative five-session active return and exceeds its entry-date 21-session drawdown.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong prior and recent benchmark-relative performance provide a comparatively defensive continuation opportunity.",
+      "time_window_catalyst": "No direct scheduled catalyst identified; softer growth concerns or equity rotation before July 28 could favor defensive healthcare."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "The recent advance reverses and agriculture falls below its entry-date 21-session drawdown level.",
+      "option_id": "AGRICULTURE",
+      "rationale": "Positive recent and prior performance with near-zero SPY correlation offers independently sourced return potential, though briefing support is limited.",
+      "time_window_catalyst": "No specific scheduled catalyst identified; commodity positioning and supply expectations may move prices before exit."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "The 10-year yield falls sharply while financials underperform SPY and breach the entry-date 21-session drawdown.",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong prior active return and a high quality score support continued relative strength, with elevated Treasury yields providing a possible tailwind.",
+      "time_window_catalyst": "The first day of the FOMC meeting on July 28 and movements in the 10-year Treasury yield may affect financials before the exit close."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.61,
+  "portfolio_rationale": "The portfolio combines a high-quality cybersecurity rebound with persistent healthcare and financials strength plus low-correlation agriculture momentum. Four distinct exposure clusters reduce dependence on the July 22 mega-cap earnings reaction.",
+  "provider": "openai",
+  "rationale_summary": "Each active holding has a base forecast above SPY's 0.18% forecast. The weighted one-week base return is 0.61%, implying expected alpha of 0.43 percentage point.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-21-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15612,
+    "latency_seconds": 47.57139388588257,
+    "output_tokens": 3341,
+    "reasoning_tokens": 1341,
+    "total_tokens": 18953
+  }
+}
