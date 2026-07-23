@@ -1,0 +1,185 @@
+{
+  "benchmark_expected_return_pct": 0.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Stable macro data supports modest gains into FOMC",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7498.96 down 0.1%",
+        "June nonfarm payrolls +57k"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "SPY closes below 7400 on July 29",
+      "option_id": "SP500",
+      "reversal_case": "CPI or payroll revisions trigger risk-off",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "continuation_case": "Inventory draws and geopolitical premium persist",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude rose 3.4% to 94.07",
+        "EIA refinery utilization 96.1%"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Brent closes below 90 on July 29",
+      "option_id": "ENERGY",
+      "reversal_case": "Demand proxy falls further week-over-week",
+      "time_window_catalyst": "EIA inventory data and Brent above 93"
+    },
+    {
+      "continuation_case": "Cloud and search momentum continues post-print",
+      "decision": "selected",
+      "evidence": [
+        "Alphabet revenue 119.8B up 24%",
+        "Google Cloud revenue 24.8B up 82%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "XLC closes below 95 on July 29",
+      "option_id": "COMMUNICATIONS",
+      "reversal_case": "Ad spend slowdown visible in follow-on data",
+      "time_window_catalyst": "Alphabet follow-through and FOMC"
+    },
+    {
+      "continuation_case": "Defensive rotation holds through policy event",
+      "decision": "selected",
+      "evidence": [
+        "XLV active return positive 1.70% over 5 sessions",
+        "Low volatility rank 0.299"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "XLV closes below 135 on July 29",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Rate-sensitive rotation accelerates post-FOMC",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "continuation_case": "Yield curve stability supports banks",
+      "decision": "rejected",
+      "evidence": [
+        "XLF prior active rank 0.896",
+        "Regional banks quality score 0.629"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.9,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "XLF closes below 42 on July 29",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit spread widening on growth concerns",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "continuation_case": "Safe-haven bid on policy uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 5-session return 1.85%",
+        "Quality evidence score 0.172"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -2.1,
+      "invalidation_condition": "IAU closes below 48 on July 29",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar strength resumes post-FOMC",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "continuation_case": "Commodity momentum persists",
+      "decision": "rejected",
+      "evidence": [
+        "PDBC 5-session return 3.25%",
+        "Volume z-score elevated at 3.705"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.9,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "PDBC closes below 13.5 on July 29",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "USD rally compresses prices",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Value rotation continues",
+      "decision": "rejected",
+      "evidence": [
+        "SCHD active return 2.71% over 5 sessions",
+        "Low drawdown rank 0.910"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.7,
+      "forecast_low_pct": -1.1,
+      "invalidation_condition": "SCHD closes below 82 on July 29",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth reasserts post-earnings season",
+      "time_window_catalyst": "FOMC statement July 29"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.255,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC outcome volatility on July 29",
+    "Oil price reversal below 90",
+    "Earnings follow-through disappointment"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "SPY closes below 7400 on July 29",
+      "option_id": "SP500",
+      "rationale": "Broad market exposure with neutral near-term catalyst support.",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Brent closes below 90 on July 29",
+      "option_id": "ENERGY",
+      "rationale": "Oil inventory and Brent price strength provide base-case support.",
+      "time_window_catalyst": "EIA inventory data and Brent above 93"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "XLC closes below 95 on July 29",
+      "option_id": "COMMUNICATIONS",
+      "rationale": "Alphabet revenue and cloud growth exceed expectations.",
+      "time_window_catalyst": "Alphabet follow-through and FOMC"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "XLV closes below 135 on July 29",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with stable relative performance.",
+      "time_window_catalyst": "FOMC statement July 29"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.655,
+  "portfolio_rationale": "SP500 core with targeted overweights in energy and communications where base forecasts exceed SPY.",
+  "provider": "xai",
+  "rationale_summary": "One-week allocation favors sectors with recent earnings or commodity support while capping cluster exposure at 20%.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-22-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15670,
+    "latency_seconds": 23.396161450073123,
+    "output_tokens": 1706,
+    "reasoning_tokens": 517,
+    "total_tokens": 17893
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Resilient data and Alphabet beat support modest gains",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 down 0.1% to 7,498.96 on July 22",
+        "June CPI -0.4% m/m but 3.5% y/y; Fed holding at 3.50%-3.75% citing elevated inflation"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "10-year yield rises materially above 4.8%",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish FOMC and rising oil/yields pressure multiples",
+      "time_window_catalyst": "FOMC statement July 29 at 2pm ET"
+    },
+    {
+      "continuation_case": "Strong prior trend plus post-close Alphabet beat priced into window",
+      "decision": "selected",
+      "evidence": [
+        "Alphabet Q2 revenue +24%, Cloud +82%, operating margin 34% vs 32%",
+        "Sector -2.71% active over 5 days after strong +4.70% prior trend"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Alphabet trades down more than 3% on results",
+      "option_id": "COMMUNICATIONS",
+      "reversal_case": "Market discounts unrealized-gain-inflated net income and sells the news",
+      "time_window_catalyst": "Alphabet earnings reaction July 23"
+    },
+    {
+      "continuation_case": "Geopolitical supply risk and crude momentum lift energy equities",
+      "decision": "selected",
+      "evidence": [
+        "Brent +3.4% to $94.07, traded above $95",
+        "XLE +5.76% active 5-day with positive prior trend; USO +16.85% over 21 sessions",
+        "Fed cited Middle East conflict as supply-shock source"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Brent closes below $88",
+      "option_id": "ENERGY",
+      "reversal_case": "Inventory builds (crude +2.0M barrels) and demand softness reverse crude",
+      "time_window_catalyst": "EIA weekly data and geopolitical headlines through July 29"
+    },
+    {
+      "continuation_case": "Energy-led commodity rally with volume confirmation persists",
+      "decision": "selected",
+      "evidence": [
+        "PDBC +4.71% active 5-day, +3.55% prior trend, volume z-score 3.705",
+        "PPI +5.5% y/y signals commodity-cost pressure"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Crude falls more than 5% intra-window",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Oil reversal drags the basket lower given energy weighting",
+      "time_window_catalyst": "Oil and inflation data flow through July 29"
+    },
+    {
+      "continuation_case": "Defensive rotation continues into FOMC uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "SPLV +2.13% active 5-day with +1.64% prior trend",
+        "Negative 63-day beta to SPY (-0.326) provides FOMC hedge"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Broad risk-on rally with QQQ up >2%",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Dovish surprise triggers growth rally leaving defensives behind",
+      "time_window_catalyst": "FOMC July 29"
+    },
+    {
+      "continuation_case": "Supply-shock momentum extends",
+      "decision": "rejected",
+      "evidence": [
+        "USO +8.49% 5-day, +16.85% 21-day; Brent above $94",
+        "Commercial crude inventories rose 2.0M barrels; total petroleum +11.6M"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Brent below $88",
+      "option_id": "OIL",
+      "reversal_case": "Inventory builds and 48% volatility make sharp mean reversion likely; energy cluster cap also binds with XLE",
+      "time_window_catalyst": "EIA report July 29"
+    },
+    {
+      "continuation_case": "Duration relief if FOMC dovish",
+      "decision": "rejected",
+      "evidence": [
+        "10-year yield rose to 4.65%; TLT -2.72% over 21 sessions",
+        "CPI 3.5% y/y and PPI 5.5% y/y keep Fed on hold"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "10-year yield falls below 4.5%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky inflation and oil spike push yields higher",
+      "time_window_catalyst": "FOMC July 29"
+    },
+    {
+      "continuation_case": "Value/financials trend continues on elevated rates",
+      "decision": "rejected",
+      "evidence": [
+        "XLF prior trend +3.93% but only +0.08% active 5-day",
+        "Low SPY beta (0.170) limits both risk and upside"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Credit spreads widen sharply",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Rate volatility around FOMC and weak payroll revisions weigh on banks",
+      "time_window_catalyst": "FOMC July 29"
+    }
+  ],
+  "confidence": 0.6,
+  "cost_usd": 0.44947,
+  "expected_alpha_vs_sp500_pct": 0.64,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC hawkish surprise on July 29 hits all risk assets",
+    "Oil price reversal on inventory builds (crude stocks rose 2.0M barrels)",
+    "Alphabet sells off despite headline beat given unrealized-gain-driven net income",
+    "Commodity inflation strength pressures equity multiples"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Alphabet shares fall on the results despite the beat",
+      "option_id": "COMMUNICATIONS",
+      "rationale": "Alphabet beat with 24% revenue growth, Cloud +82%, margin expansion; sector pulled back last week creating entry ahead of the report's price reaction inside the window.",
+      "time_window_catalyst": "Alphabet Q2 results released after July 22 close price into July 23 open"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Brent falls back below $88",
+      "option_id": "ENERGY",
+      "rationale": "Brent +3.4% to $94 with strong recent oil momentum and 96.1% refinery utilization; energy equities lag crude's move.",
+      "time_window_catalyst": "Weekly EIA data July 29 and continued Middle East supply risk"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Broad commodity index turns negative on the week",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Broad commodities show positive prior trend, strong 5-day active return, and unusual volume interest amid supply shocks and elevated inflation.",
+      "time_window_catalyst": "Energy-led commodity strength through FOMC July 29"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "Strong risk-on rally in mega-cap growth",
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive ballast into July 29 FOMC; negative SPY beta cushions hawkish-surprise risk while retaining positive base forecast.",
+      "time_window_catalyst": "FOMC statement July 29 before exit close"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.2,
+      "invalidation_condition": "Hawkish FOMC surprise triggers broad selloff",
+      "option_id": "SP500",
+      "rationale": "Benchmark anchor to limit tracking error around the FOMC decision.",
+      "time_window_catalyst": "FOMC July 29 statement"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.84,
+  "portfolio_rationale": "Overweight energy and commodities on the supplied oil supply-shock evidence, overweight communications on Alphabet's strong after-close results, with low-vol and SPY ballast into the July 29 FOMC.",
+  "provider": "anthropic",
+  "rationale_summary": "Oil momentum and Alphabet's beat are the two strongest supplied catalysts inside the window; defensive sleeves hedge FOMC risk.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-22-1W",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.44947,
+    "input_tokens": 27597,
+    "latency_seconds": 49.03175395797007,
+    "output_tokens": 3470,
+    "total_tokens": 31067
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Soft landing data and stable policy keep broad equities grinding higher from -1.35% off highs.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY 5-session return -0.98% and 21-session +0.41%",
+        "June payrolls +57k with downward revisions; CPI -0.4% m/m",
+        "FOMC meeting concludes July 29"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Close below recent 63-session drawdown lows on rising yields",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish FOMC or weaker GDP/PCE triggers multiple compression.",
+      "time_window_catalyst": "July 29 FOMC statement and July 30 GDP/PCE"
+    },
+    {
+      "continuation_case": "Geopolitical premium and high utilization sustain elevated oil prices supporting energy equities.",
+      "decision": "selected",
+      "evidence": [
+        "XLE 21-session active return +9.10%; Brent +3.4% to $94.07",
+        "EIA commercial crude +2.0 mbbl but total petroleum +11.6 mbbl; refinery util 96.1%",
+        "Quality evidence prior active rank 0.806"
+      ],
+      "forecast_base_pct": 2.8,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Brent close below $85 with XLE underperforming SPY by >5% active",
+      "option_id": "ENERGY",
+      "reversal_case": "Demand proxy weakness (product supplied -1% y/y) plus inventory builds reverse the move.",
+      "time_window_catalyst": "Weekly EIA reports and any Middle East headlines before Aug 21"
+    },
+    {
+      "continuation_case": "Supply concerns and summer demand keep the futures-driven ETF elevated.",
+      "decision": "selected",
+      "evidence": [
+        "USO 5-session +8.49%, 21-session +16.45%, prior 105s active +46.37%",
+        "Brent above $94 after trading $95; four-week product supplied 20.4 mb/d",
+        "High volatility 50.34% and max drawdown -32.49%"
+      ],
+      "forecast_base_pct": 3.5,
+      "forecast_high_pct": 12.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "USO 10% drawdown from entry on consecutive crude builds",
+      "option_id": "OIL",
+      "reversal_case": "Large inventory builds or OPEC+ surprise increase collapses the curve.",
+      "time_window_catalyst": "EIA weekly data and geopolitical developments through mid-August"
+    },
+    {
+      "continuation_case": "Defensive characteristics and recent relative strength persist amid macro uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "XLV 21-session active return +5.84%; distance to 52w high -3.05%",
+        "Low corr/beta to SPY (0.268/0.336); shallow recent drawdown",
+        "Soft labor and cooling core CPI favor defensives"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLV active return turns negative >3% versus SPY on growth rebound",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation post-strong GDP or dovish pivot leaves healthcare lagging.",
+      "time_window_catalyst": "August 7 employment and August 12 CPI"
+    },
+    {
+      "continuation_case": "Elevated yields and quality dividend tilt attract flows if growth remains moderate.",
+      "decision": "selected",
+      "evidence": [
+        "SCHD 5-session +1.73%, 21-session active +3.58%; near 52w high (-0.42%)",
+        "Low beta 0.274 and quality pullback rank low but prior active solid",
+        "10y yield at 4.65% supports income appeal"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "10y yield drops below 4.2% with growth stocks outperforming >4% active",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Sharp rate cut expectations or tech leadership resumption hurts relative performance.",
+      "time_window_catalyst": "FOMC and income-focused flows around month-end/August data"
+    },
+    {
+      "continuation_case": "AI capex and strong cloud results restart the prior uptrend after pullback.",
+      "decision": "rejected",
+      "evidence": [
+        "SMH 21-session active -12.66% after prior 105s active +60.90%",
+        "Highest quality evidence score 0.758 but vol 52.86% and -12.26% from high",
+        "Alphabet Cloud +82% but broader tech Nasdaq -0.6% on day"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Break of recent lows with active underperformance extending past -15%",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Further mean-reversion from extreme prior gains and high vol into earnings.",
+      "time_window_catalyst": "Microsoft/Qualcomm results and any AI commentary post July 29"
+    },
+    {
+      "continuation_case": "Continued preference for value over growth on rate and macro softness.",
+      "decision": "rejected",
+      "evidence": [
+        "IWD 21-session active +1.23%; low vol rank strong; -0.78% from high",
+        "Quality evidence score 0.641 with solid prior active",
+        "Value tilt overlaps energy/financials that have mixed recent prints"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "IWD underperforms SPY by >2% active on Nasdaq rebound",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth re-rating on strong mega-cap earnings reverses the relative bid.",
+      "time_window_catalyst": "FOMC and sector rotation around August macro data"
+    },
+    {
+      "continuation_case": "Commodity complex follows energy higher on inflation residual and supply.",
+      "decision": "rejected",
+      "evidence": [
+        "PDBC 21-session active +8.46%; prior active +7.00%",
+        "Oil strength dominant but broad basket includes weaker metals/ag",
+        "Quality prior rank 0.851 but recent pullback rank very low 0.045"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "PDBC gives back >5% as oil corrects and industrial metals lag",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Dollar strength or demand slowdown hits non-energy components harder.",
+      "time_window_catalyst": "Oil inventory data and ISM/PMI prints in early August"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.65,
+  "is_official_score": true,
+  "key_risks": [
+    "Sudden oil price reversal on inventory builds or de-escalation",
+    "FOMC hawkish surprise lifting real yields and pressuring all risk assets",
+    "Growth re-acceleration favoring mega-cap tech over value/energy/defensives",
+    "Cluster concentration risk if energy mean-reverts hard"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.8,
+      "invalidation_condition": "Brent sustained drop below $85 or sharp risk-off equity selloff",
+      "option_id": "ENERGY",
+      "rationale": "Oil price strength and inventory/build data support near-term energy equity continuation into FOMC and summer demand window.",
+      "time_window_catalyst": "Elevated Brent near $94 and weekly EIA inventory prints before August 21"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 3.5,
+      "invalidation_condition": "Commercial crude builds exceeding 5 mbbl for two consecutive weeks with price collapse",
+      "option_id": "OIL",
+      "rationale": "Direct crude exposure captures the recent supply-shock premium and product-supplied trends better than equities alone.",
+      "time_window_catalyst": "Continued geopolitical premium and refinery utilization at 96.1% through mid-August"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Broad risk-on surge that leaves defensives lagging by >3% active",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive relative strength and lower beta provide ballast while recent active outperformance can persist on soft macro data.",
+      "time_window_catalyst": "July employment and CPI prints plus any defensive rotation post-FOMC"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Sharp 10y yield spike above 5% or growth re-acceleration crushing value/dividend",
+      "option_id": "DIVIDEND",
+      "rationale": "Quality dividend tilt benefits from elevated yields environment and recent relative resilience versus growth.",
+      "time_window_catalyst": "FOMC statement and soft payroll/retail data supporting income equities"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.25,
+  "portfolio_rationale": "Portfolio concentrates in energy cluster at the 50% cap on continued oil strength while balancing with healthcare and dividend defensives that have shown superior recent active returns and lower drawdowns versus SPY. All selected bases exceed SPY base on supplied momentum, macro softness, and commodity facts.",
+  "provider": "xai",
+  "rationale_summary": "SPY base is modest given mixed payrolls, cooling CPI, and recent 5-session weakness. Energy/OIL clear the hurdle on price and inventory evidence; healthcare and dividend clear on relative performance and defensive characteristics into the FOMC and data window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-22-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16518,
+    "latency_seconds": 27.30661854497157,
+    "output_tokens": 2649,
+    "reasoning_tokens": 631,
+    "total_tokens": 19798
+  }
+}

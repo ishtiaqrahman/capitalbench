@@ -1,0 +1,133 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Earnings growth supports current valuations.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 down 0.1% to 7,498.96 on July 22."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Significant negative earnings surprises from mega-cap tech.",
+      "option_id": "SP500",
+      "reversal_case": "Inflation concerns lead to higher rates and lower valuations.",
+      "time_window_catalyst": "Upcoming FOMC meeting and tech earnings."
+    },
+    {
+      "continuation_case": "Sustained high oil prices drive sector earnings.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude rose 3.4% to $94.07 per barrel.",
+        "Commercial crude inventories up 2.0 million barrels."
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sharp decline in crude oil prices below $85.",
+      "option_id": "ENERGY",
+      "reversal_case": "Demand destruction or supply increases lower oil prices.",
+      "time_window_catalyst": "Weekly EIA inventory reports."
+    },
+    {
+      "continuation_case": "Investors seek yield and stability in a volatile market.",
+      "decision": "selected",
+      "evidence": [
+        "DIVIDEND return_5s is 1.73%."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Widespread dividend cuts across major holdings.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Rising interest rates make dividend yields less attractive.",
+      "time_window_catalyst": "Q2 earnings season highlighting dividend sustainability."
+    },
+    {
+      "continuation_case": "AI investments continue to drive growth.",
+      "decision": "rejected",
+      "evidence": [
+        "Alphabet reported Q2 revenue up 24%.",
+        "Nasdaq Composite down 0.6% on July 22."
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Major tech companies missing earnings estimates.",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Valuation concerns and regulatory scrutiny weigh on the sector.",
+      "time_window_catalyst": "Microsoft and Qualcomm earnings on July 29."
+    },
+    {
+      "continuation_case": "Inflation remains sticky, keeping yields high.",
+      "decision": "rejected",
+      "evidence": [
+        "10-year U.S. Treasury yield was 4.65%."
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Fed signals a pivot to rate cuts.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Economic slowdown prompts expectations of rate cuts.",
+      "time_window_catalyst": "July FOMC meeting and CPI data."
+    },
+    {
+      "continuation_case": "Geopolitical uncertainty and inflation fears support gold.",
+      "decision": "rejected",
+      "evidence": [
+        "GOLD return_5s is 1.85%."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Significant strengthening of the US Dollar.",
+      "option_id": "GOLD",
+      "reversal_case": "Strong dollar and rising real rates pressure gold prices.",
+      "time_window_catalyst": "Changes in real interest rates."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 1.5,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden drop in oil prices could negatively impact the Energy allocation.",
+    "A broad market downturn could drag down Dividend equities despite their defensive nature."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Significant build in crude inventories or OPEC production increase.",
+      "option_id": "ENERGY",
+      "rationale": "Energy sector shows strong recent momentum and benefits from rising crude prices.",
+      "time_window_catalyst": "Continued crude inventory draws and geopolitical tensions."
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Broad market sell-off impacting value and dividend stocks.",
+      "option_id": "DIVIDEND",
+      "rationale": "Dividend equities offer defensive characteristics and have shown positive recent returns.",
+      "time_window_catalyst": "Earnings reports confirming stable dividend payouts."
+    }
+  ],
+  "portfolio_expected_return_pct": 2.0,
+  "portfolio_rationale": "The portfolio balances the strong momentum in the energy sector with the defensive characteristics of dividend equities. This combination aims to capture upside from rising oil prices while mitigating downside risk.",
+  "provider": "google",
+  "rationale_summary": "Balanced approach using Energy for growth and Dividend for defense.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-22-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17117,
+    "latency_seconds": 13.523863961920142,
+    "output_tokens": 1498,
+    "total_tokens": 18615
+  }
+}

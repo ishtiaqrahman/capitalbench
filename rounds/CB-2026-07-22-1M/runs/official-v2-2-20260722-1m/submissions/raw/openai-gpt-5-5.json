@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad U.S. equities remain near highs and could continue if macro data support soft landing expectations and earnings breadth improves.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 was down 0.1% at the July 22 close and SPY return_5s was -0.98%.",
+        "SPY return_21s was 0.41%, volatility_63s was 12.94%, and distance_52w_high was -1.35%.",
+        "Scheduled catalysts include FOMC on July 29, advance Q2 GDP on July 30, July payrolls on August 7, and CPI/PPI on August 12-13."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4,
+      "forecast_low_pct": -3,
+      "invalidation_condition": "SPY breaks materially below recent lows or upcoming macro data sharply worsen the growth/inflation mix.",
+      "option_id": "SP500",
+      "reversal_case": "Cap-weighted leadership can weaken further if growth stocks lag, rates rise, or upcoming macro data revive inflation and slowdown concerns.",
+      "time_window_catalyst": "FOMC, GDP, payrolls, CPI/PPI, and large-cap earnings through the August 21 exit close."
+    },
+    {
+      "continuation_case": "Strong recent crude momentum can persist if geopolitical supply risk stays elevated and traders continue to price tighter energy conditions.",
+      "decision": "selected",
+      "evidence": [
+        "USO return_5s was 8.49% and return_21s was 16.85%, with active_return_21s of 16.45%.",
+        "Brent crude rose 3.4% to $94.07 after trading above $95.",
+        "The Fed statement cited Middle East conflict as a source of uncertainty and supply shocks."
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 10,
+      "forecast_low_pct": -7,
+      "invalidation_condition": "Crude reverses below its recent breakout or EIA data continue to show broad inventory builds with weakening product supplied.",
+      "option_id": "OIL",
+      "reversal_case": "EIA reported crude, gasoline, distillate, and total petroleum inventory builds, while four-week product supplied was down 1% from a year earlier, creating risk that the surge is overextended.",
+      "time_window_catalyst": "July 23-August 21 EIA inventory data, Middle East supply-risk headlines, and energy-price follow-through."
+    },
+    {
+      "continuation_case": "Recent leadership by lower-beta, dividend-oriented equities may continue if investors favor profitable defensive income exposures into policy and inflation events.",
+      "decision": "selected",
+      "evidence": [
+        "DIVIDEND return_5s was 1.73% and active_return_21s was 3.58%.",
+        "Volatility_63s was 11.89%, beta_spy_252s was 0.274, and distance_52w_high was -0.42%.",
+        "Quality evidence score was 0.576, with prior active rank 0.731 and shallow drawdown rank 0.791."
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2,
+      "invalidation_condition": "Dividend equities lose their recent active leadership versus SPY or rates rise sharply enough to pressure income-oriented equities.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "If risk appetite shifts back toward high-beta growth and rates move higher, dividend equities may lag SPY despite their recent relative strength.",
+      "time_window_catalyst": "July FOMC, July CPI/PPI, and ongoing rotation toward lower-volatility dividend equities before August 21."
+    },
+    {
+      "continuation_case": "Healthcare's low beta and strong recent active return can persist if investors rotate toward defensive earnings exposure during macro uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE active_return_21s was 5.84% and return_5s was 0.72%.",
+        "Max_drawdown_63s was -3.74%, with corr_spy_252s of 0.268 and beta_spy_252s of 0.336.",
+        "June payroll gains slowed to 57,000 and unemployment was 4.2%, supporting interest in defensive sectors if growth concerns persist."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.2,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Healthcare's 21-day active outperformance fades or risk appetite rotates decisively back into high-beta growth.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "The sector has weak prior active rank and could reverse if recent outperformance is just a short-term defensive bounce or if broad risk appetite strengthens.",
+      "time_window_catalyst": "Defensive-sector rotation around FOMC, GDP, payrolls, CPI/PPI, and sector earnings/news through the exit close."
+    },
+    {
+      "continuation_case": "Positive recent relative performance can continue if the Bank of England decision and global risk conditions support UK large-cap and dividend-oriented exposures.",
+      "decision": "selected",
+      "evidence": [
+        "UNITED_KINGDOM return_5s was 1.00% and active_return_21s was 2.99%.",
+        "Volatility_63s was 16.74%, beta_spy_252s was 0.717, and distance_52w_high was -1.57%.",
+        "The Bank of England policy decision and Monetary Policy Report are scheduled for July 30."
+      ],
+      "forecast_base_pct": 1,
+      "forecast_high_pct": 4,
+      "forecast_low_pct": -3,
+      "invalidation_condition": "UK equities break recent relative strength or sterling/UK policy news turns materially adverse.",
+      "option_id": "UNITED_KINGDOM",
+      "reversal_case": "UK equities could lag if the policy decision disappoints, sterling moves adversely, or global equity risk appetite weakens.",
+      "time_window_catalyst": "Bank of England decision and Monetary Policy Report on July 30, plus global risk and currency moves through August 21."
+    },
+    {
+      "continuation_case": "Strong prior trend and major technology earnings could restart growth leadership if investors look through the recent pullback.",
+      "decision": "rejected",
+      "evidence": [
+        "NASDAQ100 had a high quality evidence score of 0.740, with prior active rank 0.896 and recent pullback rank 0.836.",
+        "Return_5s was -1.73% and active_return_21s was -4.82%.",
+        "Alphabet reported revenue up 24% and Google Cloud revenue up 82%, while Tesla reported operating margin of 1.4% and negative free cash flow."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -5,
+      "invalidation_condition": "NASDAQ100 fails to reclaim recent relative strength or rates rise enough to pressure long-duration growth valuations.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Weak recent relative performance, high volatility of 24.40%, and earnings dispersion create risk that mega-cap growth continues to lag SPY.",
+      "time_window_catalyst": "Technology earnings, FOMC rate signals, GDP, payrolls, and inflation data before August 21."
+    },
+    {
+      "continuation_case": "Energy equities can extend gains if crude strength continues and supply-risk headlines support earnings expectations.",
+      "decision": "rejected",
+      "evidence": [
+        "ENERGY return_5s was 4.78% and active_return_21s was 9.10%.",
+        "Prior_105s_active_return was 4.69%, but max_drawdown_63s was -13.21%.",
+        "Brent crude rose 3.4%, while EIA reported total commercial petroleum inventories up 11.6 million barrels."
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 7,
+      "forecast_low_pct": -5,
+      "invalidation_condition": "Energy equities stop tracking crude higher or crude reverses on sustained inventory builds.",
+      "option_id": "ENERGY",
+      "reversal_case": "Inventory builds, high sector volatility, and sensitivity to oil-price reversals could make energy equities underperform after a sharp move.",
+      "time_window_catalyst": "Weekly EIA inventory reports, crude-price moves, Middle East supply-risk headlines, and sector earnings through August 21."
+    },
+    {
+      "continuation_case": "The dollar can continue to firm if U.S. rates remain relatively attractive or global risk events drive reserve-currency demand.",
+      "decision": "rejected",
+      "evidence": [
+        "US_DOLLAR return_5s was 0.71% and return_21s was 0.32%.",
+        "Volatility_63s was 4.86%, max_drawdown_63s was -0.98%, and distance_52w_high was -0.28%.",
+        "The ECB decision is scheduled for July 23, with FOMC on July 29 and Bank of Japan on July 31."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "The dollar loses recent upside momentum after central-bank decisions or U.S. yields fall sharply versus global peers.",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "A dovish FOMC or relatively hawkish non-U.S. central-bank decisions could weaken the dollar over the month.",
+      "time_window_catalyst": "ECB, FOMC, Bank of England, and Bank of Japan policy decisions before the exit close."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.74,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil's recent surge reverses if inventory builds and weaker product supplied outweigh geopolitical supply risk.",
+    "A dovish growth rally or mega-cap technology rebound causes SPY to outperform defensive and international tilts.",
+    "July FOMC, CPI/PPI, GDP, or payrolls surprise markets and trigger broad risk-off selling.",
+    "Currency or policy surprises around the Bank of England decision hurt UK equities."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Crude reverses below its recent breakout or EIA data continue to show broad inventory builds with weakening product supplied.",
+      "option_id": "OIL",
+      "rationale": "Crude has the clearest one-month momentum and macro catalyst set, with Brent up sharply and energy-supply uncertainty noted, while keeping energy exposure below the 50% cap.",
+      "time_window_catalyst": "July 23-August 21 EIA inventory data, Middle East supply-risk headlines, and energy-price follow-through."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Dividend equities lose their recent active leadership versus SPY or rates rise sharply enough to pressure income-oriented equities.",
+      "option_id": "DIVIDEND",
+      "rationale": "Dividend equities show positive 5-day and 21-day active strength, low drawdown, and lower beta than SPY, giving a defensive equity path to outperform if breadth remains stronger than cap-weighted growth.",
+      "time_window_catalyst": "July FOMC, July CPI/PPI, and ongoing rotation toward lower-volatility dividend equities before August 21."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Healthcare's 21-day active outperformance fades or risk appetite rotates decisively back into high-beta growth.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare has strong recent active return, a shallow drawdown, and low correlation/beta versus SPY, offering non-tech defensive equity exposure during a data-heavy month.",
+      "time_window_catalyst": "Defensive-sector rotation around FOMC, GDP, payrolls, CPI/PPI, and sector earnings/news through the exit close."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1,
+      "invalidation_condition": "UK equities break recent relative strength or sterling/UK policy news turns materially adverse.",
+      "option_id": "UNITED_KINGDOM",
+      "rationale": "UK equities provide international diversification with positive recent returns and active strength, plus a Bank of England decision inside the scoring window.",
+      "time_window_catalyst": "Bank of England decision and Monetary Policy Report on July 30, plus global risk and currency moves through August 21."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.54,
+  "portfolio_rationale": "The portfolio avoids relying solely on U.S. mega-cap beta and emphasizes options with supplied evidence of recent active strength, identifiable one-month catalysts, and diversification across energy, defensive U.S. equity, healthcare, and international equity. Oil receives the largest weight due to the strongest near-term price and macro catalyst, but is capped below the energy cluster limit because inventory builds create reversal risk.",
+  "provider": "openai",
+  "rationale_summary": "Base forecasts for all selected holdings exceed the SPY base forecast. The weighted base return is 1.54%, implying 0.74 percentage points of expected alpha versus SPY over the one-month window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-22-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15444,
+    "latency_seconds": 35.976859611226246,
+    "output_tokens": 2763,
+    "reasoning_tokens": 126,
+    "total_tokens": 18207
+  }
+}

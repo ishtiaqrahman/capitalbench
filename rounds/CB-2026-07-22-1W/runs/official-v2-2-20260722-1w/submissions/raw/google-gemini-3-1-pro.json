@@ -1,0 +1,132 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Market continues to drift higher on mixed economic data.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 down 0.1% to 7,498.96."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Significant market selloff.",
+      "option_id": "SP500",
+      "reversal_case": "Negative reaction to upcoming earnings or economic data.",
+      "time_window_catalyst": "Upcoming earnings and economic data releases."
+    },
+    {
+      "continuation_case": "Crude prices continue to rise, supporting energy stocks.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude rose 3.4% to $94.07 per barrel.",
+        "EIA reported commercial crude inventories up 2.0 million barrels."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Crude prices reverse sharply lower.",
+      "option_id": "ENERGY",
+      "reversal_case": "Crude prices reverse sharply lower.",
+      "time_window_catalyst": "Continued crude inventory draws and price strength."
+    },
+    {
+      "continuation_case": "Market reacts positively to Alphabet earnings, lifting the sector.",
+      "decision": "selected",
+      "evidence": [
+        "Alphabet reported second-quarter revenue of $119.796 billion, up 24%."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Broader market selloff drags down the sector despite strong earnings.",
+      "option_id": "COMMUNICATIONS",
+      "reversal_case": "Broader market selloff drags down the sector despite strong earnings.",
+      "time_window_catalyst": "Market reaction to Alphabet earnings."
+    },
+    {
+      "continuation_case": "Yields continue to rise, pressuring long-duration bonds.",
+      "decision": "rejected",
+      "evidence": [
+        "10-year U.S. Treasury yield was 4.65%, compared with 4.63% on July 21."
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 1.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yields fall sharply.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Yields fall sharply on weak economic data.",
+      "time_window_catalyst": "Upcoming economic data releases."
+    },
+    {
+      "continuation_case": "Gold continues to benefit from safe-haven demand.",
+      "decision": "rejected",
+      "evidence": [
+        "Gold IAU return 5s 1.85%."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Significant improvement in risk appetite.",
+      "option_id": "GOLD",
+      "reversal_case": "Risk appetite improves, reducing demand for gold.",
+      "time_window_catalyst": "Changes in risk appetite."
+    },
+    {
+      "continuation_case": "Consumer spending remains resilient.",
+      "decision": "rejected",
+      "evidence": [
+        "Tesla reported second-quarter revenue of $28.236 billion, up 26%."
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Significant weakening in consumer spending.",
+      "option_id": "CONSUMER_DISCRETIONARY",
+      "reversal_case": "Consumer spending weakens.",
+      "time_window_catalyst": "Market reaction to Tesla earnings."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.85,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden reversal in crude oil prices could negatively impact the Energy allocation.",
+    "A broader market selloff could drag down the Communications sector despite strong earnings.",
+    "Macroeconomic data releases could cause volatility."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Crude prices reverse sharply lower.",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent momentum and positive catalyst from rising crude prices.",
+      "time_window_catalyst": "Continued crude inventory draws and price strength."
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Broader market selloff drags down the sector despite strong earnings.",
+      "option_id": "COMMUNICATIONS",
+      "rationale": "Alphabet earnings beat provides a strong catalyst for the sector.",
+      "time_window_catalyst": "Market reaction to Alphabet earnings."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.35,
+  "portfolio_rationale": "The portfolio is allocated to Energy and Communications to capitalize on strong recent momentum and positive catalysts. Energy benefits from rising crude prices, while Communications is supported by strong Alphabet earnings.",
+  "provider": "google",
+  "rationale_summary": "Overweight Energy and Communications based on positive catalysts and momentum.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-22-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17077,
+    "latency_seconds": 11.852693545864895,
+    "output_tokens": 1514,
+    "total_tokens": 18591
+  }
+}

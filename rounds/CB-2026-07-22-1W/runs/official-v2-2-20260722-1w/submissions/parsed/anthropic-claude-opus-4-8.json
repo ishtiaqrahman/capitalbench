@@ -1,0 +1,175 @@
+{
+  "benchmark_expected_return_pct": 0.35,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong mega-cap earnings sustain index; benign CPI at 3.5% headline supports risk",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed 7,498.96, down 0.1% on July 22",
+        "Alphabet reported 24% revenue growth and strong cloud results"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "FOMC signals additional tightening",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish FOMC July 29 or elevated PPI at 5.5% pressures multiples",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "continuation_case": "Oil momentum and high refinery utilization at 96.1% support energy",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude rose 3.4% to $94.07",
+        "Energy active_return_5s +5.76% with negative SPY beta"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Brent falls below $88",
+      "option_id": "ENERGY",
+      "reversal_case": "Crude inventory builds of 2.0M barrels signal softening demand",
+      "time_window_catalyst": "Oil price moves and EIA data"
+    },
+    {
+      "continuation_case": "Defensive low-beta leadership persists into FOMC uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "DIVIDEND active_return_5s +2.71%, beta 0.084",
+        "Shallow max drawdown -1.18%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Rate spike hits dividend equities",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Risk-on rally favors high-beta over defensives",
+      "time_window_catalyst": "Defensive rotation into FOMC week"
+    },
+    {
+      "continuation_case": "Defensive demand into FOMC",
+      "decision": "rejected",
+      "evidence": [
+        "Utilities active_return_5s +2.55%",
+        "Return_3s +1.68%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "10yr yield spikes above 4.8%",
+      "option_id": "UTILITIES",
+      "reversal_case": "Rising 10yr yield at 4.65% pressures rate-sensitive utilities",
+      "time_window_catalyst": "FOMC and rate moves"
+    },
+    {
+      "continuation_case": "Oil momentum continues on tight supply",
+      "decision": "rejected",
+      "evidence": [
+        "USO return_3s +6.23%, active_return_5s +9.47%",
+        "Volatility 48.18% very high"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Crude drops below $88 (capped energy cluster)",
+      "option_id": "OIL",
+      "reversal_case": "Inventory builds reverse the rally",
+      "time_window_catalyst": "EIA inventory reports"
+    },
+    {
+      "continuation_case": "Defensive factor leadership into FOMC",
+      "decision": "rejected",
+      "evidence": [
+        "LOW_VOL active_return_5s +2.13%",
+        "Negative SPY beta -0.326"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Strong risk-on rally",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Risk-on rotation hurts low-vol",
+      "time_window_catalyst": "FOMC week volatility"
+    },
+    {
+      "continuation_case": "Duration bid if FOMC dovish",
+      "decision": "rejected",
+      "evidence": [
+        "10yr yield 4.65% vs 4.63%",
+        "IEF volatility 4.60%"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Yields break higher on hawkish Fed",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Yields rising on elevated inflation",
+      "time_window_catalyst": "FOMC July 29"
+    },
+    {
+      "continuation_case": "Safe-haven bid into FOMC",
+      "decision": "rejected",
+      "evidence": [
+        "IAU return_3s +2.90%, active_return_5s +2.83%",
+        "Distance from 52w high -23.51%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Dollar rally accelerates",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar strength (UUP +1.69%) pressures gold",
+      "time_window_catalyst": "FOMC and dollar moves"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.25,
+  "is_official_score": true,
+  "key_risks": [
+    "Hawkish FOMC on July 29 triggers broad equity drawdown",
+    "Oil reverses sharply on inventory builds hurting energy sleeve"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Brent crude reverses below $88 or crude inventories build sharply",
+      "option_id": "ENERGY",
+      "rationale": "Strong active return with Brent up 3.4% and oil momentum; low beta diversifier ahead of tight energy inventories.",
+      "time_window_catalyst": "Oil price momentum and EIA inventory data before exit close"
+    },
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Hawkish FOMC surprise triggers equity selloff",
+      "option_id": "SP500",
+      "rationale": "Core broad exposure through FOMC week; strong Alphabet earnings support large-cap sentiment.",
+      "time_window_catalyst": "FOMC statement July 29 before weekly close"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Sharp rate-driven selloff in dividend equities",
+      "option_id": "DIVIDEND",
+      "rationale": "Highest recent active return (+2.71%) with very low beta and shallow drawdown; defensive tilt into FOMC.",
+      "time_window_catalyst": "Defensive rotation into FOMC uncertainty"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.6,
+  "portfolio_rationale": "Balanced portfolio anchoring on SPY core while tilting toward energy strength and defensive dividend equities that showed strong recent relative returns with low volatility into an FOMC week.",
+  "provider": "anthropic",
+  "rationale_summary": "Energy momentum plus defensive dividend leadership complement an SPY core into a rate-decision week.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-22-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27603,
+    "latency_seconds": 37.75730536901392,
+    "output_tokens": 2384,
+    "total_tokens": 29987
+  }
+}

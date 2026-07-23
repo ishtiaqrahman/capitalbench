@@ -1,0 +1,184 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Stable growth and contained inflation support equity prices through August.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7498.96 on July 22",
+        "June nonfarm payrolls +57k with downward revisions"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "SP500",
+      "reversal_case": "Higher than expected CPI or weak GDP triggers risk-off move.",
+      "time_window_catalyst": "FOMC statement July 29 and GDP release July 30"
+    },
+    {
+      "continuation_case": "Elevated oil inventories and Middle East uncertainty keep prices supported.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude rose 3.4% to $94.07",
+        "XLE active return +9.10% over 21 days"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent crude falls below $90",
+      "option_id": "ENERGY",
+      "reversal_case": "Demand weakness shown in product supplied data accelerates.",
+      "time_window_catalyst": "EIA inventory reports and Brent crude levels"
+    },
+    {
+      "continuation_case": "Defensive sector benefits from rate stability and earnings resilience.",
+      "decision": "selected",
+      "evidence": [
+        "XLV active return +5.84% over 21 days",
+        "CPI ex-food-energy up 2.6% year-over-year"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Unemployment rate rises above 4.5%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Healthcare policy or regulatory headlines weigh on valuations.",
+      "time_window_catalyst": "July employment and CPI releases"
+    },
+    {
+      "continuation_case": "Higher yields support net interest margins for banks.",
+      "decision": "selected",
+      "evidence": [
+        "XLF active return +3.97% over 21 days",
+        "10-year Treasury yield at 4.65%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "10-year yield drops below 4.4%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield curve flattens sharply on growth concerns.",
+      "time_window_catalyst": "Bank of England and FOMC decisions"
+    },
+    {
+      "continuation_case": "European growth stabilizes ahead of ECB decision.",
+      "decision": "rejected",
+      "evidence": [
+        "VEA 21-day return -3.03%",
+        "ECB policy decision scheduled July 23"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Euro weakens below 1.05 versus USD",
+      "option_id": "DEVELOPED_EX_US",
+      "reversal_case": "ECB signals tighter policy than expected.",
+      "time_window_catalyst": "ECB policy decision July 23"
+    },
+    {
+      "continuation_case": "Safe-haven demand persists amid geopolitical uncertainty.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 5-day return +1.85%",
+        "US dollar index up 0.71% over 5 days"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "US dollar index rises above 105",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger USD and higher real yields pressure gold.",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Short-term rates remain anchored near current levels.",
+      "decision": "rejected",
+      "evidence": [
+        "BIL low volatility rank 1.000",
+        "Federal funds target range held at 3.50%-3.75%"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.3,
+      "forecast_low_pct": -0.2,
+      "invalidation_condition": "Fed signals cut at July meeting",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Unexpected rate cut shifts yield curve.",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "continuation_case": "Broad market participation improves with small-cap relative strength.",
+      "decision": "rejected",
+      "evidence": [
+        "VTI 5-day return -0.95%",
+        "Equal-weight RSP active return +1.07% over 21 days"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Nasdaq Composite falls below 25,000",
+      "option_id": "TOTAL_US_MARKET",
+      "reversal_case": "Mega-cap earnings disappointment spills over to broader indices.",
+      "time_window_catalyst": "Alphabet and Tesla earnings follow-through"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.35,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC policy surprise on July 29",
+    "Oil price reversal below $90",
+    "Weaker than expected Q2 GDP print"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 60,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "SP500",
+      "rationale": "Broad diversified US equity exposure with neutral base case for the one-month window.",
+      "time_window_catalyst": "FOMC statement July 29 and GDP release July 30"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Brent crude falls below $90",
+      "option_id": "ENERGY",
+      "rationale": "Recent oil price strength and inventory data support relative outperformance.",
+      "time_window_catalyst": "EIA inventory reports and Brent crude levels"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Unemployment rate rises above 4.5%",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive characteristics and recent relative performance versus SPY.",
+      "time_window_catalyst": "July employment and CPI releases"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "10-year yield drops below 4.4%",
+      "option_id": "FINANCIALS",
+      "rationale": "Yield curve and rate environment supportive for sector.",
+      "time_window_catalyst": "Bank of England and FOMC decisions"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.15,
+  "portfolio_rationale": "60% SP500 plus three holdings with base forecasts exceeding SPY to capture modest alpha from energy and defensive sectors.",
+  "provider": "xai",
+  "rationale_summary": "Energy and select defensive sectors show stronger base-case returns than SPY over the one-month horizon based on recent price action and macro data.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-22-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15666,
+    "latency_seconds": 28.44077837606892,
+    "output_tokens": 1795,
+    "reasoning_tokens": 813,
+    "total_tokens": 18274
+  }
+}

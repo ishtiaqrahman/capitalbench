@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.15,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad U.S. equities remain near highs with only a shallow 52-week-high distance and could benefit if FOMC communication is benign.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 was down 0.1% at the July 22 close.",
+        "SPY return was -0.98% over 5 sessions and 0.41% over 21 sessions.",
+        "SPY volatility_21s was 11.70% and max_drawdown_21s was -2.07%."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "SPY breaks materially below its recent drawdown range or underperforms defensive and cash-like assets into the FOMC.",
+      "option_id": "SP500",
+      "reversal_case": "Weak payrolls, elevated inflation readings, and higher Treasury yields could weigh on broad equity risk appetite.",
+      "time_window_catalyst": "July 29 FOMC statement and press conference before the scoring close."
+    },
+    {
+      "continuation_case": "Strong Alphabet fundamentals can trigger sector follow-through after a pullback, with quality evidence showing both prior strength and recent reset.",
+      "decision": "selected",
+      "evidence": [
+        "Alphabet reported second-quarter revenue up 24% year over year after the close.",
+        "Google Cloud revenue rose 82% and Alphabet operating margin improved to 34% from 32%.",
+        "COMMUNICATIONS had quality evidence score 0.830, with prior active rank 0.925 and recent pullback rank 0.955."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Alphabet-led communication services fail to hold positive relative performance versus SPY after the earnings reaction.",
+      "option_id": "COMMUNICATIONS",
+      "reversal_case": "The sector's active_return_5s was -2.71%, and a sell-the-news reaction or growth-stock risk-off move could extend underperformance.",
+      "time_window_catalyst": "Market reaction to Alphabet's after-close second-quarter results during the scoring week."
+    },
+    {
+      "continuation_case": "Oil-price strength and positive sector trend can continue over one week if supply-risk and inflation hedging remain dominant.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude rose 3.4% to $94.07 per barrel after trading above $95.",
+        "ENERGY active_return_5s was 5.76% and prior_16s_active_return was 3.11%.",
+        "ENERGY quality evidence score was 0.492, with very low recent pullback rank 0.015."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.6,
+      "invalidation_condition": "Brent crude reverses materially or the sector gives back its recent active breakout versus SPY.",
+      "option_id": "ENERGY",
+      "reversal_case": "EIA reported crude, gasoline, distillate, and total commercial petroleum inventory builds, which could undercut the oil move.",
+      "time_window_catalyst": "Continuation of crude strength after Brent rose 3.4% to $94.07 and traded above $95."
+    },
+    {
+      "continuation_case": "Broad commodity momentum and high recent volume can persist if inflation and energy-linked flows remain supportive.",
+      "decision": "selected",
+      "evidence": [
+        "BROAD_COMMODITIES active_return_5s was 4.71% and prior_16s_active_return was 3.55%.",
+        "Volume_zscore_5v60 was 3.705, the table's strongest positive volume signal among assessed candidates.",
+        "Brent crude rose 3.4%, while June CPI was down 0.4% for the month but still up 3.5% over 12 months."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "Commodity prices broadly reverse or PDBC loses relative strength versus SPY.",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Recent strength may be extended, and inventory builds or softer global demand signals could reverse commodity prices.",
+      "time_window_catalyst": "Commodity follow-through after crude and broad commodity strength into the entry close."
+    },
+    {
+      "continuation_case": "Prior relative strength and a high evidence score can continue if yields remain firm and FOMC messaging does not pressure bank and capital-market sentiment.",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS quality evidence score was 0.787, with prior active rank 0.896 and pullback rank 0.731.",
+        "FINANCIALS prior_16s_active_return was 3.93%.",
+        "The 10-year Treasury yield was 4.65%, compared with 4.63% on July 21."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Treasury yields fall sharply or financials underperform SPY after the FOMC communication.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "A dovish yield decline, credit concerns, or risk-off reaction around FOMC could hurt financials.",
+      "time_window_catalyst": "FOMC meeting and press conference on July 29 before the weekly close, affecting yield-curve and bank sentiment."
+    },
+    {
+      "continuation_case": "Recent breadth improvement can persist if investors rotate away from concentrated mega-cap exposure into broader large-cap participation.",
+      "decision": "selected",
+      "evidence": [
+        "RSP outperformed SPY by 0.85% over 5 sessions and 1.07% over 21 sessions.",
+        "EQUAL_WEIGHT_SP500 quality evidence score was 0.651 with low volatility rank 0.776 and shallow drawdown rank 0.866.",
+        "RSP volatility_21s was 9.80%, below SPY's 11.70%."
+      ],
+      "forecast_base_pct": 0.28,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Mega-cap concentration resumes and RSP's active return versus SPY turns negative during the week.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "If mega-cap technology resumes leadership, equal weight can lag SPY despite lower volatility.",
+      "time_window_catalyst": "Continuation of recent market-breadth improvement into the FOMC week."
+    },
+    {
+      "continuation_case": "Defensive sector leadership with strong prior active return could continue if broad risk appetite weakens into FOMC.",
+      "decision": "rejected",
+      "evidence": [
+        "HEALTHCARE prior_16s_active_return was 4.08%.",
+        "HEALTHCARE active_return_5s was 1.70%.",
+        "HEALTHCARE quality evidence score was 0.569, with prior active rank 0.910."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.1,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "Healthcare continues negative short-term momentum and underperforms SPY during the week.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "The sector's return_3s was -1.03% and volatility_21s was 21.85%, so recent defensive strength may be fading.",
+      "time_window_catalyst": "Potential defensive rotation around the July 29 FOMC communication."
+    },
+    {
+      "continuation_case": "Dollar strength can continue if firm U.S. yields and FOMC uncertainty support safe-haven or rate-differential demand.",
+      "decision": "rejected",
+      "evidence": [
+        "US_DOLLAR active_return_5s was 1.69%.",
+        "UUP return_5s was 0.71% and return_21s was 0.32%.",
+        "US_DOLLAR had low volatility rank 0.866 and shallow drawdown rank 0.940."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.7,
+      "forecast_low_pct": -0.4,
+      "invalidation_condition": "UUP loses recent gains and turns negative versus SPY-adjusted cash proxies before the FOMC close.",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "The prior_16s_active_return was -1.79%, and a dovish FOMC or stronger non-U.S. policy signal could weaken the dollar.",
+      "time_window_catalyst": "ECB decision on July 23 and FOMC decision on July 29 before the weekly close."
+    }
+  ],
+  "confidence": 0.57,
+  "expected_alpha_vs_sp500_pct": 0.2595,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC communication on July 29 tightens financial conditions and pressures equities before the close.",
+    "Crude oil and commodity strength reverses after inventory data showed total commercial petroleum inventories up 11.6 million barrels.",
+    "Alphabet earnings reaction fades or is offset by broader growth-stock weakness.",
+    "Recent breadth leadership reverses back toward SPY's mega-cap concentration."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Alphabet-led communication services fail to hold positive relative performance versus SPY after the earnings reaction.",
+      "option_id": "COMMUNICATIONS",
+      "rationale": "Alphabet's strong after-close revenue, margin, search, YouTube, and cloud growth provide a near-window mega-cap catalyst for communication services after a recent relative pullback.",
+      "time_window_catalyst": "Market reaction to Alphabet's after-close second-quarter results during the scoring week."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "Brent crude reverses materially or the sector gives back its recent active breakout versus SPY.",
+      "option_id": "ENERGY",
+      "rationale": "Energy has strong prior and recent active performance with crude prices up sharply; sector exposure is less extreme than direct oil while still benefiting from oil momentum.",
+      "time_window_catalyst": "Continuation of crude strength after Brent rose 3.4% to $94.07 and traded above $95."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "Commodity prices broadly reverse or PDBC loses relative strength versus SPY.",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Broad commodities combine strong recent and prior active returns with elevated volume, offering inflation and commodity momentum exposure outside pure energy.",
+      "time_window_catalyst": "Commodity follow-through after crude and broad commodity strength into the entry close."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Treasury yields fall sharply or financials underperform SPY after the FOMC communication.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials show strong prior active return and high quality evidence, with low correlation to SPY and moderate volatility supporting a one-week diversifier with upside.",
+      "time_window_catalyst": "FOMC meeting and press conference on July 29 before the weekly close, affecting yield-curve and bank sentiment."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.28,
+      "invalidation_condition": "Mega-cap concentration resumes and RSP's active return versus SPY turns negative during the week.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Equal-weight S&P has outperformed SPY over 5 and 21 sessions with lower volatility and shallow drawdown, supporting modest breadth exposure.",
+      "time_window_catalyst": "Continuation of recent market-breadth improvement into the FOMC week."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.4095,
+  "portfolio_rationale": "The portfolio emphasizes candidates with near-week catalysts or cross-sectional evidence above SPY's base forecast while capping non-benchmark clusters. It balances Alphabet-related communications upside, commodity and energy momentum, financials around FOMC, and broader equal-weight breadth.",
+  "provider": "openai",
+  "rationale_summary": "SPY's base case is modestly positive but not the strongest active forecast. Selected holdings each clear the SPY hurdle and span technology/growth, energy, commodities, financials, and diversified U.S. equity exposure.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-22-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15448,
+    "latency_seconds": 40.99890528107062,
+    "output_tokens": 2707,
+    "reasoning_tokens": 216,
+    "total_tokens": 18155
+  }
+}

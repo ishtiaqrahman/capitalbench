@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Mild bounce from recent soft patch if FOMC is neutral and mega-cap earnings support holds",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 0.1% on July 22 at 7498.96",
+        "spy_return_5s at -0.98% and distance_52w_high -1.35%",
+        "FOMC decision and press conference scheduled July 29 before scoring close"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Break below recent range on hawkish Fed or risk-off",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish Fed or weak follow-through data extends the 5-session decline",
+      "time_window_catalyst": "FOMC statement 2:00 p.m. ET July 29"
+    },
+    {
+      "continuation_case": "Geopolitical/supply uncertainty and recent momentum keep crude bid into week-end",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude rose 3.4% to $94.07 after trading above $95",
+        "uso_return_5s +8.49% and active_return_5s +9.47%",
+        "EIA commercial crude inventories up 2.0 million barrels week ended July 17"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Brent sustained drop below $90 or large unexpected inventory surge",
+      "option_id": "OIL",
+      "reversal_case": "Inventory builds or demand soft patch trigger sharp mean-reversion after large 5-day gain",
+      "time_window_catalyst": "Crude price action and any supply headlines before July 29 close"
+    },
+    {
+      "continuation_case": "Oil persistence and positive active trend support further outperformance vs SPY",
+      "decision": "selected",
+      "evidence": [
+        "XLE active_return_5s +5.76% and prior_16s_active_return +3.11%",
+        "Brent strength and energy sector linkage to crude",
+        "quality evidence score 0.492 with elevated prior active rank"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "XLE underperformance if oil falls sharply or beta to risk-off rises",
+      "option_id": "ENERGY",
+      "reversal_case": "Crude reversal or profit-taking after strong relative run",
+      "time_window_catalyst": "Oil price continuation and FOMC macro clarity"
+    },
+    {
+      "continuation_case": "Broad commodity momentum and energy complex strength extend",
+      "decision": "selected",
+      "evidence": [
+        "PDBC return_3s +3.25% and active_return_5s +4.71%",
+        "volume_zscore_5v60 elevated at 3.705",
+        "prior_16s_active_return +3.55%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Sharp PDBC drawdown on stronger dollar or demand fears",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "USD strength or growth scare hits industrial and energy commodities",
+      "time_window_catalyst": "Commodity complex follow-through alongside oil into July 29"
+    },
+    {
+      "continuation_case": "Strong Alphabet print drives sector re-rating and catch-up after recent pullback",
+      "decision": "selected",
+      "evidence": [
+        "Alphabet Q2 revenue $119.8B up 24%, Cloud +82% to $24.8B, operating margin 34%",
+        "XLC quality evidence score 0.830 (high prior active and pullback ranks)",
+        "Communications prior_16s_active_return +4.70%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Negative post-earnings drift or XLC break of recent lows",
+      "option_id": "COMMUNICATIONS",
+      "reversal_case": "Unrealized gains volatility or broader growth selloff offsets earnings beat",
+      "time_window_catalyst": "Market digestion of Alphabet results through July 29"
+    },
+    {
+      "continuation_case": "Stable rates path and prior relative strength support financials",
+      "decision": "selected",
+      "evidence": [
+        "XLF quality evidence score 0.787 with high prior active rank 0.896",
+        "prior_16s_active_return +3.93%",
+        "FOMC meeting concludes July 29 with statement and press conference"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "Hawkish surprise or financial sector relative breakdown",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Hawkish Fed or curve/credit concerns pressure banks and brokers",
+      "time_window_catalyst": "FOMC decision and presser July 29"
+    },
+    {
+      "continuation_case": "Breadth recovery continues if equal-weight leadership persists",
+      "decision": "rejected",
+      "evidence": [
+        "rsp_minus_spy_5s +0.85% and rsp_return_21s +1.47%",
+        "quality evidence score 0.651",
+        "lower volatility_21s 9.80% vs SPY"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "RSP active return turns sharply negative vs SPY",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap rebound re-concentrates market and RSP lags",
+      "time_window_catalyst": "FOMC and any breadth confirmation before July 29"
+    },
+    {
+      "continuation_case": "High quality and prior trend resume after pullback",
+      "decision": "rejected",
+      "evidence": [
+        "quality evidence score 0.805 with top prior active rank 1.000",
+        "prior_16s_active_return +10.07%",
+        "recent active_return_5s -3.06% pullback"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Further relative underperformance or break of support",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "Continued high-vol tech weakness or factor rotation away from momentum",
+      "time_window_catalyst": "None identified specific to cybersecurity before July 29"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.935,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC hawkish surprise triggering broad equity and commodity risk-off on July 29",
+    "Sudden crude inventory or demand disappointment reversing oil/energy gains",
+    "Post-earnings fade in Alphabet/communications names",
+    "Elevated single-cluster (energy) volatility within the 50% cap"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Sharp reversal in crude with Brent falling below recent range on demand or supply news",
+      "option_id": "OIL",
+      "rationale": "Strong recent oil price momentum and inventory/build data support continued energy strength into FOMC week.",
+      "time_window_catalyst": "Elevated Brent near $94-95 and weekly EIA inventory dynamics before July 29 close"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Oil price collapse or broad risk-off that decouples XLE from crude",
+      "option_id": "ENERGY",
+      "rationale": "Sector levered to oil strength with positive prior active returns and quality support relative to broad market.",
+      "time_window_catalyst": "Crude price persistence and energy earnings/geopolitical supply uncertainty into FOMC"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Broad commodity selloff or USD spike reversing PDBC gains",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Diversified commodity exposure capturing oil-linked and broader commodity momentum with elevated volume.",
+      "time_window_catalyst": "Continuation of commodity complex strength alongside energy into end-July"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Negative reaction to Alphabet details or broader tech/growth selloff",
+      "option_id": "COMMUNICATIONS",
+      "rationale": "Alphabet post-close beat with strong Cloud and services growth provides near-term catalyst for sector.",
+      "time_window_catalyst": "Alphabet Q2 results digestion and any follow-through in large-platform names before July 29"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Hawkish FOMC surprise or credit/financial stress signals",
+      "option_id": "FINANCIALS",
+      "rationale": "Solid prior active trend and quality score with potential rate-path clarity from FOMC.",
+      "time_window_catalyst": "FOMC statement and press conference on July 29 before scoring close"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.235,
+  "portfolio_rationale": "Portfolio concentrates in energy/commodities where price and inventory evidence is strongest while adding Alphabet-driven communications and financials for FOMC week diversification. All active legs carry base forecasts above SPY and respect the 50% cluster cap.",
+  "provider": "xai",
+  "rationale_summary": "Energy complex leads on crude strength; communications benefits from Alphabet beat; financials offer FOMC optionality. Equal-weight and pure SPY lag the selected bases.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-22-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16522,
+    "latency_seconds": 41.789759376086295,
+    "output_tokens": 2621,
+    "reasoning_tokens": 839,
+    "total_tokens": 19982
+  }
+}
