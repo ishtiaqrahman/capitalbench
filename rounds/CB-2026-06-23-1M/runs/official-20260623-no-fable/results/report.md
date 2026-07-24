@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-06-23-1M / official-20260623-no-fable
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-06-23-1M
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-20260623-no-fable
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench CB-2026-06-23-1M
+- Description: One-month market allocation evaluation round.
+- Decision date: 2026-06-23
 - Decision deadline: 2026-06-24T02:30:00Z
 - Horizon: one month
-- Official run ID: official-20260623-no-fable
-- Mock: no
+- Entry date: 2026-06-23
+- Exit date: 2026-07-23
+- Entry rule: Use adjusted close prices on Tuesday, June 23, 2026 as the post-close entry snapshot, supplied in prices/entry_prices.csv.
+- Exit rule: Use adjusted close prices on Thursday, July 23, 2026 as the one-month exit snapshot, calculated after regular trading ends and supplied in prices/exit_prices.csv.
+- Options: 70
 
 ## Model Decisions
 
@@ -93,43 +108,88 @@
 | SOUTH_KOREA | South Korea Equities | 192.2 | 173.86 | -0.0954214360041622 | 69 |
 | SOLAR | Solar Energy | 58.56 | 52.849998474121094 | -0.09750685665776826 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| google-gemini-3-1-pro | portfolio | SP500 | 5 | 0.65 | 0.006270618064832645 | 0.014124372848936018 | 0.007853754784103373 | 0.23960562894865517 |  | True | True |
-| xai-grok-4-3 | portfolio | SMALL_CAP | 5 | 0.65 | -0.010937300765641922 | 0.0008553869860437255 | -0.005415231078788919 | 0.2528746148115475 |  | False | True |
-| openai-gpt-5-5 | portfolio | BIOTECH | 5 | 0.58 | 0.03536693191865603 | -0.0025723656442730226 | -0.008842983709105667 | 0.25630236744186424 |  | False | False |
-| anthropic-claude-opus-4-7 | portfolio | SMALL_CAP | 5 | 0.55 | -0.010937300765641922 | -0.008352950269671278 | -0.014623568334503923 | 0.26208295206726245 |  | False | False |
-| anthropic-claude-opus-4-8 | portfolio | MOMENTUM | 5 | 0.55 | -0.04785295067222184 | -0.014853071563470512 | -0.021123689628303157 | 0.2685830733610617 |  | False | False |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-opus-4-7 | SMALL_CAP | 25.0 | -0.010937300765641922 | -0.0027343251914104805 | Small caps showing relative strength amid tech selloff, positive momentum with +3.82% 30d. |
+| anthropic-claude-opus-4-7 | MOMENTUM | 20.0 | -0.04785295067222184 | -0.00957059013444437 | Strong momentum factor (+8.73% 30d) likely to continue as leadership broadens. |
+| anthropic-claude-opus-4-7 | BIOTECH | 20.0 | 0.03536693191865603 | 0.007073386383731207 | XBI breaking out +11.78% 30d, +8.74% 7d signals sector rotation and risk appetite return. |
+| anthropic-claude-opus-4-7 | INDUSTRIALS | 15.0 | 0.02127422083304098 | 0.003191133124956147 | Solid breadth participation, defensive cyclical with steady gains. |
+| anthropic-claude-opus-4-7 | LONG_TREASURY | 20.0 | -0.03156277226251891 | -0.0063125544525037824 | Hedge for equity drawdown; TLT positive 30d as rates likely peak with Fed at 3.50-3.75%. |
+| anthropic-claude-opus-4-8 | MOMENTUM | 25.0 | -0.04785295067222184 | -0.01196323766805546 | Strong relative momentum (+8.7% 30d) and positive 7d return amid mega-cap tech weakness; broad factor exposure with persistence. |
+| anthropic-claude-opus-4-8 | INDUSTRIALS | 20.0 | 0.02127422083304098 | 0.004254844166608196 | Solid breadth-driven cyclical with +4% 30d, defense/aerospace tailwinds and domestic resilience. |
+| anthropic-claude-opus-4-8 | SMALL_CAP | 20.0 | -0.010937300765641922 | -0.0021874601531283846 | Best 7d/30d breadth participation (+1.1%/+3.8%); benefits from broadening rally away from concentrated mega-cap tech. |
+| anthropic-claude-opus-4-8 | BIOTECH | 15.0 | 0.03536693191865603 | 0.005305039787798405 | Sharp positive momentum (+8.7% 7d, +11.8% 30d) suggesting M&A/data catalysts and idiosyncratic strength uncorrelated to tech selloff. |
+| anthropic-claude-opus-4-8 | TAIWAN | 20.0 | -0.05131128848346633 | -0.010262257696693268 | Semiconductor supply chain strength with positive 7d (+1.4%) and strong 30d (+8.7%) despite Korea/Micron weakness; quality chip exposure. |
+| google-gemini-3-1-pro | SP500 | 40.0 | 0.006270618064832645 | 0.002508247225933058 | Core broad market exposure to capture potential upside while maintaining diversification. |
+| google-gemini-3-1-pro | SHORT_TREASURY | 20.0 | 0.002928030634333556 | 0.0005856061268667113 | Provides a cash-like buffer with yield to mitigate downside risk in a volatile environment. |
+| google-gemini-3-1-pro | HEALTHCARE | 20.0 | 0.06084901065452919 | 0.012169802130905839 | Defensive sector exposure that can perform well during periods of economic uncertainty. |
+| google-gemini-3-1-pro | GOLD | 10.0 | -0.015259258685129895 | -0.0015259258685129896 | Safe-haven asset to hedge against inflation and geopolitical risks. |
+| google-gemini-3-1-pro | US_DOLLAR | 10.0 | 0.0038664323374340004 | 0.00038664323374340006 | Hedge against potential currency fluctuations and global market stress. |
+| openai-gpt-5-5 | BIOTECH | 30.0 | 0.03536693191865603 | 0.01061007957559681 | Strongest recent 7-day and 30-day mechanical momentum in the universe, with potential for continued risk-on flows and idiosyncratic catalysts over the one-month window. |
+| openai-gpt-5-5 | MOMENTUM | 25.0 | -0.04785295067222184 | -0.01196323766805546 | Broad exposure to stocks with persistent relative strength, which has outperformed over 30 days, 6 months, and 1 year and may continue if trend-following flows persist. |
+| openai-gpt-5-5 | REGIONAL_BANKS | 20.0 | 0.02776258205689275 | 0.00555251641137855 | Recent positive momentum, strong domestic retail data, and higher long-end yields can support bank earnings sentiment if credit fears stay contained. |
+| openai-gpt-5-5 | SMALL_CAP | 15.0 | -0.010937300765641922 | -0.0016405951148462882 | Small caps have shown relative strength versus the S&P 500, supported by domestic growth sensitivity and improving market breadth beyond mega-cap technology. |
+| openai-gpt-5-5 | TAIWAN | 10.0 | -0.05131128848346633 | -0.005131128848346634 | Maintains selective semiconductor-linked international exposure with strong trailing momentum while limiting concentration after recent chip-sector volatility. |
+| xai-grok-4-3 | SMALL_CAP | 30.0 | -0.010937300765641922 | -0.0032811902296925764 | Positive 30d return of 3.82% and breadth favoring non-mega caps after tech-led decline. |
+| xai-grok-4-3 | BIOTECH | 25.0 | 0.03536693191865603 | 0.008841732979664008 | Strong recent momentum with 11.78% 30d return amid favorable risk appetite signals. |
+| xai-grok-4-3 | MOMENTUM | 20.0 | -0.04785295067222184 | -0.00957059013444437 | Leading 30d return of 8.73% indicating persistence in recent winners over one-month window. |
+| xai-grok-4-3 | SMALL_VALUE | 15.0 | 0.013927841098849258 | 0.0020891761648273886 | 3.32% 30d return and domestic growth sensitivity in post-selloff environment. |
+| xai-grok-4-3 | REGIONAL_BANKS | 10.0 | 0.02776258205689275 | 0.002776258205689275 | 6.02% 30d return with potential yield-curve and credit improvement tailwinds. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| google-gemini-3-1-pro | SP500 | 5 | 0.65 | 0.006270618064832645 | 0.014124372848936018 | 0.007853754784103373 | 0.23960562894865517 |  | True | True |
+| xai-grok-4-3 | SMALL_CAP | 5 | 0.65 | -0.010937300765641922 | 0.0008553869860437255 | -0.005415231078788919 | 0.2528746148115475 |  | False | True |
+| openai-gpt-5-5 | BIOTECH | 5 | 0.58 | 0.03536693191865603 | -0.0025723656442730226 | -0.008842983709105667 | 0.25630236744186424 |  | False | False |
+| anthropic-claude-opus-4-7 | SMALL_CAP | 5 | 0.55 | -0.010937300765641922 | -0.008352950269671278 | -0.014623568334503923 | 0.26208295206726245 |  | False | False |
+| anthropic-claude-opus-4-8 | MOMENTUM | 5 | 0.55 | -0.04785295067222184 | -0.014853071563470512 | -0.021123689628303157 | 0.2685830733610617 |  | False | False |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | 2218976e7d767f6963091d4a175346e7c2dea00a579bff2e03372b14806c8827 |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | 0e5a222ebba001788946308d0e0b4c71b9e1bdc4f2882aad00ed1514ecaa5c5f |
+| manifest.yaml | 6f290901006ce5354f948ab2681ca2ecf171b0a212abb566a42fd2928a39e998 |
+| market_data/universe_trailing_returns.csv | 48ac9b3cff9bf0458bdbff994bc3d106780f9a050279bc1a57b5549e16624493 |
+| market_data/universe_trailing_returns.md | 084f6c13c8d304543ebbfba78c4684ef0d221555120a2655044d984436323ce4 |
+| market_data/universe_trailing_returns.json | a4ccb1046396a7bd296806faf056e992b2dd8486a8eed5b637704928b1183421 |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | 4a7bfbda9cd8d27396df783c7c3939d08fe2489f225921ff7cc13bbd82ba2b12 | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | e9947e280d4eea4a5a90adc9b1211dbb963be8ee9a78953e80e9410928e2a6ea | yes |
+| Final briefing | research/final_briefing.md | model-facing | 2218976e7d767f6963091d4a175346e7c2dea00a579bff2e03372b14806c8827 | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-06-24-1M has no scored official run.
-- Round CB-2026-06-25-1M has no scored official run.
-- Round CB-2026-06-26-1M has no scored official run.
-- Round CB-2026-06-29-1M has no scored official run.
-- Round CB-2026-06-30-1M has no scored official run.
-- Round CB-2026-07-01-1M has no scored official run.
-- Round CB-2026-07-02-1M has no scored official run.
-- Round CB-2026-07-06-1M has no scored official run.
-- Round CB-2026-07-07-1M has no scored official run.
-- Round CB-2026-07-08-1M has no scored official run.
-- Round CB-2026-07-09-1M has no scored official run.
-- Round CB-2026-07-10-1M has no scored official run.
-- Round CB-2026-07-13-1M has no scored official run.
-- Round CB-2026-07-14-1M has no scored official run.
-- Round CB-2026-07-15-1M has no scored official run.
-- Round CB-2026-07-16-1M has no scored official run.
-- Round CB-2026-07-17-1M has no scored official run.
-- Round CB-2026-07-21-1M has no scored official run.
-- Round CB-2026-07-22-1M has no scored official run.
-- Round example-round has no scored official run.
-- Round example-round-2 has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.

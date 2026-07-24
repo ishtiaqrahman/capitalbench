@@ -8,14 +8,12 @@ Each round is a separate market decision with its own declared scoring window. O
 
 | Rank | Model | Provider | Resolved Rounds | Avg Return | Avg S&P Return | Avg Alpha | Hit Rate vs S&P | Avg Regret | Cumulative Return | Cumulative S&P Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | openai-gpt-5-6-sol | openai | 4 | 0.38% | -0.99% | 1.36% | 50.00% | 8.85% | 1.23% | -3.89% |
-| 2 | xai-grok-4-5 | xai | 6 | 0.40% | -0.47% | 0.87% | 66.67% | 9.12% | 1.89% | -2.80% |
-| 3 | xai-grok-4-3 | xai | 33 | 0.08% | -0.01% | 0.09% | 48.48% | 8.90% | 0.56% | -0.60% |
-| 4 | anthropic-claude-fable-5 | anthropic | 13 | 0.00% | 0.16% | -0.15% | 46.15% | 9.76% | -0.40% | 1.99% |
-| 5 | anthropic-claude-opus-4-8 | anthropic | 31 | -0.47% | -0.09% | -0.38% | 38.71% | 9.25% | -14.67% | -3.18% |
-| 6 | anthropic-claude-opus-4-7 | anthropic | 33 | -0.51% | -0.01% | -0.50% | 39.39% | 9.49% | -16.80% | -0.60% |
-| 7 | openai-gpt-5-5 | openai | 33 | -0.64% | -0.01% | -0.64% | 36.36% | 9.63% | -21.87% | -0.60% |
-| 8 | google-gemini-3-1-pro | google | 33 | -0.76% | -0.01% | -0.76% | 39.39% | 9.75% | -24.87% | -0.60% |
+| 1 | xai-grok-4-3 | xai | 19 | -1.37% | -0.14% | -1.23% | 47.37% | 18.56% | -24.25% | -2.80% |
+| 2 | anthropic-claude-opus-4-7 | anthropic | 19 | -2.07% | -0.14% | -1.94% | 42.11% | 19.26% | -34.02% | -2.80% |
+| 3 | anthropic-claude-opus-4-8 | anthropic | 16 | -2.15% | 0.01% | -2.16% | 31.25% | 20.35% | -30.10% | 0.01% |
+| 4 | google-gemini-3-1-pro | google | 19 | -2.53% | -0.14% | -2.39% | 21.05% | 19.72% | -39.77% | -2.80% |
+| 5 | anthropic-claude-fable-5 | anthropic | 2 | -1.11% | 2.03% | -3.14% | 0.00% | 22.26% | -2.28% | 4.10% |
+| 6 | openai-gpt-5-5 | openai | 19 | -4.74% | -0.14% | -4.60% | 26.32% | 21.93% | -61.40% | -2.80% |
 
 ## Cumulative Stability Leaderboard
 
@@ -25,39 +23,25 @@ _No rows._
 
 | Round | Official Run | Stability Run | Official Included | Stability Included | Warnings |
 | --- | --- | --- | --- | --- | --- |
-| CB-2026-05-24-1W | official-20260524-1W |  | yes | no |  |
-| CB-2026-05-27-1W | official-20260527-1W |  | yes | no |  |
-| CB-2026-05-28-1W | official-20260528-1W |  | yes | no |  |
-| CB-2026-05-29-1W | official-20260529-1W |  | yes | no |  |
-| CB-2026-06-01-1W | official-20260601 |  | yes | no |  |
-| CB-2026-06-02-1W | official-20260602-clean |  | yes | no |  |
-| CB-2026-06-03-1W | official-20260603 |  | yes | no |  |
-| CB-2026-06-05-1W | official-20260605 |  | yes | no |  |
-| CB-2026-06-08-1W | official-20260608 |  | yes | no |  |
-| CB-2026-06-09-1W | official-20260609 |  | yes | no |  |
-| CB-2026-06-12-1W | official-20260612-clean |  | yes | no |  |
-| CB-2026-06-13-1W | official-20260613 |  | yes | no |  |
-| CB-2026-06-15-1W | official-20260615-no-fable |  | yes | no |  |
-| CB-2026-06-16-1W | official-20260616-no-fable |  | yes | no |  |
-| CB-2026-06-17-1W | official-20260617-no-fable |  | yes | no |  |
-| CB-2026-06-18-1W | official-20260618-no-fable |  | yes | no |  |
-| CB-2026-06-22-1W | official-20260622-no-fable |  | yes | no |  |
-| CB-2026-06-23-1W | official-20260623-no-fable |  | yes | no |  |
-| CB-2026-06-24-1W | official-20260624-no-fable |  | yes | no |  |
-| CB-2026-06-25-1W | official-20260625-no-fable |  | yes | no |  |
-| CB-2026-06-26-1W | official-20260626-no-fable |  | yes | no |  |
-| CB-2026-06-29-1W | official-20260629-no-fable |  | yes | no |  |
-| CB-2026-06-30-1W | official-20260630-no-fable-clean |  | yes | no |  |
-| CB-2026-07-01-1W | official-20260701-with-fable |  | yes | no |  |
-| CB-2026-07-02-1W | official-20260702 |  | yes | no |  |
-| CB-2026-07-06-1W | official-20260706 |  | yes | no |  |
-| CB-2026-07-07-1W | official-20260707 |  | yes | no |  |
-| CB-2026-07-08-1W | official-20260708 |  | yes | no |  |
-| CB-2026-07-09-1W | official-20260709 |  | yes | no |  |
-| CB-2026-07-10-1W | official-20260710 |  | yes | no |  |
-| CB-2026-07-13-1W | official-20260713 |  | yes | no |  |
-| CB-2026-07-14-1W | official-20260714 |  | yes | no |  |
-| CB-2026-07-15-1W | official-20260715 |  | yes | no |  |
+| CB-2026-05-10-1M | official-round-1-clean |  | yes | no |  |
+| CB-2026-05-17-1M | official-20260517 |  | yes | no |  |
+| CB-2026-05-24-1M | official-20260524 |  | yes | no |  |
+| CB-2026-05-28-1M | official-20260528-1M |  | yes | no |  |
+| CB-2026-05-29-1M | official-20260529-1M |  | yes | no |  |
+| CB-2026-06-01-1M | official-20260601 |  | yes | no |  |
+| CB-2026-06-02-1M | official-20260602 |  | yes | no |  |
+| CB-2026-06-03-1M | official-20260603 |  | yes | no |  |
+| CB-2026-06-05-1M | official-20260605-r3 |  | yes | no |  |
+| CB-2026-06-08-1M | official-20260608 |  | yes | no |  |
+| CB-2026-06-09-1M | official-20260609 |  | yes | no |  |
+| CB-2026-06-12-1M | official-20260612 |  | yes | no |  |
+| CB-2026-06-13-1M | official-20260613-no-fable |  | yes | no |  |
+| CB-2026-06-15-1M | official-20260615-no-fable |  | yes | no |  |
+| CB-2026-06-16-1M | official-20260616-no-fable |  | yes | no |  |
+| CB-2026-06-17-1M | official-20260617-no-fable |  | yes | no |  |
+| CB-2026-06-18-1M | official-20260618-no-fable |  | yes | no |  |
+| CB-2026-06-22-1M | official-20260622-no-fable |  | yes | no |  |
+| CB-2026-06-23-1M | official-20260623-no-fable |  | yes | no |  |
 
 ## Methodology
 
@@ -82,7 +66,24 @@ The official leaderboard measures the saved public model decision. The stability
 
 ## Warnings
 
-- Round CB-2026-07-16-1W has no scored official or stability runs.
-- Round CB-2026-07-17-1W has no scored official or stability runs.
-- Round CB-2026-07-20-1W has no scored official or stability runs.
-- Round CB-2026-07-21-1W has no scored official or stability runs.
+- Round CB-2026-06-24-1M has no scored official or stability runs.
+- Round CB-2026-06-25-1M has no scored official or stability runs.
+- Round CB-2026-06-26-1M has no scored official or stability runs.
+- Round CB-2026-06-29-1M has no scored official or stability runs.
+- Round CB-2026-06-30-1M has no scored official or stability runs.
+- Round CB-2026-07-01-1M has no scored official or stability runs.
+- Round CB-2026-07-02-1M has no scored official or stability runs.
+- Round CB-2026-07-06-1M has no scored official or stability runs.
+- Round CB-2026-07-07-1M has no scored official or stability runs.
+- Round CB-2026-07-08-1M has no scored official or stability runs.
+- Round CB-2026-07-09-1M has no scored official or stability runs.
+- Round CB-2026-07-10-1M has no scored official or stability runs.
+- Round CB-2026-07-13-1M has no scored official or stability runs.
+- Round CB-2026-07-14-1M has no scored official or stability runs.
+- Round CB-2026-07-15-1M has no scored official or stability runs.
+- Round CB-2026-07-16-1M has no scored official or stability runs.
+- Round CB-2026-07-17-1M has no scored official or stability runs.
+- Round CB-2026-07-21-1M has no scored official or stability runs.
+- Round CB-2026-07-22-1M has no scored official or stability runs.
+- Round example-round has no scored official or stability runs.
+- Round example-round-2 has no scored official or stability runs.
