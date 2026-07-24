@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 0.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Recent weekly decline of 0.7% persists into next week",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.2% on July 23",
+        "Four sectors advanced while decliners outnumbered advancers 2.99:1"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "S&P 500 closes above 7500",
+      "option_id": "SP500",
+      "reversal_case": "Positive GDP and FOMC outcomes lift equities",
+      "time_window_catalyst": "FOMC meeting and July 30 GDP release"
+    },
+    {
+      "continuation_case": "Crude strength from geopolitical and inventory factors holds",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $100.69 up 7%",
+        "EIA showed refinery utilization at 96.1%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Brent crude falls below $95",
+      "option_id": "ENERGY",
+      "reversal_case": "Large inventory build reported",
+      "time_window_catalyst": "FOMC meeting and July 30 GDP release"
+    },
+    {
+      "continuation_case": "Value tilt and low drawdown support relative gains",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS quality evidence score 0.827 highest in table",
+        "Prior active rank 0.910"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "10-year yield rises above 4.80%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield curve flattens sharply",
+      "time_window_catalyst": "FOMC meeting and July 30 GDP release"
+    },
+    {
+      "continuation_case": "Defensive characteristics hold amid volatility",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE prior active rank 0.925",
+        "Positive active return 1.45% over 5 sessions"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -0.6,
+      "invalidation_condition": "CPI reacceleration above 3.8%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Sector rotation into cyclicals accelerates",
+      "time_window_catalyst": "FOMC meeting and July 30 GDP release"
+    },
+    {
+      "continuation_case": "Defense earnings momentum continues",
+      "decision": "selected",
+      "evidence": [
+        "RTX reported Q2 sales up 14% and EPS up 29%",
+        "AEROSPACE_DEFENSE active return 4.85%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -0.4,
+      "invalidation_condition": "Defense budget signals weaken",
+      "option_id": "AEROSPACE_DEFENSE",
+      "reversal_case": "Geopolitical de-escalation reduces spending outlook",
+      "time_window_catalyst": "FOMC meeting and July 30 GDP release"
+    },
+    {
+      "continuation_case": "Equal-weight outperformance versus cap-weighted persists modestly",
+      "decision": "rejected",
+      "evidence": [
+        "EQUAL_WEIGHT_SP500 quality evidence score 0.742",
+        "Recent pullback rank 0.791"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "S&P 500 closes above 7500",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap rebound dominates",
+      "time_window_catalyst": "FOMC meeting and July 30 GDP release"
+    },
+    {
+      "continuation_case": "International equities stabilize after recent pullback",
+      "decision": "rejected",
+      "evidence": [
+        "DEVELOPED_EX_US active return 1.31%",
+        "Quality evidence score 0.416"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "US_DOLLAR index rises above 105",
+      "option_id": "DEVELOPED_EX_US",
+      "reversal_case": "US dollar strengthens further",
+      "time_window_catalyst": "FOMC meeting and July 30 GDP release"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 1.06,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC outcome surprises rates higher",
+    "Oil reversal on inventory build",
+    "Broader equity selloff extends"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Brent crude falls below $95",
+      "option_id": "ENERGY",
+      "rationale": "Brent crude surge and inventory data support near-term strength",
+      "time_window_catalyst": "FOMC meeting and July 30 GDP release"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "10-year yield rises above 4.80%",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong prior active rank and low drawdown support outperformance",
+      "time_window_catalyst": "FOMC meeting and July 30 GDP release"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "CPI reacceleration above 3.8%",
+      "option_id": "HEALTHCARE",
+      "rationale": "High prior active rank with positive recent relative performance",
+      "time_window_catalyst": "FOMC meeting and July 30 GDP release"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Defense budget signals weaken",
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "RTX earnings beat and defense segment strength",
+      "time_window_catalyst": "FOMC meeting and July 30 GDP release"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.46,
+  "portfolio_rationale": "Energy leads on crude spike; financials, healthcare, and aerospace show superior base forecasts versus SPY with diversified clusters under 50% cap.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings exceed SPY base forecast; energy cluster at 40% drives alpha in one-week window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-23-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16266,
+    "latency_seconds": 25.370453925104812,
+    "output_tokens": 1612,
+    "reasoning_tokens": 572,
+    "total_tokens": 18450
+  }
+}

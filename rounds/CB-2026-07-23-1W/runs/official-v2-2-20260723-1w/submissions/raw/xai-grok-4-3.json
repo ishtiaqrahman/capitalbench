@@ -1,0 +1,166 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Stabilization after recent decline",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7408.30 down 1.2%",
+        "Four sectors advanced on July 23"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "S&P 500 closes below 7300",
+      "option_id": "SP500",
+      "reversal_case": "Further downside on weak GDP print",
+      "time_window_catalyst": "FOMC meeting and GDP release"
+    },
+    {
+      "continuation_case": "Sustained high crude prices",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $100.69 up 7%",
+        "Refinery utilization at 96.1%"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Brent crude falls below $95",
+      "option_id": "ENERGY",
+      "reversal_case": "Inventory build exceeds expectations",
+      "time_window_catalyst": "FOMC meeting and GDP release"
+    },
+    {
+      "continuation_case": "Rate environment supportive",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score 0.827",
+        "Prior active rank 0.910"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "10-year yield rises above 4.80%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield curve steepening reversal",
+      "time_window_catalyst": "FOMC meeting and GDP release"
+    },
+    {
+      "continuation_case": "Defensive rotation persists",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score 0.606",
+        "Prior active rank 0.925"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Unemployment claims exceed 210000",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation accelerates",
+      "time_window_catalyst": "FOMC meeting and GDP release"
+    },
+    {
+      "continuation_case": "Aerospace demand holds",
+      "decision": "rejected",
+      "evidence": [
+        "RTX reported strong Q2 results"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Industrial production falls",
+      "option_id": "INDUSTRIALS",
+      "reversal_case": "Defense budget concerns",
+      "time_window_catalyst": "FOMC meeting and GDP release"
+    },
+    {
+      "continuation_case": "Value rotation continues",
+      "decision": "rejected",
+      "evidence": [
+        "Quality evidence score 0.792"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Value underperforms growth by 2%",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth reasserts leadership",
+      "time_window_catalyst": "FOMC meeting and GDP release"
+    },
+    {
+      "continuation_case": "Broad market recovery",
+      "decision": "rejected",
+      "evidence": [
+        "Russell 2000 down 0.7% for week"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Russell 2000 falls below 2900",
+      "option_id": "TOTAL_US_MARKET",
+      "reversal_case": "Small-cap weakness persists",
+      "time_window_catalyst": "FOMC meeting and GDP release"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 1.14,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC outcome volatility",
+    "Oil price reversal on inventory data",
+    "Broader equity drawdown continuation"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Brent crude falls below $95",
+      "option_id": "ENERGY",
+      "rationale": "Brent crude surge and inventory data support near-term strength.",
+      "time_window_catalyst": "FOMC meeting and GDP release"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "10-year yield rises above 4.80%",
+      "option_id": "FINANCIALS",
+      "rationale": "Quality evidence score and recent relative performance.",
+      "time_window_catalyst": "FOMC meeting and GDP release"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Unemployment claims exceed 210000",
+      "option_id": "HEALTHCARE",
+      "rationale": "Prior active rank and low drawdown support defensive tilt.",
+      "time_window_catalyst": "FOMC meeting and GDP release"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "S&P 500 closes below 7300",
+      "option_id": "SP500",
+      "rationale": "Benchmark exposure with no active option exceeding hurdle by wide margin.",
+      "time_window_catalyst": "FOMC meeting and GDP release"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.64,
+  "portfolio_rationale": "Energy leads on commodity price spike; financials and healthcare add quality factors within cluster caps.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings exceed SPY base forecast; energy allocation capped at 40%.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-23-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16266,
+    "latency_seconds": 26.592758510028943,
+    "output_tokens": 1449,
+    "reasoning_tokens": 827,
+    "total_tokens": 18542
+  }
+}

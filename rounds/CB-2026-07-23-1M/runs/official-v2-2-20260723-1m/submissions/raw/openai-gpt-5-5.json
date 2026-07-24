@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad US equities can recover if upcoming FOMC, GDP, inflation, and earnings events confirm resilient growth and disinflation.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.2% on July 23 and was down 0.7% for the week.",
+        "NYSE declining issues outnumbered advancing issues by 2.99 to 1, with 354 new lows versus 82 new highs.",
+        "SPY 21-session return was 0.63%, 5-session return was -1.67%, and distance to 52-week high was -2.57%."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -4,
+      "invalidation_condition": "SPY breaks to new highs with improving breadth and easing Treasury yields.",
+      "option_id": "SP500",
+      "reversal_case": "Weak breadth, high rates, oil-driven inflation risk, and large single-stock earnings disappointments could continue to pressure the index.",
+      "time_window_catalyst": "FOMC July 28-29, advance Q2 GDP and June income/outlays on July 30, July employment on August 7, July CPI on August 12, and major technology earnings."
+    },
+    {
+      "continuation_case": "Energy equities can continue if elevated crude prices sustain earnings revisions and investors seek inflation hedges.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $100.69 on July 23, up 7% for the session, after trading below $72 early in July.",
+        "ENERGY had 21-session active return of 8.41% and 5-session return of 4.14%.",
+        "Commercial crude inventories were 6% below the 2021-2025 average despite the latest weekly build."
+      ],
+      "forecast_base_pct": 2,
+      "forecast_high_pct": 8,
+      "forecast_low_pct": -5,
+      "invalidation_condition": "Brent falls back below roughly $90 or weekly petroleum inventory builds continue alongside weakening product supplied.",
+      "option_id": "ENERGY",
+      "reversal_case": "The signal could reverse if the crude move proves exhausted after a sharp spike or if inventory builds and weaker demand proxies dominate.",
+      "time_window_catalyst": "Oil-price follow-through, July/August inflation data, and any conflict or supply headlines before August 21."
+    },
+    {
+      "continuation_case": "Direct crude exposure could lead if geopolitical risk premium persists and inventories remain tight relative to average.",
+      "decision": "rejected",
+      "evidence": [
+        "USO 5-session return was 16.92% and 21-session return was 25.37%.",
+        "Brent crude rose to $100.69 after being below $72 early in July.",
+        "OIL had 63-session volatility of 51.65% and max drawdown of -32.49%."
+      ],
+      "forecast_base_pct": 1.7,
+      "forecast_high_pct": 12,
+      "forecast_low_pct": -12,
+      "invalidation_condition": "Crude futures retrace the late-July spike or petroleum inventories continue to rise with softer product supplied.",
+      "option_id": "OIL",
+      "reversal_case": "The very large recent move and high volatility increase the risk of mean reversion before the exit close.",
+      "time_window_catalyst": "Weekly EIA inventory reports, conflict-related supply headlines, and July CPI/PPI inflation prints."
+    },
+    {
+      "continuation_case": "A broad commodity basket can extend gains if the oil shock feeds inflation expectations and related commodity complexes.",
+      "decision": "selected",
+      "evidence": [
+        "BROAD_COMMODITIES had 5-session return of 6.49% and 21-session active return of 10.99%.",
+        "Prior 105-session active return was 7.32%.",
+        "ECB stated energy prices were highly volatile and well above pre-conflict levels."
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 6,
+      "forecast_low_pct": -4,
+      "invalidation_condition": "Broad commodities lose 21-day relative strength versus SPY and energy prices retrace materially.",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Commodity gains could reverse if the energy spike fades or global growth concerns outweigh inflation hedging demand.",
+      "time_window_catalyst": "July CPI on August 12, July PPI on August 13, and commodity market reaction to energy and inventory news."
+    },
+    {
+      "continuation_case": "Dividend equities can benefit from rotation toward lower-volatility, profitable, mature companies during earnings and macro uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "DIVIDEND had 21-session active return of 2.62% and 5-session return of -0.73%, outperforming SPY's -1.67% 5-session return.",
+        "DIVIDEND had 63-session volatility of 11.92% and max drawdown of -2.95%.",
+        "Quality evidence score was 0.599 with high prior active rank and low-volatility rank."
+      ],
+      "forecast_base_pct": 1,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Market leadership returns decisively to mega-cap growth and dividend equities lose their 21-day relative strength versus SPY.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "They could lag if high-beta growth and mega-cap technology rapidly regain leadership after upcoming earnings.",
+      "time_window_catalyst": "Rotation away from high-beta growth after July 23 earnings declines and upcoming macro/FOMC data."
+    },
+    {
+      "continuation_case": "Healthcare can continue to outperform if investors favor lower-beta defensive sectors during a macro and earnings-heavy window.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE had 21-session active return of 5.46%, among the stronger sector-relative readings supplied.",
+        "Healthcare 5-session return was -0.22%, better than SPY's -1.67%.",
+        "HEALTHCARE had beta to SPY of 0.323 and distance to 52-week high of -1.82%."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "Healthcare reverses below recent relative strength and broad risk appetite re-accelerates into high-beta cyclicals and technology.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Prior 105-session active return was -10.62%, so recent strength could be only a short-lived rebound.",
+      "time_window_catalyst": "Defensive rotation around FOMC, employment, CPI, and retail-sales releases before August 21."
+    },
+    {
+      "continuation_case": "Longer prior trend and scheduled chip-related earnings could revive high-beta semiconductor leadership.",
+      "decision": "rejected",
+      "evidence": [
+        "SEMICONDUCTORS had prior 105-session active return of 47.17% and quality evidence score of 0.736.",
+        "It also had 21-session active return of -7.36%, 63-session volatility of 52.76%, and max drawdown of -16.80%.",
+        "Qualcomm results were scheduled for July 29 and AMD results for August 4."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 8,
+      "forecast_low_pct": -9,
+      "invalidation_condition": "Semiconductors fail to respond positively to earnings catalysts or continue underperforming SPY over the next several sessions.",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "High volatility, large drawdown, and recent underperformance suggest crowded momentum could keep unwinding.",
+      "time_window_catalyst": "Qualcomm fiscal Q3 results on July 29 and AMD fiscal Q2 results on August 4."
+    },
+    {
+      "continuation_case": "Semiconductor/export-linked momentum and the sharp local-market gain could persist if global chip sentiment improves.",
+      "decision": "rejected",
+      "evidence": [
+        "South Korea's Kospi was reported up 4.4% on July 23.",
+        "SOUTH_KOREA had prior 105-session active return of 58.58% and the highest quality evidence score, 0.754.",
+        "It also had 63-session volatility of 77.36%, beta to SPY of 2.631, and distance to 52-week high of -20.68%."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 10,
+      "forecast_low_pct": -12,
+      "invalidation_condition": "Korea-linked exposure gives back the July 23 jump or global semiconductor proxies continue to weaken.",
+      "option_id": "SOUTH_KOREA",
+      "reversal_case": "Extreme volatility, high beta, and deep distance from highs make the one-month outcome highly fragile.",
+      "time_window_catalyst": "Bank of Japan meeting spillovers, global technology earnings, and risk-appetite changes through August 21."
+    }
+  ],
+  "confidence": 0.57,
+  "expected_alpha_vs_sp500_pct": 1.03,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil-price spike reverses quickly as inventories build or geopolitical risk premium fades.",
+    "FOMC communication or July CPI/PPI triggers a broad equity selloff that overwhelms defensive sector selection.",
+    "Mega-cap technology rebounds sharply after Microsoft, Qualcomm, AMD, or Amazon-related earnings updates, causing SPY to outperform.",
+    "Commodity inflation pressures rates higher, hurting dividend and healthcare equity valuations."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2,
+      "invalidation_condition": "Brent falls back below roughly $90 or weekly petroleum inventory builds continue alongside weakening product supplied.",
+      "option_id": "ENERGY",
+      "rationale": "Energy equities have direct support from the supplied oil shock, positive recent active performance, and a still-reasonable distance from highs versus crude itself.",
+      "time_window_catalyst": "Oil-price follow-through, July/August inflation data, and any conflict or supply headlines before August 21."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Commodity basket loses recent breakout leadership or energy prices retrace most of the July spike.",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Broad commodities provide diversified exposure to the energy-led inflation impulse while avoiding single-contract oil concentration.",
+      "time_window_catalyst": "Continuation of elevated energy prices, July CPI/PPI, and commodity-inflation repricing through August 21."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1,
+      "invalidation_condition": "Market leadership returns decisively to mega-cap growth and dividend equities lose their 21-day relative strength versus SPY.",
+      "option_id": "DIVIDEND",
+      "rationale": "Dividend equities show strong recent active return, low drawdown, and lower beta, offering a defensive equity tilt if mega-cap growth remains under pressure.",
+      "time_window_catalyst": "Rotation away from high-beta growth after July 23 earnings declines and upcoming macro/FOMC data."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Healthcare reverses below recent relative strength and broad risk appetite re-accelerates into high-beta cyclicals and technology.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare has a strong 21-day active return, shallow drawdown, and low market beta, fitting a defensive sector rotation case over the one-month window.",
+      "time_window_catalyst": "Defensive rotation around FOMC, employment, CPI, and retail-sales releases before August 21."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.43,
+  "portfolio_rationale": "The portfolio tilts away from SPY toward energy/commodity inflation beneficiaries and defensive equity factors with positive relative strength. It respects the 50% non-benchmark cluster cap by keeping energy exposure to 30% and non-energy commodities to 25%.",
+  "provider": "openai",
+  "rationale_summary": "SPY faces near-term pressure from weak breadth, mega-cap earnings declines, and a scheduled FOMC/macro-heavy month. Selected holdings have base forecasts above SPY and combine oil-driven continuation with defensive rotation potential.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-23-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16058,
+    "latency_seconds": 38.67886776383966,
+    "output_tokens": 2556,
+    "reasoning_tokens": 129,
+    "total_tokens": 18614
+  }
+}

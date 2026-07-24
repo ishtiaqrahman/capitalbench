@@ -1,0 +1,191 @@
+{
+  "benchmark_expected_return_pct": 0.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad breadth deterioration suggests further downside",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 down 1.2% July 23",
+        "2.99:1 decliners, 82 highs vs 354 lows",
+        "spy_return_5s -1.67%"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY closes materially higher on FOMC",
+      "option_id": "SP500",
+      "reversal_case": "FOMC dovish tone or strong Microsoft earnings could lift index",
+      "time_window_catalyst": "FOMC July 29 statement"
+    },
+    {
+      "continuation_case": "Defensive rotation persists in risk-off week",
+      "decision": "selected",
+      "evidence": [
+        "Prior active rank 0.925",
+        "Negative beta -0.182 to SPY",
+        "Shallow drawdown -3.74%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Sharp equity rally reverses defensive leadership",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rally rotates out of defensives",
+      "time_window_catalyst": "Defensive flows into FOMC"
+    },
+    {
+      "continuation_case": "Rate-sensitive defensive demand continues",
+      "decision": "selected",
+      "evidence": [
+        "return_3s +2.78%",
+        "Negative beta -0.117",
+        "active_return_5s +3.25%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "10-year yield above 4.9%",
+      "option_id": "UTILITIES",
+      "reversal_case": "Long yields spike hurting utilities",
+      "time_window_catalyst": "FOMC July 29"
+    },
+    {
+      "continuation_case": "Geopolitical stress and FOMC uncertainty drive safe-haven",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s +3.48%",
+        "iau_return_5s +1.80%",
+        "Safe-haven amid energy conflict"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Dollar and real yields surge",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar strength and rising real yields",
+      "time_window_catalyst": "Risk-off flows into FOMC"
+    },
+    {
+      "continuation_case": "Stable cash-like return in volatile week",
+      "decision": "selected",
+      "evidence": [
+        "Low vol rank 1.000",
+        "Shallow drawdown rank 1.000",
+        "Capital preservation"
+      ],
+      "forecast_base_pct": 0.05,
+      "forecast_high_pct": 0.1,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "None material",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Opportunity cost if equities rally",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Oil spike sustains energy strength",
+      "decision": "rejected",
+      "evidence": [
+        "Brent +7% to $100.69",
+        "active_return_5s +5.81%",
+        "Prior active rank 0.866"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Brent falls back below $90",
+      "option_id": "ENERGY",
+      "reversal_case": "Recent pullback rank 0.060 signals extended move",
+      "time_window_catalyst": "EIA inventories, geopolitics"
+    },
+    {
+      "continuation_case": "Defensive demand in selloff",
+      "decision": "rejected",
+      "evidence": [
+        "Negative beta -0.369",
+        "Recent pullback rank 0.910",
+        "return_3s -1.94%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Risk-on rotation",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Recent weakness suggests continued drift",
+      "time_window_catalyst": "Risk-off flows"
+    },
+    {
+      "continuation_case": "Bond bid on risk-off and dovish FOMC",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_5s +0.87%",
+        "Low vol rank 0.925",
+        "Shallow drawdown"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Hawkish FOMC lifts yields",
+      "option_id": "AGGREGATE_BONDS",
+      "reversal_case": "Yields rising, tlt_return_21s -3.16%",
+      "time_window_catalyst": "FOMC July 29"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.4225,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC surprise dovish pivot sparks broad risk-on rally that lifts SPY above defensives",
+    "Gold reverses on dollar strength and rising real yields",
+    "Utilities pressured by rising long-end Treasury yields"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Sharp risk-on rally that reverses defensive leadership",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong prior rank, low beta to SPY, and a shallow drawdown; benefits during equity risk-off week.",
+      "time_window_catalyst": "FOMC July 29 and defensive rotation amid broad selloff"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "10-year yield spikes sharply above 4.9%",
+      "option_id": "UTILITIES",
+      "rationale": "Rate-sensitive defensive with strong recent 3s return (+2.78%) and negative beta; hedge amid market decline.",
+      "time_window_catalyst": "FOMC July 29 rate decision"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Dollar surge and real yields spike",
+      "option_id": "GOLD",
+      "rationale": "Safe-haven demand with positive recent active return (+3.48% 5s) amid geopolitical/energy stress.",
+      "time_window_catalyst": "Risk-off flows and FOMC uncertainty"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.05,
+      "invalidation_condition": "None material over one week",
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Cash-like capital preservation with best low-vol/drawdown ranks during high-dispersion selloff week.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.5225,
+  "portfolio_rationale": "Broad market fell 1.2% on entry day with 2.99:1 decliners and 354 new lows, signaling risk-off. Tilting toward defensive healthcare, utilities, gold, and short Treasury reduces beta while retaining modest upside versus a weakening SPY.",
+  "provider": "anthropic",
+  "rationale_summary": "Defensive allocation to healthcare, utilities, gold, and T-bills to outperform a declining SPY over one week around the FOMC.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-23-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28506,
+    "latency_seconds": 36.162391242105514,
+    "output_tokens": 2506,
+    "total_tokens": 31012
+  }
+}

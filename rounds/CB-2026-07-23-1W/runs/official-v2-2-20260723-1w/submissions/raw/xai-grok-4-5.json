@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Stable policy hold and decent GDP print allow modest rebound from oversold daily move",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.2% on July 23 and down 0.7% for the week",
+        "FOMC meeting scheduled July 28-29 with statement and press conference",
+        "Advance Q2 GDP due July 30"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Break below recent weekly lows on heavy volume",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish FOMC or weak data extends the weekly decline",
+      "time_window_catalyst": "FOMC decision July 29 and GDP July 30"
+    },
+    {
+      "continuation_case": "Elevated oil prices and sector beta to energy sustain outperformance",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $100.69 up 7% on July 23 after trading below $72 earlier in July",
+        "ENERGY active_return_5s of 5.81% and prior strength",
+        "EIA showed commercial crude inventories still 6% below average"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Brent settles materially lower for multiple sessions",
+      "option_id": "ENERGY",
+      "reversal_case": "Profit-taking after the large single-day oil move or demand concerns",
+      "time_window_catalyst": "Oil price action and FOMC inflation commentary through July 29"
+    },
+    {
+      "continuation_case": "Geopolitical/supply premium keeps crude elevated into the scoring window",
+      "decision": "selected",
+      "evidence": [
+        "USO return_3s of 11.14% and active_return_5s of 18.59%",
+        "Brent reached $102 intraday and settled near $101",
+        "AAA gasoline at $4.09 versus recent lower levels"
+      ],
+      "forecast_base_pct": 3.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Oil ETF gives back majority of the 5-session gain",
+      "option_id": "OIL",
+      "reversal_case": "Rapid mean-reversion after the 7% single-day jump",
+      "time_window_catalyst": "Crude futures reaction through July 30 close"
+    },
+    {
+      "continuation_case": "Positive earnings momentum and defense spending backdrop support further gains",
+      "decision": "selected",
+      "evidence": [
+        "RTX reported Q2 sales up 14%, net income and EPS up 29%, adjusted EPS up 21%",
+        "AEROSPACE_DEFENSE active_return_5s of 4.85%",
+        "Segment strength across Collins, Pratt & Whitney, Raytheon"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sector reverses recent outperformance on equity weakness",
+      "option_id": "AEROSPACE_DEFENSE",
+      "reversal_case": "Broader market risk-off overrides company-specific strength",
+      "time_window_catalyst": "Post-RTX earnings drift and any related sector flows"
+    },
+    {
+      "continuation_case": "Stable-to-higher yields and solid quality metrics favor financials",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS quality evidence score 0.827 with high prior active rank",
+        "10-year yield at 4.69%",
+        "Relative resilience with low recent drawdown"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Financials lag SPY materially on rate or credit news",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit concerns or inverted curve pressure on banks",
+      "time_window_catalyst": "FOMC statement and press conference July 29"
+    },
+    {
+      "continuation_case": "Energy and broader commodity momentum persists with inflation volatility noted by ECB",
+      "decision": "selected",
+      "evidence": [
+        "BROAD_COMMODITIES active_return_5s of 8.16% and volume z-score elevated",
+        "Oil-driven commodity complex strength",
+        "Positive prior active return context"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "PDBC gives back recent active gains sharply",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "USD strength or demand slowdown hits the complex",
+      "time_window_catalyst": "Commodity price follow-through alongside oil"
+    },
+    {
+      "continuation_case": "Defensive bid and relative trend continue if equities remain choppy",
+      "decision": "rejected",
+      "evidence": [
+        "HEALTHCARE active_return_5s of 1.45% and prior_16s_active_return 3.98%",
+        "Quality score 0.606 with defensive characteristics",
+        "June CPI and labor data mixed but sector relative strength"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Healthcare underperforms on growth rotation",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation away from defensives after FOMC",
+      "time_window_catalyst": "None identified beyond general market tone"
+    },
+    {
+      "continuation_case": "Value factor resilience and lower volatility support modest gains",
+      "decision": "rejected",
+      "evidence": [
+        "LARGE_VALUE quality evidence score 0.792",
+        "active_return_5s positive 0.36% and shallow drawdown",
+        "Value tilt with financials/energy overlap"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Value lags growth decisively in the window",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth rebound post-earnings dominates",
+      "time_window_catalyst": "FOMC and value-factor reaction"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 1.5,
+  "is_official_score": true,
+  "key_risks": [
+    "Sudden oil price reversal after the sharp July 23 spike",
+    "FOMC or GDP surprise triggering broad risk-off equity move",
+    "High volatility in OIL and ENERGY amplifying drawdowns",
+    "Cluster concentration if energy underperforms"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Brent crude reverses sharply below recent settlement levels or energy underperforms on risk-off equity move",
+      "option_id": "ENERGY",
+      "rationale": "Oil price surge and energy sector momentum supported by elevated Brent and inventory context provide higher base return than SPY over the one-week window.",
+      "time_window_catalyst": "Continued oil price reaction and any FOMC commentary on energy/inflation through July 29"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 3.0,
+      "invalidation_condition": "Sharp multi-day oil price reversal or inventory/demand data undermining the spike",
+      "option_id": "OIL",
+      "rationale": "Direct crude exposure captures the large recent price move and elevated levels better than broad equity for the short horizon.",
+      "time_window_catalyst": "Oil price continuation from $100+ Brent levels into the July 30 close"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Broader industrials selloff or negative defense budget/geopolitical headlines",
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "Strong RTX quarterly results and sector momentum support outperformance versus SPY base case.",
+      "time_window_catalyst": "Post-earnings follow-through on RTX and defense names before July 30"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Sharp rise in credit stress or underperformance on rate volatility",
+      "option_id": "FINANCIALS",
+      "rationale": "High quality evidence score and relative resilience support modest outperformance versus SPY.",
+      "time_window_catalyst": "FOMC decision and any yield curve reaction on July 29"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Broad commodity reversal or stronger USD pressure",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Commodity complex strength tied to energy and materials provides diversification and higher expected return.",
+      "time_window_catalyst": "Commodity price persistence alongside oil into week-end data"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.0,
+  "portfolio_rationale": "Portfolio concentrates in energy complex and select cyclicals/defensives with base forecasts above SPY, capped at 50% energy cluster, to capture oil-driven momentum and earnings catalysts over the one-week window while limiting pure equity beta.",
+  "provider": "xai",
+  "rationale_summary": "SPY base is modest given recent weakness and mixed macro; selected holdings leverage oil spike, RTX results, and relative strength factors for positive expected alpha. Allocations respect cluster caps and active-hurdle rules.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-23-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17151,
+    "latency_seconds": 53.53246594686061,
+    "output_tokens": 2522,
+    "reasoning_tokens": 775,
+    "total_tokens": 20448
+  }
+}

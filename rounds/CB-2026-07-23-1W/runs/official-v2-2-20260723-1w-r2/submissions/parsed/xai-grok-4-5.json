@@ -1,0 +1,178 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Modest bounce if FOMC is neutral and GDP holds near trend",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed 7408.30 down 1.2% on July 23; week through July 23 down 0.7%",
+        "Four of 11 sectors advanced; NYSE decliners led 2.99-to-1",
+        "FOMC meeting July 28-29 and advance GDP July 30 scheduled"
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Close below recent 21-session low on risk-off volume",
+      "option_id": "SP500",
+      "reversal_case": "Further downside if oil spike feeds inflation fears or claims reverse",
+      "time_window_catalyst": "FOMC statement and press conference July 29"
+    },
+    {
+      "continuation_case": "Geopolitical premium and tight inventories sustain crude bid into month-end",
+      "decision": "selected",
+      "evidence": [
+        "Brent settled 100.69 up 7% on July 23 after intraday 102; early July below 72",
+        "XLE active_return_5s +5.81% and prior_16s_active +2.36%",
+        "EIA commercial crude inventories 411.7 mb, 6% below 5-yr avg; refinery util 96.1%"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Brent settles under 95 with rising product inventories",
+      "option_id": "ENERGY",
+      "reversal_case": "Inventory builds or demand proxy weakness reverse the spike",
+      "time_window_catalyst": "Crude price action and FOMC July 29"
+    },
+    {
+      "continuation_case": "Earnings momentum and defense backlog support relative strength",
+      "decision": "selected",
+      "evidence": [
+        "RTX Q2 sales 24.708 bn +14%, diluted EPS 1.57 +29%, adj EPS 1.89 +21%, FCF 2.878 bn",
+        "ITA return_3s +3.91%, active_return_5s +4.85%",
+        "Segment sales solid across Collins, Pratt, Raytheon"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "ITA gives back 3s gains on weak macro prints",
+      "option_id": "AEROSPACE_DEFENSE",
+      "reversal_case": "Broader industrial weakness on durables or risk-off overrides single-name beat",
+      "time_window_catalyst": "July 27 durables and July 30 GDP"
+    },
+    {
+      "continuation_case": "Stable labor and higher-for-longer rates support net interest and capital markets",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score 0.827 (high prior active and pullback ranks)",
+        "XLF prior_16s_active_return +2.99%; 10y yield at 4.69%",
+        "Initial claims 187k, four-week avg 207.5k"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "XLF underperforms SPY by >2% on rising yields",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Curve inversion or credit stress hits banks",
+      "time_window_catalyst": "FOMC July 29"
+    },
+    {
+      "continuation_case": "Energy-led commodity momentum persists with elevated prices",
+      "decision": "selected",
+      "evidence": [
+        "PDBC return_3s +3.91%, active_return_5s +8.16%, volume_zscore_5v60 3.745",
+        "Brent +7% session and broad commodity complex strength",
+        "Quality score 0.519 with strong prior active rank"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -1.6,
+      "invalidation_condition": "PDBC active return turns negative on rising UUP",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Dollar strength or growth scare unwinds the complex",
+      "time_window_catalyst": "Commodity price action through July 30 data"
+    },
+    {
+      "continuation_case": "Defensive bid if FOMC or GDP disappoints cyclicals",
+      "decision": "rejected",
+      "evidence": [
+        "XLV active_return_5s +1.45%, prior_16s_active +3.98%",
+        "Quality evidence score 0.606",
+        "Defensive characteristics amid equity volatility"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "XLV underperforms on broad market rebound",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation leaves healthcare lagging",
+      "time_window_catalyst": "FOMC and GDP week"
+    },
+    {
+      "continuation_case": "Value holds up better than growth if rates stay elevated",
+      "decision": "rejected",
+      "evidence": [
+        "Quality evidence score 0.792 with high shallow-drawdown rank",
+        "IWD active_return_5s +0.36%, prior_16s_active +1.20%",
+        "Distance to 52w high only -1.31%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.9,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Value-growth spread widens against IWD",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth rebound on dovish FOMC overtakes value",
+      "time_window_catalyst": "FOMC July 29"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.925,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC hawkish surprise drives rates higher and equities lower",
+    "Oil mean-reversion after 7% single-day jump",
+    "Growth data (GDP/durables) disappoints cyclical sleeves",
+    "Mega-cap earnings (MSFT) dominate and leave cyclicals behind"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Brent reverses below 95 or sharp inventory build surprise",
+      "option_id": "ENERGY",
+      "rationale": "Oil price spike and energy sector momentum supported by elevated Brent and product demand proxies into FOMC week.",
+      "time_window_catalyst": "Continued crude strength and FOMC statement July 29"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Broader industrials reverse on weak durable goods July 27",
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "RTX beat on sales/EPS/cash flow provides near-term fundamental support for defense names into month-end.",
+      "time_window_catalyst": "Post-RTX follow-through and July 30 GDP"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "10y yield spikes above 4.9% with equity risk-off",
+      "option_id": "FINANCIALS",
+      "rationale": "High quality evidence score, positive prior active trend, and rate backdrop favor banks/insurers vs mega-cap growth.",
+      "time_window_catalyst": "FOMC July 29 and stable claims data"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Broad risk-off or dollar surge reverses commodity bid",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Strong recent active return and volume confirmation alongside energy complex strength.",
+      "time_window_catalyst": "Commodity follow-through into July 30 data"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.175,
+  "portfolio_rationale": "Portfolio concentrates in energy, industrials/defense, financials and commodities where recent active returns, quality scores and briefing catalysts (oil spike, RTX results, FOMC) exceed SPY base case while respecting 50% cluster cap.",
+  "provider": "xai",
+  "rationale_summary": "SPY base is modest after the July 23 selloff; selected sleeves show stronger base forecasts from oil momentum, defense earnings and factor quality. Horizon catalysts are FOMC, GDP and residual commodity momentum.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-23-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17151,
+    "latency_seconds": 47.458294368116185,
+    "output_tokens": 2296,
+    "reasoning_tokens": 603,
+    "total_tokens": 20050
+  }
+}

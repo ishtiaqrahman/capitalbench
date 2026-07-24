@@ -1,0 +1,192 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Post-pullback bounce and dovish FOMC lift broad equities",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 down 1.2% July 23, week -0.7%",
+        "spy_return_5s -1.67%",
+        "FOMC July 28-29 ahead"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY closes down more than 3% over the week",
+      "option_id": "SP500",
+      "reversal_case": "Weak breadth and mega-cap earnings disappointments extend selloff",
+      "time_window_catalyst": "FOMC July 29 statement, MSFT earnings July 29"
+    },
+    {
+      "continuation_case": "Defensive rotation continues amid risk-off breadth",
+      "decision": "selected",
+      "evidence": [
+        "Prior active rank 0.925, high quality",
+        "Beta to SPY -0.182, corr -0.131",
+        "Shallow drawdown -3.74%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLV falls more than 2%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rally rotates out of defensives",
+      "time_window_catalyst": "FOMC and defensive flows"
+    },
+    {
+      "continuation_case": "Crude supply shock sustains energy strength",
+      "decision": "selected",
+      "evidence": [
+        "Brent settled $100.69, up 7% July 23",
+        "active_return_5s 5.81%",
+        "Negative beta -0.702 to SPY"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent falls below $90",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil reverses if geopolitical premium fades",
+      "time_window_catalyst": "Continued crude strength and EIA data"
+    },
+    {
+      "continuation_case": "Defensive bid persists in weak breadth",
+      "decision": "selected",
+      "evidence": [
+        "return_3s 2.78%, active_return_5s 3.25%",
+        "Low corr -0.086 to SPY",
+        "Shallow drawdown -3.10%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "10-year yield jumps sharply above 4.9%",
+      "option_id": "UTILITIES",
+      "reversal_case": "Rate spike hurts rate-sensitive utilities",
+      "time_window_catalyst": "FOMC July 29 and flight to defensives"
+    },
+    {
+      "continuation_case": "Supply shock extends crude rally",
+      "decision": "rejected",
+      "evidence": [
+        "USO return_3s 11.14%, active_return_5s 18.59%",
+        "Volatility 50.70%, very high",
+        "Brent hit $102 intraday"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Brent falls below $90",
+      "option_id": "OIL",
+      "reversal_case": "Futures curve and extreme volatility cause sharp mean reversion",
+      "time_window_catalyst": "EIA data and OPEC signals"
+    },
+    {
+      "continuation_case": "Strong aerospace/defense earnings support sector",
+      "decision": "rejected",
+      "evidence": [
+        "return_3s 2.14%, active_return_5s 2.66%",
+        "RTX Q2 sales up 14%",
+        "Beta 0.88"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLI falls more than 2%",
+      "option_id": "INDUSTRIALS",
+      "reversal_case": "Cyclical exposure vulnerable in risk-off",
+      "time_window_catalyst": "Durable goods July 27"
+    },
+    {
+      "continuation_case": "Safe-haven demand amid uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "iau_return_5s 1.80%",
+        "Distance from high -25%",
+        "Beta 1.259, high volatility"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Gold falls below recent support",
+      "option_id": "GOLD",
+      "reversal_case": "Strong dollar and rising real rates weigh",
+      "time_window_catalyst": "FOMC July 29"
+    },
+    {
+      "continuation_case": "Preserves capital in drawdown",
+      "decision": "rejected",
+      "evidence": [
+        "Quality score 0.543, top safety ranks",
+        "Volatility 0.23%",
+        "Cash-like proxy"
+      ],
+      "forecast_base_pct": 0.05,
+      "forecast_high_pct": 0.1,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "N/A",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Equity rally leaves it lagging",
+      "time_window_catalyst": "None material"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC surprise triggering risk-on rally hurting defensives",
+    "Crude oil reversing sharply, undercutting energy",
+    "Mega-cap earnings (MSFT) driving broad rebound above defensives"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "XLV falls more than 2% or broad risk-on rally resumes",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong prior rank, low beta to SPY (-0.18), and shallow drawdown; benefits during equity pullback.",
+      "time_window_catalyst": "FOMC July 29 statement; defensive positioning favored"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Brent falls back below $90 or crude reverses sharply",
+      "option_id": "ENERGY",
+      "rationale": "Brent surged 7% to $100 with strong active return; energy sector negative-beta and momentum supported by oil supply shock.",
+      "time_window_catalyst": "Continued crude strength above $100 through exit close"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Long rates spike further or utilities give back gains",
+      "option_id": "UTILITIES",
+      "rationale": "Defensive, low correlation to SPY, strong 3-session return of 2.78% and shallow drawdown amid risk-off.",
+      "time_window_catalyst": "FOMC and flight-to-defensive flows"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.2,
+      "invalidation_condition": "Broad equity selloff accelerates",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure to limit tracking error.",
+      "time_window_catalyst": "FOMC July 29; mega-cap earnings MSFT July 29"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.75,
+  "portfolio_rationale": "Defensive tilt into a risk-off week (2.99:1 decliners, 354 new lows) combining low-beta healthcare and utilities with an energy momentum play driven by the crude spike, anchored by SPY core.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight defensives and energy given deteriorating breadth and an oil supply shock, while retaining SPY exposure ahead of FOMC.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-23-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28506,
+    "latency_seconds": 34.66925243707374,
+    "output_tokens": 2564,
+    "total_tokens": 31070
+  }
+}

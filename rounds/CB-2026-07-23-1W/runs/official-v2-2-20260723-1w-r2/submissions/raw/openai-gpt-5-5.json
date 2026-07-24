@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.15,
+  "candidate_ledger": [
+    {
+      "continuation_case": "A one-day selloff could stabilize if FOMC and GDP data do not worsen growth or rate expectations, and SPY remains the diversified benchmark.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.2% on July 23 and was down 0.7% for the week through that close.",
+        "SPY return_5s was -1.67%, return_21s was 0.63%, and max_drawdown_21s was -2.22%.",
+        "FOMC, Microsoft earnings, advance Q2 GDP, and June personal income and outlays are scheduled before the exit close."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "SPY breaks materially below its recent drawdown range on worsening breadth or hawkish policy repricing.",
+      "option_id": "SP500",
+      "reversal_case": "Negative breadth, large mega-cap earnings declines, and scheduled policy/data risk could extend the drawdown.",
+      "time_window_catalyst": "FOMC statement and press conference, Microsoft results, advance Q2 GDP, and June personal income and outlays before July 30 close."
+    },
+    {
+      "continuation_case": "Energy equities can continue outperforming if crude remains elevated and geopolitical risk premium persists through the week.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $100.69 on July 23, up 7% for the session, after trading below $72 early in July.",
+        "ENERGY had active_return_5s of 5.81% and prior_16s_active_return of 2.36%.",
+        "ENERGY quality evidence score was 0.528, while its 21-session volatility was 19.48%."
+      ],
+      "forecast_base_pct": 0.65,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Brent or oil exposure gives back most of the July 23 surge, or energy equities underperform SPY despite firm crude.",
+      "option_id": "ENERGY",
+      "reversal_case": "Crude has already moved sharply, and EIA reported total commercial petroleum inventories rose 11.6 million barrels, creating pullback risk.",
+      "time_window_catalyst": "Oil-price follow-through and risk premium before the July 30 close; FOMC and GDP could affect cyclical risk appetite."
+    },
+    {
+      "continuation_case": "Direct crude exposure benefits most if the Brent shock and geopolitical risk premium continue into the scoring week.",
+      "decision": "rejected",
+      "evidence": [
+        "USO return_5s was 16.92% and return_21s was 25.37%.",
+        "OIL had active_return_5s of 18.59% and prior_16s_active_return of 4.89%.",
+        "OIL 21-session volatility was 50.70%, and EIA reported crude and product inventory increases for the week ended July 17."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -6,
+      "invalidation_condition": "USO fails to hold recent gains or crude prices retreat on inventory, demand, or de-escalation signals.",
+      "option_id": "OIL",
+      "reversal_case": "The recent move is extreme, volatility is very high, and inventory builds could encourage profit taking.",
+      "time_window_catalyst": "Any continuation or reversal in crude after the July 23 Brent spike before the weekly exit close."
+    },
+    {
+      "continuation_case": "Broad commodity exposure can extend gains if energy-price pressure and inflation hedging demand persist.",
+      "decision": "selected",
+      "evidence": [
+        "BROAD_COMMODITIES had active_return_5s of 8.16% and prior_16s_active_return of 2.48%.",
+        "Its volume_zscore_5v60 was 3.745, indicating unusually high recent reported volume.",
+        "Brent crude was up 7% on July 23 and traded above $100 per barrel."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": -2,
+      "invalidation_condition": "Commodity complex reverses sharply or the 5-day volume spike resolves into a failed breakout.",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "The volume surge and strong 5-day active return could mark crowded positioning vulnerable to a quick reversal.",
+      "time_window_catalyst": "Continuation of commodity inflation and geopolitical risk premium through the FOMC/GDP week."
+    },
+    {
+      "continuation_case": "Recent relative strength and low market beta support defensive rotation if broad equity breadth remains weak.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE had prior_16s_active_return of 3.98% and active_return_5s of 1.45%.",
+        "The quality evidence table gave HEALTHCARE a prior active rank of 0.925.",
+        "HEALTHCARE 63-session beta to SPY was -0.182 and distance_52w_high was -1.82%."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.7,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "Healthcare loses relative strength versus SPY or risk-on mega-cap growth leadership resumes.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A strong risk-on rebound could favor higher-beta growth and cyclicals over defensive healthcare.",
+      "time_window_catalyst": "Defensive rotation around FOMC and GDP, with lower market beta than SPY in the supplied 63-session context."
+    },
+    {
+      "continuation_case": "Firm labor data and elevated yields can support bank and financial earnings expectations if credit stress does not rise.",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS had a quality evidence score of 0.827, among the stronger supplied scores.",
+        "FINANCIALS prior_16s_active_return was 2.99%, with 21-session volatility of 13.69%.",
+        "Initial unemployment claims fell to 187,000, while the 10-year Treasury yield was 4.69%."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Rates fall on growth fears, credit concerns widen, or financials break below recent relative support.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "A dovish growth scare or credit-quality concerns could hurt financials, especially around policy and GDP releases.",
+      "time_window_catalyst": "FOMC statement, Treasury-yield moves, Visa results, and GDP/personal income data before the exit close."
+    },
+    {
+      "continuation_case": "Equal weight can continue outperforming if weakness remains concentrated in mega-cap names hit by earnings reactions.",
+      "decision": "selected",
+      "evidence": [
+        "RSP return_5s was -1.46% versus SPY return_5s of -1.67%, a 0.21% relative advantage.",
+        "RSP return_21s was 1.45% versus SPY return_21s of 0.63%.",
+        "EQUAL_WEIGHT_SP500 quality evidence score was 0.742, with 21-session volatility of 9.81%."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.6,
+      "invalidation_condition": "NYSE breadth remains very negative and cap-weighted mega-cap leadership decisively reasserts over equal weight.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "If mega-cap technology rebounds strongly, cap-weighted SPY could regain leadership over equal weight.",
+      "time_window_catalyst": "Mean reversion in market breadth after July 23 mega-cap-driven weakness; FOMC and GDP as broad-market catalysts."
+    },
+    {
+      "continuation_case": "Dollar strength could persist if US yields remain elevated or risk aversion rises into the FOMC meeting.",
+      "decision": "rejected",
+      "evidence": [
+        "US_DOLLAR return_5s was 0.78% and return_21s was 0.39%.",
+        "US_DOLLAR active_return_5s was 2.45%, with 21-session volatility of 4.56%.",
+        "The FOMC meeting is scheduled for July 28-29, and ECB rates were left unchanged on July 23."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "UUP loses recent gains after FOMC or Treasury yields decline sharply relative to global rates.",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "A dovish FOMC interpretation or improved global risk appetite could weaken the dollar versus other assets.",
+      "time_window_catalyst": "FOMC statement and press conference, plus GDP and personal income/outlays before the exit close."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.2875,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil and commodity prices could reverse sharply after the large July move and inventory builds.",
+    "The FOMC statement or GDP/personal income data could trigger a broad risk-off move that hurts equities and cyclicals.",
+    "Mega-cap technology could rebound after earnings-related declines, causing SPY to outperform equal-weight and defensive tilts.",
+    "Energy-price inflation could pressure margins and consumer demand, weakening non-energy equity holdings."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.65,
+      "invalidation_condition": "Brent or oil exposure gives back most of the July 23 surge, or energy equities underperform SPY despite firm crude.",
+      "option_id": "ENERGY",
+      "rationale": "Energy equities have direct support from the sharp crude move and positive recent relative strength, while avoiding the full volatility of crude oil itself.",
+      "time_window_catalyst": "Oil-price follow-through and risk premium before the July 30 close; FOMC and GDP could affect cyclical risk appetite."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "Commodity complex reverses sharply or the 5-day volume spike resolves into a failed breakout.",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Commodity exposure is supported by the large energy shock and very strong short-term relative performance, with diversification beyond single-sector equities.",
+      "time_window_catalyst": "Continuation of commodity inflation and geopolitical risk premium through the FOMC/GDP week."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Healthcare loses relative strength versus SPY or risk-on mega-cap growth leadership resumes.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare combines strong prior active return and high quality evidence with defensive characteristics during a weak equity tape.",
+      "time_window_catalyst": "Defensive rotation around FOMC and GDP, with lower market beta than SPY in the supplied 63-session context."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Rates fall on growth fears, credit concerns widen, or financials break below recent relative support.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials have one of the highest quality evidence scores and a strong prior active trend, with potential support if firm labor data and rates sustain bank earnings expectations.",
+      "time_window_catalyst": "FOMC statement, Treasury-yield moves, Visa results, and GDP/personal income data before the exit close."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.25,
+      "invalidation_condition": "NYSE breadth remains very negative and cap-weighted mega-cap leadership decisively reasserts over equal weight.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Equal-weight S&P offers broad US equity exposure with better recent breadth than cap-weighted SPY and less dependence on the mega-cap names that led the July 23 decline.",
+      "time_window_catalyst": "Mean reversion in market breadth after July 23 mega-cap-driven weakness; FOMC and GDP as broad-market catalysts."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.4375,
+  "portfolio_rationale": "The portfolio tilts away from cap-weighted SPY toward energy/commodities and relative-strength defensive or broader-equity exposures. It keeps the energy cluster below the 50% cap and avoids a full crude-oil position because the recent oil move is large and reversal risk is high.",
+  "provider": "openai",
+  "rationale_summary": "SPY faces near-term earnings and policy-event risk after a broad down day. Selected holdings have base forecasts above SPY, supported by supplied relative strength, quality evidence, commodity shock data, or defensive rotation potential.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-23-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16055,
+    "latency_seconds": 37.82256336091086,
+    "output_tokens": 2941,
+    "reasoning_tokens": 340,
+    "total_tokens": 18996
+  }
+}

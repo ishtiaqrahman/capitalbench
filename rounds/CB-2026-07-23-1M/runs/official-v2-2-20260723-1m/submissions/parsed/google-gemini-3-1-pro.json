@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued economic growth and resilient corporate earnings support a rebound.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7,408.30, down 1.2% on July 23.",
+        "First-quarter real GDP growth was revised up to 2.1%."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant deterioration in corporate earnings or a sharp rise in unemployment.",
+      "option_id": "SP500",
+      "reversal_case": "Rising interest rates or disappointing earnings could lead to further declines.",
+      "time_window_catalyst": "Upcoming corporate earnings releases and July employment data."
+    },
+    {
+      "continuation_case": "Tight supplies and strong demand keep energy prices elevated.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $100.69 per barrel, up 7% for the session.",
+        "Commercial crude inventories are 6% below the 2021-2025 average."
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A sharp drop in crude oil prices or a significant build in commercial inventories.",
+      "option_id": "ENERGY",
+      "reversal_case": "A sudden increase in supply or a drop in demand could reverse the trend.",
+      "time_window_catalyst": "EIA weekly inventory reports and potential OPEC+ policy signals."
+    },
+    {
+      "continuation_case": "Ongoing supply constraints and geopolitical tensions support higher oil prices.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude settled at $100.69 per barrel, up 7% for the session.",
+        "Commercial crude inventories are 6% below the 2021-2025 average."
+      ],
+      "forecast_base_pct": 3.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A sudden resolution to geopolitical tensions or a significant drop in global demand expectations.",
+      "option_id": "OIL",
+      "reversal_case": "A resolution to geopolitical conflicts or a global economic slowdown could reduce demand.",
+      "time_window_catalyst": "EIA weekly inventory reports and geopolitical developments affecting supply."
+    },
+    {
+      "continuation_case": "Persistent inflation and geopolitical uncertainty drive safe-haven demand for gold.",
+      "decision": "selected",
+      "evidence": [
+        "June CPI rose 3.5% over 12 months.",
+        "Gold has a 5-day return of 1.80%."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A sharp rise in real interest rates or a significant strengthening of the US dollar.",
+      "option_id": "GOLD",
+      "reversal_case": "A sharp rise in real interest rates or a stronger US dollar could weigh on gold prices.",
+      "time_window_catalyst": "July CPI and PPI releases, and FOMC meeting minutes."
+    },
+    {
+      "continuation_case": "Rising inflation and potential Fed rate hikes keep upward pressure on yields.",
+      "decision": "rejected",
+      "evidence": [
+        "10-year U.S. Treasury yield at 4.69%.",
+        "June CPI rose 3.5% over 12 months."
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A significant drop in inflation or a dovish shift by the Fed.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "A sudden economic slowdown or a shift to a more dovish Fed stance could lower yields.",
+      "time_window_catalyst": "FOMC meeting and July employment data."
+    },
+    {
+      "continuation_case": "Strong earnings from mega-cap tech companies could drive a rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq Composite down 2.2% on July 23.",
+        "Alphabet down 7.1% after company results."
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "A significant miss in tech earnings or a sharp rise in interest rates.",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Rising interest rates and valuation concerns could lead to further underperformance.",
+      "time_window_catalyst": "Upcoming tech earnings releases (e.g., Microsoft, Qualcomm)."
+    },
+    {
+      "continuation_case": "Defensive characteristics and steady earnings support the sector.",
+      "decision": "rejected",
+      "evidence": [
+        "Healthcare sector has a 21-day active return of 5.46%.",
+        "Defensive sectors may outperform in a volatile market."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant shift in market sentiment towards cyclical sectors.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Regulatory changes or a shift towards cyclical sectors could lead to underperformance.",
+      "time_window_catalyst": "Upcoming healthcare earnings releases."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 1.35,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden drop in energy prices due to increased supply or weakening demand.",
+    "A stronger-than-expected US dollar, which could weigh on commodity prices.",
+    "A broader market sell-off driven by disappointing corporate earnings or economic data."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "A sharp drop in crude oil prices or a significant build in commercial inventories.",
+      "option_id": "ENERGY",
+      "rationale": "Energy sector shows strong recent momentum and benefits from rising crude prices and tight inventories.",
+      "time_window_catalyst": "EIA weekly inventory reports and potential OPEC+ policy signals."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 3.0,
+      "invalidation_condition": "A sudden resolution to geopolitical tensions or a significant drop in global demand expectations.",
+      "option_id": "OIL",
+      "rationale": "Direct exposure to crude oil, which has surged recently amid tight supplies and strong demand proxies.",
+      "time_window_catalyst": "EIA weekly inventory reports and geopolitical developments affecting supply."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "A sharp rise in real interest rates or a significant strengthening of the US dollar.",
+      "option_id": "GOLD",
+      "rationale": "Gold provides a hedge against inflation and geopolitical uncertainty, with recent positive momentum.",
+      "time_window_catalyst": "July CPI and PPI releases, and FOMC meeting minutes."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "A significant deterioration in corporate earnings or a sharp rise in unemployment.",
+      "option_id": "SP500",
+      "rationale": "Core equity exposure to balance the portfolio, despite recent weakness, supported by ongoing economic growth.",
+      "time_window_catalyst": "Upcoming corporate earnings releases and July employment data."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.85,
+  "portfolio_rationale": "The portfolio overweights the energy sector and crude oil to capitalize on recent price momentum and tight supply dynamics. Gold is included as a hedge against inflation and geopolitical risks, while a core allocation to the S&P 500 provides diversified equity exposure.",
+  "provider": "google",
+  "rationale_summary": "Overweight energy and oil due to tight supplies and rising prices. Include gold as an inflation hedge and maintain a core S&P 500 position.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-23-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17819,
+    "latency_seconds": 18.323617208050564,
+    "output_tokens": 2206,
+    "total_tokens": 20025
+  }
+}

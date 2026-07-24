@@ -1,0 +1,203 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad market weakness continues as oil shock pressures margins and yields rise",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 fell 1.2% July 23 to 7,408.30 with NYSE decliners 2.99:1",
+        "10-year Treasury yield rose to 4.69% amid oil shock",
+        "FOMC decision and Q2 GDP both land within the window"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "N/A - benchmark",
+      "option_id": "SP500",
+      "reversal_case": "Dovish FOMC and strong Microsoft earnings could rally the index",
+      "time_window_catalyst": "FOMC July 29; Microsoft earnings July 29; GDP July 30"
+    },
+    {
+      "continuation_case": "War-driven supply disruption sustains crude above $100 and lifts producer earnings expectations",
+      "decision": "selected",
+      "evidence": [
+        "Brent settled at $100.69, up 7% July 23, from below $72 early July",
+        "XLE +5.81% active return over 5 sessions with -0.70 SPY beta",
+        "Crude inventories 6% below 2021-2025 average; refinery utilization 96.1%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Brent below $90 on de-escalation",
+      "option_id": "ENERGY",
+      "reversal_case": "Ceasefire or supply restoration drives sharp crude retracement",
+      "time_window_catalyst": "Ongoing supply shock; EIA weekly inventory report"
+    },
+    {
+      "continuation_case": "Energy shock spillover into diversified commodity basket persists through the week",
+      "decision": "selected",
+      "evidence": [
+        "PDBC +8.16% active over 5 sessions with volume z-score 3.745",
+        "Brent above $100 pulling the broad commodity complex higher",
+        "Negative SPY correlation (-0.136) offers risk-off diversification"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Broad commodity index reverses more than half the recent 5-session gain",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Oil retracement drags the whole complex lower given heavy energy weight",
+      "time_window_catalyst": "Continued war-related supply repricing"
+    },
+    {
+      "continuation_case": "Geopolitical stress and equity weakness sustain safe-haven flows",
+      "decision": "selected",
+      "evidence": [
+        "IAU +3.48% active over 5 sessions amid risk-off tape",
+        "War referenced in briefing supports safe-haven demand",
+        "FOMC July 29 a rate-path catalyst"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "De-escalation plus rising real yields",
+      "option_id": "GOLD",
+      "reversal_case": "Hawkish FOMC and dollar strength (UUP +2.45% active 5s) pressure gold",
+      "time_window_catalyst": "FOMC July 29; geopolitical headlines"
+    },
+    {
+      "continuation_case": "Risk-off, oil-shock environment keeps defensive factor leading into FOMC",
+      "decision": "selected",
+      "evidence": [
+        "SPLV +1.10% active over 5 sessions in a down tape",
+        "Negative SPY beta (-0.312) and shallow drawdown (-1.89%)",
+        "Prior active return +1.34% shows persistent defensive leadership"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Sharp mega-cap growth rally post-FOMC",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Dovish surprise triggers growth rally and defensive underperformance",
+      "time_window_catalyst": "FOMC July 29 statement"
+    },
+    {
+      "continuation_case": "Value leadership persists as tech earnings disappoint and yields rise",
+      "decision": "selected",
+      "evidence": [
+        "Highest-tier quality evidence score 0.792 with prior active +1.20%",
+        "Only -1.31% from 52-week high with lowest sector vol among equity styles",
+        "Energy and financials tilt benefits from oil and higher yields"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Growth outperforms value by >1% early in the window",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Strong Microsoft results reignite growth leadership",
+      "time_window_catalyst": "FOMC July 29; GDP July 30"
+    },
+    {
+      "continuation_case": "Microsoft earnings could spark a rebound if results beat",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq fell 2.2% July 23 with Tesla -14.5% and Alphabet -7.1% on results",
+        "QQQ prior active -3.42% and -7.16% from 52-week high",
+        "10-year yield at 4.69% pressures long-duration growth"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Blowout Microsoft results with dovish FOMC",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Further mega-cap earnings disappointments and rising yields extend the selloff",
+      "time_window_catalyst": "Microsoft July 29, Qualcomm July 29 earnings"
+    },
+    {
+      "continuation_case": "Extreme risk-off flight to safety could bid duration",
+      "decision": "rejected",
+      "evidence": [
+        "10-year yield rose to 4.69% from 3.97% pre-war on oil inflation fears",
+        "TLT -3.16% over 21 sessions",
+        "June CPI still 3.5% YoY headline"
+      ],
+      "forecast_base_pct": -0.4,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yields fall below 4.5% on growth scare",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Oil-driven inflation expectations keep pushing yields higher",
+      "time_window_catalyst": "FOMC July 29; GDP July 30"
+    }
+  ],
+  "confidence": 0.62,
+  "cost_usd": 0.47625000000000006,
+  "expected_alpha_vs_sp500_pct": 0.81,
+  "is_official_score": true,
+  "key_risks": [
+    "Rapid conflict de-escalation collapses oil, commodities, and gold simultaneously",
+    "Dovish FOMC surprise sparks a growth/tech rally that leaves defensive tilts behind",
+    "High-volatility oil positioning (USO vol 50.7%) can reverse violently within the week",
+    "Strong Microsoft results July 29 lift SPY via mega-cap concentration"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Brent falls back below $90 on de-escalation or ceasefire news",
+      "option_id": "ENERGY",
+      "rationale": "Brent at $100.69 amid war-driven supply shock; XLE +5.81% active over 5 sessions with negative SPY beta gives hedge plus carry.",
+      "time_window_catalyst": "Ongoing war-driven oil supply disruption; EIA weekly inventory data during window"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Oil de-escalation triggers broad commodity reversal below entry levels",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Broad commodity strength (+8.16% active 5s, volume z-score 3.75) benefits from energy shock spillover into the complex; negative equity correlation.",
+      "time_window_catalyst": "Continued energy-led commodity repricing through the window"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Sharp risk-on rally in growth stocks led by dovish FOMC surprise",
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive equity with +1.10% recent active return and negative SPY beta; likely to outperform in risk-off, oil-shock tape into FOMC.",
+      "time_window_catalyst": "FOMC July 29 statement and press conference"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Growth/tech sharply outperforms value after Microsoft earnings",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value tilt with energy/financials weight, top quality-evidence rank (0.792), shallow drawdown, and positive prior active trend.",
+      "time_window_catalyst": "FOMC July 29; Q2 GDP July 30"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "De-escalation plus hawkish FOMC lifting real yields and the dollar",
+      "option_id": "GOLD",
+      "rationale": "Safe-haven demand during war and equity risk-off; IAU +3.48% active over 5 sessions.",
+      "time_window_catalyst": "Geopolitical escalation risk and FOMC July 29"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.01,
+  "portfolio_rationale": "A war-driven oil shock (Brent $100.69 vs sub-$72 early July), rising 10-year yields at 4.69%, and broad equity weakness favor energy, commodities, gold, and defensive/value equity over cap-weighted SPY into the FOMC and GDP releases.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight energy and inflation-shock beneficiaries with defensive equity ballast; underweight rate-sensitive mega-cap growth that just sold off on Tesla and Alphabet results.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-23-1W",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.47625000000000006,
+    "input_tokens": 28500,
+    "latency_seconds": 45.68752718809992,
+    "output_tokens": 3825,
+    "total_tokens": 32325
+  }
+}
