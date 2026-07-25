@@ -24,9 +24,11 @@ exposure clusters, low/base/high forecasts, the active-holding SPY hurdle, and
 the 50% non-benchmark economic-exposure cap. Score only the final frozen
 portfolio; retain the candidate ledger for calibration and audit.
 
-The active production roster has seven models: GPT-5.5, GPT-5.6 SOL, Grok 4.3,
-Grok 4.5, Gemini 3.1 Pro, Claude Opus 4.8, and Claude Fable 5. Claude Opus 4.7
-was retired from new rounds effective July 21, 2026; preserve all of its
+The active production roster has eight models: GPT-5.5, GPT-5.6 SOL, Grok 4.3,
+Grok 4.5, Gemini 3.1 Pro, Claude Opus 4.8, Claude Opus 5, and Claude Fable 5.
+Claude Opus 5 joined future rounds effective July 24, 2026 using the Anthropic
+API model ID `claude-opus-5`; do not backfill it into older rounds. Claude Opus
+4.7 was retired from new rounds effective July 21, 2026; preserve all of its
 historical submissions, results, profiles, and comparison sets. Never delete a
 retired model from `configs/models.v2.yaml`. New production round manifests
 freeze `model_roster_version`, `model_roster_frozen_at_utc`, and

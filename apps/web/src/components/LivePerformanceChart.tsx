@@ -94,6 +94,7 @@ function modelColorClass(modelId: string, index: number): string {
     "anthropic-claude-fable-5": "live-bar-anthropic-fable",
     "anthropic-claude-opus-4-7": "live-bar-anthropic",
     "anthropic-claude-opus-4-8": "live-bar-anthropic-alt",
+    "anthropic-claude-opus-5": "live-bar-anthropic",
     "google-gemini-3-1-pro": "live-bar-google"
   };
   return colors[modelId] ?? `live-bar-model-${(index % 6) + 1}`;

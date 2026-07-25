@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Stable equity breadth supports modest gains into FOMC",
+      "decision": "selected",
+      "evidence": [
+        "SPY closed at 7411.98 down 0.6% for the week",
+        "More S&P constituents rose than fell on July 24"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SPY closes below 7300 on July 31",
+      "option_id": "SP500",
+      "reversal_case": "Weak payroll revisions and tariff news trigger selloff",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "continuation_case": "Geopolitical support and inventory data sustain prices",
+      "decision": "selected",
+      "evidence": [
+        "XLE active return 3.95% over 5 days",
+        "Brent settled at 96.78 after prior 100.69"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent crude falls below 90",
+      "option_id": "ENERGY",
+      "reversal_case": "Demand concerns from weak retail sales accelerate drop",
+      "time_window_catalyst": "June advance economic indicators July 28"
+    },
+    {
+      "continuation_case": "Rate stability and earnings growth favor banks",
+      "decision": "selected",
+      "evidence": [
+        "XLF prior active rank 0.866",
+        "Average hourly earnings rose 3.5% YoY"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "10-year yield rises above 4.80",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield curve steepening pressures margins",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "continuation_case": "Defensive rotation continues into earnings season",
+      "decision": "selected",
+      "evidence": [
+        "XLV prior active rank 0.896",
+        "Core CPI rose only 2.6% YoY"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLV closes below prior week low",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Drug pricing pressure from policy headlines",
+      "time_window_catalyst": "Advance Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Value outperformance persists on rate stability",
+      "decision": "rejected",
+      "evidence": [
+        "IWD prior active rank 0.701",
+        "Russell 2000 YTD up 18.1%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "IWD underperforms SPY by more than 1% in window",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth rebound on AI earnings beats",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "continuation_case": "Rate-sensitive defensive flows continue",
+      "decision": "rejected",
+      "evidence": [
+        "XLU recent active return 3.07%",
+        "10-year yield ended at 4.68%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "XLU closes below 1-week low",
+      "option_id": "UTILITIES",
+      "reversal_case": "FOMC signals higher for longer",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "continuation_case": "Cash proxy holds value in risk-off",
+      "decision": "rejected",
+      "evidence": [
+        "BIL low volatility rank 1.000",
+        "Initial claims fell to 187000"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.3,
+      "forecast_low_pct": -0.1,
+      "invalidation_condition": "BIL yield falls below 4.0%",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Risk-on rally reduces demand for bills",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.28,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC outcome volatility on July 29",
+    "Tariff implementation uncertainty",
+    "Oil price reversal after sharp drop"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "SPY closes below 7300 on July 31",
+      "option_id": "SP500",
+      "rationale": "Broad market exposure with neutral base case amid mixed macro data.",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Brent crude falls below 90",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent active returns and commodity price support.",
+      "time_window_catalyst": "June advance economic indicators July 28"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "10-year yield rises above 4.80",
+      "option_id": "FINANCIALS",
+      "rationale": "Value tilt with positive prior active rank and earnings momentum.",
+      "time_window_catalyst": "FOMC statement July 29"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "XLV closes below prior week low",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with highest prior active rank and low drawdown.",
+      "time_window_catalyst": "Advance Q2 GDP July 30"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.78,
+  "portfolio_rationale": "Mix of benchmark with three higher-base sectors to capture modest alpha from value, energy, and defensive exposure over one week.",
+  "provider": "xai",
+  "rationale_summary": "SPY base 0.5; selected holdings exceed it with 20% each in energy, financials, healthcare for weighted 0.78 expected return.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15505,
+    "latency_seconds": 20.74715212220326,
+    "output_tokens": 1593,
+    "reasoning_tokens": 653,
+    "total_tokens": 17751
+  }
+}

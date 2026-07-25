@@ -66,6 +66,8 @@ def smoke_provider(
     elif provider == "anthropic":
         reasoning_effort = "low"
 
+    max_output_tokens = 3000 if manifest.submission_format == "portfolio" else 500
+
     model_config = ModelConfig(
         model_id=f"{provider}-smoke",
         provider=provider,
@@ -73,7 +75,7 @@ def smoke_provider(
         enabled=True,
         mode="closed_capability",
         temperature=0,
-        max_completion_tokens=500,
+        max_completion_tokens=max_output_tokens,
         max_wall_clock_seconds=60,
         reasoning_effort=reasoning_effort,
         metadata={
@@ -90,7 +92,7 @@ def smoke_provider(
     )
     runtime_limits = RuntimeSettings(
         timeout_seconds=60,
-        max_output_tokens=500,
+        max_output_tokens=max_output_tokens,
         temperature=0,
         reasoning_effort=reasoning_effort,
     )

@@ -1,0 +1,177 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong reported earnings and positive market breadth sustain the index despite its soft final week.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY returned 0.78% over 21 sessions and fell 0.59% over five sessions.",
+        "Aggregate second-quarter S&P 500 earnings were tracking 26.5% above a year earlier.",
+        "Fresh tariffs and a 38% implied probability of a July rate increase create near-term uncertainty."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6,
+      "forecast_low_pct": -6,
+      "invalidation_condition": "Earnings guidance deteriorates broadly while SPY breaks below its recent 4.49% drawdown range.",
+      "option_id": "SP500",
+      "reversal_case": "Tariff inflation, a hawkish FOMC outcome, or weak mega-cap guidance causes valuation compression.",
+      "time_window_catalyst": "July 27-31 earnings, the July 28-29 FOMC meeting, and July employment, inflation, and retail-sales data."
+    },
+    {
+      "continuation_case": "Broadening participation and policy uncertainty continue to favor profitable, defensive dividend payers.",
+      "decision": "selected",
+      "evidence": [
+        "Dividend equities gained 1.15% over five sessions and outperformed SPY by 4.17% over 21 sessions.",
+        "Prior 105-session active return was positive 3.55%.",
+        "Its 12.00% volatility was below SPY's 13.04%, although it entered at a 52-week high."
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 6,
+      "forecast_low_pct": -4,
+      "invalidation_condition": "Dividend equities lose their recent relative leadership and close materially below the July 24 level while SPY advances.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "A sharp growth-stock rebound or rising rates rotates capital away from dividend equities after their recent advance.",
+      "time_window_catalyst": "July 27-31 earnings, the July 28-29 FOMC decision, and July CPI and retail-sales reports."
+    },
+    {
+      "continuation_case": "The deep pullback stabilizes and strong technology earnings revive the exceptional prior relative trend.",
+      "decision": "selected",
+      "evidence": [
+        "Semiconductors had a 46.66% prior 105-session active return followed by 10.10% 21-session underperformance.",
+        "The quality evidence score was 0.751, with prior-trend and pullback ranks of 0.985 and 0.970.",
+        "Volatility was an extreme 53.24%, and Micron and Broadcom fell 7.0% and 2.7% on July 24."
+      ],
+      "forecast_base_pct": 2.1,
+      "forecast_high_pct": 16,
+      "forecast_low_pct": -13,
+      "invalidation_condition": "Semiconductors extend their benchmark-relative decline beyond the existing 10.10% 21-session underperformance as major technology earnings disappoint.",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "The prior advance unwinds further as high rates, tariffs, or weak earnings guidance pressure expensive chip shares.",
+      "time_window_catalyst": "Mega-cap technology earnings during July 27-31 and subsequent July inflation and employment releases."
+    },
+    {
+      "continuation_case": "Persistently elevated crude prices and geopolitical supply risk sustain energy earnings and relative leadership.",
+      "decision": "selected",
+      "evidence": [
+        "Energy outperformed SPY by 10.52% over 21 sessions and had a positive 4.05% prior active return.",
+        "Brent settled at $96.78, far above its roughly $72 pre-war level.",
+        "Brent fell 3.9% on July 24, and energy's recent pullback rank was only 0.045."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 11,
+      "forecast_low_pct": -10,
+      "invalidation_condition": "Brent decisively reverses toward its pre-war level or energy equities erase their positive 21-session active return.",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil's July 24 decline develops into a larger reversal after an extended 21-session advance.",
+      "time_window_catalyst": "Chevron earnings, geopolitical oil developments, and inflation data released before August 24."
+    },
+    {
+      "continuation_case": "Defensive rotation persists as employment softens and tariff and policy uncertainty weigh on cyclicals.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare gained 0.92% over five sessions and outperformed SPY by 5.24% over 21 sessions.",
+        "Its 63-session drawdown was a relatively contained 3.74%.",
+        "Prior active return was negative 9.28% and the quality evidence score was only 0.275."
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 8,
+      "forecast_low_pct": -6,
+      "invalidation_condition": "Healthcare turns negative versus SPY over the scoring window and breaks below its recent 63-session drawdown range.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "The recent rebound fades because its longer prior trend remains weak and risk appetite returns to growth sectors.",
+      "time_window_catalyst": "Sector earnings and the July employment, CPI, PPI, and retail-sales releases."
+    },
+    {
+      "continuation_case": "Weak payroll growth and benign monthly core CPI lead markets to price lower future policy rates.",
+      "decision": "rejected",
+      "evidence": [
+        "Long Treasuries fell 5.15% relative to SPY over 21 sessions and had a negative 5.46% prior active return.",
+        "The 10-year Treasury yield was 4.68%, up from 3.97% before the Iran war.",
+        "The option had a strong 0.866 recent-pullback rank and 0.806 low-volatility rank."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 7,
+      "forecast_low_pct": -5,
+      "invalidation_condition": "The 10-year yield rises decisively above 4.71% and the FOMC delivers or signals additional tightening.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Tariffs, elevated energy prices, or a July rate increase push inflation expectations and long yields higher.",
+      "time_window_catalyst": "The July 28-29 FOMC meeting, July 30 PCE, August 7 employment report, and August 12 CPI."
+    },
+    {
+      "continuation_case": "A hawkish FOMC outcome, tariff uncertainty, and safe-haven demand support the dollar.",
+      "decision": "rejected",
+      "evidence": [
+        "The dollar gained 0.88% over five sessions but underperformed SPY by 0.60% over 21 sessions.",
+        "Its quality evidence score was 0.663 with low-volatility and shallow-drawdown ranks of 0.881 and 0.985.",
+        "Federal-funds futures priced a 38% probability of a July rate increase."
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 4,
+      "forecast_low_pct": -3,
+      "invalidation_condition": "The FOMC rejects further tightening while U.S. inflation and employment data undershoot, causing the dollar to lose its five-session advance.",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "Soft inflation and employment data eliminate tightening expectations and narrow relative-rate support.",
+      "time_window_catalyst": "The FOMC decision, U.S. GDP and PCE, Bank of Japan meeting, and July employment and inflation reports."
+    }
+  ],
+  "confidence": 0.57,
+  "expected_alpha_vs_sp500_pct": 0.9,
+  "is_official_score": true,
+  "key_risks": [
+    "A hawkish FOMC decision or renewed rise in Treasury yields could deepen the technology selloff.",
+    "Tariff pass-through could lift inflation while weakening corporate margins and consumer demand.",
+    "Crude oil could continue its July 24 reversal, sharply reducing energy-sector returns.",
+    "Mega-cap technology earnings could disappoint after the semiconductor group's extreme prior advance."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 45,
+      "expected_return_pct": 2.1,
+      "invalidation_condition": "Semiconductors extend their benchmark-relative decline beyond the existing 10.10% 21-session underperformance as major technology earnings disappoint.",
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Exceptional prior relative strength and a deep recent pullback create the strongest rebound setup, supported by the imminent mega-cap earnings cycle, though volatility warrants staying below the cluster cap.",
+      "time_window_catalyst": "Mega-cap technology earnings during July 27-31 and subsequent July inflation and employment releases."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Dividend equities lose their recent relative leadership and close materially below the July 24 level while SPY advances.",
+      "option_id": "DIVIDEND",
+      "rationale": "Positive short- and medium-term relative performance, lower volatility, and a defensive profile provide exposure to broadening market participation.",
+      "time_window_catalyst": "July 27-31 earnings, the July 28-29 FOMC decision, and July CPI and retail-sales reports."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Brent decisively reverses toward its pre-war level or energy equities erase their positive 21-session active return.",
+      "option_id": "ENERGY",
+      "rationale": "Energy equities retain support from elevated crude prices and strong relative performance, while the smaller allocation accounts for oil's sharp extension and reversal risk.",
+      "time_window_catalyst": "Chevron earnings, geopolitical oil developments, and inflation data released before August 24."
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Healthcare turns negative versus SPY over the scoring window and breaks below its recent 63-session drawdown range.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Recent benchmark-relative strength and defensive demand may persist if tariffs, softer employment, or policy uncertainty pressure cyclical equities.",
+      "time_window_catalyst": "Sector earnings and the July employment, CPI, PPI, and retail-sales releases."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.7,
+  "portfolio_rationale": "The portfolio combines a high-upside semiconductor rebound with dividend and healthcare defensiveness and an energy inflation hedge. Each active holding has a base forecast above SPY, and no non-benchmark exposure cluster exceeds 50%.",
+  "provider": "openai",
+  "rationale_summary": "Strong aggregate earnings and semiconductor pullback potential support upside, while broader participation and elevated energy prices favor dividend and energy exposure. Defensive healthcare reduces dependence on a single continuation regime.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15428,
+    "latency_seconds": 48.424244411988184,
+    "output_tokens": 3612,
+    "reasoning_tokens": 1461,
+    "total_tokens": 19040
+  }
+}

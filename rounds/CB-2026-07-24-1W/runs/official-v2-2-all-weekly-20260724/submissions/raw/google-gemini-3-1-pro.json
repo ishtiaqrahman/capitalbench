@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad market resilience supported by strong aggregate Q2 earnings tracking 26.5% above a year earlier.",
+      "decision": "rejected",
+      "evidence": [
+        "The S&P 500 closed at 7,411.98, down 0.6% for the week.",
+        "Roughly one-third of S&P 500 companies were scheduled to report during the week."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A sharp decline in mega-cap tech stocks dragging the index lower",
+      "option_id": "SP500",
+      "reversal_case": "Mega-cap earnings misses or a hawkish FOMC statement triggering a broad market selloff.",
+      "time_window_catalyst": "FOMC meeting and major tech earnings"
+    },
+    {
+      "continuation_case": "Continued defensive rotation and stable yields supporting utility valuations.",
+      "decision": "selected",
+      "evidence": [
+        "XLU returned 3.05% over the prior 3 weeks.",
+        "The FOMC maintained a 3.50%-3.75% federal-funds target range on June 17."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "A hawkish surprise from the FOMC driving a sharp spike in Treasury yields",
+      "option_id": "UTILITIES",
+      "reversal_case": "A hawkish FOMC surprise driving yields higher and pressuring rate-sensitive sectors.",
+      "time_window_catalyst": "FOMC meeting statement on July 29"
+    },
+    {
+      "continuation_case": "A stable or steepening yield curve supporting bank net interest margins.",
+      "decision": "selected",
+      "evidence": [
+        "XLF returned 0.36% over the prior 3 weeks.",
+        "Federal-funds futures late July 24 priced a 38% probability of a 25-basis-point increase."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A dovish FOMC pivot causing a collapse in the yield curve",
+      "option_id": "FINANCIALS",
+      "reversal_case": "A dovish FOMC pivot causing a collapse in the yield curve.",
+      "time_window_catalyst": "FOMC meeting and advance Q2 GDP release"
+    },
+    {
+      "continuation_case": "Strong earnings reports from major constituents like Meta driving sector outperformance.",
+      "decision": "selected",
+      "evidence": [
+        "Meta is scheduled to report earnings during the week.",
+        "XLC has a quality evidence score of 0.729."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Significant earnings misses or weak forward guidance from mega-cap constituents",
+      "option_id": "COMMUNICATIONS",
+      "reversal_case": "Earnings misses or weak forward guidance from mega-cap constituents.",
+      "time_window_catalyst": "Meta earnings report during the week"
+    },
+    {
+      "continuation_case": "Continued rotation away from high-beta growth stocks into value-oriented equities.",
+      "decision": "selected",
+      "evidence": [
+        "IWD returned 0.32% over the prior 3 weeks.",
+        "IWD has a quality evidence score of 0.660."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "A sudden reversal back into high-beta growth stocks",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "A sudden resurgence in mega-cap tech growth reversing the recent value rotation.",
+      "time_window_catalyst": "Advance Q2 GDP and PCE prices release on July 30"
+    },
+    {
+      "continuation_case": "Geopolitical tensions re-escalating and driving crude prices back above $100.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude settled at $96.78 per barrel, down 3.9% on July 24.",
+        "USO returned 10.27% over the prior 5 weeks."
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "A sudden escalation in the Iran war driving crude prices sharply higher",
+      "option_id": "OIL",
+      "reversal_case": "Continued easing of geopolitical risk premiums leading to further crude price declines.",
+      "time_window_catalyst": "Geopolitical developments in the Middle East"
+    },
+    {
+      "continuation_case": "Safe-haven demand increasing ahead of the FOMC meeting and GDP data.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU returned -0.77% over the prior 3 weeks.",
+        "The 10-year U.S. Treasury yield ended at 4.68%."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A dovish FOMC pivot driving real yields sharply lower",
+      "option_id": "GOLD",
+      "reversal_case": "A hawkish FOMC driving real yields higher and pressuring gold prices.",
+      "time_window_catalyst": "FOMC meeting statement on July 29"
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.45,
+  "is_official_score": true,
+  "key_risks": [
+    "Hawkish FOMC surprise negatively impacting rate-sensitive sectors like Utilities.",
+    "Earnings misses from major Communications constituents dragging down the broader market.",
+    "A sudden resurgence in mega-cap tech growth reversing the recent value rotation."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "A hawkish surprise from the FOMC driving a sharp spike in Treasury yields",
+      "option_id": "UTILITIES",
+      "rationale": "Utilities offer defensive positioning ahead of the FOMC meeting and have shown strong recent relative performance.",
+      "time_window_catalyst": "FOMC meeting statement on July 29"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "A dovish FOMC pivot causing a collapse in the yield curve",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials benefit from a potential steepening yield curve and have demonstrated positive recent active returns.",
+      "time_window_catalyst": "FOMC meeting and advance Q2 GDP release"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Significant earnings misses or weak forward guidance from mega-cap constituents",
+      "option_id": "COMMUNICATIONS",
+      "rationale": "Communications holds high quality evidence scores and is positioned for major mega-cap earnings reports.",
+      "time_window_catalyst": "Meta earnings report during the week"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "A sudden reversal back into high-beta growth stocks",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Large value provides a rotation target away from tech while maintaining broad equity exposure.",
+      "time_window_catalyst": "Advance Q2 GDP and PCE prices release on July 30"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.95,
+  "portfolio_rationale": "This portfolio balances defensive positioning with targeted growth exposure ahead of a catalyst-heavy week. By allocating equally across Utilities, Financials, Communications, and Large Value, it captures potential upside from mega-cap earnings while hedging against FOMC-driven volatility. The strategy aims to outperform the broader market by avoiding the most overextended tech sectors.",
+  "provider": "google",
+  "rationale_summary": "An equal-weight allocation across four distinct sectors to navigate FOMC risks and mega-cap earnings.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16901,
+    "latency_seconds": 33.80509873921983,
+    "output_tokens": 2244,
+    "reasoning_tokens": 2573,
+    "total_tokens": 21718
+  }
+}

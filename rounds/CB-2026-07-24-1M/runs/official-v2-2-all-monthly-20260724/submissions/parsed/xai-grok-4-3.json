@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad earnings growth of 26.5% continues",
+      "decision": "rejected",
+      "evidence": [
+        "SPY 21s return 0.78%",
+        "YTD 8.3%",
+        "More constituents rose than fell on July 24"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SPY closes below 7300",
+      "option_id": "SP500",
+      "reversal_case": "Tariff pass-through pressures margins",
+      "time_window_catalyst": "July 30 advance GDP and August 7 employment"
+    },
+    {
+      "continuation_case": "Oil price stability persists into August",
+      "decision": "selected",
+      "evidence": [
+        "XLE 5s return 3.36%",
+        "USO 5s return 10.27%",
+        "Brent at $96.78"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent crude falls below $90 or USO 5-day return turns negative",
+      "option_id": "ENERGY",
+      "reversal_case": "Supply increase or demand slowdown",
+      "time_window_catalyst": "July 28-29 FOMC and August 7 employment data"
+    },
+    {
+      "continuation_case": "Manufacturing PMI holds above 50",
+      "decision": "selected",
+      "evidence": [
+        "XLI 5s return 1.81%",
+        "Aerospace defense positive",
+        "Earnings tracking positive"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "XLI 5-day return falls below -1%",
+      "option_id": "INDUSTRIALS",
+      "reversal_case": "Tariffs raise input costs sharply",
+      "time_window_catalyst": "July 30 advance GDP and August 3 ISM manufacturing"
+    },
+    {
+      "continuation_case": "Rates remain range-bound",
+      "decision": "selected",
+      "evidence": [
+        "XLU 5s return 2.48%",
+        "Yield at 4.68%",
+        "Defensive sector behavior"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "10-year yield rises above 4.80%",
+      "option_id": "UTILITIES",
+      "reversal_case": "Yield spike above 4.80%",
+      "time_window_catalyst": "August 12 CPI release"
+    },
+    {
+      "continuation_case": "Value rotation persists",
+      "decision": "rejected",
+      "evidence": [
+        "IWD 21s active return 2.23%",
+        "YTD 8.1% for Dow",
+        "Lower drawdown rank"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "IWD underperforms SPY by more than 2% in 5 days",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth reaccelerates on AI news",
+      "time_window_catalyst": "August 7 employment data"
+    },
+    {
+      "continuation_case": "European growth stabilizes",
+      "decision": "rejected",
+      "evidence": [
+        "VEA 5s return 0.01%",
+        "ECB rates unchanged",
+        "Euro area inflation 2.8%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "VEA closes below prior 21-day low",
+      "option_id": "DEVELOPED_EX_US",
+      "reversal_case": "Energy shock intensifies",
+      "time_window_catalyst": "July 31 euro-area flash inflation"
+    },
+    {
+      "continuation_case": "Mid and small caps participate",
+      "decision": "rejected",
+      "evidence": [
+        "RSP 21s active return 0.74%",
+        "Equal weight reduces concentration",
+        "Lower volatility than SPY"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "RSP underperforms SPY by 1.5% over 5 days",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap earnings dominate again",
+      "time_window_catalyst": "August 7 employment data"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 1.25,
+  "is_official_score": true,
+  "key_risks": [
+    "Tariff implementation raises consumer prices faster than expected",
+    "FOMC signals tighter policy than futures imply",
+    "Energy reversal if geopolitical tensions ease"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Brent crude falls below $90 or USO 5-day return turns negative",
+      "option_id": "ENERGY",
+      "rationale": "Recent 5s and 21s outperformance plus oil price stability support base case above SPY.",
+      "time_window_catalyst": "July 28-29 FOMC and August 7 employment data"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "XLI 5-day return falls below -1%",
+      "option_id": "INDUSTRIALS",
+      "rationale": "Positive 5s return and earnings tracking support modest outperformance.",
+      "time_window_catalyst": "July 30 advance GDP and August 3 ISM manufacturing"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "10-year yield rises above 4.80%",
+      "option_id": "UTILITIES",
+      "rationale": "Defensive characteristics and positive 5s return provide stability.",
+      "time_window_catalyst": "August 12 CPI release"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.05,
+  "portfolio_rationale": "Energy leads with recent strength; industrials and utilities add defensive balance within cluster caps.",
+  "provider": "xai",
+  "rationale_summary": "Three holdings selected with bases exceeding SPY; energy cluster at 40% under 50% cap.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15652,
+    "latency_seconds": 17.72249778895639,
+    "output_tokens": 1571,
+    "reasoning_tokens": 598,
+    "total_tokens": 17821
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings season sustains the index despite rate risk",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 up 8.3% YTD, -0.6% on the week",
+        "38% priced probability of a 25bp hike at July 28-29 FOMC",
+        "Q2 earnings tracking +26.5% y/y per LSEG"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Dovish Fed and cooling inflation lifting the whole index strongly",
+      "option_id": "SP500",
+      "reversal_case": "Fed hike plus tariff inflation compresses growth-heavy multiples",
+      "time_window_catalyst": "FOMC July 28-29, mega-cap earnings week of July 31, Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Higher-for-longer rates keep rotating flows into value",
+      "decision": "selected",
+      "evidence": [
+        "+2.23% 21d active return vs SPY, +3.46% prior-window active",
+        "Only -0.49% from 52w high with 11.9% vol and 0.72 beta",
+        "10y yield 4.68% and possible Fed hike pressure long-duration growth"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Fed signals cuts and yields fall sharply",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Dovish surprise reignites growth leadership",
+      "time_window_catalyst": "July 28-29 FOMC and Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Defensive rotation persists into a possible hike",
+      "decision": "selected",
+      "evidence": [
+        "+4.17% 21d active return, at 52w high",
+        "Beta 0.27 vs SPY, drawdown only -2.95%",
+        "Hawkish Fed risk favors low-beta income equity"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Broad growth-led melt-up post soft CPI",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Risk-on growth rally leaves dividend stocks lagging",
+      "time_window_catalyst": "FOMC decision July 28-29"
+    },
+    {
+      "continuation_case": "Persistent geopolitical supply risk keeps crude elevated and energy earnings strong",
+      "decision": "selected",
+      "evidence": [
+        "Brent $96.78 vs ~$72 pre-Iran-war; gasoline $4.10 and rising",
+        "XLE +10.52% 21d active return, negative SPY beta -0.21",
+        "Energy CPI 15.7% above year-earlier"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Brent settling below $85 on supply normalization",
+      "option_id": "ENERGY",
+      "reversal_case": "Brent fell 3.9% on July 24; de-escalation could unwind the premium fast",
+      "time_window_catalyst": "Iran conflict developments and Chevron earnings week of July 31"
+    },
+    {
+      "continuation_case": "Inflationary tariff and energy shock supports broad commodity prices",
+      "decision": "selected",
+      "evidence": [
+        "+12.98% 21d active return",
+        "New broad tariff round announced July 24 raises goods-price risk",
+        "Negative equity beta provides hedge in a hike scenario"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Broad commodity index rolling over with Brent below $85",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Demand destruction and geopolitical calm trigger commodity pullback",
+      "time_window_catalyst": "Aug 12 CPI, Aug 13 PPI tariff pass-through evidence"
+    },
+    {
+      "continuation_case": "Defensive bid persists amid rate and tariff uncertainty; sector is cheap after long underperformance",
+      "decision": "selected",
+      "evidence": [
+        "+5.24% 21d active return after -9.28% prior-window lag (mean reversion turn)",
+        "Beta 0.32, drawdown -3.74%, near 52w high"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Healthcare active return turns negative as growth rallies",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation drains defensive flows",
+      "time_window_catalyst": "FOMC and August macro data driving defensive demand"
+    },
+    {
+      "continuation_case": "Mega-cap earnings week of July 31 could reignite the AI trade",
+      "decision": "rejected",
+      "evidence": [
+        "-4.49% 21d active return, -8.2% from 52w high, beta 1.39",
+        "Micron -7.0% and Broadcom -2.7% on July 24",
+        "Possible Fed hike hurts long-duration growth valuations"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Blowout mega-cap earnings and dovish FOMC",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Hike plus tariff inflation extends the growth correction",
+      "time_window_catalyst": "Microsoft/Amazon/Meta/Apple earnings week of July 31"
+    },
+    {
+      "continuation_case": "Inflation and hike risk keep pushing yields up",
+      "decision": "rejected",
+      "evidence": [
+        "10y yield 4.68%, up from 3.97% pre-war; TLT -4.37% over 21d",
+        "38% priced hike probability with CPI at 3.5%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Sharp downside growth surprise driving yields below 4.4%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Growth scare (57k payrolls) could rally duration",
+      "time_window_catalyst": "FOMC July 28-29 and Aug 7 payrolls"
+    }
+  ],
+  "confidence": 0.62,
+  "cost_usd": 0.46416,
+  "expected_alpha_vs_sp500_pct": 1.0,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil price collapse on Iran de-escalation would hurt energy and commodity sleeves",
+    "A dovish FOMC and soft July CPI could spark a growth rally that the portfolio underweights",
+    "A Fed hike triggering a broad equity selloff would drag all equity sleeves despite defensive tilt",
+    "Tariff-driven earnings warnings during Aug reporting could hit value cyclicals"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Sharp growth-led rally after a dovish FOMC surprise",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value leads in a rising-rate, energy-shock regime; +2.23% 21d active return, only -0.49% from 52w high, low vol.",
+      "time_window_catalyst": "July 28-29 FOMC and Aug 12 CPI favor rate-resilient value over growth"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Risk-on rotation back into mega-cap growth on soft inflation prints",
+      "option_id": "DIVIDEND",
+      "rationale": "Defensive dividend equity at 52w high with +4.17% 21d active return and very low beta (0.27) into hike risk.",
+      "time_window_catalyst": "FOMC July 28-29; defensive flows if hike materializes"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Ceasefire or supply normalization pushing Brent back toward $80",
+      "option_id": "ENERGY",
+      "rationale": "Brent ~$97 amid Iran war supply shock; XLE +10.5% 21d active, negative SPY beta gives hedge value.",
+      "time_window_catalyst": "Ongoing Iran conflict supply risk and oil-major earnings week of July 31"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Geopolitical de-escalation and sharp commodity retracement",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Broad inflation hedge: +12.98% 21d active, tariffs and energy shock support commodity prices; negative equity beta.",
+      "time_window_catalyst": "Aug 12 CPI and tariff pass-through into goods prices"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Renewed sector-specific policy pressure or strong risk-on rotation",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector turning: +5.24% 21d active after prolonged underperformance, low beta 0.32, near 52w high.",
+      "time_window_catalyst": "Defensive rotation around FOMC and August macro prints"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.5,
+  "portfolio_rationale": "With headline CPI at 3.5%, a 38% priced probability of a Fed hike, Brent near $97 and tariffs raising inflation risk, I tilt toward value, dividends, defensives, energy and commodities and away from richly-valued rate-sensitive growth.",
+  "provider": "anthropic",
+  "rationale_summary": "Energy-shock plus hawkish-Fed regime favors low-beta value/defensive equity and commodity exposure over the growth-heavy S&P 500 for this one-month window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1M",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.46416,
+    "input_tokens": 27426,
+    "latency_seconds": 52.14578338689171,
+    "output_tokens": 3798,
+    "total_tokens": 31224
+  }
+}

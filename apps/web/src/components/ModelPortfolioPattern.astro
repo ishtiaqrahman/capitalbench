@@ -26,11 +26,15 @@ function similarity(value: number | null | undefined): string {
 }
 
 function riskScore(value: number | null | undefined): string {
-  return value === null || value === undefined || !Number.isFinite(value) ? "n/a" : `${value.toFixed(2)} / 5`;
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  const rounded = Math.round((value + Number.EPSILON * Math.abs(value)) * 100) / 100;
+  return `${rounded.toFixed(2)} / 5`;
 }
 
 function riskScoreShort(value: number | null | undefined): string {
-  return value === null || value === undefined || !Number.isFinite(value) ? "n/a" : value.toFixed(2);
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  const rounded = Math.round((value + Number.EPSILON * Math.abs(value)) * 100) / 100;
+  return rounded.toFixed(2);
 }
 
 function riskWidth(value: number | null | undefined): string {

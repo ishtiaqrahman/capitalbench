@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-07-24-claude-opus-5-added",
+    date: "2026-07-24",
+    title: "Claude Opus 5 joins future CapitalBench rounds",
+    category: "Benchmark",
+    status: "published",
+    summary:
+      "Claude Opus 5 joins the production roster starting with the July 24 weekly and monthly rounds, with no backfill into older tests.",
+    details: [
+      "The model is configured as anthropic-claude-opus-5 using Anthropic's official API model ID claude-opus-5.",
+      "The production adapter disables tools and browsing, requests strict structured output, and pins adaptive thinking effort to low.",
+      "Its first accepted weekly and monthly portfolios create forward-only model history, model-profile data, and new fair-roster comparison cohorts.",
+      "Published API pricing is recorded as $5 per million input tokens and $25 per million output tokens."
+    ],
+    links: [
+      { label: "Models", href: "/models" },
+      { label: "Benchmark sets", href: "/leaderboards/benchmark-sets" },
+      { label: "Protocol", href: "/methodology" }
+    ]
+  },
+  {
     id: "2026-07-21-claude-opus-4-7-retired",
     date: "2026-07-21",
     title: "Claude Opus 4.7 retired from new benchmark rounds",

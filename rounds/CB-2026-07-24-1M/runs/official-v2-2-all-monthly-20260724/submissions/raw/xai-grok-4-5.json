@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.9,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid earnings and breadth (more advancers) support modest positive drift",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7411.98, down 0.6% for the week and up 8.3% YTD",
+        "Aggregate Q2 S&P 500 earnings tracking +26.5% YoY",
+        "38% probability of 25bp hike priced for July 28-29 FOMC"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY close below recent 63-day drawdown low of -4.49% extended",
+      "option_id": "SP500",
+      "reversal_case": "Tariff uncertainty or hawkish FOMC triggers risk-off",
+      "time_window_catalyst": "July 28-29 FOMC, July 30 GDP/PCE, and mega-cap earnings week"
+    },
+    {
+      "continuation_case": "Geopolitical supply premium and elevated gasoline prices sustain sector strength",
+      "decision": "selected",
+      "evidence": [
+        "XLE active return 21s +10.52%, return_5s +3.36%",
+        "Brent crude at $96.78 after trading near $72 pre-Iran war",
+        "Energy quality evidence prior active rank 0.836"
+      ],
+      "forecast_base_pct": 4.0,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Brent sustained move below $85",
+      "option_id": "ENERGY",
+      "reversal_case": "Sharp crude decline or demand destruction from higher prices",
+      "time_window_catalyst": "Oil price path and any residual Iran-related headlines before Aug 24"
+    },
+    {
+      "continuation_case": "War premium and inventory tightness keep crude elevated into August",
+      "decision": "selected",
+      "evidence": [
+        "USO return_5s +10.27%, return_21s +27.82%, prior_105s_active +41.01%",
+        "Brent settled $96.78, down 3.9% on day but far above pre-war $72",
+        "Gasoline national average $4.10 vs $3.93 one month earlier"
+      ],
+      "forecast_base_pct": 5.5,
+      "forecast_high_pct": 15.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "USO or Brent drop exceeding 10% from entry within two weeks",
+      "option_id": "OIL",
+      "reversal_case": "De-escalation or OPEC+ supply response collapses the premium",
+      "time_window_catalyst": "Weekly oil inventories and geopolitical updates through scoring window"
+    },
+    {
+      "continuation_case": "Energy-driven commodity complex momentum persists with inflation residual",
+      "decision": "selected",
+      "evidence": [
+        "PDBC return_5s +4.06%, active_return_21s +12.98%",
+        "Prior active rank 0.851 and energy-linked commodity strength",
+        "June CPI energy component still +15.7% YoY"
+      ],
+      "forecast_base_pct": 3.5,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "PDBC drawdown beyond recent max of -16.55% or oil-led collapse",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "Global growth scare or dollar spike reverses broad commodities",
+      "time_window_catalyst": "July CPI/PPI and any tariff inflation pass-through data"
+    },
+    {
+      "continuation_case": "Value and equal-weight leadership continues amid rate and tariff uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "IWD active_return_21s +2.23%, return_5s +0.08%, distance_52w_high only -0.49%",
+        "Quality evidence score 0.632 with high shallow-drawdown rank 0.836",
+        "RSP outperforming SPY on 5s and 21s windows"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "IWD underperforms SPY by >1.5% in first 10 trading days",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth/tech rebound on dovish FOMC or strong mega-cap earnings",
+      "time_window_catalyst": "FOMC outcome and value-sector earnings reports"
+    },
+    {
+      "continuation_case": "Defensive flows and relative strength persist through macro data volatility",
+      "decision": "selected",
+      "evidence": [
+        "XLV active_return_21s +5.24%, return_5s +0.92%",
+        "Shallow max_drawdown_63s -3.74% and distance_52w_high -1.14%",
+        "Defensive sector with positive absolute returns amid mixed equity tape"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLV active return turns negative versus SPY by more than 2%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation back into tech/growth or sector-specific negative news",
+      "time_window_catalyst": "Healthcare earnings and July employment/CPI defensive bid"
+    },
+    {
+      "continuation_case": "AI/semiconductor structural demand reasserts after pullback",
+      "decision": "rejected",
+      "evidence": [
+        "SMH active_return_21s -10.10%, max_drawdown_63s -16.80%, distance_52w_high -16.10%",
+        "High volatility_63s 53.24% and Micron down 7% on July 24",
+        "Prior active strength but recent sharp pullback"
+      ],
+      "forecast_base_pct": -1.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -12.0,
+      "invalidation_condition": "SMH fails to reclaim 21-day relative strength versus SPY",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Further earnings or tariff-related de-rating of high-beta tech",
+      "time_window_catalyst": "Mega-cap tech earnings including any semiconductor supply-chain commentary"
+    },
+    {
+      "continuation_case": "Dividend factor continues to attract flows in uncertain rate/tariff environment",
+      "decision": "rejected",
+      "evidence": [
+        "SCHD return_5s +1.15%, active_return_21s +4.17%, at 52w high",
+        "Quality evidence prior active rank 0.806",
+        "Low beta_spy 0.274 and defensive dividend profile"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "SCHD breaks below recent lows or underperforms value peers",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Broad risk-on or rising yields pressure dividend stocks",
+      "time_window_catalyst": "FOMC and income-oriented flows around macro prints"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 2.78,
+  "is_official_score": true,
+  "key_risks": [
+    "Rapid oil price reversal if geopolitical premium fades",
+    "FOMC hawkish surprise or tariff-driven risk-off hitting cyclicals",
+    "High volatility in OIL and ENERGY amplifying drawdowns",
+    "Commodity correlation breakdown if dollar strengthens sharply"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 4.0,
+      "invalidation_condition": "Brent crude sustained drop below $85 or sharp risk-off equity selloff",
+      "option_id": "ENERGY",
+      "rationale": "Oil price persistence and energy sector momentum from geopolitical premium support outperformance versus broad equities over the one-month window.",
+      "time_window_catalyst": "Continued elevated Brent crude near $97 and any further supply headlines before August 24 close"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 5.5,
+      "invalidation_condition": "Brent settlement below $80 or rapid de-escalation removing war premium",
+      "option_id": "OIL",
+      "rationale": "Direct crude exposure captures the largest recent active returns and geopolitical premium more efficiently than equities for the short horizon.",
+      "time_window_catalyst": "Oil inventory data and any escalation residual from Iran-related supply risk through mid-August"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 3.5,
+      "invalidation_condition": "Broad commodity index reversal with oil and metals simultaneous decline >5%",
+      "option_id": "BROAD_COMMODITIES",
+      "rationale": "Diversified commodity basket benefits from energy spillover and inflation residual while offering lower single-name oil volatility.",
+      "time_window_catalyst": "Commodity complex reaction to July PCE and CPI prints plus any tariff pass-through signals"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Sharp growth/tech rebound or value underperformance >2% versus SPY in first two weeks",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value tilt shows positive active return and lower drawdown versus growth/tech, aligning with equal-weight outperformance and defensive rotation.",
+      "time_window_catalyst": "FOMC decision and July employment/CPI data supporting value over growth"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Sector-specific policy or earnings disappointment driving underperformance versus SPY",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong recent active return, defensive characteristics, and shallow drawdown provide ballast with base case above SPY.",
+      "time_window_catalyst": "Healthcare earnings subset and defensive flows around FOMC and macro data"
+    }
+  ],
+  "portfolio_expected_return_pct": 3.68,
+  "portfolio_rationale": "Portfolio concentrates in energy/commodities capturing the dominant recent geopolitical and price momentum while diversifying into value and healthcare for lower-volatility alpha. All active holdings clear the SPY base hurdle and respect the 50% cluster cap.",
+  "provider": "xai",
+  "rationale_summary": "Energy complex leads on supplied price and macro facts; value and healthcare add breadth across clusters with superior recent active returns and quality metrics versus growth-heavy benchmarks.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16513,
+    "latency_seconds": 55.950137705076486,
+    "output_tokens": 2726,
+    "reasoning_tokens": 772,
+    "total_tokens": 20011
+  }
+}

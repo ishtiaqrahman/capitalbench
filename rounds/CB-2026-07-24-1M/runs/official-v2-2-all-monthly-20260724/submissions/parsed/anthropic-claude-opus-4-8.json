@@ -1,0 +1,192 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings and resilient labor support continued gains.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 up 8.3% YTD through July 24",
+        "Q2 earnings tracking +26.5% YoY",
+        "More constituents rose than fell July 24"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Broad index closes materially below entry after adverse macro surprise.",
+      "option_id": "SP500",
+      "reversal_case": "FOMC hike and tariff shock trigger drawdown.",
+      "time_window_catalyst": "Mega-cap earnings week and FOMC July 28-29."
+    },
+    {
+      "continuation_case": "Defensive rotation persists amid rate and tariff uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "Active return 21s +5.24%",
+        "Max drawdown 63s only -3.74%",
+        "Recent 5s +0.92%"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Healthcare active return turns sharply negative.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rally rotates away from defensives.",
+      "time_window_catalyst": "Defensive flows through August data-heavy window."
+    },
+    {
+      "continuation_case": "Solid earnings and stable curve support financials.",
+      "decision": "selected",
+      "evidence": [
+        "Active return 21s +4.05%",
+        "Low volatility 13.04%",
+        "Shallow drawdown -2.42%"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Regional bank stress or credit spread widening.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit stress or curve flattening pressures margins.",
+      "time_window_catalyst": "Bank earnings and FOMC guidance."
+    },
+    {
+      "continuation_case": "Defensive dividend demand continues amid uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "Active return 21s +4.17%",
+        "At 52w high, drawdown -2.95%",
+        "Low beta 0.274"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Dividend factor breaks below entry on rotation.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Rate spike or growth surge favors high-beta.",
+      "time_window_catalyst": "Defensive positioning into August."
+    },
+    {
+      "continuation_case": "Geopolitical premium sustains oil.",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 21s +10.52%",
+        "Brent fell 3.9% July 24",
+        "Deep drawdown -13.21%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Brent falls back toward pre-war $72 level.",
+      "option_id": "ENERGY",
+      "reversal_case": "Brent pullback from $100 to $96.78 signals fading premium.",
+      "time_window_catalyst": "OPEC and Iran-war-related supply news."
+    },
+    {
+      "continuation_case": "Value leadership persists in defensive tape.",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 21s +2.23%",
+        "Low volatility 11.87%",
+        "Near 52w high -0.49%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Value underperforms growth sharply.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth reasserts on strong tech earnings.",
+      "time_window_catalyst": "Earnings breadth and rate path."
+    },
+    {
+      "continuation_case": "Mega-cap earnings surprise to upside.",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 21s -4.49%",
+        "Recent 5s -1.60%",
+        "Drawdown -8.20%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -7.0,
+      "invalidation_condition": "Tech earnings miss triggers further drawdown.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Recent weakness and rate risk pressure high-beta tech.",
+      "time_window_catalyst": "Mega-cap earnings week."
+    },
+    {
+      "continuation_case": "Duration rally if growth slows.",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 21s -2.19%",
+        "10-year yield 4.68% rising",
+        "High low-vol rank"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yields rise further on hawkish Fed.",
+      "option_id": "AGGREGATE_BONDS",
+      "reversal_case": "Rising yields and hike risk pressure bonds.",
+      "time_window_catalyst": "FOMC and PCE/CPI data."
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.35,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC surprise hike July 28-29 with 38% implied probability hurts rate-sensitive holdings",
+    "Mega-cap earnings disappointment drags broad market and correlates holdings",
+    "Tariff round announced July 24 raises inflation pass-through risk"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "FOMC hikes and mega-cap earnings disappoint, driving broad selloff below entry.",
+      "option_id": "SP500",
+      "rationale": "Core broad equity exposure with strong Q2 earnings tracking +26.5% YoY supporting large-cap resilience.",
+      "time_window_catalyst": "Mega-cap earnings week (MSFT, AMZN, META, AAPL) and July 28-29 FOMC."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Strong risk-on rally rotates flows out of defensives.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive leadership with +5.24% active 21s return, low drawdown -3.74%, and shallow pullback offering value after prior underperformance.",
+      "time_window_catalyst": "Defensive rotation amid tariff and rate uncertainty through August."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Credit stress or sharp yield decline pressures net interest margins.",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive +4.05% active 21s return, low vol 13% and shallow drawdown -2.42%; strong earnings backdrop.",
+      "time_window_catalyst": "Bank earnings and yield-curve dynamics into August."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Rising rates or growth surge favors high-beta growth over dividends.",
+      "option_id": "DIVIDEND",
+      "rationale": "Strong +4.17% active 21s return, recent +1.15% strength, low beta 0.27, at 52w high with low drawdown.",
+      "time_window_catalyst": "Defensive dividend demand amid tariff-driven uncertainty."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.35,
+  "portfolio_rationale": "Blend of SPY core with defensive/quality tilts (healthcare, financials, dividend) that showed positive recent active returns, low volatility and shallow drawdowns amid FOMC and tariff uncertainty.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt toward defensively resilient sectors with positive active momentum while keeping broad SPY core; hedges tariff and rate risk during a heavy earnings and data window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27432,
+    "latency_seconds": 40.04516045493074,
+    "output_tokens": 2729,
+    "total_tokens": 30161
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings growth and resilient claims support drift higher.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 up 8.3% YTD, closed 7,411.98",
+        "Q2 earnings tracking +26.5% y/y per LSEG IBES",
+        "38% implied probability of a July hike"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "SPY down more than 5% from entry",
+      "option_id": "SP500",
+      "reversal_case": "Rate hike, 3.5% CPI and new tariffs compress multiples.",
+      "time_window_catalyst": "FOMC July 28-29, Aug 7 payrolls, Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Defensive rotation persists amid tariff and rate uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "XLV 21-day active return +5.24%",
+        "Max drawdown only -3.74%, near 52-week high",
+        "Low beta 0.315 to SPY"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "XLV lags SPY by more than 3%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation back into tech leaves healthcare behind.",
+      "time_window_catalyst": "Sector Q2 earnings through early August"
+    },
+    {
+      "continuation_case": "Value/dividend leadership backed by broadening breadth (RSP>SPY).",
+      "decision": "selected",
+      "evidence": [
+        "SCHD +4.17% active over 21 sessions, +1.15% last 5",
+        "At 52-week high with -2.95% max drawdown",
+        "Beta 0.274"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "SCHD down more than 4% from entry",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Falling yields could re-favor long-duration growth.",
+      "time_window_catalyst": "Aug 12 CPI, Aug 7 payrolls"
+    },
+    {
+      "continuation_case": "Supply shock persists and energy earnings beat.",
+      "decision": "selected",
+      "evidence": [
+        "Brent $96.78 vs ~$72 pre-Iran-war",
+        "XLE +10.52% active over 21 sessions",
+        "Negative SPY beta -0.209 offers diversification"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Brent drops below $80",
+      "option_id": "ENERGY",
+      "reversal_case": "Ceasefire or demand destruction sends Brent sharply lower; XLE already had a -13% 63-day drawdown.",
+      "time_window_catalyst": "Chevron earnings late July; crude path"
+    },
+    {
+      "continuation_case": "Steeper curve and solid credit support bank earnings.",
+      "decision": "selected",
+      "evidence": [
+        "XLF +4.05% active over 21 sessions",
+        "Shallow -2.42% drawdown, near 52-week high",
+        "10-year at 4.68%"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "HYG falls more than 2% over the window",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit deterioration or a hawkish shock hits loan demand.",
+      "time_window_catalyst": "FOMC July 28-29; Aug 19 minutes"
+    },
+    {
+      "continuation_case": "AI capex cycle and prior +46.7% active trend could resume.",
+      "decision": "rejected",
+      "evidence": [
+        "SMH -10.10% active over last 21 sessions",
+        "Volatility 53% and -16.8% 63-day drawdown",
+        "Micron fell 7.0% on July 24"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 16.0,
+      "forecast_low_pct": -16.0,
+      "invalidation_condition": "SMH lags SPY by another 5%",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Momentum already cracking with heavy single-name declines.",
+      "time_window_catalyst": "Mega-cap earnings week ending July 31"
+    },
+    {
+      "continuation_case": "Weak payrolls (57k) could rally duration.",
+      "decision": "rejected",
+      "evidence": [
+        "TLT -4.37% over 21 sessions",
+        "10-year yield 4.68% vs 3.97% pre-war",
+        "CPI 3.5% y/y"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "10-year yield rises above 4.9%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Hike risk and energy inflation keep yields elevated.",
+      "time_window_catalyst": "FOMC and Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Inflation and geopolitical risk revive safe-haven demand.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU -25.97% prior active return, -24.95% from 52-week high",
+        "Recent 5-day return +0.97%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -7.0,
+      "invalidation_condition": "Gold makes new lows below the 63-day drawdown trough",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields and strong dollar (UUP +0.88% 5d) cap gold.",
+      "time_window_catalyst": "FOMC and CPI"
+    }
+  ],
+  "confidence": 0.55,
+  "cost_usd": 0.21178,
+  "expected_alpha_vs_sp500_pct": 0.64,
+  "is_official_score": true,
+  "key_risks": [
+    "Dovish FOMC sparks a mega-cap tech melt-up that leaves defensive tilts behind",
+    "Sharp oil reversal hits energy allocation",
+    "Tariff pass-through crushes consumer and broad equity sentiment",
+    "Hot July CPI on Aug 12 raises rates and pressures all equity clusters"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "FOMC hikes and SPY breaks below -5% from entry",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure with Q2 earnings tracking +26.5% y/y.",
+      "time_window_catalyst": "July 28-29 FOMC, mega-cap earnings week, Aug 7 jobs, Aug 12 CPI"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "XLV underperforms SPY by more than 3% intramonth",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with positive relative momentum, low drawdown and tariff/rate insulation.",
+      "time_window_catalyst": "Sector earnings and August CPI"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "SCHD falls more than 4% from entry",
+      "option_id": "DIVIDEND",
+      "rationale": "Strong relative trend, at 52-week high, low beta cushions mega-cap tech drawdown risk.",
+      "time_window_catalyst": "Aug 12 CPI and Aug 7 payrolls"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Brent falls back below $80",
+      "option_id": "ENERGY",
+      "rationale": "Oil near $97 on Iran-war supply shock supports energy cash flows; low correlation to SPY.",
+      "time_window_catalyst": "Crude price path and Chevron earnings in late July"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Credit spreads widen sharply with HYG down over 2%",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive 21-day active return, shallow drawdown, benefits from higher-for-longer rates.",
+      "time_window_catalyst": "July 28-29 FOMC and Aug 19 minutes"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.44,
+  "portfolio_rationale": "Barbell of benchmark core plus defensive/value and an energy hedge against the inflationary oil shock, avoiding stretched high-beta semis and AI names that already show sharp recent relative drawdowns.",
+  "provider": "anthropic",
+  "rationale_summary": "Sticky 3.5% CPI, a live 38% July hike probability, tariff risk and negative tech breadth argue for lower-beta defensive and real-asset tilts around an SPY core.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1M",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.21178,
+    "input_tokens": 27426,
+    "latency_seconds": 42.64768880303018,
+    "output_tokens": 2986,
+    "total_tokens": 30412
+  }
+}

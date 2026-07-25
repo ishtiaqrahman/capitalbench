@@ -1,0 +1,183 @@
+{
+  "benchmark_expected_return_pct": 0.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings and dovish Fed lift broad index",
+      "decision": "selected",
+      "evidence": [
+        "SPY closed 7,411.98, down 0.6% for week",
+        "Heavy mega-cap earnings week and FOMC July 28-29",
+        "Q2 S&P 500 earnings tracking +26.5%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Index breaks below prior week lows",
+      "option_id": "SP500",
+      "reversal_case": "FOMC hike or mega-cap misses drag index",
+      "time_window_catalyst": "FOMC July 28-29 and mega-cap earnings"
+    },
+    {
+      "continuation_case": "Momentum persists into durable-goods report",
+      "decision": "selected",
+      "evidence": [
+        "Active return 5s +2.40%",
+        "3s return +2.24%, low vol 16.17%",
+        "Near 52w high, shallow drawdown"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Durable-goods miss and cyclical selloff",
+      "option_id": "INDUSTRIALS",
+      "reversal_case": "Weak durables or GDP triggers cyclical pullback",
+      "time_window_catalyst": "June durable-goods July 27"
+    },
+    {
+      "continuation_case": "Strong earnings and steady rates support banks",
+      "decision": "selected",
+      "evidence": [
+        "Quality score 0.689, prior active rank 0.866",
+        "Low beta 0.181, near 52w high",
+        "Positive active return 5s +0.68%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Credit-spread widening or curve shock",
+      "option_id": "FINANCIALS",
+      "reversal_case": "FOMC surprise flattens curve, hurts banks",
+      "time_window_catalyst": "Bank earnings and FOMC"
+    },
+    {
+      "continuation_case": "Geopolitical premium sustains oil",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 5s +3.95%",
+        "Brent fell 3.9% on July 24 to $96.78",
+        "Prior active +6.30%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Brent falls below $90",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil correction after Iran-war spike unwinds",
+      "time_window_catalyst": "Chevron earnings and oil inventories"
+    },
+    {
+      "continuation_case": "Defensive rotation continues",
+      "decision": "rejected",
+      "evidence": [
+        "3s return +3.05%, active 5s +3.07%",
+        "Low beta, defensive",
+        "Rate-sensitive with 10yr at 4.68%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "10yr yield spikes above 4.85%",
+      "option_id": "UTILITIES",
+      "reversal_case": "Rising yields pressure rate-sensitive sector",
+      "time_window_catalyst": "FOMC July 28-29"
+    },
+    {
+      "continuation_case": "Defensive bid persists",
+      "decision": "rejected",
+      "evidence": [
+        "Active 5s +1.51%, prior active +3.68%",
+        "Low beta -0.186, defensive",
+        "Quality score 0.570"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Broad defensive rotation reverses",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Policy/tariff headline risk",
+      "time_window_catalyst": "Sector earnings"
+    },
+    {
+      "continuation_case": "Dovish Fed rallies bonds",
+      "decision": "rejected",
+      "evidence": [
+        "Return 3s -0.29%",
+        "10yr yield 4.68%, sticky inflation 3.5%",
+        "FOMC hike probability 38%"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Yields rise sharply",
+      "option_id": "AGGREGATE_BONDS",
+      "reversal_case": "Hike or hot PCE lifts yields",
+      "time_window_catalyst": "FOMC and PCE July 30"
+    },
+    {
+      "continuation_case": "Safe-haven demand on tariff/geopolitical risk",
+      "decision": "rejected",
+      "evidence": [
+        "Active 5s +1.55%",
+        "Far from 52w high -24.95%",
+        "Safe-haven amid tariffs"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Dollar rally accelerates",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar strength and rising real rates weigh",
+      "time_window_catalyst": "FOMC and dollar moves"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.165,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC surprise hike (38% implied) roiling rates and equities",
+    "Mega-cap earnings misses dragging the broad index",
+    "Tariff round pass-through hitting cyclicals"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Sharp risk-off move or weak durable-goods and GDP prints",
+      "option_id": "INDUSTRIALS",
+      "rationale": "Strong recent relative momentum (+2.4% active 5s), shallow drawdown, low volatility versus tech; defensive-cyclical tilt with earnings support.",
+      "time_window_catalyst": "Durable-goods report July 27 and industrial earnings during the week"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Yield-curve shock or credit-spread widening",
+      "option_id": "FINANCIALS",
+      "rationale": "High quality-evidence score (0.689), positive active returns, low beta, strong Q2 earnings tracking; defensive within equities.",
+      "time_window_catalyst": "Bank earnings and FOMC July 28-29"
+    },
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "Broad equity selloff below prior week lows",
+      "option_id": "SP500",
+      "rationale": "Core broad-market anchor into a heavy mega-cap earnings and FOMC week.",
+      "time_window_catalyst": "Microsoft, Amazon, Meta, Apple earnings and FOMC July 28-29"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.565,
+  "portfolio_rationale": "Tilt toward lower-volatility cyclical and defensive equity sectors with strong recent relative strength and earnings support, anchored by SPY into a heavy earnings and FOMC week.",
+  "provider": "anthropic",
+  "rationale_summary": "Industrials and financials show the best combination of recent relative strength, low volatility, and shallow drawdown while tech remains under pressure; SPY provides the core anchor.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27205,
+    "latency_seconds": 35.624438571045175,
+    "output_tokens": 2470,
+    "total_tokens": 29675
+  }
+}

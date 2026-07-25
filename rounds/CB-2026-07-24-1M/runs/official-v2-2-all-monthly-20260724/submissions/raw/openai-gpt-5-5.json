@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.9,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings growth and a heavy late-July reporting calendar could support a continued grind higher if macro data and FOMC communication are benign.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7,411.98, down 0.6% for the week and up 8.3% year to date.",
+        "SPY 21-session return was 0.78%, 63-session volatility was 13.04%, and max drawdown was -4.49%.",
+        "Aggregate second-quarter S&P 500 earnings were tracking 26.5% above a year earlier from more than 80 reported companies."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "SPY breaks below its recent drawdown area while breadth deteriorates and rate expectations move more hawkish.",
+      "option_id": "SP500",
+      "reversal_case": "Tariff implementation uncertainty, a possible FOMC hike, slowing payroll growth, or growth-stock weakness could pull the index lower.",
+      "time_window_catalyst": "July 28-29 FOMC meeting, advance Q2 GDP, June PCE, July employment report, July CPI/PPI, retail sales, and major S&P 500 earnings."
+    },
+    {
+      "continuation_case": "Positive breadth, low beta, shallow drawdown, and earnings support favor mature dividend companies if investors continue rotating away from volatile growth.",
+      "decision": "selected",
+      "evidence": [
+        "DIVIDEND returned 1.15% over 5 sessions and had a 4.17% 21-session active return versus SPY.",
+        "It had 12.00% 63-session volatility, -2.95% max drawdown, and was at its 52-week high.",
+        "Quality evidence score was 0.601 with high prior active rank of 0.806 and low-volatility rank of 0.761."
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2,
+      "invalidation_condition": "Dividend equities lose their 52-week-high support and underperform SPY by more than 1.5 percentage points over the first half of the window.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "A strong rebound in high-beta technology or a sharp rise in rates could reduce demand for dividend-oriented equities.",
+      "time_window_catalyst": "Large-cap earnings reports, July CPI/PPI, July retail sales, and FOMC communications before the August 24 exit."
+    },
+    {
+      "continuation_case": "Value leadership can continue if market breadth remains positive and earnings strength extends beyond mega-cap growth.",
+      "decision": "selected",
+      "evidence": [
+        "LARGE_VALUE returned 0.08% over 5 sessions and had a 2.23% 21-session active return versus SPY.",
+        "It showed 3.46% prior 105-session active return, 11.87% volatility, and -2.40% max drawdown.",
+        "Distance from 52-week high was only -0.49%, with a 0.632 quality evidence score."
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.1,
+      "forecast_low_pct": -2.4,
+      "invalidation_condition": "Market leadership narrows back sharply to mega-cap growth and large value underperforms SPY by more than 1 percentage point.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "A renewed Nasdaq-led rally or weaker cyclical earnings could reverse the value factor advantage.",
+      "time_window_catalyst": "Broad second-quarter earnings reports and macro releases that test whether market breadth continues beyond mega-cap growth."
+    },
+    {
+      "continuation_case": "Healthcare may continue to benefit from defensive rotation and lower broad-market correlation during tariff, labor, and rate uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE returned 0.92% over 5 sessions and had a 5.24% 21-session active return versus SPY.",
+        "It had a -3.74% 63-session max drawdown and was only -1.14% from its 52-week high.",
+        "The sector has moderate SPY beta of 0.315 and correlation of 0.255."
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.4,
+      "forecast_low_pct": -2.7,
+      "invalidation_condition": "Healthcare reverses below recent support and its 21-day active return falls back near zero or negative versus SPY.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "The recent relative bounce could fade because prior 105-session active return was -9.28% and quality evidence score was only 0.275.",
+      "time_window_catalyst": "S&P 500 earnings season plus July labor, CPI, PPI, and retail-sales releases before exit."
+    },
+    {
+      "continuation_case": "Elevated oil prices, geopolitical risk, and near-term energy earnings can support continued sector outperformance.",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY returned 3.36% over 5 sessions and had a 10.52% 21-session active return versus SPY.",
+        "Brent crude settled at $96.78 after trading near $72 before the late-February Iran war.",
+        "ENERGY had 4.05% prior 105-session active return, but 24.01% volatility and -13.21% max drawdown."
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 7,
+      "forecast_low_pct": -5,
+      "invalidation_condition": "Brent crude breaks materially below the post-shock range or energy gives back most of its recent relative strength versus SPY.",
+      "option_id": "ENERGY",
+      "reversal_case": "Crude fell 3.9% on July 24, and any easing of the geopolitical supply premium could quickly reverse energy equities.",
+      "time_window_catalyst": "Chevron and other energy earnings, oil-market reaction to geopolitical supply risk, and July inflation data before August 24."
+    },
+    {
+      "continuation_case": "Defensive demand and any decline in yields after soft inflation or labor data could sustain utilities' recent gains.",
+      "decision": "selected",
+      "evidence": [
+        "UTILITIES returned 2.48% over 5 sessions and had a 0.87% 21-session active return versus SPY.",
+        "Prior 105-session active return was 1.07%, with a quality evidence score of 0.551.",
+        "The sector had low SPY beta of 0.156 and correlation of 0.133."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "The 10-year Treasury yield rises materially above the entry level and utilities underperform SPY during the first two weeks.",
+      "option_id": "UTILITIES",
+      "reversal_case": "A hawkish Fed outcome or higher long yields would pressure rate-sensitive defensive equities.",
+      "time_window_catalyst": "FOMC decision/minutes and July CPI/PPI prints that may move Treasury yields and defensive yield-sensitive equities."
+    },
+    {
+      "continuation_case": "A hawkish FOMC, tariff uncertainty, or global risk aversion could support further dollar strength.",
+      "decision": "rejected",
+      "evidence": [
+        "US_DOLLAR returned 0.88% over 5 sessions but had -0.60% 21-session active return versus SPY.",
+        "It had low 4.90% volatility, -0.98% max drawdown, and was at its 52-week high.",
+        "Quality evidence score was 0.663, supported by low-volatility rank of 0.881 and shallow-drawdown rank of 0.985."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "The dollar falls from its 52-week high while rate-hike probability declines after FOMC or inflation data.",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "Soft inflation or labor data could reduce rate-hike odds and weaken the dollar versus risk assets.",
+      "time_window_catalyst": "July FOMC decision, July employment report, CPI/PPI, and trade-related uncertainty before exit."
+    },
+    {
+      "continuation_case": "If July inflation or employment data weaken and the FOMC sounds less hawkish, duration could rebound from its pullback.",
+      "decision": "rejected",
+      "evidence": [
+        "LONG_TREASURY returned -1.50% over 5 sessions and had -5.15% 21-session active return versus SPY.",
+        "The 10-year Treasury yield ended at 4.68%, up from 3.97% before the Iran war began.",
+        "It had a strong recent pullback rank of 0.866 and low-volatility rank of 0.806, but prior 105-session active return was -5.46%."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "The 10-year Treasury yield rises above the entry level after FOMC or CPI and long Treasuries make new 63-session drawdown lows.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "A rate hike, hotter CPI/PPI, or tariff pass-through fears could push yields higher and extend Treasury losses.",
+      "time_window_catalyst": "July FOMC meeting, June PCE, July employment, July CPI/PPI, and FOMC minutes."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.6,
+  "is_official_score": true,
+  "key_risks": [
+    "A dovish risk-on rally led by mega-cap technology could cause SPY to outperform the defensive/value tilt.",
+    "Oil and energy equities could reverse if crude prices fall after the geopolitical shock premium fades.",
+    "A hotter July CPI/PPI or hawkish FOMC message could pressure utilities and dividend/value equities through higher yields.",
+    "Earnings disappointments in selected defensive, value, or energy sectors could overwhelm recent relative-strength signals."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Dividend equities lose their 52-week-high support and underperform SPY by more than 1.5 percentage points over the first half of the window.",
+      "option_id": "DIVIDEND",
+      "rationale": "Dividend equities show strong recent relative performance, low beta, shallow drawdown, and exposure to profitable mature companies ahead of a heavy earnings window.",
+      "time_window_catalyst": "Large-cap earnings reports, July CPI/PPI, July retail sales, and FOMC communications before the August 24 exit."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Healthcare reverses below recent support and its 21-day active return falls back near zero or negative versus SPY.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare combines strong 21-day active return and moderate beta with defensive characteristics if macro or tariff uncertainty weighs on broad risk appetite.",
+      "time_window_catalyst": "S&P 500 earnings season plus July labor, CPI, PPI, and retail-sales releases before exit."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Brent crude breaks materially below the post-shock range or energy gives back most of its recent relative strength versus SPY.",
+      "option_id": "ENERGY",
+      "rationale": "Energy has direct support from elevated crude prices after the Iran-war shock, strong recent active return, and possible earnings/geopolitical catalysts, while using sector equity rather than the more volatile oil ETP.",
+      "time_window_catalyst": "Chevron and other energy earnings, oil-market reaction to geopolitical supply risk, and July inflation data before August 24."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Market leadership narrows back sharply to mega-cap growth and large value underperforms SPY by more than 1 percentage point.",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Large value has positive prior and recent active performance, lower volatility, low drawdown, and is near its 52-week high, fitting a one-month broadening and earnings-quality thesis.",
+      "time_window_catalyst": "Broad second-quarter earnings reports and macro releases that test whether market breadth continues beyond mega-cap growth."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "The 10-year Treasury yield rises materially above the entry level and utilities underperform SPY during the first two weeks.",
+      "option_id": "UTILITIES",
+      "rationale": "Utilities provide rate-sensitive defensive exposure with positive recent and prior active returns, useful if labor or tariff uncertainty pressures cyclicals.",
+      "time_window_catalyst": "FOMC decision/minutes and July CPI/PPI prints that may move Treasury yields and defensive yield-sensitive equities."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.5,
+  "portfolio_rationale": "The portfolio tilts away from mega-cap growth toward dividend/value, healthcare, utilities, and energy where supplied evidence shows stronger recent breadth, lower drawdowns in several holdings, and identifiable one-month catalysts. It keeps diversified US equity exposure below the non-benchmark cluster cap and avoids concentrated high-volatility technology despite high quality-evidence ranks there.",
+  "provider": "openai",
+  "rationale_summary": "SPY has decent earnings support but faces tariff, rate, and growth-data risks. Selected holdings have base forecasts above SPY and diversify across four non-benchmark clusters with catalysts inside the scoring window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15426,
+    "latency_seconds": 44.99068231484853,
+    "output_tokens": 3189,
+    "reasoning_tokens": 414,
+    "total_tokens": 18615
+  }
+}

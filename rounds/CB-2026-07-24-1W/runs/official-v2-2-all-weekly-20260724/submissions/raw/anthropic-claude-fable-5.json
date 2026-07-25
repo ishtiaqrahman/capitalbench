@@ -1,0 +1,199 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings season and no hike could extend the rally.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY down 0.6% for week, 5s return -0.59%",
+        "38% priced probability of 25bp hike at July 28-29 FOMC",
+        "Q2 earnings tracking +26.5% y/y; mega-caps report during window"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "N/A benchmark",
+      "option_id": "SP500",
+      "reversal_case": "Surprise hike, hot PCE, or mega-cap earnings misses amid tariff shock.",
+      "time_window_catalyst": "FOMC July 29; Microsoft/Amazon/Meta/Apple earnings; PCE July 30"
+    },
+    {
+      "continuation_case": "Persistent supply shock keeps crude elevated; energy earnings leverage to $95+ Brent.",
+      "decision": "selected",
+      "evidence": [
+        "Brent $96.78 vs ~$72 pre-Iran war",
+        "XLE prior-16s active return +6.30%, 5s active +3.95%",
+        "Chevron reports during window"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Brent settles below $85",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation or demand destruction drops crude sharply (Brent fell 3.9% July 24).",
+      "time_window_catalyst": "Crude prices and Chevron earnings before July 31 close"
+    },
+    {
+      "continuation_case": "Rate pressure and energy/financial strength keep value leadership.",
+      "decision": "selected",
+      "evidence": [
+        "Prior-16s active +1.55%, only -0.49% from 52w high",
+        "Lowest-vol equity cohort (10.07% vol, -1.31% drawdown)",
+        "Hike risk pressures long-duration growth more than value"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Growth outperforms value by >1% early in the week",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Dovish FOMC plus mega-cap earnings beats rotate flows back to growth.",
+      "time_window_catalyst": "FOMC July 29, PCE July 30"
+    },
+    {
+      "continuation_case": "Continued defensive rotation into FOMC uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "+1.93% 3s, +1.58% 5s active; at 52w high",
+        "Negative beta to SPY (-0.297)",
+        "Defensive bid amid tariff round and hike risk"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "SPY rallies >2% on dovish outcome",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Risk-on relief rally after dovish Fed leaves low-vol lagging.",
+      "time_window_catalyst": "FOMC July 29"
+    },
+    {
+      "continuation_case": "Defensive earnings resilience and momentum continue amid macro uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "Prior-16s active +3.68%, 5s active +1.51%",
+        "Near 52w high (-1.14%), negative beta (-0.186)"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLV underperforms SPY by >1% mid-week",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation out of defensives or adverse policy headline.",
+      "time_window_catalyst": "FOMC and macro data driving defensive flows"
+    },
+    {
+      "continuation_case": "Defensive bid persists into FOMC; yields eased slightly (4.68% from 4.71%).",
+      "decision": "selected",
+      "evidence": [
+        "+3.05% 3s return, +3.07% 5s active",
+        "Near-zero SPY beta (-0.089)"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "10y yield above 4.85%",
+      "option_id": "UTILITIES",
+      "reversal_case": "A Fed hike pushes yields higher, hurting rate-sensitive utilities.",
+      "time_window_catalyst": "FOMC July 29 rate decision"
+    },
+    {
+      "continuation_case": "Blowout mega-cap earnings could spark a sharp rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "Down 2.1% for week, -8.20% from 52w high, 23.3% vol",
+        "Micron -7.0%, Broadcom -2.7% on July 24",
+        "Mega-cap earnings (MSFT, AMZN, META, AAPL) in window"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "N/A rejected",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Hike risk plus semi weakness and stretched valuations extend the drawdown.",
+      "time_window_catalyst": "Mega-cap earnings and FOMC"
+    },
+    {
+      "continuation_case": "Geopolitical risk and inflation hedge demand support gold.",
+      "decision": "rejected",
+      "evidence": [
+        "+0.97% 5s, but -24.95% from 52w high",
+        "Dollar strengthening (UUP +0.88% 5s) and hike risk are headwinds"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "N/A rejected",
+      "option_id": "GOLD",
+      "reversal_case": "Fed hike and stronger dollar pressure gold; base does not clear SPY hurdle confidently.",
+      "time_window_catalyst": "FOMC July 29"
+    }
+  ],
+  "confidence": 0.6,
+  "cost_usd": 0.45469000000000004,
+  "expected_alpha_vs_sp500_pct": 0.61,
+  "is_official_score": true,
+  "key_risks": [
+    "Dovish FOMC surprise triggering a growth/mega-cap rally that lifts SPY above defensives",
+    "Sharp oil price reversal on geopolitical de-escalation",
+    "Strong Microsoft/Amazon/Meta/Apple earnings driving tech-led SPY outperformance",
+    "Tariff pass-through fears hitting cyclical value and energy demand expectations"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Brent falls back below $85 on de-escalation news",
+      "option_id": "ENERGY",
+      "rationale": "Oil supply shock intact (Brent $96.78, up from ~$72 pre-Iran war); energy equities lag crude's move and have positive prior-16s active return of 6.30%.",
+      "time_window_catalyst": "Elevated Brent through week; Chevron earnings during window"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Dovish FOMC sparking growth-led rally",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value near 52w high, low vol, positive prior active trend; hike risk and hot headline inflation favor value over growth.",
+      "time_window_catalyst": "FOMC July 28-29; PCE July 30"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Strong risk-on rally after dovish FOMC and mega-cap earnings beats",
+      "option_id": "LOW_VOL",
+      "rationale": "Defensive factor at 52w high with negative SPY beta; hedges FOMC hike risk and tariff uncertainty.",
+      "time_window_catalyst": "FOMC decision July 29 amid 38% priced hike probability"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Sector-specific policy news or broad risk-on rotation out of defensives",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong prior active trend (+3.68%), near 52w high, negative beta; defensive earnings resilience amid tariff and rate risk.",
+      "time_window_catalyst": "Defensive rotation around FOMC and GDP/PCE releases"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "10-year yield rising sharply above 4.85% on a hike",
+      "option_id": "UTILITIES",
+      "rationale": "Recent defensive bid (+3.05% 3s) and near-zero beta; cushions portfolio against FOMC volatility.",
+      "time_window_catalyst": "FOMC July 29; rate-sensitive flows"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.81,
+  "portfolio_rationale": "With a live oil supply shock, hot headline inflation, fresh tariffs, and a 38% priced probability of a Fed hike at the July 29 FOMC, the portfolio tilts to energy, value, and low-beta defensive sectors that show positive relative trends and shallow drawdowns, avoiding stretched growth ahead of mega-cap earnings risk.",
+  "provider": "anthropic",
+  "rationale_summary": "Energy plus defensive value/low-vol/healthcare/utilities barbell to capture the oil shock and hedge FOMC hike risk versus a rate-sensitive, growth-heavy SPY.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1W",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.45469000000000004,
+    "input_tokens": 27199,
+    "latency_seconds": 50.98313269391656,
+    "output_tokens": 3654,
+    "total_tokens": 30853
+  }
+}

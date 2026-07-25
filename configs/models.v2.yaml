@@ -56,6 +56,24 @@ models:
     model_release_date: "2026-05-28"
     notes: CapitalBench Portfolio V2 production participant.
 
+  - model_id: anthropic-claude-opus-5
+    provider: anthropic
+    api_model_name: claude-opus-5
+    enabled: true
+    mode: closed_capability
+    temperature: 0
+    max_completion_tokens: 6000
+    max_wall_clock_seconds: 180
+    reasoning_effort: low
+    first_eligible_round: CB-2026-07-24-1M
+    first_eligible_date_utc: "2026-07-24T00:00:00Z"
+    model_release_date: "2026-07-24"
+    notes: CapitalBench Portfolio V2 production participant starting with the July 24, 2026 weekly and monthly rounds.
+    metadata:
+      pricing_per_1m_tokens_usd:
+        base_input: 5.0
+        output: 25.0
+
   - model_id: anthropic-claude-fable-5
     provider: anthropic
     api_model_name: claude-fable-5

@@ -78,17 +78,14 @@ test("forming sets expose early performance without presenting it as established
   assert.doesNotMatch(swapped.trust_guidance, /established ranking/);
 });
 
-test("swapping scored sets preserves set-specific conclusions", () => {
+test("swapping scored historical sets preserves set-specific conclusions", () => {
   const may28 = benchmarkSets.find((set) => set.set_id === "weekly-set-2026-05-28");
   const june9 = benchmarkSets.find((set) => set.set_id === "weekly-set-2026-06-09");
   const swapped = buildBenchmarkSetComparison(apiReadModel, june9, may28);
-  const mainSet = [may28, june9].find((set) => set.is_current);
-  const otherSet = [may28, june9].find((set) => set.set_id !== mainSet.set_id);
 
   assert.match(swapped.summary, new RegExp(may28.short_label));
   assert.match(swapped.summary, new RegExp(june9.short_label));
-  assert.match(swapped.trust_guidance, new RegExp(`${mainSet.short_label} is the main published ranking`));
-  assert.match(swapped.trust_guidance, new RegExp(`${otherSet.short_label} also has enough rounds`));
+  assert.match(swapped.trust_guidance, /Both groups have enough completed rounds/);
   assert.equal(swapped.rounds.comparison_only.length, may28.comparison.comparison_round_count - swapped.rounds.shared.length);
 });
 

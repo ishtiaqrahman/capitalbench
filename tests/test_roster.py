@@ -18,6 +18,7 @@ EXPECTED_PORTFOLIO_V2_MODEL_IDS = {
     "openai-gpt-5-6-sol",
     "anthropic-claude-opus-4-7",
     "anthropic-claude-opus-4-8",
+    "anthropic-claude-opus-5",
     "anthropic-claude-fable-5",
     "google-gemini-3-1-pro",
     "xai-grok-4-3",
@@ -28,13 +29,22 @@ EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS = EXPECTED_PORTFOLIO_V2_MODEL_IDS - {
 }
 
 
-def test_canonical_portfolio_v2_roster_contains_all_eight_models() -> None:
+def test_canonical_portfolio_v2_roster_contains_all_nine_models() -> None:
     assert set(canonical_portfolio_v2_model_ids()) == EXPECTED_PORTFOLIO_V2_MODEL_IDS
 
 
 def test_active_portfolio_v2_roster_excludes_models_after_retirement() -> None:
-    assert set(active_portfolio_v2_model_ids("2026-07-20T23:59:59Z")) == EXPECTED_PORTFOLIO_V2_MODEL_IDS
-    assert set(active_portfolio_v2_model_ids("2026-07-21T00:00:00Z")) == EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS
+    pre_opus_5_ids = EXPECTED_PORTFOLIO_V2_MODEL_IDS - {"anthropic-claude-opus-5"}
+    assert set(active_portfolio_v2_model_ids("2026-07-20T23:59:59Z")) == pre_opus_5_ids
+    assert set(active_portfolio_v2_model_ids("2026-07-21T00:00:00Z")) == (
+        EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS - {"anthropic-claude-opus-5"}
+    )
+    assert set(
+        active_portfolio_v2_model_ids(
+            "2026-07-24T00:00:00Z",
+            round_id="CB-2026-07-24-1W",
+        )
+    ) == EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS
 
 
 def test_roster_version_is_order_independent() -> None:

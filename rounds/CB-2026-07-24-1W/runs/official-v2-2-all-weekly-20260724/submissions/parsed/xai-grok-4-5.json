@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Earnings beats and stable FOMC keep modest positive drift",
+      "decision": "rejected",
+      "evidence": [
+        "SPY return_5s -0.59% and return_3s -1.25%",
+        "S&P 500 closed down 0.6% for the week with FOMC and GDP scheduled",
+        "Roughly one-third of S&P 500 companies report in the window"
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "SPY closes the week below -2% on risk-off",
+      "option_id": "SP500",
+      "reversal_case": "Hotter inflation data or tariff concerns trigger further weekly decline",
+      "time_window_catalyst": "July 28-29 FOMC statement/presser and July 30 GDP/PCE"
+    },
+    {
+      "continuation_case": "Geopolitical premium and still-elevated crude support further relative gains",
+      "decision": "selected",
+      "evidence": [
+        "XLE active_return_5s +3.95% and prior_16s_active_return +6.30%",
+        "Brent settled 96.78 after prior spike near 100 and war-related premium",
+        "Energy quality evidence score 0.573 with high prior active rank"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Brent closes week under 90 or XLE active return turns deeply negative",
+      "option_id": "ENERGY",
+      "reversal_case": "Continued single-day style crude selloff extends and erodes sector premium",
+      "time_window_catalyst": "FOMC/GDP week oil volatility and any supply headlines"
+    },
+    {
+      "continuation_case": "Momentum and defense spending narrative persist through event week",
+      "decision": "selected",
+      "evidence": [
+        "ITA return_3s +4.53% and active_return_5s +4.66%",
+        "Strong outperformance versus SPY in recent sessions",
+        "Industrials-and-defense cluster with geopolitical backdrop"
+      ],
+      "forecast_base_pct": 0.95,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "ITA retraces majority of 3-session gain",
+      "option_id": "AEROSPACE_DEFENSE",
+      "reversal_case": "Profit-taking after sharp 3-day run or broad equity selloff",
+      "time_window_catalyst": "Geopolitical premium maintenance around policy meetings"
+    },
+    {
+      "continuation_case": "Defensive bid into FOMC and data releases sustains outperformance",
+      "decision": "selected",
+      "evidence": [
+        "XLV active_return_5s +1.51% and prior_16s_active_return +3.68%",
+        "Healthcare quality evidence score 0.570 with high prior rank",
+        "Defensive sector characteristics amid event risk"
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "XLV underperforms SPY by >1.5% on growth rebound",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation back into growth/tech post-earnings",
+      "time_window_catalyst": "Potential defensive flows around July 29-30 data"
+    },
+    {
+      "continuation_case": "Value and equal-weight preference continues if mega-caps lag",
+      "decision": "selected",
+      "evidence": [
+        "IWD active_return_5s +0.67% and prior_16s_active +1.55%",
+        "Quality evidence score 0.660 with high shallow-drawdown rank",
+        "Distance to 52w high only -0.49%"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "IWD lags SPY materially on tech-led rally",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Strong Nasdaq/tech earnings reverse value leadership",
+      "time_window_catalyst": "Mega-cap earnings reports and any value rotation"
+    },
+    {
+      "continuation_case": "Residual geopolitical premium keeps crude elevated",
+      "decision": "rejected",
+      "evidence": [
+        "USO return_3s +6.08% and active_return_5s +10.86%",
+        "Brent down 3.9% on July 24 after multi-day strength",
+        "High volatility_21s 47.91%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "USO gives back majority of 5-session gain",
+      "option_id": "OIL",
+      "reversal_case": "Extension of July 24 crude selloff dominates the week",
+      "time_window_catalyst": "Inventory or geopolitical headlines before July 31"
+    },
+    {
+      "continuation_case": "Stable or higher yields support net interest and financials",
+      "decision": "rejected",
+      "evidence": [
+        "XLF active_return_5s +0.68% and prior_16s_active +3.36%",
+        "Quality evidence score 0.689",
+        "10-year yield at 4.68% with FOMC imminent"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.7,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "XLF underperforms on falling yields or risk-off",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Dovish FOMC surprise or credit concerns hit banks",
+      "time_window_catalyst": "FOMC decision and any yield-curve reaction"
+    },
+    {
+      "continuation_case": "Safe-haven bid if equity volatility rises around data",
+      "decision": "rejected",
+      "evidence": [
+        "IAU active_return_5s +1.55%",
+        "Gold distance_52w_high -24.95% after prior moves",
+        "Real-rate and dollar sensitivity into FOMC"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "IAU falls on hawkish FOMC or USD strength",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields or stronger dollar pressure gold",
+      "time_window_catalyst": "FOMC and PCE inflation reading"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.6125,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp post-FOMC equity rally favoring mega-cap growth/tech would reverse relative value and energy leadership",
+    "Further crude oil decline below recent settlement could pressure ENERGY allocation",
+    "Tariff pass-through or hotter PCE could lift yields and hit rate-sensitive and cyclical names",
+    "Concentrated earnings misses from large reporters could drive broad risk-off"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Brent settles below 90 or XLE underperforms SPY by more than 2% intraday on risk-off",
+      "option_id": "ENERGY",
+      "rationale": "Elevated oil price level and energy sector relative strength support higher base return than SPY into FOMC and GDP week despite single-day crude pullback.",
+      "time_window_catalyst": "July 28-29 FOMC and July 30 GDP/PCE plus ongoing energy-price volatility from prior Iran-war shock"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.95,
+      "invalidation_condition": "ITA gives back more than half of its 3-session gain or broad equity risk-off exceeds 1.5%",
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "Strong 3-session outperformance and defense budget/geopolitical backdrop give higher expected weekly return than benchmark.",
+      "time_window_catalyst": "Continued geopolitical premium and any defense-related commentary around FOMC week"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "XLV breaks below recent lows on rising yields or broad growth rebound",
+      "option_id": "HEALTHCARE",
+      "rationale": "Positive active returns, defensive characteristics, and quality score support outperformance versus SPY base case.",
+      "time_window_catalyst": "Defensive rotation potential around FOMC decision and PCE data"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "IWD lags SPY on strong Nasdaq rebound post-earnings",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value leadership, shallow drawdown, and higher quality evidence score imply modest edge over cap-weighted SPY.",
+      "time_window_catalyst": "Equal-weight/value preference if mega-cap earnings disappoint or rates stabilize"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.8625,
+  "portfolio_rationale": "Portfolio concentrates in energy, aerospace-defense, healthcare and large-value clusters that show superior recent active returns, shallower relative drawdowns or defensive traits versus SPY, while respecting the 50% cluster cap. All selected bases exceed the SPY base forecast to target positive expected alpha over the one-week window containing FOMC and GDP.",
+  "provider": "xai",
+  "rationale_summary": "SPY base is modest given recent weekly decline and event risk; higher-base alternatives in energy and cyclicals/defensives are favored for the short horizon. Allocations stay diversified across four clusters and sum to 100%.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16361,
+    "latency_seconds": 57.43156271404587,
+    "output_tokens": 2566,
+    "reasoning_tokens": 668,
+    "total_tokens": 19595
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.15,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings growth and major company reports can keep the broad index supported despite a flat entry-day close.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed up less than 0.1% on July 24 and down 0.6% for the week.",
+        "Reuters reported aggregate Q2 S&P 500 earnings tracking 26.5% above a year earlier from more than 80 reported companies.",
+        "Roughly one-third of S&P 500 companies were scheduled to report during the week."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -1.6,
+      "invalidation_condition": "SPY breaks below the recent 21-session drawdown area or earnings breadth deteriorates sharply during the week.",
+      "option_id": "SP500",
+      "reversal_case": "Fresh tariff uncertainty, FOMC hike risk, or weak GDP/PCE data could pressure broad equities after recent year-to-date gains.",
+      "time_window_catalyst": "FOMC on July 28-29, Q2 GDP and PCE on July 30, ECI on July 31, and major S&P 500 earnings."
+    },
+    {
+      "continuation_case": "Improving breadth and lower mega-cap concentration can persist if earnings support a wider set of sectors.",
+      "decision": "selected",
+      "evidence": [
+        "RSP active return was 0.68% over 5 sessions and 0.74% over 21 sessions versus SPY.",
+        "RSP 21-session volatility was 9.87%, lower than SPY at 11.37%.",
+        "More S&P 500 constituents rose than fell on July 24."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "RSP underperforms SPY by more than 0.75 percentage point early in the week or mega-cap earnings dominate market breadth.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap earnings from Microsoft, Amazon, Meta, and Apple could drive cap-weighted SPY ahead of equal weight.",
+      "time_window_catalyst": "One-third of S&P 500 earnings plus GDP/PCE and FOMC can reward broader cyclicals if results are not concentrated in mega-cap growth."
+    },
+    {
+      "continuation_case": "Positive relative trend and defensive, low-beta behavior can continue if macro or tariff uncertainty weighs on broader risk appetite.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare active return was 1.51% over 5 sessions and prior 16-session active return was 3.68%.",
+        "Healthcare had a high prior active rank of 0.896 in the quality evidence table.",
+        "Healthcare 63-session beta to SPY was -0.186 and correlation was -0.133."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.1,
+      "invalidation_condition": "Healthcare falls below recent relative support or underperforms SPY by more than 1 percentage point after early-week macro data.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "If risk appetite strengthens after FOMC and earnings, defensive sectors may lag higher-beta SPY exposure.",
+      "time_window_catalyst": "Large S&P 500 earnings week and macro releases may favor defensive sectors if growth or rate uncertainty weighs on cyclicals and growth stocks."
+    },
+    {
+      "continuation_case": "Recent and prior relative strength can persist if yields remain firm and economic data avoid a growth scare.",
+      "decision": "selected",
+      "evidence": [
+        "Financials active return was 0.68% over 5 sessions and prior 16-session active return was 3.36%.",
+        "Financials quality evidence score was 0.689 with prior active rank 0.866.",
+        "The 10-year Treasury yield ended at 4.68%, and FOMC futures priced a 38% chance of a July hike."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 1.9,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "A sharp Treasury-yield decline with weak growth data or sector underperformance exceeding 1 percentage point versus SPY.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "A dovish yield decline or weak credit/growth signal could hurt banks and financials relative to SPY.",
+      "time_window_catalyst": "July 28-29 FOMC meeting, Q2 GDP, PCE, and Employment Cost Index can support the sector if rates and growth expectations remain constructive."
+    },
+    {
+      "continuation_case": "Energy equities may retain support from high crude levels, gasoline inflation, and geopolitical energy-risk uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "Energy active return was 3.95% over 5 sessions and prior 16-session active return was 6.30%.",
+        "Brent crude settled at $96.78, still far above the near-$72 level before the late-February Iran war.",
+        "Energy prior active rank was 0.925 in the quality evidence table."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent or oil-linked ETFs extend the July 24 reversal materially, or ENERGY underperforms SPY by more than 1.5 percentage points.",
+      "option_id": "ENERGY",
+      "reversal_case": "Brent fell 3.9% on July 24, showing near-term reversal risk after a sharp oil rally.",
+      "time_window_catalyst": "Chevron earnings and continued attention to oil, gasoline, and energy-shock uncertainty before July 31."
+    },
+    {
+      "continuation_case": "Defensive and rate-sensitive flows can persist if yields ease or macro events increase risk aversion.",
+      "decision": "selected",
+      "evidence": [
+        "Utilities active return was 3.07% over 5 sessions with 3.05% return over the latest 3 sessions.",
+        "Utilities 63-session beta to SPY was -0.089 and correlation was -0.068.",
+        "The 10-year Treasury yield declined to 4.68% from 4.71% late July 23."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "10-year yield resumes rising materially after FOMC or utilities underperform SPY by more than 1 percentage point.",
+      "option_id": "UTILITIES",
+      "reversal_case": "A hawkish FOMC or stronger growth/inflation data could push yields higher and reverse utilities strength.",
+      "time_window_catalyst": "FOMC, GDP, PCE, and ECI releases can support rate-sensitive defensives if yields decline or equity risk appetite softens."
+    },
+    {
+      "continuation_case": "Commodity strength could persist if energy shock and tariff pass-through concerns lift inflation-hedge demand.",
+      "decision": "rejected",
+      "evidence": [
+        "Broad commodities active return was 4.64% over 5 sessions and prior 16-session active return was 7.94%.",
+        "Broad commodities prior active rank was 0.955.",
+        "Brent crude fell 3.9% on July 24 after settling above $100 on July 23."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "Commodity prices continue the July 24 oil-led reversal or PDBC underperforms SPY by more than 1 percentage point.",
+      "option_id": "BROAD_COMMODITIES",
+      "reversal_case": "The sharp July 24 crude reversal could spill into broad commodity exposure after extended gains.",
+      "time_window_catalyst": "Energy-price reaction, tariff pass-through debate, PCE inflation, and euro-area flash inflation before July 31."
+    },
+    {
+      "continuation_case": "Cash-like stability should continue regardless of equity volatility, with minimal duration risk into FOMC.",
+      "decision": "rejected",
+      "evidence": [
+        "Short Treasury 21-session volatility was 0.24% with max drawdown of -0.01%.",
+        "Short Treasury quality evidence score was 0.622, helped by low volatility and shallow drawdown ranks of 1.000.",
+        "FOMC futures priced a 38% probability of a 25-basis-point increase at the July 28-29 meeting."
+      ],
+      "forecast_base_pct": 0.07,
+      "forecast_high_pct": 0.12,
+      "forecast_low_pct": 0.02,
+      "invalidation_condition": "A broad equity rally lifts SPY more than roughly 0.5 percentage point while bills remain near flat.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Its low return potential is unlikely to beat SPY if equities rally on earnings or dovish macro outcomes.",
+      "time_window_catalyst": "July 28-29 FOMC meeting; otherwise no strong return catalyst identified."
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.35,
+  "is_official_score": true,
+  "key_risks": [
+    "Mega-cap technology earnings lead SPY sharply higher and reverse recent breadth improvement.",
+    "FOMC communication or inflation data pushes yields higher, hurting utilities and defensive equities.",
+    "Oil continues the July 24 reversal, pressuring energy exposure.",
+    "Tariff pass-through concerns or weak GDP data trigger broad risk-off selling across equities."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "RSP underperforms SPY by more than 0.75 percentage point early in the week or mega-cap earnings dominate market breadth.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth was better than cap-weighted SPY, with RSP outperforming over 5 and 21 sessions and lower 21-session volatility than SPY.",
+      "time_window_catalyst": "One-third of S&P 500 earnings plus GDP/PCE and FOMC can reward broader cyclicals if results are not concentrated in mega-cap growth."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Healthcare falls below recent relative support or underperforms SPY by more than 1 percentage point after early-week macro data.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare has positive recent active return, strong prior active return, and low beta/correlation to SPY, offering defensive alpha potential into a catalyst-heavy week.",
+      "time_window_catalyst": "Large S&P 500 earnings week and macro releases may favor defensive sectors if growth or rate uncertainty weighs on cyclicals and growth stocks."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "A sharp Treasury-yield decline with weak growth data or sector underperformance exceeding 1 percentage point versus SPY.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials show strong prior active return, positive 5-session active return, and high quality evidence, with FOMC and economic data as near-term catalysts.",
+      "time_window_catalyst": "July 28-29 FOMC meeting, Q2 GDP, PCE, and Employment Cost Index can support the sector if rates and growth expectations remain constructive."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Brent or oil-linked ETFs extend the July 24 reversal materially, or ENERGY underperforms SPY by more than 1.5 percentage points.",
+      "option_id": "ENERGY",
+      "rationale": "Energy retains strong prior and recent active return and is supported by oil-price levels still well above pre-war levels despite the latest pullback.",
+      "time_window_catalyst": "Chevron earnings and continued attention to oil, gasoline, and energy-shock uncertainty before July 31."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "10-year yield resumes rising materially after FOMC or utilities underperform SPY by more than 1 percentage point.",
+      "option_id": "UTILITIES",
+      "rationale": "Utilities had the strongest recent defensive sector active move with low market beta, useful if FOMC and growth data trigger risk reduction.",
+      "time_window_catalyst": "FOMC, GDP, PCE, and ECI releases can support rate-sensitive defensives if yields decline or equity risk appetite softens."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.5,
+  "portfolio_rationale": "The portfolio tilts toward sectors and equal-weight exposure with positive relative performance and lower mega-cap growth dependence into a dense macro and earnings week. It avoids concentrated technology where Nasdaq and growth segments had recent weakness and larger drawdowns.",
+  "provider": "openai",
+  "rationale_summary": "Selected holdings all have base forecasts above SPY and span diversified US equity, healthcare, financials, energy, and rate-sensitive defensive clusters. The expected edge comes from breadth, defensive balance, and sector-specific momentum into FOMC, GDP/PCE, ECI, and major earnings.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-24-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15275,
+    "latency_seconds": 33.968414802104235,
+    "output_tokens": 2918,
+    "reasoning_tokens": 264,
+    "total_tokens": 18193
+  }
+}

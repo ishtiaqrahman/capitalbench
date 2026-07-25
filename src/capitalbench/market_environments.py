@@ -50,6 +50,7 @@ MODEL_LABELS = {
     "anthropic-claude-fable-5": "Claude Fable 5",
     "anthropic-claude-opus-4-7": "Claude Opus 4.7",
     "anthropic-claude-opus-4-8": "Claude Opus 4.8",
+    "anthropic-claude-opus-5": "Claude Opus 5",
     "google-gemini-3-1-pro": "Gemini 3.1 Pro",
     "openai-gpt-5-5": "GPT-5.5",
     "openai-gpt-5-6-sol": "GPT-5.6 Sol",
