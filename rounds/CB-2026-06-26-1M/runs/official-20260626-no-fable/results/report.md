@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-06-26-1M / official-20260626-no-fable
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-06-26-1M
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-20260626-no-fable
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench CB-2026-06-26-1M
+- Description: One-month market allocation evaluation round.
+- Decision date: 2026-06-26
 - Decision deadline: 2026-06-27T03:30:00Z
 - Horizon: one month
-- Official run ID: official-20260626-no-fable
-- Mock: no
+- Entry date: 2026-06-26
+- Exit date: 2026-07-24
+- Entry rule: Use the official entry prices supplied in prices/entry_prices.csv.
+- Exit rule: Use the official exit prices supplied in prices/exit_prices.csv.
+- Options: 70
 
 ## Model Decisions
 
@@ -93,41 +108,86 @@
 | SOLAR | Solar Energy | 56.85 | 51.28 | -0.09797713280562881 | 69 |
 | SOUTH_KOREA | South Korea Equities | 197.28 | 162.96 | -0.17396593673965932 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| anthropic-claude-opus-4-8 | portfolio | HEALTHCARE | 5 | 0.58 | 0.013907968772869372 | 0.021824041031888754 | 0.008188723813844192 | 0.2740614580333961 |  | True | True |
-| openai-gpt-5-5 | portfolio | BIOTECH | 5 | 0.58 | -0.03153559016604457 | 0.005214450121971093 | -0.00842086709607347 | 0.29067104894331375 |  | False | True |
-| anthropic-claude-opus-4-7 | portfolio | HEALTHCARE | 5 | 0.6 | 0.013907968772869372 | -0.0024968856667196447 | -0.016132202884764208 | 0.29838238473200446 |  | False | False |
-| xai-grok-4-3 | portfolio | BIOTECH | 4 | 0.55 | -0.03153559016604457 | -0.004505010737975879 | -0.01814032795602044 | 0.3003905098032607 |  | False | False |
-| google-gemini-3-1-pro | portfolio | HEALTHCARE | 4 | 0.65 | 0.013907968772869372 | -0.0059047989944792725 | -0.019540116212523835 | 0.3017902980597641 |  | False | False |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-opus-4-7 | HEALTHCARE | 30.0 | 0.013907968772869372 | 0.004172390631860812 | EMA approvals catalyst, defensive with strong recent breadth, low beta supports outperformance amid AI/mega-cap weakness. |
+| anthropic-claude-opus-4-7 | REGIONAL_BANKS | 20.0 | 0.00744978049753886 | 0.0014899560995077722 | Steeper curve, declining claims, strong Q1 GDP revision, and breakout near 52w highs support continuation through July earnings. |
+| anthropic-claude-opus-4-7 | BIOTECH | 15.0 | -0.03153559016604457 | -0.0047303385249066856 | Strong M&A/approval backdrop with EMA catalyst, breaking out at 52w highs with improving sentiment. |
+| anthropic-claude-opus-4-7 | EQUAL_WEIGHT_SP500 | 20.0 | 0.015500927202700687 | 0.0031001854405401374 | Broad market participation (2/3 stocks up) favors equal-weight over cap-weighted while AI mega-caps wobble. |
+| anthropic-claude-opus-4-7 | LONG_TREASURY | 15.0 | -0.043527195424811205 | -0.006529079313721681 | Yields easing, soft sentiment data, contained inflation expectations, and FOMC minutes catalyst support duration. |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 30.0 | 0.013907968772869372 | 0.004172390631860812 | Healthcare led the market on positive EMA regulatory catalysts, has low beta (0.38) and is near 52w highs; defensive with fundamental support amid AI-stock weakness. |
+| anthropic-claude-opus-4-8 | FINANCIALS | 20.0 | 0.05114803660229472 | 0.010229607320458946 | Financials and regional banks show broadening leadership with strong benchmark-relative returns; firming yields and steepening curve plus solid GDP/claims data support. |
+| anthropic-claude-opus-4-8 | INDUSTRIALS | 15.0 | 0.008057412121120766 | 0.001208611818168115 | Strong flash manufacturing PMI (59-month high output) and cyclical broadening support industrials; positive 30d alpha and near highs. |
+| anthropic-claude-opus-4-8 | EQUAL_WEIGHT_SP500 | 20.0 | 0.015500927202700687 | 0.0031001854405401374 | Two-thirds of S&P stocks rose while cap-weighted indexes were dragged by AI names; equal-weight captures the broadening and avoids mega-cap semis concentration risk. |
+| anthropic-claude-opus-4-8 | LOW_VOL | 15.0 | 0.020754972139071626 | 0.0031132458208607437 | Low-vol factor (beta 0.08) is near highs with positive alpha; defensive ballast against AI/tech drawdown risk and a heavy macro data calendar. |
+| google-gemini-3-1-pro | HEALTHCARE | 40.0 | 0.013907968772869372 | 0.005563187509147749 | Healthcare stocks showed strong upward momentum following positive European Medicines Agency recommendations, providing a near-term catalyst. |
+| google-gemini-3-1-pro | BIOTECH | 30.0 | -0.03153559016604457 | -0.009460677049813371 | Biotech benefits from the same positive regulatory catalysts as broader healthcare, with strong recent performance and high beta for potential outperformance. |
+| google-gemini-3-1-pro | SMALL_CAP | 15.0 | -0.028882990228125016 | -0.004332448534218753 | Small caps have shown resilience and positive year-to-date performance, offering diversification away from mega-cap tech weakness. |
+| google-gemini-3-1-pro | EQUAL_WEIGHT_SP500 | 15.0 | 0.015500927202700687 | 0.002325139080405103 | Equal-weight S&P 500 reduces concentration risk in mega-cap tech stocks, which have recently weighed on cap-weighted indexes. |
+| openai-gpt-5-5 | BIOTECH | 30.0 | -0.03153559016604457 | -0.009460677049813371 | Biotech has strong recent relative strength, and the briefing provides independent healthcare support from EMA medicine recommendations; it can benefit from continued rotation into healthcare during a weak AI-linked tape. |
+| openai-gpt-5-5 | REGIONAL_BANKS | 25.0 | 0.00744978049753886 | 0.001862445124384715 | Regional banks have led recently as market breadth improved and domestic cyclical risk appetite broadened; supportive macro data include better PMI, strong income and spending, and lower jobless claims, though support beyond price action is limited. |
+| openai-gpt-5-5 | SMALL_VALUE | 20.0 | -4.5127923550492e-05 | -9.025584710098401e-06 | Small-cap value offers exposure to the broadening away from cap-weighted AI leaders, with Russell 2000 strength and nearly two-thirds of S&P 500 constituents rising despite index weakness. |
+| openai-gpt-5-5 | HEALTHCARE | 15.0 | 0.013907968772869372 | 0.002086195315930406 | Healthcare was specifically cited as a strong upward force on June 26 after European regulatory recommendations, with lower beta than the benchmark and potential defensive appeal before July macro data. |
+| openai-gpt-5-5 | ENERGY | 10.0 | 0.10735512316179441 | 0.010735512316179441 | Energy provides exposure to geopolitical and inventory-tightness risk after low crude inventories and a U.S.-Iran escalation, while using equities rather than direct oil to reduce commodity futures volatility. |
+| xai-grok-4-3 | BIOTECH | 30.0 | -0.03153559016604457 | -0.009460677049813371 | Strong 30-day outperformance and positive EMA recommendations for medicines support near-term gains before July 24 exit. |
+| xai-grok-4-3 | HEALTHCARE | 25.0 | 0.013907968772869372 | 0.003476992193217343 | Sector led market gains on June 26 with favorable regulatory news and defensive characteristics amid mixed macro data. |
+| xai-grok-4-3 | SMALL_VALUE | 25.0 | -4.5127923550492e-05 | -1.1281980887623e-05 | Domestic small-value exposure benefits from improving consumer sentiment and low unemployment claims over the one-month window. |
+| xai-grok-4-3 | REGIONAL_BANKS | 20.0 | 0.00744978049753886 | 0.0014899560995077722 | Recent strength in regional banks aligns with stable rates and positive GDP revision likely to support credit conditions before exit. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 5 | 0.58 | 0.013907968772869372 | 0.021824041031888754 | 0.008188723813844192 | 0.2740614580333961 |  | True | True |
+| openai-gpt-5-5 | BIOTECH | 5 | 0.58 | -0.03153559016604457 | 0.005214450121971093 | -0.00842086709607347 | 0.29067104894331375 |  | False | True |
+| anthropic-claude-opus-4-7 | HEALTHCARE | 5 | 0.6 | 0.013907968772869372 | -0.0024968856667196447 | -0.016132202884764208 | 0.29838238473200446 |  | False | False |
+| xai-grok-4-3 | BIOTECH | 4 | 0.55 | -0.03153559016604457 | -0.004505010737975879 | -0.01814032795602044 | 0.3003905098032607 |  | False | False |
+| google-gemini-3-1-pro | HEALTHCARE | 4 | 0.65 | 0.013907968772869372 | -0.0059047989944792725 | -0.019540116212523835 | 0.3017902980597641 |  | False | False |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | 1c9ea285a309fc37909ee033f834dd0ec72df267f2f661e2a332c29432fe5bb5 |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | 7858eef0aa73ea38b28daacc4aaa57e57b110de6456378f1697ff1cd79ca213c |
+| manifest.yaml | b22c258a84e92ccbcf16cb0ebd9f0cadfdc2f87c3ab3009d6a632edef57ea9b0 |
+| market_data/universe_trailing_returns.csv | 6e4b3cd4b1284abbd59faf5ff3d1c7eece182b1c3b26a5b7306b2a0aeafb414c |
+| market_data/universe_trailing_returns.md | 95fb16347d221c8413bcfc8147edae69c474ee549438610e0bbdb0ecbc3185c8 |
+| market_data/universe_trailing_returns.json | 350fce324d33007f47dbd4ccf216efc206721e0e127bdb93e8ae473ceaec186a |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | 323cf0a0134355cc5a58a844e8473570cc2375f1c4bb7a894c5997f403a6de79 | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | d808f67f0f680bf0baec85b279dffa5d3884ddd51abea33252648f64f41c3a5a | yes |
+| Final briefing | research/final_briefing.md | model-facing | 1c9ea285a309fc37909ee033f834dd0ec72df267f2f661e2a332c29432fe5bb5 | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-06-29-1M has no scored official run.
-- Round CB-2026-06-30-1M has no scored official run.
-- Round CB-2026-07-01-1M has no scored official run.
-- Round CB-2026-07-02-1M has no scored official run.
-- Round CB-2026-07-06-1M has no scored official run.
-- Round CB-2026-07-07-1M has no scored official run.
-- Round CB-2026-07-08-1M has no scored official run.
-- Round CB-2026-07-09-1M has no scored official run.
-- Round CB-2026-07-10-1M has no scored official run.
-- Round CB-2026-07-13-1M has no scored official run.
-- Round CB-2026-07-14-1M has no scored official run.
-- Round CB-2026-07-15-1M has no scored official run.
-- Round CB-2026-07-16-1M has no scored official run.
-- Round CB-2026-07-17-1M has no scored official run.
-- Round CB-2026-07-21-1M has no scored official run.
-- Round CB-2026-07-22-1M has no scored official run.
-- Round CB-2026-07-23-1M has no scored official run.
-- Round example-round has no scored official run.
-- Round example-round-2 has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.
