@@ -1,0 +1,35 @@
+round_id: CB-2026-07-27-1M
+title: CapitalBench CB-2026-07-27-1M
+description: One-month market allocation evaluation round.
+decision_date: '2026-07-27'
+decision_deadline: '2026-07-28T12:30:00Z'
+horizon: one month
+methodology_version: portfolio-v2.2
+model_roster_version: portfolio-v2-roster-5e5ef62318ec
+model_roster_frozen_at_utc: '2026-07-28T06:47:18.901670+00:00'
+expected_model_ids:
+- openai-gpt-5-5
+- openai-gpt-5-6-sol
+- anthropic-claude-opus-4-8
+- anthropic-claude-opus-5
+- anthropic-claude-fable-5
+- google-gemini-3-1-pro
+- xai-grok-4-3
+- xai-grok-4-5
+universe_version: v2.1
+submission_format: portfolio
+portfolio_constraints:
+  min_holdings: 1
+  max_holdings: 5
+  allocation_increment_pct: 5
+  min_allocation_pct: 5
+  max_total_allocation_pct: 100
+  allow_cash: true
+  allow_benchmark_asset: true
+  max_economic_exposure_pct: 50
+entry_rule: Use adjusted close prices on Monday, July 27, 2026 as the one-month entry snapshot, calculated after regular trading ends and supplied in prices/entry_prices.csv.
+exit_rule: Use adjusted close prices on Thursday, August 27, 2026 as the one-month exit snapshot, calculated after regular trading ends and supplied in prices/exit_prices.csv.
+entry_date: '2026-07-27'
+exit_date: '2026-08-27'
+created_at: '2026-07-28T06:47:18.901670+00:00'
+notes: Production Portfolio V2.2 monthly round prepared from a brand-new July 27 close research package using direct public-source browsing. Participant tools, browsing, search, retrieval, and follow-up calls are disabled.

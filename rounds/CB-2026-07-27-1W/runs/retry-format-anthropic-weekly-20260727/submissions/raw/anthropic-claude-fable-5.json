@@ -1,0 +1,153 @@
+{
+  "benchmark_expected_return_pct": 0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Benign FOMC hold plus solid mega-cap earnings lift the index modestly.",
+      "decision": "selected",
+      "evidence": [
+        "SPY 5-session return -0.40% with breadth improving (RSP-SPY 5s +1.70%)",
+        "FOMC July 29 with 38% market-implied hike probability; mega-cap earnings Jul 29-30",
+        "VIX 18.67, index -2.45% from 52-week high"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Hawkish hike with guidance for more tightening or major mega-cap earnings misses.",
+      "option_id": "SP500",
+      "reversal_case": "A 25bp hike or weak Microsoft/Meta/Apple/Amazon results pressure the cap-weighted index.",
+      "time_window_catalyst": "FOMC statement Jul 29; MSFT/META Jul 29 and AAPL/AMZN Jul 30 earnings; Q2 GDP Jul 30"
+    },
+    {
+      "continuation_case": "Defensive rotation continues into a hike-risk FOMC week; sector momentum with fundamental defensiveness.",
+      "decision": "selected",
+      "evidence": [
+        "XLV 5s active return +3.01%, 3s return +2.49%, only -0.63% from 52-week high",
+        "Near-zero SPY beta (-0.161) insulates from FOMC/mega-cap earnings volatility",
+        "Prior-window active return +1.27% shows trend predates latest week"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sharp risk-on rotation into tech/growth after a dovish FOMC.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Dovish surprise triggers rotation back to beaten-down growth away from defensives.",
+      "time_window_catalyst": "FOMC Jul 29 and macro data Jul 30-31 sustaining defensive demand"
+    },
+    {
+      "continuation_case": "Breadth-led market continues to favor equal weight over mega-cap concentration into earnings risk.",
+      "decision": "selected",
+      "evidence": [
+        "RSP-SPY +1.70% over 5 sessions and +0.97% over 21 sessions; RSP at 52-week high",
+        "Advancers beat decliners 1.9:1 with 30 new highs, indicating broad participation",
+        "Lower volatility (9.95%) and shallow drawdown (-1.46%) vs SPY"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Mega-cap earnings beats drive cap-weighted outperformance over equal weight.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Strong mega-cap earnings restore cap-weighted leadership.",
+      "time_window_catalyst": "Mega-cap earnings Jul 29-30 concentrate idiosyncratic risk in cap-weighted SPY"
+    },
+    {
+      "continuation_case": "Value rotation continues while growth digests hike risk and earnings uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "IWD 5s active return +1.53%, 3s return +0.90%, at 52-week high",
+        "Low volatility 9.13% and shallow -1.31% drawdown; beta 0.66",
+        "Value/dividend/low-vol cohort all showing positive recent active returns"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Growth sharply outperforms value after dovish FOMC or strong tech earnings.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Dovish FOMC sparks growth rebound and value underperformance.",
+      "time_window_catalyst": "FOMC Jul 29; bank-relevant Senior Loan Officer Survey Aug 3"
+    },
+    {
+      "continuation_case": "FOMC uncertainty, sticky inflation, and geopolitical risk sustain gold bid.",
+      "decision": "selected",
+      "evidence": [
+        "IAU +1.90% over 5 sessions despite dollar strength; gold $4,079.80",
+        "CPI 3.5% y/y and PCE 4.1% y/y keep inflation-hedge demand elevated",
+        "Unresolved U.S.-Iran situation supports safe-haven demand"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "25bp hike with hawkish guidance driving dollar and real yields sharply higher.",
+      "option_id": "GOLD",
+      "reversal_case": "A hawkish hike lifts real rates and the dollar, pressuring gold.",
+      "time_window_catalyst": "FOMC Jul 29; PCE Jul 30; U.S.-Iran negotiations ongoing"
+    },
+    {
+      "continuation_case": "Blowout mega-cap earnings and a dovish hold could produce a sharp rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ 3s return -3.29%, -8.48% from 52-week high, 21s volatility 23.07%",
+        "MSFT/META/AAPL/AMZN all report within the window",
+        "High beta 1.72 into a 38%-probability hike FOMC"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Continued distribution in tech after earnings; base case too binary to select.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Any hike or earnings disappointment extends the pronounced downtrend.",
+      "time_window_catalyst": "Mega-cap earnings Jul 29-30 and FOMC Jul 29"
+    },
+    {
+      "continuation_case": "Steady carry regardless of FOMC outcome.",
+      "decision": "rejected",
+      "evidence": [
+        "Fed funds 3.50-3.75% yields ~0.07% weekly carry",
+        "Lowest volatility and drawdown in universe"
+      ],
+      "forecast_base_pct": 0.07,
+      "forecast_high_pct": 0.1,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Base return below SPY base; rejected on hurdle.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "None; opportunity cost if equities rally.",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Renewed Iran escalation or strong majors' earnings lift energy.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent fell 6.3% to $85.87 on U.S.-Iran pause and negotiations",
+        "XLE prior-window active +6.06% but crude momentum reversing (USO 3s -5.26%)",
+        "Chevron and Exxon report Jul 31"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Crude declines persist on progress in negotiations; base does not clear SPY hurdle.",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation continues pushing crude and energy equities lower.",
+      "time_window_catalyst": "CVX/XOM earnings Jul 31; U.S.-Iran talks"
+    }
+  ],
+  "confidence": 0,
+  "expected_alpha_vs_sp500_pct": 0,
+  "is_official_score": true,
+  "key_risks": [],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [],
+  "portfolio_expected_return_pct": 0,
+  "portfolio_rationale": "",
+  "provider": "anthropic",
+  "rationale_summary": "",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27059,
+    "latency_seconds": 36.092184149893,
+    "output_tokens": 2951,
+    "total_tokens": 30010
+  }
+}

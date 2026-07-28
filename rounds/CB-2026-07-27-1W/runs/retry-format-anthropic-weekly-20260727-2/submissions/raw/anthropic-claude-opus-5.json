@@ -1,0 +1,200 @@
+{
+  "benchmark_expected_return_pct": 0.35,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad uptrend intact, only 2.45% from 52-week high, breadth positive",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed 7,413.18, up less than 0.1%",
+        "VIX 18.67; SPY -0.40% over 5 sessions",
+        "FOMC July 29 plus Microsoft, Meta, Apple, Amazon results"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY closes below its 21-session low",
+      "option_id": "SP500",
+      "reversal_case": "38% odds of a rate hike and megacap earnings create two-sided event risk",
+      "time_window_catalyst": "FOMC July 29; GDP/PCE July 30; megacap earnings"
+    },
+    {
+      "continuation_case": "Breadth broadening away from mega-cap tech supports equal weight",
+      "decision": "selected",
+      "evidence": [
+        "rsp_minus_spy_5s 1.70%",
+        "Advancers outnumbered decliners 1.9 to 1; 30 new highs",
+        "RSP at 0% distance from 52-week high, vol 9.95%"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "RSP underperforms SPY by more than 1% during the window",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "A mega-cap earnings beat re-concentrates leadership into cap-weighted names",
+      "time_window_catalyst": "FOMC and megacap earnings week"
+    },
+    {
+      "continuation_case": "Sustained relative strength with low correlation offers alpha with limited market beta",
+      "decision": "selected",
+      "evidence": [
+        "XLV active_return_5s 3.01%, prior 16s active 1.27%",
+        "distance from 52w high -0.63%",
+        "beta to SPY -0.16"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "XLV declines more than 3% in the window",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Sharp recent run-up could mean-revert; sector rotation back to tech",
+      "time_window_catalyst": "Defensive positioning into FOMC July 29"
+    },
+    {
+      "continuation_case": "Steady leadership, low drawdown, supported by firm rate expectations",
+      "decision": "selected",
+      "evidence": [
+        "XLF prior 16s active return 3.78%, at 52-week high",
+        "max drawdown 21s only -2.08%",
+        "Senior Loan Officer Survey August 3"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "XLF falls below its 21-session low",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak loan survey or credit deterioration; HYG already -0.51% over 5 sessions",
+      "time_window_catalyst": "FOMC July 29 and SLOOS August 3"
+    },
+    {
+      "continuation_case": "Safe-haven demand and easing yields ahead of FOMC and PCE",
+      "decision": "selected",
+      "evidence": [
+        "iau_return_5s 1.90%; active 5s 2.30%",
+        "Gold futures $4,079.80",
+        "10-year yield eased to 4.65%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Dollar index above 103 with gold under $3,950",
+      "option_id": "GOLD",
+      "reversal_case": "Hawkish Fed and stronger dollar (UUP +0.74% 5s) pressure gold",
+      "time_window_catalyst": "FOMC July 29; June PCE July 30"
+    },
+    {
+      "continuation_case": "Persistent relative strength with very low SPY correlation adds diversification",
+      "decision": "selected",
+      "evidence": [
+        "SCHD active_return_5s 2.48%, prior 16s 1.41%",
+        "corr to SPY only 0.136; drawdown -1.18%",
+        "At 52-week high"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SCHD falls more than 2%",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Rate hike surprise pressures yield-oriented equities",
+      "time_window_catalyst": "FOMC and Employment Cost Index July 31"
+    },
+    {
+      "continuation_case": "Deep pullback could snap back on strong megacap capex guidance",
+      "decision": "rejected",
+      "evidence": [
+        "SMH prior 16s active -13.32%, drawdown -16.37%",
+        "Philadelphia semiconductor index fell 2.2% on July 27",
+        "volatility 49.31%, beta 3.16"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -9.0,
+      "invalidation_condition": "SMH makes a new 52-week low",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Downtrend and extreme volatility make it a coin flip with huge variance",
+      "time_window_catalyst": "Microsoft/Meta July 29 and Apple/Amazon July 30 capex commentary"
+    },
+    {
+      "continuation_case": "Soft June CPI/PPI could extend the modest bond bid",
+      "decision": "rejected",
+      "evidence": [
+        "IEF prior 16s active -2.05%",
+        "10-year yield 4.65%, down from 4.69%",
+        "38% market-implied odds of a 25bp hike"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "10-year yield above 4.85%",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "A hike or hawkish statement pushes yields higher",
+      "time_window_catalyst": "FOMC July 29; PCE and GDP July 30"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.26,
+  "is_official_score": true,
+  "key_risks": [
+    "A dovish FOMC or blowout mega-cap earnings could drive a cap-weighted melt-up that RSP and defensives lag",
+    "A 25bp hike surprise (38% priced) hits rate-sensitive defensives and gold simultaneously",
+    "Oil's 7% slide and unresolved US-Iran talks could spark cross-asset volatility",
+    "Defensive sectors near 52-week highs are crowded and prone to mean reversion"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Breadth narrows and RSP underperforms SPY by more than 1% intraweek",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth is strong (advancers 1.9:1, RSP beating SPY by 1.7% over 5 sessions) with low vol and zero drawdown from highs.",
+      "time_window_catalyst": "FOMC July 29, GDP/PCE July 30, mega-cap earnings"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "XLV falls more than 3% or gives up its 52-week-high proximity",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong prior active trend, near 52-week high, low beta to SPY ahead of a two-sided FOMC.",
+      "time_window_catalyst": "FOMC statement July 29; defensive rotation flows"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "XLF breaks below its 21-session low or credit spreads widen sharply",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive prior active return, at 52-week high, low drawdown; benefits if FOMC signals firmer rates.",
+      "time_window_catalyst": "FOMC July 29 and Senior Loan Officer Survey August 3"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Dollar index rallies above 103 and gold falls under $3,950",
+      "option_id": "GOLD",
+      "rationale": "Hedge against a hawkish surprise/geopolitical re-escalation; positive recent active return with moderate vol.",
+      "time_window_catalyst": "FOMC July 29 and June PCE July 30"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "SCHD drops more than 2% or its relative strength versus SPY reverses",
+      "option_id": "DIVIDEND",
+      "rationale": "Low correlation to SPY (0.14), at 52-week high, strongest recent active return among diversified equity sleeves.",
+      "time_window_catalyst": "Rate path clarity from FOMC and ECI July 31"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.61,
+  "portfolio_rationale": "With SPY's mega-cap complex weak (QQQ/SMH sharply negative) and breadth broadening, I tilt toward equal-weight and defensive/value sectors that are at or near 52-week highs, plus a gold hedge into a two-sided FOMC and heavy macro/earnings calendar.",
+  "provider": "anthropic",
+  "rationale_summary": "Broadening-breadth tilt: RSP, XLV, XLF, SCHD plus gold hedge, avoiding concentrated mega-cap tech risk into FOMC and megacap earnings.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27351,
+    "latency_seconds": 39.19760863203555,
+    "output_tokens": 3275,
+    "total_tokens": 30626
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "benchmark_expected_return_pct": 0.7,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Steady earnings and stable rates support grind higher",
+      "decision": "selected",
+      "evidence": [
+        "SPY 21d active return baseline 0%",
+        "VIX 18.67, breadth 1.9:1 advancers",
+        "-2.45% from 52w high"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "Break below recent range on risk-off",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish FOMC or weak mega-cap earnings",
+      "time_window_catalyst": "FOMC July 29 and mega-cap earnings"
+    },
+    {
+      "continuation_case": "Value/cyclical breadth and steeper curve aid banks",
+      "decision": "selected",
+      "evidence": [
+        "+5.76% active 21d, best sector",
+        "Low drawdown -2.42%, low vol 13%",
+        "Shallow drawdown rank 0.821"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Regional bank stress spike",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit stress or dovish flattening",
+      "time_window_catalyst": "FOMC, SLOOS Aug 3, JOLTS"
+    },
+    {
+      "continuation_case": "Defensive rotation and stable earnings",
+      "decision": "selected",
+      "evidence": [
+        "+4.34% active 21d",
+        "Low beta 0.315, drawdown -3.74%",
+        "Recent 5d +2.61%"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Adverse healthcare policy news",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Policy risk or strong risk-on rotation",
+      "time_window_catalyst": "Earnings season"
+    },
+    {
+      "continuation_case": "Quality income rotation",
+      "decision": "selected",
+      "evidence": [
+        "+3.95% active 21d",
+        "Low beta 0.274, drawdown -2.95%",
+        "5d +2.08%"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Sharp rate spike",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Yield spike pressure",
+      "time_window_catalyst": "FOMC rate decision"
+    },
+    {
+      "continuation_case": "Geopolitical re-escalation lifts oil",
+      "decision": "rejected",
+      "evidence": [
+        "+7.24% active 21d",
+        "Oil fell 6-7% on Iran pause",
+        "High drawdown -13.21%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Sustained crude decline",
+      "option_id": "ENERGY",
+      "reversal_case": "Negotiations ease crude further",
+      "time_window_catalyst": "US-Iran negotiations"
+    },
+    {
+      "continuation_case": "Safe-haven and rate-cut bid",
+      "decision": "rejected",
+      "evidence": [
+        "5d +1.90%",
+        "High drawdown -16%",
+        "Low quality rank 0.193"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Dollar surge above range",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger dollar and hawkish Fed",
+      "time_window_catalyst": "FOMC and PCE data"
+    },
+    {
+      "continuation_case": "Mega-cap earnings beat revives growth",
+      "decision": "rejected",
+      "evidence": [
+        "-5.43% active 21d",
+        "High vol 24%, -8.48% from high",
+        "Semis fell 2.2% on day"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Weak mega-cap guidance",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Rate hike risk hits high-duration growth",
+      "time_window_catalyst": "MSFT/META/AAPL/AMZN and Nvidia Aug 26"
+    },
+    {
+      "continuation_case": "Growth scare rallies duration",
+      "decision": "rejected",
+      "evidence": [
+        "-4.42% active 21d",
+        "10y at 4.65%",
+        "38% hike probability"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Yields break above 4.8%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Hike or sticky inflation lifts yields",
+      "time_window_catalyst": "FOMC and CPI Aug 12"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.615,
+  "is_official_score": true,
+  "key_risks": [
+    "Hawkish FOMC surprise (38% priced hike) hitting rate-sensitive and equity broadly",
+    "Mega-cap earnings disappointment dragging the index",
+    "Defensive rotation reverses if strong growth data revives risk-on tech leadership"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Regional bank stress or sharp risk-off with credit spread widening",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong recent relative strength (+5.76% active 21d), low drawdown, low volatility, and breadth favoring value/cyclicals.",
+      "time_window_catalyst": "Bank earnings continuation and FOMC July 29; SLOOS Aug 3"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Adverse drug pricing policy or sharp risk-on rotation away from defensives",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive leadership with +4.34% active 21d, low drawdown, positive recent breadth, low beta cushions downside.",
+      "time_window_catalyst": "Sector rotation into defensives; earnings season"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Sharp yield spike hurting dividend proxies",
+      "option_id": "DIVIDEND",
+      "rationale": "Low-beta dividend equity with +3.95% active 21d and shallow drawdown; strong defensive carry.",
+      "time_window_catalyst": "Rotation into quality income amid rate uncertainty"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Broad equity selloff below recent support",
+      "option_id": "SP500",
+      "rationale": "Core broad market anchor for the horizon.",
+      "time_window_catalyst": "Mega-cap earnings (MSFT/META/AAPL/AMZN) and FOMC"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.315,
+  "portfolio_rationale": "Tilt toward defensive and value/cyclical leaders (financials, healthcare, dividend) that show recent relative strength, low drawdown, and low volatility, while keeping SPY as an anchor. Breadth (RSP beating SPY) and staples/tech mix favor diversified quality over concentrated growth into a rate-decision window.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight relatively strong, lower-volatility financials, healthcare, and dividend equity with an SPY anchor to seek modest alpha with downside protection into the FOMC and earnings.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27537,
+    "latency_seconds": 40.59441294101998,
+    "output_tokens": 2588,
+    "total_tokens": 30125
+  }
+}

@@ -274,6 +274,65 @@ def test_invalid_real_official_run_is_not_official_score_eligible(tmp_path: Path
     assert "invalid submissions" in manifest["notes"]
 
 
+def test_format_retry_run_is_never_independently_official_score_eligible(
+    tmp_path: Path, monkeypatch
+) -> None:
+    class ValidProvider:
+        api_key_env_var = "OPENAI_API_KEY"
+
+        def run_model(self, model_config, prompt, json_schema, runtime_limits: RuntimeSettings) -> ProviderResult:
+            payload = {
+                "round_id": model_config.metadata["round_id"],
+                "model_id": model_config.model_id,
+                "provider": model_config.provider,
+                "mode": model_config.mode,
+                "run_type": "official",
+                "replicate_index": 1,
+                "replicate_count": 1,
+                "is_official_score": True,
+                "selected_option_id": "SP500",
+                "confidence": 0.5,
+                "rationale_summary": "Valid format retry.",
+                "key_risks": ["Risk one"],
+            }
+            return ProviderResult(
+                raw_text=json.dumps(payload),
+                parsed_json=payload,
+                usage=Usage(input_tokens=1, output_tokens=1, latency_seconds=0),
+                error=None,
+            )
+
+    round_path = _copy_example_round(tmp_path)
+    models_path = _write_models(tmp_path / "models.yaml", [_model()])
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setitem(runner_module.PROVIDER_CLASSES, "openai", ValidProvider)
+
+    summary = run_round(
+        round_path,
+        models_path,
+        run_id="official-format-retry",
+        run_type="official",
+        allow_real_api_calls=True,
+        format_retry=True,
+    )
+    manifest = yaml.safe_load(
+        (round_path / "runs" / summary.run_id / "run_manifest.yaml").read_text(encoding="utf-8")
+    )
+
+    assert summary.valid_submissions == 1
+    assert manifest["format_retry"] is True
+    assert manifest["official_score_eligible"] is False
+    assert "never independently" in manifest["notes"]
+
+
+def test_format_retry_rejects_mock_or_non_official_runs(tmp_path: Path) -> None:
+    round_path = _copy_example_round(tmp_path)
+    models_path = _write_models(tmp_path / "models.yaml", [_model()])
+
+    with pytest.raises(ValueError, match="real official run"):
+        run_round(round_path, models_path, mock=True, format_retry=True)
+
+
 def test_model_config_loading_works(tmp_path: Path) -> None:
     models_path = _write_models(tmp_path / "models.yaml", [_model(), _model(model_id="google-example", provider="google")])
 

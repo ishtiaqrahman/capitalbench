@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad participation and a modest pullback can support an index rebound if macro data and earnings avoid negative surprises.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY fell 0.40% over five sessions but gained 0.65% over 21 sessions.",
+        "Seven of eleven sectors advanced and S&P advancers led decliners 1.9 to 1.",
+        "FOMC, GDP, PCE, and four mega-cap earnings reports fall inside the window."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.4,
+      "invalidation_condition": "SPY closes below its recent 21-session drawdown low as breadth turns decisively negative.",
+      "option_id": "SP500",
+      "reversal_case": "High event density, VIX at 18.67, and concentrated mega-cap earnings exposure could extend the decline.",
+      "time_window_catalyst": "FOMC July 29, GDP and PCE July 30, and Microsoft, Meta, Apple, and Amazon earnings."
+    },
+    {
+      "continuation_case": "Improving breadth and lower mega-cap concentration can sustain equal-weight leadership through earnings volatility.",
+      "decision": "selected",
+      "evidence": [
+        "RSP beat SPY by 1.70 percentage points over five sessions and 0.97 over 21 sessions.",
+        "S&P advancers outnumbered decliners 1.9 to 1, with seven sectors advancing.",
+        "RSP volatility was 9.95% and its 21-session drawdown was only 1.46%."
+      ],
+      "forecast_base_pct": 0.65,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.7,
+      "invalidation_condition": "RSP closes below SPY on two consecutive sessions while S&P breadth turns negative.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Strong mega-cap earnings could abruptly restore cap-weighted leadership.",
+      "time_window_catalyst": "Macro releases and mega-cap earnings from Microsoft, Meta, Apple, and Amazon may reinforce market broadening."
+    },
+    {
+      "continuation_case": "Independent prior and recent relative strength plus defensive characteristics support persistence during a volatile macro week.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare gained 2.49% over three sessions and beat SPY by 3.01 points over five.",
+        "Its prior 16-session active return was positive 1.27%.",
+        "Healthcare stood only 0.63% below its 52-week high."
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Healthcare underperforms SPY by more than 1 percentage point over two consecutive closes.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "The sharp three-session gain may mean-revert if risk appetite rotates toward growth sectors.",
+      "time_window_catalyst": "FOMC, GDP, PCE, and Employment Cost Index releases through July 31."
+    },
+    {
+      "continuation_case": "Persistent relative leadership and firm long yields can support banks and insurers through policy and growth updates.",
+      "decision": "selected",
+      "evidence": [
+        "Financials beat SPY by 1.90 points over five sessions and 3.78 points in the prior window.",
+        "The sector was at a 52-week high with a 2.08% recent maximum drawdown.",
+        "Its quality evidence score was 0.616."
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.1,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "A sharp yield decline or financials falling more than 1.5% relative to SPY invalidates the rate-sensitive leadership case.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "A dovish shock, growth scare, or adverse credit signal could compress yields and reverse leadership.",
+      "time_window_catalyst": "July 29 FOMC decision, July 30 GDP and PCE, and August 3 Senior Loan Officer survey."
+    },
+    {
+      "continuation_case": "Strong prior leadership plus a deep recent pullback can produce a rebound if technology earnings stabilize sentiment.",
+      "decision": "selected",
+      "evidence": [
+        "Cybersecurity had an 8.66% prior 16-session active return and a 0.779 quality score.",
+        "Its recent active return was negative 2.53%, creating a pullback after prior leadership.",
+        "It remained 5.94% below its 52-week high with 28.59% volatility."
+      ],
+      "forecast_base_pct": 0.85,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.8,
+      "invalidation_condition": "Cybersecurity breaks its recent drawdown low or trails SPY by another 2 percentage points.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High volatility and continued growth-stock de-rating could turn the pullback into a trend break.",
+      "time_window_catalyst": "Microsoft and Meta results July 29 and Apple and Amazon results July 30 may reset technology sentiment."
+    },
+    {
+      "continuation_case": "Positive prior relative momentum and reported economic growth can sustain a short-term rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "China equities had a 5.44% prior active return and gained 1.29% over three sessions.",
+        "China reported second-quarter real GDP growth of 4.3% year over year.",
+        "The quality evidence score was 0.681, but the fund remained 17.47% below its 52-week high."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "China equities lose the recent three-session gain and underperform SPY by more than 1.5 points.",
+      "option_id": "CHINA",
+      "reversal_case": "Large distance from the high and 19.48% volatility indicate fragile momentum and policy sensitivity.",
+      "time_window_catalyst": "No specific China policy catalyst was identified before the August 3 close."
+    },
+    {
+      "continuation_case": "Prior strength, recent pullback, and low equity correlation offer a differentiated rebound setup.",
+      "decision": "rejected",
+      "evidence": [
+        "Agriculture had the universe's highest quality evidence score at 0.793.",
+        "Its prior active return was positive 3.03%, but recent active return was negative 1.02%.",
+        "Correlation with SPY was only 0.031 and recent drawdown was 2.20%."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.7,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "Agriculture falls below its 21-session drawdown low or its active return deteriorates another 1 point.",
+      "option_id": "AGRICULTURE",
+      "reversal_case": "No supplied weather or crop catalyst supports immediate continuation, so the recent decline may persist.",
+      "time_window_catalyst": "No specific agriculture catalyst was identified before the August 3 close."
+    },
+    {
+      "continuation_case": "Soft inflation or growth data and a non-hawkish FOMC could extend the nascent duration rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "The 10-year Treasury yield fell to 4.65% from 4.69%.",
+        "TLT gained 0.37% over three sessions but lost 3.77% over 21 sessions.",
+        "The FOMC and inflation data create substantial duration event risk."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "The 10-year yield rises above its recent level and TLT breaks its 21-session low.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "A rate increase or firm GDP, PCE, or labor-cost data could push yields higher again.",
+      "time_window_catalyst": "FOMC July 29, GDP and PCE July 30, and Employment Cost Index July 31."
+    }
+  ],
+  "confidence": 0.59,
+  "expected_alpha_vs_sp500_pct": 0.43,
+  "is_official_score": true,
+  "key_risks": [
+    "A hawkish FOMC surprise could pressure equities and reverse the recent decline in Treasury yields.",
+    "Weak GDP or labor-cost data could hurt financials and broad cyclical participation.",
+    "Mega-cap earnings disappointments could overwhelm breadth and drag cybersecurity lower.",
+    "Recent healthcare and equal-weight strength could mean-revert during a technology-led rebound."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "Healthcare underperforms SPY by more than 1 percentage point over two consecutive closes.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong recent and prior relative performance, defensive exposure, and proximity to its 52-week high support continued leadership through a macro-heavy week.",
+      "time_window_catalyst": "FOMC, GDP, PCE, and Employment Cost Index releases through July 31."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "A sharp yield decline or financials falling more than 1.5% relative to SPY invalidates the rate-sensitive leadership case.",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive prior and recent active returns, a new high, and low recent drawdown provide independent support ahead of rate and credit catalysts.",
+      "time_window_catalyst": "July 29 FOMC decision, July 30 GDP and PCE, and August 3 Senior Loan Officer survey."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.65,
+      "invalidation_condition": "RSP closes below SPY on two consecutive sessions while S&P breadth turns negative.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broad market participation and persistent equal-weight outperformance favor continued rotation away from concentrated mega-cap exposure.",
+      "time_window_catalyst": "Macro releases and mega-cap earnings from Microsoft, Meta, Apple, and Amazon may reinforce market broadening."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.85,
+      "invalidation_condition": "Cybersecurity breaks its recent drawdown low or trails SPY by another 2 percentage points.",
+      "option_id": "CYBERSECURITY",
+      "rationale": "The highest technology finalist quality score combines strong prior leadership with a deep relative pullback, offering rebound potential around major technology earnings.",
+      "time_window_catalyst": "Microsoft and Meta results July 29 and Apple and Amazon results July 30 may reset technology sentiment."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.73,
+  "portfolio_rationale": "The portfolio emphasizes breadth, defensive healthcare, and financial leadership while retaining a smaller high-upside cybersecurity rebound position. Four distinct clusters limit dependence on any single macro outcome.",
+  "provider": "openai",
+  "rationale_summary": "Each active holding has a base forecast above SPY's 0.30% forecast. The weighted base return is 0.73%, implying 0.43 percentage point expected alpha.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15081,
+    "latency_seconds": 34.50589114311151,
+    "output_tokens": 2233,
+    "reasoning_tokens": 0,
+    "total_tokens": 17314
+  }
+}

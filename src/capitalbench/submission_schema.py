@@ -49,6 +49,10 @@ def provider_submission_schema(model_config: ModelConfig) -> dict[str, object]:
                 "type": "array",
                 "minItems": min_holdings,
                 "maxItems": max_holdings,
+                "description": (
+                    f"Required final portfolio with {min_holdings} to {max_holdings} holdings; "
+                    "it must not be empty."
+                ),
                 "items": {
                     "type": "object",
                     "additionalProperties": False,
@@ -57,9 +61,19 @@ def provider_submission_schema(model_config: ModelConfig) -> dict[str, object]:
                 },
             },
             "confidence": {"type": "number", "minimum": 0, "maximum": 1},
-            "portfolio_rationale": {"type": "string"},
-            "rationale_summary": {"type": "string"},
-            "key_risks": {"type": "array", "items": {"type": "string"}},
+            "portfolio_rationale": {
+                "type": "string",
+                "description": "Required non-empty rationale for the final portfolio.",
+            },
+            "rationale_summary": {
+                "type": "string",
+                "description": "Required non-empty summary; do not return an empty string.",
+            },
+            "key_risks": {
+                "type": "array",
+                "description": "Required risk list with at least one non-empty item.",
+                "items": {"type": "string"},
+            },
         }
         required = [
             "round_id",
@@ -92,6 +106,10 @@ def provider_submission_schema(model_config: ModelConfig) -> dict[str, object]:
                 "type": "array",
                 "minItems": 6,
                 "maxItems": 8,
+                "description": (
+                    "Required ledger of 6 to 8 unique candidates. Entries marked selected "
+                    "must exactly match the non-empty final portfolio."
+                ),
                 "items": {
                     "type": "object",
                     "additionalProperties": False,

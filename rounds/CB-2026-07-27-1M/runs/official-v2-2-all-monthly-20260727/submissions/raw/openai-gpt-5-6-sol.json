@@ -1,0 +1,185 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Positive breadth and cooling monthly CPI and PPI can support further gains if earnings and policy avoid negative surprises.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY returned 0.65% over 21 sessions and -0.40% over five sessions.",
+        "Advancers led decliners 1.9 to 1, but volume was below its 20-session average.",
+        "VIX closed at 18.67 ahead of major policy, macro, and mega-cap earnings events."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -5.5,
+      "invalidation_condition": "SPY breaks below its recent 63-session drawdown low as breadth and high-yield credit weaken together.",
+      "option_id": "SP500",
+      "reversal_case": "A hawkish FOMC, sticky PCE or CPI, or weak mega-cap earnings could pressure an index exposed to concentrated leadership.",
+      "time_window_catalyst": "FOMC, GDP, PCE, payrolls, CPI, retail sales, mega-cap earnings, and Nvidia results through August 26."
+    },
+    {
+      "continuation_case": "Improving breadth and lower concentration allow equal-weight stocks to keep outperforming if macro data remain adequate.",
+      "decision": "selected",
+      "evidence": [
+        "RSP beat SPY by 1.70 percentage points over five sessions and 0.97 point over 21 sessions.",
+        "Its 63-session volatility was 10.90% with a shallow -2.04% maximum drawdown.",
+        "Seven of eleven sectors advanced and S&P advancers outnumbered decliners 1.9 to 1."
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 7.2,
+      "forecast_low_pct": -4.2,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points over a rolling five-session period while breadth turns decisively negative.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Strong mega-cap earnings or renewed growth-stock leadership could restore cap-weighted SPY dominance.",
+      "time_window_catalyst": "FOMC, GDP, inflation, employment, and retail-sales releases through August 26 could sustain broad market participation."
+    },
+    {
+      "continuation_case": "Defensive demand and established relative strength can persist through a macro-heavy month.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare gained 2.61% over five sessions and outperformed SPY by 4.34 points over 21 sessions.",
+        "It stood only 0.63% below its 52-week high with a -3.74% 63-session maximum drawdown.",
+        "Its 252-session SPY beta was 0.315."
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 7.5,
+      "forecast_low_pct": -4.8,
+      "invalidation_condition": "Healthcare loses its recent relative leadership and closes more than 5% below its entry level.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "The weak prior 105-session active return may reassert itself if risk appetite shifts sharply toward cyclicals and technology.",
+      "time_window_catalyst": "July inflation, employment, and retail-sales data could favor defensive earnings exposure before August 27."
+    },
+    {
+      "continuation_case": "The strong prior relative trend can resume after the recent pullback if BOJ communication avoids a disruptive surprise.",
+      "decision": "selected",
+      "evidence": [
+        "Japan's quality evidence score was 0.670, including prior active rank 0.731 and pullback rank 0.806.",
+        "Its prior 105-session active return was 3.94%, while its latest 21-session active return was -2.67%.",
+        "Bank of Japan policy communication is scheduled during July 28-31."
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 10.5,
+      "forecast_low_pct": -7.5,
+      "invalidation_condition": "A sharp yen move or BOJ surprise coincides with EWJ falling below its recent 63-session drawdown trough.",
+      "option_id": "JAPAN",
+      "reversal_case": "High 22.06% volatility and sensitivity to yen moves could turn the pullback into a deeper decline.",
+      "time_window_catalyst": "Bank of Japan policy communication during July 28-31 and subsequent yen moves."
+    },
+    {
+      "continuation_case": "The exceptional prior trend and deep pullback could produce a sharp rebound if large technology earnings validate demand.",
+      "decision": "rejected",
+      "evidence": [
+        "Semiconductors had a 52.08% prior 105-session active return and a 0.759 quality evidence score.",
+        "They underperformed SPY by 14.52 points over 21 sessions and sat 17.99% below the 52-week high.",
+        "The Philadelphia semiconductor index fell 2.2% on July 27; Nvidia reports after the August 26 close."
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 18,
+      "forecast_low_pct": -15,
+      "invalidation_condition": "Semiconductors make a new 63-session low after major technology earnings without improving relative strength.",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "The 52.57% volatility, 2.303 beta, and full -17.99% drawdown show that momentum damage can continue.",
+      "time_window_catalyst": "Mega-cap technology earnings during July 28-31 and Nvidia results after the August 26 close."
+    },
+    {
+      "continuation_case": "Cooling inflation and weaker labor data could lower long yields and generate a duration rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "The 10-year Treasury yield fell to 4.65% from 4.69% on July 24.",
+        "TLT lost 3.77% over 21 sessions and had a -4.42% active return.",
+        "Its quality evidence score was 0.607, supported by a 0.851 recent-pullback rank."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 6,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "The 10-year yield rises above 4.85% and TLT makes a new 63-session low.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "A rate increase, sticky PCE, or upside CPI surprise could extend the bond selloff.",
+      "time_window_catalyst": "FOMC on July 29, PCE and GDP on July 30 and August 26, payrolls on August 7, and CPI on August 12."
+    },
+    {
+      "continuation_case": "Renewed geopolitical disruption could reverse the latest decline and restore the strong prior trend.",
+      "decision": "rejected",
+      "evidence": [
+        "Oil had a 40.71% prior 105-session active return and a 13.48% latest 21-session active return.",
+        "U.S. crude fell 7.5% as U.S.-Iran attacks paused and negotiations resumed.",
+        "Its 63-session volatility was 54.04% with a -32.49% maximum drawdown."
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 20,
+      "forecast_low_pct": -18,
+      "invalidation_condition": "Negotiations produce sustained de-escalation while crude breaks below its post-pause low.",
+      "option_id": "OIL",
+      "reversal_case": "A durable de-escalation and weaker global demand could unwind the crowded advance further.",
+      "time_window_catalyst": "Developments in unresolved U.S.-Iran negotiations and July 30 energy-company earnings."
+    },
+    {
+      "continuation_case": "A hawkish Fed or risk aversion could preserve rate support and safe-haven demand.",
+      "decision": "rejected",
+      "evidence": [
+        "The Dollar Index was 101.38 and UUP gained 0.74% over five sessions.",
+        "UUP had low 4.88% volatility, a shallow -0.98% drawdown, and a 0.651 quality evidence score.",
+        "The FOMC decision and BOJ communication occur during July 28-31."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "UUP closes more than 2% below entry as U.S. rate expectations decline relative to Japan and Europe.",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "Cooling U.S. inflation or a hawkish BOJ could narrow rate differentials and weaken the dollar.",
+      "time_window_catalyst": "FOMC and BOJ communications, followed by U.S. payrolls, CPI, and PCE releases."
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.68,
+  "is_official_score": true,
+  "key_risks": [
+    "Mega-cap earnings trigger renewed cap-weighted technology leadership and reverse market broadening.",
+    "A hawkish FOMC outcome or upside inflation surprise raises yields and pressures equities broadly.",
+    "BOJ communication or an abrupt yen move harms Japanese exporters.",
+    "Recent healthcare strength mean-reverts as investors rotate back into higher-beta sectors."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points over a rolling five-session period while breadth turns decisively negative.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broadening breadth, a positive 21-session active return, lower volatility, and a shallow drawdown support continued leadership beyond mega-caps.",
+      "time_window_catalyst": "FOMC, GDP, inflation, employment, and retail-sales releases through August 26 could sustain broad market participation."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Healthcare loses its recent relative leadership and closes more than 5% below its entry level.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Recent relative strength and near-high positioning provide a defensive source of potential alpha amid substantial macro-event risk.",
+      "time_window_catalyst": "July inflation, employment, and retail-sales data could favor defensive earnings exposure before August 27."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "A sharp yen move or BOJ surprise coincides with EWJ falling below its recent 63-session drawdown trough.",
+      "option_id": "JAPAN",
+      "rationale": "Strong prior relative trend and deep recent pullback create a supported rebound setup, with near-term BOJ communication as a catalyst.",
+      "time_window_catalyst": "Bank of Japan policy communication during July 28-31 and subsequent yen moves."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.48,
+  "portfolio_rationale": "The portfolio favors broadening U.S. participation, defensive healthcare strength, and a Japanese-equity rebound rather than concentrated mega-cap exposure. Each active sleeve has a base forecast above SPY, and no non-benchmark cluster exceeds 50%.",
+  "provider": "openai",
+  "rationale_summary": "Breadth and factor rotation support equal-weight U.S. equities, while healthcare and Japan diversify the catalyst set. The weighted one-month base forecast is 1.48%, implying 0.68 percentage point of expected alpha.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15278,
+    "latency_seconds": 34.54969957796857,
+    "output_tokens": 2285,
+    "reasoning_tokens": 0,
+    "total_tokens": 17563
+  }
+}

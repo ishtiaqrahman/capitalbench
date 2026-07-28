@@ -73,6 +73,11 @@ Use this checklist before running a public CapitalBench round.
 - Run `capitalbench validate-submissions --round rounds/<id> --run-id <run_id>`.
 - Review `_validation_errors.json` if any submissions are invalid.
 - If an official attempt has malformed JSON, truncation, provider transport failure, or schema failure, preserve the raw response and mark that attempt ineligible before retrying.
+- For a subset retry of only failed models, use a separate models file and pass
+  `--format-retry` with `--run-type official`. The retry source run bypasses the
+  complete-roster preflight but is permanently marked ineligible on its own.
+  Preserve every source run, then assemble and disclose exactly one clean
+  full-roster official run from schema-valid decisions.
 - Do not retry an official call because of the model's selected asset, confidence, or rationale quality.
 
 ## Official And Stability Runs

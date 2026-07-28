@@ -321,6 +321,7 @@ def _cmd_run_round(args: argparse.Namespace) -> int:
         overwrite_run=args.overwrite_run,
         run_type=args.run_type,
         replicates=args.replicates,
+        format_retry=args.format_retry,
     )
     print(f"run_id: {summary.run_id}")
     print(f"models loaded: {summary.loaded_models}")
@@ -769,6 +770,11 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--run-id")
     run_parser.add_argument("--run-type", choices=["official", "stability", "mock", "retrospective"])
     run_parser.add_argument("--replicates", type=int)
+    run_parser.add_argument(
+        "--format-retry",
+        action="store_true",
+        help="run an official schema/format retry subset; the source run is never independently score eligible",
+    )
     run_parser.add_argument("--overwrite-run", action="store_true")
     run_parser.add_argument("--mock", action="store_true", help="use deterministic mock responses")
     run_parser.add_argument(

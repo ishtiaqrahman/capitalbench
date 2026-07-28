@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Positive breadth, 30 new S&P 500 highs, and potential benign macro or earnings outcomes could keep the benchmark advancing.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed up less than 0.1% on July 27 while Nasdaq Composite fell 0.2%.",
+        "SPY return_3s was -1.11%, return_5s was -0.40%, and distance from 52-week high was -2.45%.",
+        "FOMC, GDP/PCE, ECI, and major mega-cap earnings are scheduled before the August 3 close."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.3,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "SPY reclaims strong breadth leadership with technology and mega-cap growth outperforming after FOMC and earnings.",
+      "option_id": "SP500",
+      "reversal_case": "Mega-cap earnings disappointment, hawkish FOMC communication, or unfavorable inflation/wage data could extend the recent SPY pullback.",
+      "time_window_catalyst": "FOMC on July 29, GDP/PCE on July 30, ECI on July 31, and Microsoft, Meta, Apple, and Amazon results."
+    },
+    {
+      "continuation_case": "Defensive leadership can continue if FOMC or macro releases raise growth or rate concerns while healthcare remains near its 52-week high.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare return_3s was 2.49% and active_return_5s was 3.01%.",
+        "Healthcare prior_16s_active_return was 1.27% and distance from 52-week high was -0.63%.",
+        "Healthcare quality evidence score was 0.478, with high prior active rank of 0.791 but weak recent pullback rank of 0.090."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Healthcare underperforms SPY by more than 1% after the FOMC/GDP-PCE releases or breaks materially away from its near-high position.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "The strong recent move and weak pullback rank create mean-reversion risk if risk appetite broadens into higher-beta sectors.",
+      "time_window_catalyst": "FOMC, GDP/PCE, ECI, and broad earnings-week risk may favor lower-beta defensive leadership before the August 3 close."
+    },
+    {
+      "continuation_case": "At-high price leadership and strong prior relative trend can continue if FOMC and macro data support stable credit and rate expectations.",
+      "decision": "selected",
+      "evidence": [
+        "Financials return_3s was 1.48%, active_return_5s was 1.90%, and prior_16s_active_return was 3.78%.",
+        "Financials were at a 0.00% distance from 52-week high.",
+        "The August 3 Senior Loan Officer Opinion Survey is scheduled inside the scoring window."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 1.7,
+      "forecast_low_pct": -1.1,
+      "invalidation_condition": "10-year yields fall sharply with risk-off breadth or financials lose their 52-week-high leadership versus SPY.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "A dovish growth scare, weaker credit tone, or negative loan-officer signal could reverse financials' recent leadership.",
+      "time_window_catalyst": "FOMC communication, GDP/PCE/ECI data, and the August 3 Senior Loan Officer Opinion Survey can affect rate-curve and credit-quality expectations."
+    },
+    {
+      "continuation_case": "Broad participation and equal-weight strength can persist if investors rotate away from mega-cap concentration during earnings week.",
+      "decision": "selected",
+      "evidence": [
+        "RSP return_5s was 1.30% versus SPY return_5s of -0.40%.",
+        "RSP active_return_5s was 1.70%, active_return_21s was 0.97%, and distance from 52-week high was 0.00%.",
+        "Advancing S&P 500 issues outnumbered decliners by 1.9 to 1 on July 27."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "Market breadth turns negative and RSP's 5-day relative strength versus SPY reverses by more than half.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Strong mega-cap technology earnings could reassert cap-weight SPY leadership and reverse RSP's recent relative gain.",
+      "time_window_catalyst": "Mega-cap earnings from Microsoft, Meta, Apple, and Amazon plus macro data could sustain broader participation if breadth remains positive."
+    },
+    {
+      "continuation_case": "Defensive sector strength can continue if macro or policy events pressure cyclical and growth equities.",
+      "decision": "selected",
+      "evidence": [
+        "Consumer staples gained 1.58% on July 27, the strongest sector gain cited in the briefing.",
+        "Consumer staples return_3s was 1.16% and active_return_5s was 0.99%.",
+        "Consumer staples prior_16s_active_return was 0.04%, with distance from 52-week high at -3.97%."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Staples fail to hold recent positive relative performance and underperform SPY after consumer confidence and FOMC events.",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Risk-on reactions to FOMC, GDP, PCE, or mega-cap earnings could rotate flows away from staples into higher-beta areas.",
+      "time_window_catalyst": "Consumer confidence, FOMC, GDP/PCE, and ECI releases may support defensive rotation if growth or rate signals disappoint."
+    },
+    {
+      "continuation_case": "Strong prior relative trend and deep recent pullback could rebound if growth and software-adjacent earnings sentiment improves.",
+      "decision": "rejected",
+      "evidence": [
+        "Cybersecurity had a quality evidence score of 0.779, including prior active rank 0.955 and recent pullback rank 0.985.",
+        "Cybersecurity prior_16s_active_return was 8.66%, but active_return_5s was -2.53%.",
+        "Cybersecurity volatility_21s was 28.59% and distance from 52-week high was -5.94%."
+      ],
+      "forecast_base_pct": 0.05,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "Cybersecurity fails to recover relative to SPY after mega-cap earnings or its drawdown deepens beyond recent levels.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High volatility and recent underperformance could continue if technology/growth remains weak around mega-cap earnings and FOMC.",
+      "time_window_catalyst": "Microsoft and Meta results after July 29 and Apple/Amazon results after July 30 can influence growth-technology sentiment."
+    },
+    {
+      "continuation_case": "Prior strength could resume if U.S.-Iran negotiations fail or geopolitical supply risk returns before the exit close.",
+      "decision": "rejected",
+      "evidence": [
+        "October Brent crude settled down 6.3% and September U.S. crude settled down 7.5% after a pause in U.S.-Iran attacks and renewed negotiations.",
+        "Oil prior_16s_active_return was 13.76%, but return_3s was -5.26% and active_return_5s was -0.19%.",
+        "Oil volatility_21s was 58.63% and max_drawdown_21s was -10.56%."
+      ],
+      "forecast_base_pct": -0.2,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Crude prices stabilize and oil exposure turns positive versus SPY after energy earnings or geopolitical headlines.",
+      "option_id": "OIL",
+      "reversal_case": "The attack pause and renewed negotiations could keep pressuring crude, with very high volatility amplifying downside.",
+      "time_window_catalyst": "Unresolved U.S.-Iran negotiations and Chevron/Exxon results before the July 31 open."
+    },
+    {
+      "continuation_case": "Cash-like yield and low volatility should provide a small positive return if risk assets sell off or policy remains steady.",
+      "decision": "rejected",
+      "evidence": [
+        "Short Treasury return_3s was 0.04% and active_return_5s was 0.47%.",
+        "Short Treasury volatility_21s was 0.24%, max_drawdown_21s was -0.01%, and distance from 52-week high was 0.00%.",
+        "The Federal Reserve target range was 3.50% to 3.75% with the July 28-29 FOMC meeting pending."
+      ],
+      "forecast_base_pct": 0.04,
+      "forecast_high_pct": 0.07,
+      "forecast_low_pct": 0.02,
+      "invalidation_condition": "Equity breadth and SPY rally strongly after FOMC, making capital-preservation exposure lag materially.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Its expected one-week return is too small to beat SPY in normal or risk-on equity conditions.",
+      "time_window_catalyst": "FOMC statement and press conference on July 29."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.325,
+  "is_official_score": true,
+  "key_risks": [
+    "Mega-cap technology earnings could strongly lift SPY and leave the defensive/breadth tilt behind.",
+    "A hawkish FOMC surprise or hot inflation/wage data could pressure equities and financials simultaneously.",
+    "Recent defensive and equal-weight outperformance could mean-revert within the short one-week window.",
+    "Unexpected geopolitical or oil-price reversal could shift leadership toward energy and away from selected sectors."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Healthcare underperforms SPY by more than 1% after the FOMC/GDP-PCE releases or breaks materially away from its near-high position.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare showed the strongest recent defensive-sector relative performance with positive 3-day and 5-day active returns and a shallow distance from its 52-week high.",
+      "time_window_catalyst": "FOMC, GDP/PCE, ECI, and broad earnings-week risk may favor lower-beta defensive leadership before the August 3 close."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "10-year yields fall sharply with risk-off breadth or financials lose their 52-week-high leadership versus SPY.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials combine strong prior active return, positive recent active return, and a 52-week-high position, with the Senior Loan Officer survey inside the window.",
+      "time_window_catalyst": "FOMC communication, GDP/PCE/ECI data, and the August 3 Senior Loan Officer Opinion Survey can affect rate-curve and credit-quality expectations."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Market breadth turns negative and RSP's 5-day relative strength versus SPY reverses by more than half.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Equal-weight S&P 500 benefits from stronger breadth than cap-weight SPY and lower volatility, while avoiding concentrated mega-cap earnings risk.",
+      "time_window_catalyst": "Mega-cap earnings from Microsoft, Meta, Apple, and Amazon plus macro data could sustain broader participation if breadth remains positive."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Staples fail to hold recent positive relative performance and underperform SPY after consumer confidence and FOMC events.",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Consumer staples had the largest S&P 500 sector gain on July 27 and offers defensive exposure if FOMC or macro data pressure higher-beta equities.",
+      "time_window_catalyst": "Consumer confidence, FOMC, GDP/PCE, and ECI releases may support defensive rotation if growth or rate signals disappoint."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.425,
+  "portfolio_rationale": "The portfolio tilts toward recent broadening and defensive/value leadership instead of cap-weight technology concentration ahead of FOMC, GDP/PCE, ECI, and mega-cap earnings. All active holdings have base forecasts above SPY and no non-benchmark cluster exceeds 50%.",
+  "provider": "openai",
+  "rationale_summary": "SPY was flat with mixed mega-cap technology weakness, while breadth was positive and several defensive/value sectors led. The selected holdings seek one-week alpha from breadth continuation, defensive rotation, and financial leadership around scheduled macro and policy catalysts.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15079,
+    "latency_seconds": 38.95493310596794,
+    "output_tokens": 2848,
+    "reasoning_tokens": 168,
+    "total_tokens": 17927
+  }
+}

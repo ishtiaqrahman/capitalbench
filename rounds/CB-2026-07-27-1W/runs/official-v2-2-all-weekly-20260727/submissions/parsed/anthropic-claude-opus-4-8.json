@@ -1,0 +1,200 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad market grinds higher on solid earnings and no Fed hike",
+      "decision": "selected",
+      "evidence": [
+        "SPY closed 7413.18, up <0.1%",
+        "5s return -0.40%, RSP beating SPY by 1.70%",
+        "VIX 18.67"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY falls more than 2% intraweek",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish Fed or weak mega-cap earnings trigger selloff",
+      "time_window_catalyst": "FOMC July 29, mega-cap earnings"
+    },
+    {
+      "continuation_case": "Defensive rotation continues amid tech volatility",
+      "decision": "selected",
+      "evidence": [
+        "Active return 5s +3.01%",
+        "Negative beta to SPY -0.161",
+        "3s return +2.49%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Healthcare underperforms SPY by >1%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on tech rally pulls flows from defensives",
+      "time_window_catalyst": "Earnings-week volatility"
+    },
+    {
+      "continuation_case": "Cyclical breadth leadership persists",
+      "decision": "selected",
+      "evidence": [
+        "Highest 5s active return +3.26%",
+        "3s +2.43%",
+        "moderate volatility 14.30%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Industrials fall below SPY performance",
+      "option_id": "INDUSTRIALS",
+      "reversal_case": "Growth reasserts, cyclicals fade",
+      "time_window_catalyst": "Breadth rotation"
+    },
+    {
+      "continuation_case": "Stable yields support banks",
+      "decision": "selected",
+      "evidence": [
+        "Prior active return +3.78%",
+        "at 52w high, drawdown -2.08%",
+        "low beta 0.197"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Financials break recent range low",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield spike or credit worries",
+      "time_window_catalyst": "FOMC, loan officer survey Aug 3"
+    },
+    {
+      "continuation_case": "Defensive flows in choppy week",
+      "decision": "selected",
+      "evidence": [
+        "Active return +2.48%",
+        "beta 0.125",
+        "drawdown -1.18%"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Broad growth rally dominates",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Tech-led risk-on rally",
+      "time_window_catalyst": "Earnings volatility"
+    },
+    {
+      "continuation_case": "Mega-cap earnings beat drives tech",
+      "decision": "rejected",
+      "evidence": [
+        "5s active -1.60%",
+        "high beta 1.72",
+        "drawdown -7.37%"
+      ],
+      "forecast_base_pct": -0.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "QQQ breaks lower on weak earnings",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Earnings disappoint or rates rise",
+      "time_window_catalyst": "Microsoft/Meta/Apple/Amazon earnings"
+    },
+    {
+      "continuation_case": "Safe-haven demand amid uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "5s active +2.30%",
+        "IAU 21s +1.41%",
+        "gold $4079"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Gold breaks below recent support",
+      "option_id": "GOLD",
+      "reversal_case": "Strong dollar and hawkish Fed pressure gold",
+      "time_window_catalyst": "FOMC and dollar moves"
+    },
+    {
+      "continuation_case": "Yields fall on dovish Fed",
+      "decision": "rejected",
+      "evidence": [
+        "10y yield 4.65% down from 4.69%",
+        "low vol 4.15%",
+        "5s active +0.13%"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "10y yield rises above 4.8%",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Hawkish Fed lifts yields",
+      "time_window_catalyst": "FOMC July 29"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.2975,
+  "is_official_score": true,
+  "key_risks": [
+    "Hawkish FOMC surprise (38% priced hike) hits all equities",
+    "Strong Microsoft/Meta/Apple/Amazon earnings drive tech-led rally that leaves defensive tilt behind",
+    "Yield spike pressures rate-sensitive and financial names"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Healthcare underperforms SPY by more than 1% mid-window",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong recent active return (+3.01% 5s), low correlation to SPY, and deep pullback rank; benefits from breadth rotation into staples/defensives.",
+      "time_window_catalyst": "Big-tech earnings week volatility favors defensives"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Industrials give back gains as growth stocks reassert",
+      "option_id": "INDUSTRIALS",
+      "rationale": "Strongest 5s active return (+3.26%) with moderate volatility and improving breadth; industrials leading the rotation.",
+      "time_window_catalyst": "Continued cyclical breadth rotation"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Financials break below recent range",
+      "option_id": "FINANCIALS",
+      "rationale": "High quality score, positive prior active trend (+3.78%), low volatility, at 52w highs; benefits from steady yields.",
+      "time_window_catalyst": "FOMC statement July 29 and yield stability"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Risk-on rally in mega-cap tech dominates",
+      "option_id": "DIVIDEND",
+      "rationale": "Very low beta (0.125), strong active return (+2.48%), shallow drawdown; ballast during earnings-driven volatility.",
+      "time_window_catalyst": "Defensive flows during heavy earnings week"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Broad equity selloff on hawkish Fed",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure to limit tracking risk.",
+      "time_window_catalyst": "FOMC and mega-cap earnings"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.5975,
+  "portfolio_rationale": "Tilt toward defensive and cyclical breadth leaders (healthcare, industrials, financials, dividend) that show strong recent relative strength and low volatility, given a heavy earnings/FOMC week where mega-cap tech (down QQQ/SMH) carries elevated risk.",
+  "provider": "anthropic",
+  "rationale_summary": "Breadth is rotating away from mega-cap growth (RSP beating SPY) into defensives and cyclicals; portfolio overweights those leaders while keeping SPY core.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27065,
+    "latency_seconds": 50.75088654877618,
+    "output_tokens": 2684,
+    "total_tokens": 29749
+  }
+}

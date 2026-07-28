@@ -219,7 +219,9 @@ def _fetch_yahoo_history(symbol: str, start: date, end: date) -> list[dict[str, 
     rows: list[dict[str, Any]] = []
     for index, timestamp in enumerate(timestamps):
         close = closes[index] if index < len(closes) else None
-        adj_close = adjusted[index] if index < len(adjusted) else close
+        adj_close = adjusted[index] if index < len(adjusted) else None
+        if adj_close is None:
+            adj_close = close
         if adj_close is None:
             continue
         rows.append(

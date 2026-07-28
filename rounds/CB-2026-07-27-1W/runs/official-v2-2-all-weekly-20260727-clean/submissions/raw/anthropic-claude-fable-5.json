@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Dovish hold plus earnings beats lift the index",
+      "decision": "selected",
+      "evidence": [
+        "SPY -0.40% over 5 days, -2.45% from 52-week high",
+        "VIX 18.67; FOMC pricing 62% hold / 38% hike",
+        "Mega-cap earnings MSFT/META/AAPL/AMZN this week"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Hawkish hike with hawkish guidance",
+      "option_id": "SP500",
+      "reversal_case": "Surprise 25bp hike or mega-cap earnings misses",
+      "time_window_catalyst": "FOMC July 29; earnings July 29-30; GDP/PCE July 30"
+    },
+    {
+      "continuation_case": "Defensive rotation continues into FOMC uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "+3.01% 5-day active return, +1.27% prior active",
+        "Beta to SPY -0.161, only -0.63% from 52-week high"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Sharp post-FOMC growth rally with healthcare underperforming early week",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rally after dovish Fed pulls flows to growth",
+      "time_window_catalyst": "FOMC July 29 defensive positioning"
+    },
+    {
+      "continuation_case": "Breadth broadening continues as mega-caps stall into earnings",
+      "decision": "selected",
+      "evidence": [
+        "RSP-SPY +1.70% 5d and +0.97% 21d",
+        "At 52-week high with only -1.46% max drawdown",
+        "Advancers led decliners 1.9:1 on July 27"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "QQQ outperforming RSP sharply after earnings",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap earnings beats restore cap-weighted leadership",
+      "time_window_catalyst": "Mega-cap earnings July 29-30"
+    },
+    {
+      "continuation_case": "Value/dividend rotation with prior-trend support persists through FOMC",
+      "decision": "selected",
+      "evidence": [
+        "+2.48% 5d active and +1.41% prior active return",
+        "Beta 0.125, at 52-week high, -1.18% max drawdown"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.6,
+      "invalidation_condition": "10-year yield surging well above 4.75% on hawkish outcome",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Yield spike from hike could pressure dividend proxies",
+      "time_window_catalyst": "FOMC July 29; ECI July 31"
+    },
+    {
+      "continuation_case": "Higher-for-longer rates support net interest margins; trend intact",
+      "decision": "selected",
+      "evidence": [
+        "+1.90% 5d active with +3.78% prior active trend",
+        "At 52-week high; low beta 0.197 to SPY"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Bank credit-quality shock or sharp yield-curve inversion move",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak Senior Loan Officer Survey or credit worries",
+      "time_window_catalyst": "FOMC July 29; SLOOS Aug 3"
+    },
+    {
+      "continuation_case": "Mega-cap earnings beats spark a rebound",
+      "decision": "rejected",
+      "evidence": [
+        "-1.60% 5d active, -3.90% prior active, -8.48% from high",
+        "Beta 1.72, 23% volatility; semis fell 2.2% July 27"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Broad tech earnings beats with strong guidance",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Earnings misses plus a rate hike extend the drawdown",
+      "time_window_catalyst": "MSFT/META July 29, AAPL/AMZN July 30 earnings"
+    },
+    {
+      "continuation_case": "FOMC uncertainty and safe-haven demand",
+      "decision": "rejected",
+      "evidence": [
+        "+2.30% 5d active but -24.41% from 52-week high",
+        "Dollar Index firm at 101.38; hike risk pressures gold"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Post-hike dollar rally",
+      "option_id": "GOLD",
+      "reversal_case": "Rate hike and dollar strength hit gold",
+      "time_window_catalyst": "FOMC July 29"
+    },
+    {
+      "continuation_case": "Geopolitical re-escalation lifts crude and energy equities",
+      "decision": "rejected",
+      "evidence": [
+        "Brent fell 6.3% on U.S.-Iran pause and negotiations",
+        "+6.06% prior active but crude reversing sharply"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Talks collapse and crude rallies back above $90 Brent",
+      "option_id": "ENERGY",
+      "reversal_case": "Continued de-escalation extends crude selloff",
+      "time_window_catalyst": "CVX/XOM earnings July 31; Iran talks"
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 0.52,
+  "is_official_score": true,
+  "key_risks": [
+    "Dovish FOMC plus strong mega-cap earnings could reignite growth leadership and hurt the value/defensive tilt",
+    "A 25bp hike could pressure all equities including defensives",
+    "Financials exposed to weak Senior Loan Officer Survey or credit deterioration",
+    "Healthcare's recent strength may mean-revert"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Broad risk-on rotation back into mega-cap growth after a dovish FOMC",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong recent relative strength (+3.01% 5-day active), low SPY beta, near 52-week high; insulated from FOMC hike risk.",
+      "time_window_catalyst": "July 29 FOMC decision; defensive flows if hawkish surprise"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Mega-cap earnings beats drive cap-weighted leadership back",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth improving: RSP beat SPY +1.70% over 5 days with advancers 1.9:1; equal weight at 52-week high with low drawdown.",
+      "time_window_catalyst": "Mega-cap earnings (MSFT, META, AAPL, AMZN) concentration risk favors equal weight; FOMC July 29"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Sharp risk-on growth rally post-FOMC pulling flows from dividend value",
+      "option_id": "DIVIDEND",
+      "rationale": "Strong prior and recent active returns (+2.48% 5d, +1.41% prior), near-zero SPY beta, at 52-week high; resilient to a rate hike.",
+      "time_window_catalyst": "FOMC July 29; defensive value flows through week"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Credit-quality shock or sharp curve rally hurting bank margins",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive prior trend (+3.78% prior active) and continued strength (+1.90% 5d), at 52-week high; benefits from elevated rates whether Fed hikes or holds.",
+      "time_window_catalyst": "FOMC July 29 and Senior Loan Officer Survey Aug 3"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.2,
+      "invalidation_condition": "n/a benchmark holding",
+      "option_id": "SP500",
+      "rationale": "Benchmark anchor to limit tracking error through heavy earnings/FOMC week.",
+      "time_window_catalyst": "FOMC July 29, mega-cap earnings, Q2 GDP July 30"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.72,
+  "portfolio_rationale": "With a 38% priced probability of a Fed hike, mega-cap earnings risk, and clear breadth rotation toward value/defensives (RSP +1.70% vs SPY over 5 days), the portfolio tilts to healthcare, dividends, equal-weight, and financials that are at or near 52-week highs with independent trend support, keeping tech-growth exposure minimal.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight defensive value and breadth (healthcare, dividend, equal-weight, financials) into a hawkish-risk FOMC and concentrated mega-cap earnings week; small SPY anchor.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27351,
+    "latency_seconds": 44.867778029991314,
+    "output_tokens": 3820,
+    "total_tokens": 31171
+  }
+}

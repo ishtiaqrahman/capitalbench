@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad market stability through earnings season",
+      "decision": "rejected",
+      "evidence": [
+        "S&P closed at 7413.18 on July 27",
+        "VIX at 18.67",
+        "June payrolls +57k"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Core CPI above 3.0% or FOMC hawkish surprise",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish FOMC or weak August CPI",
+      "time_window_catalyst": "July 29 FOMC and August CPI releases"
+    },
+    {
+      "continuation_case": "Defensive dividend tilt persists amid rate uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "Active return 3.95% over 21 days",
+        "Low volatility rank 0.776",
+        "Shallow drawdown rank 0.791"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Core CPI above 3.0% or FOMC hawkish surprise",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Hawkish FOMC or weak August CPI",
+      "time_window_catalyst": "July 29 FOMC and August CPI releases"
+    },
+    {
+      "continuation_case": "Defensive healthcare outperformance continues",
+      "decision": "selected",
+      "evidence": [
+        "Active return 4.34% over 21 days",
+        "Shallow drawdown rank 0.731",
+        "Low volatility rank 0.552"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Core CPI above 3.0% or FOMC hawkish surprise",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Hawkish FOMC or weak August CPI",
+      "time_window_catalyst": "July 29 FOMC and August CPI releases"
+    },
+    {
+      "continuation_case": "Financial sector breadth supports gains",
+      "decision": "selected",
+      "evidence": [
+        "Active return 5.76% over 21 days",
+        "Shallow drawdown rank 0.821",
+        "Low volatility rank 0.716"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Core CPI above 3.0% or FOMC hawkish surprise",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Hawkish FOMC or weak August CPI",
+      "time_window_catalyst": "July 29 FOMC and August CPI releases"
+    },
+    {
+      "continuation_case": "Industrial orders and earnings support",
+      "decision": "rejected",
+      "evidence": [
+        "Return 2.85% over 5 days",
+        "Active return -1.15% over 21 days",
+        "Prior active rank 0.821"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Core CPI above 3.0% or FOMC hawkish surprise",
+      "option_id": "INDUSTRIALS",
+      "reversal_case": "Hawkish FOMC or weak August CPI",
+      "time_window_catalyst": "July 29 FOMC and August CPI releases"
+    },
+    {
+      "continuation_case": "Dollar strength amid policy uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "UUP return 0.74% over 5 days",
+        "Shallow drawdown rank 0.985",
+        "Low volatility rank 0.881"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Core CPI above 3.0% or FOMC hawkish surprise",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "Dovish FOMC or risk-on flows",
+      "time_window_catalyst": "July 29 FOMC and August CPI releases"
+    },
+    {
+      "continuation_case": "Safe-haven demand on geopolitical pause",
+      "decision": "rejected",
+      "evidence": [
+        "IAU return 1.90% over 5 days",
+        "Gold futures at 4079.80",
+        "Low prior active rank 0.045"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Core CPI above 3.0% or FOMC hawkish surprise",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger dollar or risk-on equity rally",
+      "time_window_catalyst": "July 29 FOMC and August CPI releases"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 1.27,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC policy surprise on July 29",
+    "August CPI deviation from 3.5% YoY",
+    "Sector rotation away from financials and healthcare"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Core CPI above 3.0% or FOMC hawkish surprise",
+      "option_id": "DIVIDEND",
+      "rationale": "Positive active returns and defensive tilt support modest outperformance.",
+      "time_window_catalyst": "July 29 FOMC and August CPI releases"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Core CPI above 3.0% or FOMC hawkish surprise",
+      "option_id": "HEALTHCARE",
+      "rationale": "Recent outperformance and low drawdown support relative strength.",
+      "time_window_catalyst": "July 29 FOMC and August CPI releases"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Core CPI above 3.0% or FOMC hawkish surprise",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong recent active returns and sector breadth support base case.",
+      "time_window_catalyst": "July 29 FOMC and August CPI releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.27,
+  "portfolio_rationale": "Selected holdings show higher base forecasts than SPY with distinct clusters under 50% cap.",
+  "provider": "xai",
+  "rationale_summary": "Value and defensive equity tilt for one-month window based on recent active returns and macro data.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15506,
+    "latency_seconds": 17.369567994959652,
+    "output_tokens": 1608,
+    "reasoning_tokens": 844,
+    "total_tokens": 17958
+  }
+}

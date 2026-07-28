@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid breadth, low VIX, earnings season underway.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed 7,413.18, -2.45% from 52w high",
+        "VIX 18.67",
+        "spy_return_21s +0.65%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "SPY closes below 7,000",
+      "option_id": "SP500",
+      "reversal_case": "Sticky 3.5% CPI and 38% odds of a rate hike could compress multiples.",
+      "time_window_catalyst": "FOMC July 29; mega-cap earnings; Nvidia Aug 26"
+    },
+    {
+      "continuation_case": "Breadth 1.9:1 advancers and 30 new highs support broadening.",
+      "decision": "selected",
+      "evidence": [
+        "rsp_minus_spy_21s +0.97%",
+        "volatility 10.90%, max drawdown -2.04%",
+        "at 52-week high"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "RSP lags SPY by more than 2%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap earnings could re-concentrate leadership.",
+      "time_window_catalyst": "August macro data and FOMC minutes Aug 19"
+    },
+    {
+      "continuation_case": "Defensive leadership with low beta and shallow drawdown.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +4.34%",
+        "beta 0.315, max drawdown -3.74%",
+        "0.63% from 52w high"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "XLV drops 4% from entry",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Prior 105-session active return -7.44% shows weak longer trend; policy headlines a risk.",
+      "time_window_catalyst": "August macro prints"
+    },
+    {
+      "continuation_case": "Curve steepening and solid credit backdrop.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +5.76%",
+        "at 52-week high, drawdown -2.42%",
+        "low volatility 13.03%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "XLF drops 4% from entry",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Loan officer survey could show tightening; recent gains extended.",
+      "time_window_catalyst": "FOMC July 29; Aug 3 SLOOS"
+    },
+    {
+      "continuation_case": "Defensive income flows amid rate uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +3.95%",
+        "beta 0.274, at 52-week high",
+        "return_5s +2.08%"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "SCHD falls 3% from entry",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Risk-on melt-up would leave low-beta dividends behind.",
+      "time_window_catalyst": "Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Unresolved US-Iran talks keep supply risk premium alive; energy CPI +15.7% y/y.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +7.24%",
+        "Brent settled $85.87, -6.3% on Iran talks pause",
+        "corr_spy -0.126"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Brent below $75",
+      "option_id": "ENERGY",
+      "reversal_case": "A negotiated deal could push crude sharply lower.",
+      "time_window_catalyst": "Chevron and Exxon results July 28-31"
+    },
+    {
+      "continuation_case": "Nvidia Aug 26 results could reignite AI trade.",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s -14.52%",
+        "volatility 52.57%, drawdown -17.99%",
+        "SOX fell 2.2% on July 27"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 14.0,
+      "forecast_low_pct": -14.0,
+      "invalidation_condition": "SMH makes new lows before Nvidia",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Sharp recent relative breakdown after huge prior run signals momentum unwind.",
+      "time_window_catalyst": "Nvidia results Aug 26"
+    },
+    {
+      "continuation_case": "Cooling June CPI/PPI could allow yields to fall.",
+      "decision": "rejected",
+      "evidence": [
+        "tlt_return_21s -3.77%",
+        "10-year yield 4.65%",
+        "38% odds priced for a 25bp hike"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "10-year yield above 4.9%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Hawkish FOMC and 4.1% headline PCE keep duration under pressure.",
+      "time_window_catalyst": "FOMC July 29; Aug 12 CPI"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.415,
+  "is_official_score": true,
+  "key_risks": [
+    "A hawkish July 29 FOMC hike surprise pressures all equity exposures",
+    "Mega-cap earnings (MSFT/META/AAPL/AMZN) and Nvidia Aug 26 re-ignite cap-weighted leadership, causing SPY to outrun equal-weight and defensives",
+    "Oil collapse on a US-Iran deal hurts the energy sleeve",
+    "Hot Aug 12 CPI lifts yields and hits dividend/defensive rate-sensitive holdings",
+    "Healthcare and financials give back recent relative strength via mean reversion"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Breadth narrows and RSP underperforms SPY by more than 2% intramonth",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broadening breadth (adv/dec 1.9:1, RSP-SPY +0.97% over 21 sessions) with lowest volatility and zero drawdown from highs.",
+      "time_window_catalyst": "FOMC July 29, Aug 7 payrolls, Aug 12 CPI"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "XLV falls more than 4% from entry or cyclical melt-up resumes",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong recent relative strength (+4.34% active 21s), low beta 0.315, shallow 3.7% drawdown, near 52w high.",
+      "time_window_catalyst": "August macro prints; defensive rotation if growth data softens"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Credit spreads widen sharply or XLF drops 4% from entry",
+      "option_id": "FINANCIALS",
+      "rationale": "At 52-week high, +5.76% active 21s, low volatility 13%, benefits from steeper curve if Fed holds/hikes.",
+      "time_window_catalyst": "July 29 FOMC; Aug 3 Senior Loan Officer Survey"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "10-year yield spikes above 5% or SCHD breaks 3% below entry",
+      "option_id": "DIVIDEND",
+      "rationale": "Quality income tilt at 52-week high with 0.27 beta and +3.95% active 21s; ballast if mega-cap tech corrects.",
+      "time_window_catalyst": "Aug 12 CPI and rate path repricing"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Brent falls below $75 or durable US-Iran agreement caps crude",
+      "option_id": "ENERGY",
+      "rationale": "Strong 21-session active return +7.24%, negative SPY correlation offers hedge against oil re-spike from unresolved US-Iran situation.",
+      "time_window_catalyst": "Chevron/Exxon results July 28-31; unresolved US-Iran negotiations"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.415,
+  "portfolio_rationale": "Mega-cap tech and semis have led but are now the weakest recent relative performers with extreme volatility, while breadth has broadened into value, financials, healthcare and dividends that sit at or near 52-week highs with low drawdown. The portfolio overweights this broadening with a small negatively-correlated energy sleeve.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt toward broadening breadth and low-drawdown defensives/value rather than concentrated mega-cap tech, plus a small energy hedge, targeting modest alpha over SPY.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27531,
+    "latency_seconds": 44.948936047032475,
+    "output_tokens": 3176,
+    "total_tokens": 30707
+  }
+}

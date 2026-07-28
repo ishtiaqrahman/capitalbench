@@ -1,0 +1,189 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid earnings and no hike keep index grinding higher",
+      "decision": "rejected",
+      "evidence": [
+        "SPY -0.40% over 5 sessions, -2.45% from 52-week high",
+        "VIX 18.67; FOMC hike priced at 38%",
+        "RSP outperformed SPY by 1.7% over 5 sessions, signaling breadth rotation away from cap-weighted leadership"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Benchmark; used only if no active option clears hurdle",
+      "option_id": "SP500",
+      "reversal_case": "Hike plus weak mega-cap earnings drag cap-weighted index",
+      "time_window_catalyst": "FOMC July 29; mega-cap earnings; Nvidia Aug 26"
+    },
+    {
+      "continuation_case": "Breadth rotation continues as tech/semis consolidate",
+      "decision": "selected",
+      "evidence": [
+        "rsp_minus_spy +1.70% (5s) and +0.97% (21s)",
+        "At 52-week high with lowest equity volatility (10.9%) and -2.04% max drawdown",
+        "Advancers beat decliners 1.9:1; 30 new highs vs 3 new lows"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Mega-cap earnings blowouts restore narrow leadership; rsp_minus_spy turns negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap earnings beats restore narrow leadership",
+      "time_window_catalyst": "FOMC July 29, mega-cap earnings July 28-31, Nvidia Aug 26"
+    },
+    {
+      "continuation_case": "Elevated rates and breadth rotation favor value",
+      "decision": "selected",
+      "evidence": [
+        "+1.53% active (21s) and +5.54% prior active return; at 52-week high",
+        "Low 11.9% volatility and -2.40% drawdown",
+        "Quality evidence score 0.650 with high prior-trend rank 0.806"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Growth/tech resumes leadership with dovish Fed surprise",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Dovish Fed and falling yields swing leadership back to growth",
+      "time_window_catalyst": "FOMC July 29 decision; CPI Aug 12"
+    },
+    {
+      "continuation_case": "Elevated rates and firm economy support bank earnings",
+      "decision": "selected",
+      "evidence": [
+        "+5.76% active return over 21 sessions; at 52-week high",
+        "Low 13.0% volatility and -2.42% max drawdown",
+        "10-year yield at 4.65% and possible Fed hike support net interest margins"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Sharp yield curve deterioration or credit-quality shock from loan survey",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit deterioration or curve inversion pressure banks",
+      "time_window_catalyst": "FOMC July 29; Senior Loan Officer Survey Aug 3"
+    },
+    {
+      "continuation_case": "Defensive rotation continues into hike-risk FOMC and soft payrolls",
+      "decision": "selected",
+      "evidence": [
+        "+2.61% (5s) and +4.34% active (21s) after prior -7.44% active lag, suggesting early rotation",
+        "-0.63% from 52-week high with low 0.32 beta"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Strong risk-on rotation back into growth leaves defensives lagging",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Strong risk-on rally leaves low-beta defensives behind",
+      "time_window_catalyst": "Defensive bid around FOMC and August macro releases"
+    },
+    {
+      "continuation_case": "Nvidia Aug 26 beat could reignite the rally",
+      "decision": "rejected",
+      "evidence": [
+        "-14.52% active over 21 sessions after +52% prior active run; SOX fell 2.2% July 27",
+        "52.6% volatility, -18% drawdown, beta 2.30"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -9.0,
+      "invalidation_condition": "Further breakdown below recent drawdown lows before Nvidia",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Momentum unwind continuing into a hawkish Fed; extreme volatility",
+      "time_window_catalyst": "Nvidia earnings Aug 26 (day before exit)"
+    },
+    {
+      "continuation_case": "Talks collapse and supply risk re-prices higher",
+      "decision": "rejected",
+      "evidence": [
+        "Brent -6.3% to $85.87 on US-Iran attack pause and renewed negotiations",
+        "+40.7% prior active run with 54% volatility; -18.4% from high"
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -12.0,
+      "invalidation_condition": "Formal de-escalation agreement announced",
+      "option_id": "OIL",
+      "reversal_case": "Successful negotiations remove geopolitical premium, further declines",
+      "time_window_catalyst": "Unresolved US-Iran negotiations"
+    },
+    {
+      "continuation_case": "Recent 5-session +1.9% bounce extends if Fed skips",
+      "decision": "rejected",
+      "evidence": [
+        "-26.4% prior active return, -24.4% from 52-week high",
+        "Possible Fed hike and firm dollar (DXY 101.38) are headwinds"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Hike delivered with hawkish guidance and dollar strength",
+      "option_id": "GOLD",
+      "reversal_case": "25bp hike lifts real rates and dollar, resuming downtrend",
+      "time_window_catalyst": "FOMC July 29; CPI Aug 12"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.7,
+  "is_official_score": true,
+  "key_risks": [
+    "Mega-cap earnings (MSFT, META, AAPL, AMZN) and Nvidia Aug 26 could reignite narrow tech leadership, hurting breadth trades",
+    "A hawkish 25bp hike on July 29 could pressure all equities including value sectors",
+    "Soft July payrolls (Aug 7) or CPI surprise could trigger broad risk-off",
+    "Financials exposed to credit-quality surprises in the Aug 3 loan officer survey"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Mega-cap earnings blowouts restore narrow leadership; rsp_minus_spy turns negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth rotation: RSP beat SPY by 1.7% over 5 sessions with low volatility and zero drawdown from highs; hedges mega-cap earnings concentration risk.",
+      "time_window_catalyst": "FOMC July 29, mega-cap earnings July 28-31, Nvidia Aug 26"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Growth/tech resumes leadership with dovish Fed surprise",
+      "option_id": "LARGE_VALUE",
+      "rationale": "At 52-week high, low 11.9% vol, positive prior and recent active returns; value benefits if the 38%-priced hike materializes and rates stay elevated.",
+      "time_window_catalyst": "FOMC July 29 decision; CPI Aug 12"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Sharp yield curve deterioration or credit-quality shock from loan survey",
+      "option_id": "FINANCIALS",
+      "rationale": "+5.76% active over 21 sessions, at 52-week high, shallow 2.4% drawdown; benefits from elevated rate environment (10y at 4.65%, possible Fed hike).",
+      "time_window_catalyst": "FOMC July 29; Senior Loan Officer Survey Aug 3"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Strong risk-on rotation back into growth leaves defensives lagging",
+      "option_id": "HEALTHCARE",
+      "rationale": "+4.34% active over 21 sessions after a prior lag, near 52-week high, low beta 0.32 provides defense into a hike-risk FOMC and stretched tech valuations.",
+      "time_window_catalyst": "Defensive bid around FOMC and August macro releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.5,
+  "portfolio_rationale": "With a 38% priced probability of a Fed hike, semis pulling back sharply, and equal-weight breadth outperforming, the portfolio tilts toward value, financials, healthcare, and equal-weight large caps that are near highs with low volatility and positive recent active returns.",
+  "provider": "anthropic",
+  "rationale_summary": "Rotation from concentrated tech into breadth: equal-weight, value, financials, and healthcare all show positive recent relative strength, shallow drawdowns, and resilience to the elevated-rate scenario.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27531,
+    "latency_seconds": 50.88970122416504,
+    "output_tokens": 3744,
+    "total_tokens": 31275
+  }
+}

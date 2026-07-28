@@ -2,6 +2,7 @@ import csv
 import json
 from datetime import date, timedelta
 from pathlib import Path
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 import yaml
@@ -9,6 +10,7 @@ import yaml
 from capitalbench.decision_context import (
     DECISION_CONTEXT_TITLE,
     QUALITY_EVIDENCE_TITLE,
+    _fetch_yahoo_history,
     fetch_universe_decision_context,
 )
 from capitalbench.prompting import build_prompt
@@ -73,6 +75,50 @@ def _history(symbol: str, start: date, end: date):
         cursor += timedelta(days=1)
         index += 1
     return rows, "fixture_adjusted_price_and_volume"
+
+
+def test_yahoo_history_uses_close_when_latest_adjusted_close_is_pending(monkeypatch) -> None:
+    payload = {
+        "chart": {
+            "result": [
+                {
+                    "timestamp": [1769760000],
+                    "indicators": {
+                        "quote": [{"close": [123.45], "volume": [987654]}],
+                        "adjclose": [{"adjclose": [None]}],
+                    },
+                }
+            ]
+        }
+    }
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+        def read(self):
+            return json.dumps(payload).encode("utf-8")
+
+    def fake_urlopen(request, timeout):
+        assert timeout == 30
+        query = parse_qs(urlparse(request.full_url).query)
+        assert query["interval"] == ["1d"]
+        return Response()
+
+    monkeypatch.setattr("capitalbench.decision_context.urllib.request.urlopen", fake_urlopen)
+
+    rows = _fetch_yahoo_history("AAA", date(2026, 1, 1), date(2026, 1, 30))
+
+    assert rows == [
+        {
+            "date": "2026-01-30",
+            "adjClose": 123.45,
+            "volume": 987654,
+        }
+    ]
 
 
 def test_weekly_decision_context_is_complete_and_replaces_v1_appendix(tmp_path: Path) -> None:

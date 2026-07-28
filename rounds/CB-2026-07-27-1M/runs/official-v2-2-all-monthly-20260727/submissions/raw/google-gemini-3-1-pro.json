@@ -1,0 +1,161 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued economic resilience and positive earnings surprises.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7,413.18, up less than 0.1%.",
+        "Advancing issues outnumbered declining issues by 1.9 to 1."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant drop in consumer confidence or GDP.",
+      "option_id": "SP500",
+      "reversal_case": "A hawkish Fed or weak economic data.",
+      "time_window_catalyst": "FOMC decision on July 29."
+    },
+    {
+      "continuation_case": "Defensive rotation amid market uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare sector showed a 5-day return of 2.61%.",
+        "Low volatility rank of 0.552."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A sharp rise in interest rates or regulatory changes.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A strong risk-on rally favoring high-beta sectors.",
+      "time_window_catalyst": "Upcoming earnings reports and defensive rotation."
+    },
+    {
+      "continuation_case": "Continued strength in durable goods and infrastructure spending.",
+      "decision": "selected",
+      "evidence": [
+        "Industrials sector showed a 5-day return of 2.85%.",
+        "June durable-goods orders rose 0.3%."
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A significant miss in industrial production or GDP data.",
+      "option_id": "INDUSTRIALS",
+      "reversal_case": "A slowdown in manufacturing or industrial production.",
+      "time_window_catalyst": "Industrial production data on August 18."
+    },
+    {
+      "continuation_case": "Persistent inflation concerns and geopolitical tensions.",
+      "decision": "selected",
+      "evidence": [
+        "August gold futures were $4,079.80 per troy ounce.",
+        "Gold ETF (IAU) showed a 5-day return of 1.90%."
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A hawkish Fed surprise leading to a stronger US dollar.",
+      "option_id": "GOLD",
+      "reversal_case": "A strong US dollar and rising real yields.",
+      "time_window_catalyst": "FOMC decision and inflation data releases."
+    },
+    {
+      "continuation_case": "Rates remain steady or rise slightly.",
+      "decision": "rejected",
+      "evidence": [
+        "Federal Reserve's target range was 3.50% to 3.75%.",
+        "Low volatility rank of 1.000."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 0.5,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "A surprise rate cut.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "A sudden rate cut by the Fed.",
+      "time_window_catalyst": "FOMC decision on July 29."
+    },
+    {
+      "continuation_case": "Strong earnings from mega-cap tech companies.",
+      "decision": "rejected",
+      "evidence": [
+        "Information technology gained 1.25% on July 27.",
+        "Technology sector showed a 5-day return of -0.80%."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Significant earnings misses from major tech firms.",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Rising interest rates impacting growth valuations.",
+      "time_window_catalyst": "Earnings from Microsoft, Meta, Apple, and Amazon."
+    },
+    {
+      "continuation_case": "Supply constraints and geopolitical tensions supporting oil prices.",
+      "decision": "rejected",
+      "evidence": [
+        "October Brent crude settled at $85.87 per barrel, down 6.3%.",
+        "Energy sector showed a 5-day return of 0.72%."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A sharp drop in oil prices due to increased supply.",
+      "option_id": "ENERGY",
+      "reversal_case": "A resolution to geopolitical conflicts or a global economic slowdown.",
+      "time_window_catalyst": "Developments in U.S.-Iran negotiations."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.65,
+  "is_official_score": true,
+  "key_risks": [
+    "Unexpected hawkishness from the Federal Reserve.",
+    "A sudden deterioration in macroeconomic data.",
+    "Geopolitical shocks affecting commodity prices."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "A sharp rise in interest rates or regulatory changes.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare offers defensive growth characteristics and has shown recent relative strength.",
+      "time_window_catalyst": "Upcoming earnings reports and defensive rotation."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "A significant miss in industrial production or GDP data.",
+      "option_id": "INDUSTRIALS",
+      "rationale": "Industrials benefit from steady economic data and infrastructure spending.",
+      "time_window_catalyst": "Industrial production data on August 18."
+    },
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "A hawkish Fed surprise leading to a stronger US dollar.",
+      "option_id": "GOLD",
+      "rationale": "Gold provides a hedge against inflation and geopolitical uncertainty.",
+      "time_window_catalyst": "FOMC decision and inflation data releases."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.65,
+  "portfolio_rationale": "This portfolio balances defensive growth in healthcare with cyclical exposure in industrials, while using gold as a hedge against macroeconomic uncertainty. The allocations are designed to capture upside while managing downside risk in a potentially volatile environment.",
+  "provider": "google",
+  "rationale_summary": "A balanced approach favoring healthcare, industrials, and gold for defensive growth and inflation protection.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-27-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16838,
+    "latency_seconds": 20.965236563934013,
+    "output_tokens": 1901,
+    "reasoning_tokens": 643,
+    "total_tokens": 19382
+  }
+}

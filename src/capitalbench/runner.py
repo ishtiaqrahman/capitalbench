@@ -57,8 +57,11 @@ def run_round(
     overwrite_run: bool = False,
     run_type: str | None = None,
     replicates: int | None = None,
+    format_retry: bool = False,
 ) -> RunSummary:
     selected_run_type, selected_replicates = _normalize_run_type_and_replicates(run_type, mock, replicates)
+    if format_retry and (selected_run_type != "official" or mock):
+        raise ValueError("format retries require a real official run")
     if not mock and not allow_real_api_calls:
         raise RuntimeError(
             "refusing to call real provider APIs without --allow-real-api-calls; "
@@ -82,7 +85,7 @@ def run_round(
     )
     skipped_models = len(model_configs) - len(enabled_models)
 
-    if selected_run_type == "official" and not mock:
+    if selected_run_type == "official" and not mock and not format_retry:
         validate_official_portfolio_v2_roster(
             manifest.methodology_version,
             enabled_models,
@@ -224,6 +227,7 @@ def run_round(
     official_score_eligible = (
         selected_run_type == "official"
         and not mock
+        and not format_retry
         and len(enabled_models) > 0
         and valid_count == len(enabled_models)
         and invalid_count == 0
@@ -237,8 +241,14 @@ def run_round(
         "invalid_submissions": invalid_count,
         "completed_at_utc": _utc_now(),
         "official_score_eligible": official_score_eligible,
+        "format_retry": format_retry,
     }
-    if selected_run_type == "official" and not mock and not official_score_eligible:
+    if format_retry:
+        manifest_updates["notes"] = (
+            "Format-retry source run; preserved for audit and never independently "
+            "eligible for public official scoring."
+        )
+    elif selected_run_type == "official" and not mock and not official_score_eligible:
         manifest_updates["notes"] = (
             "Official run is incomplete or contains invalid submissions; preserved for audit "
             "but not eligible for public official scoring."
