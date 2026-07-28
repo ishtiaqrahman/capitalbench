@@ -61,18 +61,24 @@ test("benchmark-set comparison separates roster and round-window changes", () =>
 });
 
 test("forming sets expose early performance without presenting it as established", () => {
-  const baseline = benchmarkSets.find((set) => set.set_id === "weekly-set-2026-05-28");
-  const waiting = benchmarkSets.find((set) => set.set_id === "weekly-set-2026-07-10");
-  const result = buildBenchmarkSetComparison(apiReadModel, baseline, waiting);
-  const swapped = buildBenchmarkSetComparison(apiReadModel, waiting, baseline);
+  const forming = benchmarkSets.find(
+    (set) =>
+      set.comparison.comparison_round_count > 0 &&
+      set.comparison.comparison_round_count < set.qualification_threshold
+  );
+  assert.ok(forming);
+  const baseline = benchmarkSets.find((set) => set.track === forming.track && set.is_current);
+  assert.ok(baseline);
+  const result = buildBenchmarkSetComparison(apiReadModel, baseline, forming);
+  const swapped = buildBenchmarkSetComparison(apiReadModel, forming, baseline);
 
   assert.equal(result.comparison.status, "forming");
-  assert.equal(result.comparison.shared_round_count, waiting.comparison.comparison_round_count);
+  assert.equal(result.comparison.shared_round_count, forming.comparison.comparison_round_count);
   assert.equal(result.comparison.is_qualified, false);
   assert.match(result.trust_guidance, /more reliable ranking/);
   assert.match(
     result.trust_guidance,
-    new RegExp(`needs ${waiting.qualification_threshold - waiting.comparison.comparison_round_count} more`)
+    new RegExp(`needs ${forming.qualification_threshold - forming.comparison.comparison_round_count} more`)
   );
   assert.match(swapped.trust_guidance, new RegExp(`Use ${baseline.short_label}`));
   assert.doesNotMatch(swapped.trust_guidance, /established ranking/);

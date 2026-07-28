@@ -11,7 +11,12 @@ from .hashing import round_hashes_match
 from .io import load_manifest, read_json, read_yaml, write_yaml
 from .prices import fetch_selected_prices
 from .report import publish_report
-from .roster import validate_official_portfolio_v2_run_manifest
+from .roster import (
+    LEGACY_PORTFOLIO_V2_METHODOLOGY,
+    active_portfolio_v2_model_ids,
+    portfolio_v2_roster_version,
+    validate_official_portfolio_v2_run_manifest,
+)
 from .run_store import get_run_paths, list_run_ids, read_run_manifest, update_run_manifest
 from .scoring import score_round
 from .web_sync import (
@@ -113,6 +118,19 @@ def accept_run(
         "operator_selected_official": True,
         "accepted_at_utc": accepted_at_utc,
     }
+    if (
+        manifest.methodology_version == LEGACY_PORTFOLIO_V2_METHODOLOGY
+        and not manifest.expected_model_ids
+        and not run_manifest.get("expected_model_ids")
+    ):
+        recovered_model_ids = _expected_model_ids_for_run(manifest, run_manifest)
+        updates.update(
+            {
+                "expected_model_ids": list(recovered_model_ids),
+                "model_roster_version": portfolio_v2_roster_version(recovered_model_ids),
+                "model_roster_frozen_at_utc": accepted_at_utc,
+            }
+        )
     if schedule_resolution:
         updates["resolution_due_at_utc"] = due_at
     update_run_manifest(run_paths, updates)
@@ -470,13 +488,31 @@ def _validate_acceptance_gate(round_path: Path, run_manifest: dict[str, Any]) ->
     validate_official_portfolio_v2_run_manifest(
         manifest.methodology_version,
         run_manifest,
-        manifest.expected_model_ids,
+        _expected_model_ids_for_run(manifest, run_manifest),
     )
     if not round_hashes_match(round_path):
         raise ValueError("round hashes do not match current round files")
     for filename in ["manifest.yaml", "briefing.md", "options.yaml", "prompt.md", "hashes.json"]:
         if not (round_path / filename).exists():
             raise FileNotFoundError(f"missing required round file: {filename}")
+
+
+def _expected_model_ids_for_run(manifest: Any, run_manifest: dict[str, Any]) -> tuple[str, ...]:
+    round_ids = tuple(str(model_id) for model_id in manifest.expected_model_ids)
+    if round_ids:
+        return round_ids
+
+    run_ids = tuple(str(model_id) for model_id in (run_manifest.get("expected_model_ids") or ()))
+    if run_ids:
+        return run_ids
+
+    if manifest.methodology_version == LEGACY_PORTFOLIO_V2_METHODOLOGY:
+        if not manifest.decision_date:
+            raise ValueError("legacy Portfolio V2 roster recovery requires decision_date")
+        roster_cutoff = f"{manifest.decision_date}T23:59:59+00:00"
+        return active_portfolio_v2_model_ids(roster_cutoff, manifest.round_id)
+
+    return ()
 
 
 def _supersede_previous_accepted_runs(

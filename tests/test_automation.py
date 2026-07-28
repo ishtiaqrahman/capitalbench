@@ -8,6 +8,7 @@ import yaml
 
 from capitalbench.automation import AutomationSummary, accept_run, automation_run, resolve_accepted_round
 from capitalbench.hashing import write_round_hashes
+from capitalbench.roster import portfolio_v2_roster_version
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -102,6 +103,58 @@ def test_accept_run_syncs_round_selection_to_clear_superseded_rows(
     )
 
     assert calls == [(round_path, {"event_type": "accept_run"})]
+
+
+def test_accept_legacy_v2_freezes_roster_from_decision_date(tmp_path: Path) -> None:
+    round_path = _copy_due_round(tmp_path)
+    expected_model_ids = [
+        "openai-gpt-5-5",
+        "openai-gpt-5-6-sol",
+        "anthropic-claude-opus-4-7",
+        "anthropic-claude-opus-4-8",
+        "anthropic-claude-fable-5",
+        "google-gemini-3-1-pro",
+        "xai-grok-4-3",
+        "xai-grok-4-5",
+    ]
+    manifest_path = round_path / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest.update(
+        {
+            "round_id": "CB-2026-07-20-1W",
+            "decision_date": "2026-07-20",
+            "methodology_version": "portfolio-v2.0",
+            "submission_format": "portfolio",
+        }
+    )
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    run_manifest_path = round_path / "runs" / "official-round-1-clean" / "run_manifest.yaml"
+    run_manifest = yaml.safe_load(run_manifest_path.read_text(encoding="utf-8"))
+    run_manifest.update(
+        {
+            "round_id": "CB-2026-07-20-1W",
+            "model_count": len(expected_model_ids),
+            "valid_submissions": len(expected_model_ids),
+            "invalid_submissions": 0,
+            "model_ids": expected_model_ids,
+        }
+    )
+    run_manifest.pop("expected_model_ids", None)
+    run_manifest.pop("model_roster_version", None)
+    run_manifest_path.write_text(yaml.safe_dump(run_manifest, sort_keys=False), encoding="utf-8")
+    write_round_hashes(round_path)
+
+    accept_run(
+        round_path,
+        run_id="official-round-1-clean",
+        store=FakeAutomationStore(),
+        sync_pending=False,
+    )
+
+    frozen = yaml.safe_load(run_manifest_path.read_text(encoding="utf-8"))
+    assert frozen["expected_model_ids"] == expected_model_ids
+    assert frozen["model_roster_version"] == portfolio_v2_roster_version(expected_model_ids)
+    assert frozen["model_roster_frozen_at_utc"]
 
 
 def test_accept_run_rejects_invalid_official_run(tmp_path: Path) -> None:
