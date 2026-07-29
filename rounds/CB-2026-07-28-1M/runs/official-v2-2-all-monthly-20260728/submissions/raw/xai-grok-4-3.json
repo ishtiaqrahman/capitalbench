@@ -1,0 +1,184 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad market stability holds through earnings season",
+      "decision": "selected",
+      "evidence": [
+        "SPY closed at 7428.78 up 0.2% on July 28",
+        "VIX at 18.21 down 2.46%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "SP500",
+      "reversal_case": "Growth stock selloff broadens to value and defensives",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Defensive rotation persists into August",
+      "decision": "selected",
+      "evidence": [
+        "XLV 5-day return 4.37%",
+        "Quality evidence score 0.425"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Rate volatility triggers broad equity decline",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Bank sector relative strength continues",
+      "decision": "selected",
+      "evidence": [
+        "XLF 5-day return 2.66%",
+        "Quality evidence score 0.364"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Rate volatility triggers broad equity decline",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Defense spending and geopolitics support sector",
+      "decision": "selected",
+      "evidence": [
+        "ITA 5-day return 6.63%",
+        "Geopolitical tensions unresolved"
+      ],
+      "forecast_base_pct": 3.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "AEROSPACE_DEFENSE",
+      "reversal_case": "Rate volatility triggers broad equity decline",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Rate-sensitive defensives attract flows",
+      "decision": "rejected",
+      "evidence": [
+        "XLU 5-day return 1.34%",
+        "Quality evidence score 0.654"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "UTILITIES",
+      "reversal_case": "Rate volatility triggers broad equity decline",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Yen stabilization supports exporters",
+      "decision": "rejected",
+      "evidence": [
+        "EWJ 5-day return -3.14%",
+        "Quality evidence score 0.672"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yen strengthens sharply versus USD",
+      "option_id": "JAPAN",
+      "reversal_case": "Global growth slowdown hits exports",
+      "time_window_catalyst": "Bank of Japan policy communication July 29-31"
+    },
+    {
+      "continuation_case": "Value rotation continues from growth weakness",
+      "decision": "rejected",
+      "evidence": [
+        "IWD 5-day return 1.86%",
+        "Quality evidence score 0.623"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Rate volatility triggers broad equity decline",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Equal-weight outperformance persists",
+      "decision": "rejected",
+      "evidence": [
+        "RSP 5-day return 2.32%",
+        "Quality evidence score 0.572"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap rebound narrows breadth",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 1.06,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC outcome and July CPI surprise",
+    "Further tech sector weakness extending to broader market",
+    "Oil price volatility from unresolved Hormuz negotiations"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "SP500",
+      "rationale": "Broad market exposure with neutral recent momentum amid mixed macro data.",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "HEALTHCARE",
+      "rationale": "Positive 5-day return of 4.37% and quality evidence score 0.425 with defensive characteristics.",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive 5-day return of 2.66% and quality evidence score 0.364 with recent relative strength.",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 3.0,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.8%",
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "Strong 5-day return of 6.63% and defensive sector exposure amid geopolitical tensions.",
+      "time_window_catalyst": "FOMC statement July 29 and Q2 GDP July 30"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.86,
+  "portfolio_rationale": "Allocates to SP500 plus three holdings with base forecasts exceeding SP500, spanning diversified equity, healthcare, financials, and industrials clusters, each under 50%.",
+  "provider": "xai",
+  "rationale_summary": "Favors recent positive performers in defensive areas over growth sectors showing sharp pullbacks.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-28-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15400,
+    "latency_seconds": 14.167812920873985,
+    "output_tokens": 1878,
+    "reasoning_tokens": 678,
+    "total_tokens": 17956
+  }
+}

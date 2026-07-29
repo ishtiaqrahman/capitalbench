@@ -1,0 +1,177 @@
+{
+  "benchmark_expected_return_pct": 0.15,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad positive breadth and easing CPI support a modest rebound if macro data and earnings are benign.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY fell 0.99% over five sessions but rose 1.63% over 21 sessions.",
+        "Equal-weight SPY outperformed by 3.31 points over five sessions.",
+        "FOMC, GDP, PCE, and four mega-cap earnings reports fall inside the window."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.4,
+      "invalidation_condition": "SPY decisively regains recent leadership while equal-weight relative strength reverses.",
+      "option_id": "SP500",
+      "reversal_case": "Weak payrolls, softer confidence, and concentrated earnings risk could extend recent benchmark weakness.",
+      "time_window_catalyst": "July 29 FOMC; July 30 GDP, PCE, Apple and Amazon results; Microsoft and Meta results after July 29 close."
+    },
+    {
+      "continuation_case": "Persistent relative strength and elevated yields support banks and insurers if credit conditions remain orderly.",
+      "decision": "selected",
+      "evidence": [
+        "Prior 16-session active return was 2.10% and five-session active return was 3.65%.",
+        "Prior-active rank was 0.866 and the sector sat at its 52-week high.",
+        "The 10-year yield was 4.60% ahead of the FOMC and lending survey."
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.1,
+      "invalidation_condition": "A sharp yield decline or renewed credit concern that causes financials to underperform SPY.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "A dovish rate shock, curve compression, or adverse lending evidence could trigger profit-taking from a recent high.",
+      "time_window_catalyst": "July 29 FOMC communication and August 3 Senior Loan Officer Opinion Survey."
+    },
+    {
+      "continuation_case": "Positive relative momentum can persist if global risk appetite holds and reported growth limits downside concerns.",
+      "decision": "selected",
+      "evidence": [
+        "Prior 16-session active return was 4.33% and five-session active return was 1.75%.",
+        "China reported second-quarter real GDP growth of 4.3% year over year.",
+        "Quality evidence score was 0.639, including a 0.925 prior-active rank."
+      ],
+      "forecast_base_pct": 0.65,
+      "forecast_high_pct": 3.4,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "China equities lose recent relative strength and underperform SPY amid weaker global risk appetite.",
+      "option_id": "CHINA",
+      "reversal_case": "The recent three-session gain may reverse on global risk-off moves or renewed China policy and geopolitical concerns.",
+      "time_window_catalyst": "No discrete China catalyst identified; global macro and risk-appetite repricing through August 4."
+    },
+    {
+      "continuation_case": "The positive prior relative trend and near-zero equity correlation can persist through macro-driven market volatility.",
+      "decision": "selected",
+      "evidence": [
+        "Prior 16-session active return was 2.39%.",
+        "Quality evidence score was 0.743 with a 0.881 prior-active rank.",
+        "Correlation with SPY was 0.032 and 21-session drawdown was only 2.20%."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Agriculture breaks its shallow 21-session drawdown range and its prior active trend reverses.",
+      "option_id": "AGRICULTURE",
+      "reversal_case": "The latest three-session return was negative, so short-term weakness could overwhelm the prior trend without a specific catalyst.",
+      "time_window_catalyst": "No discrete scheduled catalyst identified; commodity and currency repricing around U.S. macro releases."
+    },
+    {
+      "continuation_case": "Stable spreads and low realized volatility can preserve modest positive carry-like performance through the event calendar.",
+      "decision": "selected",
+      "evidence": [
+        "Five-session active return was 0.70%.",
+        "Quality evidence score was 0.672 with 0.985 ranks for low volatility and shallow drawdown.",
+        "Twenty-one-session volatility was 2.58% and maximum drawdown was 0.80%."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.1,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Credit spreads widen materially and HYG underperforms SPY after the macro releases.",
+      "option_id": "HIGH_YIELD_CREDIT",
+      "reversal_case": "Weak GDP, hawkish policy, or adverse lending conditions could widen spreads and erase the small expected gain.",
+      "time_window_catalyst": "July 29 FOMC, July 30 GDP and PCE, and August 3 lending survey."
+    },
+    {
+      "continuation_case": "The strong prior trend could resume if geopolitical supply risk lifts crude prices.",
+      "decision": "rejected",
+      "evidence": [
+        "Prior 16-session active return was 6.01% and quality evidence score was 0.746.",
+        "Energy's five-session active return was negative 0.60%.",
+        "Brent fell 4.4% and Strait of Hormuz negotiations remained unresolved."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Crude continues lower and energy equities fail to regain positive active performance.",
+      "option_id": "ENERGY",
+      "reversal_case": "Falling crude and unresolved negotiations can extend the recent pullback, while Chevron and Exxon results add event risk.",
+      "time_window_catalyst": "Chevron and Exxon Mobil results on July 31 and developments in Strait of Hormuz tanker negotiations."
+    },
+    {
+      "continuation_case": "Positive prior and recent active trends could continue if mega-cap results validate software and cloud demand.",
+      "decision": "rejected",
+      "evidence": [
+        "Prior 16-session active return was 1.46% and five-session active return was 0.95%.",
+        "Software gained 5.37% over the latest three sessions.",
+        "Microsoft, Meta, Apple, and Amazon report during the window."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 3.6,
+      "forecast_low_pct": -3.2,
+      "invalidation_condition": "Software loses its recent rebound and underperforms SPY following mega-cap earnings.",
+      "option_id": "SOFTWARE",
+      "reversal_case": "The sharp three-session rise may be vulnerable to profit-taking, high rates, or disappointing technology guidance.",
+      "time_window_catalyst": "Microsoft and Meta results July 29; Apple and Amazon results July 30."
+    }
+  ],
+  "confidence": 0.61,
+  "expected_alpha_vs_sp500_pct": 0.44,
+  "is_official_score": true,
+  "key_risks": [
+    "A dovish Fed and strong mega-cap earnings could drive a sharp SPY and growth-stock rebound.",
+    "Hot PCE or hawkish FOMC communication could pressure financials, China equities, and credit simultaneously.",
+    "Commodity-specific weather or supply news could reverse agriculture's prior relative trend.",
+    "Risk-off conditions could widen high-yield spreads and weaken international equities."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "A sharp yield decline or renewed credit concern that causes financials to underperform SPY.",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive prior and recent active returns, a high prior-active rank, and upcoming Fed and lending data support continued relative strength.",
+      "time_window_catalyst": "July 29 FOMC communication and August 3 Senior Loan Officer Opinion Survey."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.65,
+      "invalidation_condition": "China equities lose recent relative strength and underperform SPY amid weaker global risk appetite.",
+      "option_id": "CHINA",
+      "rationale": "Positive prior and recent active returns plus reported GDP growth provide independent support for continuation outside U.S. event concentration.",
+      "time_window_catalyst": "No discrete China catalyst identified; global macro and risk-appetite repricing through August 4."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Agriculture breaks its shallow 21-session drawdown range and its prior active trend reverses.",
+      "option_id": "AGRICULTURE",
+      "rationale": "Positive prior active trend, low equity correlation, and a high quality score offer differentiated one-week return potential.",
+      "time_window_catalyst": "No discrete scheduled catalyst identified; commodity and currency repricing around U.S. macro releases."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Credit spreads widen materially and HYG underperforms SPY after the macro releases.",
+      "option_id": "HIGH_YIELD_CREDIT",
+      "rationale": "Very low volatility and shallow drawdown provide a steadier expression of benign credit conditions around a dense macro calendar.",
+      "time_window_catalyst": "July 29 FOMC, July 30 GDP and PCE, and August 3 lending survey."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.59,
+  "portfolio_rationale": "The portfolio favors four distinct clusters with base forecasts above SPY: financials, China equities, agriculture, and high-yield credit. It balances relative-strength opportunities with low-correlation commodity exposure and lower-volatility credit while avoiding concentrated mega-cap earnings risk.",
+  "provider": "openai",
+  "rationale_summary": "Breadth favored non-mega-cap exposures while SPY faced a dense Fed, inflation, growth, and mega-cap earnings calendar. Diversification across four capped clusters improves the chance of beating a modest SPY base case.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-28-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15127,
+    "latency_seconds": 41.74490949092433,
+    "output_tokens": 1979,
+    "reasoning_tokens": 0,
+    "total_tokens": 17106
+  }
+}

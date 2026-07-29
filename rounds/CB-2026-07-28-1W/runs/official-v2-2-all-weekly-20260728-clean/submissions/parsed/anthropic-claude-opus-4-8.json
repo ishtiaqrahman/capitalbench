@@ -1,0 +1,176 @@
+{
+  "benchmark_expected_return_pct": 0.35,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Megacap earnings beats lift index",
+      "decision": "rejected",
+      "evidence": [
+        "SPY up 0.2% July 28, up 8.5% in 2026",
+        "spy_return_5s -0.99%, beta reference"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Broad equity decline below entry",
+      "option_id": "SP500",
+      "reversal_case": "Tech drag and FOMC hawkishness weigh",
+      "time_window_catalyst": "FOMC July 29, megacap earnings"
+    },
+    {
+      "continuation_case": "Breadth broadening and steady yields favor banks",
+      "decision": "selected",
+      "evidence": [
+        "Prior active rank 0.866, positive prior 16s active 2.10%",
+        "active_return_5s 3.65%, shallow drawdown -2.08%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Credit spreads widen sharply",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield spike or credit stress",
+      "time_window_catalyst": "FOMC and Senior Loan Officer Survey"
+    },
+    {
+      "continuation_case": "Breadth broadening away from megacaps",
+      "decision": "selected",
+      "evidence": [
+        "rsp_minus_spy_5s 3.31%",
+        "low volatility 10.23%, shallow drawdown -1.46%"
+      ],
+      "forecast_base_pct": 0.65,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "RSP underperforms SPY over window",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Narrow megacap leadership returns",
+      "time_window_catalyst": "Megacap earnings week"
+    },
+    {
+      "continuation_case": "Defensive rotation amid tech weakness",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s 5.37%, negative beta -0.150",
+        "shallow drawdown -3.74%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sharp growth rally reverses defensive bid",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on reversal to growth",
+      "time_window_catalyst": "Ongoing defensive flows"
+    },
+    {
+      "continuation_case": "Megacap earnings reignite rally",
+      "decision": "rejected",
+      "evidence": [
+        "return_3s -2.38%, active_return_5s -3.73%",
+        "distance_52w_high -9.37%, high beta 1.715"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Continued tech drawdown",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Semi and chip weakness persists",
+      "time_window_catalyst": "MSFT/META/AAPL/AMZN earnings"
+    },
+    {
+      "continuation_case": "Cyclical breadth participation",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_5s 5.46%, shallow drawdown -3.81%",
+        "prior 16s active -5.55%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Broad commodities decline",
+      "option_id": "MATERIALS",
+      "reversal_case": "Weak prior trend, commodity softness",
+      "time_window_catalyst": "Commodity price moves"
+    },
+    {
+      "continuation_case": "FOMC dovish pause rallies bonds",
+      "decision": "rejected",
+      "evidence": [
+        "10yr yield 4.60% down from 4.65%",
+        "tlt_return_5s 0.69%, prior active -6.53%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yields rise sharply",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Hawkish FOMC lifts yields",
+      "time_window_catalyst": "FOMC July 29, GDP July 30"
+    },
+    {
+      "continuation_case": "Safe-haven demand",
+      "decision": "rejected",
+      "evidence": [
+        "iau_return_5s -1.46%, drawdown -4.47%",
+        "distance_52w_high -25.47%"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Gold falls below entry",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar strength and higher real rates",
+      "time_window_catalyst": "FOMC and dollar moves"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.3,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC July 29 surprise hawkish shift lifts yields and hits financials",
+    "Megacap tech earnings (MSFT, META, AAPL, AMZN) spark risk-on reversal favoring SPY/Nasdaq over defensives",
+    "Sharp broad equity selloff drags all holdings"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Sharp yield spike or credit stress in Senior Loan Officer Survey Aug 3",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong prior active rank, positive recent trend, low drawdown, defensive to tech selloff, Chevron/Exxon earnings and broadening breadth support financials.",
+      "time_window_catalyst": "FOMC outcome July 29 and continued equal-weight breadth leadership"
+    },
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.65,
+      "invalidation_condition": "Megacap tech earnings reignite narrow leadership, RSP underperforms SPY",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "RSP has strongly outperformed SPY (rsp_minus_spy 3.31% over 5s) as breadth broadens away from megacap tech; low volatility and shallow drawdown.",
+      "time_window_catalyst": "Continued rotation from megacap tech into broader market post mega-cap earnings"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Sharp risk-on reversal into growth reverses defensive flows",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare posted +5.37% active return with low beta and defensive characteristics, benefiting during tech drawdown.",
+      "time_window_catalyst": "Defensive rotation continues amid Nasdaq weakness"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.65,
+  "portfolio_rationale": "Market breadth is broadening (RSP beating SPY, Dow up 1.0% while Nasdaq fell), so I overweight equal-weight, financials, and defensive healthcare which are outperforming as megacap tech and semis sell off.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt toward broadening breadth and defensive strength while avoiding the tech/semiconductor drawdown; all holdings beat SPY base forecast.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-28-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27294,
+    "latency_seconds": 40.18657178594731,
+    "output_tokens": 2516,
+    "total_tokens": 29810
+  }
+}

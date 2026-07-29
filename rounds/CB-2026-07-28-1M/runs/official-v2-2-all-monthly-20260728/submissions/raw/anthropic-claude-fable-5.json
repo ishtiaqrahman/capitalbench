@@ -1,0 +1,198 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Disinflation in CPI and solid earnings sustain a grind higher.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 up 8.5% YTD, -2.21% from 52w high",
+        "10y yield 4.60%; 31.5% market-implied hike probability at Jul 29 FOMC",
+        "June core CPI flat m/m, 2.6% y/y"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Fed hikes and signals more tightening; SPY breaks below recent drawdown lows.",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish hike or weak payrolls trigger a broad pullback.",
+      "time_window_catalyst": "FOMC Jul 29; mega-cap earnings; Aug 12-14 CPI; Nvidia Aug 25."
+    },
+    {
+      "continuation_case": "Breadth rotation continues as concentrated tech corrects from record levels.",
+      "decision": "selected",
+      "evidence": [
+        "RSP-SPY +3.31% over 5 sessions, +1.88% over 21 sessions",
+        "RSP at 52-week high, lowest 63s volatility (11.09%) among equities",
+        "Dow +1.0% vs Nasdaq -0.2% on Jul 28 indicates breadth rotation"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Mega-cap tech reasserts leadership with RSP-SPY spread turning negative for two-plus weeks.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap earnings beat and reassert cap-weighted leadership.",
+      "time_window_catalyst": "FOMC Jul 29 and Aug 12-14 CPI/PPI supporting rotation into equal-weight breadth."
+    },
+    {
+      "continuation_case": "Value rotation persists with tech ~9-13% off highs and rates elevated.",
+      "decision": "selected",
+      "evidence": [
+        "+1.86% over 5 sessions, +2.19% 21s active return, at 52-week high",
+        "Prior 105s active return +5.77% shows established relative trend",
+        "63s volatility 12.00%, drawdown only -2.40%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Sharp tech-led rebound restoring growth leadership; IWD active return turns negative.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth rebound after tech correction reprices value underweight.",
+      "time_window_catalyst": "Continued rotation through FOMC and July CPI; energy/financials earnings."
+    },
+    {
+      "continuation_case": "Curve and rotation tailwinds continue supporting bank profitability.",
+      "decision": "selected",
+      "evidence": [
+        "+5.89% 21s active return, best among sectors; at 52-week high",
+        "-2.42% max drawdown, lowest among sector options",
+        "Fed funds 3.50-3.75% with 10y at 4.60% supports net interest margins"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Hawkish surprise hike or credit deterioration in loan survey pressuring banks.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit tightening in loan survey or hawkish hike hurts banks.",
+      "time_window_catalyst": "FOMC decision Jul 29; Senior Loan Officer Survey Aug 3-4."
+    },
+    {
+      "continuation_case": "Defensive flows continue amid tech correction and softening confidence data.",
+      "decision": "selected",
+      "evidence": [
+        "+4.37% over 5 sessions, +2.69% 21s active return, at 52-week high",
+        "Low beta to SPY (0.316) cushions against tech drawdown spillover"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Broad risk-on rally rotating money out of defensives; XLV underperforms SPY by >1%.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rally pulls flows out of defensives.",
+      "time_window_catalyst": "Defensive flows if tech drawdown deepens through August data releases."
+    },
+    {
+      "continuation_case": "Nvidia results Aug 25 could rekindle the AI trade before exit.",
+      "decision": "rejected",
+      "evidence": [
+        "-9.33% over 5 sessions, -15.04% 21s active return, -20.83% drawdown",
+        "Micron -8.9%, AMD -8.1%, Applied Materials -7.8% on Jul 28",
+        "53% volatility, beta 2.30 to SPY"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -12.0,
+      "invalidation_condition": "Continued chip-stock selling and Nvidia disappointment; too volatile for a base-case bet.",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Downtrend and heavy single-day losses suggest ongoing distribution.",
+      "time_window_catalyst": "Nvidia earnings Aug 25 after the close."
+    },
+    {
+      "continuation_case": "Mega-cap earnings (MSFT, META, AAPL, AMZN) could stabilize the index.",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq traded up to 9.3% below its prior-month record",
+        "-6.02% 21s active return; beta 1.39"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Earnings beats with strong guidance reversing the tech drawdown quickly.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Rotation out of growth continues; correction extends.",
+      "time_window_catalyst": "Mega-cap earnings Jul 29-31; Nvidia Aug 25."
+    },
+    {
+      "continuation_case": "Weak payrolls or soft CPI could rally duration.",
+      "decision": "rejected",
+      "evidence": [
+        "10y at 4.60%; -4.84% 21s active return",
+        "31.5% priced probability of a hike at Jul 29 FOMC",
+        "Headline CPI still 3.5% y/y, PPI 5.5% y/y"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Fed hikes with hawkish guidance; base case below SPY hurdle.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "A hike or sticky inflation pushes yields higher.",
+      "time_window_catalyst": "FOMC Jul 29; Aug 7 jobs; Aug 12 CPI."
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 0.46,
+  "is_official_score": true,
+  "key_risks": [
+    "Surprise dovish outcome or strong mega-cap earnings reignite tech leadership, reversing the rotation",
+    "A hawkish 25bp hike (31.5% priced) hits all equities including financials",
+    "July CPI reaccelerates, lifting yields and pressuring the whole portfolio",
+    "Value/breadth trade is crowded after strong 5-session run and mean-reverts"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Mega-cap tech reasserts leadership with RSP-SPY spread turning negative for two-plus weeks.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broadening breadth: RSP outperformed SPY by 3.31% over 5 sessions with low volatility and 0% drawdown from 52w high.",
+      "time_window_catalyst": "FOMC Jul 29 and Aug 12-14 CPI/PPI supporting rotation into equal-weight breadth."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Sharp tech-led rebound restoring growth leadership; IWD active return turns negative.",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value at 52-week high with positive 21s active return (+2.19%), low volatility, benefiting from rotation out of stretched tech.",
+      "time_window_catalyst": "Continued rotation through FOMC and July CPI; energy/financials earnings."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Hawkish surprise hike or credit deterioration in loan survey pressuring banks.",
+      "option_id": "FINANCIALS",
+      "rationale": "Strongest 21s active return among sectors (+5.89%), at 52-week high, lowest sector drawdown; benefits from steep curve and value rotation.",
+      "time_window_catalyst": "FOMC decision Jul 29; Senior Loan Officer Survey Aug 3-4."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Broad risk-on rally rotating money out of defensives; XLV underperforms SPY by >1%.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive with positive momentum: +4.37% over 5 sessions, at 52-week high, low beta cushioning tech volatility.",
+      "time_window_catalyst": "Defensive flows if tech drawdown deepens through August data releases."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Hawkish Fed hike plus weak payrolls triggering broad drawdown.",
+      "option_id": "SP500",
+      "rationale": "Benchmark anchor for residual diversification.",
+      "time_window_catalyst": "FOMC Jul 29, mega-cap earnings, Nvidia Aug 25, jobs/CPI prints."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.46,
+  "portfolio_rationale": "Rotation from stretched high-beta tech into breadth, value, financials, and healthcare, all showing recent relative strength, low drawdowns, and 52-week-high proximity, with rate and macro catalysts (FOMC, CPI) likely to reward lower-beta breadth over concentrated growth.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight equal-weight, value, financials, and healthcare versus a small SPY anchor to capture the ongoing breadth rotation while tech corrects from a ~9% Nasdaq drawdown.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-28-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27345,
+    "latency_seconds": 56.003053553868085,
+    "output_tokens": 4091,
+    "total_tokens": 31436
+  }
+}

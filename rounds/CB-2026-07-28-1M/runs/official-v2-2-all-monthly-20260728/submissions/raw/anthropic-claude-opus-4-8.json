@@ -1,0 +1,191 @@
+{
+  "benchmark_expected_return_pct": 0.7,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad market grinds higher on stable rates.",
+      "decision": "selected",
+      "evidence": [
+        "SPY up 8.5% YTD",
+        "5s return -0.99%, 21s +1.63%",
+        "VIX 18.21"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Broad equity drawdown below recent lows.",
+      "option_id": "SP500",
+      "reversal_case": "FOMC hike or weak GDP triggers selloff.",
+      "time_window_catalyst": "FOMC July 29, GDP, August CPI."
+    },
+    {
+      "continuation_case": "Sector leadership continues amid stable rates.",
+      "decision": "selected",
+      "evidence": [
+        "Active return 21s +5.89%",
+        "shallow drawdown -2.42%",
+        "at 52w high"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Credit spreads widen sharply.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit stress emerges.",
+      "time_window_catalyst": "FOMC, Senior Loan Officer Survey Aug 3-4."
+    },
+    {
+      "continuation_case": "Defensive rotation persists.",
+      "decision": "selected",
+      "evidence": [
+        "5s +4.37%",
+        "active 21s +2.69%",
+        "low drawdown -3.74%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Healthcare underperforms as growth rebounds.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation back to tech.",
+      "time_window_catalyst": "Defensive flows amid tech correction."
+    },
+    {
+      "continuation_case": "Value leadership continues.",
+      "decision": "selected",
+      "evidence": [
+        "Active 21s +2.19%",
+        "low vol 12%",
+        "at 52w high"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Growth strongly outperforms.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth reasserts.",
+      "time_window_catalyst": "Value/growth rotation, FOMC."
+    },
+    {
+      "continuation_case": "AI demand resumes.",
+      "decision": "rejected",
+      "evidence": [
+        "5s -9.33%",
+        "active 21s -15.04%",
+        "drawdown -20.83%"
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -12.0,
+      "invalidation_condition": "Further breakdown below drawdown lows.",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Continued correction from stretched levels.",
+      "time_window_catalyst": "Nvidia results Aug 25."
+    },
+    {
+      "continuation_case": "Defensive dividend flows.",
+      "decision": "rejected",
+      "evidence": [
+        "5s +3.26%",
+        "active 21s +3.98%",
+        "low beta 0.28"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Sharp rate increase.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Rate spike hurts dividend payers.",
+      "time_window_catalyst": "Defensive rotation."
+    },
+    {
+      "continuation_case": "Rate stability supports bonds.",
+      "decision": "rejected",
+      "evidence": [
+        "10y yield 4.60%",
+        "active 21s -2.73%",
+        "low vol"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yields spike above 4.8%.",
+      "option_id": "AGGREGATE_BONDS",
+      "reversal_case": "FOMC hike lifts yields.",
+      "time_window_catalyst": "FOMC July 29."
+    },
+    {
+      "continuation_case": "Safe-haven demand on volatility.",
+      "decision": "rejected",
+      "evidence": [
+        "5s -1.46%",
+        "deep prior drawdown -25%",
+        "low quality score"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Dollar rallies strongly.",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar strength weighs.",
+      "time_window_catalyst": "Geopolitical risk, FOMC."
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.715,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC surprise hike (31.5% implied) triggers broad equity selloff",
+    "Rapid tech rebound reverses value leadership",
+    "Credit stress in financials from Senior Loan Officer Survey"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Credit spreads widen sharply or regional bank stress emerges.",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong recent relative strength (+5.89% active 21s), shallow drawdown, and defensive positioning as tech corrects.",
+      "time_window_catalyst": "FOMC July 29, August CPI/PPI, bank credit conditions in Senior Loan Officer Survey."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Risk-on rotation back into mega-cap tech; healthcare policy shock.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with recent leadership (+2.69% active 21s), low drawdown, and rotation from growth.",
+      "time_window_catalyst": "Defensive rotation amid tech drawdown; earnings and macro data through August."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Growth reasserts leadership; sharp equity selloff.",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value leadership as growth corrects, positive momentum (+2.19% active 21s), low volatility.",
+      "time_window_catalyst": "Continued value/growth rotation, FOMC outcome."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Broad equity drawdown.",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure to hedge active tilts.",
+      "time_window_catalyst": "FOMC, GDP, earnings, August CPI."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.415,
+  "portfolio_rationale": "Tilt toward defensive and value sectors showing recent leadership while mega-cap tech corrects hard (semis -15% active, Nasdaq -6% active). Financials and healthcare offer strong relative trend with shallow drawdowns.",
+  "provider": "anthropic",
+  "rationale_summary": "Rotation trade favoring value/defensive sectors over growth given the sharp tech drawdown and macro uncertainty around FOMC.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-28-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27351,
+    "latency_seconds": 37.79701969306916,
+    "output_tokens": 2441,
+    "total_tokens": 29792
+  }
+}

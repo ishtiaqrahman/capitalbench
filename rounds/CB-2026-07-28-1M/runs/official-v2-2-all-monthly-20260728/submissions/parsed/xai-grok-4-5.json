@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Modest positive drift if FOMC and data remain orderly with breadth support",
+      "decision": "rejected",
+      "evidence": [
+        "SPY 5s return -0.99% and 21s +1.63%",
+        "S&P 500 closed 7428.78 up 0.2% on July 28 with YTD +8.5%",
+        "VIX at 18.21"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Close below recent range lows with VIX spike",
+      "option_id": "SP500",
+      "reversal_case": "Policy surprise or weak GDP/PCE drives drawdown toward recent -4.49% max",
+      "time_window_catalyst": "FOMC statement July 29 and July CPI mid-August"
+    },
+    {
+      "continuation_case": "Rate stability and employment data sustain financial leadership and high levels",
+      "decision": "selected",
+      "evidence": [
+        "XLF active_return_21s +5.89% and return_5s +2.66%",
+        "Distance to 52w high 0.00%",
+        "Quality evidence score 0.364 with shallow drawdown rank 0.821"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Break of recent highs support on rising unemployment or spreads",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit tightening or yield curve shock reverses gains",
+      "time_window_catalyst": "July Employment Situation August 7 and Fed minutes"
+    },
+    {
+      "continuation_case": "Defensive bid and earnings support hold recent strength",
+      "decision": "selected",
+      "evidence": [
+        "XLV return_5s +4.37% and active_return_21s +2.69%",
+        "Distance to 52w high 0.00%",
+        "Max drawdown_63s only -3.74%"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Loss of 5s gains and underperformance vs SPY",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Growth scare or sector-specific policy news fades momentum",
+      "time_window_catalyst": "July CPI August 12-14 and residual earnings"
+    },
+    {
+      "continuation_case": "Momentum from recent surge persists with industrial and defense demand",
+      "decision": "selected",
+      "evidence": [
+        "ITA return_5s +6.63% and active_return_21s +1.83%",
+        "Volatility_63s 24.97% with distance_52w_high -2.31%",
+        "Most U.S. stocks rose on July 28"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Give-back of majority of 5-session advance",
+      "option_id": "AEROSPACE_DEFENSE",
+      "reversal_case": "Risk-off or budget concerns reverse the sharp 5s move",
+      "time_window_catalyst": "Industrial production and residual defense-related news before exit"
+    },
+    {
+      "continuation_case": "Value and equal-weight leadership continues if rates stabilize",
+      "decision": "selected",
+      "evidence": [
+        "IWD return_5s +1.86% and active_return_21s +2.19%",
+        "Distance to 52w high 0.00% and prior_105s_active +5.77%",
+        "RSP minus SPY 5s +3.31% indicating breadth"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "Active return turns negative versus SPY on growth data",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth reacceleration or mega-cap rebound leaves value behind",
+      "time_window_catalyst": "FOMC and July retail sales/CPI data"
+    },
+    {
+      "continuation_case": "Breadth persistence favors equal-weight over cap-weighted",
+      "decision": "rejected",
+      "evidence": [
+        "RSP return_5s +2.32% and active_return_21s +1.88%",
+        "Distance to 52w high 0.00% and low volatility rank supportive",
+        "rsp_minus_spy_5s +3.31%"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "RSP underperforms SPY over multi-day stretch",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap recovery compresses the equal-weight premium",
+      "time_window_catalyst": "Post-FOMC and mid-August inflation data"
+    },
+    {
+      "continuation_case": "Geopolitical premium and prior strength reassert",
+      "decision": "rejected",
+      "evidence": [
+        "XLE active_return_21s +5.30% but return_5s -1.59%",
+        "October Brent at $82.08 down 4.4% with Hormuz unresolved",
+        "USO 21s +14.23% but 5s -6.49%"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Sustained oil weakness below recent settles",
+      "option_id": "ENERGY",
+      "reversal_case": "Further oil price decline or demand concerns dominate",
+      "time_window_catalyst": "Ongoing tanker negotiations and inventory data"
+    },
+    {
+      "continuation_case": "Dividend and quality bid continues in uncertain macro",
+      "decision": "rejected",
+      "evidence": [
+        "SCHD return_5s +3.26% and active_return_21s +3.98%",
+        "Distance to 52w high 0.00%",
+        "Low corr_spy_252s 0.313"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Loss of relative strength versus broader value",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Risk-on rotation away from defensive yield names",
+      "time_window_catalyst": "Employment and CPI releases"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.36,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC or GDP surprise triggers broad equity selloff",
+    "Tech earnings contagion reverses value/financial leadership",
+    "Geopolitical escalation hits energy-linked or risk assets",
+    "Higher-than-expected inflation data lifts yields sharply"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Break below recent lows on rising credit stress or sharp yield spike",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong recent active returns and position at 52-week high with supportive breadth and upcoming data flow.",
+      "time_window_catalyst": "July employment report and Fed minutes through mid-August"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Reversal of monthly gains on policy or growth disappointment",
+      "option_id": "HEALTHCARE",
+      "rationale": "Positive 5-session momentum, at 52-week high, defensive characteristics amid mixed macro.",
+      "time_window_catalyst": "July CPI and ongoing earnings season through August"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Sharp reversal of 5-session gains on risk-off move",
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "Large recent outperformance and industrial exposure with geopolitical backdrop.",
+      "time_window_catalyst": "Defense-related budget and earnings updates before August 28"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Underperformance versus SPY on growth scare",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Positive active returns, at highs, and alignment with equal-weight breadth strength.",
+      "time_window_catalyst": "FOMC follow-through and July retail sales/CPI"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.16,
+  "portfolio_rationale": "Portfolio concentrates in areas showing recent relative strength, breadth leadership, and proximity to highs while avoiding extended tech pullbacks. Allocations stay within cluster caps and target higher base returns than SPY over the one-month window.",
+  "provider": "xai",
+  "rationale_summary": "Value, financials, healthcare, and aerospace exhibit better recent active performance and positioning than cap-weighted SPY amid mixed rates and data. Selection favors continuation of breadth with defined invalidation levels.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-28-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16255,
+    "latency_seconds": 43.1429106250871,
+    "output_tokens": 2421,
+    "reasoning_tokens": 1111,
+    "total_tokens": 19787
+  }
+}

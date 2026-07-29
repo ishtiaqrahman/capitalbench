@@ -1,0 +1,34 @@
+run_id: retry-provider-openai-monthly-20260728
+round_id: CB-2026-07-28-1M
+run_type: official
+mode: closed_capability
+mock: false
+created_at_utc: '2026-07-29T08:22:32.313175+00:00'
+models_config_file: output/retry-configs/openai-20260728.yaml
+models_path: output/retry-configs/openai-20260728.yaml
+pricing_path: null
+replicates: 1
+allow_real_api_calls: true
+official_score_eligible: false
+model_roster_version: portfolio-v2-roster-5e5ef62318ec
+expected_model_ids:
+- openai-gpt-5-5
+- openai-gpt-5-6-sol
+- anthropic-claude-opus-4-8
+- anthropic-claude-opus-5
+- anthropic-claude-fable-5
+- google-gemini-3-1-pro
+- xai-grok-4-3
+- xai-grok-4-5
+model_count: 2
+valid_submissions: 1
+invalid_submissions: 1
+model_ids:
+- openai-gpt-5-5
+- openai-gpt-5-6-sol
+loaded_models: 2
+skipped_models: 0
+completed_at_utc: '2026-07-29T08:23:56.205288+00:00'
+format_retry: true
+notes: Format-retry source run; preserved for audit and never independently eligible
+  for public official scoring.

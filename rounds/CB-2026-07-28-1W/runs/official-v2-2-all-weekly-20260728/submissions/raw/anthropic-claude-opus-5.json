@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad market up 8.5% YTD with resilient breadth and easing headline CPI momentum.",
+      "decision": "selected",
+      "evidence": [
+        "SPY -0.99% over 5 sessions, +1.63% over 21",
+        "10y yield 4.60%, fed funds 3.50-3.75%",
+        "FOMC plus four mega-cap earnings reports in window"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY closes below 7,200",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish Fed with 31.5% implied hike probability and semis correction could drag index.",
+      "time_window_catalyst": "FOMC July 29; GDP/PCE July 30; Apple/Amazon/Microsoft/Meta earnings"
+    },
+    {
+      "continuation_case": "Only sector with positive prior active trend plus recent gains; low drawdown and firm credit.",
+      "decision": "selected",
+      "evidence": [
+        "Prior 16-session active return +2.10%, best among sectors",
+        "At 52-week high, drawdown only -2.08%",
+        "Beta 0.20 to SPY, vol 14.2%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLF down more than 2% or HYG down more than 1%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak loan officer survey or curve flattening on hawkish Fed.",
+      "time_window_catalyst": "FOMC July 29; Senior Loan Officer Survey Aug 3"
+    },
+    {
+      "continuation_case": "Defensive rotation with negative SPY beta amid tech drawdown.",
+      "decision": "selected",
+      "evidence": [
+        "Active return +5.37% over 5 sessions, at 52w high",
+        "Beta -0.15, correlation -0.11 to SPY",
+        "Prior active -2.70% so not extended on trend"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLV falls below prior week low",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Recent burst is short-term; low quality score (0.338) reflects weak prior trend.",
+      "time_window_catalyst": "July 30-31 macro data; sector earnings flow"
+    },
+    {
+      "continuation_case": "Broadening leadership away from mega-cap concentration.",
+      "decision": "selected",
+      "evidence": [
+        "RSP minus SPY +3.31% 5s, +1.88% 21s",
+        "Vol 10.2%, max drawdown -1.46%",
+        "Russell 2000 +19% YTD, breadth positive July 28"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "RSP-minus-SPY 5-day turns negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap earnings beats re-concentrate leadership in cap-weighted index.",
+      "time_window_catalyst": "Mega-cap earnings July 29-30"
+    },
+    {
+      "continuation_case": "Defensive, dividend-heavy market with low drawdown and stable policy backdrop.",
+      "decision": "selected",
+      "evidence": [
+        "Prior active -0.44% with +3.24% recent active, near 52w high",
+        "Vol 14.7%, drawdown -1.93%",
+        "ECB held rates July 23; euro-area CPI 2.8%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "EWU down more than 2%",
+      "option_id": "UNITED_KINGDOM",
+      "reversal_case": "Energy-heavy index exposed to Brent's 4.4% drop; USD strength.",
+      "time_window_catalyst": "Euro-area flash CPI July 31; Exxon/Chevron read-across"
+    },
+    {
+      "continuation_case": "Deep oversold could snap back on strong hyperscaler capex commentary.",
+      "decision": "rejected",
+      "evidence": [
+        "Return -8.72% over 3 sessions, drawdown -19.25%",
+        "Micron -8.9%, AMD -8.1%, AMAT -7.8% on July 28",
+        "Vol 48.9%, beta 3.14"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -9.0,
+      "invalidation_condition": "SMH makes new lower low after earnings",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Momentum crash dynamics and extreme volatility argue for further downside.",
+      "time_window_catalyst": "Microsoft/Meta/Amazon capex guidance July 29-30"
+    },
+    {
+      "continuation_case": "Unresolved Hormuz/Iran conflict is a supply-risk catalyst.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent settled $82.08, down 4.4%",
+        "USO -13.62% over 3 sessions",
+        "XLE prior active +6.01% but -0.60% recent"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Brent below $78",
+      "option_id": "ENERGY",
+      "reversal_case": "Sharp crude break lower undermines the whole cluster.",
+      "time_window_catalyst": "Exxon/Chevron results July 31; Hormuz negotiations"
+    },
+    {
+      "continuation_case": "Soft June CPI/PPI and weak payrolls support duration.",
+      "decision": "rejected",
+      "evidence": [
+        "TLT +0.69% 5s, -3.21% 21s",
+        "10y at 4.60% from 4.65%",
+        "31.5% implied probability of a rate increase"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "10-year yield above 4.75%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Hawkish FOMC and 4.1% headline PCE keep long yields elevated.",
+      "time_window_catalyst": "FOMC July 29; PCE and GDP July 30"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.26,
+  "is_official_score": true,
+  "key_risks": [
+    "Hawkish FOMC (31.5% hike-implied probability) hits all equity exposure",
+    "Strong mega-cap earnings spark tech-led rebound, causing defensives to lag SPY",
+    "Financials reverse on weak Senior Loan Officer Survey or credit deterioration",
+    "Defensive sectors already at 52-week highs and vulnerable to profit-taking",
+    "Oil weakness and Hormuz escalation risk creating cross-asset volatility"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "XLF falls more than 2% or credit spreads widen sharply (HYG down >1%)",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive prior active trend (+2.10%), at 52w high, low beta and low drawdown; benefits from steep-curve/loan-survey week.",
+      "time_window_catalyst": "FOMC July 29 statement; Senior Loan Officer Survey Aug 3"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "XLV drops below prior week's low or sharp growth-led melt-up resumes",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector at 52-week high with strong recent relative strength and near-zero SPY beta; hedges mega-cap earnings risk.",
+      "time_window_catalyst": "Macro data July 30-31; defensive rotation continuation"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "RSP-minus-SPY 5-day spread turns negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth is broadening (RSP +3.31% vs SPY over 5 sessions, low vol, shallow drawdown) while mega-cap tech corrects.",
+      "time_window_catalyst": "Mega-cap earnings July 29-30; FOMC"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Sterling slump or EWU falls more than 2%",
+      "option_id": "UNITED_KINGDOM",
+      "rationale": "Positive prior active trend, near 52w high, low volatility, defensive/dividend tilt; diversifies away from US tech risk.",
+      "time_window_catalyst": "Euro-area flash CPI July 31; energy major earnings"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Hawkish FOMC surprise driving SPY below 7,200",
+      "option_id": "SP500",
+      "rationale": "Benchmark anchor to limit tracking error in a heavy event week.",
+      "time_window_catalyst": "FOMC July 29, GDP/PCE July 30, mega-cap earnings"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.56,
+  "portfolio_rationale": "Rotation out of crowded high-beta semis/AI into breadth and defensives is supported by breadth data (Dow +1.0% vs Nasdaq -0.2%, RSP outperformance) rather than price alone, and it reduces exposure to mega-cap earnings and FOMC tail risk in a dense event week.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt to financials, healthcare, equal-weight breadth and UK, with a benchmark anchor; avoid semis/AI where volatility and drawdowns are extreme.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-28-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27288,
+    "latency_seconds": 49.55258107697591,
+    "output_tokens": 3371,
+    "total_tokens": 30659
+  }
+}

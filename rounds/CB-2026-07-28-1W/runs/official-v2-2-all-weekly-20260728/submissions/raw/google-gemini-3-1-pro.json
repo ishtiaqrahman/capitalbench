@@ -1,0 +1,136 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued economic resilience and positive earnings surprises.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7,428.78, up 0.2% on July 28.",
+        "Through July 28, the S&P 500 was up 8.5% in 2026."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Significant negative macro data or earnings misses.",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish FOMC or disappointing tech earnings.",
+      "time_window_catalyst": "FOMC meeting and major tech earnings (Microsoft, Meta, Apple, Amazon)."
+    },
+    {
+      "continuation_case": "Investors seek defensive positioning amid market uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "XLP return_3s is 4.63%.",
+        "XLP active_return_5s is 4.56%."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Tech earnings significantly beat expectations and FOMC is dovish, sparking a risk-on rally.",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Strong risk-on sentiment reduces demand for defensive sectors.",
+      "time_window_catalyst": "FOMC meeting and tech earnings volatility"
+    },
+    {
+      "continuation_case": "Defensive characteristics attract capital during volatile periods.",
+      "decision": "selected",
+      "evidence": [
+        "XLV return_3s is 3.61%.",
+        "XLV active_return_5s is 5.37%."
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Broad market rally led by cyclical and growth sectors.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Broad market rally favors cyclical and growth sectors over defensive ones.",
+      "time_window_catalyst": "FOMC meeting and tech earnings volatility"
+    },
+    {
+      "continuation_case": "Strong earnings from mega-cap tech companies.",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq Composite closed at 24,876.91, down 0.2% on July 28.",
+        "QQQ active_return_5s is -3.73%."
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Tech earnings significantly miss expectations.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Earnings misses or hawkish FOMC weighing on growth valuations.",
+      "time_window_catalyst": "Earnings from Microsoft, Meta, Apple, and Amazon."
+    },
+    {
+      "continuation_case": "Dovish FOMC or weak economic data driving yields lower.",
+      "decision": "rejected",
+      "evidence": [
+        "10-year U.S. Treasury yield ended July 28 at 4.60%.",
+        "TLT return_3s is 1.29%."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "FOMC signals further rate hikes.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Hawkish FOMC or strong economic data driving yields higher.",
+      "time_window_catalyst": "FOMC meeting and statement."
+    },
+    {
+      "continuation_case": "Increased safe-haven demand due to geopolitical tensions or market volatility.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU return_3s is -0.59%.",
+        "IAU active_return_5s is -0.47%."
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Significant strengthening of the US dollar.",
+      "option_id": "GOLD",
+      "reversal_case": "Strong US dollar or rising real yields.",
+      "time_window_catalyst": "FOMC meeting and potential shifts in real yields."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.55,
+  "is_official_score": true,
+  "key_risks": [
+    "A dovish FOMC and strong tech earnings could lead to a risk-on rally, causing defensive sectors to underperform.",
+    "Sector-specific negative news in Healthcare or Consumer Staples could drag down the portfolio."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Tech earnings significantly beat expectations and FOMC is dovish, sparking a risk-on rally.",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Defensive positioning ahead of FOMC and tech earnings, supported by strong recent relative performance.",
+      "time_window_catalyst": "FOMC meeting and tech earnings volatility"
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Broad market rally led by cyclical and growth sectors.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong recent active return, providing stability during a potentially volatile week.",
+      "time_window_catalyst": "FOMC meeting and tech earnings volatility"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.75,
+  "portfolio_rationale": "The portfolio is positioned defensively ahead of a busy week with the FOMC meeting and major tech earnings. Consumer Staples and Healthcare offer stability and have shown strong recent relative performance compared to the broader market.",
+  "provider": "google",
+  "rationale_summary": "Defensive allocation to Consumer Staples and Healthcare to navigate potential volatility from FOMC and tech earnings.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-28-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16592,
+    "latency_seconds": 14.485249551013112,
+    "output_tokens": 1707,
+    "total_tokens": 18299
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "benchmark_expected_return_pct": 1.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Positive year-to-date performance and broad scheduled earnings support a modest advance if growth remains resilient.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY returned 1.63% over 21 sessions but fell 0.99% over five sessions.",
+        "SPY was 2.21% below its 52-week high with 12.96% 63-session volatility.",
+        "FOMC, GDP, inflation, labor data, and major earnings all fall inside the window."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -5.5,
+      "invalidation_condition": "SPY closes more than 4% below entry while breadth and high-yield credit weaken.",
+      "option_id": "SP500",
+      "reversal_case": "A hawkish policy surprise, sticky inflation, or weak earnings could deepen the recent decline.",
+      "time_window_catalyst": "FOMC communication, GDP, inflation, employment, and mega-cap earnings before August 28."
+    },
+    {
+      "continuation_case": "Improving breadth and lower mega-cap concentration can sustain relative gains if economic data avoid recession signals.",
+      "decision": "selected",
+      "evidence": [
+        "RSP beat SPY by 3.31 percentage points over five sessions and 1.88 points over 21 sessions.",
+        "RSP closed at its 52-week high with an 11.09% volatility reading and 2.04% maximum drawdown.",
+        "Most U.S. stocks rose on July 28 despite weakness in several large chip stocks."
+      ],
+      "forecast_base_pct": 2.1,
+      "forecast_high_pct": 7.2,
+      "forecast_low_pct": -4.2,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points over five sessions while breadth contracts.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Strong mega-cap earnings or a growth scare could rapidly restore cap-weighted leadership.",
+      "time_window_catalyst": "July employment, inflation, retail-sales, and industrial-production releases could confirm broader economic resilience."
+    },
+    {
+      "continuation_case": "Defensive demand and recent relative strength can persist through a dense macro-event calendar.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare gained 4.37% over five sessions and outperformed SPY by 2.69 points over 21 sessions.",
+        "It closed at a 52-week high with a 3.74% 63-session maximum drawdown.",
+        "Its 252-session SPY beta was only 0.316."
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 7.5,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "Healthcare loses its recent relative leadership and falls more than 5% from the entry close.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A sharp risk-on rotation or sector-specific policy concerns could unwind defensive leadership.",
+      "time_window_catalyst": "July inflation and labor data may sustain rotation toward defensive earnings exposure."
+    },
+    {
+      "continuation_case": "Strong prior relative trend plus a deep pullback can produce a rebound if scheduled mega-cap earnings validate growth expectations.",
+      "decision": "selected",
+      "evidence": [
+        "NASDAQ100 had a 0.718 quality score, including 0.836 prior-active and 0.866 pullback ranks.",
+        "QQQ underperformed SPY by 6.02 points over 21 sessions after 7.43 points of prior-window active strength.",
+        "The Nasdaq traded as much as 9.3% below its prior-month record."
+      ],
+      "forecast_base_pct": 2.4,
+      "forecast_high_pct": 12.5,
+      "forecast_low_pct": -8.5,
+      "invalidation_condition": "Major technology earnings disappoint collectively or QQQ closes more than 5% below its entry level.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "High volatility, elevated rate sensitivity, and disappointing technology earnings could extend the drawdown.",
+      "time_window_catalyst": "Microsoft, Meta, Apple, Amazon, and Nvidia earnings occur before the exit close."
+    },
+    {
+      "continuation_case": "Cooling inflation and weak payroll growth could lower yields and lift duration.",
+      "decision": "rejected",
+      "evidence": [
+        "The 10-year Treasury yield fell to 4.60% from 4.65%.",
+        "TLT gained 0.69% over five sessions but lost 3.21% over 21 sessions.",
+        "June CPI fell 0.4% month over month, while May PCE inflation remained elevated."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "The 10-year yield closes above 4.80% and inflation data reaccelerate.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "A rate increase, sticky PCE, or stronger GDP could push long yields higher.",
+      "time_window_catalyst": "FOMC, June PCE, July CPI, and the second GDP estimate occur before exit."
+    },
+    {
+      "continuation_case": "Relatively firm U.S. rates or risk aversion could support the dollar.",
+      "decision": "rejected",
+      "evidence": [
+        "UUP gained 0.35% over five sessions and 0.42% over 21 sessions.",
+        "Its quality score was 0.651 with high low-volatility and shallow-drawdown ranks.",
+        "The FOMC meeting carried a market-implied 31.5% probability of an increase."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "UUP falls more than 1.5% from entry as U.S. yields decline relative to foreign yields.",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "Dovish Fed communication and softer inflation could narrow rate differentials.",
+      "time_window_catalyst": "FOMC, U.S. inflation data, and Bank of Japan communication."
+    },
+    {
+      "continuation_case": "Unresolved geopolitical supply risk could revive the strong prior trend.",
+      "decision": "rejected",
+      "evidence": [
+        "USO rose 14.23% over 21 sessions but fell 6.49% over five sessions.",
+        "Brent settled down 4.4% at $82.08.",
+        "Strait of Hormuz tanker-access negotiations and the U.S.-Iran conflict remained unresolved."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 18.0,
+      "forecast_low_pct": -15.0,
+      "invalidation_condition": "Brent breaks materially below its July 28 level as tanker access normalizes.",
+      "option_id": "OIL",
+      "reversal_case": "The sharp five-session decline may continue if access negotiations improve or demand expectations weaken.",
+      "time_window_catalyst": "Developments in Strait of Hormuz access and U.S.-Iran tensions before August 28."
+    }
+  ],
+  "confidence": 0.59,
+  "expected_alpha_vs_sp500_pct": 0.9,
+  "is_official_score": true,
+  "key_risks": [
+    "A hawkish FOMC outcome or renewed inflation pressure lifts yields and compresses equity valuations.",
+    "Mega-cap or Nvidia earnings disappoint, extending the technology drawdown.",
+    "Weak employment or consumption data turns broadening into a cyclical selloff.",
+    "Recent defensive and equal-weight leadership reverses abruptly back toward cap-weighted mega-caps."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 2.1,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points over five sessions while breadth contracts.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broadening participation, a record-level close, lower volatility, and shallower drawdown support continued leadership over cap-weighted SPY.",
+      "time_window_catalyst": "July employment, inflation, retail-sales, and industrial-production releases could confirm broader economic resilience."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Healthcare loses its recent relative leadership and falls more than 5% from the entry close.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Recent relative strength, a shallow drawdown, and defensive characteristics offer favorable one-month asymmetry amid macro and earnings uncertainty.",
+      "time_window_catalyst": "July inflation and labor data may sustain rotation toward defensive earnings exposure."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.4,
+      "invalidation_condition": "Major technology earnings disappoint collectively or QQQ closes more than 5% below its entry level.",
+      "option_id": "NASDAQ100",
+      "rationale": "A deep relative pullback against a strong prior trend creates rebound potential, with mega-cap earnings and Nvidia results inside the window.",
+      "time_window_catalyst": "Microsoft, Meta, Apple, Amazon, and Nvidia earnings occur before the exit close."
+    }
+  ],
+  "portfolio_expected_return_pct": 2.1,
+  "portfolio_rationale": "The portfolio combines broadening U.S. participation and defensive healthcare with a measured technology rebound position. Distinct catalysts and the 50% cluster cap limit dependence on any single market regime.",
+  "provider": "openai",
+  "rationale_summary": "Equal weight has the strongest breadth confirmation, healthcare supplies defensive relative strength, and Nasdaq-100 offers event-driven rebound potential after a material pullback.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-28-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15169,
+    "latency_seconds": 30.140120999189094,
+    "output_tokens": 1885,
+    "reasoning_tokens": 0,
+    "total_tokens": 17054
+  }
+}

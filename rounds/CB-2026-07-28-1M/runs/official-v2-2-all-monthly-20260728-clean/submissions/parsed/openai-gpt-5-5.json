@@ -1,0 +1,186 @@
+{
+  "benchmark_expected_return_pct": 0.7,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad US equities can continue higher if FOMC, GDP, inflation, employment, and mega-cap earnings avoid negative surprises.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed up 0.2% on July 28 and was up 8.5% in 2026.",
+        "SPY 5-day return was -0.99% and 21-day return was 1.63%.",
+        "SPY volatility was 12.96% with a -4.49% 63-day max drawdown and price was 2.21% below its 52-week high."
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "SPY breaks materially below its recent 63-day drawdown range or breadth deteriorates with RSP no longer outperforming.",
+      "option_id": "SP500",
+      "reversal_case": "The Nasdaq weakness and upcoming policy and earnings events could pull cap-weighted indexes lower if growth leadership disappoints.",
+      "time_window_catalyst": "FOMC statement and press conference, GDP, PCE, July employment, CPI/PPI, retail sales, Fed minutes, and Nvidia results before August 28."
+    },
+    {
+      "continuation_case": "Most US stocks rose on July 28 and equal-weight leadership can persist if market breadth remains stronger than mega-cap growth.",
+      "decision": "selected",
+      "evidence": [
+        "RSP returned 2.32% over 5 days and had 1.88% 21-day active return versus SPY.",
+        "RSP volatility was 11.09%, below SPY's 12.96%, with a -2.04% 63-day max drawdown.",
+        "RSP was at a 52-week high while SPY was 2.21% below its 52-week high."
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.8,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "RSP loses its 21-day active outperformance versus SPY or falls more than 4% from entry while SPY holds up.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "If mega-cap technology earnings rebound and concentration leadership returns, equal weight could lag SPY despite positive breadth.",
+      "time_window_catalyst": "FOMC, GDP, inflation, employment and major earnings could extend the recent broadening beyond mega-cap technology before August 28."
+    },
+    {
+      "continuation_case": "Defensive yield-oriented equities can continue to benefit if investors favor lower-volatility breadth over high-beta technology.",
+      "decision": "selected",
+      "evidence": [
+        "Dividend equities returned 3.26% over 5 days and had 3.98% 21-day active return versus SPY.",
+        "Prior 105-day active return was 5.99%, with 12.14% volatility and a -2.95% max drawdown.",
+        "Dividend equities were at a 52-week high and had low 252-day beta to SPY of 0.275."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.2,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Dividend equities break below recent highs and their 21-day active return versus SPY turns negative.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "A sharp risk-on rebound in high-beta growth or a rate spike could make dividend equities lag the benchmark.",
+      "time_window_catalyst": "July CPI/PPI, retail sales and FOMC communication could support lower-volatility yield-oriented equities if rate fears ease."
+    },
+    {
+      "continuation_case": "Recent defensive sector strength can continue if macro uncertainty persists and investors rotate away from volatile technology leadership.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare returned 4.37% over 5 days and had 2.69% 21-day active return versus SPY.",
+        "Healthcare was at a 52-week high with a -3.74% 63-day max drawdown.",
+        "Its 252-day correlation to SPY was 0.253 and beta was 0.316."
+      ],
+      "forecast_base_pct": 1.15,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.4,
+      "invalidation_condition": "Healthcare underperforms SPY over the next two weeks or falls more than 4% from entry.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "The sector's prior 105-day active return was -3.52%, so the recent rebound could fade if rotation stalls.",
+      "time_window_catalyst": "August macro data and risk rotation could favor defensive sectors with positive recent breadth through the exit close."
+    },
+    {
+      "continuation_case": "Financial leadership can persist if rates, credit data, and economic releases support margins and reduce recession concern.",
+      "decision": "selected",
+      "evidence": [
+        "Financials had 5.89% 21-day active return versus SPY and a 2.66% 5-day return.",
+        "Financials were at a 52-week high with 13.17% volatility and a -2.42% max drawdown.",
+        "The federal-funds target range was 3.50% to 3.75% and FOMC, loan survey, jobs and GDP data are scheduled before exit."
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 4.7,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "Financials lose 21-day active leadership versus SPY or credit/rate data imply materially worse bank margin or credit conditions.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weaker loan, labor, or credit conditions could quickly reverse banks and broader financials from current highs.",
+      "time_window_catalyst": "FOMC communication, Senior Loan Officer Survey, JOLTS, employment and GDP data can affect yield-curve and credit expectations before August 28."
+    },
+    {
+      "continuation_case": "Strong recent sector buying can continue if geopolitical risk and industrial earnings sustain demand for defense exposure.",
+      "decision": "selected",
+      "evidence": [
+        "Aerospace and defense returned 6.63% over 5 days and had 1.83% 21-day active return versus SPY.",
+        "The option was 2.31% below its 52-week high with 24.97% volatility.",
+        "Geopolitical risks included unresolved U.S.-Iran conflict and Strait of Hormuz tanker-access negotiations."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.2,
+      "invalidation_condition": "Aerospace and defense reverses more than half of its 5-day gain or its 21-day active return turns negative.",
+      "option_id": "AEROSPACE_DEFENSE",
+      "reversal_case": "The 5-day surge may be overextended, and prior 105-day active return was -4.20%, making reversal risk meaningful.",
+      "time_window_catalyst": "Large-cap earnings season and unresolved geopolitical risks could sustain demand for defense-oriented industrial exposure."
+    },
+    {
+      "continuation_case": "The strong prior trend and major earnings catalysts could restart technology leadership if results support AI and growth expectations.",
+      "decision": "rejected",
+      "evidence": [
+        "Technology fell 5.36% over 5 days and had -7.16% 21-day active return versus SPY.",
+        "Prior 105-day active return was 18.48%, but volatility was 33.17% and max drawdown was -13.58%.",
+        "Major technology earnings including Microsoft, Meta, Apple, Amazon, and Nvidia are scheduled before the exit close."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Technology fails to regain positive 21-day active momentum versus SPY after the first wave of mega-cap earnings.",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Recent drawdown, high volatility, and Nasdaq weakness could persist if earnings or rates disappoint.",
+      "time_window_catalyst": "Mega-cap technology earnings and Nvidia results after the close on August 26."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.47,
+  "is_official_score": true,
+  "key_risks": [
+    "Mega-cap technology and SPY rebound sharply after major earnings, causing the active portfolio to lag.",
+    "FOMC, CPI, PPI, GDP, or employment data revive rate fears and pressure financials, dividend equities, real assets, and broad equities.",
+    "Recent breadth and sector rotation reverse, with equal-weight and defensive sectors giving back their short-term active gains.",
+    "Aerospace and defense strength proves a short-term spike and reverses without supportive earnings or geopolitical follow-through."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "RSP loses its 21-day active outperformance versus SPY or falls more than 4% from entry while SPY holds up.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Equal-weight exposure has better near-term breadth than cap-weighted SPY, with 5-day and 21-day returns ahead of SPY and a fresh 52-week high.",
+      "time_window_catalyst": "FOMC, GDP, inflation, employment and major earnings could extend the recent broadening beyond mega-cap technology before August 28."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Dividend equities break below recent highs and their 21-day active return versus SPY turns negative.",
+      "option_id": "DIVIDEND",
+      "rationale": "Dividend equities combine positive recent active returns, low beta to SPY, and a 52-week high, offering defensive upside if leadership keeps broadening.",
+      "time_window_catalyst": "July CPI/PPI, retail sales and FOMC communication could support lower-volatility yield-oriented equities if rate fears ease."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.15,
+      "invalidation_condition": "Healthcare underperforms SPY over the next two weeks or falls more than 4% from entry.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare shows recent strength, a 52-week high, shallow drawdown, and relatively low correlation to SPY, giving a non-mega-cap defensive growth tilt.",
+      "time_window_catalyst": "August macro data and risk rotation could favor defensive sectors with positive recent breadth through the exit close."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Financials lose 21-day active leadership versus SPY or credit/rate data imply materially worse bank margin or credit conditions.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials have the strongest recent 21-day active return among selected sectors and sit at a 52-week high with modest volatility.",
+      "time_window_catalyst": "FOMC communication, Senior Loan Officer Survey, JOLTS, employment and GDP data can affect yield-curve and credit expectations before August 28."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Aerospace and defense reverses more than half of its 5-day gain or its 21-day active return turns negative.",
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "Aerospace and defense has strong 5-day price action and positive 21-day active return, with potential support from earnings and geopolitical risk.",
+      "time_window_catalyst": "Large-cap earnings season and unresolved geopolitical risks could sustain demand for defense-oriented industrial exposure."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.17,
+  "portfolio_rationale": "The portfolio avoids recently weak mega-cap technology concentration and emphasizes breadth, defensive/quality sectors, and financials with near-term macro catalysts. Diversified US equity exposure is capped at 50% outside SPY, while the remaining allocations span healthcare, financials, and industrials/defense.",
+  "provider": "openai",
+  "rationale_summary": "Selected holdings all have base forecasts above SPY and are supported by recent breadth, 52-week highs or positive active returns. The one-month edge depends on continued rotation away from cap-weighted technology weakness into broader and more defensive equity leadership.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-28-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15167,
+    "latency_seconds": 40.95946152578108,
+    "output_tokens": 2688,
+    "reasoning_tokens": 200,
+    "total_tokens": 17855
+  }
+}
