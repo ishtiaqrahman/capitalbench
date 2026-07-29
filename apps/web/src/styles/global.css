@@ -2456,7 +2456,7 @@ a.snapshot-model-chip:hover {
   font-variant-numeric: tabular-nums;
 }
 
-.ai-positioning-summary article:nth-child(2) strong {
+.ai-positioning-summary article:nth-of-type(2) strong {
   font-size: clamp(1.05rem, 1.8vw, 1.45rem);
   line-height: 1.12;
 }
@@ -39319,20 +39319,26 @@ html.score-alert-modal-open body {
   }
 
   #benchmark-insights.context-insights-featured .context-insights-head .home-question-title {
-    position: relative;
-    padding-inline: 38px;
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) 28px;
+    align-items: start;
+    padding-inline: 0;
     text-align: center;
   }
 
   #benchmark-insights.context-insights-featured .context-insights-head .home-question-title h2 {
+    grid-column: 2;
     display: block;
+    max-width: none;
+    font-size: clamp(1.75rem, 8.4vw, 2.3rem);
   }
 
   #benchmark-insights.context-insights-featured .context-insights-head .home-info-tip {
-    position: absolute;
-    top: 3px;
-    right: 0;
-    margin: 0;
+    position: static;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    margin: 3px 0 0;
     transform: none;
   }
 
