@@ -216,6 +216,10 @@ def test_generate_and_validate_deterministic_insights(tmp_path: Path) -> None:
     assert "consensus_performance" in categories
     assert "benchmark_difficulty" in categories
     assert "current_positioning" in categories
+    positioning = next(row for row in latest["insights"] if row["category"] == "current_positioning")
+    assert positioning["context"]["asset_option_id"] == "BONDS"
+    assert positioning["context"]["asset_label"] == "Aggregate Bonds"
+    assert positioning["context"]["asset_ticker"] == "AGG"
     consensus = next(row for row in latest["insights"] if row["category"] == "consensus_performance")
     consensus_return = next(row for row in consensus["calculations"] if row["name"] == "consensus_portfolio_return")
     assert consensus_return["value"] == 2.5

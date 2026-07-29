@@ -257,6 +257,33 @@ export function publishedInsights(readModel) {
   return publishedInsightRows(rows);
 }
 
+export function currentLiveRoundIds(readModel) {
+  const pulse = readModel?.risk_appetite?.current_decision_pulse;
+  return [pulse?.weekly?.round_id, pulse?.monthly?.round_id]
+    .filter(Boolean)
+    .map(String)
+    .sort();
+}
+
+export function isCurrentLiveInsight(readModel, insight) {
+  if (insight?.context?.scope !== "live_rounds") return true;
+  const currentRoundIds = currentLiveRoundIds(readModel);
+  const insightRoundIds = Array.isArray(insight?.context?.round_ids)
+    ? insight.context.round_ids.filter(Boolean).map(String).sort()
+    : [];
+  return (
+    currentRoundIds.length > 0 &&
+    currentRoundIds.length === insightRoundIds.length &&
+    currentRoundIds.every((roundId, index) => roundId === insightRoundIds[index])
+  );
+}
+
+export function staleLiveInsights(readModel) {
+  return publishedInsights(readModel).filter(
+    (insight) => insight?.context?.scope === "live_rounds" && !isCurrentLiveInsight(readModel, insight)
+  );
+}
+
 export function featuredInsightRows(rows, limit = 18, perCategory = 2) {
   const ranked = publishedInsightRows(rows).filter((insight) => insight?.publication_tier !== "detail");
   const selected = [];
@@ -317,9 +344,10 @@ function surfaceCategoryLeads(rows, categories) {
 
 export function insightsForSurface(readModel, surface, limit = 3) {
   const rows = publishedInsights(readModel);
-  const market = marketEnvironmentSynthesis(rows);
+  const currentRows = rows.filter((insight) => isCurrentLiveInsight(readModel, insight));
+  const market = marketEnvironmentSynthesis(currentRows);
   if (surface === "home") {
-    const base = surfaceCategoryLeads(rows, [
+    const base = surfaceCategoryLeads(currentRows, [
       "current_positioning",
       "risk_regime",
       "horizon_agreement",
@@ -339,7 +367,7 @@ export function insightsForSurface(readModel, surface, limit = 3) {
   if (surface === "ticker") {
     const candidates = [
       market,
-      ...surfaceCategoryLeads(rows, [
+      ...surfaceCategoryLeads(currentRows, [
         "current_positioning",
         "risk_regime",
         "horizon_agreement",

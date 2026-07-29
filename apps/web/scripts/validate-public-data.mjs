@@ -5,6 +5,7 @@ import apiReadModel from "../src/generated/apiReadModel.js";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { buildBenchmarkSetsData } from "../src/lib/benchmarkSets.js";
 import { buildCumulativeLeaderboardData } from "../src/lib/dataApi.js";
+import { currentLiveRoundIds, staleLiveInsights } from "../src/lib/insights.js";
 
 const repoRoot = resolve(process.cwd(), "../..");
 const failures = [];
@@ -523,6 +524,59 @@ if (!riskSnapshot) {
   const expectedPriorScore = average(Object.values(priorTrackScores).filter(isFiniteNumber));
   if (!sameNullableNumber(pulse.score, expectedCurrentScore)) {
     failures.push(`risk appetite combined score ${pulse.score} does not match equal-track average ${expectedCurrentScore}`);
+  }
+
+  const expectedLiveRoundIds = currentLiveRoundIds(apiReadModel);
+  const staleCurrentLiveInsights = staleLiveInsights(apiReadModel);
+  for (const insight of staleCurrentLiveInsights) {
+    failures.push(
+      `live insight ${insight.id ?? "unknown"} references ${JSON.stringify(insight.context?.round_ids ?? [])} instead of current rounds ${JSON.stringify(expectedLiveRoundIds)}; regenerate benchmark insights`
+    );
+  }
+
+  const currentRiskInsight = (apiReadModel.insights?.insights ?? []).find(
+    (insight) =>
+      insight?.category === "risk_regime" &&
+      insight?.context?.scope === "live_rounds" &&
+      !staleCurrentLiveInsights.includes(insight)
+  );
+  const currentRiskCalculation = currentRiskInsight?.calculations?.find(
+    (calculation) => calculation?.name === "live_risk_taking_score"
+  );
+  const expectedInsightRiskScore = isFiniteNumber(pulse.score) ? Number(pulse.score.toFixed(4)) : pulse.score;
+  if (expectedLiveRoundIds.length > 0 && !currentRiskInsight) {
+    failures.push("generated insights are missing a current live risk-regime insight");
+  } else if (currentRiskInsight && !sameNullableNumber(currentRiskCalculation?.value, expectedInsightRiskScore)) {
+    failures.push(
+      `live risk insight score ${currentRiskCalculation?.value} does not match current risk appetite score ${expectedInsightRiskScore}`
+    );
+  }
+
+  const currentPositioningInsight = (apiReadModel.insights?.insights ?? []).find(
+    (insight) =>
+      insight?.category === "current_positioning" &&
+      insight?.context?.scope === "live_rounds" &&
+      !staleCurrentLiveInsights.includes(insight)
+  );
+  const currentPositioningCalculation = currentPositioningInsight?.calculations?.find(
+    (calculation) => calculation?.name === "aggregate_live_allocation"
+  );
+  const expectedTopAsset = pulse.top_assets?.[0];
+  const expectedTopAllocation = isFiniteNumber(expectedTopAsset?.allocation_pct)
+    ? Number(expectedTopAsset.allocation_pct.toFixed(4))
+    : expectedTopAsset?.allocation_pct;
+  if (expectedLiveRoundIds.length > 0 && !currentPositioningInsight) {
+    failures.push("generated insights are missing a current live-positioning insight");
+  } else if (
+    currentPositioningInsight &&
+    (
+      currentPositioningInsight.context?.asset_option_id !== expectedTopAsset?.option_id ||
+      !sameNullableNumber(currentPositioningCalculation?.value, expectedTopAllocation)
+    )
+  ) {
+    failures.push(
+      `live positioning insight ${currentPositioningInsight.context?.asset_option_id}/${currentPositioningCalculation?.value} does not match current top asset ${expectedTopAsset?.option_id}/${expectedTopAllocation}`
+    );
   }
   if (!sameNullableNumber(pulse.previous_score, expectedPriorScore)) {
     failures.push(`risk appetite previous score ${pulse.previous_score} does not match prior equal-track average ${expectedPriorScore}`);

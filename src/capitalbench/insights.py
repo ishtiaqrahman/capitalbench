@@ -32,7 +32,7 @@ INSIGHTS_DATA_FINGERPRINT_VERSION = "capitalbench_insights_data_fingerprint_v3"
 INSIGHTS_BUILD_FINGERPRINT_VERSION = "capitalbench_insights_build_fingerprint_v2"
 INSIGHTS_POINTER_VERSION = "capitalbench_insights_pointer_v1"
 PUBLICATION_POLICY_VERSION = "capitalbench_publication_policy_v1"
-DETERMINISTIC_ENGINE_VERSION = "deterministic_insights_v3"
+DETERMINISTIC_ENGINE_VERSION = "deterministic_insights_v4"
 LLM_PROMPT_VERSION = "capitalbench_insight_llm_prompt_v1"
 LLM_OUTPUT_VERSION = "insight_llm_output_v1"
 LLM_ENGINE_VERSION = "nvidia_llm_rewrite_v1"
@@ -2047,6 +2047,12 @@ def _active_positioning_insights(snapshot: dict[str, Any], generated_at: str) ->
     ]
     top_name = _asset_name(top_option)
     context = _live_rounds_context(current_rounds, data_as_of=data_as_of)
+    positioning_context = {
+        **context,
+        "asset_option_id": top_option_id,
+        "asset_label": _text(top_option.get("label")) or top_option_id,
+        "asset_ticker": _text(top_option.get("ticker")),
+    }
     insights = [
         _insight(
             insight_id=f"active-positioning-{_slug(data_as_of)}",
@@ -2074,7 +2080,7 @@ def _active_positioning_insights(snapshot: dict[str, Any], generated_at: str) ->
             ],
             evidence=evidence,
             related=[{"label": "AI Risk Appetite", "href": "/risk-appetite"}],
-            context=context,
+            context=positioning_context,
         )
     ]
     if risk_score is not None:

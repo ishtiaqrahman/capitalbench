@@ -1,12 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  currentLiveRoundIds,
   featuredInsightRows,
   insightsForModel,
   insightsForRound,
   insightsForSurface,
+  isCurrentLiveInsight,
   publishedInsightRows,
-  roundReferenceTokens
+  roundReferenceTokens,
+  staleLiveInsights
 } from "../src/lib/insights.js";
 
 test("roundReferenceTokens links CapitalBench round IDs", () => {
@@ -223,4 +226,92 @@ test("home and results surfaces include a ready non-low market-environment synth
   assert.ok(insightsForSurface(readModel, "results", 3).some((row) => row.id === "market-ready"));
   assert.ok(!insightsForSurface(readModel, "home", 3).some((row) => row.id === "market-forming"));
   assert.equal(insightsForSurface(readModel, "ticker", 1)[0].id, "market-ready");
+});
+
+test("live insight helpers identify the canonical current weekly and monthly rounds", () => {
+  const readModel = {
+    risk_appetite: {
+      current_decision_pulse: {
+        weekly: { round_id: "CB-2026-07-27-1W" },
+        monthly: { round_id: "CB-2026-07-27-1M" }
+      }
+    },
+    insights: {
+      insights: [
+        {
+          id: "current-risk",
+          status: "published",
+          context: {
+            scope: "live_rounds",
+            round_ids: ["CB-2026-07-27-1W", "CB-2026-07-27-1M"]
+          }
+        },
+        {
+          id: "stale-risk",
+          status: "published",
+          context: {
+            scope: "live_rounds",
+            round_ids: ["CB-2026-07-24-1W", "CB-2026-07-24-1M"]
+          }
+        }
+      ]
+    }
+  };
+
+  assert.deepEqual(currentLiveRoundIds(readModel), ["CB-2026-07-27-1M", "CB-2026-07-27-1W"]);
+  assert.equal(isCurrentLiveInsight(readModel, readModel.insights.insights[0]), true);
+  assert.equal(isCurrentLiveInsight(readModel, readModel.insights.insights[1]), false);
+  assert.deepEqual(staleLiveInsights(readModel).map((insight) => insight.id), ["stale-risk"]);
+});
+
+test("home and ticker surfaces exclude stale live insights", () => {
+  const base = {
+    status: "published",
+    data_as_of: "2026-07-27",
+    confidence: "high",
+    publication_tier: "category",
+    importance_score: 90
+  };
+  const readModel = {
+    risk_appetite: {
+      current_decision_pulse: {
+        weekly: { round_id: "CB-2026-07-27-1W" },
+        monthly: { round_id: "CB-2026-07-27-1M" }
+      }
+    },
+    insights: {
+      insights: [
+        {
+          ...base,
+          id: "stale-positioning",
+          category: "current_positioning",
+          context: {
+            scope: "live_rounds",
+            round_ids: ["CB-2026-07-24-1W", "CB-2026-07-24-1M"]
+          }
+        },
+        {
+          ...base,
+          id: "current-risk",
+          category: "risk_regime",
+          context: {
+            scope: "live_rounds",
+            round_ids: ["CB-2026-07-27-1W", "CB-2026-07-27-1M"]
+          }
+        },
+        {
+          ...base,
+          id: "resolved-oracle",
+          category: "oracle_comparison",
+          context: { scope: "round", round_id: "CB-2026-07-24-1W" }
+        }
+      ]
+    }
+  };
+
+  assert.deepEqual(insightsForSurface(readModel, "home", 3).map((insight) => insight.id), [
+    "current-risk",
+    "resolved-oracle"
+  ]);
+  assert.ok(!insightsForSurface(readModel, "ticker", 3).some((insight) => insight.id === "stale-positioning"));
 });

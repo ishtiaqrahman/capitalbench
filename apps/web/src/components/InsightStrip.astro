@@ -1,5 +1,15 @@
 ---
-import { ArrowRight, Info } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  Gauge,
+  Info,
+  LineChart,
+  PieChart,
+  Sparkles,
+  Trophy,
+  Users
+} from "lucide-react";
 import {
   calculationLabel,
   calculationValue,
@@ -36,6 +46,40 @@ type InsightLink = {
   href?: string | null;
 };
 
+function featuredSignalPresentation(category: unknown) {
+  const value = String(category ?? "").toLowerCase();
+  if (value.includes("risk")) return { Icon: Gauge, tone: "risk" };
+  if (value.includes("position") || value.includes("allocation")) return { Icon: PieChart, tone: "positioning" };
+  if (value.includes("environment") || value.includes("regime")) return { Icon: LineChart, tone: "environment" };
+  if (value.includes("performance") || value.includes("attribution")) return { Icon: Trophy, tone: "performance" };
+  if (value.includes("agreement") || value.includes("behavior")) return { Icon: Users, tone: "behavior" };
+  if (value.includes("live")) return { Icon: Activity, tone: "live" };
+  return { Icon: Sparkles, tone: "neutral" };
+}
+
+function featuredContextItems(insight: any): string[] {
+  const items = contextPills(insight).map(String).filter(Boolean);
+  const sampleItems = items.filter((item) => /\d/.test(item));
+  return (sampleItems.length > 0 ? sampleItems : items).slice(0, 2);
+}
+
+function featuredAssetTicker(insight: any): string {
+  const structuredTicker = String(
+    insight?.context?.asset_ticker
+      ?? insight?.asset_ticker
+      ?? insight?.ticker
+      ?? ""
+  ).trim();
+  if (/^[A-Z0-9.-]{1,10}$/i.test(structuredTicker)) return structuredTicker.toUpperCase();
+
+  for (const text of [insight?.title, insight?.summary]) {
+    const matches = Array.from(String(text ?? "").matchAll(/\(([A-Z][A-Z0-9.-]{0,9})\)/g));
+    const ticker = matches.at(-1)?.[1];
+    if (ticker) return ticker;
+  }
+  return "";
+}
+
 const {
   insights = [],
   kicker = "Benchmark insights",
@@ -58,11 +102,6 @@ const timeframeLabels = visibleInsights.map((insight) => insightTimeframeLabel(i
 const sharedTimeframe = timeframeLabels.length > 1 && timeframeLabels.every((label) => label === timeframeLabels[0])
   ? timeframeLabels[0]
   : "";
-const sharedSamplePills = sharedContextPills.filter((pill) => /\b(rounds?|models?|tests?)\b/i.test(pill));
-const sectionContextItems = Array.from(new Set([
-  sharedTimeframe,
-  ...(sharedSamplePills.length > 0 ? sharedSamplePills : sharedContextPills.slice(0, 2))
-].filter(Boolean))).slice(0, 3);
 ---
 
 {visibleInsights.length > 0 && (
@@ -80,87 +119,175 @@ const sectionContextItems = Array.from(new Set([
           </span>
         </div>
         {description && <p>{description}</p>}
-        {featured && sectionContextItems.length > 0 && (
-          <div class="insight-section-context" aria-label="Insight sample context">
-            {sectionContextItems.map((item) => <span>{item}</span>)}
-          </div>
-        )}
       </div>
     </div>
 
-    <div class:list={["insight-card-grid", compact && "insight-card-grid-compact"]}>
-      {visibleInsights.map((insight) => {
-        const calculationLimit = featured ? 1 : 3;
-        const calculations: InsightCalculation[] = Array.isArray(insight.calculations)
-          ? insight.calculations.slice(0, calculationLimit)
-          : [];
-        const evidence: InsightLink[] = Array.isArray(insight.evidence) ? insight.evidence.slice(0, 2) : [];
-        const cardContextPills = contextPills(insight).filter((pill) => !sharedContextSet.has(String(pill))).slice(0, 3);
-        const metricCount = Math.max(1, calculations.length);
-        return (
-          <article class:list={["insight-card", `insight-card-metrics-${metricCount}`]} data-metric-count={metricCount}>
-            <header>
-              <span>{categoryLabel(insight.category)}</span>
-              {(!featured || !sharedTimeframe) && (
+    {featured ? (
+      <div class="signal-briefing-grid" data-insight-count={visibleInsights.length}>
+        {visibleInsights.map((insight, index) => {
+          const calculations: InsightCalculation[] = Array.isArray(insight.calculations)
+            ? insight.calculations.slice(0, 1)
+            : [];
+          const calculation = calculations[0];
+          const contextItems = featuredContextItems(insight);
+          const presentation = featuredSignalPresentation(insight.category);
+          const Icon = presentation.Icon;
+          const assetTicker = index === 0 ? featuredAssetTicker(insight) : "";
+          return (
+            <article
+              class:list={["signal-briefing-card", index === 0 && "signal-briefing-card-lead"]}
+              data-signal-tone={presentation.tone}
+              data-insight-category={String(insight.category ?? "unknown")}
+            >
+              <header class="signal-card-header">
+                <span class="signal-card-category">
+                  <span class="signal-card-icon" aria-hidden="true">
+                    <Icon size={17} />
+                  </span>
+                  <span>{categoryLabel(insight.category)}</span>
+                </span>
                 <strong title="Timeframe for this insight">{insightTimeframeLabel(insight)}</strong>
-              )}
-            </header>
-            {cardContextPills.length > 0 && (
-              <div class="insight-context-strip" aria-label={`${insight.title} context`}>
-                {cardContextPills.map((pill) => (
-                  <span>
-                    {roundReferenceTokens(pill).map((token) =>
+              </header>
+
+              <div class="signal-card-main">
+                {calculation && (
+                  <div class:list={["signal-card-metric-shell", index === 0 && "signal-card-lead-metric"]}>
+                    <dl class="signal-card-metric">
+                      <div>
+                        <dt>{calculationLabel(calculation.name)}</dt>
+                        <dd data-count-up-skip>{calculationValue(calculation)}</dd>
+                      </div>
+                    </dl>
+                    {index === 0 && (
+                      <span
+                        class:list={["signal-card-ticker", !assetTicker && "signal-card-ticker-fallback"]}
+                        aria-label={assetTicker ? `Asset ticker ${assetTicker}` : undefined}
+                      >
+                        {assetTicker || categoryLabel(insight.category)}
+                      </span>
+                    )}
+                  </div>
+                )}
+                <div class="signal-card-copy">
+                  <h3>{insight.title}</h3>
+                  <p>
+                    {roundReferenceTokens(insight.summary).map((token) =>
                       token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
                     )}
-                  </span>
-                ))}
+                  </p>
+                </div>
               </div>
-            )}
-            <h3><a href={insightHref(insight)}>{insight.title}</a></h3>
-            <p>
-              {roundReferenceTokens(insight.summary).map((token) =>
-                token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+
+              <footer class="signal-card-footer">
+                {contextItems.length > 0 && (
+                  <span class="signal-card-context">
+                    {contextItems.map((item, itemIndex) => (
+                      <>
+                        <span>
+                          {roundReferenceTokens(item).map((token) =>
+                            token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+                          )}
+                        </span>
+                        {itemIndex < contextItems.length - 1 && <i aria-hidden="true">·</i>}
+                      </>
+                    ))}
+                  </span>
+                )}
+                <a class="signal-card-link" href={insightHref(insight)}>
+                  Read insight
+                  <ArrowRight size={14} aria-hidden="true" />
+                </a>
+              </footer>
+            </article>
+          );
+        })}
+      </div>
+    ) : (
+      <div class:list={["insight-card-grid", compact && "insight-card-grid-compact"]}>
+        {visibleInsights.map((insight) => {
+          const calculationLimit = 3;
+          const calculations: InsightCalculation[] = Array.isArray(insight.calculations)
+            ? insight.calculations.slice(0, calculationLimit)
+            : [];
+          const evidence: InsightLink[] = Array.isArray(insight.evidence) ? insight.evidence.slice(0, 2) : [];
+          const cardContextPills = contextPills(insight).filter((pill) => !sharedContextSet.has(String(pill))).slice(0, 3);
+          const metricCount = Math.max(1, calculations.length);
+          return (
+            <article class:list={["insight-card", `insight-card-metrics-${metricCount}`]} data-metric-count={metricCount}>
+              <header>
+                <span>{categoryLabel(insight.category)}</span>
+                {(!featured || !sharedTimeframe) && (
+                  <strong title="Timeframe for this insight">{insightTimeframeLabel(insight)}</strong>
+                )}
+              </header>
+              {cardContextPills.length > 0 && (
+                <div class="insight-context-strip" aria-label={`${insight.title} context`}>
+                  {cardContextPills.map((pill) => (
+                    <span>
+                      {roundReferenceTokens(pill).map((token) =>
+                        token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+                      )}
+                    </span>
+                  ))}
+                </div>
               )}
-            </p>
-            <p class="insight-definition">{insightDefinition(insight)}</p>
-            <div class="insight-card-meta">
-              {sourcePills(insight).map((pill) => <span>{pill}</span>)}
-            </div>
-            {calculations.length > 0 && (
-              <dl class="insight-calculation-list">
-                {calculations.map((calculation) => (
-                  <div>
-                    <dt>{calculationLabel(calculation.name)}</dt>
-                    <dd>{calculationValue(calculation)}</dd>
-                  </div>
-                ))}
-              </dl>
-            )}
-            <footer class="insight-card-footer">
-              <span>Why it matters</span>
+              <h3><a href={insightHref(insight)}>{insight.title}</a></h3>
               <p>
-                {roundReferenceTokens(insight.why_it_matters).map((token) =>
+                {roundReferenceTokens(insight.summary).map((token) =>
                   token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
                 )}
               </p>
-              <div>
-                <a href={insightHref(insight)}>
-                  Open insight
-                  <ArrowRight size={14} aria-hidden="true" />
-                </a>
-                {!featured && evidence.map((item) => item.href ? <a href={item.href}>{item.label}</a> : <em>{item.label}</em>)}
+              <p class="insight-definition">{insightDefinition(insight)}</p>
+              <div class="insight-card-meta">
+                {sourcePills(insight).map((pill) => <span>{pill}</span>)}
               </div>
-            </footer>
-          </article>
-        );
-      })}
-    </div>
+              {calculations.length > 0 && (
+                <dl class="insight-calculation-list">
+                  {calculations.map((calculation) => (
+                    <div>
+                      <dt>{calculationLabel(calculation.name)}</dt>
+                      <dd>{calculationValue(calculation)}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              <footer class="insight-card-footer">
+                <span>Why it matters</span>
+                <p>
+                  {roundReferenceTokens(insight.why_it_matters).map((token) =>
+                    token.type === "round" ? <a class="round-reference-link" href={token.href}>{token.text}</a> : token.text
+                  )}
+                </p>
+                <div>
+                  <a href={insightHref(insight)}>
+                    Open insight
+                    <ArrowRight size={14} aria-hidden="true" />
+                  </a>
+                  {!featured && evidence.map((item) => item.href ? <a href={item.href}>{item.label}</a> : <em>{item.label}</em>)}
+                </div>
+              </footer>
+            </article>
+          );
+        })}
+      </div>
+    )}
 
-    <div class="home-section-cta" aria-label={`${title} links`}>
-      <a class="home-primary-cta" href={viewAllHref}>
-        {viewAllLabel}
-        <ArrowRight size={16} aria-hidden="true" />
-      </a>
-    </div>
+    {featured && (
+      <div class="signal-briefing-footer-cta" aria-label={`${title} links`}>
+        <a class="signal-briefing-view-all" href={viewAllHref}>
+          {viewAllLabel}
+          <ArrowRight size={16} aria-hidden="true" />
+        </a>
+      </div>
+    )}
+
+    {!featured && (
+      <div class="home-section-cta" aria-label={`${title} links`}>
+        <a class="home-primary-cta" href={viewAllHref}>
+          {viewAllLabel}
+          <ArrowRight size={16} aria-hidden="true" />
+        </a>
+      </div>
+    )}
   </section>
 )}
