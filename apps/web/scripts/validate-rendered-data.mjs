@@ -2125,6 +2125,11 @@ if (latestActiveMonthly) includes(leaderboardsHtml, latestActiveMonthly.round_id
 
 includes(indexHtml, `${apiReadModel.rounds.length} rounds`, "homepage all-rounds link count");
 includes(indexHtml, `same ${currentUniverseOptionCount} assets`, "homepage process asset count");
+includes(
+  indexHtml,
+  '<a href="/methodology"> <span class="view-icon"',
+  "homepage methodology explore link"
+);
 includes(liveHtml, "Current Scoring Calendar", "live dashboard scoring calendar heading");
 includes(liveHtml, `${apiReadModel.rounds.length} official rounds recorded`, "live dashboard scoring calendar total round count");
 excludes(indexHtml, `${apiReadModel.rounds.length}-round record`, "homepage scoring calendar old total-round label");

@@ -32,8 +32,10 @@ if (!existsSync(distDir)) {
 
 const sitemapPath = join(distDir, "sitemap.xml");
 const robotsPath = join(distDir, "robots.txt");
+const redirectsPath = join(distDir, "_redirects");
 const sitemap = readFileSync(sitemapPath, "utf8");
 const robots = readFileSync(robotsPath, "utf8");
+const redirects = readFileSync(redirectsPath, "utf8");
 const changelogSource = readFileSync(changelogSourcePath, "utf8");
 const htmlFiles = walk(distDir).filter((file) => file.endsWith(".html"));
 const titles = new Map();
@@ -47,6 +49,10 @@ const today = new Date().toISOString().slice(0, 10);
 
 if (!robots.includes(`${siteUrl}/sitemap.xml`)) {
   throw new Error("robots.txt does not reference the canonical sitemap URL.");
+}
+
+if (!redirects.split(/\r?\n/).includes("/methodology.html /methodology/ 301")) {
+  throw new Error("legacy methodology redirect is missing.");
 }
 
 for (const url of sitemapUrls) {
