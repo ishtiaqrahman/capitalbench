@@ -1,0 +1,203 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Tech-led drawdown could extend if AI capex concerns broaden.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed 7,316.15, -1.5% on July 29",
+        "spy_return_5s -2.40%",
+        "Up 6.9% YTD"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Ten-year yield above 4.9%",
+      "option_id": "SP500",
+      "reversal_case": "Oversold bounce after 2.4% weekly decline plus strong Apple/Amazon results.",
+      "time_window_catalyst": "Apple and Amazon results July 30; GDP and PCE data"
+    },
+    {
+      "continuation_case": "Defensive rotation persists while megacap tech de-rates.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s +5.23%, prior_16s +2.17%",
+        "max_drawdown_21s -1.11%, 0.18% from 52w high",
+        "quality score 0.584 with top prior active rank"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Tech-led rally with dividend underperformance two consecutive sessions",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Very low recent-pullback rank suggests it is extended short term.",
+      "time_window_catalyst": "Rotation flows through the Aug 5 close"
+    },
+    {
+      "continuation_case": "Steeper curve and solid activity support bank earnings power.",
+      "decision": "selected",
+      "evidence": [
+        "prior_16s active +3.47%, active_5s +3.53%",
+        "10-year yield rose to 4.68%",
+        "drawdown only -2.08%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "HYG falling more than 1% on the week",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Loan survey showing tightening standards or credit deterioration.",
+      "time_window_catalyst": "Senior Loan Officer Opinion Survey Aug 3"
+    },
+    {
+      "continuation_case": "Defensive bid with negative SPY correlation amid elevated uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s +6.67%",
+        "beta_spy -0.11, drawdown -3.74%",
+        "0.61% from 52-week high"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Two-day underperformance versus SPY exceeding 2%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Lowest recent-pullback rank (0.00) implies stretched short-term move.",
+      "time_window_catalyst": "Defensive flows and macro prints through Aug 5"
+    },
+    {
+      "continuation_case": "Geopolitical supply risk keeps crude bid, energy earnings upgraded.",
+      "decision": "selected",
+      "evidence": [
+        "Brent settled $88.09, +7.3%",
+        "prior_16s active +9.62%",
+        "Hormuz access unresolved"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Brent below $80",
+      "option_id": "ENERGY",
+      "reversal_case": "Diplomatic de-escalation would unwind the risk premium quickly.",
+      "time_window_catalyst": "Middle East headlines and weekly inventory data"
+    },
+    {
+      "continuation_case": "Momentum unwind and AI capex doubts can extend.",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_5s -11.69%, return_3s -10.15%",
+        "KLA -10.8%, Nvidia -3.6%",
+        "volatility 48.7%, 24.6% below 52w high"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "SMH reclaiming its 21-day average",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Deeply oversold; a bounce could be violent.",
+      "time_window_catalyst": "Apple/Amazon capex commentary July 30"
+    },
+    {
+      "continuation_case": "Safe-haven demand from conflict and elevated inflation.",
+      "decision": "rejected",
+      "evidence": [
+        "iau_return_5s -2.12%",
+        "25.1% below 52-week high",
+        "prior active +1.99%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Gold breaking below its 21-day range",
+      "option_id": "GOLD",
+      "reversal_case": "Rising 10-year yield at 4.68% and hawkish FOMC dissents pressure gold.",
+      "time_window_catalyst": "June PCE and Q2 GDP July 30"
+    },
+    {
+      "continuation_case": "Stable spreads and carry provide steady low-vol return.",
+      "decision": "rejected",
+      "evidence": [
+        "volatility 2.55%, drawdown -0.80%",
+        "hyg_return_5s -0.35%",
+        "quality score 0.622"
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 0.9,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Spread widening with HYG under -1% weekly",
+      "option_id": "HIGH_YIELD_CREDIT",
+      "reversal_case": "Upside too limited to beat equities in a bounce week.",
+      "time_window_catalyst": "Loan officer survey Aug 3"
+    }
+  ],
+  "confidence": 0.57,
+  "cost_usd": 0.21184499999999998,
+  "expected_alpha_vs_sp500_pct": 0.315,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp mega-cap tech rebound on Apple/Amazon results would reverse the rotation",
+    "Hot Q2 GDP/PCE prints lifting yields and hurting defensives",
+    "Oil reversal if Hormuz risk premium unwinds",
+    "Crowded defensive positioning prone to mean reversion"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Ten-year yield above 4.9% or mega-cap guidance shock",
+      "option_id": "SP500",
+      "rationale": "Benchmark core; SPY already down 2.4% in five sessions, limiting further tail underperformance.",
+      "time_window_catalyst": "Apple/Amazon results July 30, Q2 GDP and PCE"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Sharp tech-led melt-up reversing defensive leadership",
+      "option_id": "DIVIDEND",
+      "rationale": "Defensive quality with strongest prior and recent relative trend, shallow drawdown, near 52-week high.",
+      "time_window_catalyst": "Rotation out of megacap tech through Aug 5 close"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Credit stress signals or curve flattening sharply",
+      "option_id": "FINANCIALS",
+      "rationale": "Persistent positive prior active return, steeper curve (10y up to 4.68%), low drawdown.",
+      "time_window_catalyst": "Senior Loan Officer Survey Aug 3"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Adverse drug-pricing policy headline",
+      "option_id": "HEALTHCARE",
+      "rationale": "Low beta defensive with negative SPY correlation; deep recent-pullback rank implies mean-reversion room.",
+      "time_window_catalyst": "Defensive flows amid elevated uncertainty into Aug 5"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Brent falling back below $80",
+      "option_id": "ENERGY",
+      "rationale": "Brent up 7.3% to $88 with Hormuz risk unresolved; energy has strong prior active return and negative SPY beta.",
+      "time_window_catalyst": "Middle East conflict headlines, weekly inventories"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.615,
+  "portfolio_rationale": "SPY is in a tech-led drawdown while equal-weight, dividend, defensive and energy exposures outperformed sharply; I tilt to those with modest benchmark core.",
+  "provider": "anthropic",
+  "rationale_summary": "Barbell of benchmark plus defensive/value/energy tilts supported by breadth rotation (RSP-SPY +3.8% over 5 sessions), rising oil, and elevated policy uncertainty.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1W",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.21184499999999998,
+    "input_tokens": 27489,
+    "latency_seconds": 44.74853277695365,
+    "output_tokens": 2976,
+    "total_tokens": 30465
+  }
+}

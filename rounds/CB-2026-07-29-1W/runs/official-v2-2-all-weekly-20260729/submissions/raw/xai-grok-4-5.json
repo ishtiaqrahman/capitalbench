@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Oversold bounce after broad decline if data is not hawkish and earnings stabilize sentiment",
+      "decision": "selected",
+      "evidence": [
+        "SPY closed down 1.5% on July 29 with spy_return_5s at -2.40%",
+        "FOMC held rates; June CPI 3.5% y/y and elevated uncertainty noted",
+        "July 30 GDP/PCE and Apple/Amazon earnings scheduled inside window"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Close below recent 21-session lows on weak breadth",
+      "option_id": "SP500",
+      "reversal_case": "Further de-risking if inflation/GDP surprises hot or mega-caps disappoint",
+      "time_window_catalyst": "July 30 advance GDP, PCE, and mega-cap earnings"
+    },
+    {
+      "continuation_case": "Breadth rotation persists as mega-cap concentration remains under pressure",
+      "decision": "selected",
+      "evidence": [
+        "rsp_minus_spy_5s +3.83% and rsp_return_5s +1.42% while SPY negative",
+        "EQUAL_WEIGHT distance_52w_high only -0.90% vs SPY -3.72%",
+        "Majority of stocks fell but equal-weight held up better than cap-weight"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "RSP active return turns sharply negative versus SPY",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Risk-on mega-cap rebound re-concentrates leadership in SPY",
+      "time_window_catalyst": "Post-earnings reaction to AAPL/AMZN and macro prints favoring breadth"
+    },
+    {
+      "continuation_case": "Value leadership continues while growth/tech remains weak after Nvidia/KLA declines",
+      "decision": "selected",
+      "evidence": [
+        "LARGE_VALUE return_3s +0.52% and active_return_5s +3.21%",
+        "prior_16s_active_return +1.10% with shallow max_drawdown_21s -1.31%",
+        "Quality evidence score 0.614 with high shallow-drawdown rank"
+      ],
+      "forecast_base_pct": 0.85,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "IWD loses relative strength and falls through recent support",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth snapback on softer data or strong mega-cap guidance",
+      "time_window_catalyst": "Rates reaction to July 30 data supporting value cyclicals"
+    },
+    {
+      "continuation_case": "Steeper curve and relative strength persist into macro event cluster",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS active_return_5s +3.53% and prior_16s_active_return +3.47%",
+        "Quality evidence score 0.601 with strong prior active rank 0.866",
+        "Ten-year yield rose to 4.68% on decision day"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLF breaks below recent range on widening credit concerns",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit stress or falling yields reverse financial outperformance",
+      "time_window_catalyst": "GDP/PCE and Aug 3 Senior Loan Officer Survey"
+    },
+    {
+      "continuation_case": "Relative resilience and lower US mega-cap beta support continued outperformance",
+      "decision": "selected",
+      "evidence": [
+        "EUROPE active_return_5s +2.14% and return_3s +0.51%",
+        "Quality evidence score 0.628; distance_52w_high -1.23%",
+        "ECB held rates; euro-area inflation 2.8%"
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": -1.6,
+      "invalidation_condition": "VGK underperforms SPY by wide margin on risk-off flows",
+      "option_id": "EUROPE",
+      "reversal_case": "USD spike or weak euro-area inflation/growth surprise hits region",
+      "time_window_catalyst": "Euro-area July flash inflation on July 31"
+    },
+    {
+      "continuation_case": "Oversold bounce if mega-cap earnings beat and rates ease",
+      "decision": "rejected",
+      "evidence": [
+        "TECHNOLOGY return_3s -5.29% and active_return_5s -5.20%",
+        "Nvidia -3.6% and KLA -10.8%; Nasdaq 9.8% below prior-month record",
+        "High volatility_21s 29.46% and distance_52w_high -15.86%"
+      ],
+      "forecast_base_pct": -0.4,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Stabilization above recent lows with positive active returns",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Further multiple compression if data keeps policy tight",
+      "time_window_catalyst": "Apple/Amazon results and any semis follow-through"
+    },
+    {
+      "continuation_case": "Mean-reversion bounce after extreme underperformance",
+      "decision": "rejected",
+      "evidence": [
+        "SEMICONDUCTORS return_3s -10.15% and active_return_5s -11.69%",
+        "volatility_21s 48.70% and max_drawdown_21s -23.12%",
+        "volume_zscore_5v60 elevated at 2.453 on the selloff"
+      ],
+      "forecast_base_pct": -0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "SMH reclaims multi-day losses with falling volatility",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Continued de-rating on demand or geopolitical supply-chain fears",
+      "time_window_catalyst": "Mega-cap tech earnings spillover into chip complex"
+    },
+    {
+      "continuation_case": "Geopolitical premium sustains energy complex",
+      "decision": "rejected",
+      "evidence": [
+        "ENERGY prior_16s_active_return +9.62% and quality score 0.691",
+        "Brent at $88.09 up 7.3%; Hormuz access unresolved",
+        "Recent return_3s -1.63% shows near-term pullback"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Crude breaks lower sharply with XLE losing active strength",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation or demand scare cuts oil prices quickly",
+      "time_window_catalyst": "Middle East headlines and oil price path before Aug 5"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.5,
+  "is_official_score": true,
+  "key_risks": [
+    "Stronger-than-expected GDP/PCE or hawkish interpretation could pressure equities broadly",
+    "Mega-cap earnings bounce could reverse equal-weight and value leadership",
+    "Middle East/oil volatility spillover into risk assets",
+    "Sudden USD strength hurting Europe allocation"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "RSP underperforms SPY sharply or breadth collapses on risk-off data",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Equal-weight has outperformed cap-weight recently with positive active returns and shallower drawdown amid mega-cap weakness.",
+      "time_window_catalyst": "July 30 GDP/PCE and mega-cap earnings (AAPL/AMZN) that could extend breadth rotation"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.85,
+      "invalidation_condition": "Sharp rebound in mega-cap growth that reverses value outperformance",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value showed positive 3-session and active returns with low distance to highs while growth/tech sold off.",
+      "time_window_catalyst": "Post-FOMC rate path and July 30 macro prints favoring value cyclicals over growth"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Financials reverse lower on credit or rate shock",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong prior active trend, positive recent returns, and quality score support continuation versus weak tech.",
+      "time_window_catalyst": "Yield curve moves after GDP/PCE and any loan-officer survey signals Aug 3"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "Europe underperforms on stronger USD or weak regional data",
+      "option_id": "EUROPE",
+      "rationale": "Positive active returns, solid quality evidence, and relative resilience versus US mega-cap drawdown.",
+      "time_window_catalyst": "Euro-area flash inflation July 31 and relative US data reaction"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Sustained break below recent lows on weak data",
+      "option_id": "SP500",
+      "rationale": "Core benchmark ballast given elevated event risk and uncertain one-week direction after the selloff.",
+      "time_window_catalyst": "July 30 GDP/PCE and mega-cap earnings"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.8,
+  "portfolio_rationale": "SPY base case is modest after a sharp down day into heavy macro and earnings catalysts. Portfolio tilts to equal-weight, value, financials, and Europe, all with higher base forecasts than SPY, to capture ongoing breadth/value rotation while keeping cluster exposures under the 50% cap.",
+  "provider": "xai",
+  "rationale_summary": "Favor relative-strength value and equal-weight exposures over beaten-up growth/tech for the one-week window. Maintain a small SPY anchor for event risk around GDP, PCE, and mega-cap results.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16312,
+    "latency_seconds": 35.17808718490414,
+    "output_tokens": 2743,
+    "reasoning_tokens": 16,
+    "total_tokens": 19071
+  }
+}

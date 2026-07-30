@@ -1,0 +1,195 @@
+{
+  "benchmark_expected_return_pct": 0.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Apple/Amazon earnings beat and benign PCE could stabilize the index",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 fell 1.5% on July 29; Nasdaq 9.8% below prior-month record",
+        "FOMC held rates 9-3 with three hawkish dissents; 10y yield rose to 4.68%",
+        "spy_return_5s -2.40% while rsp_minus_spy_5s +3.83% shows mega-cap-driven weakness"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Strong mega-cap earnings reaction lifting SPY sharply",
+      "option_id": "SP500",
+      "reversal_case": "Concentrated mega-cap weakness continues, dragging cap-weighted index below equal-weight and defensives",
+      "time_window_catalyst": "Apple/Amazon results Jul 30, PCE and GDP Jul 30"
+    },
+    {
+      "continuation_case": "Rotation from expensive growth into value persists amid hawkish Fed tilt and rising long yields",
+      "decision": "selected",
+      "evidence": [
+        "+3.21% 5-session active return with only -1.00% from 52-week high",
+        "Low 9.95% volatility and 0.665 beta; positive prior active trend +1.10%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sharp tech-led rally with value underperforming SPY for consecutive sessions",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth snapback after mega-cap earnings drains value flows",
+      "time_window_catalyst": "Macro data week Jul 30-Aug 4 sustaining value rotation"
+    },
+    {
+      "continuation_case": "Risk-off environment sustains defensive demand",
+      "decision": "selected",
+      "evidence": [
+        "+5.93% 5-session active return, beta -0.32 to SPY",
+        "Consumer confidence fell to 90.8; breadth negative with 33% positive asset share"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "SPY rallies >2% on earnings/data, reversing defensive rotation",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Risk-on rally reverses defensive bid; staples already extended after strong week",
+      "time_window_catalyst": "Data-heavy week with elevated uncertainty through Aug 5"
+    },
+    {
+      "continuation_case": "Defensive rotation continues amid tech drawdown and policy uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "+6.67% 5-session active return, beta -0.11, only -0.61% from 52-week high",
+        "Recent pullback rank 0.000 indicates strongest recent relative move in universe"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Broad risk-on rally with healthcare lagging SPY",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Mean reversion after strong week; risk-on shift",
+      "time_window_catalyst": "Macro uncertainty through Aug 5 supporting defensives"
+    },
+    {
+      "continuation_case": "Geopolitical supply risk premium persists or escalates",
+      "decision": "selected",
+      "evidence": [
+        "Brent settled at $88.09, up 7.3%; Strait of Hormuz access unresolved",
+        "Prior 16-session active return +9.62%; beta -0.715 to SPY"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Ceasefire or Hormuz reopening sending Brent below $82",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation collapses oil premium; XLE gives back gains",
+      "time_window_catalyst": "Ongoing Middle East conflict and Hormuz tanker risk through Aug 5"
+    },
+    {
+      "continuation_case": "Safe-haven demand rises on geopolitical escalation and equity stress",
+      "decision": "selected",
+      "evidence": [
+        "Middle East conflict cited by FOMC as elevating outlook uncertainty",
+        "Prior active return +1.99% with recent -2.12% pullback offering entry"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Real yields spike further with risk sentiment improving",
+      "option_id": "GOLD",
+      "reversal_case": "Higher 10y yields (4.68%) and dollar firmness pressure gold",
+      "time_window_catalyst": "Geopolitical headlines and PCE/GDP data through Aug 5"
+    },
+    {
+      "continuation_case": "Apple/Amazon beats could spark a bounce",
+      "decision": "rejected",
+      "evidence": [
+        "-3.78% 5-session active return, -11.22% from 52-week high, 21.5% volatility",
+        "Nvidia -3.6%, KLA -10.8%; Meta costs up 55% with net income down 14%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Strong earnings reactions stabilizing mega-cap tech",
+      "option_id": "NASDAQ100",
+      "reversal_case": "AI capex concerns and hawkish Fed keep pressuring growth multiples",
+      "time_window_catalyst": "Apple and Amazon earnings after close Jul 30"
+    },
+    {
+      "continuation_case": "Defensive dividend demand persists in risk-off tape",
+      "decision": "rejected",
+      "evidence": [
+        "+5.23% 5-session active return, near 52-week high, beta 0.14"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Risk-on rotation back into growth",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Already extended; lowest recent pullback rank suggests reversion risk; cluster overlap with LARGE_VALUE would breach 50% cap",
+      "time_window_catalyst": "Macro data week through Aug 5"
+    }
+  ],
+  "confidence": 0.66,
+  "cost_usd": 0.46848999999999996,
+  "expected_alpha_vs_sp500_pct": 0.87,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp mega-cap tech rebound after Apple/Amazon earnings would lift SPY above defensive sectors",
+    "Middle East de-escalation could reverse energy and gold gains quickly",
+    "Hot PCE/ECI prints could push yields higher, pressuring all equity holdings",
+    "Defensive sectors have already run 5-7% active in a week and may mean-revert"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Sharp rebound in mega-cap tech after Apple/Amazon earnings pulling flows back to growth",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value leading in the tech-driven selloff with low volatility, shallow drawdown, and positive prior active trend; defensive tilt fits hawkish FOMC dissent and rising 10y yields.",
+      "time_window_catalyst": "Q2 GDP, PCE (Jul 30), ECI (Jul 31), SLOOS (Aug 3) favoring rotation from growth to value"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Broad risk-on rally lifting growth sectors and reversing defensive flows",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Negative beta to SPY (-0.32), +5.93% active over 5 sessions, defensive shelter with consumer confidence declining and market breadth deteriorating.",
+      "time_window_catalyst": "Continued risk-off through data-heavy week ending Aug 5"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Risk-on reversal or sector-specific policy news pressuring healthcare",
+      "option_id": "HEALTHCARE",
+      "rationale": "Near-zero beta, +6.67% 5-session active return, near 52-week high, and deepest recent relative pullback rank suggesting favorable defensive positioning.",
+      "time_window_catalyst": "Defensive rotation persisting through macro data week"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "De-escalation announcement or ceasefire dropping Brent back below ~$82",
+      "option_id": "ENERGY",
+      "rationale": "Brent up 7.3% to $88 on unresolved Strait of Hormuz risk; XLE negative beta, strong prior active trend (+9.62%), geopolitical premium likely persists over the week.",
+      "time_window_catalyst": "Middle East conflict and Hormuz tanker access unresolved through Aug 5"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Sharp rise in real yields or dollar strength alongside geopolitical de-escalation",
+      "option_id": "GOLD",
+      "rationale": "Safe-haven demand amid Middle East conflict and elevated policy uncertainty; positive prior active trend with a recent modest pullback entry point.",
+      "time_window_catalyst": "Geopolitical risk and FOMC hawkish-dissent uncertainty into Aug 5"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.87,
+  "portfolio_rationale": "Hawkish FOMC dissent, rising 10-year yields, a 9.8% Nasdaq drawdown from highs, and unresolved Middle East risk favor defensive value, staples, healthcare, energy, and gold over cap-weighted SPY, whose mega-cap growth exposure is under pressure.",
+  "provider": "anthropic",
+  "rationale_summary": "Defensive rotation portfolio: value, staples, healthcare, energy, and gold to exploit ongoing breadth divergence (RSP-SPY +3.83% over 5 sessions) and geopolitical oil/gold support while avoiding stressed growth exposure.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1W",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.46848999999999996,
+    "input_tokens": 27489,
+    "latency_seconds": 46.80355584714562,
+    "output_tokens": 3872,
+    "total_tokens": 31361
+  }
+}

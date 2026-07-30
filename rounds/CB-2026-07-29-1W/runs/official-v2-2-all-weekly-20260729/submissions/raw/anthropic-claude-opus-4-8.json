@@ -1,0 +1,191 @@
+{
+  "benchmark_expected_return_pct": 0.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Rebound after oversold selloff",
+      "decision": "selected",
+      "evidence": [
+        "SPY closed -1.5% July 29",
+        "spy_return_5s -2.40%",
+        "-3.72% from 52w high"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Break below recent lows on weak data",
+      "option_id": "SP500",
+      "reversal_case": "Continued tech-led decline",
+      "time_window_catalyst": "GDP/PCE July 30, jobs"
+    },
+    {
+      "continuation_case": "Defensive value rotation persists amid tech weakness",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s +3.21%",
+        "beta 0.665",
+        "max_drawdown -1.31%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Tech mega-cap rally reverses rotation",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth stocks rebound leading value underperformance",
+      "time_window_catalyst": "Macro data week favors defensives"
+    },
+    {
+      "continuation_case": "Low-correlation defensive bid continues",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s +6.67%",
+        "beta -0.111",
+        "shallow drawdown -3.74%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Broad cyclical rally",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rally hurts defensives",
+      "time_window_catalyst": "Defensive flows in macro week"
+    },
+    {
+      "continuation_case": "Defensive hedge amid equity weakness",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s +5.93%",
+        "beta -0.322",
+        "shallow drawdown -3.03%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Strong risk-on rally",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Sharp equity rebound reverses defensive bid",
+      "time_window_catalyst": "Macro data uncertainty"
+    },
+    {
+      "continuation_case": "Tech weakness continues",
+      "decision": "rejected",
+      "evidence": [
+        "return_3s -3.29%",
+        "-11.22% from high",
+        "beta 1.689"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Sharp tech recovery",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Oversold bounce in mega-caps",
+      "time_window_catalyst": "Apple/Amazon earnings July 30"
+    },
+    {
+      "continuation_case": "Defensive dividend bid persists",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_5s +5.23%",
+        "beta 0.141",
+        "shallow drawdown -1.11%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Risk-on rotation",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Rate-driven rotation out of dividend names",
+      "time_window_catalyst": "Macro week"
+    },
+    {
+      "continuation_case": "Geopolitical oil premium persists",
+      "decision": "rejected",
+      "evidence": [
+        "Brent +7.3% to $88.09",
+        "prior 16s active +9.62%",
+        "Hormuz risk unresolved"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Oil declines sharply",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil pullback -1.63% return_3s",
+      "time_window_catalyst": "Middle East conflict"
+    },
+    {
+      "continuation_case": "Safe-haven bid amid uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "safe-haven demand",
+        "return_5s -2.12%",
+        "-25.14% from high"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Strong dollar and rising real rates",
+      "option_id": "GOLD",
+      "reversal_case": "Rising 10yr yields pressure gold",
+      "time_window_catalyst": "Macro data, geopolitics"
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 0.455,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp tech rebound reverses defensive rotation",
+    "Strong GDP/PCE prints trigger broad risk-on rally",
+    "Middle East escalation spikes volatility across all equities"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Tech mega-caps rebound sharply reversing value rotation",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value outperformed sharply in recent selloff with low beta and shallow drawdown; defensive rotation continues amid tech weakness.",
+      "time_window_catalyst": "GDP/PCE July 30 and jobs data support defensive rotation"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Broad risk-on rally lifts cyclicals over defensives",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong defensive rotation beneficiary, +6.67% active 5s, low SPY correlation, shallow drawdown.",
+      "time_window_catalyst": "Defensive flows amid uncertain GDP/PCE prints"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Sharp equity rebound reverses defensive bid",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Strong defensive move +5.93% active 5s, negative beta, shallow drawdown; hedge against continued equity weakness.",
+      "time_window_catalyst": "Defensive positioning into macro data week"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.1,
+      "invalidation_condition": "Broad equity selloff continues",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure to limit tracking error.",
+      "time_window_catalyst": "GDP/PCE July 30, jobs data"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.555,
+  "portfolio_rationale": "After a broad -1.5% selloff with tech leading declines, defensive factors (value, healthcare, staples) showed strong positive active returns with low beta and shallow drawdowns, positioning them to outperform in a continued risk-off or choppy week around GDP/PCE data.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt to defensive equity leaders that resisted the selloff while keeping SP500 core exposure.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27495,
+    "latency_seconds": 35.84437903901562,
+    "output_tokens": 2422,
+    "total_tokens": 29917
+  }
+}

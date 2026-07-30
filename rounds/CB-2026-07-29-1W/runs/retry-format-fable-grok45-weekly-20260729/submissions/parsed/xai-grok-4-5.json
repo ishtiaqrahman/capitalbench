@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Soft data or earnings misses extend the post-FOMC weakness into the week",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.5% on July 29 at 7316.15",
+        "spy_return_5s -2.40% and majority of US stocks fell",
+        "FOMC held rates with elevated uncertainty cited"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Sustained close above pre-selloff levels on strong data",
+      "option_id": "SP500",
+      "reversal_case": "Bounce if July 30 GDP/PCE and mega-cap earnings stabilize sentiment",
+      "time_window_catalyst": "July 30 advance GDP, PCE and Apple/Amazon results"
+    },
+    {
+      "continuation_case": "Geopolitical premium and oil strength persist through the scoring window",
+      "decision": "selected",
+      "evidence": [
+        "October Brent settled at 88.09 up 7.3%",
+        "prior_16s_active_return 9.62% and quality evidence score 0.691",
+        "Strait of Hormuz access and Middle East conflict unresolved"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Brent decline erasing recent gains or XLE break of recent lows",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation or demand concerns reverse the energy bid",
+      "time_window_catalyst": "Middle East developments and any inventory/supply headlines before August 5"
+    },
+    {
+      "continuation_case": "Commodity complex leadership and quality factors support relative gains",
+      "decision": "selected",
+      "evidence": [
+        "quality evidence score 0.787 highest in table",
+        "prior_16s_active_return 5.62%",
+        "return_3s -2.66% offers pullback context"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "DBA break below recent range on broad commodity liquidation",
+      "option_id": "AGRICULTURE",
+      "reversal_case": "Risk-off or dollar strength hits non-energy commodities",
+      "time_window_catalyst": "Commodity price action and any crop/weather data into August 5"
+    },
+    {
+      "continuation_case": "Commodity tailwinds and prior active trend continue",
+      "decision": "selected",
+      "evidence": [
+        "quality evidence score 0.747",
+        "prior_16s_active_return 5.13%",
+        "commodity-sensitive EM exposure amid oil strength"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "EWZ underperformance versus EM peers or sharp commodity drop",
+      "option_id": "BRAZIL",
+      "reversal_case": "EM outflows or commodity reversal on stronger USD",
+      "time_window_catalyst": "US data reaction and commodity follow-through July 30-August 5"
+    },
+    {
+      "continuation_case": "Haven demand and policy uncertainty sustain bid",
+      "decision": "selected",
+      "evidence": [
+        "quality evidence score 0.668",
+        "prior_16s_active_return 1.99%",
+        "FOMC noted elevated uncertainty partly from Middle East conflict"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "IAU decline with rising yields or strong equity recovery",
+      "option_id": "GOLD",
+      "reversal_case": "Risk-on equity rebound or rising real yields pressure gold",
+      "time_window_catalyst": "Safe-haven flows around July 30 data and geopolitics"
+    },
+    {
+      "continuation_case": "Breadth recovery and equal-weight leadership persist after mega-cap selloff",
+      "decision": "selected",
+      "evidence": [
+        "rsp_minus_spy_5s +3.83% and rsp_return_5s +1.42%",
+        "distance_52w_high only -0.90%",
+        "positive breadth contrast to cap-weighted weakness"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "RSP lagging SPY on renewed mega-cap outperformance",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Return of concentration in large-growth names",
+      "time_window_catalyst": "Post-data rotation and earnings breadth through August 5"
+    },
+    {
+      "continuation_case": "Risk appetite and prior trend extend crypto gains",
+      "decision": "rejected",
+      "evidence": [
+        "quality evidence score 0.732",
+        "prior_16s_active_return 8.38%",
+        "high volatility_21s 31.78%"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "IBIT break of recent support on broader risk reduction",
+      "option_id": "BITCOIN_ETF",
+      "reversal_case": "Equity risk-off or liquidity squeeze hits high-beta crypto",
+      "time_window_catalyst": "Risk sentiment around July 30 data and weekend flows"
+    },
+    {
+      "continuation_case": "Value/financial leadership continues after growth selloff",
+      "decision": "rejected",
+      "evidence": [
+        "quality evidence score 0.601",
+        "prior_16s_active_return 3.47%",
+        "active_return_5s +3.53%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLF underperformance on weaker loan or growth signals",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield-curve or credit concerns reverse financials",
+      "time_window_catalyst": "August 3 SLOOS and rate-path reaction to data"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.795,
+  "is_official_score": true,
+  "key_risks": [
+    "Further equity selloff on soft GDP/PCE or weak Apple/Amazon results dragging cyclicals and EM",
+    "Sudden Middle East de-escalation removing energy premium",
+    "Dollar strength or real-yield rise pressuring gold and commodities",
+    "High volatility in oil and EM reversing recent relative strength"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Sharp drop in Brent or resolution signals removing risk premium before exit close",
+      "option_id": "ENERGY",
+      "rationale": "Geopolitical premium and prior active strength support higher base return than SPY over the short window.",
+      "time_window_catalyst": "Unresolved Middle East conflict and Strait of Hormuz tanker access into August 5 close"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Broad risk-off liquidation or dollar spike reversing commodity bids",
+      "option_id": "AGRICULTURE",
+      "rationale": "Highest quality evidence score and positive prior active trend favor outperformance versus cap-weighted SPY.",
+      "time_window_catalyst": "Commodity price follow-through and any weather/inventory headlines before August 5"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "EM risk-off or commodity reversal exceeding recent drawdown levels",
+      "option_id": "BRAZIL",
+      "rationale": "Strong quality score and commodity-linked prior active return exceed SPY base case.",
+      "time_window_catalyst": "Commodity complex stability and EM flow reaction to US data July 30-August 4"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Real-yield spike or strong risk-on equity rebound reducing haven demand",
+      "option_id": "GOLD",
+      "rationale": "Elevated policy uncertainty and quality rank support defensive bid above SPY base.",
+      "time_window_catalyst": "Safe-haven demand around July 30 GDP/PCE and Middle East headlines"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Renewed mega-cap leadership or equal-weight underperformance on risk-off",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Recent breadth outperformance versus SPY and lower concentration risk lift base forecast.",
+      "time_window_catalyst": "Post-selloff rotation and July 30-August 5 macro/earnings breadth reaction"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.295,
+  "portfolio_rationale": "Portfolio tilts to energy, agriculture, Brazil, gold and equal-weight US exposure whose base forecasts exceed SPY after the July 29 selloff, while respecting the 50% cluster cap. Seeks short-horizon alpha from geopolitics, commodity trends and breadth without pure tech concentration.",
+  "provider": "xai",
+  "rationale_summary": "SPY base is modest after the 1.5% drop and elevated uncertainty; selected holdings clear the active hurdle via quality scores, prior active returns and catalysts inside the window. Allocations stay diversified across five clusters under the cap.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16312,
+    "latency_seconds": 48.611385697033256,
+    "output_tokens": 2520,
+    "reasoning_tokens": 957,
+    "total_tokens": 19789
+  }
+}

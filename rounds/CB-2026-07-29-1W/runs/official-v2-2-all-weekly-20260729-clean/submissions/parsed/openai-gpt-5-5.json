@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "A short-term rebound is possible after the recent selloff if macro data and large-cap earnings calm risk appetite.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.5% on July 29 and was 3.72% below its 52-week high.",
+        "SPY return_3s was -1.28% and return_5s was -2.40%.",
+        "Scheduled GDP, PCE, jobless claims, ECI, and JOLTS arrive before the August 5 close."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.6,
+      "invalidation_condition": "SPY fails to hold recent lows while breadth remains negative and technology continues to lead down.",
+      "option_id": "SP500",
+      "reversal_case": "Mega-cap technology weakness, elevated inflation uncertainty, and weak breadth could extend the decline.",
+      "time_window_catalyst": "July 30 GDP/PCE/jobless claims and Apple/Amazon results, followed by ECI, SLOOS, trade, JOLTS, and manufacturers' orders."
+    },
+    {
+      "continuation_case": "Positive prior active trend, high pullback and quality ranks, and low SPY correlation support continued relative strength.",
+      "decision": "selected",
+      "evidence": [
+        "Agriculture had the highest quality evidence score at 0.787.",
+        "Prior 16-session active return was 5.62% with low 63-session SPY correlation of 0.091.",
+        "Volatility_21s was 16.59% and max_drawdown_21s was -2.66%."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Agriculture breaks below its recent 21-day drawdown area or commodity/inflation data sharply undermines the prior active trend.",
+      "option_id": "AGRICULTURE",
+      "reversal_case": "Recent 3-session weakness of -2.66% could extend if commodities mean-revert or inflation-sensitive trades fade.",
+      "time_window_catalyst": "June PCE, GDP, trade data, and continued commodity/inflation sensitivity before the August 5 close."
+    },
+    {
+      "continuation_case": "Strong prior active trend and high quality score may persist if industrial demand sentiment holds up.",
+      "decision": "selected",
+      "evidence": [
+        "Copper quality evidence score was 0.721 with prior active rank of 0.881 and recent pullback rank of 0.731.",
+        "Prior 16-session active return was 4.56%.",
+        "China reported second-quarter real GDP growth of 4.3% year over year and 0.9% quarter over quarter."
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "Copper loses recent relative strength versus SPY or macro releases point to materially weaker industrial demand.",
+      "option_id": "COPPER",
+      "reversal_case": "Copper's growth sensitivity could hurt if U.S. or global macro data disappoints before exit.",
+      "time_window_catalyst": "Advance U.S. GDP, June PCE, trade data, and China-linked global growth sentiment through August 5."
+    },
+    {
+      "continuation_case": "Geopolitical oil risk and strong prior relative trend support near-term continuation in energy equities.",
+      "decision": "selected",
+      "evidence": [
+        "Energy had quality evidence score of 0.691 and prior active rank of 0.955.",
+        "Energy prior 16-session active return was 9.62%.",
+        "October Brent crude settled at $88.09 per barrel, up 7.3%, while Strait of Hormuz tanker access and the Middle East conflict remained unresolved."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Brent crude reverses sharply or conflict-risk premium fades, invalidating the energy continuation case.",
+      "option_id": "ENERGY",
+      "reversal_case": "Energy could reverse if crude gives back the conflict premium or equity risk-off pressure overwhelms oil sensitivity.",
+      "time_window_catalyst": "Unresolved Strait of Hormuz tanker access and Middle East conflict, plus weekly macro/inventory-sensitive oil sentiment before exit."
+    },
+    {
+      "continuation_case": "Recent and prior relative strength can continue if solid activity, a steeper curve, and benign credit conditions persist.",
+      "decision": "selected",
+      "evidence": [
+        "Financials had prior active rank of 0.866 and quality evidence score of 0.601.",
+        "Financials active_return_5s was 3.53% and prior_16s_active_return was 3.47%.",
+        "The two-year Treasury yield ended at 4.24%, while the ten-year yield rose to 4.68%."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 1.9,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Rates flatten materially, credit conditions deteriorate, or the loan survey points to clear tightening stress.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Financials could lag if labor or loan data imply rising credit stress or if rates move against net-interest-margin expectations.",
+      "time_window_catalyst": "July 30 GDP/PCE, July 31 Employment Cost Index, and August 3 Senior Loan Officer Opinion Survey."
+    },
+    {
+      "continuation_case": "Defensive rotation may persist if broad market breadth remains weak and technology stays under pressure.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare active_return_5s was 6.67% and return_3s was 2.26%.",
+        "Healthcare distance_52w_high was only -0.61%.",
+        "Healthcare had negative 63-session SPY correlation of -0.080 and beta of -0.111."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 1.7,
+      "forecast_low_pct": -1.1,
+      "invalidation_condition": "Healthcare's recent active rebound fails and the sector underperforms SPY on risk-on rotation into growth.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Its quality evidence score was low at 0.305, so the recent bounce may be overextended without new sector-specific support.",
+      "time_window_catalyst": "Rotation after broad U.S. equity weakness and upcoming macro data that could favor defensive sectors."
+    },
+    {
+      "continuation_case": "Cash-like stability should continue if rates remain anchored and risk assets stay volatile.",
+      "decision": "rejected",
+      "evidence": [
+        "Short Treasury volatility_21s was 0.23% with max_drawdown_21s of -0.01%.",
+        "Quality evidence score was 0.608 with low-volatility and shallow-drawdown ranks both 1.000.",
+        "FOMC maintained the federal-funds target range at 3.50% to 3.75%."
+      ],
+      "forecast_base_pct": 0.08,
+      "forecast_high_pct": 0.12,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "A broad equity rebound lifts SPY materially while short Treasury returns remain near zero.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Low expected price movement makes it unlikely to beat SPY if equities rebound from the recent selloff.",
+      "time_window_catalyst": "None identified beyond short-rate carry and macro data affecting risk appetite."
+    },
+    {
+      "continuation_case": "A strong short-term software bounce could persist if Microsoft cloud results support sentiment toward software and AI-related spending.",
+      "decision": "rejected",
+      "evidence": [
+        "Software return_3s was 4.99% and active_return_5s was 6.16%.",
+        "Software quality evidence score was low at 0.242.",
+        "Technology and growth exposures showed broad weakness, with Nasdaq down 1.7% on July 29 and 9.8% below its prior-month record."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "Software fails to hold its recent rebound while broader technology and Nasdaq weakness resumes.",
+      "option_id": "SOFTWARE",
+      "reversal_case": "Low quality score, broader technology weakness, and high 21-session volatility of 25.25% make reversal risk high.",
+      "time_window_catalyst": "Apple and Amazon results, follow-through from Microsoft cloud results, and macro data affecting growth-stock sentiment."
+    }
+  ],
+  "confidence": 0.57,
+  "expected_alpha_vs_sp500_pct": 0.47,
+  "is_official_score": true,
+  "key_risks": [
+    "Scheduled GDP, PCE, labor-cost, and loan-officer data could trigger a broad equity or rates reversal unfavorable to selected sectors.",
+    "Commodity exposures may reverse quickly if Middle East risk premium fades or global growth expectations weaken.",
+    "A sharp rebound in mega-cap technology would likely help SPY more than this portfolio and reduce alpha.",
+    "Financials could lag if long yields fall, credit concerns rise, or the loan survey signals tighter lending conditions."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Agriculture breaks below its recent 21-day drawdown area or commodity/inflation data sharply undermines the prior active trend.",
+      "option_id": "AGRICULTURE",
+      "rationale": "Highest quality evidence score with positive prior active trend, comparatively moderate volatility, and low SPY correlation offers diversification for a one-week window.",
+      "time_window_catalyst": "June PCE, GDP, trade data, and continued commodity/inflation sensitivity before the August 5 close."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "Copper loses recent relative strength versus SPY or macro releases point to materially weaker industrial demand.",
+      "option_id": "COPPER",
+      "rationale": "Positive prior active return and high quality evidence score support continuation, while China GDP growth and upcoming macro data provide near-term catalysts.",
+      "time_window_catalyst": "Advance U.S. GDP, June PCE, trade data, and China-linked global growth sentiment through August 5."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Brent crude reverses sharply or conflict-risk premium fades, invalidating the energy continuation case.",
+      "option_id": "ENERGY",
+      "rationale": "Energy has strong prior active return and high quality evidence, with unresolved Middle East conflict and elevated Brent crude as a direct one-week catalyst.",
+      "time_window_catalyst": "Unresolved Strait of Hormuz tanker access and Middle East conflict, plus weekly macro/inventory-sensitive oil sentiment before exit."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Rates flatten materially, credit conditions deteriorate, or the loan survey points to clear tightening stress.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials show positive 5-day and prior active returns, high prior active rank, and benefit if solid activity and a steeper yield curve persist.",
+      "time_window_catalyst": "July 30 GDP/PCE, July 31 Employment Cost Index, and August 3 Senior Loan Officer Opinion Survey."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "Healthcare's recent active rebound fails and the sector underperforms SPY on risk-on rotation into growth.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare recently outperformed SPY and sits close to its 52-week high, providing defensive equity exposure if mega-cap technology weakness continues.",
+      "time_window_catalyst": "Rotation after broad U.S. equity weakness and upcoming macro data that could favor defensive sectors."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.72,
+  "portfolio_rationale": "The portfolio avoids concentrated mega-cap technology weakness and favors commodity-linked, energy, financial, and defensive healthcare exposures with near-term catalysts. Non-SPY cluster exposure respects the 50% cap, with non-energy commodities capped at 50% and energy at 20%.",
+  "provider": "openai",
+  "rationale_summary": "SPY has mild rebound potential after a weak close, but several active exposures have stronger one-week base forecasts based on supplied quality, relative strength, and catalysts. The allocation targets diversified alpha versus SPY rather than a single momentum bet.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15230,
+    "latency_seconds": 58.60793678788468,
+    "output_tokens": 2801,
+    "reasoning_tokens": 296,
+    "total_tokens": 18031
+  }
+}

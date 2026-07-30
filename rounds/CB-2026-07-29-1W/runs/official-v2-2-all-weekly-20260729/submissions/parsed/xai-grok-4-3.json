@@ -1,0 +1,170 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad equity weakness persists into GDP release",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.5% on July 29",
+        "FOMC maintained rates amid elevated uncertainty"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Sustained rise in 10y yield above 4.8%",
+      "option_id": "SP500",
+      "reversal_case": "Positive GDP and PCE surprise lifts equities",
+      "time_window_catalyst": "July 30 GDP and PCE releases"
+    },
+    {
+      "continuation_case": "Value outperformance continues on rate stability",
+      "decision": "selected",
+      "evidence": [
+        "LARGE_VALUE active return 3.21% over 5s",
+        "Prior active rank 0.761"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Sustained rise in 10y yield above 4.8%",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth rebound compresses value premium",
+      "time_window_catalyst": "July 30 GDP and PCE releases"
+    },
+    {
+      "continuation_case": "Defensive dividend exposure holds through macro prints",
+      "decision": "selected",
+      "evidence": [
+        "DIVIDEND active return 5.23% over 5s",
+        "Prior active rank 0.836"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -0.6,
+      "invalidation_condition": "Sustained rise in 10y yield above 4.8%",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Risk-on rotation favors growth over dividends",
+      "time_window_catalyst": "July 30 GDP and PCE releases"
+    },
+    {
+      "continuation_case": "Healthcare defensiveness supports relative gains",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE active return 6.67% over 5s",
+        "Low correlation to SPY at -0.080"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.3,
+      "forecast_low_pct": -0.7,
+      "invalidation_condition": "Sustained rise in 10y yield above 4.8%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Sector-specific regulatory or earnings disappointment",
+      "time_window_catalyst": "July 30 GDP and PCE releases"
+    },
+    {
+      "continuation_case": "Financials benefit from stable policy outlook",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS active return 3.53% over 5s",
+        "Prior active rank 0.866"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "Sustained rise in 10y yield above 4.8%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit spread widening on growth concerns",
+      "time_window_catalyst": "July 30 GDP and PCE releases"
+    },
+    {
+      "continuation_case": "Geopolitical support for energy prices holds",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude at $88.09 up 7.3%",
+        "ENERGY prior active rank 0.955"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Sustained rise in 10y yield above 4.8%",
+      "option_id": "ENERGY",
+      "reversal_case": "Resolution of Middle East tensions eases oil",
+      "time_window_catalyst": "July 30 GDP and PCE releases"
+    },
+    {
+      "continuation_case": "Safe-haven demand persists amid uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "GOLD prior active rank 0.821",
+        "June CPI and PPI data released"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Sustained rise in 10y yield above 4.8%",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger growth data reduces gold appeal",
+      "time_window_catalyst": "July 30 GDP and PCE releases"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 0.95,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC dissent signals potential policy volatility",
+    "Middle East conflict escalation affecting energy and risk assets",
+    "Weaker than expected Q2 GDP print"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Sustained rise in 10y yield above 4.8%",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value tilt shows relative strength amid rate stability and earnings dispersion.",
+      "time_window_catalyst": "July 30 GDP and PCE releases"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Sustained rise in 10y yield above 4.8%",
+      "option_id": "DIVIDEND",
+      "rationale": "Dividend equities exhibit defensive characteristics with positive active returns.",
+      "time_window_catalyst": "July 30 GDP and PCE releases"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Sustained rise in 10y yield above 4.8%",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare demonstrates low correlation to growth selloff and recent outperformance.",
+      "time_window_catalyst": "July 30 GDP and PCE releases"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Sustained rise in 10y yield above 4.8%",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials benefit from stable policy and yield curve dynamics.",
+      "time_window_catalyst": "July 30 GDP and PCE releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.45,
+  "portfolio_rationale": "Selected holdings with base forecasts exceeding SP500 to capture value and defensive rotation in a week of macro data releases.",
+  "provider": "xai",
+  "rationale_summary": "Portfolio tilts toward large value, dividend, healthcare and financials clusters for one-week alpha versus SP500.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15463,
+    "latency_seconds": 18.015349756926298,
+    "output_tokens": 1648,
+    "reasoning_tokens": 925,
+    "total_tokens": 18036
+  }
+}
