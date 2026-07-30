@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid activity and strong mega-cap cloud growth could stabilize the index after its pullback.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY fell 2.40% over five sessions and 1.56% over 21 sessions.",
+        "The S&P 500 remained up 6.9% in 2026, but a majority of U.S. stocks fell on July 29.",
+        "Inflation remained above target and the FOMC vote included three preferences for a rate increase."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -6.5,
+      "invalidation_condition": "SPY regains its prior-month high with improving breadth and declining long-term yields.",
+      "option_id": "SP500",
+      "reversal_case": "Concentrated technology weakness, elevated inflation, and weak payroll revisions could extend the decline.",
+      "time_window_catalyst": "U.S. GDP, PCE, employment, CPI/PPI, Federal Reserve minutes, and major technology earnings through August 28."
+    },
+    {
+      "continuation_case": "Leadership continues broadening away from mega-cap growth as lower-volatility constituents hold up.",
+      "decision": "selected",
+      "evidence": [
+        "RSP gained 1.42% over five sessions and outperformed SPY by 2.82 percentage points over 21 sessions.",
+        "Its 63-session volatility was 11.21%, below SPY's 13.31%, with a shallower drawdown.",
+        "RSP was only 0.90% below its 52-week high."
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points over a rolling five-session period.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "A sharp technology rebound restores cap-weighted concentration leadership.",
+      "time_window_catalyst": "July labor and inflation data plus August GDP and PCE updates could sustain market broadening."
+    },
+    {
+      "continuation_case": "Defensive demand persists as labor data soften and policy uncertainty remains elevated.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare gained 4.27% over five sessions and outperformed SPY by 4.98 percentage points over 21 sessions.",
+        "It was only 0.61% below its 52-week high with a 3.74% maximum drawdown.",
+        "Its 0.318 beta provides defensive participation."
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Healthcare loses its recent relative lead and closes more than 5% below the entry close.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A risk-on rotation into growth and cyclicals unwinds recent defensive outperformance.",
+      "time_window_catalyst": "July labor and inflation releases may reinforce demand for defensive earnings exposure."
+    },
+    {
+      "continuation_case": "Softer inflation readings reduce rate pressure while defensive income demand persists.",
+      "decision": "selected",
+      "evidence": [
+        "Real estate gained 2.11% over five sessions and outperformed SPY by 3.87 percentage points over 21 sessions.",
+        "It was 0.11% below its 52-week high with a 3.38% maximum drawdown.",
+        "June CPI fell 0.4% month over month, though broader inflation measures remained elevated."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -5.5,
+      "invalidation_condition": "The ten-year Treasury yield rises materially above 4.68% while XLRE falls more than 5% from entry.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "A renewed rise in long yields compresses real-estate valuations and reverses the breakout.",
+      "time_window_catalyst": "July CPI/PPI and July PCE could lower rate expectations before the exit close."
+    },
+    {
+      "continuation_case": "Restrictive U.S. policy and geopolitical uncertainty sustain relative-rate and safe-haven demand.",
+      "decision": "selected",
+      "evidence": [
+        "The dollar's quality evidence score was 0.649, supported by high low-volatility and shallow-drawdown ranks.",
+        "UUP had 5.01% volatility and a 0.98% maximum drawdown over 63 sessions.",
+        "The FOMC held rates at 3.50%-3.75%, with three members preferring an increase."
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "UUP closes more than 2% below entry alongside a sustained decline in U.S. rate differentials.",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "Weak U.S. data or a hawkish Bank of Japan narrows rate differentials and lifts competing currencies.",
+      "time_window_catalyst": "Bank of Japan communication and U.S. GDP, employment, CPI, and PCE releases may widen relative-rate support."
+    },
+    {
+      "continuation_case": "Strong prior leadership and Nvidia's August 26 results could trigger a high-beta rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "Semiconductors had the highest prior active rank and a 0.754 quality evidence score.",
+        "They fell 14.09% over five sessions and underperformed SPY by 18.66 percentage points over 21 sessions.",
+        "Volatility was 53.62% and the 63-session drawdown reached 24.62%."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 18.0,
+      "forecast_low_pct": -15.0,
+      "invalidation_condition": "The sector fails to stabilize before Nvidia results or makes a new 63-session low afterward.",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "The severe drawdown continues as valuation and earnings expectations reset.",
+      "time_window_catalyst": "Nvidia reports after the August 26 close, leaving one full session before the scoring exit."
+    },
+    {
+      "continuation_case": "Unresolved Middle East supply risk keeps a geopolitical premium embedded in crude.",
+      "decision": "rejected",
+      "evidence": [
+        "Oil outperformed SPY by 22.32 percentage points over 21 sessions and had 34.42% prior active return.",
+        "Brent settled at $88.09, up 7.3%, amid unresolved Strait of Hormuz access.",
+        "USO volatility was 55.85% with a 32.49% maximum drawdown."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 16.0,
+      "forecast_low_pct": -14.0,
+      "invalidation_condition": "Brent's geopolitical premium fades and USO closes more than 8% below entry.",
+      "option_id": "OIL",
+      "reversal_case": "De-escalation or demand concerns unwind the crowded 21-session surge.",
+      "time_window_catalyst": "Any change in Strait of Hormuz tanker access or the Middle East conflict before August 28."
+    },
+    {
+      "continuation_case": "Weak labor and softer inflation data could drive a duration rebound from depressed levels.",
+      "decision": "rejected",
+      "evidence": [
+        "TLT fell 4.91% over 21 sessions and remained 7.06% below its 52-week high.",
+        "The ten-year yield rose to 4.68% while payroll growth slowed to 57,000.",
+        "Its recent pullback rank was 0.821, but prior active return remained negative."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "The ten-year yield rises above 4.90% and TLT makes a new 63-session low.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Persistent inflation and hawkish policy expectations push long yields higher.",
+      "time_window_catalyst": "July CPI/PPI, Federal Reserve minutes, and July PCE through August 26."
+    }
+  ],
+  "confidence": 0.61,
+  "expected_alpha_vs_sp500_pct": 0.93,
+  "is_official_score": true,
+  "key_risks": [
+    "A sharp mega-cap technology rebound could restore SPY leadership and hurt equal-weight alpha.",
+    "Hot July inflation or hawkish Federal Reserve minutes could pressure real estate and equities.",
+    "A rapid de-escalation in the Middle East or dovish U.S. data could weaken the dollar.",
+    "Recent defensive-sector strength could reverse if risk appetite broadens into high-beta growth."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points over a rolling five-session period.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broadening leadership, positive relative performance, and lower volatility favor equal weight over concentrated SPY.",
+      "time_window_catalyst": "July labor and inflation data plus August GDP and PCE updates could sustain market broadening."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Healthcare loses its recent relative lead and closes more than 5% below the entry close.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Recent defensive strength and shallow drawdown offer favorable one-month asymmetry amid macro uncertainty.",
+      "time_window_catalyst": "July labor and inflation releases may reinforce demand for defensive earnings exposure."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "The ten-year Treasury yield rises materially above 4.68% while XLRE falls more than 5% from entry.",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Positive relative trend and near-high positioning provide upside if upcoming inflation data eases rate pressure.",
+      "time_window_catalyst": "July CPI/PPI and July PCE could lower rate expectations before the exit close."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "UUP closes more than 2% below entry alongside a sustained decline in U.S. rate differentials.",
+      "option_id": "US_DOLLAR",
+      "rationale": "Low volatility, shallow drawdown, and restrictive relative U.S. policy provide diversification against equity and geopolitical shocks.",
+      "time_window_catalyst": "Bank of Japan communication and U.S. GDP, employment, CPI, and PCE releases may widen relative-rate support."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.53,
+  "portfolio_rationale": "The portfolio favors broadening U.S. equity leadership and defensive sectors while adding a low-volatility dollar diversifier. Each active holding has a base forecast above SPY, and no capped cluster exceeds 35%.",
+  "provider": "openai",
+  "rationale_summary": "SPY faces concentrated growth weakness and elevated policy uncertainty. Equal weight, healthcare, real estate, and the dollar offer stronger one-month base cases supported by relative strength, defensiveness, or event-driven rate sensitivity.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15280,
+    "latency_seconds": 39.94056737492792,
+    "output_tokens": 2235,
+    "reasoning_tokens": 0,
+    "total_tokens": 17515
+  }
+}

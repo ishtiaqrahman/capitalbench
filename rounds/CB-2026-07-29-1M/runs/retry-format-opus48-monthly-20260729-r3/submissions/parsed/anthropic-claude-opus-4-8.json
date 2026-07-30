@@ -1,0 +1,184 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid economy and possible dip-buying stabilize large caps",
+      "decision": "selected",
+      "evidence": [
+        "SPY down 1.5% on July 29, -2.40% over 5s",
+        "9.8% below prior Nasdaq record signals tech weakness"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Broad drawdown exceeding 8%",
+      "option_id": "SP500",
+      "reversal_case": "Tech-led selloff deepens dragging cap-weighted index",
+      "time_window_catalyst": "GDP Jul 30, jobs Aug 7, CPI Aug 12, Nvidia Aug 26"
+    },
+    {
+      "continuation_case": "Defensive rotation continues as tech unwinds",
+      "decision": "selected",
+      "evidence": [
+        "+2.83% 5s, +7.51% active 21s",
+        "Low beta 0.27, drawdown only -2.95%, near 52w high"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Sustained mega-cap tech rally",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Risk-on rotation back to growth",
+      "time_window_catalyst": "CPI Aug 12-13; defensive flows"
+    },
+    {
+      "continuation_case": "Steeper curve and stable credit support banks",
+      "decision": "selected",
+      "evidence": [
+        "+7.07% active 21s, drawdown -2.42%",
+        "10y yield rose to 4.68% steepening curve"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Regional bank deposit flight",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit stress or hike fears",
+      "time_window_catalyst": "Loan Officer Survey Aug 3-4"
+    },
+    {
+      "continuation_case": "Defensive leadership persists",
+      "decision": "selected",
+      "evidence": [
+        "+4.27% 5s best sector, +4.98% active 21s",
+        "Low beta 0.32, drawdown -3.74%"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Adverse policy news",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Drug pricing headlines",
+      "time_window_catalyst": "Defensive flows amid volatility"
+    },
+    {
+      "continuation_case": "Defensive bid",
+      "decision": "rejected",
+      "evidence": [
+        "+3.53% 5s, +5.10% active 21s",
+        "Negative beta -0.05"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Growth rally",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Risk-on rotation",
+      "time_window_catalyst": "CPI Aug 12"
+    },
+    {
+      "continuation_case": "Breadth improvement",
+      "decision": "rejected",
+      "evidence": [
+        "RSP beating SPY +3.83% 5s, +2.82% 21s",
+        "Low drawdown -2.04%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Cap-weight retakes leadership",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap resurgence",
+      "time_window_catalyst": "Nvidia Aug 26"
+    },
+    {
+      "continuation_case": "Oversold bounce",
+      "decision": "rejected",
+      "evidence": [
+        "SMH -14.09% 5s, drawdown -24.62%",
+        "KLA down 10.8%, Nvidia down 3.6%"
+      ],
+      "forecast_base_pct": -2.0,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -20.0,
+      "invalidation_condition": "Further chip guidance cuts",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Momentum unwind continues",
+      "time_window_catalyst": "Nvidia Aug 26"
+    },
+    {
+      "continuation_case": "Growth slowdown flight to safety",
+      "decision": "rejected",
+      "evidence": [
+        "TLT -4.91% 21s, 10y rose to 4.68%",
+        "Elevated inflation 3.5% CPI"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "10y breaks above 4.9%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Rate hike fears push yields higher",
+      "time_window_catalyst": "FOMC minutes Aug 18"
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": 0.745,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp tech-led rebound leaving defensives behind and lagging SPY",
+    "August CPI/PPI surprise triggering rate-hike repricing that hurts financials and rate-sensitives",
+    "Middle East conflict escalation spiking oil and broad risk-off"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Sharp risk-on rally in mega-cap tech that leaves defensives behind",
+      "option_id": "DIVIDEND",
+      "rationale": "Strong defensive equity, low beta (0.27), positive recent returns while market sold off, near 52w high.",
+      "time_window_catalyst": "August CPI Aug 12-13; defensive rotation persists"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Credit stress or regional bank deposit flight",
+      "option_id": "FINANCIALS",
+      "rationale": "Best breadth-leading sector with +7% active 21s, minimal drawdown, low volatility, near highs.",
+      "time_window_catalyst": "Senior Loan Officer Survey Aug 3-4; steepening curve (10y rose)"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Adverse drug pricing policy headline",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with best recent 5s return (+4.27%), low beta, shallow drawdown.",
+      "time_window_catalyst": "Defensive flows amid elevated tech volatility"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Broad equity drawdown exceeding 8%",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure to limit tracking error.",
+      "time_window_catalyst": "GDP Jul 30, jobs Aug 7, Nvidia Aug 26"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.245,
+  "portfolio_rationale": "Market is in a defensive rotation: equal-weight beating cap-weight, tech leadership breaking down hard (SMH -14%, QQQ -6%), while low-beta defensives (dividends, financials, healthcare) show positive returns and shallow drawdowns. Tilt toward quality defensives while keeping SPY core.",
+  "provider": "anthropic",
+  "rationale_summary": "Defensive equity tilt favoring dividends, financials, and healthcare over vulnerable mega-cap tech during a breadth-narrowing selloff.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27566,
+    "latency_seconds": 30.380842300131917,
+    "output_tokens": 2539,
+    "total_tokens": 30105
+  }
+}

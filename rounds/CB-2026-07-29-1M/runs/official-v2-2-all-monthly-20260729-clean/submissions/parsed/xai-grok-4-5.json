@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.7,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Stabilization after the July 29 selloff plus solid activity description from FOMC allows modest recovery into August data.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.5% on July 29 at 7316.15 and was down 2.40% over 5 sessions",
+        "FOMC held rates at 3.50-3.75% with elevated uncertainty cited partly due to Middle East",
+        "YTD S&P up 6.9% through July 29 with Nasdaq 9.8% below prior-month record"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY closes more than 4% below July 29 entry before August 28",
+      "option_id": "SP500",
+      "reversal_case": "Further downside if June PCE/GDP or August CPI surprises hot or geopolitical risk escalates.",
+      "time_window_catalyst": "July 30 GDP/PCE, August employment, CPI, and Nvidia results"
+    },
+    {
+      "continuation_case": "Defensive bid persists amid elevated inflation readings and policy uncertainty, extending recent outperformance.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE return_5s +4.27% and active_return_21s +4.98% with distance_52w_high only -0.61%",
+        "Quality evidence score 0.483 with relatively shallow drawdown rank",
+        "Consumer confidence and labor data mixed but defensive sectors held up on July 29 breadth weakness"
+      ],
+      "forecast_base_pct": 2.1,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLV active return versus SPY turns negative by over 2% on a closing basis",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation back to growth if data softens and rates expectations ease sharply.",
+      "time_window_catalyst": "July employment situation August 7 and July CPI August 12-13"
+    },
+    {
+      "continuation_case": "Post-selloff preference for lower-volatility value names continues as mega-cap growth digests losses.",
+      "decision": "selected",
+      "evidence": [
+        "LARGE_VALUE return_5s +0.81% and active_return_21s +4.35% with max_drawdown_63s only -2.40%",
+        "Quality evidence prior active rank 0.821 and shallow drawdown rank 0.836",
+        "RSP minus SPY positive 3.83% over 5 sessions indicating breadth/value tilt"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "IWD underperforms SPY by more than 1.5% over any 5-session stretch",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth reacceleration if tech earnings or AI narrative reasserts dominance.",
+      "time_window_catalyst": "Federal Reserve minutes August 18-19 and second GDP estimate August 26"
+    },
+    {
+      "continuation_case": "Breadth recovery after concentrated mega-cap weakness sustains equal-weight leadership.",
+      "decision": "selected",
+      "evidence": [
+        "EQUAL_WEIGHT_SP500 return_5s +1.42% and active_return_21s +2.82% with volatility_63s 11.21%",
+        "rsp_minus_spy_5s +3.83% and rsp_minus_spy_21s +2.82%",
+        "Quality evidence score 0.619 with strong shallow-drawdown rank 0.881"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "RSP closes below its July 29 level while SPY makes new highs",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Return of mega-cap dominance if Nasdaq stabilizes and outperforms on earnings.",
+      "time_window_catalyst": "Apple and Amazon results July 30-31 plus Nvidia August 26"
+    },
+    {
+      "continuation_case": "Geopolitical risk premium in oil supports energy equities through the scoring window.",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY active_return_21s +11.02% while October Brent settled at 88.09 up 7.3%",
+        "Strait of Hormuz tanker access and Middle East conflict remained unresolved",
+        "FOMC statement cited Middle East conflict as elevating outlook uncertainty"
+      ],
+      "forecast_base_pct": 2.4,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLE loses more than half its 21-session active outperformance versus SPY",
+      "option_id": "ENERGY",
+      "reversal_case": "Rapid de-escalation or demand concerns reverse the oil price gains.",
+      "time_window_catalyst": "Middle East developments and any inventory or supply headlines before August 28"
+    },
+    {
+      "continuation_case": "Oversold bounce if upcoming mega-cap earnings stabilize sentiment.",
+      "decision": "rejected",
+      "evidence": [
+        "TECHNOLOGY return_5s -7.60% and active_return_21s -8.60% with max_drawdown_63s -15.86%",
+        "Nvidia declined 3.6% and KLA 10.8% on July 29; Nasdaq 9.8% below prior-month record",
+        "High prior active rank but recent deep pullback and elevated volatility_63s 33.43%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "XLK makes new 63-session lows on rising volume",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Further de-rating if growth concerns or higher-for-longer rates persist.",
+      "time_window_catalyst": "Apple/Amazon results and Nvidia earnings August 26"
+    },
+    {
+      "continuation_case": "Defensive flows continue if labor market or confidence softens further.",
+      "decision": "rejected",
+      "evidence": [
+        "CONSUMER_STAPLES return_5s +3.53% and active_return_21s +5.10%",
+        "July consumer confidence fell to 90.8; retail sales monthly change not statistically significant",
+        "Quality evidence score 0.431 with defensive characteristics"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLP active outperformance versus SPY fully retraces within two weeks",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Cyclical rebound if growth data surprises positively and risk appetite returns.",
+      "time_window_catalyst": "July employment report August 7 and consumer-related data"
+    },
+    {
+      "continuation_case": "Sustained geopolitical premium keeps crude elevated into late August.",
+      "decision": "rejected",
+      "evidence": [
+        "OIL active_return_21s +22.32% and prior_105s_active_return +34.42% but return_5s -1.80%",
+        "October Brent at 88.09 up 7.3%; Hormuz access unresolved",
+        "High volatility_63s 55.85% and max_drawdown_63s -32.49%"
+      ],
+      "forecast_base_pct": 1.9,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "USO closes down more than 10% from July 29 entry",
+      "option_id": "OIL",
+      "reversal_case": "Supply normalization or demand destruction triggers sharp mean reversion after large prior gains.",
+      "time_window_catalyst": "Geopolitical headlines and any OPEC or inventory reports before exit"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.245,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp reversal back into mega-cap tech/growth if Nvidia or AI-related earnings surprise positively",
+    "Escalation or de-escalation in Middle East conflict causing oil volatility that hurts energy allocation",
+    "Hotter-than-expected inflation or labor data prompting rate-hike fears and broad equity pressure",
+    "Failure of equal-weight/value leadership if market breadth collapses again"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.1,
+      "invalidation_condition": "Healthcare underperforms SPY by more than 2% on a weekly close or negative surprise in labor data driving broad risk-off",
+      "option_id": "HEALTHCARE",
+      "rationale": "Recent relative strength and defensive characteristics amid elevated uncertainty and mixed growth data support outperformance vs cap-weighted SPY over the one-month window.",
+      "time_window_catalyst": "July employment report and CPI/PPI releases in early-mid August"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Value-to-growth relative reverses sharply with Nasdaq reclaiming prior highs before exit",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value leadership and lower drawdown profile versus growth/tech after the late-July selloff provide a higher base-case path than SPY.",
+      "time_window_catalyst": "Fed minutes August 18-19 and second-quarter GDP revisions"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "RSP-SPY spread turns negative by more than 1.5% on a 5-session basis",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Equal-weight breadth advantage and positive active returns versus SPY in recent windows favor continued rotation away from mega-cap concentration.",
+      "time_window_catalyst": "Corporate earnings from Apple/Amazon and Nvidia later in window"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.4,
+      "invalidation_condition": "Brent crude settles below 80 or energy sector active return turns deeply negative versus SPY",
+      "option_id": "ENERGY",
+      "rationale": "Geopolitical premium from unresolved Middle East/Hormuz issues and prior active strength support elevated base return versus SPY.",
+      "time_window_catalyst": "Ongoing Middle East developments and oil inventory/price action through August"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.945,
+  "portfolio_rationale": "Portfolio emphasizes recent relative winners in value, equal-weight, healthcare, and energy that cleared the SPY base hurdle after the growth/tech drawdown, while respecting the 50% cluster cap. Allocations balance defensive and cyclical exposures for the one-month window under elevated policy and geopolitical uncertainty.",
+  "provider": "xai",
+  "rationale_summary": "SPY base is modest given the late-July decline and mixed macro prints; selected holdings show stronger recent active returns, shallower relative drawdowns in several cases, and catalysts that can sustain rotation. Equal-weight and value capture breadth, healthcare adds defense, energy retains geopolitical support.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16361,
+    "latency_seconds": 52.65233585005626,
+    "output_tokens": 2884,
+    "reasoning_tokens": 511,
+    "total_tokens": 19756
+  }
+}

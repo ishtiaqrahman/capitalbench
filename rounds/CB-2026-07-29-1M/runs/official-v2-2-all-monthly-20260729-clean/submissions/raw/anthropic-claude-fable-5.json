@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Correction could extend given hawkish Fed and sticky inflation",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 down 1.5% on July 29, -2.40% over 5 days, 9.8% Nasdaq drop from record",
+        "FOMC held rates 3.50-3.75% with three hawkish dissents; inflation elevated"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "None; benchmark holding",
+      "option_id": "SP500",
+      "reversal_case": "Solid earnings (Microsoft +18% revenue) and modest pullback could support bounce",
+      "time_window_catalyst": "Aug 7 payrolls, Aug 12 CPI, Aug 26 Nvidia results"
+    },
+    {
+      "continuation_case": "Rotation out of expensive growth into value amid elevated rates and hawkish Fed dissent",
+      "decision": "selected",
+      "evidence": [
+        "+0.81% 5-day return vs SPY -2.40%; +4.35% active return over 21 days",
+        "Only -1.00% off 52-week high with 12.19% volatility and -2.40% max drawdown"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Value active return turns negative for two consecutive weeks",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Tech recovery pulls flows back to growth",
+      "time_window_catalyst": "Aug 12 CPI supporting higher-for-longer rates"
+    },
+    {
+      "continuation_case": "Breadth rotation continues as mega-cap concentration unwinds",
+      "decision": "selected",
+      "evidence": [
+        "RSP beat SPY by 3.83% over 5 days, 2.82% over 21 days",
+        "Lowest equity volatility (11.21%) and shallowest drawdown (-2.04%) among broad US equity options"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "RSP-SPY 5-day spread turns decisively negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Strong mega-cap earnings restore cap-weighted leadership",
+      "time_window_catalyst": "Nvidia results Aug 26 could re-concentrate leadership either way"
+    },
+    {
+      "continuation_case": "Defensive demand persists amid weak payrolls (57k) and falling consumer confidence",
+      "decision": "selected",
+      "evidence": [
+        "Best 5-day sector return +4.27%; +4.98% active over 21 days",
+        "Beta 0.32, only -0.61% off 52-week high"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Broad risk appetite returns with defensives underperforming",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rally rotates away from defensives",
+      "time_window_catalyst": "Aug 7 employment report and Aug 12 CPI defensive flows"
+    },
+    {
+      "continuation_case": "Ongoing Middle East conflict keeps supply-risk premium in crude, boosting energy earnings",
+      "decision": "selected",
+      "evidence": [
+        "Brent settled $88.09, up 7.3%; Strait of Hormuz access unresolved",
+        "XLE +11.02% active return over 21 days; negative beta to SPY (-0.22)"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Brent falls below $80 on de-escalation",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation collapses geopolitical premium; oil already -1.80% over 5 days",
+      "time_window_catalyst": "Middle East conflict developments through August"
+    },
+    {
+      "continuation_case": "Nvidia results Aug 26 could spark rebound after deep pullback",
+      "decision": "rejected",
+      "evidence": [
+        "-14.09% 5-day return, -24.62% drawdown; KLA -10.8%, Nvidia -3.6% on July 29",
+        "53.6% volatility, beta 2.32"
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -15.0,
+      "invalidation_condition": "Stabilization and reclaim of prior highs before entry",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Prior 48% active run unwinding; momentum crash dynamics and extreme volatility",
+      "time_window_catalyst": "Nvidia results Aug 26 after close"
+    },
+    {
+      "continuation_case": "Geopolitical safe-haven demand could support prices",
+      "decision": "rejected",
+      "evidence": [
+        "-25.14% off 52-week high, prior 105-day active return -29.63%",
+        "-2.12% over 5 days despite risk-off equity tape"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Gold keeps falling despite escalating geopolitical stress",
+      "option_id": "GOLD",
+      "reversal_case": "Failing to rally on risk-off suggests weak demand; high real yields headwind",
+      "time_window_catalyst": "Middle East escalation or hot CPI Aug 12"
+    },
+    {
+      "continuation_case": "Weak payrolls could trigger duration rally",
+      "decision": "rejected",
+      "evidence": [
+        "10-year yield rose to 4.68%; TLT -4.91% over 21 days",
+        "Three FOMC members favored a rate hike; core PCE 3.4%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Clear disinflation with 10-year yield falling below 4.4%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky inflation and hawkish dissent keep upward pressure on long yields",
+      "time_window_catalyst": "Aug 12 CPI and Aug 19 Fed minutes"
+    }
+  ],
+  "confidence": 0.6,
+  "cost_usd": 0.47775,
+  "expected_alpha_vs_sp500_pct": 0.92,
+  "is_official_score": true,
+  "key_risks": [
+    "Rapid tech rebound (e.g., strong Apple/Amazon or Nvidia results) reverses breadth rotation and value/defensive leadership",
+    "Middle East de-escalation cuts oil prices, hurting the energy sleeve",
+    "Hotter CPI/PPI in mid-August triggers rate-hike fears and a broad equity selloff",
+    "Weak payrolls could hit cyclical value and energy demand expectations"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Sharp growth/tech rebound with value active return turning negative for two consecutive weeks",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value showing positive 5-day return (+0.81%) and +4.35% active return while growth corrects; low drawdown and shallow distance to 52w high suggest defensive leadership in a risk-off tape.",
+      "time_window_catalyst": "July CPI Aug 12 and jobs report Aug 7 favor low-multiple, low-duration equities if inflation stays sticky"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "RSP-SPY spread turns negative as mega-cap tech reclaims leadership",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth rotation is strong: RSP beat SPY by 3.83% over 5 days and 2.82% over 21 days as mega-cap tech corrects; low volatility (11.2%) and shallow drawdown (-2.0%).",
+      "time_window_catalyst": "Continued rotation away from concentrated mega-cap tech ahead of Nvidia results Aug 26"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Broad risk-on rally that reverses defensive sector leadership",
+      "option_id": "HEALTHCARE",
+      "rationale": "Best 5-day sector return (+4.27%), low beta (0.32), near 52-week high, defensive characteristics suited to elevated policy uncertainty and weakening labor data.",
+      "time_window_catalyst": "Defensive flows around Aug 7 payrolls and Aug 12-13 CPI/PPI amid hawkish Fed dissent"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Middle East de-escalation driving Brent back below $80",
+      "option_id": "ENERGY",
+      "rationale": "Brent up 7.3% to $88.09 with unresolved Strait of Hormuz risk; XLE +11.02% active over 21 days with negative SPY beta provides geopolitical hedge.",
+      "time_window_catalyst": "Ongoing Middle East conflict and tanker access risk through August"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "None; benchmark holding",
+      "option_id": "SP500",
+      "rationale": "Benchmark ballast maintaining core beta while tilts play out.",
+      "time_window_catalyst": "Apple/Amazon results, Aug 7 jobs, Aug 12 CPI, Nvidia Aug 26"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.72,
+  "portfolio_rationale": "With mega-cap tech correcting sharply (Nasdaq 9.8% off record), hawkish Fed dissent, sticky inflation, and unresolved Middle East oil risk, the portfolio tilts toward value, equal-weight breadth, defensive healthcare, and energy as a geopolitical hedge, with a small SPY core.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight value, breadth, healthcare, and energy versus concentrated growth during an ongoing tech correction with elevated rates and geopolitical oil risk.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1M",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.47775,
+    "input_tokens": 27560,
+    "latency_seconds": 60.58732362790033,
+    "output_tokens": 4043,
+    "total_tokens": 31603
+  }
+}

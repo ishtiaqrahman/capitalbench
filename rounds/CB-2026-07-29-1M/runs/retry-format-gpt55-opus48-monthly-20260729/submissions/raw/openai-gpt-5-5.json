@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "A modest rebound could follow the recent pullback if upcoming GDP, PCE, CPI, and earnings data do not worsen growth or inflation concerns.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 1.5% on July 29 and was 3.72% below its 52-week high.",
+        "SPY return_5s was -2.40% and return_21s was -1.56%.",
+        "Nasdaq ended 9.8% below its prior-month record, indicating pressure on large-cap growth leadership."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 4,
+      "forecast_low_pct": -4,
+      "invalidation_condition": "SPY breaks materially below the recent drawdown while equal-weight and defensive sectors continue to outperform.",
+      "option_id": "SP500",
+      "reversal_case": "Concentration risk remains elevated if mega-cap technology weakness continues and breadth favors equal-weight or defensive sectors.",
+      "time_window_catalyst": "Advance GDP, June PCE, July employment, July CPI/PPI, Fed minutes, and major technology earnings before August 28."
+    },
+    {
+      "continuation_case": "Recent broadening away from cap-weighted mega-cap leadership can persist if upcoming data support solid activity without reigniting inflation fears.",
+      "decision": "selected",
+      "evidence": [
+        "RSP return_5s was 1.42% versus SPY at -2.40%.",
+        "RSP active_return_21s was 2.82% and distance from 52-week high was only -0.90%.",
+        "RSP volatility_63s was 11.21%, below SPY's 13.31%, with max_drawdown_63s of -2.04%."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points over the first half of the window or breadth deteriorates with positive asset share falling further.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "A sharp recovery in mega-cap technology would likely restore SPY leadership and reduce equal-weight alpha.",
+      "time_window_catalyst": "July CPI/PPI, July employment, GDP/PCE updates, and continued rotation away from mega-cap concentration before August 28."
+    },
+    {
+      "continuation_case": "Dividend equities can keep attracting flows if investors prefer profitable, lower-volatility equities amid elevated inflation and policy uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "DIVIDEND return_5s was 2.83% and active_return_21s was 7.51%.",
+        "DIVIDEND volatility_63s was 12.12%, below SPY's 13.31%.",
+        "DIVIDEND was only -0.18% from its 52-week high."
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2,
+      "invalidation_condition": "Dividend equities lose their relative bid and fall more than 3% while SPY stabilizes or resumes leadership.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "A risk-on growth rebound or rapid rise in yields could reverse the defensive/value bid.",
+      "time_window_catalyst": "July inflation and labor-market releases could reinforce demand for profitable lower-beta equity exposure."
+    },
+    {
+      "continuation_case": "Defensive sector rotation can continue if labor or confidence data keep investors cautious while broad equity indices remain volatile.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE return_5s was 4.27% and active_return_21s was 4.98%.",
+        "HEALTHCARE was only -0.61% from its 52-week high.",
+        "Its max_drawdown_63s was -3.74%, shallower than SPY's -4.49%."
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 4,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Healthcare breaks below its recent relative strength and underperforms SPY by more than 2 percentage points.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Healthcare could lag if investors rotate aggressively back into higher-beta growth or cyclical sectors.",
+      "time_window_catalyst": "Risk-off or defensive sector rotation around July CPI/PPI, employment, and Fed minutes."
+    },
+    {
+      "continuation_case": "Financials may benefit if activity remains solid and higher long yields support net-interest-margin expectations without a credit shock.",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS active_return_21s was 7.07% and return_5s was 1.12%.",
+        "FINANCIALS max_drawdown_63s was -2.42%, shallower than SPY's -4.49%.",
+        "The ten-year Treasury yield rose to 4.68% from 4.61% on July 29."
+      ],
+      "forecast_base_pct": 1,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -3,
+      "invalidation_condition": "Credit or deposit concerns emerge via the loan survey or financials underperform SPY by more than 2 percentage points.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak labor data, tighter credit conditions, or curve stress could undermine banks and insurers.",
+      "time_window_catalyst": "Senior Loan Officer Opinion Survey, July employment, and rate-curve reaction to inflation data."
+    },
+    {
+      "continuation_case": "Geopolitical supply-risk premium can persist or expand while tanker access remains unresolved and energy markets focus on supply disruption risk.",
+      "decision": "selected",
+      "evidence": [
+        "October Brent crude settled at $88.09 per barrel, up 7.3%.",
+        "Strait of Hormuz tanker access and the Middle East conflict remained unresolved.",
+        "OIL active_return_21s was 22.32% and prior_105s_active_return was 34.42%."
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 10,
+      "forecast_low_pct": -8,
+      "invalidation_condition": "Geopolitical risk premium fades, tanker access normalizes, or crude gives back the recent breakout with a 10% decline from entry.",
+      "option_id": "OIL",
+      "reversal_case": "Oil is highly volatile and could reverse quickly if conflict risk eases or demand fears dominate.",
+      "time_window_catalyst": "Middle East conflict and unresolved Strait of Hormuz tanker access before the August 28 close."
+    },
+    {
+      "continuation_case": "Mega-cap growth could rebound if upcoming Apple, Amazon, and Nvidia-related sentiment restores confidence in AI and cloud spending.",
+      "decision": "rejected",
+      "evidence": [
+        "NASDAQ100 return_5s was -6.18% and active_return_21s was -7.05%.",
+        "NASDAQ100 prior_105s_active_return was 7.89%, but it was -11.22% from its 52-week high.",
+        "Microsoft reported strong cloud metrics, but Meta reported net income down 14% and high forecast capex."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 6,
+      "forecast_low_pct": -7,
+      "invalidation_condition": "NASDAQ100 fails to reclaim relative performance versus SPY after the first major technology earnings releases.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "High beta, elevated drawdown, and recent underperformance could persist if earnings or rates disappoint.",
+      "time_window_catalyst": "Apple and Amazon results, July inflation data, and Nvidia results after the U.S. close on August 26."
+    },
+    {
+      "continuation_case": "Long Treasuries could rebound if labor data weaken further or inflation releases surprise lower.",
+      "decision": "rejected",
+      "evidence": [
+        "LONG_TREASURY return_21s was -4.91% in the mechanical market state.",
+        "The ten-year Treasury yield rose to 4.68% from 4.61%.",
+        "FOMC held rates at 3.50% to 3.75%, but three members preferred a 25-basis-point increase."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 4,
+      "forecast_low_pct": -4,
+      "invalidation_condition": "Ten-year yields continue rising after the inflation data or FOMC minutes reinforce hawkish policy risk.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation, hawkish dissents, and rising long yields can continue to pressure duration.",
+      "time_window_catalyst": "June PCE, July CPI/PPI, July employment, and Fed minutes."
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.74,
+  "is_official_score": true,
+  "key_risks": [
+    "Mega-cap technology rebounds sharply after Apple, Amazon, or Nvidia results, causing SPY to outperform the active portfolio.",
+    "Inflation or GDP data reprice rates higher and pressure dividend, healthcare, and financial exposures simultaneously.",
+    "Oil reverses if Middle East tensions ease or demand concerns dominate, hurting the energy allocation.",
+    "Weak payrolls or loan survey deterioration could damage financials and broader cyclical risk appetite."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points over the first half of the window or breadth deteriorates with positive asset share falling further.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Equal-weight exposure benefits from recent breadth improvement versus cap-weighted SPY while keeping lower 63-day volatility and shallower drawdown than SPY.",
+      "time_window_catalyst": "July CPI/PPI, July employment, GDP/PCE updates, and continued rotation away from mega-cap concentration before August 28."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Dividend equities lose their relative bid and fall more than 3% while SPY stabilizes or resumes leadership.",
+      "option_id": "DIVIDEND",
+      "rationale": "Dividend equities show strong recent active performance, low volatility, and near-high price positioning, fitting a defensive/value rotation if growth leadership remains under pressure.",
+      "time_window_catalyst": "July inflation and labor-market releases could reinforce demand for profitable lower-beta equity exposure."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Healthcare breaks below its recent relative strength and underperforms SPY by more than 2 percentage points.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare has defensive characteristics, positive recent active return, and shallow drawdown while broad equity breadth has weakened.",
+      "time_window_catalyst": "Risk-off or defensive sector rotation around July CPI/PPI, employment, and Fed minutes."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1,
+      "invalidation_condition": "Credit or deposit concerns emerge via the loan survey or financials underperform SPY by more than 2 percentage points.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials have strong recent active return and low drawdown, with potential support from solid activity and a higher ten-year yield despite credit and labor risks.",
+      "time_window_catalyst": "Senior Loan Officer Opinion Survey, July employment, and rate-curve reaction to inflation data."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Geopolitical risk premium fades, tanker access normalizes, or crude gives back the recent breakout with a 10% decline from entry.",
+      "option_id": "OIL",
+      "rationale": "Oil has the strongest direct near-term geopolitical catalyst, with Brent up and Strait of Hormuz access unresolved, but position size is limited because volatility and drawdown are very high.",
+      "time_window_catalyst": "Middle East conflict and unresolved Strait of Hormuz tanker access before the August 28 close."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.34,
+  "portfolio_rationale": "The portfolio avoids weak mega-cap technology concentration and emphasizes breadth, defensive/value sectors, financials, and a limited oil catalyst. All selected active holdings have base forecasts above SPY and cluster exposure outside SPY/CASH stays within the 50% cap.",
+  "provider": "openai",
+  "rationale_summary": "Base case is a one-month continuation of rotation away from cap-weighted growth into equal-weight, dividend, defensive healthcare, financials, and geopolitically supported oil. Main expected alpha source is SPY\u2019s recent weakness and Nasdaq drawdown versus stronger breadth in non-mega-cap and defensive/value areas.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15278,
+    "latency_seconds": 55.567369092023,
+    "output_tokens": 2986,
+    "reasoning_tokens": 445,
+    "total_tokens": 18264
+  }
+}

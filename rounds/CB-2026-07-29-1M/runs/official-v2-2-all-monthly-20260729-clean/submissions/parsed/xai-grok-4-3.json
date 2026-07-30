@@ -1,0 +1,185 @@
+{
+  "benchmark_expected_return_pct": 1.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued equity weakness from rate uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "SPY closed down 2.4% over 5 days",
+        "S&P 500 up 6.9% YTD through July 29"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "SPY rises above prior month record",
+      "option_id": "SP500",
+      "reversal_case": "Positive GDP and earnings surprise",
+      "time_window_catalyst": "July CPI and second-quarter GDP"
+    },
+    {
+      "continuation_case": "Defensive rotation persists",
+      "decision": "selected",
+      "evidence": [
+        "DIVIDEND returned 2.83% over 5 days",
+        "Low volatility rank 0.776"
+      ],
+      "forecast_base_pct": 2.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "CPI above 3.8% or sharp equity rebound",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Broad risk-on rally",
+      "time_window_catalyst": "July CPI and industrial production data"
+    },
+    {
+      "continuation_case": "Defensive flows continue",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE returned 4.27% over 5 days",
+        "Shallow drawdown rank 0.731"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 4.2,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "Unemployment rises above 4.5%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Growth sector leadership returns",
+      "time_window_catalyst": "July employment and GDP data"
+    },
+    {
+      "continuation_case": "Weak consumer data persists",
+      "decision": "selected",
+      "evidence": [
+        "CONSUMER_STAPLES returned 3.53% over 5 days",
+        "Consumer confidence fell to 90.8"
+      ],
+      "forecast_base_pct": 2.3,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": 0.4,
+      "invalidation_condition": "Retail sales exceed 1% monthly",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Retail sales accelerate",
+      "time_window_catalyst": "July CPI and retail sales"
+    },
+    {
+      "continuation_case": "Value rotation holds",
+      "decision": "rejected",
+      "evidence": [
+        "LARGE_VALUE returned 0.81% over 5 days",
+        "Prior active rank 0.821"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "Nasdaq rises more than 4%",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth stocks rebound sharply",
+      "time_window_catalyst": "Bank of Japan and earnings"
+    },
+    {
+      "continuation_case": "Equal-weight outperformance continues",
+      "decision": "selected",
+      "evidence": [
+        "EQUAL_WEIGHT_SP500 returned 1.42% over 5 days",
+        "RSP minus SPY 21s positive 2.82%"
+      ],
+      "forecast_base_pct": 2.1,
+      "forecast_high_pct": 3.9,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "Tech mega-caps surge more than 5%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap concentration resumes",
+      "time_window_catalyst": "Second-quarter GDP and earnings"
+    },
+    {
+      "continuation_case": "Rates remain elevated",
+      "decision": "rejected",
+      "evidence": [
+        "Ten-year yield rose to 4.68%",
+        "FOMC held rates at 3.50-3.75%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Two-year yield falls below 4.0%",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Rate cut expectations rise",
+      "time_window_catalyst": "FOMC minutes and CPI"
+    },
+    {
+      "continuation_case": "Dollar strength from rate differential",
+      "decision": "rejected",
+      "evidence": [
+        "US_DOLLAR returned -0.11% over 5 days",
+        "Quality evidence score 0.649"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.3,
+      "invalidation_condition": "Dollar index falls below 100",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "Global risk appetite improves",
+      "time_window_catalyst": "ECB and BoJ policy"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.925,
+  "is_official_score": true,
+  "key_risks": [
+    "Inflation reacceleration from energy prices",
+    "Stronger than expected GDP boosting growth stocks",
+    "FOMC signaling further rate hikes"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.8,
+      "invalidation_condition": "CPI above 3.8% or sharp equity rebound",
+      "option_id": "DIVIDEND",
+      "rationale": "Defensive equity with recent outperformance and lower volatility.",
+      "time_window_catalyst": "July CPI and industrial production data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Unemployment rises above 4.5%",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with positive recent returns and low drawdown.",
+      "time_window_catalyst": "July employment and GDP data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.3,
+      "invalidation_condition": "Retail sales exceed 1% monthly",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Defensive equity benefiting from weak consumer confidence.",
+      "time_window_catalyst": "July CPI and retail sales"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.1,
+      "invalidation_condition": "Tech mega-caps surge more than 5%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broad equity exposure with recent relative strength versus SPY.",
+      "time_window_catalyst": "Second-quarter GDP and earnings"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.425,
+  "portfolio_rationale": "Defensive and equal-weight equities selected for base forecasts exceeding SPY amid recent market weakness and upcoming inflation data.",
+  "provider": "xai",
+  "rationale_summary": "Four holdings in defensive and diversified equity clusters with base returns above SPY forecast; 100% allocation in 25% increments.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-29-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15510,
+    "latency_seconds": 15.53661194909364,
+    "output_tokens": 1697,
+    "reasoning_tokens": 682,
+    "total_tokens": 17889
+  }
+}
