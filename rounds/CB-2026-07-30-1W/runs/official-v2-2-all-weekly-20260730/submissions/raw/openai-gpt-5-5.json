@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Mega-cap earnings strength from Microsoft, Apple, and Amazon data can sustain broad index risk appetite after the strong July 30 recovery.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed up 1.7% on July 30 and more than recovered its July 29 decline.",
+        "SPY return was 0.48% over 5 sessions and -0.68% over 21 sessions.",
+        "SPY volatility_21s was 12.12% with max_drawdown_21s of -3.38%."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.7,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "Invalidated if SPY loses the July 30 recovery and closes below the prior pullback area with breadth turning negative.",
+      "option_id": "SP500",
+      "reversal_case": "The sharp entry-day rally may have pulled forward near-term gains, and elevated inflation plus a divided FOMC can cap equity multiples.",
+      "time_window_catalyst": "July 31 ECI, August 3 SLOOS, August 4 JOLTS/orders/trade, and August 6 jobless claims."
+    },
+    {
+      "continuation_case": "Value leadership can continue if breadth remains positive and investors rotate away from concentrated mega-cap growth after the July 30 rebound.",
+      "decision": "selected",
+      "evidence": [
+        "Active_return_5s was 1.36% and prior_16s_active_return was 2.70%.",
+        "Volatility_21s was 9.97% and max_drawdown_21s was -1.31%, both milder than SPY.",
+        "Quality evidence score was 0.650 with prior active rank 0.776 and shallow drawdown rank 0.925."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Invalidated if value underperforms SPY by more than 1% early in the window while yields rise and breadth deteriorates.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "If mega-cap technology earnings momentum dominates, value's lower beta and sector mix may lag SPY.",
+      "time_window_catalyst": "August 3 Senior Loan Officer Survey, August 4 JOLTS and orders, and August 6 jobless claims can support cyclical/value breadth if growth looks resilient."
+    },
+    {
+      "continuation_case": "Financials can extend relative strength if loan conditions and labor data do not imply a sharp credit slowdown.",
+      "decision": "selected",
+      "evidence": [
+        "Active_return_5s was 1.62% and prior_16s_active_return was 5.29%.",
+        "Quality evidence score was 0.634 with prior active rank 0.881.",
+        "Distance from 52-week high was -1.04% and max_drawdown_21s was -2.08%."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Invalidated if SLOOS shows materially tighter credit or financials fall below SPY by more than 1.25% before midweek.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "A negative SLOOS or weak labor data would raise credit-quality and loan-growth concerns.",
+      "time_window_catalyst": "August 3 Senior Loan Officer Survey and August 4 JOLTS provide direct read-throughs to credit conditions, loan demand, and bank earnings expectations."
+    },
+    {
+      "continuation_case": "Recent breakout strength can persist if euro-area inflation does not force a more hawkish rates repricing and global risk appetite stays firm.",
+      "decision": "selected",
+      "evidence": [
+        "Active_return_5s was 3.12% and return_3s was 2.42%.",
+        "Europe was at its 52-week high with distance_52w_high of 0.00%.",
+        "ECB kept policy rates unchanged July 23 and final June euro-area inflation was 2.8%."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "Invalidated if euro-area inflation surprises in a way that sharply lifts rate concerns or Europe reverses below its recent breakout.",
+      "option_id": "EUROPE",
+      "reversal_case": "A hot inflation print, currency reversal, or global risk-off move could quickly fade the recent strength.",
+      "time_window_catalyst": "July 31 euro-area flash inflation and follow-through from ECB steady policy can drive regional relative performance before the exit close."
+    },
+    {
+      "continuation_case": "Australia can continue to benefit from broad global equity participation and commodity-linked cyclical exposure if risk appetite holds.",
+      "decision": "selected",
+      "evidence": [
+        "Active_return_5s was 4.19% and prior_16s_active_return was 2.32%.",
+        "Distance from 52-week high was -0.07% with max_drawdown_21s of -1.63%.",
+        "Quality evidence score was 0.506 with prior active rank 0.731 and shallow drawdown rank 0.806."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Invalidated if global cyclical equities weaken broadly or Australia gives back more than half of its recent 5-day relative gain.",
+      "option_id": "AUSTRALIA",
+      "reversal_case": "Its recent strength is extended over the 5-day window, so a reversal in commodities or global cyclicals could hurt relative performance.",
+      "time_window_catalyst": "Continuation of global cyclical breadth and commodity-linked equity demand through the scheduled US trade, orders, and labor-market data."
+    },
+    {
+      "continuation_case": "Stable risk appetite and benign credit data can allow carry-like positive performance with lower volatility than equities.",
+      "decision": "selected",
+      "evidence": [
+        "Volatility_21s was 2.77% and max_drawdown_21s was -0.80%.",
+        "Prior_16s_active_return was 0.68% and distance_52w_high was -0.50%.",
+        "Quality evidence score was 0.667 with low-volatility rank 0.970 and shallow-drawdown rank 0.985."
+      ],
+      "forecast_base_pct": 0.32,
+      "forecast_high_pct": 0.85,
+      "forecast_low_pct": -0.35,
+      "invalidation_condition": "Invalidated if credit spreads proxy behavior weakens, HYG turns negative versus SPY by more than 0.75%, or labor data signals abrupt deterioration.",
+      "option_id": "HIGH_YIELD_CREDIT",
+      "reversal_case": "Credit spreads could widen if SLOOS or labor-market data point to weaker borrowers or tighter lending standards.",
+      "time_window_catalyst": "August 3 Senior Loan Officer Survey and weekly jobless claims can support spreads if credit and labor conditions remain benign."
+    },
+    {
+      "continuation_case": "Strong prior active trend and commodity-linked inflation backdrop could reassert if crude stabilizes after the July 30 decline.",
+      "decision": "rejected",
+      "evidence": [
+        "Prior_16s_active_return was 12.96% and quality evidence score was 0.771.",
+        "Active_return_5s was -1.18% and distance_52w_high was -5.07%.",
+        "Brent crude fell 1.4% on July 30 to $86.88 per barrel."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "Invalidated if crude continues lower or XLE underperforms SPY by more than 1% during the first half of the window.",
+      "option_id": "ENERGY",
+      "reversal_case": "Recent underperformance and falling Brent show near-term pressure, while energy beta to SPY was negative over 63 sessions.",
+      "time_window_catalyst": "No specific scheduled energy catalyst identified; potential sensitivity to weekly macro growth and risk-appetite data."
+    },
+    {
+      "continuation_case": "Recent software strength could continue if technology risk appetite broadens beyond mega-cap earnings beneficiaries.",
+      "decision": "rejected",
+      "evidence": [
+        "Active_return_5s was 6.65% and return_3s was 2.64%.",
+        "Quality evidence score was only 0.139 with recent active pullback rank 0.000.",
+        "Distance from 52-week high was -20.77% and volatility_21s was 25.34%."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Invalidated if software gives back more than one-third of its recent 5-day active gain or technology breadth narrows.",
+      "option_id": "SOFTWARE",
+      "reversal_case": "The move appears sharp and weakly supported by the quality score, leaving it vulnerable to profit-taking within a one-week window.",
+      "time_window_catalyst": "No direct software-specific scheduled catalyst identified; continuation would rely on broad technology sentiment after major company earnings."
+    }
+  ],
+  "confidence": 0.57,
+  "expected_alpha_vs_sp500_pct": 0.2165,
+  "is_official_score": true,
+  "key_risks": [
+    "The July 30 mega-cap technology rebound continues and SPY outperforms diversified value, financials, and international exposures.",
+    "Scheduled labor or credit data weaken risk appetite and pressure financials, high yield, and cyclical international equities.",
+    "Euro-area inflation or currency moves reverse the recent Europe and Australia strength.",
+    "A broad equity pullback after the S&P 500's 1.7% entry-day gain overwhelms relative-factor signals."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "Invalidated if value underperforms SPY by more than 1% early in the window while yields rise and breadth deteriorates.",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Large-cap value has positive relative trend, low recent drawdown, and less dependence on mega-cap growth continuation after the July 30 rally.",
+      "time_window_catalyst": "August 3 Senior Loan Officer Survey, August 4 JOLTS and orders, and August 6 jobless claims can support cyclical/value breadth if growth looks resilient."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Invalidated if SLOOS shows materially tighter credit or financials fall below SPY by more than 1.25% before midweek.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials combine the strongest prior active trend among major US sectors considered, positive near-term active return, and a macro setup where loan and labor data can matter within the week.",
+      "time_window_catalyst": "August 3 Senior Loan Officer Survey and August 4 JOLTS provide direct read-throughs to credit conditions, loan demand, and bank earnings expectations."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Invalidated if euro-area inflation surprises in a way that sharply lifts rate concerns or Europe reverses below its recent breakout.",
+      "option_id": "EUROPE",
+      "rationale": "Europe has strong recent active return, is at a 52-week high, and has ECB policy already held steady with euro-area flash inflation due immediately after cutoff.",
+      "time_window_catalyst": "July 31 euro-area flash inflation and follow-through from ECB steady policy can drive regional relative performance before the exit close."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Invalidated if global cyclical equities weaken broadly or Australia gives back more than half of its recent 5-day relative gain.",
+      "option_id": "AUSTRALIA",
+      "rationale": "Australia shows strong short-term and prior relative performance with shallow drawdown, while maintaining a non-US cyclical exposure distinct from US mega-cap concentration.",
+      "time_window_catalyst": "Continuation of global cyclical breadth and commodity-linked equity demand through the scheduled US trade, orders, and labor-market data."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.32,
+      "invalidation_condition": "Invalidated if credit spreads proxy behavior weakens, HYG turns negative versus SPY by more than 0.75%, or labor data signals abrupt deterioration.",
+      "option_id": "HIGH_YIELD_CREDIT",
+      "rationale": "High yield has low volatility, shallow drawdown, and a modest positive prior active trend, offering a lower-beta way to benefit if risk appetite remains stable.",
+      "time_window_catalyst": "August 3 Senior Loan Officer Survey and weekly jobless claims can support spreads if credit and labor conditions remain benign."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.4665,
+  "portfolio_rationale": "The portfolio tilts away from mega-cap growth after a sharp July 30 rebound and toward value, financials, international breadth, and high-yield credit with supplied evidence of stronger relative breadth or lower drawdown. All selected active holdings have base forecasts above SPY and cluster exposure stays within the 50% cap.",
+  "provider": "openai",
+  "rationale_summary": "Base case is that one-week breadth and cyclical/value continuation modestly outpace SPY, while high-yield credit dampens volatility. The strongest near-term catalysts are SLOOS, JOLTS/orders, claims, and euro-area inflation.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15321,
+    "latency_seconds": 47.488922343123704,
+    "output_tokens": 2956,
+    "reasoning_tokens": 211,
+    "total_tokens": 18277
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong mega-cap earnings and easing headline inflation support the index.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed 7,437.63 up 1.7% on July 30, up 8.6% YTD",
+        "spy_return_21s -0.68%, drawdown -4.49%",
+        "Microsoft, Apple, Amazon reported double-digit revenue growth"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Ten-year yield above 5.0%",
+      "option_id": "SP500",
+      "reversal_case": "Core PCE 3.3%, three FOMC hawks, and 30-year at 5.22% could compress multiples.",
+      "time_window_catalyst": "July CPI Aug 12; Nvidia Aug 26"
+    },
+    {
+      "continuation_case": "Breadth broadening away from concentrated mega-cap leadership.",
+      "decision": "selected",
+      "evidence": [
+        "rsp_minus_spy_21s +1.91%",
+        "volatility_63s 11.21%, max drawdown -2.04%",
+        "Russell 2000 up 18.7% YTD signals breadth"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "RSP-minus-SPY 21-session spread turns negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "A Nvidia-led mega-cap melt-up would leave equal weight behind.",
+      "time_window_catalyst": "Payrolls Aug 7; CPI Aug 12"
+    },
+    {
+      "continuation_case": "Steep curve, solid activity, low drawdown and near-high price.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +7.00%, only -1.04% from 52-week high",
+        "volatility 13.66%, max drawdown -2.42%",
+        "30-year yield rose to 5.22%, steeper curve"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "XLF drawdown deeper than 5% or curve flattening sharply",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak recent-pullback rank (0.090) suggests short-term extension; credit could sour.",
+      "time_window_catalyst": "Senior Loan Officer Survey Aug 3-4"
+    },
+    {
+      "continuation_case": "Defensive leadership as growth data soften (Q2 GDP 1.5%, payrolls 57k).",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +3.74%, max drawdown only -3.74%",
+        "beta_spy 0.295, low correlation 0.239"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "XLV active return turns negative over the window",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on continuation would leave low-beta defensives lagging.",
+      "time_window_catalyst": "FOMC minutes Aug 18-19"
+    },
+    {
+      "continuation_case": "Micron/Lam surge and Nvidia Aug 26 could restart the trend.",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s -17.16% after prior +49.47%",
+        "volatility 55.23%, drawdown -24.62%, -19.44% from high",
+        "Micron +18.4%, Lam +18% on July 30"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 16.0,
+      "forecast_low_pct": -16.0,
+      "invalidation_condition": "SMH failing to reclaim its 21-session relative downtrend",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "A -17% one-month active reversal with elevated volume signals momentum unwind.",
+      "time_window_catalyst": "Nvidia results Aug 26"
+    },
+    {
+      "continuation_case": "Elevated crude and inflation hedge demand.",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s +11.70% but recent pullback rank 0.030",
+        "Brent fell 1.4% to $86.88; uso_return_5s -8.61%"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -9.0,
+      "invalidation_condition": "Brent below $80",
+      "option_id": "ENERGY",
+      "reversal_case": "Crude rolling over sharply into the window.",
+      "time_window_catalyst": "Weekly inventories and OPEC commentary"
+    },
+    {
+      "continuation_case": "Softening payrolls could rally duration.",
+      "decision": "rejected",
+      "evidence": [
+        "tlt_return_21s -3.83%; 30-year yield rose to 5.22%",
+        "Core PCE 3.3% year over year"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Ten-year above 4.9%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation and hawkish FOMC dissents pressure the long end.",
+      "time_window_catalyst": "July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Weaker dollar and stable ECB policy aid European equities.",
+      "decision": "rejected",
+      "evidence": [
+        "return_5s +3.60%, at 52-week high, active_return_21s +3.45%",
+        "ECB held rates; June euro-area inflation 2.8%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "VGK falling more than 3% below its 52-week high",
+      "option_id": "EUROPE",
+      "reversal_case": "Prior-window active return -5.32% shows no durable trend.",
+      "time_window_catalyst": "Euro-area July flash inflation"
+    }
+  ],
+  "confidence": 0.53,
+  "expected_alpha_vs_sp500_pct": 0.355,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot July CPI on Aug 12 lifting yields and pressuring all equity exposure",
+    "Nvidia results Aug 26 re-igniting mega-cap tech leadership and causing SPY to outrun our diversifiers",
+    "Labor-market deterioration (payrolls 57k, downward revisions) hitting cyclicals and financials",
+    "Hawkish FOMC minutes given three members favored a hike"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Ten-year yield above 5.0% or hot July CPI triggering hawkish repricing",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure amid strong mega-cap earnings (Microsoft, Apple, Amazon beats) and Nvidia catalyst Aug 26.",
+      "time_window_catalyst": "July CPI Aug 12, Nvidia results Aug 26"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "RSP-minus-SPY spread turning negative on a 21-session basis",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broadening breadth: RSP beating SPY on 5- and 21-session windows with lowest volatility and shallow drawdown.",
+      "time_window_catalyst": "July Employment Situation Aug 7 and CPI Aug 12"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Credit stress or sharp curve flattening; XLF drawdown beyond 5%",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong 21-session active return (+7.0%), low volatility, minimal drawdown, near 52-week high, steep curve with 30-year at 5.22%.",
+      "time_window_catalyst": "Senior Loan Officer Survey Aug 3-4; July CPI Aug 12"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "XLV active return turning negative over the window",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive diversifier with positive 21-session active return, shallowest drawdown (-3.7%) and low SPY beta.",
+      "time_window_catalyst": "Sector rotation around Aug CPI and FOMC minutes Aug 18-19"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.355,
+  "portfolio_rationale": "Core SPY plus a broadening tilt into equal-weight, financials and healthcare, all of which show positive recent relative strength with materially lower volatility and shallower drawdowns than the crowded semiconductor/momentum complex that just gave back large active returns.",
+  "provider": "anthropic",
+  "rationale_summary": "Breadth is improving (positive asset share 68% over 5 sessions, RSP beating SPY) while high-beta AI leadership has sharply reversed. We hold SPY as core and add lower-volatility, positive-trend exposures.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27727,
+    "latency_seconds": 49.43894271599129,
+    "output_tokens": 3107,
+    "total_tokens": 30834
+  }
+}

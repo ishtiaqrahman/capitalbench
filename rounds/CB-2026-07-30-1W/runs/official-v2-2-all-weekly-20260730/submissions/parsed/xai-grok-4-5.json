@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.45,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Breadth recovery and solid private domestic sales support modest weekly grind higher",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7,437.63 up 1.7% on July 30 recovering prior decline",
+        "FOMC held funds rate at 3.50-3.75% with elevated inflation and uncertainty noted",
+        "spy_return_5s at 0.48% and distance to 52w high -2.10%"
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "SPY closes below recent support with volume spike and negative breadth",
+      "option_id": "SP500",
+      "reversal_case": "Soft claims or trade data plus residual inflation could trigger profit-taking after the July 30 rally",
+      "time_window_catalyst": "August 6 weekly claims and any residual post-FOMC commentary"
+    },
+    {
+      "continuation_case": "Strong cloud and software earnings momentum can extend relative outperformance into the short window",
+      "decision": "selected",
+      "evidence": [
+        "SOFTWARE return_3s +2.64% and active_return_5s +6.65%",
+        "Microsoft quarterly revenue up 18% with Azure growth 43%",
+        "Apple revenue up 16% and Amazon AWS up 37%"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Software sector reverses more than 3% on rising rates or negative follow-through volume",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High valuation sensitivity and prior drawdown leave room for sharp mean-reversion if rates rise",
+      "time_window_catalyst": "Post-earnings digestion of Microsoft and related software results before August 6 close"
+    },
+    {
+      "continuation_case": "Strong multi-week prior active trend and elevated quality score favor rebound after recent oil pullback",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY quality evidence score 0.771 with prior active rank 0.955",
+        "prior_16s_active_return +12.96% for ENERGY",
+        "Brent crude at $86.88 after 1.4% decline on July 30"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent crude breaks below recent lows with XLE underperforming SPY by over 2%",
+      "option_id": "ENERGY",
+      "reversal_case": "Further crude weakness or demand concerns could extend the 5-session underperformance",
+      "time_window_catalyst": "Oil price stabilization and any inventory or geopolitical headlines before exit close"
+    },
+    {
+      "continuation_case": "Positive momentum to new highs plus stable ECB policy supports further relative gains",
+      "decision": "selected",
+      "evidence": [
+        "EUROPE return_3s +2.42% active_return_5s +3.12% and at 0.00% distance to 52w high",
+        "ECB kept policy rates unchanged with final June euro-area inflation at 2.8%",
+        "France CAC 40 rose 0.9% on July 30"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Europe equities gap down over 2% on stronger USD or weak inflation data",
+      "option_id": "EUROPE",
+      "reversal_case": "Stronger USD or disappointing euro-area data could reverse the short-term outperformance",
+      "time_window_catalyst": "Euro-area flash inflation release and any ECB-related commentary through August 6"
+    },
+    {
+      "continuation_case": "Stable yields and constructive prior trend favor continued modest outperformance versus SPY",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS quality score 0.634 with prior active rank 0.881 and prior_16s_active_return +5.29%",
+        "Ten-year yield steady at 4.67% after FOMC hold",
+        "active_return_5s +1.62% for FINANCIALS"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Financials lag SPY by more than 1.5% on rising credit concerns or yield spike",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit tightening signals from loan survey or rising unemployment claims could pressure banks",
+      "time_window_catalyst": "Senior Loan Officer Opinion Survey on August 3 and claims data August 6"
+    },
+    {
+      "continuation_case": "Top quality score combining trend and pullback supports mean-reversion higher in the week",
+      "decision": "selected",
+      "evidence": [
+        "AGRICULTURE quality evidence score 0.826 highest in table with prior active rank 0.925",
+        "prior_16s_active_return +7.04% for AGRICULTURE",
+        "recent pullback rank 0.881"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.7,
+      "invalidation_condition": "Agriculture ETF drops over 2% on USD strength or inventory surprises",
+      "option_id": "AGRICULTURE",
+      "reversal_case": "USD strength or weather/inventory news could extend the recent 5-session active underperformance",
+      "time_window_catalyst": "None identified beyond general commodity flows before exit close"
+    },
+    {
+      "continuation_case": "Soft USD and elevated inflation uncertainty could sustain safe-haven bid",
+      "decision": "rejected",
+      "evidence": [
+        "GOLD iau_return_5s +1.51% and active_return_5s +1.03%",
+        "quality evidence score 0.521 with prior active rank 0.716",
+        "distance_52w_high -23.89%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Gold falls more than 2% as real yields rise and USD strengthens",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields or stronger risk appetite would pressure gold lower",
+      "time_window_catalyst": "Any inflation data surprises or USD moves before August 6"
+    },
+    {
+      "continuation_case": "Strong prior trend could resume if risk appetite holds after equity bounce",
+      "decision": "rejected",
+      "evidence": [
+        "BITCOIN_ETF quality score 0.681 with prior active rank 0.940 and prior_16s_active_return +11.24%",
+        "active_return_5s -0.34% and distance_52w_high -48.52%",
+        "volatility_21s 30.48%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Bitcoin ETF drops over 5% on risk-off equity move or flow reversal",
+      "option_id": "BITCOIN_ETF",
+      "reversal_case": "High volatility and deep drawdown from highs leave large downside if liquidity fades",
+      "time_window_catalyst": "None identified specific to crypto before exit close"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.805,
+  "is_official_score": true,
+  "key_risks": [
+    "Elevated inflation readings or hawkish Fed speak could pressure risk assets broadly",
+    "Sharp USD rebound would reverse international and commodity holdings",
+    "Post-earnings profit-taking in software and tech-related names",
+    "Oil price volatility spilling into energy sector underperformance"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Software sector reverses more than 3% on rising rates or negative follow-through volume",
+      "option_id": "SOFTWARE",
+      "rationale": "Recent relative strength and mega-cap software earnings support short-horizon continuation above broad market.",
+      "time_window_catalyst": "Post-earnings digestion of Microsoft and related software results before August 6 close"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Brent crude breaks below recent lows with XLE underperforming SPY by over 2%",
+      "option_id": "ENERGY",
+      "rationale": "High quality evidence score and strong prior active trend support base case above SPY despite oil volatility.",
+      "time_window_catalyst": "Oil price stabilization and any inventory or geopolitical headlines before exit close"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Europe equities gap down over 2% on stronger USD or weak inflation data",
+      "option_id": "EUROPE",
+      "rationale": "At 52-week high with positive active returns and ECB policy stability favoring continuation.",
+      "time_window_catalyst": "Euro-area flash inflation release and any ECB-related commentary through August 6"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Financials lag SPY by more than 1.5% on rising credit concerns or yield spike",
+      "option_id": "FINANCIALS",
+      "rationale": "Solid prior active return and quality rank with stable rates backdrop after FOMC hold.",
+      "time_window_catalyst": "Senior Loan Officer Opinion Survey on August 3 and claims data August 6"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Agriculture ETF drops over 2% on USD strength or inventory surprises",
+      "option_id": "AGRICULTURE",
+      "rationale": "Highest quality evidence score and constructive prior active trend for diversified commodity exposure.",
+      "time_window_catalyst": "None identified beyond general commodity flows before exit close"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.255,
+  "portfolio_rationale": "Portfolio concentrates in five active holdings with base forecasts exceeding SPY, spanning distinct clusters under the 50% cap, emphasizing recent relative strength, quality scores, and near-term catalysts within the one-week window.",
+  "provider": "xai",
+  "rationale_summary": "Selected SOFTWARE, ENERGY, EUROPE, FINANCIALS and AGRICULTURE for higher base-case weekly returns than SPY after FOMC hold and mixed earnings; equal-ish weights keep cluster exposures balanced while targeting positive alpha.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16399,
+    "latency_seconds": 52.11400246503763,
+    "output_tokens": 2761,
+    "reasoning_tokens": 870,
+    "total_tokens": 20030
+  }
+}

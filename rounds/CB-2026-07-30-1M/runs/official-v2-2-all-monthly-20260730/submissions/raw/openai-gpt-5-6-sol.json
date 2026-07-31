@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid private domestic demand and strong large-cap earnings can sustain the broader uptrend.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY returned -0.68% over 21 sessions and 0.48% over five sessions.",
+        "The index was 2.10% below its 52-week high with 13.71% 63-session volatility.",
+        "Growth was solid but inflation remained elevated and the FOMC vote included three preferences for a rate increase."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -5.5,
+      "invalidation_condition": "SPY closes more than 5% below entry or breadth deteriorates with RSP lagging SPY by over 2 percentage points.",
+      "option_id": "SP500",
+      "reversal_case": "Elevated inflation, restrictive yields, and concentrated post-earnings moves could trigger valuation compression.",
+      "time_window_catalyst": "August employment, CPI, PPI, Fed minutes, GDP revision, and personal-income data."
+    },
+    {
+      "continuation_case": "Positive breadth and resilient domestic demand can extend rotation beyond the largest index constituents.",
+      "decision": "selected",
+      "evidence": [
+        "RSP outperformed SPY by 1.91 percentage points over 21 sessions and 1.16 points over five sessions.",
+        "RSP had lower 63-session volatility and a shallower drawdown than SPY.",
+        "Its quality evidence score was 0.643, including strong low-volatility and shallow-drawdown ranks."
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 7.2,
+      "forecast_low_pct": -4.2,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points on a rolling 10-session basis.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Another narrow mega-cap technology surge or weakening domestic growth could restore cap-weighted leadership.",
+      "time_window_catalyst": "August labor, inflation, production, and income data could sustain broad market participation if growth remains resilient."
+    },
+    {
+      "continuation_case": "The strong prior relative trend can resume because recent performance remained positive without the severe pullback seen in broader technology.",
+      "decision": "selected",
+      "evidence": [
+        "CIBR's prior 105-session active return was 18.02%.",
+        "Its five-session return was 2.62% and 21-session active return was 0.87%.",
+        "The quality evidence score was 0.616, led by a 0.910 prior-active rank."
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 11.5,
+      "forecast_low_pct": -7.5,
+      "invalidation_condition": "CIBR falls more than 8% from entry or its active return versus SPY turns below -4%.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High 32.28% volatility and growth-duration sensitivity could produce a sharp reversal if yields rise.",
+      "time_window_catalyst": "August macro releases and Nvidia results may renew demand for technology themes before the exit close."
+    },
+    {
+      "continuation_case": "Prior leadership can reassert itself if the recent pullback stabilizes and financing conditions do not tighten further.",
+      "decision": "selected",
+      "evidence": [
+        "XBI's prior 105-session active return was 17.82%.",
+        "Its 21-session active return was -3.61%, providing a recent pullback after prior strength.",
+        "Its quality evidence score was 0.728 with strong prior-active and pullback ranks."
+      ],
+      "forecast_base_pct": 2,
+      "forecast_high_pct": 12.5,
+      "forecast_low_pct": -8.5,
+      "invalidation_condition": "XBI falls more than 7% from entry or long yields rise above their entry level by 30 basis points.",
+      "option_id": "BIOTECH",
+      "reversal_case": "High volatility, weak near-term momentum, or higher yields could deepen the drawdown.",
+      "time_window_catalyst": "Softer inflation or labor data during August could ease financing-rate pressure on biotechnology equities."
+    },
+    {
+      "continuation_case": "BOJ normalization expectations and softer US data could narrow rate differentials and extend yen strength.",
+      "decision": "selected",
+      "evidence": [
+        "FXY returned 2.80% over five sessions and outperformed SPY by 2.70 points over 21 sessions.",
+        "Its 252-session correlation with SPY was only 0.140.",
+        "The BOJ held at 1.0%, but one member preferred 1.25% and projected inflation above 2% from the second half of fiscal 2026."
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 6,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "FXY loses more than 3% from entry or reverses below its pre-entry 21-session trend.",
+      "option_id": "YEN",
+      "reversal_case": "Firm US inflation or risk-on carry demand could widen rate differentials and weaken the yen.",
+      "time_window_catalyst": "August inflation and labor data may narrow rate differentials, while the BOJ's inflation outlook can support normalization expectations."
+    },
+    {
+      "continuation_case": "High long yields and resilient private demand could support margins and credit activity.",
+      "decision": "rejected",
+      "evidence": [
+        "XLF outperformed SPY by 7.00 percentage points over 21 sessions and returned 2.10% over five sessions.",
+        "Its 63-session volatility was 13.66% and drawdown was only -2.42%.",
+        "Its quality evidence score was only 0.409, with a 0.090 recent-pullback rank."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 7,
+      "forecast_low_pct": -5.5,
+      "invalidation_condition": "XLF underperforms SPY by more than 3 percentage points over 10 sessions or credit spreads widen sharply.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "The strong recent active return may mean-revert, while weak payrolls and tighter lending could raise credit concerns.",
+      "time_window_catalyst": "The Senior Loan Officer survey, employment report, and Fed minutes can reset expectations for margins and credit quality."
+    },
+    {
+      "continuation_case": "Solid activity and low claims can keep spreads contained and allow carry-like gains.",
+      "decision": "rejected",
+      "evidence": [
+        "HYG returned 0.30% over five sessions and had a 0.52% 21-session active return.",
+        "Its 63-session volatility was 3.65% with a -1.01% maximum drawdown.",
+        "The quality evidence score was 0.553, supported by high low-volatility and shallow-drawdown ranks."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "HYG falls more than 1.5% from entry or begins underperforming SPY by more than 2 percentage points.",
+      "option_id": "HIGH_YIELD_CREDIT",
+      "reversal_case": "Weak payrolls, tighter bank lending, or an equity selloff could widen spreads.",
+      "time_window_catalyst": "The lending survey and August employment data may clarify near-term default and spread risk."
+    },
+    {
+      "continuation_case": "Inflation uncertainty and softer dollar conditions could sustain safe-haven and real-asset demand.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU returned 1.51% over five sessions and outperformed SPY by 3.05 points over 21 sessions.",
+        "Its prior 105-session active return was -33.38%.",
+        "Its quality evidence score was only 0.184 with a -16.01% 63-session drawdown."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 9,
+      "forecast_low_pct": -7,
+      "invalidation_condition": "IAU loses more than 5% from entry or the dollar and long yields rise together materially.",
+      "option_id": "GOLD",
+      "reversal_case": "High real yields and the weak prior relative trend could overwhelm the recent bounce.",
+      "time_window_catalyst": "August CPI, PPI, Fed minutes, and personal-consumption inflation data can move real-rate expectations."
+    }
+  ],
+  "confidence": 0.59,
+  "expected_alpha_vs_sp500_pct": 1.04,
+  "is_official_score": true,
+  "key_risks": [
+    "A renewed mega-cap rally could cause equal-weight equities to lag SPY.",
+    "Hot August inflation or rising long yields could pressure biotechnology and growth equities.",
+    "Cybersecurity's elevated volatility could overwhelm its trend support.",
+    "A widening US-Japan rate differential could reverse the yen rally."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "RSP underperforms SPY by more than 2 percentage points on a rolling 10-session basis.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broadening participation, positive benchmark-relative returns, and lower volatility support continued outperformance versus cap-weighted SPY.",
+      "time_window_catalyst": "August labor, inflation, production, and income data could sustain broad market participation if growth remains resilient."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "CIBR falls more than 8% from entry or its active return versus SPY turns below -4%.",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Strong prior relative trend and a recent positive active return provide a less concentrated technology-growth opportunity.",
+      "time_window_catalyst": "August macro releases and Nvidia results may renew demand for technology themes before the exit close."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2,
+      "invalidation_condition": "XBI falls more than 7% from entry or long yields rise above their entry level by 30 basis points.",
+      "option_id": "BIOTECH",
+      "rationale": "Strong prior active performance and a recent relative pullback create a tactical rebound setup outside technology.",
+      "time_window_catalyst": "Softer inflation or labor data during August could ease financing-rate pressure on biotechnology equities."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "FXY loses more than 3% from entry or reverses below its pre-entry 21-session trend.",
+      "option_id": "YEN",
+      "rationale": "Recent strength, low equity correlation, and a dissenting BOJ vote support a modest diversifying allocation.",
+      "time_window_catalyst": "August inflation and labor data may narrow rate differentials, while the BOJ's inflation outlook can support normalization expectations."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.84,
+  "portfolio_rationale": "The portfolio combines improving US breadth with two pullback-supported growth exposures and a low-correlation currency diversifier. Every active holding has a base forecast above SPY, while cluster weights remain at or below 50%.",
+  "provider": "openai",
+  "rationale_summary": "Favor broadening participation and selective rebound candidates rather than chasing the most volatile recent winners. The yen reduces dependence on a single US equity outcome.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15407,
+    "latency_seconds": 39.03187688207254,
+    "output_tokens": 2254,
+    "reasoning_tokens": 0,
+    "total_tokens": 17661
+  }
+}

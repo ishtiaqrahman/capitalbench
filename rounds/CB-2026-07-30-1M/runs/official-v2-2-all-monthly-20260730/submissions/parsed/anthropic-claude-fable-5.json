@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid earnings (MSFT, AAPL, AMZN) and steady Fed support continued grind higher",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed 7,437.63 up 1.7% on Jul 30, +8.6% YTD",
+        "FOMC held rates 3.50-3.75% with three hike dissents; core PCE 3.3% y/y"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Hot CPI shifting consensus toward Fed hikes",
+      "option_id": "SP500",
+      "reversal_case": "Sticky inflation plus weakening payrolls (57k) could trigger stagflation repricing",
+      "time_window_catalyst": "Jobs Aug 7, CPI Aug 12, Nvidia Aug 26"
+    },
+    {
+      "continuation_case": "Hyperscaler capex guidance confirms AI demand; deep pullback offers re-entry before Nvidia",
+      "decision": "selected",
+      "evidence": [
+        "Prior 105d active return +49.5% but -17.2% 21d active pullback",
+        "Micron +18.4%, Lam +18%, AMD +13% on Jul 30; Azure +43%, AWS +37%, Meta capex $130-145B",
+        "Nvidia results scheduled Aug 26, before exit"
+      ],
+      "forecast_base_pct": 3.5,
+      "forecast_high_pct": 14.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Nvidia guidance disappointment or renewed semi-complex breakdown below recent lows",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "55% volatility and stretched positioning; Nvidia miss could extend -25% drawdown",
+      "time_window_catalyst": "Nvidia earnings Aug 26 after close"
+    },
+    {
+      "continuation_case": "Market breadth broadening with Russell 2000 +18.7% YTD supports average-stock outperformance",
+      "decision": "selected",
+      "evidence": [
+        "RSP minus SPY +1.16% (5d) and +1.91% (21d)",
+        "Volatility 11.2% and max drawdown -2.0%, lowest among equity options"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "RSP-SPY relative return turns decisively negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap earnings strength could re-concentrate returns in cap-weighted index",
+      "time_window_catalyst": "CPI Aug 12 and jobs Aug 7 sustaining rotation"
+    },
+    {
+      "continuation_case": "Elevated inflation and yields favor value sectors; strong relative momentum with low volatility",
+      "decision": "selected",
+      "evidence": [
+        "+4.1% 21d active return, -0.5% from 52-week high",
+        "10y at 4.67%, 30y 5.22% supports value tilt"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Sharp yield decline restoring growth-factor leadership",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Falling yields or growth-scare could rotate back to defensive growth",
+      "time_window_catalyst": "CPI/PPI Aug 12-13"
+    },
+    {
+      "continuation_case": "Steep curve and solid activity support bank margins; strong recent relative trend",
+      "decision": "selected",
+      "evidence": [
+        "+7.0% 21d active return, -1.0% from 52-week high, drawdown only -2.4%",
+        "30-year yield rose to 5.22%, steepening curve"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Loan survey shows sharp tightening or credit-quality deterioration",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak recent pullback rank (0.09) means signal is extended; credit worries could reverse",
+      "time_window_catalyst": "Senior Loan Officer Survey Aug 3-4"
+    },
+    {
+      "continuation_case": "Weakening dollar and elevated inflation could keep bid under gold",
+      "decision": "rejected",
+      "evidence": [
+        "IAU +2.37% 21d, dollar -0.95% 21d",
+        "Prior 105d active return -33.4%, -23.9% from 52-week high"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Dollar rebound or rising real yields",
+      "option_id": "GOLD",
+      "reversal_case": "Deep prior downtrend and hawkish Fed dissents; real rates elevated",
+      "time_window_catalyst": "CPI Aug 12; PCE Aug 26"
+    },
+    {
+      "continuation_case": "Weak payrolls could rally duration if growth cracks",
+      "decision": "rejected",
+      "evidence": [
+        "TLT -3.83% 21d; 30y yield 5.22% and rising",
+        "Core PCE 3.3% y/y, three FOMC members favored a hike"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Inflation prints below expectations driving yields lower",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky inflation and hawkish dissents keep long yields under upward pressure",
+      "time_window_catalyst": "CPI Aug 12, FOMC minutes Aug 19"
+    },
+    {
+      "continuation_case": "Bounce off deep lows with improving relative momentum",
+      "decision": "rejected",
+      "evidence": [
+        "+9.4% 21d active return but -27.6% prior 105d active return; -15.6% from 52-week high",
+        "Q2 GDP +4.3% y/y"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Renewed relative underperformance versus SPY",
+      "option_id": "CHINA",
+      "reversal_case": "Bounce within severe downtrend; policy and geopolitical risk unresolved",
+      "time_window_catalyst": "None identified before Aug 28 close"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.97,
+  "is_official_score": true,
+  "key_risks": [
+    "Nvidia guidance disappointment could send SMH sharply lower given 55% volatility",
+    "Hot July CPI (Aug 12) with three FOMC dissenters favoring hikes could hit all equities",
+    "Breadth rotation could reverse, with mega-cap growth reasserting leadership over RSP/value",
+    "Payroll weakness (57k June, negative revisions) could morph into growth-scare selloff"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 3.5,
+      "invalidation_condition": "Nvidia guidance miss or further AI-capex de-rating pushing SMH below its recent lows",
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Strongest prior trend (+49.5% prior active) with deep -17% recent pullback into Nvidia results Aug 26; strong AI capex confirmation from Microsoft, Amazon, Meta guidance.",
+      "time_window_catalyst": "Nvidia earnings after close Aug 26; hyperscaler capex follow-through"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "RSP-SPY relative trend reverses as mega-cap leadership reasserts",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth broadening: RSP beat SPY +1.16% (5d) and +1.91% (21d) with lowest equity volatility (11.2%) and shallow drawdown.",
+      "time_window_catalyst": "July CPI Aug 12 and jobs report Aug 7 supporting soft-landing rotation into average stock"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Sharp fall in long yields reigniting growth-over-value rotation",
+      "option_id": "LARGE_VALUE",
+      "rationale": "+4.1% 21d active return, near 52-week high, low volatility (12.2%) and shallow -2.4% drawdown; benefits from sticky-inflation, higher-yield regime.",
+      "time_window_catalyst": "CPI/PPI Aug 12-13 keeping rates elevated favors value over long-duration growth"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Credit deterioration signals or sharp yield-curve flattening",
+      "option_id": "FINANCIALS",
+      "rationale": "+7.0% 21d active return, only -1.0% off 52-week high, steepening curve (30y 5.22%) supports banks.",
+      "time_window_catalyst": "Senior Loan Officer Survey Aug 3-4; continued curve steepening"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Hot inflation prints forcing Fed hike repricing",
+      "option_id": "SP500",
+      "rationale": "Benchmark ballast at record-adjacent levels with solid mega-cap earnings.",
+      "time_window_catalyst": "Jobs report Aug 7, CPI Aug 12, Nvidia Aug 26"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.97,
+  "portfolio_rationale": "Barbell of an oversold, catalyst-rich semiconductor position into Nvidia earnings against low-volatility broadening trades (equal-weight, value, financials) that are outperforming SPY in a sticky-inflation, higher-rate regime.",
+  "provider": "anthropic",
+  "rationale_summary": "Breadth is rotating away from cap-weighted mega-cap concentration while AI capex remains robust; semis' -17% active pullback into Nvidia's Aug 26 report offers asymmetric upside, funded by resilient value/financials/equal-weight sleeves.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27727,
+    "latency_seconds": 54.848251880845055,
+    "output_tokens": 3997,
+    "total_tokens": 31724
+  }
+}

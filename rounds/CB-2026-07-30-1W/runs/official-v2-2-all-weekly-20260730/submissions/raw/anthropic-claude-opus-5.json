@@ -1,0 +1,197 @@
+{
+  "benchmark_expected_return_pct": 0.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong mega-cap earnings and broad breadth (68% positive assets 5d).",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed 7,437.63 up 1.7% on July 30",
+        "Up 8.6% in 2026; -2.1% from 52w high",
+        "Microsoft, Apple, Amazon beat with strong cloud growth"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "Break below prior week's low on rate shock",
+      "option_id": "SP500",
+      "reversal_case": "Core inflation 3.3% and three hawkish FOMC dissents could lift yields.",
+      "time_window_catalyst": "Aug 3 SLOOS, Aug 4 JOLTS/trade, Aug 6 claims"
+    },
+    {
+      "continuation_case": "Persistent relative strength with low drawdown and steep curve.",
+      "decision": "selected",
+      "evidence": [
+        "Prior 16s active return +5.29%, drawdown only -2.08%",
+        "30-year yield rose to 5.22%",
+        "Vol 15.6% vs SPY 12.1%, near 52w high"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLF lags SPY by >1.5%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "SLOOS showing tightening credit standards could hit banks.",
+      "time_window_catalyst": "Aug 3 Senior Loan Officer Survey"
+    },
+    {
+      "continuation_case": "New highs with modest volatility and dollar weakness tailwind.",
+      "decision": "selected",
+      "evidence": [
+        "Active return 5s +3.12%, at 0.00% from 52w high",
+        "Euro-area final June inflation 2.8%, ECB on hold",
+        "UUP -1.47% over 5 sessions"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "VGK closes below prior week range",
+      "option_id": "EUROPE",
+      "reversal_case": "Hot flash inflation or dollar rebound could stall the move.",
+      "time_window_catalyst": "July 31 euro-area flash inflation"
+    },
+    {
+      "continuation_case": "Defensive rotation persists with elevated inflation uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "Prior active +2.90%, beta to SPY -0.17",
+        "Max 21s drawdown only -3.74%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "XLV lags SPY by >1.5%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on tech melt-up drains defensive flows.",
+      "time_window_catalyst": "Aug 4-6 macro data"
+    },
+    {
+      "continuation_case": "Sticky inflation and softer dollar support gold.",
+      "decision": "selected",
+      "evidence": [
+        "IAU +1.51% 5s, +2.37% 21s",
+        "Core PCE 3.3% y/y, dollar down 1.47% 5s"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Gold breaks below prior week low with dollar rally",
+      "option_id": "GOLD",
+      "reversal_case": "Hawkish repricing after strong ECI lifts real yields.",
+      "time_window_catalyst": "July 31 Employment Cost Index"
+    },
+    {
+      "continuation_case": "Massive hyperscaler capex guidance supports chip demand.",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 5s -7.59%, prior 16s -10.39%",
+        "Vol 53.5%, drawdown -23.1%, volume z 2.76",
+        "Micron +18.4%, Lam +18% on July 30"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "SMH gives back the July 30 gain",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme volatility and one-day spike invite mean reversion.",
+      "time_window_catalyst": "Post-earnings capex digestion"
+    },
+    {
+      "continuation_case": "Prior strong trend and tight supply.",
+      "decision": "rejected",
+      "evidence": [
+        "USO -9.09% active 5s after +32.20% prior",
+        "Brent fell 1.4% to $86.88",
+        "Vol 63.2%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Brent breaks below $84",
+      "option_id": "OIL",
+      "reversal_case": "Sharp recent breakdown and extreme volatility.",
+      "time_window_catalyst": "Weekly inventory and OPEC news"
+    },
+    {
+      "continuation_case": "Soft payrolls (57k) and downward revisions could rally duration.",
+      "decision": "rejected",
+      "evidence": [
+        "TLT -3.83% over 21 sessions; 30y yield 5.22%",
+        "Three FOMC members wanted a hike"
+      ],
+      "forecast_base_pct": -0.1,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "30-year yield exceeds 5.35%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation and hawkish dissents keep long yields rising.",
+      "time_window_catalyst": "July 31 ECI, Aug 6 claims"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.23,
+  "is_official_score": true,
+  "key_risks": [
+    "Mega-cap tech momentum continues and SPY outruns the diversified tilts",
+    "Hot ECI or flash inflation lifts yields and hits gold and financials",
+    "Europe reverses from 52-week highs on dollar rebound",
+    "Weak JOLTS/claims triggers broad risk-off"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "S&P 500 falls more than 2% intra-week on rate or inflation shock",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure given strong mega-cap earnings from Microsoft, Apple, Amazon.",
+      "time_window_catalyst": "Post-earnings drift plus Aug 4 JOLTS and Aug 6 claims"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "XLF underperforms SPY by more than 1.5% or credit spreads widen sharply",
+      "option_id": "FINANCIALS",
+      "rationale": "Steady leadership with low volatility, positive prior active return, minimal drawdown; steep curve with 30y at 5.22%.",
+      "time_window_catalyst": "Aug 3 Senior Loan Officer Opinion Survey"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Euro reverses sharply or VGK breaks below prior week range",
+      "option_id": "EUROPE",
+      "rationale": "At 52-week high with positive breadth, weaker dollar tailwind, ECB on hold, contained 2.8% euro-area inflation.",
+      "time_window_catalyst": "July 31 euro-area flash inflation"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "XLV lags SPY by more than 1.5%",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive diversifier with positive prior active return, negative SPY beta, shallow drawdown.",
+      "time_window_catalyst": "Macro data Aug 4-6 supporting defensives"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Dollar rebounds strongly and gold breaks below prior week low",
+      "option_id": "GOLD",
+      "rationale": "Hedge against elevated core inflation (3.3-3.4%) and hawkish FOMC dissents; weaker dollar supportive.",
+      "time_window_catalyst": "ECI July 31 and inflation data flow"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.63,
+  "portfolio_rationale": "Barbell of benchmark core plus lower-volatility, positive-prior-trend diversifiers (financials, Europe, healthcare, gold) rather than chasing the sharp one-day mega-cap tech spike, which carries reversal risk after an 18% Micron / 15% Microsoft move.",
+  "provider": "anthropic",
+  "rationale_summary": "SPY base +0.4%; tilt toward broad-based leadership outside crowded semis while keeping 40% benchmark to limit tracking error.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27596,
+    "latency_seconds": 44.45625958009623,
+    "output_tokens": 3040,
+    "total_tokens": 30636
+  }
+}

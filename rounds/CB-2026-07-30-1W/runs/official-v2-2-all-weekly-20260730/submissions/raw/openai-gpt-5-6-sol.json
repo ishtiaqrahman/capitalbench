@@ -1,0 +1,178 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad participation and strong mega-cap earnings can extend the rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY gained 0.48% over five sessions but lost 0.68% over 21 sessions.",
+        "Positive asset share was 68.12% over five sessions and equal weight beat SPY by 1.16%.",
+        "The FOMC held rates while inflation remained elevated and payroll growth was weak."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "Breadth deteriorates sharply or SPY breaks below its recent 21-session drawdown low.",
+      "option_id": "SP500",
+      "reversal_case": "The 1.7% entry-day surge may fade as elevated inflation and weaker labor data constrain valuations.",
+      "time_window_catalyst": "Employment Cost Index, Senior Loan Officer Survey, JOLTS, and August 6 claims."
+    },
+    {
+      "continuation_case": "Persistent relative strength and solid private demand support banks and diversified financial firms.",
+      "decision": "selected",
+      "evidence": [
+        "XLF beat SPY by 1.62% over five sessions and 5.29% in the prior 16-session window.",
+        "Its quality evidence score was 0.634 with a 0.881 prior active rank.",
+        "Real final sales to private domestic purchasers rose at a 3.9% annual rate."
+      ],
+      "forecast_base_pct": 0.65,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -2.1,
+      "invalidation_condition": "Credit conditions deteriorate materially or XLF loses relative strength versus SPY.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak lending demand, credit deterioration, or a sharp yield decline could unwind the trend.",
+      "time_window_catalyst": "August 3 Senior Loan Officer Opinion Survey and August 4 JOLTS."
+    },
+    {
+      "continuation_case": "The strong prior trend can resume after a contained pullback, with low SPY correlation providing diversification.",
+      "decision": "selected",
+      "evidence": [
+        "Agriculture had the universe's highest quality evidence score at 0.826.",
+        "Its prior active rank was 0.925 and recent pullback rank was 0.881.",
+        "DBA's prior 16-session active return was 7.04%, followed by a 3.17% five-session underperformance."
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 3.4,
+      "forecast_low_pct": -2.4,
+      "invalidation_condition": "DBA extends its decline and breaks below its recent 21-session drawdown trough.",
+      "option_id": "AGRICULTURE",
+      "reversal_case": "The pullback may reflect a genuine commodity trend break rather than temporary mean reversion.",
+      "time_window_catalyst": "No specific scheduled agriculture catalyst identified; macro and dollar releases through August 6 may affect commodity pricing."
+    },
+    {
+      "continuation_case": "Independent positive relative trend and reported growth can sustain international risk appetite.",
+      "decision": "selected",
+      "evidence": [
+        "MCHI beat SPY by 3.55% over five sessions and 5.70% in the prior 16-session window.",
+        "China reported second-quarter real GDP growth of 4.3% year over year.",
+        "China's prior active rank was 0.896, though its recent pullback rank was only 0.075."
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "MCHI reverses its recent relative advance and underperforms SPY materially.",
+      "option_id": "CHINA",
+      "reversal_case": "The recent gain may be overextended, while policy, currency, and geopolitical risks remain high.",
+      "time_window_catalyst": "Euro-area inflation and U.S. macro releases may influence global growth and emerging-market risk appetite."
+    },
+    {
+      "continuation_case": "BOJ normalization expectations and elevated participation can extend yen strength.",
+      "decision": "selected",
+      "evidence": [
+        "FXY beat SPY by 2.33% over five sessions and rose 2.80% over three sessions.",
+        "Its recent volume z-score was 2.387.",
+        "The BOJ held its rate near 1.0%, with one member favoring 1.25%, and projected inflation above 2%."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "FXY gives back its recent advance as U.S.-Japan rate differentials widen.",
+      "option_id": "YEN",
+      "reversal_case": "A stronger dollar or widening U.S.-Japan rate differential could rapidly revive carry pressure.",
+      "time_window_catalyst": "Post-BOJ repricing and U.S. labor and inflation-sensitive releases through August 6."
+    },
+    {
+      "continuation_case": "A strong prior trend could resume if crude stabilizes after its pullback.",
+      "decision": "rejected",
+      "evidence": [
+        "Energy's quality evidence score was 0.771 and prior active rank was 0.955.",
+        "XLE's prior 16-session active return was 12.96%, but it lagged SPY by 1.18% over five sessions.",
+        "Brent crude fell 1.4% on July 30."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3.1,
+      "forecast_low_pct": -3.2,
+      "invalidation_condition": "Crude continues lower and XLE underperforms SPY beyond its recent pullback.",
+      "option_id": "ENERGY",
+      "reversal_case": "Falling crude and weaker recent relative performance could deepen the correction.",
+      "time_window_catalyst": "U.S. trade and manufacturing data may alter the near-term demand outlook."
+    },
+    {
+      "continuation_case": "Stable policy rates support a small, predictable carry return.",
+      "decision": "rejected",
+      "evidence": [
+        "Short Treasury had a 0.749 quality evidence score and the lowest volatility profile among traded options.",
+        "BIL returned 0.03% over three sessions with a negligible drawdown.",
+        "The federal-funds target remained 3.50% to 3.75%."
+      ],
+      "forecast_base_pct": 0.07,
+      "forecast_high_pct": 0.12,
+      "forecast_low_pct": 0,
+      "invalidation_condition": "A pricing or distribution effect causes BIL to post a negative weekly adjusted-close return.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Its low volatility also limits upside and makes benchmark outperformance unlikely during an equity advance.",
+      "time_window_catalyst": "No material price catalyst identified; accrual is the primary return source."
+    }
+  ],
+  "confidence": 0.59,
+  "expected_alpha_vs_sp500_pct": 0.43,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot U.S. cost or labor data could lift yields and pressure risk assets.",
+    "The recent broad equity rally could reverse after the July 30 surge.",
+    "China or emerging-market sentiment could weaken despite recent relative strength.",
+    "Agriculture's pullback could continue without a near-term asset-specific catalyst.",
+    "Post-BOJ yen strength could reverse if rate differentials widen."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.65,
+      "invalidation_condition": "Credit conditions deteriorate materially or XLF loses relative strength versus SPY.",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong prior and recent benchmark-relative performance, supported by solid domestic demand and an upcoming lending-conditions survey.",
+      "time_window_catalyst": "August 3 Senior Loan Officer Opinion Survey and August 4 JOLTS."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "DBA extends its decline and breaks below its recent 21-session drawdown trough.",
+      "option_id": "AGRICULTURE",
+      "rationale": "Highest quality score in the universe combines strong prior trend with a recent pullback, offering a diversified mean-reversion setup.",
+      "time_window_catalyst": "No specific scheduled agriculture catalyst identified; macro and dollar releases through August 6 may affect commodity pricing."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "MCHI reverses its recent relative advance and underperforms SPY materially.",
+      "option_id": "CHINA",
+      "rationale": "Positive prior and recent active returns align with reported 4.3% year-over-year Chinese GDP growth.",
+      "time_window_catalyst": "Euro-area inflation and U.S. macro releases may influence global growth and emerging-market risk appetite."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "FXY gives back its recent advance as U.S.-Japan rate differentials widen.",
+      "option_id": "YEN",
+      "rationale": "Recent strength, elevated volume, and the BOJ's inflation outlook support continued adjustment in rate differentials.",
+      "time_window_catalyst": "Post-BOJ repricing and U.S. labor and inflation-sensitive releases through August 6."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.68,
+  "portfolio_rationale": "The portfolio combines four distinct clusters with independent weekly drivers and every holding clears SPY's base forecast. It favors supported relative trends while using agriculture's high-quality pullback setup to reduce dependence on equity beta.",
+  "provider": "openai",
+  "rationale_summary": "Financials, China, agriculture, and yen offer stronger one-week base cases than SPY based on relative trend, pullback quality, and identifiable macro transmission channels. Cluster diversification limits concentration to 30%.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15323,
+    "latency_seconds": 28.553534644888714,
+    "output_tokens": 1946,
+    "reasoning_tokens": 0,
+    "total_tokens": 17269
+  }
+}

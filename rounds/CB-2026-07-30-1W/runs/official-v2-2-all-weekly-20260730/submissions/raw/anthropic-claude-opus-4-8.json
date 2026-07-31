@@ -1,0 +1,179 @@
+{
+  "benchmark_expected_return_pct": 0.35,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings and solid private demand support upside.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed +1.7% on July 30 at 7,437.63",
+        "Megacap earnings beats: MSFT +15.5%, Apple rev +16%",
+        "Real final sales to private domestic purchasers +3.9%"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "S&P falls more than 2% on rate/growth scare.",
+      "option_id": "SP500",
+      "reversal_case": "Overbought after sharp rally; elevated inflation and 9-3 hawkish FOMC dissent.",
+      "time_window_catalyst": "JOLTS, trade data, weekly claims through Aug 6."
+    },
+    {
+      "continuation_case": "Broad relative strength and stable ECB support continued outperformance.",
+      "decision": "selected",
+      "evidence": [
+        "Europe active return +3.12% 5s, at 52w high",
+        "Low max drawdown -2.53%",
+        "Final June euro-area inflation 2.8%, ECB steady"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "VGK falls below prior week close.",
+      "option_id": "EUROPE",
+      "reversal_case": "Extended run at highs prone to pullback; euro strength could reverse.",
+      "time_window_catalyst": "Euro-area July flash inflation."
+    },
+    {
+      "continuation_case": "Steady rates and strong relative trend favor financials.",
+      "decision": "selected",
+      "evidence": [
+        "Prior 16s active return +5.29%",
+        "Quality evidence score 0.634, low drawdown -2.08%",
+        "Stable 10y yield 4.67%"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "XLF breaks recent support.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Curve flattening or credit stress could hurt.",
+      "time_window_catalyst": "Senior Loan Officer Survey Aug 3."
+    },
+    {
+      "continuation_case": "AI capex and cloud strength could drive rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ beta 1.708, volatility 24%",
+        "Prior active return -4.88%",
+        "Meta fell 8% post-earnings"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "QQQ drops more than 3%.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "High beta and drawdown risk after megacap spike.",
+      "time_window_catalyst": "Continued megacap earnings digestion."
+    },
+    {
+      "continuation_case": "Strong relative momentum and commodity demand.",
+      "decision": "rejected",
+      "evidence": [
+        "Active return +4.19% 5s, near 52w high",
+        "Low drawdown -1.63%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "EWA falls below prior week close.",
+      "option_id": "AUSTRALIA",
+      "reversal_case": "Very shallow pullback rank suggests overextension.",
+      "time_window_catalyst": "China growth data effects."
+    },
+    {
+      "continuation_case": "Safe-haven demand and softer dollar support gold.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU +1.51% 5s, +2.37% 21s",
+        "Weaker dollar -1.47% 5s"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "IAU falls more than 2%.",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields could pressure gold.",
+      "time_window_catalyst": "Inflation and dollar moves."
+    },
+    {
+      "continuation_case": "Stable rates provide carry.",
+      "decision": "rejected",
+      "evidence": [
+        "10y yield 4.67% unchanged",
+        "AGG low volatility 3.52%"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 0.8,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Yields spike above 4.8%.",
+      "option_id": "AGGREGATE_BONDS",
+      "reversal_case": "Hawkish FOMC dissent risks higher yields.",
+      "time_window_catalyst": "ECI and claims data."
+    },
+    {
+      "continuation_case": "Strong recent bounce and resilient real PCE +0.4%.",
+      "decision": "rejected",
+      "evidence": [
+        "XLY +2.86% active 5s",
+        "Prior active -6.11%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLY reverses below prior week close.",
+      "option_id": "CONSUMER_DISCRETIONARY",
+      "reversal_case": "Weak consumer confidence 90.8 and soft payrolls.",
+      "time_window_catalyst": "Retail-linked data."
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.14,
+  "is_official_score": true,
+  "key_risks": [
+    "Post-earnings tech reversal could drag broad indices lower",
+    "Hot ECI or inflation prints could push yields up and pressure rate-sensitive and equity names",
+    "Rally exhaustion after a 1.7% S&P day may mean mean-reversion week"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "S&P 500 falls more than 2% intraweek on rate or growth scare.",
+      "option_id": "SP500",
+      "rationale": "Broad large-cap exposure after strong tech-led rally; solid GDP final sales and megacap earnings beats support continuation.",
+      "time_window_catalyst": "August JOLTS, trade data, and weekly claims through Aug 6."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "VGK reverses below prior week close or euro sells off sharply.",
+      "option_id": "EUROPE",
+      "rationale": "Europe showing strong recent active return (+3.12% 5s) with low drawdown and improving momentum; ECB steady.",
+      "time_window_catalyst": "Euro-area July flash inflation and regional earnings."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "XLF breaks below recent support or credit spreads widen sharply.",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong prior active return (+5.29%), high quality-evidence rank, low volatility and drawdown, steady rates backdrop.",
+      "time_window_catalyst": "Senior Loan Officer Survey Aug 3 and yield curve stability."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.49,
+  "portfolio_rationale": "Core SPY plus tilts to Europe and Financials, both showing durable relative strength, low drawdown, and supportive macro, while avoiding overheated high-beta tech that just had an 15%+ single-day megacap spike prone to mean reversion.",
+  "provider": "anthropic",
+  "rationale_summary": "Balanced allocation anchored on SPY with modest overweights to leading, lower-volatility clusters (Europe, Financials) that clear the SPY base hurdle.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27602,
+    "latency_seconds": 39.72556352405809,
+    "output_tokens": 2565,
+    "total_tokens": 30167
+  }
+}

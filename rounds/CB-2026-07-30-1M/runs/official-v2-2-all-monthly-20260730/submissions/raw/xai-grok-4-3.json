@@ -1,0 +1,180 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Recovery momentum persists into August data",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed up 1.7% on July 30",
+        "Year-to-date gain of 8.6%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "SP500",
+      "reversal_case": "Inflation or labor data disappoints",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    },
+    {
+      "continuation_case": "Value rotation continues amid rate stability",
+      "decision": "selected",
+      "evidence": [
+        "Active return 4.10% over 21 days",
+        "Quality evidence score 0.607"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth stocks rebound sharply",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    },
+    {
+      "continuation_case": "Bank earnings and rate environment supportive",
+      "decision": "selected",
+      "evidence": [
+        "Active return 7.00% over 21 days",
+        "Low drawdown rank"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit spreads widen materially",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    },
+    {
+      "continuation_case": "Defensive demand holds through data window",
+      "decision": "selected",
+      "evidence": [
+        "Active return 3.74% over 21 days",
+        "Shallow drawdown profile"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Policy or regulatory surprises",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    },
+    {
+      "continuation_case": "Broad market tracks SPY closely",
+      "decision": "rejected",
+      "evidence": [
+        "Active return -0.34% over 21 days"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "TOTAL_US_MARKET",
+      "reversal_case": "Small-cap outperformance accelerates",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    },
+    {
+      "continuation_case": "Dividend stability attracts flows",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 6.04% over 21 days"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Rate volatility increases",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    },
+    {
+      "continuation_case": "Equal-weight rotation persists",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 1.91% over 21 days"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap earnings dominate",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    },
+    {
+      "continuation_case": "Manufacturing data improves",
+      "decision": "rejected",
+      "evidence": [
+        "Active return -3.01% over 21 days"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "INDUSTRIALS",
+      "reversal_case": "Global growth concerns rise",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.66,
+  "is_official_score": true,
+  "key_risks": [
+    "Elevated inflation readings could pressure equities",
+    "Labor market softening may trigger risk-off rotation",
+    "Volatility in growth-sensitive sectors"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "SP500",
+      "rationale": "Broad diversified US equity exposure with solid recent recovery and scheduled data releases.",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value tilt shows stronger recent relative performance and lower drawdown.",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials exhibit positive active return and quality evidence support.",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Sustained rise in unemployment above 4.5%",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare provides defensive balance with moderate quality score.",
+      "time_window_catalyst": "July employment data and August CPI releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.66,
+  "portfolio_rationale": "Mix of SP500 core with value, financials and healthcare for expected outperformance based on recent relative strength and quality metrics.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings with base forecasts exceeding SPY while respecting cluster caps and allocation rules.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15633,
+    "latency_seconds": 20.77983984001912,
+    "output_tokens": 1672,
+    "reasoning_tokens": 804,
+    "total_tokens": 18109
+  }
+}

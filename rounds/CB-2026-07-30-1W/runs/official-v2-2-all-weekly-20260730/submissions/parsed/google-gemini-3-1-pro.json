@@ -1,0 +1,143 @@
+{
+  "benchmark_expected_return_pct": 1.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued positive sentiment and solid economic data.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7,437.63, up 1.7% on July 30.",
+        "Advance second-quarter real GDP increased at a 1.5% annual rate."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A sharp reversal in tech stocks or weak economic data.",
+      "option_id": "SP500",
+      "reversal_case": "A sudden shift in market sentiment or weak economic data.",
+      "time_window_catalyst": "Continued positive sentiment from tech earnings and solid GDP data."
+    },
+    {
+      "continuation_case": "Strong earnings momentum continues to drive tech stocks higher.",
+      "decision": "selected",
+      "evidence": [
+        "Microsoft reported quarterly revenue up 18%.",
+        "Apple reported quarterly revenue up 16%."
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A sudden shift in sentiment against mega-cap tech.",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "A sudden shift in sentiment against mega-cap tech.",
+      "time_window_catalyst": "Positive reaction to recent strong earnings from Microsoft and Apple."
+    },
+    {
+      "continuation_case": "Stable rates and solid economic growth support financials.",
+      "decision": "selected",
+      "evidence": [
+        "Advance second-quarter real GDP increased at a 1.5% annual rate.",
+        "The FOMC voted to maintain the federal-funds target range."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Unexpected weakness in economic data or a sudden drop in interest rates.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Unexpected weakness in economic data or a sudden drop in interest rates.",
+      "time_window_catalyst": "Stable interest rates and solid economic data supporting loan growth."
+    },
+    {
+      "continuation_case": "Oil prices stabilize and energy companies maintain capital discipline.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude fell 1.4% on July 30 to $86.88 per barrel."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A sharp decline in oil prices.",
+      "option_id": "ENERGY",
+      "reversal_case": "A further decline in oil prices due to weak demand or increased supply.",
+      "time_window_catalyst": "Stabilization in oil prices."
+    },
+    {
+      "continuation_case": "Defensive characteristics attract investors in a volatile market.",
+      "decision": "rejected",
+      "evidence": [
+        "Healthcare sector has a quality evidence score of 0.578."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A strong rally in cyclical sectors.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A shift towards more cyclical sectors.",
+      "time_window_catalyst": "None identified."
+    },
+    {
+      "continuation_case": "Yields continue to rise on strong economic data.",
+      "decision": "rejected",
+      "evidence": [
+        "The thirty-year yield rose to 5.22% from 5.20%."
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 1.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A sharp drop in long-term yields.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "A sudden flight to safety or weak economic data.",
+      "time_window_catalyst": "None identified."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.225,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden reversal in tech stock sentiment.",
+    "Unexpectedly weak economic data.",
+    "A shift in Federal Reserve policy expectations."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "A sharp reversal in tech stocks or weak economic data.",
+      "option_id": "SP500",
+      "rationale": "Core holding to capture broad market recovery and solid GDP growth.",
+      "time_window_catalyst": "Continued positive sentiment from tech earnings and solid GDP data."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "A sudden shift in sentiment against mega-cap tech.",
+      "option_id": "TECHNOLOGY",
+      "rationale": "Strong earnings from major tech companies support continued outperformance.",
+      "time_window_catalyst": "Positive reaction to recent strong earnings from Microsoft and Apple."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Unexpected weakness in economic data or a sudden drop in interest rates.",
+      "option_id": "FINANCIALS",
+      "rationale": "Solid economic growth and stable rates provide a favorable environment for financials.",
+      "time_window_catalyst": "Stable interest rates and solid economic data supporting loan growth."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.425,
+  "portfolio_rationale": "The portfolio balances broad market exposure with targeted allocations to technology and financials, sectors poised to benefit from recent strong earnings and solid economic data. The allocation to SP500 provides stability, while the active bets aim to generate alpha.",
+  "provider": "google",
+  "rationale_summary": "A balanced approach favoring technology and financials based on strong earnings and solid economic indicators.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16820,
+    "latency_seconds": 15.837227239040658,
+    "output_tokens": 1688,
+    "total_tokens": 18508
+  }
+}

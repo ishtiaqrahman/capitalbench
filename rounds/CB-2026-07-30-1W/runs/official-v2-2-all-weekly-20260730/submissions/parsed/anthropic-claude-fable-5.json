@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid activity and strong megacap earnings (Microsoft, Apple, Amazon) support the index.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed 7,437.63 on July 30, up 1.7%, up 8.6% YTD",
+        "FOMC held rates 3.50-3.75% with three dissents for a hike; inflation elevated",
+        "spy_return_5s 0.48%, -2.10% from 52-week high"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Hot ECI print pushing rate-hike expectations higher.",
+      "option_id": "SP500",
+      "reversal_case": "Hawkish Fed dissents, 4.67% 10-yr yield, and soft payrolls (57k) cap upside; Meta weakness weighs on concentration.",
+      "time_window_catalyst": "ECI July 31, SLOOS Aug 3, JOLTS Aug 4, claims Aug 6."
+    },
+    {
+      "continuation_case": "Breadth broadening (positive asset share 68% over 5 days) sustains equal-weight outperformance.",
+      "decision": "selected",
+      "evidence": [
+        "rsp_minus_spy 5-day +1.16%, 21-day +1.91%",
+        "Volatility 9.99% vs SPY 12.12%; drawdown only -1.46%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "RSP-SPY 5-day spread turns negative.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap tech rally on strong earnings pulls cap-weighted SPY ahead.",
+      "time_window_catalyst": "Macro data Aug 3-6 favoring cyclical breadth."
+    },
+    {
+      "continuation_case": "Higher-for-longer rates and rotation from expensive growth favor value.",
+      "decision": "selected",
+      "evidence": [
+        "+1.36% 5-day active, +2.70% prior 16-day active return",
+        "-0.53% from 52-week high, 9.97% volatility"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.9,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "IWD active return negative two straight sessions.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Falling yields or renewed tech momentum reverse the value rotation.",
+      "time_window_catalyst": "Elevated 10-yr yield at 4.67% into ECI and labor data."
+    },
+    {
+      "continuation_case": "Solid economy, elevated yields and steepening support bank earnings power.",
+      "decision": "selected",
+      "evidence": [
+        "+5.29% prior 16-day active, +1.62% 5-day active, -1.04% from 52w high",
+        "FOMC describes activity as solid; 10-yr at 4.67%, 30-yr 5.22%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Adverse SLOOS or XLF breaking 21-day low.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "SLOOS shows tightening credit or growth scare hits cyclicals.",
+      "time_window_catalyst": "Senior Loan Officer Survey Aug 3."
+    },
+    {
+      "continuation_case": "Weak dollar and steady ECB support USD-denominated European equity returns.",
+      "decision": "selected",
+      "evidence": [
+        "+3.12% 5-day active, at 52-week high; CAC 40 +0.9% July 30",
+        "Dollar UUP -1.47% over 5 days; euro-area inflation 2.8%, ECB on hold"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "UUP rallies more than 1% during the window.",
+      "option_id": "EUROPE",
+      "reversal_case": "Dollar rebound or hot euro-area flash inflation triggers pullback from highs.",
+      "time_window_catalyst": "Euro-area July flash inflation July 31."
+    },
+    {
+      "continuation_case": "Sticky inflation and dollar softness sustain gold demand.",
+      "decision": "selected",
+      "evidence": [
+        "IAU +1.51% 5-day, +2.37% 21-day",
+        "Inflation elevated (PCE 5.1% annualized Q2); dollar weakening"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Sharp rise in real yields or dollar strength.",
+      "option_id": "GOLD",
+      "reversal_case": "Real yields rise on hot ECI; dollar rebound.",
+      "time_window_catalyst": "ECI July 31 inflation-cost read."
+    },
+    {
+      "continuation_case": "Strong Azure/AWS growth could refuel AI-tech rally.",
+      "decision": "rejected",
+      "evidence": [
+        "-1.69% 5-day active, -4.88% prior active, -8.29% from 52w high, 24% volatility",
+        "Microsoft +15.5% but Meta -8% on 55% cost growth and $130-145B capex guide"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "QQQ reclaims recent highs on broad tech follow-through.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Capex concerns, Meta weakness and elevated rates keep pressuring growth multiples.",
+      "time_window_catalyst": "Post-earnings digestion through Aug 6."
+    },
+    {
+      "continuation_case": "Weak payrolls (57k) could rally duration on growth fears.",
+      "decision": "rejected",
+      "evidence": [
+        "TLT -3.83% over 21 days; 30-yr yield rose to 5.22%",
+        "Three FOMC dissents preferred a hike; core PCE 3.4% annualized in Q2"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Soft ECI drives 30-yr yield below 5.10%.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky inflation and hawkish dissents keep long yields elevated.",
+      "time_window_catalyst": "ECI July 31 and JOLTS Aug 4."
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.34,
+  "is_official_score": true,
+  "key_risks": [
+    "Mega-cap tech leadership resumes after strong Microsoft/Apple/Amazon results, dragging SPY above the breadth-tilted portfolio",
+    "Dollar rebound reverses Europe and gold tailwinds",
+    "Hot ECI or euro-area inflation prints push yields higher and hit all risk assets",
+    "SLOOS reveals credit tightening hurting financials"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "RSP-SPY 5-day spread turns negative as mega-cap leadership reasserts.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth is broadening: RSP beat SPY by 1.16% over 5 sessions and 1.91% over 21, with lower volatility and shallow drawdown.",
+      "time_window_catalyst": "Rotation from mega-cap tech after mixed megacap earnings (Meta -8%); JOLTS Aug 4 and claims Aug 6."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Growth/tech resumes leadership; IWD active return turns negative for two consecutive sessions.",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value leading with +1.36% 5-day active return, +2.70% prior active trend, only -0.53% from 52-week high and low 9.97% volatility.",
+      "time_window_catalyst": "Continued rotation to value amid elevated 4.67% 10-year yield and hawkish-leaning Fed hold."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "SLOOS shows sharp credit tightening or XLF drops below its 21-day drawdown low.",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong prior trend (+5.29% prior active) plus +1.62% recent active, near 52-week high; benefits from elevated rates and solid activity per FOMC.",
+      "time_window_catalyst": "Aug 3 Senior Loan Officer Survey; elevated yields support net interest margins."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Dollar rebounds sharply (UUP +1% in the week) or hot euro-area inflation print.",
+      "option_id": "EUROPE",
+      "rationale": "Europe at 52-week high with +3.12% 5-day active return; CAC 40 up 0.9%, dollar weakening (-1.47% 5-day) boosts USD-denominated returns.",
+      "time_window_catalyst": "Euro-area July flash inflation July 31; continued dollar weakness tailwind."
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Dollar rally or a jump in real yields; IAU 5-day return turns negative.",
+      "option_id": "GOLD",
+      "rationale": "Diversifier with positive momentum: +1.51% 5-day, +2.37% 21-day, supported by weakening dollar and sticky elevated inflation.",
+      "time_window_catalyst": "ECI July 31 and payroll-adjacent data; dollar weakness continuation."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.64,
+  "portfolio_rationale": "Mega-cap tech showed mixed results (Meta -8%, high capex guidance) while breadth, value, financials and Europe show independent strength supported by elevated yields, a hawkish-leaning Fed hold, and a weakening dollar. Portfolio tilts toward equal-weight/value US equity, financials, Europe, and gold to capture the rotation while capping cluster exposure at 50%.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight breadth (RSP), value, financials, Europe and gold versus SPY, expecting continued rotation away from concentrated mega-cap tech in a higher-for-longer rate regime with a softening dollar.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27596,
+    "latency_seconds": 57.87658319598995,
+    "output_tokens": 3975,
+    "total_tokens": 31571
+  }
+}

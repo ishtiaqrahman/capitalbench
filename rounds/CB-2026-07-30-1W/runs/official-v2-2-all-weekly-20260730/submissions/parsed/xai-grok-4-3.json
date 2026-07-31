@@ -1,0 +1,178 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Recent breadth recovery persists into August 6 close",
+      "decision": "selected",
+      "evidence": [
+        "SPY closed at 7437.63 up 1.7% on July 30",
+        "spy_return_5s of 0.48%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "SP500",
+      "reversal_case": "GDP slowdown and elevated inflation prompt selling",
+      "time_window_catalyst": "August 4 data releases"
+    },
+    {
+      "continuation_case": "Value outperformance continues on rotation",
+      "decision": "selected",
+      "evidence": [
+        "LARGE_VALUE active_return_5s 1.36%",
+        "quality evidence score 0.650"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth rebound erodes relative gains",
+      "time_window_catalyst": "August 4 data releases"
+    },
+    {
+      "continuation_case": "Sector momentum holds through window",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS prior active rank 0.881",
+        "active_return_5s 1.62%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Rate volatility triggers bank selloff",
+      "time_window_catalyst": "August 4 data releases"
+    },
+    {
+      "continuation_case": "European equities extend relative strength",
+      "decision": "selected",
+      "evidence": [
+        "EUROPE active_return_5s 3.12%",
+        "return_3s 2.42%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "EUROPE",
+      "reversal_case": "Euro-area inflation miss sparks reversal",
+      "time_window_catalyst": "August 4 data releases"
+    },
+    {
+      "continuation_case": "Oil price stability supports sector",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY quality evidence score 0.771",
+        "prior active rank 0.955"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "ENERGY",
+      "reversal_case": "Brent decline accelerates on demand fears",
+      "time_window_catalyst": "August 4 data releases"
+    },
+    {
+      "continuation_case": "Tech weakness persists after earnings volatility",
+      "decision": "rejected",
+      "evidence": [
+        "NASDAQ100 active_return_5s -1.69%",
+        "distance_52w_high -8.29%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Mega-cap rebound lifts index",
+      "time_window_catalyst": "August 4 data releases"
+    },
+    {
+      "continuation_case": "Safe-haven bid continues modestly",
+      "decision": "rejected",
+      "evidence": [
+        "GOLD quality evidence score 0.521",
+        "iau_return_5s 1.51%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar strength caps gold gains",
+      "time_window_catalyst": "August 4 data releases"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 0.45,
+  "is_official_score": true,
+  "key_risks": [
+    "Inflation reacceleration from PCE and CPI prints",
+    "FOMC policy surprise on August 3 survey",
+    "Weak August 6 claims data triggering risk-off rotation"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "SP500",
+      "rationale": "Broad market exposure with solid recent recovery and limited near-term catalysts.",
+      "time_window_catalyst": "August 4 data releases"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value tilt shows positive active return and lower volatility than growth.",
+      "time_window_catalyst": "August 4 data releases"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "FINANCIALS",
+      "rationale": "Sector exhibits strong prior active rank and positive recent momentum.",
+      "time_window_catalyst": "August 4 data releases"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "EUROPE",
+      "rationale": "International equity with highest 5s active return among peers.",
+      "time_window_catalyst": "August 4 data releases"
+    },
+    {
+      "allocation_pct": 5,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "SPY closes below 7300 on August 6",
+      "option_id": "ENERGY",
+      "rationale": "Commodity exposure with top quality evidence score and prior strength.",
+      "time_window_catalyst": "August 4 data releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.95,
+  "portfolio_rationale": "Mix of SP500 with value, financials, Europe, and energy to capture higher base-case returns while staying diversified across clusters.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings exceed SP500 base forecast; allocations respect 50% cluster cap and 5% increments.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15550,
+    "latency_seconds": 12.779268635902554,
+    "output_tokens": 1665,
+    "reasoning_tokens": 562,
+    "total_tokens": 17777
+  }
+}

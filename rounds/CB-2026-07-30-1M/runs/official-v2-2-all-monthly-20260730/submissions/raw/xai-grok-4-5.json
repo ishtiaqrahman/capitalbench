@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.7,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid activity description and mega-cap earnings support grind higher if inflation cools.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY closed up 1.7% on July 30 recovering prior day; YTD +8.6%",
+        "FOMC held funds rate 3.50-3.75% with elevated inflation and uncertainty noted",
+        "spy_return_21s -0.68%, distance_52w_high -2.10%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Break below recent July lows on higher-than-expected inflation or growth scare.",
+      "option_id": "SP500",
+      "reversal_case": "Sticky core inflation or weak payrolls could trigger risk-off and negative monthly return.",
+      "time_window_catalyst": "July CPI/PPI Aug 12-13 and employment situation Aug 6-7."
+    },
+    {
+      "continuation_case": "Cloud and software earnings momentum plus recent price rebound can extend into August.",
+      "decision": "selected",
+      "evidence": [
+        "SOFTWARE return_5s +7.13% and active_return_21s +3.67%",
+        "Microsoft revenue +18%, Azure +43%; Apple revenue +16%, EPS +29%",
+        "Amazon AWS +37% with strong operating income"
+      ],
+      "forecast_base_pct": 2.4,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "IGV gives back the 5-session gain on broader tech selling.",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High volatility_63s 33.45% and distance_52w_high -20.77% leave room for sharp mean-reversion.",
+      "time_window_catalyst": "Post-earnings follow-through and Nvidia results Aug 26."
+    },
+    {
+      "continuation_case": "Stable rates and positive relative trend support further financials leadership.",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS active_return_21s +7.00%, return_5s +2.10%",
+        "Ten-year yield stable at 4.67%; FOMC held rates",
+        "distance_52w_high only -1.04% with moderate vol"
+      ],
+      "forecast_base_pct": 1.9,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLF underperforms SPY on rising claims or negative loan-officer survey.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit concerns or curve steepening shock could reverse recent outperformance.",
+      "time_window_catalyst": "Employment data and Fed minutes for rate outlook."
+    },
+    {
+      "continuation_case": "Relative strength and policy stability can persist if USD softens.",
+      "decision": "selected",
+      "evidence": [
+        "EUROPE return_5s +3.60%, active_return_21s +3.45%, distance_52w_high 0.00%",
+        "ECB kept rates unchanged; euro-area inflation 2.8%",
+        "France CAC 40 rose 0.9% on July 30"
+      ],
+      "forecast_base_pct": 1.7,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "VGK loses 52-week high status on EUR decline or growth miss.",
+      "option_id": "EUROPE",
+      "reversal_case": "Weaker European data or energy price spike could reverse gains.",
+      "time_window_catalyst": "Euro-area July flash inflation July 31."
+    },
+    {
+      "continuation_case": "Improving breadth and lower concentration favor equal-weight continuation.",
+      "decision": "selected",
+      "evidence": [
+        "rsp_return_5s +1.63%, rsp_minus_spy_21s +1.91%",
+        "EQUAL_WEIGHT_SP500 active_return_21s +1.91%, low max_drawdown_63s -2.04%",
+        "positive_asset_share_5s 68.12%"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "RSP active return turns negative versus SPY on concentration rebound.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap re-acceleration could leave RSP lagging again.",
+      "time_window_catalyst": "Breadth confirmation around CPI and industrial production data."
+    },
+    {
+      "continuation_case": "Strong prior trend and individual chip names could reassert after pullback.",
+      "decision": "rejected",
+      "evidence": [
+        "SEMICONDUCTORS prior_105s_active_return +49.47% but return_5s -7.11%, active_21s -17.16%",
+        "Micron +18.4%, Lam +18%, AMD +13% on July 30",
+        "volatility_63s 55.23%, distance_52w_high -19.44%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Further breakdown below recent lows on weak guidance.",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme vol and deep recent drawdown favor further mean reversion.",
+      "time_window_catalyst": "Nvidia results after close Aug 26."
+    },
+    {
+      "continuation_case": "Value relative strength and low drawdown support steady gains.",
+      "decision": "rejected",
+      "evidence": [
+        "LARGE_VALUE return_5s +1.84%, active_return_21s +4.10%",
+        "distance_52w_high -0.53%, volatility_63s 12.21%",
+        "quality evidence score 0.607 with high shallow-drawdown rank"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "IWD active return fades if growth stocks dominate again.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth re-acceleration or rate spike could lag value.",
+      "time_window_catalyst": "Inflation and employment data for cyclical confirmation."
+    },
+    {
+      "continuation_case": "Defensive bid and positive active trend can persist if volatility rises.",
+      "decision": "rejected",
+      "evidence": [
+        "HEALTHCARE active_return_21s +3.74%, return_5s +1.29%",
+        "distance_52w_high -2.24%, max_drawdown_63s -3.74%",
+        "defensive characteristics amid elevated macro uncertainty"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "XLV underperforms on broad risk-on move or sector-specific news.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation away from defensives on strong growth data.",
+      "time_window_catalyst": "None identified beyond general macro calendar."
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.225,
+  "is_official_score": true,
+  "key_risks": [
+    "Elevated inflation prints (CPI/PPI Aug 12-13) or hawkish Fed minutes could pressure equities broadly",
+    "Growth-stock reversal after mega-cap earnings if guidance disappoints or Nvidia Aug 26 weakens tech",
+    "USD strength or European data miss reversing international allocation",
+    "Sudden risk-off move favoring pure SPY concentration over equal-weight and sector tilts"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 2.4,
+      "invalidation_condition": "Sharp reversal in software names or broader growth selloff pushing IGV below recent lows before exit.",
+      "option_id": "SOFTWARE",
+      "rationale": "Strong recent software rebound and mega-cap cloud/software earnings support higher base return than SPY over the one-month window.",
+      "time_window_catalyst": "Continued digestion of Microsoft/Apple/Amazon results and any follow-through into August software sentiment before Nvidia on Aug 26."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.9,
+      "invalidation_condition": "Unexpected credit stress or sharp rise in yields reversing XLF relative gains.",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive active returns, solid relative strength, and stable rates backdrop favor financials outperformance versus SPY base case.",
+      "time_window_catalyst": "July employment data Aug 6-7 and Fed minutes Aug 18-19 for rate-path clarity supporting banks."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.7,
+      "invalidation_condition": "EUR weakness or European growth scare driving VGK underperformance versus SPY.",
+      "option_id": "EUROPE",
+      "rationale": "Recent outperformance, zero distance to 52w high, and ECB hold provide edge over SPY base for the scoring window.",
+      "time_window_catalyst": "Euro-area flash inflation July 31 and any USD weakness supporting European equities into late August."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Return of mega-cap dominance or RSP underperformance versus SPY on risk-off move.",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth improvement and lower concentration risk with positive active 21s return support modest edge to cap-weighted SPY.",
+      "time_window_catalyst": "Continued equal-weight leadership if July CPI/PPI Aug 12-13 confirm disinflation without growth scare."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.925,
+  "portfolio_rationale": "Portfolio concentrates in SOFTWARE, FINANCIALS, EUROPE and EQUAL_WEIGHT_SP500, each with base forecasts above SPY, spanning technology_and_growth, financials, international_equity and diversified_us_equity clusters under the 50% cap. Weighted expected return exceeds SPY base via earnings momentum, breadth and relative strength while limiting single-cluster risk.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings clear the active hurdle with higher base forecasts driven by recent earnings, breadth and international relative strength. Allocations stay within cluster caps and sum to 100% for one-month alpha versus SPY.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-30-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16487,
+    "latency_seconds": 44.637220901902765,
+    "output_tokens": 2730,
+    "reasoning_tokens": 455,
+    "total_tokens": 19672
+  }
+}
