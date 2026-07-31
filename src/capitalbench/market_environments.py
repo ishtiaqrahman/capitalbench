@@ -6,7 +6,7 @@ from typing import Any
 
 
 MARKET_ENVIRONMENT_VERSION = "capitalbench_market_environment_v1"
-MARKET_ENVIRONMENT_ENGINE_VERSION = "market_environment_engine_v2"
+MARKET_ENVIRONMENT_ENGINE_VERSION = "market_environment_engine_v3"
 READY_ROUND_THRESHOLD = 3
 MODEL_READY_OBSERVATION_THRESHOLD = 3
 BALANCED_SAMPLE_THRESHOLD = 3
@@ -144,7 +144,10 @@ def _build_track(track: str, rounds: list[dict[str, Any]]) -> dict[str, Any]:
         selected = [row for row in track_rounds if row["direction_key"] == definition["key"]]
         directions.append(_bucket(definition, selected))
 
-    ready_environments = [row for row in environments if row["status"] == "ready"]
+    raw_ready_environments = [row for row in environments if row["status"] == "ready"]
+    ready_environments = [
+        row for row in raw_ready_environments if row["comparison"]["status"] == "ready"
+    ]
     has_ready_down = any(row["direction"] == "down" for row in ready_environments)
     has_ready_up = any(row["direction"] == "up" for row in ready_environments)
     if not ready_environments:
@@ -172,6 +175,7 @@ def _build_track(track: str, rounds: list[dict[str, Any]]) -> dict[str, Any]:
         "label": "Weekly" if track == "weekly" else "Monthly",
         "data_as_of": max((row.get("exit_date") or "" for row in track_rounds), default=""),
         "round_count": len(track_rounds),
+        "raw_ready_environment_count": len(raw_ready_environments),
         "ready_environment_count": len(ready_environments),
         "confidence": confidence,
         "rounds": track_rounds,

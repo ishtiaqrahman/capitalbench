@@ -109,7 +109,7 @@ function comparisonStatement(row: any, context: string): string {
 
 function evidenceFor(environments: any[]): string {
   const labels = environments
-    .filter((environment) => environment.status === "ready")
+    .filter((environment) => environment.comparison?.status === "ready")
     .map((environment) => String(environment.comparison?.confidence ?? "low").toLowerCase());
   if (!labels.length || labels.includes("low")) return "low";
   if (labels.includes("medium")) return "medium";
@@ -402,7 +402,13 @@ const trackViews = Object.fromEntries(
         balancedSample,
         rounds,
         signals: (artifact.signals ?? []).filter((signal: any) => signal.kind !== "synthesis"),
-        readyEnvironmentCount: environments.filter((environment: any) => environment.status === "ready").length,
+        rawReadyEnvironmentCount: Number(
+          artifact.raw_ready_environment_count ?? environments.filter((environment: any) => environment.status === "ready").length
+        ),
+        readyEnvironmentCount: Number(
+          artifact.ready_environment_count
+            ?? environments.filter((environment: any) => environment.comparison?.status === "ready").length
+        ),
         resolvedRoundCount: rounds.length,
         evidence: evidenceFor(environments)
       }
@@ -630,40 +636,57 @@ const dataAsOf = humanDate(marketEnvironment.data_as_of);
               : "It matched"
           : "Not enough data";
         return (
-          <div data-mrb-track-panel={track} hidden={track !== DEFAULT_TRACK}>
-            <div class="mrb-answer-grid">
-              <article class="mrb-answer-card mrb-answer-card-leader">
-                <span>Which model leads?</span>
-                <div class="mrb-model-heading">
-                  {leader?.logoSrc && <img src={leader.logoSrc} alt="" />}
-                  <div>
-                    <h3>{leader?.label ?? "Still building"}</h3>
-                    <p>{leader?.providerName ?? "Not enough matching results yet"}</p>
+          <div
+            data-mrb-track-panel={track}
+            data-mrb-answer-track={track}
+            data-mrb-answer-state={leader ? "ready" : "forming"}
+            hidden={track !== DEFAULT_TRACK}
+          >
+            {leader ? (
+              <div class="mrb-answer-grid">
+                <article class="mrb-answer-card mrb-answer-card-leader">
+                  <span>Which model leads?</span>
+                  <div class="mrb-model-heading">
+                    {leader.logoSrc && <img src={leader.logoSrc} alt="" />}
+                    <div>
+                      <h3>{leader.label}</h3>
+                      <p>{leader.providerName}</p>
+                    </div>
                   </div>
-                </div>
-                <strong class:list={["mrb-answer-value", `is-${valueTone(leader?.averageReturn)}`]}>
-                  {signedPctText(leader?.averageReturn)}
-                </strong>
-                <p>Average return across every market type with enough data.</p>
-              </article>
-              <article class:list={["mrb-answer-card", finiteNumber(alpha) && alpha >= 0 ? "is-success" : "is-warning"]}>
-                <span>Did the leader beat the S&amp;P 500?</span>
-                <h3>{benchmarkVerdict}</h3>
-                <strong class:list={["mrb-answer-value", `is-${valueTone(alpha)}`]}>{pointText(alpha, true)}</strong>
+                  <strong class:list={["mrb-answer-value", `is-${valueTone(leader.averageReturn)}`]}>
+                    {signedPctText(leader.averageReturn)}
+                  </strong>
+                  <p>Average return across every market type with enough matching results.</p>
+                </article>
+                <article class:list={["mrb-answer-card", finiteNumber(alpha) && alpha >= 0 ? "is-success" : "is-warning"]}>
+                  <span>Did the leader beat the S&amp;P 500?</span>
+                  <h3>{benchmarkVerdict}</h3>
+                  <strong class:list={["mrb-answer-value", `is-${valueTone(alpha)}`]}>{pointText(alpha, true)}</strong>
+                  <p>
+                    S&amp;P 500 average return across the same market types: <strong>{signedPctText(leader.averageSp500Return)}</strong>
+                  </p>
+                </article>
+                <article class="mrb-answer-card">
+                  <span>How much data supports this?</span>
+                  <h3>{confidenceLabel(view.evidence)}</h3>
+                  <strong class="mrb-answer-value">{view.readyEnvironmentCount} of 5</strong>
+                  <p>
+                    {view.readyEnvironmentCount} market types have enough matching results. Each ranked model contributes
+                    {" "}{leader.testsIncluded} results.
+                  </p>
+                </article>
+              </div>
+            ) : (
+              <div class="mrb-answer-empty" role="status">
+                <strong>No fair cross-regime leader yet.</strong>
                 <p>
-                  S&amp;P 500 average return across the same market types: <strong>{signedPctText(leader?.averageSp500Return)}</strong>
+                  {view.readyEnvironmentCount} of 5 market types have enough shared-date results for comparison.
+                  {view.rawReadyEnvironmentCount > view.readyEnvironmentCount
+                    ? ` ${view.rawReadyEnvironmentCount - view.readyEnvironmentCount} additional market type${view.rawReadyEnvironmentCount - view.readyEnvironmentCount === 1 ? " has" : "s have"} enough total results but not enough dates shared by the same models.`
+                    : " No model has enough results across every comparable market type yet."}
                 </p>
-              </article>
-              <article class="mrb-answer-card">
-                <span>How much data supports this?</span>
-                <h3>{confidenceLabel(view.evidence)}</h3>
-                <strong class="mrb-answer-value">{view.readyEnvironmentCount} of 5</strong>
-                <p>
-                  {view.readyEnvironmentCount} market types have enough matching results. Each ranked model contributes
-                  {" "}{leader?.testsIncluded ?? 0} results.
-                </p>
-              </article>
-            </div>
+              </div>
+            )}
             {leader && finiteNumber(alpha) && alpha < 0 && (
               <p class="mrb-benchmark-alert">
                 <strong>Important:</strong> {leader.label} ranks first among the models, but the S&amp;P 500 still did
@@ -1538,6 +1561,25 @@ const dataAsOf = humanDate(marketEnvironment.data_as_of);
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
     }
+
+    .mrb-answer-empty {
+      display: grid;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accent-2);
+      border-radius: 8px;
+      padding: 22px 24px;
+      background: var(--surface-cool);
+      color: var(--muted);
+    }
+
+    .mrb-answer-empty strong {
+      color: var(--ink-strong);
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+    }
+
+    .mrb-answer-empty p { margin: 0; }
 
     .mrb-answer-card {
       min-width: 0;

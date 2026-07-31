@@ -1897,6 +1897,7 @@ const leaderboardsHtml = readHtml("leaderboards/index.html");
 const benchmarkSetsHtml = readHtml("leaderboards/benchmark-sets/index.html");
 const benchmarkSetComparisonHtml = readHtml("leaderboards/benchmark-sets/compare/index.html");
 const latestMonthlyHtml = readHtml("leaderboards/latest-monthly/index.html");
+const marketRegimeHtml = readHtml("leaderboards/market-regime-benchmark/index.html");
 const modelsIndexHtml = readHtml("models/index.html");
 const modelPatternsHtml = readHtml("models/patterns/index.html");
 const roundsIndexHtml = readHtml("rounds/index.html");
@@ -1909,6 +1910,32 @@ const changelogHtml = readHtml("changelog/index.html");
 const changelogSource = readRepoText("apps", "web", "src", "data", "changelog.ts");
 const latestChangelogMatch = changelogSource.match(/id:\s*"([^"]+)"[\s\S]*?date:\s*"(\d{4}-\d{2}-\d{2})"[\s\S]*?title:\s*"([^"]+)"/);
 const changelogEntryCount = [...changelogSource.matchAll(/^\s*id:\s*"/gm)].length;
+for (const track of ["weekly", "monthly"]) {
+  const trackData = apiReadModel.market_environment?.tracks?.[track] ?? {};
+  const comparableRows = (trackData.regime_leaderboard ?? []).filter(
+    (row) => row.status === "ready"
+      && Number(row.ready_environments_covered ?? 0) === Number(row.ready_environments_required ?? 0)
+  );
+  if (comparableRows.length > 0) {
+    includes(
+      marketRegimeHtml,
+      `data-mrb-answer-track="${track}" data-mrb-answer-state="ready"`,
+      `market regime ${track} ready answer`
+    );
+    includes(
+      marketRegimeHtml,
+      modelLabel(comparableRows[0].model_id),
+      `market regime ${track} leader`
+    );
+  } else {
+    includes(
+      marketRegimeHtml,
+      `data-mrb-answer-track="${track}" data-mrb-answer-state="forming"`,
+      `market regime ${track} forming answer`
+    );
+    includes(marketRegimeHtml, "No fair cross-regime leader yet.", `market regime ${track} empty-state explanation`);
+  }
+}
 includes(benchmarkSetsHtml, "Benchmark Sets", "benchmark sets page title");
 includes(benchmarkSetsHtml, "All Benchmark Sets", "benchmark sets page list heading");
 includes(benchmarkSetsHtml, 'data-benchmark-set-browser', "benchmark sets page filter browser");

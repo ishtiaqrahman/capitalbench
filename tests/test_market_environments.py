@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from pathlib import Path
+
+import pytest
+
 from capitalbench import insights as insights_module
 from capitalbench.insights import build_deterministic_candidates
 from capitalbench.market_environments import (
@@ -213,6 +217,61 @@ def test_shared_comparison_uses_identical_rounds_for_every_model() -> None:
         tuple(comparison["round_ids"])
     }
     assert {row["tests"] for row in comparison["model_rows"]} == {3}
+
+
+def test_raw_ready_bucket_with_roster_churn_does_not_blank_regime_leaderboard() -> None:
+    rounds = []
+    index = 0
+    for sp500_return in (-0.03, -0.01, 0.01):
+        for _ in range(3):
+            rounds.append(
+                _round(
+                    track="weekly",
+                    index=index,
+                    sp500_return=sp500_return,
+                    model_returns={"model-a": 0.02, "model-b": 0.01},
+                )
+            )
+            index += 1
+
+    for flat_index in range(8):
+        model_returns = {"model-a": 0.01, "model-b": 0.005}
+        if flat_index < 5:
+            model_returns["model-retired"] = 0.0
+        if flat_index >= 3:
+            model_returns["model-new"] = 0.015
+        rounds.append(
+            _round(
+                track="weekly",
+                index=index,
+                sp500_return=0.0,
+                model_returns=model_returns,
+            )
+        )
+        index += 1
+
+    market = build_market_environment(_snapshot(rounds))
+    weekly = market["tracks"]["weekly"]
+    flat = next(row for row in weekly["environments"] if row["key"] == "flat")
+    ranked = [row for row in weekly["regime_leaderboard"] if row["status"] == "ready"]
+
+    assert flat["status"] == "ready"
+    assert flat["comparison"]["status"] == "forming"
+    assert flat["comparison"]["round_count"] == 2
+    assert weekly["raw_ready_environment_count"] == 4
+    assert weekly["ready_environment_count"] == 3
+    assert {row["model_id"] for row in ranked} == {"model-a", "model-b"}
+    assert {row["ready_environments_required"] for row in ranked} == {3}
+    assert {
+        score["key"]
+        for row in ranked
+        for score in row["environment_scores"]
+    } == {"sharp_down", "down", "up"}
+
+    insights_module._validate_market_environment(market, Path("<regression>"))
+    weekly["ready_environment_count"] = 4
+    with pytest.raises(ValueError, match="invalid ready environment count"):
+        insights_module._validate_market_environment(market, Path("<regression>"))
 
 
 def test_high_confidence_requires_established_stable_leadership() -> None:

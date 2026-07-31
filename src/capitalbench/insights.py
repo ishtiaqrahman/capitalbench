@@ -3233,19 +3233,34 @@ def _validate_market_environment(payload: dict[str, Any], path: Path) -> None:
             raise ValueError(f"{path} {track} track must contain five environments")
         if not isinstance(track_data.get("directions"), list) or len(track_data["directions"]) != 3:
             raise ValueError(f"{path} {track} track must contain three direction buckets")
+        current_engine = payload.get("engine_version") == MARKET_ENVIRONMENT_ENGINE_VERSION
         for bucket in [*track_data["environments"], *track_data["directions"]]:
             _validate_market_bucket(
                 bucket,
                 track_round_ids=track_round_ids,
                 ready_threshold=thresholds["environment_rounds"],
-                require_comparison=payload.get("engine_version") == MARKET_ENVIRONMENT_ENGINE_VERSION,
+                require_comparison=current_engine,
                 path=path,
                 track=track,
             )
-        if track_data.get("ready_environment_count") != sum(
-            1 for row in track_data["environments"] if row.get("status") == "ready"
-        ):
+        raw_ready_count = sum(1 for row in track_data["environments"] if row.get("status") == "ready")
+        comparison_ready_count = sum(
+            1
+            for row in track_data["environments"]
+            if (row.get("comparison") or {}).get("status") == "ready"
+        )
+        expected_ready_count = comparison_ready_count if current_engine else raw_ready_count
+        if track_data.get("ready_environment_count") != expected_ready_count:
             raise ValueError(f"{path} {track} track has an invalid ready environment count")
+        if current_engine and track_data.get("raw_ready_environment_count") != raw_ready_count:
+            raise ValueError(f"{path} {track} track has an invalid raw-ready environment count")
+        if current_engine:
+            _validate_regime_leaderboard(
+                track_data,
+                model_ready_threshold=thresholds["model_observations"],
+                path=path,
+                track=track,
+            )
         signals = track_data.get("signals")
         if not isinstance(signals, list):
             raise ValueError(f"{path} {track} track has invalid signals")
@@ -3257,6 +3272,43 @@ def _validate_market_environment(payload: dict[str, Any], path: Path) -> None:
                 raise ValueError(f"{path} {track} track contains an invalid signal")
             if signal.get("confidence") not in {"high", "medium", "low"}:
                 raise ValueError(f"{path} {track} track contains an invalid signal confidence")
+
+
+def _validate_regime_leaderboard(
+    track_data: dict[str, Any],
+    *,
+    model_ready_threshold: int,
+    path: Path,
+    track: str,
+) -> None:
+    leaderboard = track_data.get("regime_leaderboard")
+    if not isinstance(leaderboard, list):
+        raise ValueError(f"{path} {track} track has an invalid regime leaderboard")
+    counting_keys = [
+        row["key"]
+        for row in track_data["environments"]
+        if (row.get("comparison") or {}).get("status") == "ready"
+    ]
+    model_ids = []
+    for row in leaderboard:
+        if not isinstance(row, dict) or not str(row.get("model_id") or ""):
+            raise ValueError(f"{path} {track} track has an invalid regime-leaderboard row")
+        model_ids.append(row["model_id"])
+        scores = row.get("environment_scores")
+        if not isinstance(scores, list) or [score.get("key") for score in scores] != counting_keys:
+            raise ValueError(f"{path} {track}/{row['model_id']} has invalid counting environments")
+        covered = sum(
+            1 for score in scores if int(score.get("tests") or 0) >= model_ready_threshold
+        )
+        expected_ready = bool(counting_keys) and covered == len(counting_keys)
+        if row.get("ready_environments_covered") != covered:
+            raise ValueError(f"{path} {track}/{row['model_id']} has invalid environment coverage")
+        if row.get("ready_environments_required") != len(counting_keys):
+            raise ValueError(f"{path} {track}/{row['model_id']} has invalid required environments")
+        if row.get("status") != ("ready" if expected_ready else "forming"):
+            raise ValueError(f"{path} {track}/{row['model_id']} has invalid leaderboard status")
+    if len(model_ids) != len(set(model_ids)):
+        raise ValueError(f"{path} {track} track has duplicate regime-leaderboard models")
 
 
 def _validate_market_bucket(
