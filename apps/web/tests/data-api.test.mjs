@@ -712,15 +712,15 @@ test("model behavior endpoint exposes canonical behavior profiles", async () => 
   const detail = await apiGet(`/api/v1/models/${modelId}/behavior`);
 
   assert.equal(list.status, 200);
-  assert.equal(list.body.version, "model_behavior_v1");
+  assert.equal(list.body.version, "model_behavior_v2");
   assert.equal(list.body.profiles.length, apiReadModel.models.length);
   assert.ok(list.body.summary.highest_risk_model_id);
   assert.ok(list.body.pairwise_similarity.length > 0);
-  assert.equal(list.body.pattern_report.version, "model_behavior_pattern_report_v1");
+  assert.equal(list.body.pattern_report.version, "model_behavior_pattern_report_v2");
   assert.equal(list.body.pattern_report.rows.length, apiReadModel.models.length);
 
   assert.equal(patterns.status, 200);
-  assert.equal(patterns.body.version, "model_behavior_pattern_report_v1");
+  assert.equal(patterns.body.version, "model_behavior_pattern_report_v2");
   assert.deepEqual(patterns.body.rows.map((row) => row.model_id).sort(), apiReadModel.models.map((model) => model.model_id).sort());
   assert.ok(patterns.body.llm_provenance.prompt_version);
 
@@ -730,7 +730,9 @@ test("model behavior endpoint exposes canonical behavior profiles", async () => 
   assert.ok(detail.body.sample.portfolio_count > 0);
   assert.ok(detail.body.metrics.average_risk_pulse >= 0);
   assert.ok(detail.body.metrics.average_risk_pulse <= 100);
-  assert.ok(detail.body.methodology_href.includes("model-behavior-methodology"));
+  assert.ok(detail.body.methodology_href.includes("/models/patterns/#methodology"));
+  assert.equal(detail.body.behavior_v2.version, "model_behavior_v2");
+  assert.deepEqual(detail.body.behavior_v2.pills.map((pill) => pill.role), ["Signature", "Construction", "Tempo", "Now"]);
 });
 
 test("insights endpoint returns ranked public insights with detail lookups", async () => {

@@ -1233,9 +1233,15 @@ for (const style of apiReadModel.model_styles ?? []) {
 }
 
 const modelBehavior = apiReadModel.model_behavior;
-if (!modelBehavior || modelBehavior.version !== "model_behavior_v1") {
-  failures.push("generated read model is missing model_behavior v1");
+if (!modelBehavior || modelBehavior.version !== "model_behavior_v2") {
+  failures.push("generated read model is missing model_behavior v2");
 } else {
+  if (modelBehavior.method_version !== "capitalbench_behavior_evidence_v2") {
+    failures.push("model_behavior is missing the v2 evidence method version");
+  }
+  if (modelBehavior.shadow_v1?.version !== "model_behavior_v1") {
+    failures.push("model_behavior is missing its v1 shadow comparison");
+  }
   const profiles = Array.isArray(modelBehavior.profiles) ? modelBehavior.profiles : [];
   const profileIds = new Set(profiles.map((profile) => profile.model_id));
   if (profiles.length !== apiReadModel.models.length) {
@@ -1293,16 +1299,56 @@ if (!modelBehavior || modelBehavior.version !== "model_behavior_v1") {
     for (const [field, value] of Object.entries(profile.peer_percentiles ?? {})) {
       if (value !== null && value !== undefined) percentInRange(value, `peer_percentiles.${field}`, context);
     }
-    if (profile.sample?.portfolio_count < 8 && profile.archetype?.label !== "Early sample") {
-      failures.push(`${context} with fewer than 8 portfolios must use Early sample archetype`);
+    if (!profile.behavior_v2 || profile.behavior_v2.version !== "model_behavior_v2") {
+      failures.push(`${context} is missing behavior_v2 evidence`);
     }
-    if (!String(profile.methodology_href ?? "").includes("#model-behavior-methodology")) {
-      failures.push(`${context} methodology_href must link to model behavior methodology`);
+    const pills = Array.isArray(profile.behavior_v2?.pills) ? profile.behavior_v2.pills : [];
+    if (pills.length !== 4) failures.push(`${context} must publish exactly four fixed-role pills`);
+    const pillRoles = pills.map((pill) => pill.role);
+    for (const role of ["Signature", "Construction", "Tempo"]) {
+      if (!pillRoles.includes(role)) failures.push(`${context} is missing the ${role} pill`);
+    }
+    if (!pillRoles.includes("Now") && !pillRoles.includes("Lifecycle")) {
+      failures.push(`${context} is missing the Now or Lifecycle pill`);
+    }
+    const lifecyclePill = pills.at(-1);
+    if (profile.lifecycle_status === "retired" && lifecyclePill?.role !== "Lifecycle") {
+      failures.push(`${context} retired profile must end with a Lifecycle pill`);
+    }
+    if (profile.lifecycle_status !== "retired" && lifecyclePill?.role !== "Now") {
+      failures.push(`${context} active profile must end with a Now pill`);
+    }
+    if (
+      profile.lifecycle_status !== "retired" &&
+      Number(profile.sample?.active_portfolio_count ?? 0) === 0 &&
+      lifecyclePill?.label !== "No open portfolio"
+    ) {
+      failures.push(`${context} without an open portfolio must not publish a stale Now holding`);
+    }
+    for (const pill of pills) {
+      if (!pill.key || !pill.label || !pill.evidence || !pill.scope) failures.push(`${context} has an incomplete behavior pill`);
+    }
+    const decisionProcess = profile.behavior_v2?.decision_process ?? {};
+    const eligibleDecisionRows = Number(decisionProcess.eligible_portfolio_count ?? 0);
+    for (const field of [
+      "structured_candidate_coverage_count",
+      "candidate_forecast_coverage_count",
+      "expected_alpha_coverage_count",
+      "submission_confidence_coverage_count",
+      "key_risk_coverage_count"
+    ]) {
+      const value = Number(decisionProcess[field] ?? 0);
+      if (!Number.isFinite(value) || value < 0 || value > eligibleDecisionRows) {
+        failures.push(`${context} has invalid decision-process coverage ${field}`);
+      }
+    }
+    if (!String(profile.methodology_href ?? "").includes("/models/patterns/#methodology")) {
+      failures.push(`${context} methodology_href must link to /models/patterns/#methodology`);
     }
   }
   const patternReport = modelBehavior.pattern_report;
-  if (!patternReport || patternReport.version !== "model_behavior_pattern_report_v1") {
-    failures.push("model_behavior is missing pattern_report v1");
+  if (!patternReport || patternReport.version !== "model_behavior_pattern_report_v2") {
+    failures.push("model_behavior is missing pattern_report v2");
   } else {
     const patternRows = Array.isArray(patternReport.rows) ? patternReport.rows : [];
     const patternIds = new Set(patternRows.map((row) => row.model_id));
@@ -1314,15 +1360,15 @@ if (!modelBehavior || modelBehavior.version !== "model_behavior_v1") {
     }
     if (!patternReport.data_as_of) failures.push("pattern_report is missing data_as_of");
     if (!patternReport.data_fingerprint) failures.push("pattern_report is missing data_fingerprint");
-    if (patternReport.llm_provenance?.prompt_version !== "capitalbench_model_patterns_prompt_v1") {
+    if (patternReport.llm_provenance?.prompt_version !== "capitalbench_model_patterns_prompt_v2") {
       failures.push("pattern_report is missing model pattern prompt provenance");
     }
-    if (patternReport.llm_input_contract?.version !== "capitalbench_model_patterns_llm_input_v1") {
+    if (patternReport.llm_input_contract?.version !== "capitalbench_model_patterns_llm_input_v2") {
       failures.push("pattern_report is missing model pattern LLM input contract");
     }
     const metricDefinitions = Array.isArray(patternReport.metric_definitions) ? patternReport.metric_definitions : [];
     const metricKeys = new Set(metricDefinitions.map((metric) => metric.key));
-    for (const requiredMetric of ["risk_taking_score", "average_holding_count", "average_top_allocation_pct", "defensive_pct", "peer_similarity", "average_turnover_pct"]) {
+    for (const requiredMetric of ["risk_taking_score", "average_holding_count", "average_top_allocation_pct", "defensive_pct", "benchmark_pct", "peer_similarity", "average_turnover_pct"]) {
       if (!metricKeys.has(requiredMetric)) failures.push(`pattern_report metric_definitions missing ${requiredMetric}`);
     }
     for (const row of patternRows) {
@@ -1360,6 +1406,11 @@ if (!modelBehavior || modelBehavior.version !== "model_behavior_v1") {
             failures.push(`${context} trait ${trait.key} references unknown metric key ${metricKey}`);
           }
         }
+      }
+      const pills = Array.isArray(row.pills) ? row.pills : [];
+      if (pills.length !== 4) failures.push(`${context} must include four behavior pills`);
+      for (const pill of pills) {
+        if (!pill.role || !pill.label || !pill.evidence || !pill.scope) failures.push(`${context} has incomplete pill ${pill.key}`);
       }
       for (const asset of row.top_assets ?? []) {
         if (!asset.display || !asset.label) failures.push(`${context} top asset ${asset.option_id} is missing display or label`);

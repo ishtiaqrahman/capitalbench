@@ -314,10 +314,11 @@ function width(value: number | null | undefined): string {
   <section class="section risk-method-document" id="model-behavior-methodology" aria-labelledby="model-behavior-methodology-title">
     <div class="risk-method-document-head">
       <span class="panel-kicker">Model behavior methodology</span>
-      <h2 id="model-behavior-methodology-title">How Model Behavior Profiles Are Calculated</h2>
+      <h2 id="model-behavior-methodology-title">How Risk Metrics Feed Behavior Profiles</h2>
       <p>
-        Behavior profiles are deterministic summaries of official frozen portfolios. They update whenever the generated
-        public read model updates, and they separate allocation style from investment performance.
+        Risk appetite is one input to the broader behavior profile. The canonical label-and-pill method, including
+        peer normalization, persistence, sample gates, scopes, and exclusions, is published on the
+        <a href="/models/patterns/#methodology">model behavior patterns page</a>.
       </p>
     </div>
     <div class="risk-method-dimension-grid">
@@ -329,10 +330,10 @@ function width(value: number | null | undefined): string {
         </p>
       </article>
       <article>
-        <strong>Concentration</strong>
+        <strong>Same-round comparison</strong>
         <p>
-          Average top holding and HHI measure whether a model spreads capital across many assets or expresses views
-          through a small number of larger positions.
+          A model's risk and exposure values are compared with the median of the other eligible models in the same
+          official round, so a market-wide shift does not become a false model-specific style.
         </p>
       </article>
       <article>
@@ -350,17 +351,18 @@ function width(value: number | null | undefined): string {
         </p>
       </article>
       <article>
-        <strong>Performance context</strong>
+        <strong>Performance separation</strong>
         <p>
-          Return, Portfolio Minus S&amp;P 500, rank, and CapitalBench Score use resolved rounds only. Live portfolios
-          can affect behavior labels but never finalized performance.
+          Returns, Portfolio Minus S&amp;P 500, ranks, and CapitalBench Score remain performance evidence. They do not
+          determine an allocation-style caption or pill.
         </p>
       </article>
       <article>
         <strong>Sample-size gate</strong>
         <p>
-          Models with fewer than 8 official saved portfolios are labeled Early sample. The current behavior dataset has
-          {modelBehavior.summary?.portfolio_count ?? 0} portfolios across {modelBehavior.summary?.model_count ?? 0} models.
+          Stable signals require at least {modelBehavior.methodology?.rules?.minimum_matched_portfolios ?? 8} matched
+          portfolios across {modelBehavior.methodology?.rules?.minimum_independent_decision_dates ?? 6} independent
+          decision dates. Smaller samples are explicitly provisional.
         </p>
       </article>
     </div>

@@ -131,6 +131,13 @@ function scoreValue(value: number | null | undefined): string {
                 <span class="metric-label">Behavior profile</span>
                 <strong>{profile.behavior.archetype.label}</strong>
                 <p>{profile.behavior.archetype.description}</p>
+                {(profile.behavior.behavior_v2?.pills ?? []).length > 0 && (
+                  <div class="model-card-behavior-pills" aria-label={`${profile.label} behavior evidence`}>
+                    {(profile.behavior.behavior_v2?.pills ?? []).slice(0, 3).map((pill: any) => (
+                      <em title={pill.evidence}>{pill.label}</em>
+                    ))}
+                  </div>
+                )}
                 <div>
                   <span>
                     <em>Risk-taking</em>

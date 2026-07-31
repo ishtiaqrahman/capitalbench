@@ -6,6 +6,10 @@ interface Props {
 
 const { profile, closestPeerLabel = null } = Astro.props;
 const behavior = profile.behavior;
+const behaviorV2 = behavior?.behavior_v2;
+const behaviorPills = Array.isArray(behaviorV2?.pills) ? behaviorV2.pills : [];
+const decisionProcess = behaviorV2?.decision_process ?? {};
+const hasDecisionProcess = Number(decisionProcess.structured_candidate_coverage_count ?? 0) > 0;
 const riskAppetite = profile.fingerprint.riskAppetite;
 
 function pct(value: number | null | undefined): string {
@@ -23,6 +27,16 @@ function score100(value: number | null | undefined): string {
 
 function similarity(value: number | null | undefined): string {
   return value === null || value === undefined || !Number.isFinite(value) ? "n/a" : pct(value * 100);
+}
+
+function ratioPct(value: number | null | undefined): string {
+  return value === null || value === undefined || !Number.isFinite(value) ? "n/a" : pct(value * 100);
+}
+
+function coverage(count: number | null | undefined, total: number | null | undefined): string {
+  return typeof count === "number" && Number.isFinite(count) && typeof total === "number" && Number.isFinite(total)
+    ? `${count}/${total}`
+    : "n/a";
 }
 
 function riskScore(value: number | null | undefined): string {
@@ -74,7 +88,10 @@ const behaviorMetrics = behavior
       <span class="panel-kicker">Portfolio pattern</span>
       <h2 id="model-fingerprint-title">How Does This Model Tend To Invest?</h2>
     </div>
-    <p>Calculated from every official saved portfolio, including open and completed rounds.</p>
+    <p>
+      Calculated from eligible official saved portfolios using same-round peer comparisons.
+      <a href="/models/patterns/#methodology">How labels and pills are determined</a>
+    </p>
   </div>
 
   <div class="model-fingerprint-summary" aria-label={`${profile.label} portfolio pattern sample summary`}>
@@ -102,7 +119,12 @@ const behaviorMetrics = behavior
         <span>Typical approach</span>
         <strong>{behavior.archetype.label}</strong>
         <p>{behavior.archetype.description}</p>
-        <small>Based on {behavior.sample.portfolio_count} saved portfolios.</small>
+        <small>{behavior.archetype.confidence_label ?? behavior.archetype.confidence} · based on {behavior.sample.portfolio_count} saved portfolios.</small>
+        {behaviorPills.length > 0 && (
+          <div class="model-behavior-pill-row" aria-label={`${profile.label} behavior evidence`}>
+            {behaviorPills.map((pill: any) => <em title={pill.evidence}>{pill.label}</em>)}
+          </div>
+        )}
       </article>
 
       <article class="model-behavior-metrics" aria-label={`${profile.label} defining portfolio metrics`}>
@@ -128,6 +150,29 @@ const behaviorMetrics = behavior
         </div>
         <a href="/models/patterns/">Compare every model's pattern</a>
       </article>
+
+      {hasDecisionProcess && (
+        <article class="model-decision-process">
+          <span class="metric-label">Structured decision process</span>
+          <h3>How the model builds its shortlist</h3>
+          <p>
+            Candidate-ledger evidence is available for {decisionProcess.structured_candidate_coverage_count} of
+            {` ${decisionProcess.eligible_portfolio_count}`} eligible portfolios. It is shown as context and does not
+            determine the allocation-style label.
+          </p>
+          <div>
+            <span><em>Avg candidates</em><strong>{number(decisionProcess.average_candidate_count)}</strong></span>
+            <span><em>SPY included</em><strong>{pct(decisionProcess.sp500_candidate_inclusion_rate_pct)}</strong></span>
+            <span><em>Forecast spread</em><strong>{pct(decisionProcess.average_candidate_forecast_range_pct)}</strong></span>
+            <span><em>Stated confidence</em><strong>{ratioPct(decisionProcess.average_submission_confidence)}</strong></span>
+          </div>
+          <small class="model-decision-coverage">
+            Coverage — forecasts {coverage(decisionProcess.candidate_forecast_coverage_count, decisionProcess.eligible_portfolio_count)} ·
+            confidence {coverage(decisionProcess.submission_confidence_coverage_count, decisionProcess.eligible_portfolio_count)} ·
+            key risks {coverage(decisionProcess.key_risk_coverage_count, decisionProcess.eligible_portfolio_count)}
+          </small>
+        </article>
+      )}
     </div>
   )}
 

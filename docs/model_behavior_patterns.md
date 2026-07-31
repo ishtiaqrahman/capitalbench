@@ -1,8 +1,8 @@
 # Model Behavior Patterns
 
 CapitalBench publishes a dynamic model behavior pattern report at `/models/patterns`.
-The report compares model allocation behavior across official frozen portfolios and
-resolved result rows.
+The report classifies allocation behavior across official frozen portfolios;
+resolved performance is reported alongside it but does not assign behavior labels.
 
 ## Source Of Truth
 
@@ -30,6 +30,67 @@ hard-coded model narratives.
 The report updates automatically when a model changes behavior, a new model
 joins, or a model has more resolved performance data.
 
+## Behavior Method V2
+
+The public method version is `capitalbench_behavior_evidence_v2`. The generator
+keeps a `shadow_v1` comparison so label changes can be audited, but every public
+caption and pill is derived from the V2 evidence object.
+
+For each model-round observation and behavior dimension, the generator uses a
+leave-one-model-out peer baseline:
+
+```text
+peer-relative difference = model value - median value of the other models in the same round
+```
+
+A signal qualifies only when all three gates pass:
+
+- at least 8 matched official portfolios
+- at least 6 independent decision dates
+- a dimension-specific materiality floor and the same directional difference
+  in at least 65% of matched portfolios
+
+Weekly and monthly samples are checked separately. Opposite material signals
+produce a horizon-dependent confidence caveat. A reversal under the current
+methodology produces an evolving-pattern caveat.
+
+The strongest qualifying exposure or risk signal supplies the archetype
+modifier. Signal strength is the absolute median peer difference divided by the
+dimension's materiality floor, with persistence and then the stable metric key
+as tie-breakers. Peer-normalized construction, turnover, or peer overlap
+supplies the allocation-style noun. `Peer-balanced allocator` is used only when
+no signal passes the gates; it is not a generic rule-ladder fallback.
+
+Evidence becomes established only after 16 independent decision dates and 75%
+directional persistence. Otherwise a qualifying profile remains moderate;
+small samples, horizon conflicts, and sufficiently sampled current-method
+reversals are explicitly marked provisional, horizon-dependent, or evolving.
+
+Every model publishes four fixed-role pills from the same evidence record:
+
+- Signature: persistent peer-relative risk or exposure
+- Construction: average holdings and largest position
+- Tempo: consecutive same-track turnover
+- Now: current open positioning, `No open portfolio` when none exists, or a
+  historical lifecycle note for retired models
+
+## Evidence Tiers
+
+- **Headline behavior:** eligible frozen allocations, asset-risk definitions,
+  same-round peers, concentration, turnover, and lifecycle metadata.
+- **Decision-process context:** structured candidate ledgers, forecasts,
+  expected alpha, confidence, and key-risk counts where available. Coverage is
+  displayed separately for each input family, but these fields do not override
+  allocation evidence.
+- **Performance:** resolved returns, ranks, S&P 500 comparisons, and market
+  regime results remain separate from allocation-style classification.
+- **Narrative:** free-form rationales may be displayed as model-authored context
+  but never assign a label.
+
+Ineligible, invalid, pilot, and retrospective runs are excluded by the public
+official-run gate. Page-level superlatives use the active-model cohort; retired
+models retain their historical profiles but cannot become a current “most” leader.
+
 ## Metrics
 
 - `risk_taking_score`: average allocation-weighted 0-100 risk appetite across
@@ -53,21 +114,16 @@ joins, or a model has more resolved performance data.
 
 ## Behavior Labels
 
-The generator assigns traits before any LLM wording is used.
+Labels use a small grammar instead of a mutually exclusive threshold ladder:
 
-- `highest_risk`: model has the highest average risk-taking score.
-- `most_concentrated`: model has the highest concentration metric.
-- `most_defensive`: model has the highest defensive allocation.
-- `lowest_turnover`: model has the smallest measured turnover.
-- `most_consensus_aligned`: model has the highest average peer overlap.
-- `most_distinctive`: model has the lowest average peer overlap.
-- `technology_tilt`, `international_tilt`, `real_assets_tilt`: exposure
-  thresholds show a repeated allocation tilt.
-- `binary_results`: at least two first-place finishes and at least two last-place
-  finishes.
-- `middle_stable`: at least five resolved rounds with no first-place or
-  last-place finishes.
-- `early_sample`: fewer than eight official saved portfolios.
+```text
+[persistent signature modifier] + [construction style]
+```
+
+Examples include `Real-asset tactical allocator`, `Technology-focused
+concentrator`, `Defensive diversified allocator`, and `Benchmark-anchored
+allocator`. Models without enough independent evidence are labeled `Emerging
+allocation profile`.
 
 ## NVIDIA LLM Contract
 
@@ -83,11 +139,11 @@ apiReadModel.model_behavior.pattern_report.llm_input_contract
 Prompt version:
 
 ```text
-capitalbench_model_patterns_prompt_v1
+capitalbench_model_patterns_prompt_v2
 ```
 
-The packet includes model IDs, deterministic summaries, traits, metric keys, top
-assets, sample caveats, and comparative candidates.
+The packet includes model IDs, deterministic summaries, traits, fixed-role
+pills, metric keys, top assets, sample caveats, and comparative candidates.
 
 The LLM must not:
 

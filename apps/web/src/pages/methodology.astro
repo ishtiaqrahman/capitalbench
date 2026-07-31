@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
+import apiReadModel from "../generated/apiReadModel.js";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
@@ -58,6 +59,8 @@ const earlierUniverseText = joinWithAnd(
     .filter((version) => version.label !== latestUniverse?.label)
     .map((version) => `${version.label} with ${version.count} choices`)
 );
+const behaviorMethod: any = apiReadModel.model_behavior?.methodology ?? { version: "n/a", rules: {} };
+const behaviorRules: any = behaviorMethod.rules ?? {};
 ---
 
 <BaseLayout
@@ -100,6 +103,7 @@ const earlierUniverseText = joinWithAnd(
     <a href="#artifacts">Artifacts</a>
     <a href="#execution">Execution</a>
     <a href="#pricing">Scoring</a>
+    <a href="#behavior-profiles">Behavior profiles</a>
     <a href="#fairness">Fairness</a>
     <a href="#audit">Audit</a>
   </nav>
@@ -478,6 +482,48 @@ const earlierUniverseText = joinWithAnd(
             <h3>Excluded For Fairness</h3>
             <p>If a set model misses a resolved round, that round is excluded from that set for every model.</p>
           </div>
+        </div>
+      </section>
+
+      <section id="behavior-profiles">
+        <h2>Model Behavior Labels And Pills</h2>
+        <p>
+          Behavior profiles are a post-publication descriptive layer. They summarize how a model allocated; they do
+          not change a round's return, score, rank, eligibility, or benchmark-set membership.
+        </p>
+        <div class="leaderboard-defs">
+          <div>
+            <h3>Same-Round Baseline</h3>
+            <p>For each behavior metric, subtract the median value of the other models in the same official round.</p>
+          </div>
+          <div>
+            <h3>Evidence Gate</h3>
+            <p>
+              A signal needs at least {behaviorRules.minimum_matched_portfolios ?? 8} matched portfolios across
+              {` ${behaviorRules.minimum_independent_decision_dates ?? 6}`} decision dates, its metric-specific
+              materiality floor, and {behaviorRules.persistence_rate_pct ?? 65}% directional persistence.
+            </p>
+          </div>
+          <div>
+            <h3>Two Time Scopes</h3>
+            <p>“Typical” uses eligible history. “Now” uses only open official portfolios; retired models receive a lifecycle pill instead.</p>
+          </div>
+        </div>
+        <p>
+          The strongest qualifying risk or exposure signal supplies the caption modifier. Peer-relative construction,
+          turnover, or overlap supplies its allocation-style noun. Four fixed roles keep the pills comparable:
+          signature, construction, tempo, and current positioning or lifecycle. Weekly/monthly conflicts and sufficiently
+          sampled reversals under a newer methodology explicitly qualify the confidence claim.
+        </p>
+        <p>
+          Realized returns and ranks, free-form rationale wording, briefing prose, and ineligible, invalid,
+          retrospective, or pilot runs cannot assign a behavior label. Structured candidate ledgers, forecasts,
+          confidence, and key risks appear only as separately labeled decision-process context.
+        </p>
+        <div class="method-callout">
+          <strong>Versioned and auditable.</strong>
+          The current method is <code>{behaviorMethod.version}</code>. The public API retains the previous V1 labels as a
+          shadow comparison. <a href="/models/patterns/#methodology">See the signal floors, metric definitions, and wording provenance.</a>
         </div>
       </section>
 

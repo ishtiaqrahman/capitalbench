@@ -14,6 +14,8 @@ type PatternRow = {
   sample: Record<string, number | string | null>;
   behavior_summary: string;
   traits: Array<{ key: string; label: string; evidence: string; metric_keys: string[] }>;
+  pills: Array<{ key: string; role: string; label: string; evidence: string; tone?: string; scope?: string }>;
+  decision_process?: Record<string, number | null>;
   key_numbers: Record<string, number | null>;
   top_assets: Array<{ display: string; average_allocation_pct?: number; frequency_pct?: number }>;
   closest_peer?: { label?: string; similarity_pct?: number | null } | null;
@@ -41,6 +43,8 @@ const report = modelBehavior.pattern_report ?? {
 const rows = (Array.isArray(report.rows) ? report.rows : []) as PatternRow[];
 const findings = (Array.isArray(report.comparative_findings) ? report.comparative_findings : []) as PatternFinding[];
 const metricDefinitions = Array.isArray(report.metric_definitions) ? report.metric_definitions : [];
+const behaviorMethod = report.methodology ?? modelBehavior.methodology ?? { rules: {}, dimensions: [], included_evidence: [], headline_exclusions: [] };
+const signalFloors = Array.isArray(behaviorMethod.dimensions) ? behaviorMethod.dimensions : [];
 const rowById = new Map(rows.map((row) => [row.model_id, row]));
 const leaderCards = [
   ["Most risk-seeking", report.summary?.highest_risk_model_id, "Highest average risk-taking score"],
@@ -63,10 +67,7 @@ const keyMetricColumns = [
   ["high_risk_pct", "High risk"],
   ["defensive_pct", "Defensive"],
   ["peer_similarity", "Peer overlap"],
-  ["average_turnover_pct", "Turnover"],
-  ["average_rank", "Avg rank"],
-  ["first_last", "1st / last"],
-  ["beat_sp500_rate_pct", "Beat S&P"]
+  ["average_turnover_pct", "Turnover"]
 ];
 
 function dateLabel(value: string | null | undefined) {
@@ -101,6 +102,14 @@ function numberLabel(value: number | null | undefined, digits = 1) {
 function pctLabel(value: number | null | undefined, digits = 1) {
   if (typeof value !== "number" || !Number.isFinite(value)) return "n/a";
   return `${value.toFixed(digits)}%`;
+}
+
+function materialityFloorLabel(dimension: any) {
+  const value = Number(dimension?.materiality_floor);
+  if (!Number.isFinite(value)) return "n/a";
+  if (dimension.unit === "score_100") return `${value} score points`;
+  if (dimension.unit === "holdings") return `${value} holdings`;
+  return `${value} percentage points`;
 }
 
 function metricValue(row: PatternRow, key: string) {
@@ -141,8 +150,8 @@ function rowLogoSrc(row: PatternRow) {
       <span class="panel-kicker">Model behavior patterns</span>
       <h1 id="pattern-title">How The AI Allocators Differ</h1>
       <p>
-        A dynamic comparison of each model's allocation style across official frozen portfolios. The report separates
-        risk appetite, concentration, defensive ballast, peer overlap, turnover, and resolved performance profile in one view.
+        A peer-normalized comparison of each model's typical allocation style across eligible official frozen portfolios,
+        with current open positioning shown separately from historical behavior.
       </p>
     </div>
     <aside class="pattern-freshness" aria-label="Pattern report freshness">
@@ -181,8 +190,8 @@ function rowLogoSrc(row: PatternRow) {
         <span class="panel-kicker">Comparison matrix</span>
         <h2 id="comparison-title">Distinct Behavior By Model</h2>
         <p>
-          Summaries are generated from deterministic metrics. NVIDIA-assisted wording can polish future summaries, but
-          the metric rows below remain the source of truth.
+          Every label, sentence, and pill comes from the same deterministic evidence record. Realized investment results
+          are deliberately excluded from allocation-style classification.
         </p>
       </div>
       <a class="section-profile-link" href="#methodology">Calculation method</a>
@@ -213,8 +222,8 @@ function rowLogoSrc(row: PatternRow) {
             {row.sample_caveat && <em>{row.sample_caveat}</em>}
           </div>
           <div class="pattern-evidence-cell" role="cell">
-            {row.traits.slice(0, 4).map((trait) => (
-              <span title={trait.evidence}>{trait.label}</span>
+            {(row.pills ?? []).slice(0, 4).map((pill) => (
+              <span title={pill.evidence}>{pill.label}</span>
             ))}
           </div>
           <div class="pattern-asset-cell" role="cell">
@@ -235,8 +244,8 @@ function rowLogoSrc(row: PatternRow) {
       <span class="panel-kicker">Key numbers</span>
       <h2 id="numbers-title">Behavior Metrics In One Table</h2>
       <p>
-        These are cumulative model-level measures across official saved portfolios and resolved results. A lower average
-        rank is better. Beat S&amp;P shows resolved rounds where model return exceeded the S&amp;P 500.
+        These are cumulative allocation-behavior measures across eligible official saved portfolios. Performance remains
+        available on the weekly and monthly leaderboards, but does not determine these behavior labels.
       </p>
     </div>
 
@@ -293,26 +302,55 @@ function rowLogoSrc(row: PatternRow) {
   <section id="methodology" class="section pattern-method" aria-labelledby="methodology-title">
     <div class="pattern-method-copy">
       <span class="panel-kicker">Methodology</span>
-      <h2 id="methodology-title">How The Pattern Report Is Calculated</h2>
+      <h2 id="methodology-title">How Behavior Labels And Pills Are Determined</h2>
       <p>
-        The report is generated from official frozen portfolios and resolved result rows during the website build. No
-        page copy is manually assigned to a model. New models appear automatically after they have official saved portfolios.
+        The report is rebuilt from eligible official frozen portfolios during every publication build. No model receives
+        a manually assigned caption, and the model's own descriptive wording cannot assign its label.
       </p>
       <p>
-        Models with fewer than {report.sample_rules?.stable_behavior_min_portfolios ?? 8} saved portfolios are marked
-        as early sample. Performance language is caveated until at least {report.sample_rules?.performance_context_min_resolved_rounds ?? 3}
-        resolved results are available.
+        For each model and round, CapitalBench subtracts the median behavior-metric value of the other models in that same round.
+        A behavior signal must exceed its published materiality floor, point in the same direction in at least
+        {` ${report.sample_rules?.persistence_rate_pct ?? 65}%`} of matched portfolios, and have at least
+        {` ${report.sample_rules?.stable_behavior_min_portfolios ?? 8}`} matched portfolios across
+        {` ${report.sample_rules?.stable_behavior_min_decision_dates ?? 6}`} independent decision dates.
       </p>
       <p>
-        NVIDIA-assisted text is allowed only as a rewrite layer. The prompt receives the structured model rows, traits,
-        metric keys, top assets, and comparative candidates. It is not allowed to add unsupported numbers, assets, causes,
-        stale dates, or investment advice.
+        Qualifying signals are ordered by absolute median peer difference divided by their materiality floor, then by
+        persistence and a stable metric key. The strongest exposure or risk signal supplies the label modifier;
+        peer-normalized construction, turnover, or overlap supplies the allocation-style noun.
+      </p>
+      <p>
+        Evidence is “established” only after {behaviorMethod.rules?.established_minimum_decision_dates ?? 16} decision
+        dates and {behaviorMethod.rules?.established_persistence_rate_pct ?? 75}% persistence. Opposite material weekly
+        and monthly signals are marked horizon-dependent; a sufficiently sampled reversal under the newest methodology
+        is marked evolving. The four pills always report signature, construction, tempo, and current open positioning
+        (or lifecycle for a retired model). “Typical” uses all eligible history; “Now” uses only currently open portfolios.
+      </p>
+      <p>
+        Realized returns, ranks, ineligible or pilot runs, market-briefing prose, and free-form rationale wording are not
+        classification inputs. Structured candidate-ledger, forecast, confidence, and key-risk fields are retained as
+        decision-process context when coverage exists, but they do not override allocation evidence. Page-level “most”
+        leader cards use active models only; retired profiles remain available as historical evidence.
       </p>
       <p class="pattern-provenance">
+        Method version: <strong>{behaviorMethod.version ?? modelBehavior.method_version ?? "n/a"}</strong><br />
+        Peer baseline: <strong>{modelBehavior.profiles?.[0]?.behavior_v2?.methodology?.comparison_baseline ?? "same-round peer median"}</strong><br />
+        Wording provenance: <strong>{report.llm_provenance?.status ?? "deterministic source of truth"}</strong><br />
         Prompt contract: <strong>{report.llm_provenance?.prompt_version ?? "n/a"}</strong>
       </p>
+      <a class="section-profile-link" href="/methodology/">Read the full CapitalBench benchmark methodology</a>
     </div>
     <div class="pattern-definition-list">
+      <article class="pattern-signal-floor-card">
+        <span>Qualification thresholds</span>
+        <strong>Published materiality floors</strong>
+        <p>A median same-round peer difference must meet the relevant floor before persistence can qualify it.</p>
+        <ul>
+          {signalFloors.map((dimension: any) => (
+            <li><span>{dimension.label}</span><b>≥ {materialityFloorLabel(dimension)}</b></li>
+          ))}
+        </ul>
+      </article>
       {metricDefinitions.map((metric: any) => (
         <article>
           <span>{metric.unit}</span>

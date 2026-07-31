@@ -2415,6 +2415,10 @@ if (latestUniverse) {
 for (const version of universeVersions.slice(1)) {
   includes(methodologyHtml, `${version.label} with ${version.rows.length} choices`, `methodology universe version ${version.label}`);
 }
+includes(methodologyHtml, "Model Behavior Labels And Pills", "methodology behavior profile section");
+includes(methodologyHtml, apiReadModel.model_behavior?.methodology?.version ?? "", "methodology behavior profile version");
+includes(methodologyHtml, "/models/patterns/#methodology", "methodology detailed behavior method link");
+includes(methodologyHtml, "Realized returns and ranks", "methodology behavior outcome separation");
 
 for (const [context, html] of [
   ["methodology", methodologyHtml],
@@ -2832,7 +2836,7 @@ includes(
 includes(riskAppetiteHtml, "Portfolio Pulse = 50 + 50 × Σ(allocation weight × asset risk-on loading)", "risk appetite portfolio formula");
 includes(riskAppetiteHtml, "Combined Pulse = 50% × Weekly Pulse + 50% × Monthly Pulse", "risk appetite combined formula");
 includes(riskAppetiteHtml, `${liveRisk.outstanding_live_book.portfolio_count} unresolved portfolios`, "risk appetite outstanding portfolio count");
-includes(riskAppetiteHtml, "How Model Behavior Profiles Are Calculated", "risk appetite model behavior methodology");
+includes(riskAppetiteHtml, "How Risk Metrics Feed Behavior Profiles", "risk appetite model behavior methodology");
 includes(riskAppetiteHtml, "Round-to-round turnover equals one-half of the summed absolute allocation change", "risk appetite behavior turnover formula");
 const riskHistoryProps = astroIslandProps(riskAppetiteHtml, "RiskAppetiteHistoryChart");
 const renderedDecisionHistory = Array.isArray(riskHistoryProps.decisionHistory) ? riskHistoryProps.decisionHistory : [];
@@ -3221,7 +3225,7 @@ const patternReport = apiReadModel.model_behavior?.pattern_report;
 includes(modelPatternsHtml, "How The AI Allocators Differ", "model patterns page title");
 includes(modelPatternsHtml, "Distinct Behavior By Model", "model patterns comparison section");
 includes(modelPatternsHtml, "Behavior Metrics In One Table", "model patterns key numbers section");
-includes(modelPatternsHtml, "How The Pattern Report Is Calculated", "model patterns methodology section");
+includes(modelPatternsHtml, "How Behavior Labels And Pills Are Determined", "model patterns methodology section");
 if (patternReport) {
   includes(modelPatternsHtml, patternReport.llm_provenance?.prompt_version ?? "", "model patterns prompt provenance");
   includes(modelPatternsHtml, patternReport.data_as_of ? dateLabel(patternReport.data_as_of) : "n/a", "model patterns data_as_of");
@@ -3244,13 +3248,22 @@ if (patternReport) {
     includes(modelPatternsHtml, numberLabel(row.key_numbers.average_holding_count, 2), `${context} average holding count`);
     includes(modelPatternsHtml, pctValue(row.key_numbers.average_top_allocation_pct), `${context} average top holding`);
     if (row.sample_caveat) includesAny(modelPatternsHtml, [row.sample_caveat, htmlText(row.sample_caveat)], `${context} sample caveat`);
-    for (const trait of (row.traits ?? []).slice(0, 2)) {
-      includes(modelPatternsHtml, trait.label, `${context} trait ${trait.key}`);
+    for (const pill of (row.pills ?? []).slice(0, 2)) {
+      includes(modelPatternsHtml, pill.label, `${context} pill ${pill.key}`);
     }
     for (const asset of (row.top_assets ?? []).slice(0, 3)) {
       includesAny(modelPatternsHtml, [asset.display, htmlText(asset.display)], `${context} top asset ${asset.option_id}`);
     }
   }
+  for (const row of (patternReport.rows ?? []).filter((item) => item.lifecycle_status !== "retired")) {
+    const context = `homepage behavior profile ${row.model_id}`;
+    includes(indexHtml, row.archetype?.label ?? "", `${context} archetype`);
+    for (const pill of row.pills ?? []) includes(indexHtml, pill.label, `${context} ${pill.role} pill`);
+  }
+  includes(modelPatternsHtml, patternReport.methodology?.version ?? "", "model patterns behavior method version");
+  includes(modelPatternsHtml, "median behavior-metric value of the other models in that same round", "model patterns peer normalization method");
+  includes(modelPatternsHtml, "Published materiality floors", "model patterns materiality floors");
+  includes(modelPatternsHtml, "Realized returns, ranks, ineligible or pilot runs", "model patterns headline exclusions");
   for (const finding of patternReport.comparative_findings ?? []) {
     includesAny(modelPatternsHtml, [finding.title, htmlText(finding.title)], `model patterns finding ${finding.key} title`);
     includesAny(modelPatternsHtml, [finding.body, htmlText(finding.body)], `model patterns finding ${finding.key} body`);
@@ -3290,6 +3303,9 @@ for (const model of apiReadModel.models) {
     includes(modelsIndexHtml, directoryBehavior.archetype.label, `${directoryContext} behavior archetype`);
     includes(modelsIndexHtml, directoryBehavior.metrics.average_risk_pulse.toFixed(1), `${directoryContext} behavior risk-taking`);
     includes(modelsIndexHtml, pctValue(directoryBehavior.metrics.average_top_allocation_pct), `${directoryContext} behavior top holding`);
+    for (const pill of (directoryBehavior.behavior_v2?.pills ?? []).slice(0, 3)) {
+      includes(modelsIndexHtml, pill.label, `${directoryContext} behavior pill ${pill.key}`);
+    }
   }
 
   const weeklyAlpha = modelAverageAlpha(model.model_id, "weekly");
@@ -3412,6 +3428,18 @@ for (const model of apiReadModel.models) {
     }
     if (typeof behavior.turnover.average_turnover_pct === "number") {
       includes(html, pctValue(behavior.turnover.average_turnover_pct), `${context} behavior turnover`);
+    }
+    includes(html, "/models/patterns/#methodology", `${context} behavior methodology link`);
+    for (const pill of behavior.behavior_v2?.pills ?? []) {
+      includes(html, pill.label, `${context} behavior pill ${pill.key}`);
+    }
+    if (Number(behavior.behavior_v2?.decision_process?.structured_candidate_coverage_count ?? 0) > 0) {
+      includes(html, "Structured decision process", `${context} decision process context`);
+      includes(
+        html,
+        String(behavior.behavior_v2.decision_process.structured_candidate_coverage_count),
+        `${context} decision process coverage`
+      );
     }
     for (const asset of behavior.top_assets.slice(0, 3)) {
       includesAny(html, [asset.label, htmlText(asset.label)], `${context} behavior asset ${asset.option_id}`);

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-31
+
+### Evidence-backed model behavior profiles
+
+- Replaced threshold-order captions with peer-normalized behavior profiles built
+  from same-round, leave-one-model-out comparisons across official frozen
+  portfolios.
+- Added minimum sample, independent-date, materiality, and persistence gates;
+  weekly/monthly disagreements and recent methodology reversals now lower or
+  qualify confidence instead of producing overconfident labels.
+- Standardized every model on four evidence-bearing pills: signature,
+  construction, tempo, and current positioning (or lifecycle for retired
+  models), with retired models excluded from active superlatives.
+- Published the method, evidence tiers, exclusions, and wording provenance on
+  the model-patterns page and in the public API, while retaining a V1 shadow for
+  migration audits.
+
 ## 2026-07-21
 
 ### Forward-only model retirement

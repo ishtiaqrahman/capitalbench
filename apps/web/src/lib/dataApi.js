@@ -1147,12 +1147,12 @@ function modelStyle(modelId) {
 }
 
 function listModelBehavior() {
-  return jsonApiResult(200, apiReadModel.model_behavior ?? { version: "model_behavior_v1", profiles: [] });
+  return jsonApiResult(200, apiReadModel.model_behavior ?? { version: "model_behavior_v2", profiles: [] });
 }
 
 function listModelPatterns() {
   const report = apiReadModel.model_behavior?.pattern_report;
-  return jsonApiResult(200, report ?? { version: "model_behavior_pattern_report_v1", rows: [] });
+  return jsonApiResult(200, report ?? { version: "model_behavior_pattern_report_v2", rows: [] });
 }
 
 function modelBehavior(modelId) {

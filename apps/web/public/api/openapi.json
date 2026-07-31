@@ -1119,7 +1119,7 @@
           "Models"
         ],
         "summary": "Model behavior profiles",
-        "description": "Canonical deterministic model behavior profiles with archetype labels, risk-taking score, concentration, turnover, peer similarity, resolved performance context, and the dynamic pattern report.",
+        "description": "Canonical peer-normalized model behavior profiles with evidence-gated archetypes, fixed-role pills, risk, concentration, turnover, current positioning, structured decision context, and a versioned methodology.",
         "responses": {
           "200": {
             "description": "Model behavior profile collection",
@@ -4272,6 +4272,9 @@
           "version": {
             "type": "string"
           },
+          "method_version": {
+            "type": "string"
+          },
           "generated_at": {
             "type": "string",
             "format": "date-time"
@@ -4286,6 +4289,9 @@
           "methodology_href": {
             "type": "string"
           },
+          "methodology": {
+            "type": "object"
+          },
           "summary": {
             "type": "object"
           },
@@ -4297,6 +4303,10 @@
           },
           "pattern_report": {
             "$ref": "#/components/schemas/ModelPatternReport"
+          },
+          "shadow_v1": {
+            "type": "object",
+            "description": "Audit-only comparison with the previous threshold-ladder labels."
           },
           "pairwise_similarity": {
             "type": "array",
@@ -4332,7 +4342,14 @@
         },
         "required": [
           "version",
+          "method_version",
+          "generated_at",
+          "methodology_href",
+          "methodology",
+          "summary",
           "profiles",
+          "pattern_report",
+          "shadow_v1",
           "pairwise_similarity"
         ]
       },
@@ -4370,7 +4387,13 @@
                 "label": {
                   "type": "string"
                 },
+                "provider": {
+                  "type": "string"
+                },
                 "provider_label": {
+                  "type": "string"
+                },
+                "lifecycle_status": {
                   "type": "string"
                 },
                 "archetype": {
@@ -4419,6 +4442,26 @@
                       "metric_keys"
                     ]
                   }
+                },
+                "pills": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": { "type": "string" },
+                      "role": { "type": "string" },
+                      "label": { "type": "string" },
+                      "evidence": { "type": "string" },
+                      "scope": { "type": "string" }
+                    },
+                    "required": ["key", "role", "label", "evidence", "scope"]
+                  }
+                },
+                "signals": {
+                  "type": "object"
+                },
+                "decision_process": {
+                  "type": "object"
                 },
                 "key_numbers": {
                   "type": "object",
@@ -4474,8 +4517,12 @@
               "required": [
                 "model_id",
                 "label",
+                "provider",
+                "provider_label",
+                "lifecycle_status",
                 "behavior_summary",
                 "traits",
+                "pills",
                 "key_numbers",
                 "top_assets",
                 "methodology_href"
@@ -4527,6 +4574,9 @@
           "sample_rules": {
             "type": "object"
           },
+          "methodology": {
+            "type": "object"
+          },
           "llm_provenance": {
             "type": "object"
           },
@@ -4539,7 +4589,10 @@
           "rows",
           "comparative_findings",
           "metric_definitions",
-          "sample_rules"
+          "sample_rules",
+          "methodology",
+          "llm_provenance",
+          "llm_input_contract"
         ]
       },
       "ModelBehaviorProfile": {
@@ -4555,6 +4608,9 @@
             "type": "string"
           },
           "provider_label": {
+            "type": "string"
+          },
+          "lifecycle_status": {
             "type": "string"
           },
           "archetype": {
@@ -4573,6 +4629,12 @@
                   "medium",
                   "high"
                 ]
+              },
+              "confidence_label": {
+                "type": "string"
+              },
+              "confidence_reason": {
+                "type": "string"
               }
             },
             "required": [
@@ -4737,6 +4799,25 @@
           "peer_percentiles": {
             "type": "object"
           },
+          "behavior_v2": {
+            "type": "object",
+            "description": "Canonical V2 evidence record from which the archetype, description, confidence, and four fixed-role pills are derived.",
+            "properties": {
+              "version": { "type": "string" },
+              "method_version": { "type": "string" },
+              "behavior_summary": { "type": "string" },
+              "signals": { "type": "object" },
+              "pills": {
+                "type": "array",
+                "items": { "type": "object" },
+                "minItems": 4,
+                "maxItems": 4
+              },
+              "decision_process": { "type": "object" },
+              "methodology": { "type": "object" }
+            },
+            "required": ["version", "method_version", "behavior_summary", "signals", "pills", "methodology"]
+          },
           "methodology_href": {
             "type": "string"
           }
@@ -4744,11 +4825,15 @@
         "required": [
           "model_id",
           "label",
+          "provider",
+          "provider_label",
+          "lifecycle_status",
           "archetype",
           "sample",
           "metrics",
           "peer",
           "turnover",
+          "behavior_v2",
           "methodology_href"
         ]
       },

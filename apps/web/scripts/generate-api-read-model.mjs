@@ -8,6 +8,13 @@ import {
 } from "../src/lib/riskAppetiteCore.js";
 import { capitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { buildBenchmarkEvidence } from "../src/lib/benchmarkEvidence.js";
+import {
+  MODEL_BEHAVIOR_METHOD_VERSION,
+  MODEL_BEHAVIOR_VERSION,
+  MODEL_PATTERN_REPORT_VERSION,
+  behaviorMethodologyDefinitions,
+  buildModelBehaviorV2
+} from "./lib/model-behavior-v2.mjs";
 
 const repoRoot = resolve(process.cwd(), "../..");
 const roundsRoot = join(repoRoot, "rounds");
@@ -40,8 +47,7 @@ const PROVIDER_LOGOS = {
   openai: "/labs/icons/openai-icon.svg",
   xai: "/labs/icons/xai-icon.svg"
 };
-const MODEL_PATTERN_REPORT_VERSION = "model_behavior_pattern_report_v1";
-const MODEL_PATTERN_PROMPT_VERSION = "capitalbench_model_patterns_prompt_v1";
+const MODEL_PATTERN_PROMPT_VERSION = "capitalbench_model_patterns_prompt_v2";
 
 function readText(path) {
   if (!existsSync(path)) return "";
@@ -592,6 +598,7 @@ function scoredBehaviorPortfolios({ portfolios, rounds, assetsById }) {
   const roundById = new Map(rounds.map((round) => [round.round_id, round]));
   return portfolios
     .map((portfolio) => {
+      const round = roundById.get(portfolio.round_id);
       const allocations = (portfolio.allocations ?? [])
         .filter((allocation) => allocation.option_id && typeof allocation.allocation_pct === "number" && allocation.allocation_pct > 0)
         .map((allocation) => ({
@@ -628,6 +635,9 @@ function scoredBehaviorPortfolios({ portfolios, rounds, assetsById }) {
       const realAssetsPct = normalized
         .filter((allocation) => isRealAsset(allocation.option_id, assetsById))
         .reduce((total, allocation) => total + allocation.allocation_pct, 0);
+      const benchmarkPct = normalized
+        .filter((allocation) => allocation.option_id === "SP500")
+        .reduce((total, allocation) => total + allocation.allocation_pct, 0);
       return {
         key: portfolioKey(portfolio),
         round_id: portfolio.round_id,
@@ -638,6 +648,8 @@ function scoredBehaviorPortfolios({ portfolios, rounds, assetsById }) {
         status: portfolio.status,
         entry_date: portfolio.entry_date,
         exit_date: portfolio.exit_date,
+        decision_date: round?.decision_date ?? portfolio.entry_date,
+        methodology_version: round?.methodology_version ?? "unknown",
         chronology: roundChronology(roundById, portfolio),
         holding_count: normalized.length,
         top_allocation_pct: topAllocation,
@@ -652,6 +664,17 @@ function scoredBehaviorPortfolios({ portfolios, rounds, assetsById }) {
         cash_duration_pct: cashDurationPct,
         international_pct: internationalPct,
         real_assets_pct: realAssetsPct,
+        benchmark_pct: benchmarkPct,
+        candidate_count: portfolio.candidate_count,
+        selected_candidate_count: portfolio.selected_candidate_count,
+        candidate_includes_sp500: portfolio.candidate_includes_sp500,
+        average_candidate_forecast_range_pct: portfolio.average_candidate_forecast_range_pct,
+        expected_alpha_vs_sp500_pct: portfolio.expected_alpha_vs_sp500_pct,
+        submission_confidence: portfolio.confidence,
+        key_risk_count:
+          typeof portfolio.key_risk_count === "number" && Number.isFinite(portfolio.key_risk_count)
+            ? portfolio.key_risk_count
+            : null,
         allocations: normalized
       };
     })
@@ -1074,6 +1097,12 @@ function modelPatternMetricDefinitions() {
       definition: "Average allocation to commodities, crypto, energy, gold, and other inflation-linked or real-asset groups."
     },
     {
+      key: "benchmark_pct",
+      label: "S&P 500 core allocation",
+      unit: "percentage_points",
+      definition: "Average allocation to the S&P 500 benchmark option across official saved portfolios."
+    },
+    {
       key: "peer_similarity",
       label: "Peer overlap",
       unit: "0-1",
@@ -1132,6 +1161,7 @@ function modelPatternKeyNumbers(profile) {
     cash_duration_pct: roundedNumber(profile.metrics?.cash_duration_pct, 2),
     international_pct: roundedNumber(profile.metrics?.international_pct, 2),
     real_assets_pct: roundedNumber(profile.metrics?.real_assets_pct, 2),
+    benchmark_pct: roundedNumber(profile.metrics?.benchmark_pct, 2),
     peer_similarity: roundedNumber(profile.peer?.average_peer_similarity, 4),
     outlier_round_count: Number(profile.peer?.outlier_round_count ?? 0),
     average_turnover_pct: roundedNumber(profile.turnover?.average_turnover_pct, 2),
@@ -1276,29 +1306,6 @@ function buildModelPatternFindings(rows, summary) {
       });
     }
   }
-  const fragileRows = rows.filter((row) => row.key_numbers.last_place_count >= 3 || (row.key_numbers.first_place_count >= 2 && row.key_numbers.last_place_count >= 2));
-  if (fragileRows.length > 0) {
-    findings.push({
-      key: "fragile_performance_profiles",
-      title: "Some aggressive or concentrated models have more binary outcomes",
-      body: fragileRows
-        .map((row) => `${row.label} has ${row.key_numbers.first_place_count} first-place and ${row.key_numbers.last_place_count} last-place finishes.`)
-        .join(" "),
-      model_ids: fragileRows.map((row) => row.model_id),
-      supported_metric_keys: ["first_place_count", "last_place_count"]
-    });
-  }
-  const middleStable = rows.find((row) => row.traits.some((trait) => trait.key === "middle_stable"));
-  if (middleStable) {
-    findings.push({
-      key: "middle_stable_profile",
-      title: `${middleStable.label} has been steadier than its risk score suggests`,
-      body:
-        `${middleStable.label} averages ${scoreLabel(middleStable.key_numbers.risk_taking_score)} / 100 risk-taking but has no first-place or last-place finishes across ${middleStable.key_numbers.resolved_round_count} resolved rounds.`,
-      model_ids: [middleStable.model_id],
-      supported_metric_keys: ["risk_taking_score", "first_place_count", "last_place_count", "resolved_round_count"]
-    });
-  }
   if (mostConsensus) {
     findings.push({
       key: "consensus_alignment",
@@ -1314,7 +1321,7 @@ function buildModelPatternFindings(rows, summary) {
 
 function buildModelPatternLlmPacket({ rows, findings, dataAsOf, generatedAt, dataFingerprint }) {
   return {
-    version: "capitalbench_model_patterns_llm_input_v1",
+    version: "capitalbench_model_patterns_llm_input_v2",
     prompt_version: MODEL_PATTERN_PROMPT_VERSION,
     generated_at: generatedAt,
     data_as_of: dataAsOf,
@@ -1343,13 +1350,14 @@ function buildModelPatternLlmPacket({ rows, findings, dataAsOf, generatedAt, dat
       archetype: row.archetype,
       deterministic_summary: row.behavior_summary,
       traits: row.traits,
+      pills: row.pills,
       key_numbers: row.key_numbers,
       top_assets: row.top_assets.map((asset) => asset.display),
       closest_peer: row.closest_peer
     })),
     comparative_candidates: findings,
     required_output_schema: {
-      version: "capitalbench_model_patterns_llm_output_v1",
+      version: "capitalbench_model_patterns_llm_output_v2",
       model_summaries: [
         {
           model_id: "existing model_id",
@@ -1373,8 +1381,14 @@ function buildModelPatternLlmPacket({ rows, findings, dataAsOf, generatedAt, dat
 
 function buildModelPatternReport({ profiles, pairwise, summary, dataAsOf, generatedAt }) {
   const rows = profiles.map((profile) => {
-    const sampleStatus = modelPatternSampleStatus(profile);
-    const traits = modelPatternTraits(profile, summary);
+    const legacySampleStatus = modelPatternSampleStatus(profile);
+    const behaviorV2 = profile.behavior_v2 ?? {};
+    const sampleStatus = behaviorV2.confidence?.label ?? legacySampleStatus.label;
+    const sampleCaveat =
+      behaviorV2.confidence?.level === "low" || behaviorV2.confidence?.label === "Evolving pattern"
+        ? behaviorV2.confidence?.reason
+        : legacySampleStatus.caveat;
+    const traits = Array.isArray(behaviorV2.traits) ? behaviorV2.traits : [];
     const keyNumbers = modelPatternKeyNumbers(profile);
     const topAssets = (profile.top_assets ?? []).slice(0, 5).map((asset) => ({
       ...asset,
@@ -1394,12 +1408,17 @@ function buildModelPatternReport({ profiles, pairwise, summary, dataAsOf, genera
       label: profile.label,
       provider: profile.provider,
       provider_label: profile.provider_label,
+      lifecycle_status: profile.lifecycle_status,
       archetype: profile.archetype,
-      sample_status: sampleStatus.label,
-      sample_caveat: sampleStatus.caveat,
+      sample_status: sampleStatus,
+      sample_caveat: sampleCaveat,
       sample: profile.sample,
-      behavior_summary: deterministicModelPatternSummary(profile, traits),
+      behavior_summary: behaviorV2.behavior_summary ?? profile.archetype?.description ?? "Behavior evidence is building.",
       traits,
+      pills: behaviorV2.pills ?? [],
+      signals: behaviorV2.signals ?? {},
+      qualifying_signals: behaviorV2.qualifying_signals ?? [],
+      decision_process: behaviorV2.decision_process ?? {},
       key_numbers: keyNumbers,
       top_assets: topAssets,
       top_categories: (profile.top_categories ?? []).slice(0, 5),
@@ -1421,10 +1440,14 @@ function buildModelPatternReport({ profiles, pairwise, summary, dataAsOf, genera
     comparative_findings: findings,
     pairwise_similarity: pairwise.slice(0, 12),
     metric_definitions: modelPatternMetricDefinitions(),
+    methodology: behaviorMethodologyDefinitions(),
     sample_rules: {
-      stable_behavior_min_portfolios: 8,
+      stable_behavior_min_portfolios: behaviorMethodologyDefinitions().rules.minimum_matched_portfolios,
+      stable_behavior_min_decision_dates: behaviorMethodologyDefinitions().rules.minimum_independent_decision_dates,
+      persistence_rate_pct: behaviorMethodologyDefinitions().rules.persistence_rate_pct,
       performance_context_min_resolved_rounds: 3,
-      missing_round_policy: "Only official saved portfolios and resolved result rows present in the public benchmark data are counted."
+      missing_round_policy: "Only eligible official saved portfolios present in the public benchmark data are classified.",
+      outcome_separation_policy: "Realized returns and finishing ranks do not determine allocation-style labels or pills."
     }
   };
   const dataFingerprint = sha256Json(publicPayload);
@@ -1493,6 +1516,7 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
       cash_duration_pct: average(rows.map((row) => row.cash_duration_pct)) ?? 0,
       international_pct: average(rows.map((row) => row.international_pct)) ?? 0,
       real_assets_pct: average(rows.map((row) => row.real_assets_pct)) ?? 0,
+      benchmark_pct: average(rows.map((row) => row.benchmark_pct)) ?? 0,
       average_holding_count: average(rows.map((row) => row.holding_count)),
       average_top_allocation_pct: average(rows.map((row) => row.top_allocation_pct)),
       concentration_hhi: average(rows.map((row) => row.concentration_hhi)),
@@ -1517,15 +1541,18 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
       current_or_latest_risk_pulse: recentScore,
       previous_comparable_risk_pulse: priorScore,
       risk_pulse_change_points: recentScore !== null && priorScore !== null ? recentScore - priorScore : null,
+      current_top_assets: aggregateBehaviorHoldings(liveRows, assetsById, 5),
       top_assets: aggregateBehaviorHoldings(latestRows, assetsById, 5)
     };
-    const archetype = behaviorArchetype({ sample, metrics, peer: peerStats });
+    const legacyArchetype = behaviorArchetype({ sample, metrics, peer: peerStats });
     return {
       model_id: model.model_id,
       label: model.label,
       provider: model.provider,
       provider_label: model.provider_label,
-      archetype,
+      lifecycle_status: model.lifecycle_status ?? "active",
+      archetype: legacyArchetype,
+      legacy_archetype: legacyArchetype,
       sample,
       metrics,
       peer: peerStats,
@@ -1552,26 +1579,33 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
       recent,
       top_assets: aggregateBehaviorHoldings(rows, assetsById, 8),
       top_categories: aggregateBehaviorCategories(rows, assetsById, 8),
-      methodology_href: "/risk-appetite/#model-behavior-methodology"
+      methodology_href: "/models/patterns/#methodology"
     };
   });
 
-  const profiles = rawProfiles
-    .map((profile) => ({
+  const activeRawProfiles = rawProfiles.filter((profile) => profile.lifecycle_status !== "retired");
+  const profilesWithPercentiles = rawProfiles.map((profile) => {
+    const cohort = profile.lifecycle_status === "retired" ? rawProfiles : activeRawProfiles;
+    return {
       ...profile,
       peer_percentiles: {
-        risk_pulse: percentileValue(rawProfiles, profile.model_id, (row) => row.metrics.average_risk_pulse),
-        concentration: percentileValue(rawProfiles, profile.model_id, (row) => row.metrics.concentration_hhi),
-        defensiveness: percentileValue(rawProfiles, profile.model_id, (row) => row.metrics.defensive_pct),
-        peer_similarity: percentileValue(rawProfiles, profile.model_id, (row) => row.peer.average_peer_similarity),
-        turnover_stability: percentileValue(rawProfiles, profile.model_id, (row) => row.turnover.average_turnover_pct, { lowerIsHigher: true }),
-        capitalbench_score: percentileValue(rawProfiles, profile.model_id, (row) => row.performance.average_capitalbench_score)
+        risk_pulse: percentileValue(cohort, profile.model_id, (row) => row.metrics.average_risk_pulse),
+        concentration: percentileValue(cohort, profile.model_id, (row) => row.metrics.concentration_hhi),
+        defensiveness: percentileValue(cohort, profile.model_id, (row) => row.metrics.defensive_pct),
+        peer_similarity: percentileValue(cohort, profile.model_id, (row) => row.peer.average_peer_similarity),
+        turnover_stability: percentileValue(cohort, profile.model_id, (row) => row.turnover.average_turnover_pct, { lowerIsHigher: true }),
+        capitalbench_score: percentileValue(cohort, profile.model_id, (row) => row.performance.average_capitalbench_score)
       }
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+    };
+  });
+  const profiles = buildModelBehaviorV2({
+    profiles: profilesWithPercentiles,
+    scoredRows,
+    models
+  }).sort((a, b) => a.label.localeCompare(b.label));
 
-  function leaderBy(getter, direction = "desc") {
-    return [...profiles]
+  function leaderBy(sourceProfiles, getter, direction = "desc") {
+    return [...sourceProfiles]
       .filter((profile) => typeof getter(profile) === "number" && Number.isFinite(getter(profile)))
       .sort((a, b) =>
         direction === "asc"
@@ -1582,25 +1616,66 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
 
   const dataAsOf = portfolios.map((portfolio) => portfolio.entry_date || portfolio.exit_date || "").filter(Boolean).sort().at(-1) ?? null;
   const generatedAt = new Date().toISOString();
+  const activeProfiles = profiles.filter((profile) => profile.lifecycle_status !== "retired");
   const summary = {
+    model_count: profiles.length,
+    active_model_count: activeProfiles.length,
+    historical_model_count: profiles.length - activeProfiles.length,
+    comparison_cohort: "active_models",
+    portfolio_count: scoredRows.length,
+    resolved_result_count: results.length,
+    highest_risk_model_id: leaderBy(activeProfiles, (row) => row.metrics.average_risk_pulse)?.model_id ?? null,
+    most_concentrated_model_id: leaderBy(activeProfiles, (row) => row.metrics.concentration_hhi)?.model_id ?? null,
+    most_defensive_model_id: leaderBy(activeProfiles, (row) => row.metrics.defensive_pct)?.model_id ?? null,
+    most_consensus_aligned_model_id: leaderBy(activeProfiles, (row) => row.peer.average_peer_similarity)?.model_id ?? null,
+    most_distinctive_model_id: leaderBy(activeProfiles, (row) => row.peer.average_peer_similarity, "asc")?.model_id ?? null,
+    lowest_turnover_model_id: leaderBy(activeProfiles, (row) => row.turnover.average_turnover_pct, "asc")?.model_id ?? null
+  };
+  const legacySummary = {
     model_count: profiles.length,
     portfolio_count: scoredRows.length,
     resolved_result_count: results.length,
-    highest_risk_model_id: leaderBy((row) => row.metrics.average_risk_pulse)?.model_id ?? null,
-    most_concentrated_model_id: leaderBy((row) => row.metrics.concentration_hhi)?.model_id ?? null,
-    most_defensive_model_id: leaderBy((row) => row.metrics.defensive_pct)?.model_id ?? null,
-    most_consensus_aligned_model_id: leaderBy((row) => row.peer.average_peer_similarity)?.model_id ?? null,
-    most_distinctive_model_id: leaderBy((row) => row.peer.average_peer_similarity, "asc")?.model_id ?? null,
-    lowest_turnover_model_id: leaderBy((row) => row.turnover.average_turnover_pct, "asc")?.model_id ?? null
+    highest_risk_model_id: leaderBy(profiles, (row) => row.metrics.average_risk_pulse)?.model_id ?? null,
+    most_concentrated_model_id: leaderBy(profiles, (row) => row.metrics.concentration_hhi)?.model_id ?? null,
+    most_defensive_model_id: leaderBy(profiles, (row) => row.metrics.defensive_pct)?.model_id ?? null,
+    most_consensus_aligned_model_id: leaderBy(profiles, (row) => row.peer.average_peer_similarity)?.model_id ?? null,
+    most_distinctive_model_id: leaderBy(profiles, (row) => row.peer.average_peer_similarity, "asc")?.model_id ?? null,
+    lowest_turnover_model_id: leaderBy(profiles, (row) => row.turnover.average_turnover_pct, "asc")?.model_id ?? null
   };
+  const legacyProfiles = profiles.map((profile) => {
+    const legacyProfile = { ...profile, archetype: profile.legacy_archetype };
+    const traits = modelPatternTraits(legacyProfile, legacySummary);
+    return {
+      model_id: profile.model_id,
+      label: profile.label,
+      lifecycle_status: profile.lifecycle_status,
+      archetype: profile.legacy_archetype,
+      behavior_summary: deterministicModelPatternSummary(legacyProfile, traits),
+      traits
+    };
+  });
   return {
-    version: "model_behavior_v1",
+    version: MODEL_BEHAVIOR_VERSION,
+    method_version: MODEL_BEHAVIOR_METHOD_VERSION,
     generated_at: generatedAt,
     data_as_of: dataAsOf,
     methodology_href: "/models/patterns/#methodology",
+    methodology: behaviorMethodologyDefinitions(),
     summary,
     profiles,
     pairwise_similarity: peer.pairwise,
+    shadow_v1: {
+      version: "model_behavior_v1",
+      status: "shadow_comparison_only",
+      summary: legacySummary,
+      profiles: legacyProfiles,
+      label_changes: profiles.map((profile) => ({
+        model_id: profile.model_id,
+        v1_label: profile.legacy_archetype?.label ?? null,
+        v2_label: profile.archetype?.label ?? null,
+        changed: profile.legacy_archetype?.label !== profile.archetype?.label
+      }))
+    },
     pattern_report: buildModelPatternReport({
       profiles,
       pairwise: peer.pairwise,
@@ -1662,6 +1737,14 @@ function loadSubmissions({ roundPath, round, selectedRun, assetsById }) {
     const modelId = String(payload.model_id);
     const provider = String(payload.provider);
     const portfolioAllocations = decisionAllocations(payload);
+    const candidateLedger = Array.isArray(payload.candidate_ledger) ? payload.candidate_ledger : [];
+    const candidateForecastRanges = candidateLedger
+      .map((candidate) => {
+        const low = numberValue(candidate.forecast_low_pct);
+        const high = numberValue(candidate.forecast_high_pct);
+        return low === null || high === null ? null : high - low;
+      })
+      .filter((value) => typeof value === "number" && Number.isFinite(value));
     const portfolio = {
       round_id: round.round_id,
       run_id: selectedRun.run_id,
@@ -1677,8 +1760,20 @@ function loadSubmissions({ roundPath, round, selectedRun, assetsById }) {
       selected_option_id: primaryOptionId(payload),
       holding_count: portfolioAllocations.length || 1,
       confidence: numberValue(payload.confidence),
+      candidate_count: candidateLedger.length || null,
+      selected_candidate_count: candidateLedger.length
+        ? candidateLedger.filter((candidate) => String(candidate.decision ?? "").toLowerCase() === "selected").length
+        : null,
+      candidate_includes_sp500: candidateLedger.length
+        ? candidateLedger.some((candidate) => String(candidate.option_id ?? "") === "SP500")
+        : null,
+      average_candidate_forecast_range_pct: average(candidateForecastRanges),
+      benchmark_expected_return_pct: numberValue(payload.benchmark_expected_return_pct),
+      portfolio_expected_return_pct: numberValue(payload.portfolio_expected_return_pct),
+      expected_alpha_vs_sp500_pct: numberValue(payload.expected_alpha_vs_sp500_pct),
       rationale_summary: String(payload.rationale_summary ?? payload.portfolio_rationale ?? ""),
       portfolio_rationale: String(payload.portfolio_rationale ?? ""),
+      key_risk_count: Array.isArray(payload.key_risks) ? payload.key_risks.length : null,
       key_risks: Array.isArray(payload.key_risks) ? payload.key_risks.map(String) : [],
       parsed_file_path: `rounds/${round.round_id}/runs/${selectedRun.run_id}/submissions/parsed/${filename}`,
       allocations: portfolioAllocations.map((allocation, index) => {

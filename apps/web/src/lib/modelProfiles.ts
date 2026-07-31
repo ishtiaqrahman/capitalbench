@@ -119,10 +119,13 @@ export type ModelBehaviorProfile = {
   label: string;
   provider: string;
   provider_label: string;
+  lifecycle_status?: string;
   archetype: {
     label: string;
     description: string;
     confidence: string;
+    confidence_label?: string;
+    confidence_reason?: string;
   };
   sample: {
     portfolio_count: number;
@@ -153,6 +156,15 @@ export type ModelBehaviorProfile = {
   top_assets: Array<Record<string, any>>;
   top_categories: Array<Record<string, any>>;
   peer_percentiles?: Record<string, number | null>;
+  behavior_v2?: {
+    version: string;
+    method_version: string;
+    behavior_summary: string;
+    pills: Array<Record<string, any>>;
+    signals: Record<string, any>;
+    decision_process: Record<string, number | null>;
+    methodology: Record<string, string>;
+  };
   methodology_href?: string;
 };
 

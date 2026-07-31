@@ -20578,6 +20578,40 @@ tbody tr:hover {
   line-height: 1.48;
 }
 
+.pattern-definition-list .pattern-signal-floor-card {
+  grid-column: 1 / -1;
+}
+
+.pattern-signal-floor-card ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pattern-signal-floor-card li {
+  display: grid;
+  gap: 3px;
+  padding: 8px 9px;
+  border: 1px solid #e3ece8;
+  border-radius: 6px;
+  background: var(--surface-soft);
+}
+
+.pattern-signal-floor-card li span {
+  color: var(--muted-2);
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-transform: none;
+}
+
+.pattern-signal-floor-card li b {
+  color: var(--ink-strong);
+  font-size: 0.78rem;
+}
+
 .model-pattern-link-band {
   display: flex;
   min-width: 0;
@@ -22647,6 +22681,24 @@ tbody tr:hover {
   line-height: 1.38;
 }
 
+.model-card-behavior > .model-card-behavior-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+
+.model-card-behavior-pills > em {
+  padding: 5px 7px;
+  border: 1px solid #dbe5e0;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #496259;
+  font-size: 0.64rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .model-card-behavior > div {
   width: 100%;
   display: grid;
@@ -23043,6 +23095,7 @@ tbody tr:hover {
 .model-behavior-identity,
 .model-behavior-metrics,
 .model-behavior-comparison,
+.model-decision-process,
 .model-behavior-list,
 .model-scorecard,
 .model-fingerprint-summary,
@@ -23062,6 +23115,7 @@ tbody tr:hover {
 .model-behavior-identity,
 .model-behavior-metrics,
 .model-behavior-comparison,
+.model-decision-process,
 .model-behavior-list,
 .model-scorecard,
 .model-fingerprint-list,
@@ -23142,6 +23196,76 @@ tbody tr:hover {
 
 .model-behavior-identity a {
   text-transform: none;
+}
+
+.model-behavior-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.model-behavior-pill-row em {
+  padding: 5px 8px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 8%);
+  color: rgb(255 255 255 / 86%);
+  font-size: 0.68rem;
+  font-style: normal;
+  line-height: 1.2;
+}
+
+.model-decision-process {
+  grid-column: 1 / -1;
+}
+
+.model-decision-process h3 {
+  margin: 6px 0;
+  color: var(--ink-strong);
+}
+
+.model-decision-process > p {
+  max-width: 820px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.model-decision-process > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.model-decision-process > div > span {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-soft);
+}
+
+.model-decision-process em {
+  color: var(--muted-2);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.model-decision-process strong {
+  color: var(--ink-strong);
+}
+
+.model-decision-coverage {
+  display: block;
+  margin-top: 9px;
+  color: var(--muted-2);
+  font-size: 0.72rem;
+  line-height: 1.45;
 }
 
 .model-behavior-metrics {
@@ -24369,6 +24493,10 @@ tbody tr:hover {
   .model-strategy-overview,
   .model-pattern-lists {
     grid-template-columns: 1fr;
+  }
+
+  .model-decision-process > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .model-pattern-promo {
@@ -28794,6 +28922,10 @@ tbody tr:hover {
   }
 
   .pattern-finding-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pattern-signal-floor-card ul {
     grid-template-columns: 1fr;
   }
 

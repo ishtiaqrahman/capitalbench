@@ -112,7 +112,7 @@ const homeInsights = insightsForSurface(apiReadModel, "home", 3);
 const modelBehavior: any = apiReadModel.model_behavior ?? { summary: {}, profiles: [], methodology_href: "/risk-appetite/#model-behavior-methodology" };
 const modelPatternReport = modelBehavior.pattern_report ?? { rows: [], comparative_findings: [], summary: {} };
 const modelPatternRows = Array.isArray(modelPatternReport.rows) ? modelPatternReport.rows : [];
-const heroModelBehaviorRows = modelPatternRows.slice(0, 6);
+const heroModelBehaviorRows = modelPatternRows.filter((row: any) => row.lifecycle_status !== "retired");
 const latestUniverseOptionCount = Math.max(
   latestMonthlyRound ? staticUniverseOptions(latestMonthlyRound.round_id).length : 0,
   latestWeeklyRound ? staticUniverseOptions(latestWeeklyRound.round_id).length : 0
@@ -212,8 +212,19 @@ function heroBehaviorEvidenceTone(label: string): string {
 }
 
 function heroBehaviorEvidence(row: any): { label: string; evidence?: string; tone: string }[] {
+  const generatedPills = Array.isArray(row.pills)
+    ? row.pills
+        .slice(0, 4)
+        .map((pill: any) => ({
+          label: String(pill.label ?? "").trim(),
+          evidence: pill.evidence,
+          tone: String(pill.tone ?? heroBehaviorEvidenceTone(String(pill.label ?? "")))
+        }))
+        .filter((pill: { label: string }) => pill.label.length > 0)
+    : [];
+  if (generatedPills.length === 4) return generatedPills;
   const traits = Array.isArray(row.traits) ? row.traits : [];
-  const pills = traits
+  const pills = [...generatedPills, ...traits
     .slice(0, 4)
     .map((trait: any) => {
       const label = String(trait.label ?? "").trim();
@@ -223,7 +234,7 @@ function heroBehaviorEvidence(row: any): { label: string; evidence?: string; ton
         tone: heroBehaviorEvidenceTone(label)
       };
     })
-    .filter((pill: { label: string }) => pill.label.length > 0);
+    .filter((pill: { label: string }) => pill.label.length > 0)];
   const keyNumbers = row.key_numbers ?? {};
   const fallbackPills = [
     {
