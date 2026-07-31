@@ -358,6 +358,8 @@ function riskWidth(value: number | null | undefined): string {
 
   <TrackScorecardTabs scorecards={aggregateScorecards} />
 
+  <ModelRiskBenchmark modelBehavior={modelBehavior} variant="home" />
+
   <LatestOfficialResultsTabs tracks={latestOfficialResultTracks} />
 
   {heroModelBehaviorRows.length > 0 && (
@@ -536,8 +538,6 @@ function riskWidth(value: number | null | undefined): string {
     </a>
     <a class="home-secondary-cta" href="/risk-appetite">View historical risk trend</a>
   </div>
-
-  <ModelRiskBenchmark modelBehavior={modelBehavior} variant="home" />
 
   <InsightStrip
     id="benchmark-insights"
