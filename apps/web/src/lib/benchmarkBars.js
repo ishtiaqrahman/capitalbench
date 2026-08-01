@@ -84,3 +84,15 @@ export function benchmarkBarCoordinate(value, domain) {
   const range = Math.max(domain.maximum - domain.minimum, Number.EPSILON);
   return Math.min(100, Math.max(0, ((value - domain.minimum) / range) * 100));
 }
+
+/**
+ * Keeps the zero-axis edge square and rounds only the value endpoint.
+ * CSS border-radius order is top-left, top-right, bottom-right, bottom-left.
+ */
+export function signedBarBorderRadius(value, orientation, radius = "999px") {
+  const negative = typeof value === "number" && Number.isFinite(value) && value < 0;
+  if (orientation === "vertical") {
+    return negative ? `0 0 ${radius} ${radius}` : `${radius} ${radius} 0 0`;
+  }
+  return negative ? `${radius} 0 0 ${radius}` : `0 ${radius} ${radius} 0`;
+}

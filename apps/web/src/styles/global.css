@@ -3392,7 +3392,7 @@ a.snapshot-model-chip:hover {
   left: var(--live-bar-left);
   width: var(--live-bar-width);
   min-width: 5px;
-  border-radius: 999px;
+  border-radius: var(--live-bar-radius);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 26%);
 }
 
@@ -5720,7 +5720,6 @@ a.snapshot-model-chip:hover {
   z-index: 3;
   width: min(54px, 64%);
   transform: translateX(-50%);
-  border-radius: 7px 7px 0 0;
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 28%);
 }
 
@@ -6741,7 +6740,7 @@ a.snapshot-model-chip:hover {
   bottom: 5px;
   left: var(--bar-left);
   width: var(--bar-width);
-  border-radius: 999px;
+  border-radius: var(--weekly-oracle-bar-radius);
   min-width: 3px;
 }
 
@@ -11386,7 +11385,6 @@ a.snapshot-model-chip:hover {
   position: absolute;
   min-width: 2px;
   height: 9px;
-  border-radius: 2px;
   background: #7b8794;
 }
 
@@ -24072,7 +24070,6 @@ tbody tr:hover {
   position: absolute;
   top: 3px;
   bottom: 3px;
-  border-radius: 999px;
 }
 
 .model-alpha-track .is-positive {

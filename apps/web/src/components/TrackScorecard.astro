@@ -6,6 +6,7 @@ import type {
   TrackScorecardNormalizedRow
 } from "../lib/trackScorecard";
 import { pct } from "../lib/format";
+import { signedBarBorderRadius } from "../lib/benchmarkBars.js";
 import { orderedComparableBarWidth } from "../lib/orderedBarScale.js";
 
 interface Props {
@@ -143,7 +144,7 @@ function scoreVerticalBarStyle(value: number): string {
   const endpoint = valueCoordinate(value, scoreDomainMin, scoreDomainMax);
   const bottom = Math.min(scoreZero, endpoint);
   const height = Math.max(1.5, Math.abs(endpoint - scoreZero));
-  return `bottom: ${bottom.toFixed(2)}%; height: ${height.toFixed(2)}%;`;
+  return `bottom: ${bottom.toFixed(2)}%; height: ${height.toFixed(2)}%; border-radius: ${signedBarBorderRadius(value, "vertical", "7px")};`;
 }
 
 function revealOrigin(value: number): string {

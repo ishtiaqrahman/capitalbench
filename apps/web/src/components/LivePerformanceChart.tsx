@@ -2,6 +2,7 @@ import { Activity, BarChart3 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { modelLabel, providerLabel } from "../data/fallback";
+import { signedBarBorderRadius } from "../lib/benchmarkBars.js";
 import { pct } from "../lib/format";
 import { providerLogoSrc } from "../lib/scoreReturnChart";
 import type { LivePerformanceRecord } from "../lib/localRoundRecords";
@@ -179,7 +180,8 @@ function barStyle(value: number, domainMin: number, domainMax: number): CSSPrope
   return {
     "--live-bar-left": `${left.toFixed(2)}%`,
     "--live-bar-width": `${width.toFixed(2)}%`,
-    "--live-zero-left": `${zero.toFixed(2)}%`
+    "--live-zero-left": `${zero.toFixed(2)}%`,
+    "--live-bar-radius": signedBarBorderRadius(value, "horizontal")
   } as CSSProperties;
 }
 

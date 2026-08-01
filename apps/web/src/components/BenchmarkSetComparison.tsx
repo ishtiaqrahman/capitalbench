@@ -1,5 +1,6 @@
 import { ArrowLeftRight, Download, Info } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { signedBarBorderRadius } from "../lib/benchmarkBars.js";
 
 type Track = "weekly" | "monthly";
 type Metric = "rank" | "score" | "return" | "alpha";
@@ -521,10 +522,10 @@ export default function BenchmarkSetComparison({ sets, comparisons, defaults }: 
                       <div className="set-compare-pair-track" aria-label={`${row.label}: ${comparison.baseline.short_label} ${metricValueLabel(baselineValue, metric)}, ${comparison.comparison.short_label} ${metricValueLabel(comparisonValue, metric)}`}>
                         <span className="set-compare-zero" />
                         {finiteNumber(baselineValue) && (
-                          <span className="set-compare-pair-bar is-baseline" style={{ left: `${baselineValue < 0 ? 50 - baselineWidth : 50}%`, width: `${baselineWidth}%` }} />
+                          <span className="set-compare-pair-bar is-baseline" style={{ left: `${baselineValue < 0 ? 50 - baselineWidth : 50}%`, width: `${baselineWidth}%`, borderRadius: signedBarBorderRadius(baselineValue, "horizontal", "2px") }} />
                         )}
                         {finiteNumber(comparisonValue) && (
-                          <span className="set-compare-pair-bar is-comparison" style={{ left: `${comparisonValue < 0 ? 50 - comparisonWidth : 50}%`, width: `${comparisonWidth}%` }} />
+                          <span className="set-compare-pair-bar is-comparison" style={{ left: `${comparisonValue < 0 ? 50 - comparisonWidth : 50}%`, width: `${comparisonWidth}%`, borderRadius: signedBarBorderRadius(comparisonValue, "horizontal", "2px") }} />
                         )}
                       </div>
                       <span className="set-compare-values">

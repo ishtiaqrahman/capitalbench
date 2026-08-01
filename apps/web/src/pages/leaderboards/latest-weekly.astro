@@ -23,6 +23,7 @@ import { modelLabel, providerLabel } from "../../data/fallback";
 import { capitalBenchScore } from "../../lib/capitalBenchScore.js";
 import { providerLogoSrc } from "../../lib/scoreReturnChart";
 import { buildLatestOfficialResultTracks } from "../../lib/latestOfficialResults";
+import { signedBarBorderRadius } from "../../lib/benchmarkBars.js";
 import { insightsForRound, topInsightsByCategory } from "../../lib/insights.js";
 import {
   allocationThemeClass,
@@ -216,7 +217,7 @@ function oracleBarStyle(row: WeeklyOracleScoreRow, chart: WeeklyOracleScoreChart
   const endpoint = scoreCoordinate(row.score, chart.domainMin, chart.domainMax);
   const left = Math.min(zero, endpoint);
   const width = Math.max(1.5, Math.abs(endpoint - zero));
-  return `--bar-left: ${left.toFixed(2)}%; --bar-width: ${width.toFixed(2)}%;`;
+  return `--bar-left: ${left.toFixed(2)}%; --bar-width: ${width.toFixed(2)}%; --weekly-oracle-bar-radius: ${signedBarBorderRadius(row.score, "horizontal")};`;
 }
 
 function oracleTickStyle(value: number, chart: WeeklyOracleScoreChart): string {

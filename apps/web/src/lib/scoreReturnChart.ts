@@ -5,6 +5,7 @@ import {
   type UniverseOption
 } from "../data/fallback";
 import { allocationThemeClass, formatAllocationPct, optionDisplayName } from "./allocations";
+import { signedBarBorderRadius } from "./benchmarkBars.js";
 import { pct } from "./format";
 import type { ResultAllocationRecord, ResultReturnRecord } from "./localRoundRecords";
 import { orderedComparableBarWidth } from "./orderedBarScale.js";
@@ -215,7 +216,7 @@ export function buildScoreReturnChartData({
     if (!finiteNumber(value)) return "bottom: 0%; height: 0%;";
     const zero = coordinate(0);
     const endpoint = coordinate(value);
-    return `bottom: ${Math.min(zero, endpoint).toFixed(2)}%; height: ${Math.max(1.5, Math.abs(endpoint - zero)).toFixed(2)}%;`;
+    return `bottom: ${Math.min(zero, endpoint).toFixed(2)}%; height: ${Math.max(1.5, Math.abs(endpoint - zero)).toFixed(2)}%; border-radius: ${signedBarBorderRadius(value, "vertical", "7px")};`;
   };
   const valueLabelStyle = (value: number | null | undefined) =>
     `bottom: min(calc(${yPosition(value)} + 8px), calc(100% - 22px));`;

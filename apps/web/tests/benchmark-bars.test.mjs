@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { benchmarkBarCoordinate, buildBenchmarkBarDomain } from "../src/lib/benchmarkBars.js";
+import { benchmarkBarCoordinate, buildBenchmarkBarDomain, signedBarBorderRadius } from "../src/lib/benchmarkBars.js";
 
 test("benchmark bar domains retain a zero baseline for positive and negative data", () => {
   const positive = buildBenchmarkBarDomain([0.01, 0.025]);
@@ -27,4 +27,11 @@ test("benchmark bar coordinates preserve magnitude instead of rank-normalizing i
   assert.equal(benchmarkBarCoordinate(-0.02, domain), 25);
   assert.equal(benchmarkBarCoordinate(0, domain), 50);
   assert.equal(benchmarkBarCoordinate(0.02, domain), 75);
+});
+
+test("signed bar radii keep the zero-axis edge square", () => {
+  assert.equal(signedBarBorderRadius(0.02, "vertical", "7px"), "7px 7px 0 0");
+  assert.equal(signedBarBorderRadius(-0.02, "vertical", "7px"), "0 0 7px 7px");
+  assert.equal(signedBarBorderRadius(0.02, "horizontal", "7px"), "0 7px 7px 0");
+  assert.equal(signedBarBorderRadius(-0.02, "horizontal", "7px"), "7px 0 0 7px");
 });
