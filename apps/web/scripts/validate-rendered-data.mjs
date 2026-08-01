@@ -1908,6 +1908,7 @@ const methodologyHtml = readHtml("methodology/index.html");
 const scoringHtml = readHtml("scoring/index.html");
 const changelogHtml = readHtml("changelog/index.html");
 const changelogSource = readRepoText("apps", "web", "src", "data", "changelog.ts");
+const globalStylesSource = readRepoText("apps", "web", "src", "styles", "global.css");
 const latestChangelogMatch = changelogSource.match(/id:\s*"([^"]+)"[\s\S]*?date:\s*"(\d{4}-\d{2}-\d{2})"[\s\S]*?title:\s*"([^"]+)"/);
 const changelogEntryCount = [...changelogSource.matchAll(/^\s*id:\s*"/gm)].length;
 for (const track of ["weekly", "monthly"]) {
@@ -1942,6 +1943,11 @@ includes(benchmarkSetsHtml, 'data-benchmark-set-browser', "benchmark sets page f
 includes(benchmarkSetsHtml, 'data-benchmark-set-filter="weekly"', "benchmark sets page weekly filter");
 includes(benchmarkSetsHtml, 'data-benchmark-set-filter="monthly"', "benchmark sets page monthly filter");
 includes(benchmarkSetsHtml, 'data-benchmark-set-filter="active"', "benchmark sets page active filter");
+includes(
+  globalStylesSource,
+  ".benchmark-set-row[hidden] {\n  display: none;\n}",
+  "benchmark sets page filtered-row visibility rule"
+);
 includes(benchmarkSetsHtml, "How do results change between model groups?", "benchmark sets page comparison preview heading");
 includes(benchmarkSetsHtml, "Compare weekly groups", "benchmark sets page weekly comparison link");
 includes(benchmarkSetsHtml, "Compare monthly groups", "benchmark sets page monthly comparison link");
