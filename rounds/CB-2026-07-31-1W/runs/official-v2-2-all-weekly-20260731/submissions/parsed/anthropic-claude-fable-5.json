@@ -1,0 +1,186 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid mega-cap earnings and resilient spending support the index",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 +1.0% for the week, +9.4% YTD, closed 7,489.72",
+        "10y yield rose to 4.71%; FOMC held rates with 3 hawkish dissents"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "N/A benchmark case; used as hurdle only",
+      "option_id": "SP500",
+      "reversal_case": "Rising yields and elevated inflation (core PCE 3.4% annualized in Q2) cap multiples",
+      "time_window_catalyst": "July Employment Situation Aug 7"
+    },
+    {
+      "continuation_case": "Post-earnings drift on a blowout Amazon quarter with strong Q3 guidance",
+      "decision": "selected",
+      "evidence": [
+        "Amazon net sales $200.6B +20%, AWS +37%, operating income $27.5B; stock +15.3%",
+        "XLY +5.01% active over 5 days but -6.43% prior 16-day active, so not extended on trend"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLY closes below its pre-Amazon-earnings level",
+      "option_id": "CONSUMER_DISCRETIONARY",
+      "reversal_case": "Amazon FCF was -$7.6B TTM on capex surge; profit-taking after the pop",
+      "time_window_catalyst": "Post-Amazon-earnings drift; July jobs report Aug 7"
+    },
+    {
+      "continuation_case": "Sustained relative uptrend with supportive growth data and low SPY correlation",
+      "decision": "selected",
+      "evidence": [
+        "China Q2 GDP +4.3% y/y, +0.9% q/q",
+        "MCHI +3.54% 5-day active and +4.41% prior active; drawdown only -2.22%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "MCHI underperforms SPY by more than 2% intraweek",
+      "option_id": "CHINA",
+      "reversal_case": "Geopolitical or policy shock; 15% below 52w high signals lingering skepticism",
+      "time_window_catalyst": "Continued flows on stabilizing China growth data"
+    },
+    {
+      "continuation_case": "Structural supply deficit persists while diplomatic talks remain unresolved",
+      "decision": "selected",
+      "evidence": [
+        "Brent $87.93; global supply 9.4 mb/d below pre-war; Gulf exports 16.1 vs 24 mb/d",
+        "No Hormuz agreement reached; OPEC+ only adding 188 kb/d in September",
+        "XLE prior 16-day active +13.81% with modest -3.44% drawdown"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Confirmed agreement reopening the Strait of Hormuz",
+      "option_id": "ENERGY",
+      "reversal_case": "Breakthrough Iran deal reopens Hormuz, unwinding the war premium",
+      "time_window_catalyst": "Iran negotiation headlines during the week"
+    },
+    {
+      "continuation_case": "Elevated yields and sticky inflation favor value over growth",
+      "decision": "selected",
+      "evidence": [
+        "IWD +2.70% prior active, only -0.09% from 52w high, 9.9% volatility",
+        "10y at 4.71% pressures long-duration growth valuations"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "10y yield falls below 4.5% on weak data, sparking growth rotation",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Soft jobs data drives yields down and growth re-rates",
+      "time_window_catalyst": "Loan officer survey Aug 3; payrolls Aug 7"
+    },
+    {
+      "continuation_case": "Supply deficit could keep spot prices elevated",
+      "decision": "rejected",
+      "evidence": [
+        "USO +25% over 21 days but -6.6% 5-day active; 61.6% volatility",
+        "US signaled holding off Iran strikes with possible Hormuz reopening parameters"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Any confirmed reopening framework; prefer lower-beta XLE in same cluster",
+      "option_id": "OIL",
+      "reversal_case": "De-escalation headlines could crush the war premium; extreme volatility",
+      "time_window_catalyst": "Iran/Hormuz negotiation headlines"
+    },
+    {
+      "continuation_case": "Safe-haven bid if Middle East tensions re-escalate",
+      "decision": "rejected",
+      "evidence": [
+        "IAU roughly flat (-0.08% 5-day, +0.28% 21-day) despite geopolitical stress",
+        "Rising real yields with 10y at 4.71%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Base forecast below SPY hurdle; no clear catalyst",
+      "option_id": "GOLD",
+      "reversal_case": "Higher yields and possible de-escalation weigh on gold",
+      "time_window_catalyst": "Geopolitical headlines through Aug 7"
+    },
+    {
+      "continuation_case": "Deep pullback could mean-revert if yields stabilize",
+      "decision": "rejected",
+      "evidence": [
+        "XLU -5.29% 5-day active despite +4.31% prior active",
+        "10y yield rising to 4.71% pressures rate-sensitive defensives"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Base below SPY hurdle; rate headwind dominates",
+      "option_id": "UTILITIES",
+      "reversal_case": "Continued yield rise extends underperformance",
+      "time_window_catalyst": "Payrolls Aug 7 rate reaction"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.495,
+  "is_official_score": true,
+  "key_risks": [
+    "An Iran/Hormuz agreement could collapse oil prices and energy equities",
+    "Hot July payrolls or inflation could push 10y yields above 4.8%, pressuring all equities",
+    "Amazon-driven XLY gains may mean-revert after the 15% pop",
+    "China policy or geopolitical headlines can reverse momentum quickly"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "XLY closes below its pre-Amazon-earnings level",
+      "option_id": "CONSUMER_DISCRETIONARY",
+      "rationale": "Amazon +15.3% on strong results (sales +20%, AWS +37%) anchors the sector with post-earnings drift potential.",
+      "time_window_catalyst": "Post-Amazon-earnings drift; July jobs report Aug 7"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "MCHI underperforms SPY by more than 2% intraweek",
+      "option_id": "CHINA",
+      "rationale": "Positive relative momentum (+3.5% 5-day active, +4.4% prior active), Q2 GDP 4.3% y/y, modest drawdown and 15% below 52w high.",
+      "time_window_catalyst": "Continued flows on stabilizing China growth data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Confirmed Iran deal reopening the Strait of Hormuz",
+      "option_id": "ENERGY",
+      "rationale": "Brent $87.93 with 9.4 mb/d supply shortfall from war; XLE equities lag the oil move with lower volatility than USO.",
+      "time_window_catalyst": "Unresolved Hormuz situation; OPEC+ September adjustment announced Aug 2"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Sharp rate rally rotating leadership back to long-duration growth",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Steady prior active trend (+2.7%), near 52w high, low volatility ballast in an elevated-rate environment.",
+      "time_window_catalyst": "Loan officer survey Aug 3; rates staying elevated favor value"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.795,
+  "portfolio_rationale": "Overweight the Amazon-driven discretionary sector for post-earnings drift, energy equities backed by war-constrained oil supply, China on improving relative momentum and GDP data, and large value as low-vol ballast against elevated rates.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt toward earnings momentum (XLY), supply-driven energy strength, and China relative momentum, funded away from expensive mega-cap growth after mixed reactions (Apple -7.4%, Meta margin compression).",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27762,
+    "latency_seconds": 46.5535873870831,
+    "output_tokens": 3424,
+    "total_tokens": 31186
+  }
+}

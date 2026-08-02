@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid earnings and resilient consumer support a modest grind higher",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 +9.4% YTD but small July loss",
+        "FOMC held rates 9-3 with hawkish dissents; core PCE 3.4% annualized Q2",
+        "Strong mega-cap earnings (MSFT, AMZN, AAPL beats)"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "10y yield sustained above 4.9%",
+      "option_id": "SP500",
+      "reversal_case": "Hot CPI, rising yields, or oil shock escalation drives a correction",
+      "time_window_catalyst": "CPI Aug 12, Fed minutes Aug 19, Nvidia Aug 25-27"
+    },
+    {
+      "continuation_case": "Sticky inflation and elevated yields sustain the value rotation",
+      "decision": "selected",
+      "evidence": [
+        "+3.09% 21d active return, only -0.09% from 52w high",
+        "Vol 11.74% vs SPY 13.64%; drawdown just -2.40%",
+        "10y yield at 4.71% pressures long-duration growth"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Sharp yield decline triggering growth outperformance",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Yields fall and growth/AI trade reasserts leadership",
+      "time_window_catalyst": "CPI/PPI Aug 12-14"
+    },
+    {
+      "continuation_case": "Defensive income demand persists amid macro uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "+4.92% 21d active return, beta 0.25",
+        "Drawdown only -2.95%, low vol 11.83%",
+        "FOMC flagged elevated outlook uncertainty"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Broad tech-led rally with SPY up >4%",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Strong risk-on rally leaves low-beta dividend stocks lagging",
+      "time_window_catalyst": "Fed minutes Aug 19"
+    },
+    {
+      "continuation_case": "Persistent supply deficit and unresolved Hormuz closure keep oil and energy earnings elevated",
+      "decision": "selected",
+      "evidence": [
+        "Brent $87.93; global supply 9.4 mbd below pre-war, Gulf exports 16.1 vs 24 mbd",
+        "XLE +12.59% 21d active return",
+        "Iran says no reopening discussion despite US claims; no agreement reached"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Confirmed Hormuz reopening agreement",
+      "option_id": "ENERGY",
+      "reversal_case": "Diplomatic breakthrough reopens Hormuz, oil drops sharply (already -5.5% USO 5d)",
+      "time_window_catalyst": "Iran negotiations and OPEC+ September production adjustment"
+    },
+    {
+      "continuation_case": "Rotation from mega-cap concentration into broader market continues",
+      "decision": "selected",
+      "evidence": [
+        "RSP-SPY 21d spread +0.58%; drawdown only -2.04%",
+        "Lowest equity vol at 10.86%",
+        "Breadth broadening as Apple, Micron fell while index rose"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Sustained mega-cap tech outperformance vs equal weight",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Nvidia blowout restores narrow mega-cap leadership",
+      "time_window_catalyst": "Nvidia results Aug 25-27"
+    },
+    {
+      "continuation_case": "Nvidia beat could snap back the pullback sharply",
+      "decision": "rejected",
+      "evidence": [
+        "-13.05% 21d active return after +40.58% prior trend",
+        "Vol 55.17%, drawdown -24.62%, Micron -5.9%",
+        "Nvidia results Aug 25-27"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -10.0,
+      "invalidation_condition": "Further breakdown below recent lows before Nvidia",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Post-run distribution continues; volume z-score +0.93 suggests active selling",
+      "time_window_catalyst": "Nvidia results Aug 25-27"
+    },
+    {
+      "continuation_case": "Weak payrolls could rally duration",
+      "decision": "rejected",
+      "evidence": [
+        "10y yield rose to 4.71% from 3.97% pre-war",
+        "Q2 core PCE 3.4% annualized; three FOMC members preferred a hike",
+        "TLT -3.82% over 21d"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Soft CPI and payroll miss driving yields below 4.4%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky inflation plus oil shock keeps yields elevated or rising",
+      "time_window_catalyst": "Jobs report and CPI Aug 12"
+    },
+    {
+      "continuation_case": "Geopolitical escalation could revive safe-haven bid",
+      "decision": "rejected",
+      "evidence": [
+        "Prior 105d active return -33.24%, -25% from 52w high",
+        "Flat 21d active return despite dollar weakness",
+        "Elevated real yields headwind"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Renewed Middle East escalation spike",
+      "option_id": "GOLD",
+      "reversal_case": "High real rates and no fresh escalation keep gold rangebound-weak",
+      "time_window_catalyst": "Iran situation developments"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.49,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden Iran agreement reopening the Strait of Hormuz could sharply reverse energy gains",
+    "Cooler-than-expected August CPI could reignite growth/tech leadership and hurt the value tilt",
+    "Weak July payrolls could pressure cyclicals and financial-heavy value indexes",
+    "Nvidia results late August could restore narrow mega-cap dominance vs equal-weight"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Hot CPI print pushes 10y yield well above 4.9%",
+      "option_id": "SP500",
+      "rationale": "Benchmark core exposure; solid Q2 mega-cap earnings anchor the index.",
+      "time_window_catalyst": "July jobs report, CPI Aug 12, Nvidia results Aug 25-27"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Sharp fall in yields reignites growth leadership",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value outperformed with +3.09% 21d active return, near 52w high, lower vol, and 4.71% 10y yields favor value over duration-sensitive growth.",
+      "time_window_catalyst": "CPI and PPI Aug 12-14; sticky inflation supports value rotation"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Strong risk-on tech rally resumes broadly",
+      "option_id": "DIVIDEND",
+      "rationale": "+4.92% 21d active return, low beta 0.25, shallow drawdown; defensive income exposure in elevated-uncertainty regime flagged by FOMC.",
+      "time_window_catalyst": "Fed minutes Aug 19; continued rotation to income amid elevated rates"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Confirmed Strait of Hormuz reopening agreement and Gulf export normalization",
+      "option_id": "ENERGY",
+      "rationale": "Brent at $87.93 with global supply 9.4 mbd below pre-war, Hormuz still closed, and XLE 12.59% 21d active gain; negative SPY correlation adds hedge value.",
+      "time_window_catalyst": "Unresolved Iran/Hormuz situation and OPEC+ September adjustment decision Aug 2"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Renewed narrow mega-cap leadership after Nvidia results",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Positive 21d active return (+0.58%), lowest large-cap drawdown, broadening breadth as mega-cap tech pulled back.",
+      "time_window_catalyst": "Breadth continuation through August data prints"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.29,
+  "portfolio_rationale": "Tilt toward value, dividends, equal-weight and energy: sticky inflation (core PCE 3.4% annualized in Q2), 4.71% 10y yields, and an unresolved Hormuz supply shock favor value/energy over duration-heavy growth, while a 25% SPY core limits tracking error.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight energy on constrained oil supply and negative equity correlation; overweight value/dividend/equal-weight on breadth rotation and rate pressure on growth; SPY core for balance.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27832,
+    "latency_seconds": 41.063072030898184,
+    "output_tokens": 3774,
+    "total_tokens": 31606
+  }
+}

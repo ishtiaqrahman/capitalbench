@@ -1,0 +1,183 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad market resilience with mega-cap earnings strength",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 up 9.4% in 2026, closed 7489.72",
+        "spy_return_21s 0.17%, low drawdown -4.49%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Break below key support on rate spike",
+      "option_id": "SP500",
+      "reversal_case": "Elevated rates at 4.71% and slowing GDP 1.5% pressure valuations",
+      "time_window_catalyst": "CPI Aug 12-14, Nvidia Aug 25-27"
+    },
+    {
+      "continuation_case": "Steep curve and elevated rates support net interest margins",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s 3.77%, shallow drawdown -2.42%",
+        "low volatility 13.66%"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Yield curve inversion or spread widening",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit deterioration or recession fears",
+      "time_window_catalyst": "CPI and Fed minutes mid-August"
+    },
+    {
+      "continuation_case": "Value rotation persists amid rate-sensitive growth pullback",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s 3.09%, drawdown only -2.40%",
+        "return_5s 1.44%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Value/growth ratio breaks down",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth/tech rebound reverses value leadership",
+      "time_window_catalyst": "Retail sales and CPI mid-August"
+    },
+    {
+      "continuation_case": "Defensive quality bid in uncertain macro",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s 4.92%, low beta 0.254",
+        "drawdown -2.95%"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Sharp rate rise above 5%",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Rate spike hurts dividend equities",
+      "time_window_catalyst": "Income and inflation data late August"
+    },
+    {
+      "continuation_case": "AI-driven mega-cap earnings momentum",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s -5.30%, drawdown -11.22%",
+        "high volatility 25.51%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -9.0,
+      "invalidation_condition": "Further rate rise pressures growth multiples",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Rate sensitivity and recent sharp pullback",
+      "time_window_catalyst": "Nvidia results Aug 25-27"
+    },
+    {
+      "continuation_case": "Oil supply disruption from Middle East war",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s 12.59% but return_5s -0.12%",
+        "high volatility 24.22%, drawdown -13.21%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Strait of Hormuz reopening",
+      "option_id": "ENERGY",
+      "reversal_case": "Iran deal reopening Hormuz collapses prices",
+      "time_window_catalyst": "OPEC+ September adjustment, Iran talks"
+    },
+    {
+      "continuation_case": "Safe-haven demand if growth slows",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s -1.32%, low volatility 5.00%",
+        "rates elevated at 4.71%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Inflation surprise pushing yields higher",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Sticky inflation keeps rates elevated",
+      "time_window_catalyst": "CPI and Fed minutes"
+    },
+    {
+      "continuation_case": "Safe-haven amid geopolitical risk",
+      "decision": "rejected",
+      "evidence": [
+        "prior_105s_active_return -33.24%, drawdown -16.01%",
+        "return_5s -0.08%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Dollar strength or rate spike",
+      "option_id": "GOLD",
+      "reversal_case": "Weak momentum and elevated real rates",
+      "time_window_catalyst": "Geopolitical developments"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.315,
+  "is_official_score": true,
+  "key_risks": [
+    "Rate volatility around CPI and Fed minutes could hit rate-sensitive value/dividend names",
+    "Mega-cap tech rebound could cause SP500 to outperform value tilt",
+    "Geopolitical oil shock disrupting broad risk sentiment"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Sharp risk-off or credit-spread widening",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong positive active return, shallow drawdown, low volatility, benefits from steep curve and elevated rates.",
+      "time_window_catalyst": "July CPI Aug 12-14 and Fed minutes Aug 18-19"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Value underperformance vs growth rebound",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Positive active return, shallow drawdown, low beta defensiveness with cyclical tilt amid elevated rates.",
+      "time_window_catalyst": "CPI and retail sales mid-August"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Rate shock hurting dividend equities",
+      "option_id": "DIVIDEND",
+      "rationale": "Strong 21-day active return, low volatility, shallow drawdown; defensive quality tilt.",
+      "time_window_catalyst": "August inflation and income data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Broad equity selloff",
+      "option_id": "SP500",
+      "rationale": "Core broad exposure anchor.",
+      "time_window_catalyst": "Nvidia results Aug 25-27, CPI mid-month"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.115,
+  "portfolio_rationale": "Tilt toward value, financials, and dividends which show positive recent active returns, low volatility, and shallow drawdowns while high-beta tech has pulled back sharply amid elevated rates.",
+  "provider": "anthropic",
+  "rationale_summary": "Defensive-cyclical quality tilt with financials and value leadership, anchored by SP500 core, aiming for modest alpha in an elevated-rate, uncertain macro backdrop.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27838,
+    "latency_seconds": 34.316640618024394,
+    "output_tokens": 2520,
+    "total_tokens": 30358
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid domestic demand and strong mega-cap revenue growth can keep the index near its highs.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY gained 1.10% over five sessions but only 0.17% over 21 sessions.",
+        "The S&P 500 was 1.40% below its 52-week high with 13.64% volatility.",
+        "Private domestic final sales rose 3.9%, while inflation remained elevated and payroll growth slowed."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -5.5,
+      "invalidation_condition": "The constructive case fails if SPY breaks materially below its recent range as yields rise and earnings breadth deteriorates.",
+      "option_id": "SP500",
+      "reversal_case": "Elevated inflation, a 4.71% ten-year yield, and weaker payrolls could compress valuations.",
+      "time_window_catalyst": "August payrolls, CPI, retail sales, Fed minutes, GDP revision, PCE, and Nvidia results."
+    },
+    {
+      "continuation_case": "Broadening market participation and elevated rates favor profitable, lower-duration value shares.",
+      "decision": "selected",
+      "evidence": [
+        "Large value delivered 3.09% active return over 21 sessions and 3.48% in the prior window.",
+        "Its 11.74% volatility and 2.40% drawdown were lower than SPY's.",
+        "The quality evidence score was 0.616, supported by strong prior, low-volatility, and shallow-drawdown ranks."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Invalidated if large value trails SPY by more than 2 percentage points while growth leadership sharply reaccelerates.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "A sharp yield decline or renewed mega-cap growth surge could restore growth leadership.",
+      "time_window_catalyst": "August inflation, employment, retail-sales, and GDP releases could sustain rotation toward less rate-sensitive valuations."
+    },
+    {
+      "continuation_case": "Persistent prior leadership plus positive recent relative performance can attract momentum flows.",
+      "decision": "selected",
+      "evidence": [
+        "Cybersecurity had 23.30% prior-window active return and 0.62% active return over 21 sessions.",
+        "It gained 3.88% over five sessions and sat only 3.06% below its 52-week high.",
+        "Its prior active rank was 0.955, though volatility was elevated at 32.35%."
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 11.5,
+      "forecast_low_pct": -7.5,
+      "invalidation_condition": "Invalidated if cybersecurity loses 5% or more and its active return versus SPY turns below -3 percentage points.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High volatility and technology valuation sensitivity could produce a sharp post-earnings reversal.",
+      "time_window_catalyst": "August technology earnings, including Nvidia, and continued enterprise technology demand could reinforce sector leadership."
+    },
+    {
+      "continuation_case": "Persistently constrained Gulf exports and unresolved geopolitical risk can sustain elevated crude prices and energy earnings expectations.",
+      "decision": "selected",
+      "evidence": [
+        "Energy outperformed SPY by 12.59% over 21 sessions despite a -0.12% five-session return.",
+        "Global oil supply was estimated 9.4 million barrels per day below its pre-war level.",
+        "No Hormuz agreement had been reached, and OPEC+ highlighted infrastructure and maritime-route risks."
+      ],
+      "forecast_base_pct": 2.4,
+      "forecast_high_pct": 13.5,
+      "forecast_low_pct": -8.5,
+      "invalidation_condition": "Invalidated by a credible Hormuz reopening agreement alongside sustained Brent weakness and energy underperformance versus SPY.",
+      "option_id": "ENERGY",
+      "reversal_case": "A credible Hormuz reopening or demand scare could rapidly remove the geopolitical premium.",
+      "time_window_catalyst": "Any August disruption to Gulf exports or failure of Hormuz negotiations could renew the energy risk premium."
+    },
+    {
+      "continuation_case": "BOJ normalization expectations and risk-off carry unwinds can extend yen strength.",
+      "decision": "selected",
+      "evidence": [
+        "The yen gained 2.89% over five sessions and outperformed SPY by 2.01% over 21 sessions.",
+        "Its 252-session SPY correlation was only 0.140.",
+        "One BOJ member favored raising the overnight target from around 1.0% to 1.25%."
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Invalidated if the yen reverses its recent gain and falls more than 3% while US-Japan rate differentials widen.",
+      "option_id": "YEN",
+      "reversal_case": "Persistent US inflation and wider rate differentials could restore yen-funded carry demand.",
+      "time_window_catalyst": "August inflation data, Fed minutes, and risk-off carry unwinds could narrow US-Japan rate differentials."
+    },
+    {
+      "continuation_case": "Strong prior trend and a recent relative pullback could produce a domestic-equity rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "Small caps had a strong 0.765 quality evidence score and 6.10% prior active return.",
+        "They underperformed SPY by 2.88% over 21 sessions and were nearly unchanged over five sessions.",
+        "Russell 2000 was up 18.1% in 2026, but June payroll growth was only 57,000."
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 9.5,
+      "forecast_low_pct": -7.5,
+      "invalidation_condition": "The rebound case fails if small caps make a new 63-session drawdown low while credit conditions weaken.",
+      "option_id": "SMALL_CAP",
+      "reversal_case": "Slower labor growth, elevated rates, and beta of 1.225 could deepen underperformance.",
+      "time_window_catalyst": "August employment, credit, retail-sales, and inflation reports could shift expectations for domestic growth and financing conditions."
+    },
+    {
+      "continuation_case": "Weak payrolls and softer headline growth could trigger a duration rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "Long Treasuries lost 3.82% over 21 sessions and 1.20% over five sessions.",
+        "The ten-year Treasury yield reached 4.71% amid elevated inflation.",
+        "The recent pullback rank was 0.851, but prior active return was -8.21%."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "Invalidated if the ten-year yield rises decisively above its late-July level after hot inflation data.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation and hawkish FOMC dissent could push long yields higher again.",
+      "time_window_catalyst": "August CPI, payrolls, Fed minutes, GDP revision, and PCE could materially reprice the rate path."
+    },
+    {
+      "continuation_case": "Further export disruption could cause another abrupt crude-price spike.",
+      "decision": "rejected",
+      "evidence": [
+        "Oil gained 24.91% relative to SPY over 21 sessions but fell 5.50% over five sessions.",
+        "Supply was estimated 9.4 million barrels per day below pre-war levels, while Hormuz remained unresolved.",
+        "Volatility was 53.42% and the 63-session drawdown reached 32.49%."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 22.5,
+      "forecast_low_pct": -16.5,
+      "invalidation_condition": "Invalidated if a credible reopening agreement emerges and oil breaks below its post-war support range.",
+      "option_id": "OIL",
+      "reversal_case": "Diplomatic progress, September OPEC+ adjustment, or demand weakness could accelerate the recent reversal.",
+      "time_window_catalyst": "Hormuz negotiations, Gulf export developments, and implementation expectations for the September OPEC+ adjustment."
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.09,
+  "is_official_score": true,
+  "key_risks": [
+    "A benign Hormuz agreement could rapidly unwind the oil and energy risk premium.",
+    "Hot August inflation or hawkish Fed minutes could pressure equities and strengthen the dollar against the yen.",
+    "Technology leadership could reverse after earnings despite strong cybersecurity trend evidence.",
+    "Weak payrolls or consumption data could trigger a broad risk-off move that overwhelms factor selection."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Invalidated if large value trails SPY by more than 2 percentage points while growth leadership sharply reaccelerates.",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Broadening leadership, positive relative performance, low volatility, and a shallow drawdown support value exposure.",
+      "time_window_catalyst": "August inflation, employment, retail-sales, and GDP releases could sustain rotation toward less rate-sensitive valuations."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Invalidated if cybersecurity loses 5% or more and its active return versus SPY turns below -3 percentage points.",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Strong prior relative trend and recent positive active return provide independently supported continuation potential.",
+      "time_window_catalyst": "August technology earnings, including Nvidia, and continued enterprise technology demand could reinforce sector leadership."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.4,
+      "invalidation_condition": "Invalidated by a credible Hormuz reopening agreement alongside sustained Brent weakness and energy underperformance versus SPY.",
+      "option_id": "ENERGY",
+      "rationale": "Constrained oil supply and unresolved Hormuz risk support energy equities despite substantial reversal risk.",
+      "time_window_catalyst": "Any August disruption to Gulf exports or failure of Hormuz negotiations could renew the energy risk premium."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Invalidated if the yen reverses its recent gain and falls more than 3% while US-Japan rate differentials widen.",
+      "option_id": "YEN",
+      "rationale": "Positive short-term relative performance and a dissenting BOJ vote support a modest carry-unwind and policy-normalization position.",
+      "time_window_catalyst": "August inflation data, Fed minutes, and risk-off carry unwinds could narrow US-Japan rate differentials."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.89,
+  "portfolio_rationale": "The portfolio combines value breadth, cybersecurity trend strength, geopolitical energy support, and a yen hedge. Each active holding clears SPY's base forecast, while four distinct clusters limit dependence on one outcome.",
+  "provider": "openai",
+  "rationale_summary": "Favor independently supported relative trends and near-term catalysts while avoiding the most extreme high-volatility rebound trades. The principal edge is diversified active exposure rather than a single concentrated macro bet.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15469,
+    "latency_seconds": 29.62914198380895,
+    "output_tokens": 2246,
+    "reasoning_tokens": 0,
+    "total_tokens": 17715
+  }
+}

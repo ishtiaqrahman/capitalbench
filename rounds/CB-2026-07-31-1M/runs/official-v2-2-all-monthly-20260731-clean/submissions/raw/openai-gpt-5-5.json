@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.9,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid activity, positive year-to-date equity trend, and upcoming macro data could maintain broad risk appetite.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed July 31 up 0.7% on the day and was up 9.4% year to date.",
+        "SPY 21-session return was 0.17%, with a 63-session volatility of 13.64% and max drawdown of -4.49%.",
+        "FOMC held rates at 3.50% to 3.75% while describing inflation as elevated and outlook uncertainty as elevated."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Invalidated if SPY breaks decisively below recent 63-session drawdown levels while rates and inflation expectations rise.",
+      "option_id": "SP500",
+      "reversal_case": "Elevated inflation, higher Treasury yields, weak payroll revisions, or disappointing mega-cap earnings could trigger a one-month pullback.",
+      "time_window_catalyst": "July employment data, CPI/PPI, retail sales, Fed minutes, second GDP estimate, PCE, durable goods, and Nvidia results before August 31."
+    },
+    {
+      "continuation_case": "Lower volatility, shallow drawdown, and recent relative leadership support continued rotation into value if growth remains solid.",
+      "decision": "selected",
+      "evidence": [
+        "Large value had a 21-session active return of 3.09% and prior 105-session active return of 3.48%.",
+        "Its 63-session volatility was 11.74%, lower than SPY's 13.64%, and max drawdown was -2.40%.",
+        "Distance from 52-week high was only -0.09%, with quality evidence score of 0.616."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Invalidated if value gives back its recent 21-day active leadership and breaks materially below its 52-week-high proximity while SPY breadth narrows.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "A renewed mega-cap growth rally or recession scare could reverse value leadership and favor SPY concentration.",
+      "time_window_catalyst": "July CPI, retail sales, GDP revision, and personal income/outlays may support value/cyclical breadth if growth remains solid and rates stabilize."
+    },
+    {
+      "continuation_case": "Strong prior relative trend and cloud-spending signals can support cybersecurity if tech earnings remain constructive.",
+      "decision": "selected",
+      "evidence": [
+        "Cybersecurity had a 23.30% prior 105-session active return and 0.62% 21-session active return.",
+        "It was only -3.06% from its 52-week high, with a quality evidence score of 0.610.",
+        "Microsoft reported revenue up 18%, cloud revenue up 27%, and Azure growth of 43%, providing a cloud-spending read-through."
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 7.5,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "Invalidated if tech earnings read-throughs disappoint or cybersecurity falls below recent relative strength versus SPY.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High 63-session volatility of 32.35% and beta above SPY leave it vulnerable to growth-stock derating or earnings disappointment.",
+      "time_window_catalyst": "August technology earnings read-throughs, especially AMD and Nvidia, plus broader cloud/software spending signals before month-end."
+    },
+    {
+      "continuation_case": "Supply disruption, unresolved geopolitical claims, and route-risk premium can keep crude firm through the one-month horizon.",
+      "decision": "selected",
+      "evidence": [
+        "Oil had a 24.91% 21-session active return and 22.47% prior 105-session active return.",
+        "June global oil supply was estimated 9.4 million barrels per day below its pre-war level, and Gulf exports were 16.1 million barrels per day versus 24 million before the war.",
+        "No agreement had been reached on Strait of Hormuz reopening statements as of the cutoff, and OPEC+ highlighted energy infrastructure and maritime-route risks."
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 12.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Invalidated if a credible reopening/agreement is confirmed and crude reverses below its recent breakout relative to SPY.",
+      "option_id": "OIL",
+      "reversal_case": "Recent 5-session oil return was -5.50%, volatility was 53.42%, and any credible reopening or de-escalation could unwind the geopolitical premium quickly.",
+      "time_window_catalyst": "Unresolved Strait of Hormuz claims, Gulf export disruption, and OPEC+ September production adjustment decision before August trading concludes."
+    },
+    {
+      "continuation_case": "Near-high price action and positive recent active return support continuation if European inflation data do not worsen materially.",
+      "decision": "selected",
+      "evidence": [
+        "Europe had a 3.04% 21-session active return and was only -0.44% from its 52-week high.",
+        "Its 5-session return was 2.47%, and beta to SPY was 0.920.",
+        "The ECB kept its three policy rates unchanged, while final July euro-area inflation is scheduled within the scoring window."
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 4.8,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Invalidated if euro-area inflation or energy-price stress worsens enough to trigger renewed underperformance versus SPY.",
+      "option_id": "EUROPE",
+      "reversal_case": "Euro-area inflation at 2.9% and energy inflation at 10.0% could pressure margins, rates, and equity sentiment.",
+      "time_window_catalyst": "Final July euro-area inflation and global risk appetite data may confirm acceptable inflation and support international equity flows."
+    },
+    {
+      "continuation_case": "A rebound in semiconductor-linked risk appetite and upcoming Nvidia results could revive Taiwan's prior leadership.",
+      "decision": "rejected",
+      "evidence": [
+        "Taiwan had the highest prior active rank at 1.000 and a quality evidence score of 0.757.",
+        "It had a 43.33% prior 105-session active return but -8.82% 21-session active return.",
+        "63-session volatility was 44.26%, beta was 1.779, and distance from 52-week high was -13.43%."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Invalidated if Taiwan fails to recover relative to SPY after semiconductor earnings catalysts or makes new relative lows.",
+      "option_id": "TAIWAN",
+      "reversal_case": "Large recent underperformance and high volatility suggest momentum damage could persist over only one month.",
+      "time_window_catalyst": "Nvidia results and global electronics/AI sentiment before the August 31 close."
+    },
+    {
+      "continuation_case": "Cash-like yield and very low volatility support capital preservation if risk assets weaken.",
+      "decision": "rejected",
+      "evidence": [
+        "Short Treasury had 0.08% 5-session return and 0.14% 21-session active return.",
+        "It had 0.21% 63-session volatility, zero 52-week-high distance, and shallow max drawdown of -0.01%.",
+        "FOMC maintained the federal-funds range at 3.50% to 3.75%."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 0.45,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Invalidated as an alpha candidate if SPY trend strengthens and short Treasury continues to lag risk assets.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "A positive equity month would likely leave short Treasury far behind SPY despite low drawdown.",
+      "time_window_catalyst": "No specific upside catalyst beyond carry and any risk-off reaction to August macro data."
+    },
+    {
+      "continuation_case": "Higher yields, recent relative strength, and shallow drawdown could support banks and insurers if credit remains benign.",
+      "decision": "rejected",
+      "evidence": [
+        "Financials had a 3.77% 21-session active return and -1.15% distance from 52-week high.",
+        "63-session volatility was 13.66%, close to SPY, and max drawdown was -2.42%.",
+        "FOMC kept rates unchanged, and the ten-year Treasury yield rose to 4.71%."
+      ],
+      "forecast_base_pct": 0.85,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Invalidated if yield-curve or credit-quality signals deteriorate and financials lose recent active leadership versus SPY.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Soft payroll revisions, slower GDP growth, or credit-quality concerns could hurt financials despite yield support.",
+      "time_window_catalyst": "July employment, CPI, retail sales, Fed minutes, and personal income/outlays data before month-end."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.625,
+  "is_official_score": true,
+  "key_risks": [
+    "A broad risk-off move could cause all equity holdings to underperform SPY or decline together.",
+    "A confirmed Strait of Hormuz reopening or de-escalation could sharply reverse oil exposure.",
+    "Hot CPI/PCE data or hawkish Fed minutes could pressure equities and duration-sensitive valuation multiples.",
+    "Nvidia, AMD, or other technology earnings read-throughs could disappoint and weaken cybersecurity sentiment."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Invalidated if value gives back its recent 21-day active leadership and breaks materially below its 52-week-high proximity while SPY breadth narrows.",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Large-cap value shows favorable relative performance with lower volatility and shallow drawdown versus SPY, offering a steadier active equity tilt for one month.",
+      "time_window_catalyst": "July CPI, retail sales, GDP revision, and personal income/outlays may support value/cyclical breadth if growth remains solid and rates stabilize."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Invalidated if tech earnings read-throughs disappoint or cybersecurity falls below recent relative strength versus SPY.",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Cybersecurity combines strong prior active trend with moderate recent active outperformance and a near-high price position, while avoiding the most extreme semiconductor drawdowns.",
+      "time_window_catalyst": "August technology earnings read-throughs, especially AMD and Nvidia, plus broader cloud/software spending signals before month-end."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Invalidated if a credible reopening/agreement is confirmed and crude reverses below its recent breakout relative to SPY.",
+      "option_id": "OIL",
+      "rationale": "Oil has strong prior and 21-day active performance backed by unresolved Middle East supply disruption and maritime-route risk, despite very high volatility.",
+      "time_window_catalyst": "Unresolved Strait of Hormuz claims, Gulf export disruption, and OPEC+ September production adjustment decision before August trading concludes."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Invalidated if euro-area inflation or energy-price stress worsens enough to trigger renewed underperformance versus SPY.",
+      "option_id": "EUROPE",
+      "rationale": "Europe is close to a 52-week high with positive recent active return, offering non-US equity diversification and a lower beta than SPY in the supplied context.",
+      "time_window_catalyst": "Final July euro-area inflation and global risk appetite data may confirm acceptable inflation and support international equity flows."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.525,
+  "portfolio_rationale": "The portfolio avoids a single concentrated bet and selects only active holdings with base forecasts above SPY. It balances value equity, cybersecurity growth, geopolitical oil optionality, and Europe while keeping every non-benchmark cluster at or below 25%.",
+  "provider": "openai",
+  "rationale_summary": "SPY has a positive but modest base case after a flat July and elevated inflation/rate uncertainty. The selected basket targets stronger one-month catalysts from value breadth, tech earnings, energy disruption, and international catch-up.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15467,
+    "latency_seconds": 36.81242107599974,
+    "output_tokens": 2756,
+    "reasoning_tokens": 199,
+    "total_tokens": 18223
+  }
+}

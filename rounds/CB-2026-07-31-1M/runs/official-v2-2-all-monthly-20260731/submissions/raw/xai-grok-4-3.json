@@ -1,0 +1,151 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad equity participation persists into August",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7489.72 on July 31 up 0.7%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "SPY closes below 7400 on August 31",
+      "option_id": "SP500",
+      "reversal_case": "Labor market weakness triggers risk-off rotation",
+      "time_window_catalyst": "July employment and CPI releases"
+    },
+    {
+      "continuation_case": "Small-cap underperformance continues",
+      "decision": "rejected",
+      "evidence": [
+        "Russell 2000 down 0.5% on July 31"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Russell 2000 underperforms SPY by more than 3%",
+      "option_id": "TOTAL_US_MARKET",
+      "reversal_case": "Domestic growth data surprises higher",
+      "time_window_catalyst": "August retail sales and GDP revision"
+    },
+    {
+      "continuation_case": "Value rotation persists on rate stability",
+      "decision": "rejected",
+      "evidence": [
+        "Value stocks showed relative strength in July"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": -0.2,
+      "invalidation_condition": "LARGE_VALUE underperforms SPY by 2% or more",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth stocks rebound on tech earnings",
+      "time_window_catalyst": "Nvidia and AMD results"
+    },
+    {
+      "continuation_case": "Domestic cyclical weakness persists",
+      "decision": "rejected",
+      "evidence": [
+        "Mid-cap return_5s negative at -0.66%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "IJH closes more than 4% below July 31 level",
+      "option_id": "MID_CAP",
+      "reversal_case": "Construction spending and orders beat",
+      "time_window_catalyst": "August manufacturers orders and housing data"
+    },
+    {
+      "continuation_case": "Small-cap lag continues amid rate uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "Russell 2000 nearly unchanged for the week"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "IWM underperforms SPY by more than 4%",
+      "option_id": "SMALL_CAP",
+      "reversal_case": "Payroll revisions stabilize and claims fall",
+      "time_window_catalyst": "July Employment Situation report"
+    },
+    {
+      "continuation_case": "Bank earnings hold up on stable rates",
+      "decision": "rejected",
+      "evidence": [
+        "Financials showed modest positive return_5s"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "XLF closes below July 31 level by 3%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield curve steepens sharply on inflation",
+      "time_window_catalyst": "Fed minutes and regional bank updates"
+    },
+    {
+      "continuation_case": "Geopolitical supply constraints support prices",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude at $87.93 with supply risks noted"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLE closes more than 5% below entry",
+      "option_id": "ENERGY",
+      "reversal_case": "Strait of Hormuz reopens and OPEC+ increases output",
+      "time_window_catalyst": "OPEC+ monitoring committee statements"
+    },
+    {
+      "continuation_case": "European growth holds above US slowdown",
+      "decision": "rejected",
+      "evidence": [
+        "Europe equities positive return_5s at 2.47%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "VEA underperforms SPY by more than 2%",
+      "option_id": "DEVELOPED_EX_US",
+      "reversal_case": "ECB signals further tightening or euro weakens",
+      "time_window_catalyst": "Euro-area inflation flash and ECB updates"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.0,
+  "is_official_score": true,
+  "key_risks": [
+    "FOMC policy uncertainty with 3 dissenters favoring hike",
+    "Elevated inflation prints in August data releases"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 100,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "SPY closes below 7400 on August 31",
+      "option_id": "SP500",
+      "rationale": "No active option base forecast exceeds SPY base; SPY is the benchmark proxy.",
+      "time_window_catalyst": "July employment and CPI releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.0,
+  "portfolio_rationale": "SPY selected as no other candidate clears the active-holding hurdle of base forecast greater than SPY.",
+  "provider": "xai",
+  "rationale_summary": "SPY is the default when no active holdings show superior base-case expected return over the one-month window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15692,
+    "latency_seconds": 11.442596561973915,
+    "output_tokens": 1401,
+    "reasoning_tokens": 584,
+    "total_tokens": 17677
+  }
+}

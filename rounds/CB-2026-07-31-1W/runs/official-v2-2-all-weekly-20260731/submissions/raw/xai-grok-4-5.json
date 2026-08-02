@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid activity description and mega-cap earnings support grind higher",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed July 31 up 0.7% and gained 1.0% for the week",
+        "FOMC held funds rate 3.50-3.75% with elevated inflation and uncertainty",
+        "July employment situation scheduled for August 7"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "SPY breaks below recent weekly low on jobs miss",
+      "option_id": "SP500",
+      "reversal_case": "Soft payrolls or higher claims reverse the weekly gain",
+      "time_window_catalyst": "July Employment Situation on August 7"
+    },
+    {
+      "continuation_case": "Earnings momentum and AI/software spend narrative persists into AMD",
+      "decision": "selected",
+      "evidence": [
+        "SOFTWARE 3-session return 3.05% and 5s active return +6.41%",
+        "Microsoft cloud and Azure growth strong in reported quarter",
+        "AMD results scheduled after close August 4"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Post-AMD gap down exceeding 3% in software complex",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High volatility_21s and distance from 52w high invite profit-taking",
+      "time_window_catalyst": "AMD results August 4"
+    },
+    {
+      "continuation_case": "Relative strength and EM catch-up continues absent new shocks",
+      "decision": "selected",
+      "evidence": [
+        "CHINA 3s return 2.55% and 5s active return +3.54%",
+        "China Q2 real GDP 4.3% y/y already reported",
+        "prior_16s_active_return +4.41%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "MCHI underperforms SPY by >2% on risk-off day",
+      "option_id": "CHINA",
+      "reversal_case": "Geopolitical headlines or USD rebound hit China beta",
+      "time_window_catalyst": "Any further Hormuz parameter clarity before August 7"
+    },
+    {
+      "continuation_case": "Supply tightness and infrastructure risk keep energy bid",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY prior_16s_active_return +13.81% and quality score elevated",
+        "Brent at $87.93 with supply 9.4 mb/d below pre-war",
+        "OPEC+ 188kbd adjustment decided for September"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Brent drops >5% on confirmed reopening progress",
+      "option_id": "ENERGY",
+      "reversal_case": "US hold on Iran strikes and claimed Hormuz parameters reverse premium",
+      "time_window_catalyst": "Unresolved Strait of Hormuz statements through August 7"
+    },
+    {
+      "continuation_case": "Industrial metals follow-through on China and construction data",
+      "decision": "selected",
+      "evidence": [
+        "COPPER 3s return 3.21% and 5s active +2.06%",
+        "prior_16s_active_return +3.98%",
+        "China growth backdrop and industrial linkage"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "CPER reverses full 3s gain on weak data",
+      "option_id": "COPPER",
+      "reversal_case": "Stronger dollar or growth scare hits copper beta",
+      "time_window_catalyst": "June construction spending August 3"
+    },
+    {
+      "continuation_case": "Prior trend resumes if risk appetite holds",
+      "decision": "rejected",
+      "evidence": [
+        "BITCOIN_ETF prior_16s_active +7.83% and high quality score",
+        "5s active return -3.05% showing recent pullback",
+        "High volatility_21s 31.98%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "IBIT breaks recent 21s max drawdown low",
+      "option_id": "BITCOIN_ETF",
+      "reversal_case": "Jobs data or rates spike extends crypto drawdown",
+      "time_window_catalyst": "Risk sentiment around August 7 employment report"
+    },
+    {
+      "continuation_case": "Relative value and lower energy shock supports grind",
+      "decision": "rejected",
+      "evidence": [
+        "EUROPE 5s active return +1.37% and prior_16s_active +1.65%",
+        "ECB kept rates unchanged July 23",
+        "Euro-area flash inflation 2.9%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "VGK underperforms SPY on rising yields",
+      "option_id": "EUROPE",
+      "reversal_case": "Stronger USD or weak US data spills to Europe",
+      "time_window_catalyst": "None identified beyond general risk sentiment"
+    },
+    {
+      "continuation_case": "Safe-haven bid if geopolitics worsen",
+      "decision": "rejected",
+      "evidence": [
+        "GOLD 21s return near flat and distance_52w_high -25%",
+        "Ten-year yield at 4.71%",
+        "IAU 5s active -1.17%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Yields rise further and IAU makes new 21s low",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields and de-escalation cap gold",
+      "time_window_catalyst": "Geopolitical headlines on Iran/Hormuz"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.82,
+  "is_official_score": true,
+  "key_risks": [
+    "July employment report August 7 could trigger broad risk-off if weak",
+    "Hormuz de-escalation statements reverse energy and commodity gains",
+    "Tech earnings follow-through fails after AMD",
+    "Rising Treasury yields pressure growth and EM simultaneously"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Sharp reversal in Nasdaq or software names on weak AMD or risk-off jobs data",
+      "option_id": "SOFTWARE",
+      "rationale": "Strong recent relative performance and software exposure supported by large-cap tech earnings momentum into the short window.",
+      "time_window_catalyst": "AMD results August 4 and residual tech earnings follow-through before August 7 close"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Renewed geopolitical escalation or sharp USD strength reversing EM flows",
+      "option_id": "CHINA",
+      "rationale": "Positive prior active trend and recent outperformance versus SPY with China GDP data already released.",
+      "time_window_catalyst": "Continued EM risk appetite and any Hormuz de-escalation spillover before exit"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Confirmed Strait reopening agreement driving oil sharply lower",
+      "option_id": "ENERGY",
+      "rationale": "Elevated oil prices from supply disruption and strong prior active return support energy equities over the week.",
+      "time_window_catalyst": "OPEC+ adjustment news and unresolved Hormuz parameters into August 7"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Broad commodity selloff or stronger USD pressuring metals",
+      "option_id": "COPPER",
+      "rationale": "Positive active returns and industrial demand linkage with China growth backdrop.",
+      "time_window_catalyst": "China-linked commodity sentiment and any construction data reaction August 3"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.22,
+  "portfolio_rationale": "Portfolio concentrates in four clusters with base forecasts above SPY, leveraging recent relative strength in software, China, energy, and copper while respecting the 50% cluster cap. Short-window catalysts around earnings, jobs, and geopolitics favor these over pure beta.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings clear the SPY base hurdle on supplied relative trends and briefing catalysts; equal-weight style avoided due to weaker recent breadth. Expected alpha driven by non-benchmark exposures under 50% per cluster.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16502,
+    "latency_seconds": 54.39969940087758,
+    "output_tokens": 2374,
+    "reasoning_tokens": 877,
+    "total_tokens": 19753
+  }
+}

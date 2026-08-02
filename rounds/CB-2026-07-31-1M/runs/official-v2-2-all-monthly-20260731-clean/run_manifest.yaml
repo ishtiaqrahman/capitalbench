@@ -1,0 +1,56 @@
+run_id: official-v2-2-all-monthly-20260731-clean
+round_id: CB-2026-07-31-1M
+run_type: official
+mode: closed_capability
+mock: false
+created_at_utc: '2026-08-02T23:06:54.603686+00:00'
+models_config_file: configs/models.local.yaml
+models_path: configs/models.local.yaml
+pricing_path: null
+replicates: 1
+allow_real_api_calls: true
+official_score_eligible: true
+model_roster_version: portfolio-v2-roster-5e5ef62318ec
+expected_model_ids:
+- openai-gpt-5-5
+- openai-gpt-5-6-sol
+- anthropic-claude-opus-4-8
+- anthropic-claude-opus-5
+- anthropic-claude-fable-5
+- google-gemini-3-1-pro
+- xai-grok-4-3
+- xai-grok-4-5
+model_count: 8
+valid_submissions: 8
+invalid_submissions: 0
+model_ids:
+- openai-gpt-5-5
+- openai-gpt-5-6-sol
+- anthropic-claude-opus-4-8
+- anthropic-claude-opus-5
+- anthropic-claude-fable-5
+- google-gemini-3-1-pro
+- xai-grok-4-3
+- xai-grok-4-5
+loaded_models: 9
+skipped_models: 1
+completed_at_utc: '2026-08-02T23:13:41.445483+00:00'
+format_retry: false
+notes: Clean official run assembled from seven valid first-attempt submissions and
+  a valid Claude Fable 5 schema-format retry. The invalid initial response and two
+  invalid intermediate retries remain preserved in their source runs, which are not
+  official-score eligible.
+format_retries:
+- model_id: anthropic-claude-fable-5
+  reason: The initial response had a blank required rationale_summary. The first and
+    second unchanged-input retries each failed the frozen 1-5 holding portfolio schema.
+  resolution: A third retry with unchanged input and participant settings produced
+    a schema-valid response. Every attempt is preserved.
+  initial_run_id: official-v2-2-all-monthly-20260731
+  failed_retry_run_ids:
+  - retry-format-fable-monthly-20260731
+  - retry-format-fable-monthly-20260731-r2
+  source_run_id: retry-format-fable-monthly-20260731-r3
+operator_selected_official: true
+accepted_at_utc: '2026-08-02T23:14:40.922500+00:00'
+resolution_due_at_utc: '2026-08-31T23:30:00+00:00'

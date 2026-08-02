@@ -1,0 +1,146 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued solid economic activity and corporate earnings growth.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7,489.72, up 0.7% on July 31.",
+        "S&P 500 gained 1.0% for the week."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A significant miss in the employment report leading to a broad market sell-off.",
+      "option_id": "SP500",
+      "reversal_case": "A weak employment report or unexpected inflation spike.",
+      "time_window_catalyst": "July U.S. Employment Situation report on August 7."
+    },
+    {
+      "continuation_case": "Ongoing geopolitical tensions and constrained supply.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude rose 1.2% on July 31 to $87.93 per barrel.",
+        "Seven OPEC+ countries decided August 2 to implement a 188,000-barrel-per-day production adjustment in September."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A sudden de-escalation of geopolitical tensions or unexpected increase in global supply.",
+      "option_id": "OIL",
+      "reversal_case": "A sudden de-escalation of geopolitical tensions or unexpected increase in global supply.",
+      "time_window_catalyst": "Ongoing geopolitical developments in the Middle East and OPEC+ production adjustments."
+    },
+    {
+      "continuation_case": "Continued geopolitical uncertainty and potential for rate cuts.",
+      "decision": "selected",
+      "evidence": [
+        "Gold has a quality evidence score of 0.576.",
+        "Geopolitical uncertainty remains elevated."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A sharp rise in real interest rates or a significant strengthening of the US dollar.",
+      "option_id": "GOLD",
+      "reversal_case": "A sharp rise in real interest rates or a significant strengthening of the US dollar.",
+      "time_window_catalyst": "Continued geopolitical uncertainty and potential shifts in Fed rate expectations."
+    },
+    {
+      "continuation_case": "Strong earnings from mega-cap tech companies.",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq Composite gained 1.6% for the week.",
+        "Apple reported quarterly revenue of $109.4 billion, up 16%."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant miss in tech earnings or a sharp rise in interest rates.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "A rise in interest rates negatively impacting growth stock valuations.",
+      "time_window_catalyst": "AMD results after the U.S. close on August 4."
+    },
+    {
+      "continuation_case": "A flight to safety amid economic uncertainty or a weak employment report.",
+      "decision": "rejected",
+      "evidence": [
+        "Ten-year U.S. Treasury yield rose to 4.71% late July 31.",
+        "FOMC maintained the federal-funds target range at 3.50% to 3.75%."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A strong employment report leading to a significant rise in Treasury yields.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "A strong employment report leading to higher interest rate expectations.",
+      "time_window_catalyst": "July U.S. Employment Situation report on August 7."
+    },
+    {
+      "continuation_case": "Improving global growth and a weaker US dollar.",
+      "decision": "rejected",
+      "evidence": [
+        "China reported second-quarter real GDP growth of 4.3% year over year.",
+        "South Korea's Kospi rose 17.9% on July 31 but remained down 22% for July."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant strengthening of the US dollar or a sharp slowdown in global growth.",
+      "option_id": "EMERGING_MARKETS",
+      "reversal_case": "A stronger US dollar or escalating geopolitical tensions.",
+      "time_window_catalyst": "Global economic data releases and currency movements."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.225,
+  "is_official_score": true,
+  "key_risks": [
+    "Geopolitical tensions de-escalating, leading to a drop in oil and gold prices.",
+    "A stronger-than-expected employment report causing a spike in interest rates and a broad market sell-off.",
+    "Unexpected shifts in OPEC+ production policy impacting oil prices."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "A significant miss in the employment report leading to a broad market sell-off.",
+      "option_id": "SP500",
+      "rationale": "Core equity exposure with solid recent performance and broad diversification.",
+      "time_window_catalyst": "July U.S. Employment Situation report on August 7."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "A sudden de-escalation of geopolitical tensions or unexpected increase in global supply.",
+      "option_id": "OIL",
+      "rationale": "Strong recent momentum and geopolitical tensions supporting prices.",
+      "time_window_catalyst": "Ongoing geopolitical developments in the Middle East and OPEC+ production adjustments."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "A sharp rise in real interest rates or a significant strengthening of the US dollar.",
+      "option_id": "GOLD",
+      "rationale": "Safe-haven asset amid geopolitical uncertainty and potential for rate cuts.",
+      "time_window_catalyst": "Continued geopolitical uncertainty and potential shifts in Fed rate expectations."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.025,
+  "portfolio_rationale": "This portfolio balances core equity exposure with commodities that have strong recent momentum and geopolitical catalysts. The allocation to OIL and GOLD provides potential upside and diversification against equity market volatility.",
+  "provider": "google",
+  "rationale_summary": "A balanced approach combining core equities with commodities for potential upside and diversification.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16927,
+    "latency_seconds": 15.467156179016456,
+    "output_tokens": 1878,
+    "total_tokens": 18805
+  }
+}

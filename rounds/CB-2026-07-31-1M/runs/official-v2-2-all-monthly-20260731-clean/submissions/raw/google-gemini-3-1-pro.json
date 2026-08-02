@@ -1,0 +1,139 @@
+{
+  "benchmark_expected_return_pct": 1.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued economic growth and solid corporate earnings.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7,489.72, up 0.7% on July 31."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Significant negative macro surprises.",
+      "option_id": "SP500",
+      "reversal_case": "Inflation re-accelerates or economic data weakens significantly.",
+      "time_window_catalyst": "August economic data releases."
+    },
+    {
+      "continuation_case": "Investors continue to favor lower valuation multiples.",
+      "decision": "selected",
+      "evidence": [
+        "LARGE_VALUE had a 1.44% return over the last 5 days."
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Growth stocks resume strong outperformance.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth stocks regain momentum.",
+      "time_window_catalyst": "Continued rotation into value sectors."
+    },
+    {
+      "continuation_case": "Defensive characteristics attract flows in an uncertain market.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE had a -0.01% return over the last 5 days."
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Regulatory changes or broad market rally favoring high beta.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Strong economic growth favors cyclical sectors.",
+      "time_window_catalyst": "Earnings reports and defensive flows."
+    },
+    {
+      "continuation_case": "Tech earnings continue to surprise to the upside.",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq Composite closed at 25,373.85, up 1.0% on July 31."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Significant miss in mega-cap tech earnings.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Higher interest rates pressure valuations.",
+      "time_window_catalyst": "Tech earnings reports."
+    },
+    {
+      "continuation_case": "Yields fall due to weaker economic data.",
+      "decision": "rejected",
+      "evidence": [
+        "Ten-year U.S. Treasury yield rose to 4.71% late July 31."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Inflation prints significantly above expectations.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Inflation remains sticky, keeping yields high.",
+      "time_window_catalyst": "Inflation data releases."
+    },
+    {
+      "continuation_case": "Safe-haven demand increases due to geopolitical risks.",
+      "decision": "rejected",
+      "evidence": [
+        "GOLD had a -0.08% return over the last 5 days."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Significant de-escalation of geopolitical tensions.",
+      "option_id": "GOLD",
+      "reversal_case": "Strong dollar and higher real rates pressure gold.",
+      "time_window_catalyst": "Geopolitical developments."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.1,
+  "is_official_score": true,
+  "key_risks": [
+    "Unexpected inflation spikes leading to tighter monetary policy.",
+    "Geopolitical tensions escalating, particularly in the Middle East.",
+    "A broader economic slowdown impacting corporate earnings."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Significant negative macro surprises.",
+      "option_id": "SP500",
+      "rationale": "Core holding for broad market exposure.",
+      "time_window_catalyst": "August economic data releases."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Growth stocks resume strong outperformance.",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value tilt given recent outperformance and lower volatility.",
+      "time_window_catalyst": "Continued rotation into value sectors."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Regulatory changes or broad market rally favoring high beta.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with solid fundamentals.",
+      "time_window_catalyst": "Earnings reports and defensive flows."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.6,
+  "portfolio_rationale": "A balanced portfolio combining broad market exposure with a tilt towards value and defensive sectors. This approach aims to capture upside while mitigating downside risk in an uncertain macro environment.",
+  "provider": "google",
+  "rationale_summary": "Balanced approach with value and defensive tilts.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17027,
+    "latency_seconds": 14.19164469698444,
+    "output_tokens": 1548,
+    "total_tokens": 18575
+  }
+}

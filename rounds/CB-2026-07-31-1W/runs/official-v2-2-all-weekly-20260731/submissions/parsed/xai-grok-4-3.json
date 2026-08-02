@@ -1,0 +1,161 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Positive breadth and recent weekly gain persist into August 7 close",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7489.72 up 0.7% on July 31",
+        "Week-to-date gain of 1.0%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "SPY closes below 7400 on August 7",
+      "option_id": "SP500",
+      "reversal_case": "Weak July employment report triggers risk-off rotation",
+      "time_window_catalyst": "July employment report and weekly claims on August 7"
+    },
+    {
+      "continuation_case": "European equity momentum continues",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 5s of 1.37%",
+        "Prior 16s active return 1.65%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Euro-area flash inflation exceeds 3.2%",
+      "option_id": "EUROPE",
+      "reversal_case": "Euro-area inflation print at 2.9% pressures ECB outlook",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Oil supply constraints support prices",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude at 87.93 up 1.2%",
+        "OPEC+ production adjustment decision"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Brent closes below 85",
+      "option_id": "ENERGY",
+      "reversal_case": "Strait of Hormuz reopening reduces risk premium",
+      "time_window_catalyst": "August 2 US statements on Iran"
+    },
+    {
+      "continuation_case": "Rates stabilize near current levels",
+      "decision": "rejected",
+      "evidence": [
+        "10-year yield at 4.71%",
+        "FOMC held rates at 3.50-3.75%"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.5,
+      "forecast_low_pct": -0.6,
+      "invalidation_condition": "10-year yield exceeds 4.85%",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Stronger growth data pushes yields higher",
+      "time_window_catalyst": "August 3 Senior Loan Officer Survey"
+    },
+    {
+      "continuation_case": "Safe-haven demand persists",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 5s return -0.08%",
+        "Quality evidence score 0.576"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Gold price falls below 2300",
+      "option_id": "GOLD",
+      "reversal_case": "US dollar strengthens further",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Value factor rotation continues",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 5s of 0.35%",
+        "Quality evidence score 0.619"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.3,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "IWD underperforms SPY by more than 1% over window",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth stocks rebound on earnings",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Defensive rotation into rate-sensitive sectors",
+      "decision": "rejected",
+      "evidence": [
+        "Quality evidence score 0.799",
+        "Recent pullback rank 0.985"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 0.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "XLU closes more than 3% below July 31 level",
+      "option_id": "UTILITIES",
+      "reversal_case": "10-year yield rises sharply",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Risk-on sentiment supports crypto",
+      "decision": "rejected",
+      "evidence": [
+        "Quality evidence score 0.743",
+        "Prior 16s active return 7.83%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Bitcoin ETF closes below 50% of July 31 level",
+      "option_id": "BITCOIN_ETF",
+      "reversal_case": "Broader equity weakness spills into crypto",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.52,
+  "expected_alpha_vs_sp500_pct": 0.0,
+  "is_official_score": true,
+  "key_risks": [
+    "July employment data surprise on August 7",
+    "Continued 10-year yield rise above 4.8%",
+    "Geopolitical developments around Strait of Hormuz"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 100,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "SPY closes below 7400 on August 7",
+      "option_id": "SP500",
+      "rationale": "No active holding clears the base-forecast hurdle above SPY; SPY is the benchmark proxy with neutral-to-positive near-term momentum from recent breadth data.",
+      "time_window_catalyst": "July employment report and weekly claims on August 7"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.6,
+  "portfolio_rationale": "100% SP500 allocation selected after screening 7 additional candidates; none demonstrated a base-case return strictly exceeding SPY over the one-week window.",
+  "provider": "xai",
+  "rationale_summary": "SPY base forecast of 0.6% used as hurdle; portfolio expected return equals benchmark with zero alpha.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15648,
+    "latency_seconds": 11.486939576920122,
+    "output_tokens": 1499,
+    "reasoning_tokens": 539,
+    "total_tokens": 17686
+  }
+}

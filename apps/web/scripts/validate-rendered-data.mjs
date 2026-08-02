@@ -3255,7 +3255,7 @@ if (patternReport) {
     includes(modelPatternsHtml, pctValue(row.key_numbers.average_top_allocation_pct), `${context} average top holding`);
     if (row.sample_caveat) includesAny(modelPatternsHtml, [row.sample_caveat, htmlText(row.sample_caveat)], `${context} sample caveat`);
     for (const pill of (row.pills ?? []).slice(0, 2)) {
-      includes(modelPatternsHtml, pill.label, `${context} pill ${pill.key}`);
+      includesAny(modelPatternsHtml, htmlTextVariants(pill.label), `${context} pill ${pill.key}`);
     }
     for (const asset of (row.top_assets ?? []).slice(0, 3)) {
       includesAny(modelPatternsHtml, [asset.display, htmlText(asset.display)], `${context} top asset ${asset.option_id}`);
@@ -3264,7 +3264,9 @@ if (patternReport) {
   for (const row of (patternReport.rows ?? []).filter((item) => item.lifecycle_status !== "retired")) {
     const context = `homepage behavior profile ${row.model_id}`;
     includes(indexHtml, row.archetype?.label ?? "", `${context} archetype`);
-    for (const pill of row.pills ?? []) includes(indexHtml, pill.label, `${context} ${pill.role} pill`);
+    for (const pill of row.pills ?? []) {
+      includesAny(indexHtml, htmlTextVariants(pill.label), `${context} ${pill.role} pill`);
+    }
   }
   includes(modelPatternsHtml, patternReport.methodology?.version ?? "", "model patterns behavior method version");
   includes(modelPatternsHtml, "median behavior-metric value of the other models in that same round", "model patterns peer normalization method");
@@ -3310,7 +3312,7 @@ for (const model of apiReadModel.models) {
     includes(modelsIndexHtml, directoryBehavior.metrics.average_risk_pulse.toFixed(1), `${directoryContext} behavior risk-taking`);
     includes(modelsIndexHtml, pctValue(directoryBehavior.metrics.average_top_allocation_pct), `${directoryContext} behavior top holding`);
     for (const pill of (directoryBehavior.behavior_v2?.pills ?? []).slice(0, 3)) {
-      includes(modelsIndexHtml, pill.label, `${directoryContext} behavior pill ${pill.key}`);
+      includesAny(modelsIndexHtml, htmlTextVariants(pill.label), `${directoryContext} behavior pill ${pill.key}`);
     }
   }
 
@@ -3437,7 +3439,7 @@ for (const model of apiReadModel.models) {
     }
     includes(html, "/models/patterns/#methodology", `${context} behavior methodology link`);
     for (const pill of behavior.behavior_v2?.pills ?? []) {
-      includes(html, pill.label, `${context} behavior pill ${pill.key}`);
+      includesAny(html, htmlTextVariants(pill.label), `${context} behavior pill ${pill.key}`);
     }
     if (Number(behavior.behavior_v2?.decision_process?.structured_candidate_coverage_count ?? 0) > 0) {
       includes(html, "Structured decision process", `${context} decision process context`);

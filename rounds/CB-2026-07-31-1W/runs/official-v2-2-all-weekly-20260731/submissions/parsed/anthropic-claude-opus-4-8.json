@@ -1,0 +1,176 @@
+{
+  "benchmark_expected_return_pct": 0.35,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Positive breadth and earnings momentum carry into week",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 +1.0% weekly, +9.4% YTD",
+        "Strong mega-cap earnings Amazon +20% sales, Microsoft Azure +43%"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "SPY closes below entry on payrolls disappointment",
+      "option_id": "SP500",
+      "reversal_case": "Weak payrolls and elevated inflation dampen sentiment",
+      "time_window_catalyst": "August 7 Employment Situation"
+    },
+    {
+      "continuation_case": "EM inflows and cheap valuation drive rebound",
+      "decision": "selected",
+      "evidence": [
+        "Best 5s active return +3.54%",
+        "GDP +4.3% yoy, -15% from 52w high"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "China active return turns negative vs SPY",
+      "option_id": "CHINA",
+      "reversal_case": "Policy disappointment or trade tension reverses gains",
+      "time_window_catalyst": "EM risk appetite this week"
+    },
+    {
+      "continuation_case": "Stable ECB and near-high momentum persist",
+      "decision": "selected",
+      "evidence": [
+        "+1.37% 5s active return",
+        "Near 52w high, low drawdown -2.53%"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Europe closes below entry",
+      "option_id": "EUROPE",
+      "reversal_case": "Euro-area inflation uptick pressures equities",
+      "time_window_catalyst": "Euro-area data"
+    },
+    {
+      "continuation_case": "Consumer spending strength continues",
+      "decision": "rejected",
+      "evidence": [
+        "Huge +5.01% 5s active return",
+        "Amazon +15.3% monthly"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "XLY underperforms SPY",
+      "option_id": "CONSUMER_DISCRETIONARY",
+      "reversal_case": "Overbought sharp reversal after strong run",
+      "time_window_catalyst": "Retail sentiment"
+    },
+    {
+      "continuation_case": "Software rebound continues",
+      "decision": "rejected",
+      "evidence": [
+        "+6.41% 5s active return",
+        "Deep -19.69% 52w drawdown"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "IGV underperforms SPY",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High volatility mean-reversion",
+      "time_window_catalyst": "AMD results Aug 4"
+    },
+    {
+      "continuation_case": "Safe-haven demand from geopolitics",
+      "decision": "rejected",
+      "evidence": [
+        "Negative -1.17% 5s active",
+        "Rising yields headwind"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Gold falls with rising yields",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real rates pressure gold",
+      "time_window_catalyst": "Iran situation"
+    },
+    {
+      "continuation_case": "Supply disruptions persist",
+      "decision": "rejected",
+      "evidence": [
+        "-6.60% 5s active despite +33% prior",
+        "OPEC+ 188kbpd adjustment"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Oil continues sharp decline",
+      "option_id": "OIL",
+      "reversal_case": "Strait reopening collapses prices",
+      "time_window_catalyst": "Iran/Hormuz resolution"
+    },
+    {
+      "continuation_case": "Rate stabilization aids bonds",
+      "decision": "rejected",
+      "evidence": [
+        "Rising 10y yield 4.71%",
+        "-1.18% 5s active return"
+      ],
+      "forecast_base_pct": -0.1,
+      "forecast_high_pct": 0.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Yields rise further",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Sticky inflation pushes yields higher",
+      "time_window_catalyst": "Payrolls and inflation data"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.14,
+  "is_official_score": true,
+  "key_risks": [
+    "Weak August 7 payrolls could trigger broad equity drawdown",
+    "China rebound may reverse quickly given high volatility",
+    "Rising 10-year yields pressure equities"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Weak payrolls print sparks equity selloff below entry",
+      "option_id": "SP500",
+      "rationale": "Broad large-cap exposure with positive weekly momentum and strong mega-cap earnings from Amazon, Microsoft, Meta.",
+      "time_window_catalyst": "August 7 Employment Situation report"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "China equity active return turns negative vs SPY",
+      "option_id": "CHINA",
+      "rationale": "Strongest recent active return (+3.54% 5s) with deep 52w drawdown, GDP growth 4.3% supports rebound.",
+      "time_window_catalyst": "Continued EM inflows this week"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Europe underperforms SPY over window",
+      "option_id": "EUROPE",
+      "rationale": "Positive active return (+1.37% 5s), low drawdown, near 52w high, stable ECB policy.",
+      "time_window_catalyst": "Euro-area data stability"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.49,
+  "portfolio_rationale": "Anchor in SPY for broad participation, add China and Europe for stronger recent active returns and favorable risk profiles while keeping each international cluster within caps.",
+  "provider": "anthropic",
+  "rationale_summary": "Balanced SPY core with two international tilts showing recent positive relative strength.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27768,
+    "latency_seconds": 30.361752903088927,
+    "output_tokens": 2204,
+    "total_tokens": 29972
+  }
+}

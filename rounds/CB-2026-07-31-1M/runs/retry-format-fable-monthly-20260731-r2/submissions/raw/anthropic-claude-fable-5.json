@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid activity, strong mega-cap earnings (Amazon, Microsoft) support drift higher.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 up 9.4% YTD, closed 7,489.72 on Jul 31",
+        "Fed held at 3.50-3.75% with three dissenting hikes; core PCE 3.3% y/y",
+        "10y yield 4.71%, up from 3.97% pre-war"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "CPI surprise above 3.5% headline pushing 10y above 5%",
+      "option_id": "SP500",
+      "reversal_case": "Sticky inflation plus hawkish dissents raise hike risk; rates pressure multiples.",
+      "time_window_catalyst": "July jobs report (Aug 7), CPI (Aug 12), Nvidia (Aug 26-27), Fed minutes"
+    },
+    {
+      "continuation_case": "Persistent trend and macro regime of high rates and sticky inflation favor value sectors.",
+      "decision": "selected",
+      "evidence": [
+        "+3.09% active return vs SPY over 21 sessions, +3.48% prior active trend",
+        "Only -0.09% from 52-week high with low 11.7% volatility",
+        "Elevated inflation (core PCE 3.4% Q2 annualized) and 4.71% 10y favor value"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Sharp fall in 10y yield below 4.3% with growth leadership resuming",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth re-acceleration or rate relief rotates flows back to growth.",
+      "time_window_catalyst": "CPI Aug 12 confirming sticky inflation; Fed minutes Aug 19"
+    },
+    {
+      "continuation_case": "Defensive quality income continues to attract flows amid elevated uncertainty and hawkish dissents.",
+      "decision": "selected",
+      "evidence": [
+        "+4.92% active return vs SPY over 21 sessions with only 11.8% volatility",
+        "Low beta (0.25) and shallow -2.95% drawdown provide defensive ballast"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Strong risk-on rally with SPY +4% led by mega-cap growth",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Risk-on melt-up in growth leaves dividend payers lagging.",
+      "time_window_catalyst": "Payrolls Aug 7 and CPI Aug 12; weak data supports defensive income"
+    },
+    {
+      "continuation_case": "Massive unresolved supply deficit persists; Iran denies reopening talks, keeping prices elevated.",
+      "decision": "selected",
+      "evidence": [
+        "Brent $87.93; global supply 9.4 mbd below pre-war, Gulf exports 16.1 vs 24 mbd",
+        "XLE +12.59% active vs SPY over 21 sessions; Hormuz remains closed with no agreement reached",
+        "OPEC+ only 188 kbd September adjustment; JMMC flags infrastructure risks"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Confirmed Hormuz reopening agreement with Brent falling below $78",
+      "option_id": "ENERGY",
+      "reversal_case": "US-Iran agreement reopening Strait of Hormuz collapses the risk premium.",
+      "time_window_catalyst": "Iran negotiations and any Hormuz reopening headlines during August"
+    },
+    {
+      "continuation_case": "Hyperscaler capex guidance directly funds semis; Nvidia print can re-ignite the prior strong trend after the pullback.",
+      "decision": "selected",
+      "evidence": [
+        "-13.05% active vs SPY in latest window after +40.58% prior active trend (deep pullback in strong uptrend)",
+        "AI capex intact: Meta guiding $130-145B capex, Amazon capex up $66B, Azure +43%",
+        "Nvidia results scheduled Aug 25-27 before exit close"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Nvidia guidance disappointment or SMH breaking below -25% from 52-week high",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "55% volatility; further AI momentum unwind or Nvidia miss extends the -19% drawdown.",
+      "time_window_catalyst": "Nvidia earnings Aug 25-27"
+    },
+    {
+      "continuation_case": "Weak payrolls (57k, revisions -74k) could eventually pull yields lower.",
+      "decision": "rejected",
+      "evidence": [
+        "10y rose to 4.71%; TLT -3.82% over 21 sessions",
+        "Three FOMC members preferred a hike; core PCE 3.3% y/y"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "CPI cool enough to price near-term cuts",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation and hawkish dissents keep yields rising.",
+      "time_window_catalyst": "CPI Aug 12 and Fed minutes Aug 19"
+    },
+    {
+      "continuation_case": "Geopolitical escalation or dollar weakness (UUP -1.4% 5s) could lift gold.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU flat over 21 sessions (+0.11% active would be untrue; +0.28% return); -25% from 52-week high",
+        "Rising real yields (10y 4.71%) headwind despite geopolitical risk"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Real yields falling sharply on dovish repricing",
+      "option_id": "GOLD",
+      "reversal_case": "High and rising real rates plus deep established downtrend cap upside.",
+      "time_window_catalyst": "Iran situation developments through August"
+    },
+    {
+      "continuation_case": "Weak dollar tailwind and value composition support relative gains.",
+      "decision": "rejected",
+      "evidence": [
+        "+3.04% active over 21 sessions; near 52-week high",
+        "Euro-area inflation rose to 2.9% with energy inflation at 10.0%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Energy inflation accelerating further, hitting European growth",
+      "option_id": "EUROPE",
+      "reversal_case": "Energy-driven inflation squeezes European consumers and margins; ECB on hold.",
+      "time_window_catalyst": "Final euro-area inflation Aug 18-19"
+    },
+    {
+      "continuation_case": "Preserves capital if equities fall.",
+      "decision": "rejected",
+      "evidence": [
+        "Round treats cash return as 0"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 0.0,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Not applicable",
+      "option_id": "CASH",
+      "reversal_case": "Forgoes positive expected equity returns.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.665,
+  "is_official_score": true,
+  "key_risks": [
+    "Iran agreement reopening Strait of Hormuz could sharply reverse energy gains",
+    "Hot CPI (Aug 12) could pressure all equity holdings",
+    "Semiconductors extremely volatile (55% vol, -13% recent active) and could continue underperforming",
+    "Payroll and revisions weakness could hit cyclical value exposure"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [],
+  "portfolio_expected_return_pct": 1.465,
+  "portfolio_rationale": "Tilt toward large value and dividends that show favorable relative trend with rates at 4.71% and elevated inflation, plus energy exposure supported by supply disruption (Brent $87.93, Gulf exports down 8mbd) and a measured semiconductor pullback position ahead of Nvidia results.",
+  "provider": "anthropic",
+  "rationale_summary": "Value/dividend tilt for a high-rate, sticky-inflation regime, energy for unresolved Hormuz supply risk, and a modest semis rebound position into Nvidia earnings, with a small SPY core.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27832,
+    "latency_seconds": 41.310571955982596,
+    "output_tokens": 3350,
+    "total_tokens": 31182
+  }
+}

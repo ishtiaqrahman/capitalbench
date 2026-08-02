@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid real final sales and mega-cap earnings keep broad index grinding higher",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed July 31 up 0.7% but finished July with a small loss",
+        "spy_return_21s at 0.17% and distance_52w_high -1.40%",
+        "FOMC held rates with elevated inflation and outlook uncertainty"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Close below recent range on rising claims or hawkish Fed minutes",
+      "option_id": "SP500",
+      "reversal_case": "Soft payrolls or sticky CPI trigger multiple compression",
+      "time_window_catalyst": "July Employment Situation and mid-August CPI"
+    },
+    {
+      "continuation_case": "Persistent supply disruption premium and OPEC+ discipline sustain sector gains",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +12.59% with Brent at $87.93",
+        "June global oil supply 9.4 mb/d below pre-war level",
+        "quality evidence score 0.384 but strong prior trend"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Sustained Brent decline or full export normalization",
+      "option_id": "ENERGY",
+      "reversal_case": "Diplomatic progress reopening Hormuz collapses the geopolitical bid",
+      "time_window_catalyst": "OPEC+ September adjustment and Iran-related statements before Aug 31"
+    },
+    {
+      "continuation_case": "Tight physical balances and infrastructure risks keep crude elevated",
+      "decision": "selected",
+      "evidence": [
+        "uso_return_21s +25.08% and active_return_21s +24.91%",
+        "Gulf exports 16.1 mb/d versus 24 mb/d pre-war",
+        "return_5s -5.50% after large prior run"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 12.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Oil price collapse on peace headlines or inventory builds",
+      "option_id": "OIL",
+      "reversal_case": "Demand weakness or rapid supply recovery erodes the spike",
+      "time_window_catalyst": "Any confirmed parameters on Strait reopening or lack thereof"
+    },
+    {
+      "continuation_case": "Cloud and AI spending momentum extends the short-term rebound",
+      "decision": "selected",
+      "evidence": [
+        "return_5s +7.50% and Microsoft Azure growth 39%+",
+        "Amazon AWS +37% and Meta revenue +28%",
+        "distance_52w_high -19.69% after prior weakness"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Guidance cuts or sharp NASDAQ underperformance",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High valuations meet rising yields or capex fatigue",
+      "time_window_catalyst": "Nvidia results late August"
+    },
+    {
+      "continuation_case": "Steeper curve and solid compensation data support net interest and fee income",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +3.77% and return_5s +1.12%",
+        "volatility_63s 13.66% near SPY",
+        "ten-year yield at 4.71%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Unemployment claims spike or regional-bank stress headlines",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit deterioration or deposit flight on labor weakness",
+      "time_window_catalyst": "Employment report and Fed minutes"
+    },
+    {
+      "continuation_case": "Value leadership persists amid elevated rates and mixed growth data",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +3.09% and prior_105s_active_return +3.48%",
+        "low volatility rank supportive and distance_52w_high only -0.09%",
+        "quality evidence score 0.616"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Value-growth spread reverses sharply on dovish surprise",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Risk-on rotation back into mega-cap growth",
+      "time_window_catalyst": "CPI and retail sales mid-August"
+    },
+    {
+      "continuation_case": "Relative yield and energy stabilization favor European equities",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s +3.04% and return_5s +2.47%",
+        "euro-area flash inflation 2.9% with energy 10%",
+        "ECB held rates unchanged"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "EURUSD spike or downside GDP surprises",
+      "option_id": "EUROPE",
+      "reversal_case": "Stronger euro or weaker China demand hits exporters",
+      "time_window_catalyst": "Final July euro-area inflation mid-August"
+    },
+    {
+      "continuation_case": "Secular demand and recent relative strength continue",
+      "decision": "rejected",
+      "evidence": [
+        "prior_105s_active_return +23.30% and return_5s +3.88%",
+        "quality evidence score 0.610",
+        "distance_52w_high -3.06%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Breakdown below recent support on rising volatility",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High-beta tech selloff on rates or profit-taking after strong prior run",
+      "time_window_catalyst": "Remaining August tech earnings"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.305,
+  "is_official_score": true,
+  "key_risks": [
+    "Sudden de-escalation in Middle East oil logistics removing the risk premium",
+    "Higher-than-expected core inflation prints forcing rate-hike repricing",
+    "Tech earnings disappointment reversing the software bounce",
+    "Broad risk-off move hitting high-beta energy and growth names simultaneously"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Brent crude sustained drop below recent levels or confirmed full Strait reopening without disruption premium",
+      "option_id": "ENERGY",
+      "rationale": "Elevated oil prices and unresolved supply risks from Middle East support continued outperformance versus broad equities over the one-month window.",
+      "time_window_catalyst": "August OPEC+ adjustment and any Hormuz/Iran developments before Aug 31 close"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Rapid normalization of Gulf exports to pre-war levels or sharp demand destruction data",
+      "option_id": "OIL",
+      "rationale": "Direct crude exposure captures the large prior active gains and geopolitical supply tightness more levered than equity energy names.",
+      "time_window_catalyst": "September OPEC+ production decision implementation signals and US-Iran statements through month-end"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Broad growth-stock multiple compression on higher yields or weak cloud commentary",
+      "option_id": "SOFTWARE",
+      "rationale": "Strong recent 5-session rebound and solid mega-cap software/cloud earnings provide base-case edge over SPY.",
+      "time_window_catalyst": "Nvidia results and remaining August tech earnings/guidance"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Sharp rise in claims or credit-spread widening beyond recent ranges",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive active return over 21 sessions and resilient bank/insurance backdrop versus flat SPY.",
+      "time_window_catalyst": "July employment data and Fed minutes release mid-to-late August"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Value factor reversal on renewed mega-cap leadership or recessionary payrolls surprise",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Superior 21-session active return and lower volatility profile versus growth-heavy SPY supports modest outperformance.",
+      "time_window_catalyst": "CPI/PPI prints and second-quarter GDP revision in mid-August"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.905,
+  "portfolio_rationale": "Portfolio concentrates in energy complex for geopolitical supply premium while adding software rebound, financials, and value factor exposures that each carry higher base forecasts than SPY. Cluster limits respected with energy at the 50% cap and remaining holdings diversified.",
+  "provider": "xai",
+  "rationale_summary": "SPY base is modest given mixed July close and elevated macro uncertainty; selected holdings clear the active hurdle on recent relative strength plus catalysts inside the scoring window. Energy pair dominates expected return contribution.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16546,
+    "latency_seconds": 58.23480208986439,
+    "output_tokens": 2519,
+    "reasoning_tokens": 998,
+    "total_tokens": 20063
+  }
+}

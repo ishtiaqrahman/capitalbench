@@ -1,0 +1,200 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong mega-cap earnings (Amazon +20% sales, Azure +43%) and solid final private demand at 3.9%.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed 7,489.72 up 9.4% YTD; small July loss",
+        "FOMC held 3.50-3.75% with three hikers dissenting",
+        "Core PCE 3.3% y/y, ten-year at 4.71%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "Ten-year above 5.0% or a hot CPI print triggering repricing to a hike",
+      "option_id": "SP500",
+      "reversal_case": "Elevated inflation, hawkish dissents, rising long yields, and slowing payrolls (57k) risk a drawdown.",
+      "time_window_catalyst": "Aug 7 payrolls, Aug 12-14 CPI/PPI, Aug 25-27 Nvidia and PCE"
+    },
+    {
+      "continuation_case": "Steep curve and solid activity support bank earnings; low drawdown suggests durable leadership.",
+      "decision": "selected",
+      "evidence": [
+        "XLF active return 21s +3.77%, drawdown only -2.42%",
+        "Volatility 13.7%, near 52-week high (-1.15%)",
+        "Policy rate 3.50-3.75% with ten-year 4.71%"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Curve flattens sharply or XLF lags SPY by more than 3%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak labor data or credit deterioration would hit banks; prior 105s active return negative.",
+      "time_window_catalyst": "July CPI and Fed minutes Aug 18-19"
+    },
+    {
+      "continuation_case": "Persistent value leadership with low volatility as growth multiples face rate pressure.",
+      "decision": "selected",
+      "evidence": [
+        "IWD active 21s +3.09%, prior 105s +3.48%",
+        "Volatility 11.7%, max drawdown -2.40%",
+        "Essentially at 52-week high (-0.09%)"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "IWD active return versus SPY falls below -2%",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "An AI-led rally would leave low-beta value behind.",
+      "time_window_catalyst": "August CPI and PCE data"
+    },
+    {
+      "continuation_case": "Defensive low-beta ballast improving on a relative basis with modest drawdown.",
+      "decision": "selected",
+      "evidence": [
+        "XLV active 21s +1.72%, drawdown only -3.74%",
+        "Beta to SPY 0.29, low correlation 0.24",
+        "Eli Lilly results scheduled Aug 3-7"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "XLV falls more than 4% or adverse drug-pricing policy news",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Sector has negative prior 105s active return; policy or pricing headlines can hit quickly.",
+      "time_window_catalyst": "Eli Lilly results Aug 3-7"
+    },
+    {
+      "continuation_case": "Stable ECB policy, contained core inflation, and a softer dollar boost USD-denominated returns.",
+      "decision": "selected",
+      "evidence": [
+        "VGK active 21s +3.04%, 5s +2.47%, drawdown -3.86%",
+        "ECB kept rates unchanged July 23; core inflation 2.5%",
+        "Dollar index proxy UUP -1.12% over 21s"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Dollar rallies over 2% or euro-area inflation exceeds 3.3%",
+      "option_id": "EUROPE",
+      "reversal_case": "Energy inflation at 10% and prior 105s active -6.82% show structural lag.",
+      "time_window_catalyst": "Final euro-area July inflation Aug 18-19"
+    },
+    {
+      "continuation_case": "Strong prior 105s active +40.6% and Nvidia results could reignite the trend.",
+      "decision": "rejected",
+      "evidence": [
+        "SMH active 21s -13.05%, 5s -3.68%",
+        "Volatility 55.2%, drawdown -24.6%, 19.2% below 52w high",
+        "Micron fell 5.9%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 14.0,
+      "forecast_low_pct": -14.0,
+      "invalidation_condition": "SMH breaks below its 63-day drawdown low",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Sharp recent relative breakdown with extreme volatility signals a momentum unwind.",
+      "time_window_catalyst": "Nvidia results Aug 25-27, AMD Aug 3-7"
+    },
+    {
+      "continuation_case": "Supply still 9.4 mbd below pre-war levels with infrastructure risk.",
+      "decision": "rejected",
+      "evidence": [
+        "USO -5.50% over 5s after +24.91% active 21s",
+        "Brent $87.93; US signaled holding off on Iran strikes",
+        "OPEC+ adds 188k bpd in September"
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 16.0,
+      "forecast_low_pct": -16.0,
+      "invalidation_condition": "Confirmed Strait of Hormuz reopening agreement",
+      "option_id": "OIL",
+      "reversal_case": "Any Hormuz reopening deal plus OPEC+ supply increase could crush prices quickly.",
+      "time_window_catalyst": "Iran negotiation headlines during August"
+    },
+    {
+      "continuation_case": "Weak payrolls could spark a duration rally.",
+      "decision": "rejected",
+      "evidence": [
+        "TLT -3.82% over 21s; ten-year rose to 4.71%",
+        "Core PCE 3.3% y/y with three FOMC hike dissents"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Ten-year yield falls below 4.40%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation and hawkish dissents keep upward yield pressure.",
+      "time_window_catalyst": "July CPI Aug 12-14 and Fed minutes Aug 18-19"
+    }
+  ],
+  "confidence": 0.53,
+  "expected_alpha_vs_sp500_pct": 0.42,
+  "is_official_score": true,
+  "key_risks": [
+    "Sticky core inflation (3.3-3.4%) pushes yields above 5% and compresses equity multiples",
+    "Mega-cap AI capex enthusiasm resumes and SPY outruns the value/defensive tilt",
+    "Middle East oil disruption reverses or worsens, whipsawing sector leadership",
+    "Weak August payrolls signal a growth scare hitting financials and cyclicals",
+    "Currency swings erode Europe's USD-denominated return"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Ten-year yield breaks above 5.0% or August payrolls contract",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure amid solid mega-cap earnings but elevated inflation and hawkish FOMC dissents.",
+      "time_window_catalyst": "July CPI Aug 12-14, Employment Situation Aug 7, Nvidia results Aug 25-27"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Credit stress or sharp curve flattening; XLF underperforms SPY by more than 3%",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive relative trend, low drawdown, steep curve with 3.50-3.75% policy rate and 4.71% ten-year supports net interest margins.",
+      "time_window_catalyst": "July CPI and Fed minutes Aug 18-19"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Growth-led melt-up pushes value's active return below -2%",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Strong recent relative return, low volatility 11.7%, shallow 2.4% drawdown, near 52-week high with defensive/cyclical value mix.",
+      "time_window_catalyst": "August CPI and PCE releases"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Adverse policy headlines or XLV drops more than 4%",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with positive active return, small drawdown, low beta hedge against inflation-driven equity drawdown.",
+      "time_window_catalyst": "Eli Lilly results Aug 3-7"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Dollar rebounds sharply or euro-area inflation re-accelerates above 3.3%",
+      "option_id": "EUROPE",
+      "rationale": "Positive active return, near 52-week high, ECB on hold with contained core inflation at 2.5%; weaker dollar aids USD returns.",
+      "time_window_catalyst": "Final euro-area July inflation Aug 18-19"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.22,
+  "portfolio_rationale": "Barbell of quality-value, financials, and defensive healthcare against a large SPY core, avoiding the crowded, high-volatility semiconductor/Korea/Taiwan momentum complex that already shows sharp recent relative drawdowns.",
+  "provider": "anthropic",
+  "rationale_summary": "Modest positive SPY base case with sticky inflation and a hawkish-leaning Fed; tilt toward lower-volatility, near-highs relative winners with independent macro support rather than extended high-beta tech.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-07-31-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27832,
+    "latency_seconds": 47.602307060034946,
+    "output_tokens": 3470,
+    "total_tokens": 31302
+  }
+}
