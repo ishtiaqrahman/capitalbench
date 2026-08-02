@@ -75,7 +75,7 @@ const defaultTrack = visibleScorecards.find((scorecard) => scorecard.track === "
               data-track-scorecard-panel={scorecard.track}
               hidden={!active}
             >
-              <TrackScorecard scorecard={scorecard} compact />
+              <TrackScorecard scorecard={scorecard} compact showExcludedRoundsNote={false} />
             </div>
           );
         })}

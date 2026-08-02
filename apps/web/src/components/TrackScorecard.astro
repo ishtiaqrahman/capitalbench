@@ -13,9 +13,10 @@ interface Props {
   scorecard: TrackScorecardData;
   compact?: boolean;
   focusModelId?: string;
+  showExcludedRoundsNote?: boolean;
 }
 
-const { scorecard, compact = false, focusModelId } = Astro.props;
+const { scorecard, compact = false, focusModelId, showExcludedRoundsNote = true } = Astro.props;
 const idPrefix = (scorecard.setId ?? scorecard.track).replace(/[^a-zA-Z0-9_-]/g, "-");
 const titleId = `${idPrefix}-track-scorecard-title`;
 const scoreTitleId = `${idPrefix}-normalized-score-title`;
@@ -442,7 +443,7 @@ const scorecardBadgeItems = [
   )}
 
   <div class="track-scorecard-notes" aria-label={`${scorecard.label} scorecard notes`}>
-    {scorecard.excludedRoundIds.length > 0 && (
+    {showExcludedRoundsNote && scorecard.excludedRoundIds.length > 0 && (
       <span>
         <strong>Excluded for fairness:</strong>{" "}
         {(scorecard.excludedRounds ?? []).length > 0
