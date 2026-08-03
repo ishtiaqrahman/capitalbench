@@ -71,6 +71,11 @@ const roundsItemList = itemListSchema({
     />
   </section>
   <section class="section">
-    <RoundsTable client:visible fallbackRows={roundRows} />
+    <RoundsTable
+      client:visible
+      fallbackRows={roundRows}
+      initialSortKey="decision_deadline_utc"
+      initialSortDirection="desc"
+    />
   </section>
 </BaseLayout>

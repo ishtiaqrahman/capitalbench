@@ -8,9 +8,11 @@ import TableIsland, { type Column } from "./TableIsland";
 
 interface Props {
   fallbackRows: RoundRecord[];
+  initialSortKey: "decision_deadline_utc";
+  initialSortDirection: "desc";
 }
 
-export default function RoundsTable({ fallbackRows }: Props) {
+export default function RoundsTable({ fallbackRows, initialSortKey, initialSortDirection }: Props) {
   const [rows, setRows] = useState<RoundWithAuditPath[]>(withAuditPaths(mergeRemoteRoundRows(fallbackRows, [])));
 
   useEffect(() => {
@@ -63,6 +65,8 @@ export default function RoundsTable({ fallbackRows }: Props) {
       tableLabel="CapitalBench rounds"
       emptyText="No rounds are published yet."
       csvFilename="capitalbench-rounds.csv"
+      initialSortKey={initialSortKey}
+      initialSortDirection={initialSortDirection}
     />
   );
 }

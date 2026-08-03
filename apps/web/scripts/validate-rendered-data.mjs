@@ -564,6 +564,10 @@ function buildActiveExposureSummary() {
   }
 
   const denominator = portfolioKeys.size * 10_000;
+  const roundIdsByTrack = {
+    weekly: new Set(activeAllocations.filter((row) => row.track === "weekly").map((row) => row.round_id)),
+    monthly: new Set(activeAllocations.filter((row) => row.track === "monthly").map((row) => row.round_id))
+  };
   const rows = Array.from(assets.values())
     .map((row) => ({
       ...row,
@@ -578,6 +582,8 @@ function buildActiveExposureSummary() {
   return {
     portfolio_count: portfolioKeys.size,
     active_round_count: new Set(activeAllocations.map((row) => row.round_id)).size,
+    weekly_round_count: roundIdsByTrack.weekly.size,
+    monthly_round_count: roundIdsByTrack.monthly.size,
     rows
   };
 }
@@ -1105,6 +1111,8 @@ function validateRoundTableIslands(html, round, context) {
 function validateRoundsIndexIsland(html) {
   const island = allAstroIslandProps(html, "RoundsTable", { required: true })[0];
   if (!island) return;
+  expectEqual(island.initialSortKey, "decision_deadline_utc", "rounds index initial sort key");
+  expectEqual(island.initialSortDirection, "desc", "rounds index initial sort direction");
   const expectedRows = apiReadModel.rounds.map((round) => ({
     round_id: round.round_id,
     title: round.title,
@@ -2148,6 +2156,7 @@ const latestActiveMonthly = latestRound("monthly", "active");
 const homepageTrackRounds = ["weekly", "monthly"]
   .map((track) => latestRound(track, "active"))
   .filter(Boolean);
+const activeExposure = buildActiveExposureSummary();
 includes(leaderboardsHtml, `<strong>${resolvedRoundCount}</strong>`, "leaderboards index completed count");
 includes(leaderboardsHtml, `<strong>${activeRoundCount}</strong>`, "leaderboards index live count");
 includes(leaderboardsHtml, `<strong>${apiReadModel.models.length}</strong>`, "leaderboards index model count");
@@ -2186,6 +2195,22 @@ includesAny(
 includes(indexHtml, "Explore models", "homepage current setup models CTA");
 includes(indexHtml, "View asset universe", "homepage current setup assets CTA");
 includes(indexHtml, "Open live dashboard", "homepage current setup live CTA");
+const homepageLiveSummaryHtml = htmlSection(
+  indexHtml,
+  'class="live-dashboard-promo"',
+  "homepage live dashboard summary"
+);
+includes(indexHtml, 'aria-label="Current CapitalBench setup summary" data-count-up-skip', "homepage setup counts remain visible");
+includes(homepageLiveSummaryHtml, "data-count-up-skip", "homepage live counts remain visible");
+for (const [attribute, value] of [
+  ["data-open-round-count", activeExposure.active_round_count],
+  ["data-weekly-open-round-count", activeExposure.weekly_round_count],
+  ["data-monthly-open-round-count", activeExposure.monthly_round_count],
+  ["data-live-portfolio-count", activeExposure.portfolio_count]
+]) {
+  includes(homepageLiveSummaryHtml, `${attribute}="${value}"`, `homepage live dashboard ${attribute}`);
+  includes(liveHtml, `${attribute}="${value}"`, `live dashboard ${attribute}`);
+}
 const liveTestsHeadingHtml = htmlSection(
   liveHtml,
   'id="open-tests"',
@@ -2785,7 +2810,6 @@ for (const track of ["weekly", "monthly"]) {
   }
 }
 
-const activeExposure = buildActiveExposureSummary();
 validateLivePerformanceIsland(liveHtml);
 validateActiveExposureIsland(liveHtml);
 const liveRisk = apiReadModel.risk_appetite;

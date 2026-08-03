@@ -24,9 +24,6 @@ import {
 } from "../data/fallback";
 import apiReadModel from "../generated/apiReadModel.js";
 import {
-  decisionAllocations
-} from "../lib/allocations";
-import {
   currentRiskDateLabel,
   dateFromRoundId,
   pairedPulseDateLabel,
@@ -35,8 +32,6 @@ import {
 } from "../lib/riskFormatting.js";
 import {
   staticAllOfficialSubmissions,
-  staticAllWeeklyPerformance,
-  staticOfficialSubmissions,
   staticRoundRecords,
   staticUniverseOptions
 } from "../lib/localRoundRecords";
@@ -46,10 +41,8 @@ import type { TrackScorecardData } from "../lib/trackScorecard";
 import { siteConfig } from "../lib/seo";
 import { buildLatestOfficialResultTracks } from "../lib/latestOfficialResults";
 import { insightsForSurface } from "../lib/insights.js";
-import {
-  latestRoundForTrack,
-  roundTrack
-} from "../lib/tracks";
+import { buildLiveRoundState } from "../lib/liveRoundState";
+import { latestRoundForTrack } from "../lib/tracks";
 
 const roundRows = staticRoundRecords();
 const latestWeeklyRound = latestRoundForTrack(roundRows, "weekly");
@@ -64,39 +57,13 @@ const aggregateScorecards = [
 ].filter((scorecard): scorecard is NonNullable<typeof scorecard> => scorecard !== null);
 
 const latestOfficialResultTracks = buildLatestOfficialResultTracks(roundRows);
-const activeExposureRounds = roundRows
-  .filter((round) => round.status === "pending" && round.official_run_id)
-  .map((round) => {
-    const track = roundTrack(round);
-    return {
-      round,
-      track,
-      submissions: staticOfficialSubmissions(round.round_id, round.official_run_id),
-      options: staticUniverseOptions(round.round_id)
-    };
-  })
-  .filter((item) => (item.track === "weekly" || item.track === "monthly") && item.submissions.length > 0);
-const livePerformanceRows = staticAllWeeklyPerformance(roundRows).filter((row) => row.status === "pending");
-const openRoundCounts = {
-  all: activeExposureRounds.length,
-  weekly: activeExposureRounds.filter((item) => item.track === "weekly").length,
-  monthly: activeExposureRounds.filter((item) => item.track === "monthly").length
-};
-const livePortfolioCount = activeExposureRounds.reduce((total, item) => total + item.submissions.length, 0);
-const liveHeldAssetCount = new Set(
-  activeExposureRounds.flatMap((item) =>
-    item.submissions.flatMap((submission) => decisionAllocations(submission).map((allocation) => allocation.option_id))
-  )
-).size;
-const latestLiveCloseDate = livePerformanceRows
-  .map((row) => row.price_date)
-  .filter(Boolean)
-  .sort()
-  .at(-1);
-const nextLiveScoreDate = activeExposureRounds
-  .map((item) => item.round.score_eta_utc || item.round.exit_date)
-  .filter(Boolean)
-  .sort()[0];
+const {
+  openRoundCounts,
+  livePortfolioCount,
+  liveHeldAssetCount,
+  latestCloseDate: latestLiveCloseDate,
+  nextScoreDate: nextLiveScoreDate
+} = buildLiveRoundState(roundRows);
 const liveRiskSnapshot = apiReadModel.risk_appetite;
 const currentRiskPulse = liveRiskSnapshot.current_decision_pulse;
 const outstandingBookRisk = liveRiskSnapshot.outstanding_live_book;
@@ -637,7 +604,7 @@ function riskWidth(value: number | null | undefined): string {
       <p>The active roster, asset menu, horizons, and open rounds.</p>
     </div>
 
-    <div class="current-setup-stat-row" aria-label="Current CapitalBench setup summary">
+    <div class="current-setup-stat-row" aria-label="Current CapitalBench setup summary" data-count-up-skip>
       <div>
         <span>Models</span>
         <strong data-count-token>{modelRoster.length}</strong>
@@ -682,7 +649,15 @@ function riskWidth(value: number | null | undefined): string {
       </div>
       <p>Open portfolios, interim returns, and upcoming score dates.</p>
     </div>
-    <div class="live-dashboard-promo-stats" aria-label="Live dashboard summary">
+    <div
+      class="live-dashboard-promo-stats"
+      aria-label="Live dashboard summary"
+      data-open-round-count={openRoundCounts.all}
+      data-weekly-open-round-count={openRoundCounts.weekly}
+      data-monthly-open-round-count={openRoundCounts.monthly}
+      data-live-portfolio-count={livePortfolioCount}
+      data-count-up-skip
+    >
       <article>
         <span>Open rounds</span>
         <strong>{openRoundCounts.all}</strong>

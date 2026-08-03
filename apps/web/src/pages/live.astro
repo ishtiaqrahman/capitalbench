@@ -19,11 +19,11 @@ import {
 } from "../lib/allocations";
 import { dateOnly } from "../lib/format";
 import {
-  staticAllWeeklyPerformance,
   staticOfficialSubmissions,
   staticRoundRecords,
   staticUniverseOptions
 } from "../lib/localRoundRecords";
+import { buildLiveRoundState } from "../lib/liveRoundState";
 import { staticModelProfiles } from "../lib/modelProfiles";
 import {
   currentRiskDateLabel,
@@ -102,44 +102,20 @@ const trackStates = [
   buildTrackState("monthly", "Monthly", "One-month test", latestMonthlyRound),
   buildTrackState("weekly", "Weekly", "One-week test", latestWeeklyRound)
 ];
-const activeExposureRounds = roundRows
-  .filter((round) => round.status === "pending" && round.official_run_id)
-  .map((round) => {
-    const track = roundTrack(round);
-    return {
-      round,
-      track,
-      submissions: staticOfficialSubmissions(round.round_id, round.official_run_id),
-      options: staticUniverseOptions(round.round_id)
-    };
-  })
-  .filter((item) => (item.track === "weekly" || item.track === "monthly") && item.submissions.length > 0);
-const livePerformanceRows = staticAllWeeklyPerformance(roundRows).filter((row) => row.status === "pending");
-const openRoundCounts = {
-  all: activeExposureRounds.length,
-  weekly: activeExposureRounds.filter((item) => item.track === "weekly").length,
-  monthly: activeExposureRounds.filter((item) => item.track === "monthly").length
-};
+const {
+  activeExposureRounds,
+  livePerformanceRows,
+  openRoundCounts,
+  livePortfolioCount,
+  liveHeldAssetCount,
+  latestCloseDate,
+  nextScoreDate
+} = buildLiveRoundState(roundRows);
 const liveRiskSnapshot = apiReadModel.risk_appetite;
 const currentRiskPulse = liveRiskSnapshot.current_decision_pulse;
 const outstandingBookRisk = liveRiskSnapshot.outstanding_live_book;
 const riskPulseTopAssets = currentRiskPulse.top_assets.slice(0, 6);
 const riskPulseRegimes = currentRiskPulse.regime_exposure.slice(0, 5);
-const livePortfolioCount = activeExposureRounds.reduce((total, item) => total + item.submissions.length, 0);
-const liveHeldAssetCount = new Set(
-  activeExposureRounds.flatMap((item) =>
-    item.submissions.flatMap((submission) => decisionAllocations(submission).map((allocation) => allocation.option_id))
-  )
-).size;
-const latestCloseDate = livePerformanceRows
-  .map((row) => row.price_date)
-  .filter(Boolean)
-  .sort()
-  .at(-1);
-const nextScoreDate = activeExposureRounds
-  .map((item) => item.round.score_eta_utc || item.round.exit_date)
-  .filter(Boolean)
-  .sort()[0];
 const currentDecisionSummary = currentRiskDateLabel(currentRiskPulse, "Latest open portfolios");
 const monthlyRiskSummary = `${pulseDateLabel(currentRiskPulse.monthly, "Latest monthly decision")} / ${currentRiskPulse.monthly?.label ?? "n/a"}`;
 const weeklyRiskSummary = `${pulseDateLabel(currentRiskPulse.weekly, "Latest weekly decision")} / ${currentRiskPulse.weekly?.label ?? "n/a"}`;
@@ -272,7 +248,14 @@ function modelProfileHref(modelId: string): string {
       </div>
     </div>
 
-    <aside class="live-dashboard-status-card" aria-label="Current live dashboard status">
+    <aside
+      class="live-dashboard-status-card"
+      aria-label="Current live dashboard status"
+      data-open-round-count={openRoundCounts.all}
+      data-weekly-open-round-count={openRoundCounts.weekly}
+      data-monthly-open-round-count={openRoundCounts.monthly}
+      data-live-portfolio-count={livePortfolioCount}
+    >
       <span>Current live book</span>
       <strong class="risk-score-with-unit">{pulseScore(outstandingBookRisk.score)}<small>/100</small></strong>
       <em>{outstandingBookRisk.label}</em>

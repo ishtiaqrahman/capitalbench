@@ -11,6 +11,7 @@
     "audit:external-prices": "node scripts/audit-external-prices.mjs",
     "api:test": "node scripts/generate-api-read-model.mjs && node scripts/validate-public-data.mjs && node --test tests/*.test.mjs",
     "build": "node scripts/generate-api-read-model.mjs && node scripts/validate-public-data.mjs && astro check && astro build && node scripts/validate-rendered-data.mjs",
+    "deploy:verify": "node scripts/verify-production-deployment.mjs",
     "email:campaign": "node scripts/email-campaign.mjs",
     "email:test": "node --test tests/email-system.test.mjs",
     "seo:check": "node scripts/validate-seo.mjs",
