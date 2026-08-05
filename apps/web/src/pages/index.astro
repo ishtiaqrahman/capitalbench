@@ -131,8 +131,8 @@ const heroTestSteps = [
   {
     icon: LockKeyhole,
     label: "3",
-    title: "First portfolio locks",
-    description: "Each model's saved portfolio is frozen before results are known."
+    title: "One response, then locked",
+    description: "No browsing, tools, or follow-up prompts. The model's submitted portfolio is frozen before results are known."
   },
   {
     icon: TimerReset,
@@ -259,7 +259,7 @@ function riskWidth(value: number | null | undefined): string {
       <p class="eyebrow">CapitalBench</p>
       <h1 id="home-title">The benchmark <span class="hero-title-bridge">for AI capital</span> <span class="hero-title-tail">allocation</span></h1>
       <p class="home-hero-lede">
-        AI models get the same market brief and choose their own portfolios. We track how those portfolios perform in the real market.
+        Every AI model gets the same market brief and builds its own portfolio in one response, without browsing or tools. We lock the portfolio before results are known and score it using real market prices.
       </p>
       <p class="home-hero-sublede hero-rotating-sublede">
         <span class="sr-only">
@@ -537,12 +537,12 @@ function riskWidth(value: number | null | undefined): string {
       <div>
         <span class="panel-kicker">Trust and proof</span>
         <div class="home-question-title">
-          <h2>How does CapitalBench keep <span class="no-orphan">scores comparable?</span></h2>
+          <h2>What makes each model <span class="no-orphan">test comparable?</span></h2>
           <span class="home-info-tip" tabindex="0" aria-label="The benchmark controls the brief, asset menu, portfolio freeze, scoring window, and audit trail.">
             <Info size={15} aria-hidden="true" />
           </span>
         </div>
-        <p>Same brief, same choices, frozen portfolios, real prices.</p>
+        <p>Same brief. Same choices. One response. No tools. Real market prices.</p>
       </div>
     </div>
 
@@ -566,15 +566,15 @@ function riskWidth(value: number | null | undefined): string {
 
     <aside class="benchmark-protocol-callout" aria-label="Direct model evaluation protocol">
       <div>
-        <span class="panel-kicker">Protocol</span>
-        <strong>One brief. One scored decision. No tools.</strong>
-        <p>Each model receives the same frozen information once and submits one scored decision without browsing, code execution, agent loops, or answer refinement.</p>
+        <span class="panel-kicker">Direct model test</span>
+        <strong>The model makes the investment decision itself.</strong>
+        <p>CapitalBench does not add browsing, code execution, agent loops, or repeated answer refinement. Each scored portfolio comes from one direct model response.</p>
       </div>
       <div class="benchmark-protocol-pills" aria-label="Protocol controls">
-        <span>One scored decision</span>
-        <span>No model tools</span>
+        <span>One model response</span>
+        <span>No browsing</span>
+        <span>No external tools</span>
         <span>No agent loop</span>
-        <span>No answer refinement</span>
       </div>
     </aside>
 
