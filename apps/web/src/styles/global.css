@@ -39616,3 +39616,158 @@ html.score-alert-modal-open body {
     transition: none;
   }
 }
+
+/* Keep the complete homepage hero visible in the initial viewport. */
+@media (min-width: 981px) {
+  .home-hero {
+    padding-top: clamp(24px, 3vh, 40px);
+    padding-bottom: 12px;
+  }
+
+  .home-hero-copy {
+    padding-top: 8px;
+  }
+
+  .home-hero-lede {
+    margin-top: 28px;
+    font-size: clamp(1.35rem, 1.3vw, 1.5rem);
+    line-height: 1.48;
+  }
+
+  .hero-rotating-sublede {
+    margin-top: 28px;
+  }
+
+  .hero-rotating-window {
+    min-height: 2.05em;
+  }
+
+  .hero-manifesto-link {
+    margin-top: 12px;
+  }
+
+  .home-hero-actions {
+    margin-top: 18px;
+    padding-top: 0;
+  }
+
+  .hero-positioning-card-desktop.hero-behavior-card {
+    align-self: start;
+    gap: 8px;
+    padding-bottom: 12px;
+  }
+
+  .hero-positioning-card-desktop .console-header {
+    padding: 12px 14px 10px;
+  }
+
+  .hero-positioning-card-desktop .hero-behavior-list {
+    gap: 6px;
+    padding-inline: 14px;
+  }
+
+  .hero-positioning-card-desktop .hero-behavior-row {
+    padding: 7px 8px;
+  }
+
+  .hero-positioning-card-desktop .hero-behavior-cta {
+    min-height: 38px;
+    margin-inline: 14px;
+    padding-block: 8px;
+  }
+}
+
+@media (min-width: 981px) and (max-height: 820px) {
+  .home-hero {
+    padding-top: 14px;
+    padding-bottom: 8px;
+  }
+
+  .home-hero-copy {
+    padding-top: 0;
+  }
+
+  .home-hero-copy h1 {
+    font-size: clamp(3.85rem, 4.8vw, 4.2rem);
+  }
+
+  .home-hero-lede {
+    margin-top: 18px;
+    font-size: 1.18rem;
+    line-height: 1.45;
+  }
+
+  .hero-rotating-sublede {
+    margin-top: 18px;
+    font-size: 1.4rem;
+  }
+
+  .hero-rotating-copy {
+    gap: 8px;
+  }
+
+  .hero-rotating-window {
+    min-height: 2em;
+    font-size: clamp(3.35rem, 4.2vw, 3.85rem);
+  }
+
+  .hero-manifesto-link {
+    margin-top: 8px;
+  }
+
+  .home-hero-actions {
+    margin-top: 12px;
+    padding-top: 0;
+  }
+
+  .home-hero-actions .action-link {
+    min-height: 44px;
+    font-size: 0.98rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .home-hero {
+    gap: 10px;
+    padding-top: 12px;
+    padding-bottom: 8px;
+  }
+
+  .home-hero-lede {
+    margin-top: 16px;
+    line-height: 1.42;
+  }
+
+  .hero-rotating-sublede {
+    margin-top: 14px;
+  }
+
+  .hero-rotating-window {
+    min-height: 2.35em;
+  }
+
+  .hero-manifesto-link {
+    margin-top: 8px;
+  }
+
+  .home-hero-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .home-hero-actions .action-primary {
+    grid-column: 1 / -1;
+  }
+
+  .home-hero-actions .action-link:last-child {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 350px) {
+  .home-hero-actions .action-link {
+    padding-inline: 5px;
+    font-size: 0.75rem;
+  }
+}
