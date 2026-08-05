@@ -1,0 +1,168 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record closes and positive asset share support modest upside into employment data.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at record 7736.52 up 1.8%",
+        "Q2 GDP 1.5% annualized",
+        "FOMC held funds rate 3.50-3.75%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "SPY closes below 7700 on August 7 or later",
+      "option_id": "SP500",
+      "reversal_case": "Higher-than-expected unemployment or inflation print triggers rotation out of equities.",
+      "time_window_catalyst": "August 7 BLS July Employment Situation"
+    },
+    {
+      "continuation_case": "Value tilt benefits from defensive rotation if growth slows.",
+      "decision": "rejected",
+      "evidence": [
+        "Prior active rank 0.791",
+        "Low volatility rank 0.806",
+        "Shallow drawdown rank 0.910"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SPY rallies more than 1.5% on August 5-6",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Continued mega-cap outperformance keeps value lagging.",
+      "time_window_catalyst": "August 5 ISM Services PMI"
+    },
+    {
+      "continuation_case": "High dividend quality supports relative stability.",
+      "decision": "rejected",
+      "evidence": [
+        "Quality evidence score 0.861",
+        "Prior active rank 0.940",
+        "Recent pullback rank 0.821"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "10-year yield rises above 4.70%",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Rate-sensitive sectors underperform on hawkish data.",
+      "time_window_catalyst": "August 5 Treasury refunding announcement"
+    },
+    {
+      "continuation_case": "Stable credit conditions support banks.",
+      "decision": "rejected",
+      "evidence": [
+        "Prior active rank 0.821",
+        "Shallow drawdown rank 0.716",
+        "June job openings little changed"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Regional bank ETF falls more than 3%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield curve steepening pressures regional banks.",
+      "time_window_catalyst": "August 7 employment data"
+    },
+    {
+      "continuation_case": "Geopolitical supply risk supports prices.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude at 79.36 down 5.3%",
+        "Prior active rank 0.985",
+        "Gulf oil exports well below prewar average"
+      ],
+      "forecast_base_pct": -0.2,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Brent closes below 76",
+      "option_id": "ENERGY",
+      "reversal_case": "Progress in Iran-Oman talks eases supply concerns.",
+      "time_window_catalyst": "August 5 Strait of Hormuz updates"
+    },
+    {
+      "continuation_case": "Duration provides ballast if equities stall.",
+      "decision": "rejected",
+      "evidence": [
+        "10-year yield 4.63%",
+        "Low volatility rank 0.896",
+        "Shallow drawdown rank 0.881"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 0.9,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "10-year yield rises above 4.75%",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Strong employment data pushes yields higher.",
+      "time_window_catalyst": "August 5 Treasury refunding"
+    },
+    {
+      "continuation_case": "Global disinflation stall supports non-US equities.",
+      "decision": "rejected",
+      "evidence": [
+        "IMF global growth forecast 3.0%",
+        "ECB held rates steady",
+        "Recent pullback rank 0.313"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.7,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "VEA underperforms SPY by more than 1.5%",
+      "option_id": "DEVELOPED_EX_US",
+      "reversal_case": "US outperformance widens on strong domestic data.",
+      "time_window_catalyst": "August 7 US employment data"
+    },
+    {
+      "continuation_case": "Safe-haven demand if risk appetite fades.",
+      "decision": "rejected",
+      "evidence": [
+        "Quality evidence score 0.381",
+        "Recent pullback rank 0.522",
+        "Dollar return negative over 5 days"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Gold closes below prior week low",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger dollar and higher real yields pressure gold.",
+      "time_window_catalyst": "August 5-7 macro releases"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.0,
+  "is_official_score": true,
+  "key_risks": [
+    "July employment data surprise on August 7",
+    "Inflation reacceleration in upcoming CPI",
+    "Geopolitical escalation in Strait of Hormuz"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 100,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "SPY closes below 7700 on August 7 or later",
+      "option_id": "SP500",
+      "rationale": "No active holding clears the base-forecast hurdle above SP500; market data shows record closes but mixed macro releases with no clear one-week catalyst for outperformance.",
+      "time_window_catalyst": "August 7 BLS July Employment Situation"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.5,
+  "portfolio_rationale": "Neutral briefing and recent price history provide no active option with base forecast exceeding SP500; 100% SP500 allocation maximizes expected return within rules.",
+  "provider": "xai",
+  "rationale_summary": "SP500 selected as benchmark proxy after testing continuation versus reversal across finalists; no cluster allocation exceeds cap.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15748,
+    "latency_seconds": 14.937284888001159,
+    "output_tokens": 1607,
+    "reasoning_tokens": 740,
+    "total_tokens": 18095
+  }
+}

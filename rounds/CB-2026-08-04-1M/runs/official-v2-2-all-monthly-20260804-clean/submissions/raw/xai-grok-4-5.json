@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 1.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record close and broad participation extend into scheduled data if growth holds",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at record 7736.52 up 1.8% on August 4",
+        "spy_return_5s 4.11% and spy_return_21s 2.67%",
+        "positive_asset_share_5s 79.71%"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Close below August 4 level on consecutive weak data prints",
+      "option_id": "SP500",
+      "reversal_case": "Elevated inflation prints or hawkish FOMC reaction reverse recent gains",
+      "time_window_catalyst": "July employment, CPI, and Q2 GDP revision releases"
+    },
+    {
+      "continuation_case": "Recent absolute outperformance continues if growth sentiment persists through earnings and data",
+      "decision": "selected",
+      "evidence": [
+        "return_5s 11.14% and active_return_21s +4.94%",
+        "SOFTWARE quality evidence score 0.298 with deep pullback rank",
+        "distance_52w_high -13.39%"
+      ],
+      "forecast_base_pct": 2.8,
+      "forecast_high_pct": 7.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Break below recent 5-session gains on rising rates or weak software guidance",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High volatility_63s 34.39% and max_drawdown allow sharp mean-reversion on rates up",
+      "time_window_catalyst": "August earnings and tech sentiment into July CPI and employment data"
+    },
+    {
+      "continuation_case": "At 52-week high with strong prior trend supports further relative strength",
+      "decision": "selected",
+      "evidence": [
+        "return_5s 9.70% and active_return_21s +2.75%",
+        "distance_52w_high 0.00%",
+        "prior active rank 0.940 in quality table"
+      ],
+      "forecast_base_pct": 2.3,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Reversal of 5s strength with volume spike lower on risk-off",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "Factor rotation out of high-beta tech on stronger dollar or risk-off",
+      "time_window_catalyst": "Continued defensive tech bid around geopolitical and data releases"
+    },
+    {
+      "continuation_case": "Geopolitical premium rebuilds if Hormuz remains unresolved",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +7.48%",
+        "Brent at $79.36 down 5.3% on day after July $72-102 range",
+        "IEA noted Gulf exports still well below prewar average"
+      ],
+      "forecast_base_pct": 2.1,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Sustained Brent decline below recent lows with resolved shipping routes",
+      "option_id": "ENERGY",
+      "reversal_case": "Talks progress and lower oil prices pressure sector",
+      "time_window_catalyst": "Iran-Oman talks outcome and any Strait shipping disruption news"
+    },
+    {
+      "continuation_case": "Extreme prior active strength and quality score could reassert",
+      "decision": "rejected",
+      "evidence": [
+        "return_5s 8.71% but active_return_21s -7.40%",
+        "volatility_63s 56.20% and max_drawdown_63s -24.62%",
+        "quality evidence score 0.736 highest among many"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Further underperformance vs SPY on rising vol",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Already deep relative pullback and high beta amplify downside on any growth scare",
+      "time_window_catalyst": "None identified beyond broad tech data sensitivity"
+    },
+    {
+      "continuation_case": "Recent strength and pullback rank support catch-up",
+      "decision": "rejected",
+      "evidence": [
+        "return_5s 5.32% and quality score 0.681",
+        "prior_105s_active_return +2.92%",
+        "IMF euro-area and advanced growth forecasts modest"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "Break of 5s gains on stronger USD or weak exports",
+      "option_id": "JAPAN",
+      "reversal_case": "Yen moves or global trade weakness reverse gains",
+      "time_window_catalyst": "None specific inside window beyond global data"
+    },
+    {
+      "continuation_case": "Defensive relative strength continues if inflation data mixed",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_21s +1.13% and at 52w high",
+        "low volatility rank 0.761 and shallow drawdown",
+        "quality evidence score 0.604"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Underperformance vs SPY on strong growth prints",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth reacceleration favors momentum over value",
+      "time_window_catalyst": "CPI and employment data that could favor value rotation"
+    },
+    {
+      "continuation_case": "Safe-haven bid if Hormuz escalates or data weakens",
+      "decision": "rejected",
+      "evidence": [
+        "return_5s +1.31% but active_return_21s -4.72%",
+        "distance_52w_high -24.50%",
+        "Treasury yields elevated with 10y at 4.63%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "New lows on rising yields and risk-on equity",
+      "option_id": "GOLD",
+      "reversal_case": "Higher real yields and strong equity risk appetite pressure gold",
+      "time_window_catalyst": "Geopolitical headlines and real-rate moves around data"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.81,
+  "is_official_score": true,
+  "key_risks": [
+    "Sticky inflation and FOMC hawkish dissent could reverse growth/tech leadership",
+    "Resolution of Strait of Hormuz talks could pressure energy",
+    "High volatility in selected tech names amplifies drawdown risk into September employment",
+    "Broad market concentration at records leaves limited cushion if data disappoints"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 2.8,
+      "invalidation_condition": "Break below recent 5-session gains on rising rates or weak software guidance",
+      "option_id": "SOFTWARE",
+      "rationale": "Strong recent absolute performance and positive active return support higher base case than SPY amid growth leadership persistence into data releases.",
+      "time_window_catalyst": "August earnings and tech sentiment into July CPI and employment data"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 2.3,
+      "invalidation_condition": "Reversal of 5s strength with volume spike lower on risk-off",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Positive active return and at 52w high with quality score support outperformance vs broad market over one-month window.",
+      "time_window_catalyst": "Continued defensive tech bid around geopolitical and data releases"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.1,
+      "invalidation_condition": "Sustained Brent decline below recent lows with resolved shipping routes",
+      "option_id": "ENERGY",
+      "rationale": "Strong 21s active return and oil volatility create asymmetric upside if Hormuz risks reprice before exit.",
+      "time_window_catalyst": "Iran-Oman talks outcome and any Strait shipping disruption news"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Close below August 4 level on consecutive weak data prints",
+      "option_id": "SP500",
+      "rationale": "Benchmark core holding given record close and broad positive asset share; anchors portfolio while active sleeves seek alpha.",
+      "time_window_catalyst": "July employment, CPI, and Q2 GDP revision releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.11,
+  "portfolio_rationale": "Portfolio overweight software and cybersecurity for momentum continuation plus energy for geopolitical asymmetry, capped under 50% tech cluster, with SPY core. All active bases exceed SPY base of 1.3.",
+  "provider": "xai",
+  "rationale_summary": "Selected higher-base active options in tech and energy clusters while respecting 50% cluster cap and using SPY as ballast. Forecasts prioritize one-month catalysts from briefing data releases and Hormuz status.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16595,
+    "latency_seconds": 49.315711272880435,
+    "output_tokens": 2432,
+    "reasoning_tokens": 499,
+    "total_tokens": 19526
+  }
+}

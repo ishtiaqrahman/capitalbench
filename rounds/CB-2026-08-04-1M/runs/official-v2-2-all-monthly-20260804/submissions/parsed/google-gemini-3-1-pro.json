@@ -1,0 +1,162 @@
+{
+  "benchmark_expected_return_pct": 1.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued economic resilience and strong corporate earnings.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at a record high of 7,736.52.",
+        "Q2 GDP growth estimated at 1.5%."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant miss in upcoming economic data.",
+      "option_id": "SP500",
+      "reversal_case": "A sudden macroeconomic shock or inflation resurgence.",
+      "time_window_catalyst": "August CPI and PPI data releases."
+    },
+    {
+      "continuation_case": "Ongoing AI investments and strong earnings from mega-cap tech.",
+      "decision": "selected",
+      "evidence": [
+        "High quality evidence score of 0.569.",
+        "Strong prior active rank of 0.925."
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A sharp rise in interest rates or weak mega-cap earnings.",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Valuation concerns or regulatory crackdowns.",
+      "time_window_catalyst": "Q2 earnings reports and tech sector guidance."
+    },
+    {
+      "continuation_case": "Supply disruptions and strong global demand.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude at $79.36 per barrel.",
+        "Geopolitical tensions in the Strait of Hormuz."
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "A sudden resolution to Middle East tensions or a sharp drop in oil demand.",
+      "option_id": "ENERGY",
+      "reversal_case": "Resolution of geopolitical conflicts or a global recession.",
+      "time_window_catalyst": "Developments in Iran-Oman talks and Strait of Hormuz shipping."
+    },
+    {
+      "continuation_case": "Continued geopolitical risks and potential Fed rate cuts.",
+      "decision": "selected",
+      "evidence": [
+        "Recent pullback rank of 0.851.",
+        "Safe-haven demand amid geopolitical uncertainty."
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A strong US dollar rally or hawkish Fed surprises.",
+      "option_id": "GOLD",
+      "reversal_case": "A strong US dollar and rising real yields.",
+      "time_window_catalyst": "Fed commentary and inflation data releases."
+    },
+    {
+      "continuation_case": "Fed holds rates steady.",
+      "decision": "rejected",
+      "evidence": [
+        "One-year Treasury yield at 4.04%.",
+        "Low volatility rank of 1.000."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 0.5,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "A sudden shift in Fed policy.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Unexpected rate cuts.",
+      "time_window_catalyst": "Fed commentary."
+    },
+    {
+      "continuation_case": "Steady earnings and defensive rotation.",
+      "decision": "rejected",
+      "evidence": [
+        "Quality evidence score of 0.548.",
+        "Defensive characteristics in an uncertain market."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Major negative regulatory news.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Regulatory changes or drug pricing pressures.",
+      "time_window_catalyst": "Eli Lilly Q2 results."
+    },
+    {
+      "continuation_case": "Slowing economic growth and falling inflation.",
+      "decision": "rejected",
+      "evidence": [
+        "Thirty-year Treasury yield at 5.18%.",
+        "Recent pullback rank of 0.896."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A significant upside surprise in inflation.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Resurgent inflation and higher rates.",
+      "time_window_catalyst": "August CPI and PPI data."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.64,
+  "is_official_score": true,
+  "key_risks": [
+    "Escalation of Middle East conflict disrupting oil supplies.",
+    "Higher-than-expected inflation delaying Fed rate cuts.",
+    "A sudden reversal in technology sector momentum."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "A sharp rise in interest rates or weak mega-cap earnings.",
+      "option_id": "TECHNOLOGY",
+      "rationale": "Strong momentum and high quality evidence score support continued outperformance.",
+      "time_window_catalyst": "Q2 earnings reports and tech sector guidance."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "A sudden resolution to Middle East tensions or a sharp drop in oil demand.",
+      "option_id": "ENERGY",
+      "rationale": "Geopolitical tensions in the Middle East and tight supply support energy prices.",
+      "time_window_catalyst": "Developments in Iran-Oman talks and Strait of Hormuz shipping."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "A strong US dollar rally or hawkish Fed surprises.",
+      "option_id": "GOLD",
+      "rationale": "Safe-haven demand amid geopolitical uncertainty and potential rate cuts.",
+      "time_window_catalyst": "Fed commentary and inflation data releases."
+    }
+  ],
+  "portfolio_expected_return_pct": 2.14,
+  "portfolio_rationale": "The portfolio is positioned to capture growth in technology while hedging against geopolitical risks with energy and gold. This barbell approach balances momentum with defensive assets.",
+  "provider": "google",
+  "rationale_summary": "Overweight technology for growth, with energy and gold as geopolitical hedges.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17054,
+    "latency_seconds": 18.82278300798498,
+    "output_tokens": 1814,
+    "reasoning_tokens": 713,
+    "total_tokens": 19581
+  }
+}

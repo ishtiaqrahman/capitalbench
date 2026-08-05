@@ -1,0 +1,131 @@
+{
+  "benchmark_expected_return_pct": 1.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued momentum from record highs and positive economic data.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at a record 7,736.52, up 1.8%."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A sharp reversal in mega-cap tech or a significant miss in ISM Services.",
+      "option_id": "SP500",
+      "reversal_case": "Profit-taking or negative surprises in upcoming economic releases.",
+      "time_window_catalyst": "July ISM Services PMI and Q2 productivity data."
+    },
+    {
+      "continuation_case": "Stable short-term rates providing consistent yield.",
+      "decision": "selected",
+      "evidence": [
+        "Treasury's August 4 par yields were 4.04% at one year."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.2,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "A sudden spike in short-term rates or a major liquidity event.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Unexpected shifts in Fed policy expectations.",
+      "time_window_catalyst": "Treasury quarterly refunding announcement."
+    },
+    {
+      "continuation_case": "Tech sector continues to lead market gains.",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq Composite was 26,584.99, up 2.6%."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Significant underperformance of mega-cap tech stocks.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Valuation concerns or sector rotation away from tech.",
+      "time_window_catalyst": "Tech earnings and broader market sentiment."
+    },
+    {
+      "continuation_case": "Geopolitical tensions support oil prices.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude at $79.36 per barrel on August 4, down 5.3% on the day."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "A sharp drop in oil prices due to increased supply or demand destruction.",
+      "option_id": "OIL",
+      "reversal_case": "Resolution of Middle East tensions or weaker global demand.",
+      "time_window_catalyst": "Developments in Iran-Oman talks on Strait of Hormuz."
+    },
+    {
+      "continuation_case": "Safe-haven demand amid geopolitical uncertainty.",
+      "decision": "rejected",
+      "evidence": [
+        "Gold IAU return_5s was 1.31%."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant rally in risk assets and a stronger US dollar.",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger US dollar or rising real yields.",
+      "time_window_catalyst": "Inflation data and Fed policy expectations."
+    },
+    {
+      "continuation_case": "Stable European economic data and ECB policy.",
+      "decision": "rejected",
+      "evidence": [
+        "ECB held its deposit rate at 2.25%."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A sharp depreciation of the Euro against the US dollar.",
+      "option_id": "EURO",
+      "reversal_case": "Divergence in US and Eurozone economic performance.",
+      "time_window_catalyst": "European economic releases and ECB commentary."
+    }
+  ],
+  "confidence": 0.6,
+  "expected_alpha_vs_sp500_pct": -0.7,
+  "is_official_score": true,
+  "key_risks": [
+    "Market correction from record highs.",
+    "Unexpected inflation data impacting rate expectations.",
+    "Geopolitical escalation affecting energy prices and global growth."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "A sharp reversal in mega-cap tech or a significant miss in ISM Services.",
+      "option_id": "SP500",
+      "rationale": "Core holding to capture broad market momentum and record highs.",
+      "time_window_catalyst": "July ISM Services PMI and Q2 productivity data."
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.1,
+      "invalidation_condition": "A sudden spike in short-term rates or a major liquidity event.",
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Defensive allocation to balance equity risk and capture yield.",
+      "time_window_catalyst": "Treasury quarterly refunding announcement."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.8,
+  "portfolio_rationale": "A balanced approach combining broad equity exposure with short-term Treasuries to manage risk while participating in market upside.",
+  "provider": "google",
+  "rationale_summary": "The portfolio balances SP500 momentum with the safety of short-term Treasuries.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17020,
+    "latency_seconds": 12.65088098612614,
+    "output_tokens": 1527,
+    "total_tokens": 18547
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "benchmark_expected_return_pct": 1.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad breadth and record close with resilient economy support continuation.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 record close 7,736.52 up 1.8%",
+        "79.7% positive asset share over 5 days",
+        "ISM Manufacturing 55.6"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "CPI reaccelerates and SPY breaks 21-day support",
+      "option_id": "SP500",
+      "reversal_case": "Elevated inflation and 9-3 hawkish FOMC vote could trigger pullback.",
+      "time_window_catalyst": "July CPI Aug 12, payrolls Aug 7 and Sept 4"
+    },
+    {
+      "continuation_case": "Strong trend with secular demand and shallow drawdown.",
+      "decision": "selected",
+      "evidence": [
+        "Prior active rank 0.940",
+        "Quality score 0.511",
+        "At 52w high, distance 0.00%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 8,
+      "forecast_low_pct": -6,
+      "invalidation_condition": "CIBR breaks below 21-day trend",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High beta 1.10 tech exposure vulnerable to growth risk-off.",
+      "time_window_catalyst": "Tech earnings continuing in August"
+    },
+    {
+      "continuation_case": "Manufacturing rebound supports cyclical industrials.",
+      "decision": "selected",
+      "evidence": [
+        "ISM Manufacturing 55.6 up from 53.3",
+        "New orders 56.7, production 58.5",
+        "Distance to 52w high 0.00%"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 6,
+      "forecast_low_pct": -4,
+      "invalidation_condition": "ISM reverses below 50 or IP contracts",
+      "option_id": "INDUSTRIALS",
+      "reversal_case": "Slowing GDP could weaken industrial demand.",
+      "time_window_catalyst": "Industrial production Aug 18"
+    },
+    {
+      "continuation_case": "Mega-cap tech leadership persists.",
+      "decision": "rejected",
+      "evidence": [
+        "5-day return 7.16%",
+        "Negative 21-day active return -2.53%",
+        "Volatility 26.51%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 9,
+      "forecast_low_pct": -8,
+      "invalidation_condition": "Rates spike or mega-cap earnings disappoint",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Overbought after sharp 5-day run, rate sensitivity.",
+      "time_window_catalyst": "July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Geopolitical risk premium in oil supply.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent fell 5.3% to $79.36",
+        "Strong 21-day active return 7.48%",
+        "Iran-Oman Hormuz talks unresolved"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 8,
+      "forecast_low_pct": -8,
+      "invalidation_condition": "Oil breaks below $72",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil dropped 5.3% on the day; demand weak with refinery runs down.",
+      "time_window_catalyst": "Hormuz negotiations outcome"
+    },
+    {
+      "continuation_case": "Duration hedge if growth slows.",
+      "decision": "rejected",
+      "evidence": [
+        "10yr yield 4.63%",
+        "Negative 21-day active return -3.32%",
+        "Low volatility 5.06%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2,
+      "invalidation_condition": "Inflation reaccelerates pushing yields up",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Elevated inflation keeps yields high.",
+      "time_window_catalyst": "CPI Aug 12"
+    },
+    {
+      "continuation_case": "Safe-haven demand from geopolitical risk.",
+      "decision": "rejected",
+      "evidence": [
+        "Negative 21-day active return -4.72%",
+        "Distance to 52w high -24.50%",
+        "Prior active rank 0.060"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 6,
+      "forecast_low_pct": -6,
+      "invalidation_condition": "Dollar strengthens and real rates rise",
+      "option_id": "GOLD",
+      "reversal_case": "Weak trend and deep drawdown from high.",
+      "time_window_catalyst": "Hormuz developments"
+    },
+    {
+      "continuation_case": "Steepening curve aids banks.",
+      "decision": "rejected",
+      "evidence": [
+        "Positive 21-day active return 0.43%",
+        "At 52w high",
+        "Low drawdown -2.08%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -3,
+      "invalidation_condition": "Credit stress emerges",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Base forecast does not clear SPY hurdle.",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.25,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot July CPI (Aug 12) or PPI reaccelerates hawkish Fed expectations given 9-3 FOMC vote",
+    "Tech/growth pullback hits cybersecurity given elevated volatility",
+    "Weak Sept 4 payrolls signals sharper growth slowdown after Q2 GDP 1.5%"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Hot CPI/PPI reaccelerates rate-hike odds and SPY drops below prior support",
+      "option_id": "SP500",
+      "rationale": "Record close with broad breadth (79.7% positive assets over 5 days); solid ISM manufacturing and resilient consumer.",
+      "time_window_catalyst": "July CPI Aug 12, jobs report Aug 7, Sept 4 payrolls"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Tech risk-off; CIBR breaks below 21-day trend",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Strong prior active trend with recent pullback (positive pullback rank), robust quality score, secular demand independent of rate path.",
+      "time_window_catalyst": "Software/tech earnings continuing through August"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "ISM reverses or industrial production contracts",
+      "option_id": "INDUSTRIALS",
+      "rationale": "ISM Manufacturing PMI jumped to 55.6 with new orders 56.7, production 58.5, supporting cyclical industrials.",
+      "time_window_catalyst": "July industrial production Aug 18"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.35,
+  "portfolio_rationale": "Core SP500 exposure combined with two above-benchmark tilts: cybersecurity for secular growth with favorable pullback quality, and industrials backed by the strong July ISM manufacturing beat.",
+  "provider": "anthropic",
+  "rationale_summary": "Balanced tilt around record-high SPY, adding CYBERSECURITY and INDUSTRIALS which clear the SPY base hurdle on fundamental and quality evidence.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27787,
+    "latency_seconds": 97.77455295296386,
+    "output_tokens": 2551,
+    "total_tokens": 30338
+  }
+}

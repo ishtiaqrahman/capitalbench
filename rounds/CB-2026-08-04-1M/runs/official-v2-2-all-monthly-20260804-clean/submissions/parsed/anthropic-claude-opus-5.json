@@ -1,0 +1,198 @@
+{
+  "benchmark_expected_return_pct": 1.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad breadth (65% positive 21-day), solid ISM, record highs.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 record close 7,736.52, up 1.8% on Aug 4",
+        "spy_return_21s 2.67%, volatility 14.29%",
+        "ISM Manufacturing 55.6, up from 53.3"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "CPI or payrolls shock triggering >5% index drawdown",
+      "option_id": "SP500",
+      "reversal_case": "Sticky inflation (core PCE 3.3% y/y), hawkish FOMC dissents, slowing GDP 1.5%.",
+      "time_window_catalyst": "Aug 7 payrolls, Aug 12 CPI, Sep 4 payrolls"
+    },
+    {
+      "continuation_case": "Strong prior trend with a deep recent pullback historically mean-reverts; Q2 pharma results catalysts.",
+      "decision": "selected",
+      "evidence": [
+        "Prior 105-day active return +17.79% with 21-day active -8.22%",
+        "Highest quality evidence score 0.774",
+        "Volatility 31.11%, drawdown -10.51%"
+      ],
+      "forecast_base_pct": 2.6,
+      "forecast_high_pct": 12.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "XBI makes a new 63-day low or 30y yield exceeds 5.4%",
+      "option_id": "BIOTECH",
+      "reversal_case": "Rate backup and risk-off can hit unprofitable biotech hardest.",
+      "time_window_catalyst": "Eli Lilly Q2 Aug 5; August clinical/M&A news"
+    },
+    {
+      "continuation_case": "Sustained relative strength with no drawdown from highs; secular IT security spend.",
+      "decision": "selected",
+      "evidence": [
+        "Prior 105-day active +25.25%, 21-day active +2.75%",
+        "Distance to 52-week high 0.00%",
+        "Volatility 33.23% with drawdown -11.74%"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -7.0,
+      "invalidation_condition": "CIBR falls more than 8% below the Aug 4 close",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "Growth-multiple compression if inflation prints hot; crowded tech.",
+      "time_window_catalyst": "August enterprise software earnings"
+    },
+    {
+      "continuation_case": "Value leadership consistent with elevated inflation and steep curve.",
+      "decision": "selected",
+      "evidence": [
+        "21-day active return +1.13%, prior active +3.70%",
+        "Volatility 11.84%, drawdown -2.40%, at 52-week high"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "IWD underperforms SPY by more than 3% intramonth",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "A dovish surprise would favor long-duration growth over value.",
+      "time_window_catalyst": "Aug 12 CPI, Aug 26 GDP revision"
+    },
+    {
+      "continuation_case": "Steep curve supports net interest margins; low volatility profile.",
+      "decision": "selected",
+      "evidence": [
+        "21-day active +0.43%, drawdown only -2.08%",
+        "Curve steep: 1y 4.04% vs 30y 5.18%",
+        "At 52-week high"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "HYG falls more than 2% or regional bank credit event",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit deterioration with unemployment at 4.2% and slowing GDP.",
+      "time_window_catalyst": "Aug 5 Treasury refunding; labor data"
+    },
+    {
+      "continuation_case": "Dominant AI capex trend and high quality score 0.736.",
+      "decision": "rejected",
+      "evidence": [
+        "Prior active +39.52%, 21-day active -7.40%",
+        "Volatility 56.20%, beta 2.35, drawdown -24.62%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 18.0,
+      "forecast_low_pct": -15.0,
+      "invalidation_condition": "SMH breaks 10% below entry",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme volatility and crowding; already +8.71% in five days.",
+      "time_window_catalyst": "August semi earnings and AI capex updates"
+    },
+    {
+      "continuation_case": "Deep pullback could mean-revert if labor weakens.",
+      "decision": "rejected",
+      "evidence": [
+        "21-day active -5.36%, 30y yield 5.18%",
+        "Core PCE 3.3% y/y; FOMC had three hike dissents"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "30y yield exceeds 5.35%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky inflation and heavy refunding supply keep long yields rising.",
+      "time_window_catalyst": "Aug 5 refunding, Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Gulf exports 16.1 mb/d vs 24 prewar keeps supply tight.",
+      "decision": "rejected",
+      "evidence": [
+        "21-day active +7.48% but Brent fell 5.3% to $79.36 on Aug 4",
+        "Iran-Oman Hormuz talks progressing but unresolved"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -9.0,
+      "invalidation_condition": "Brent settling below $70",
+      "option_id": "ENERGY",
+      "reversal_case": "A Hormuz deal would deflate the geopolitical premium quickly.",
+      "time_window_catalyst": "Iran-Oman negotiation outcome during August"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.59,
+  "is_official_score": true,
+  "key_risks": [
+    "July CPI on Aug 12 surprises higher, pressuring long duration and equity multiples",
+    "Hormuz escalation spikes oil and hits risk assets",
+    "Momentum/tech unwind after a 4.1% five-day SPY surge",
+    "Weak Aug 7 or Sep 4 payrolls signal a growth downturn",
+    "Biotech and cybersecurity are high-volatility sleeves that can underperform sharply"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "CPI above 4% year over year or payrolls contraction driving a >5% drawdown",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure at record highs with broad participation.",
+      "time_window_catalyst": "July payrolls Aug 7, CPI Aug 12, August payrolls Sep 4"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.6,
+      "invalidation_condition": "Long-end yields rising above 5.4% or XBI breaking below its 63-day low",
+      "option_id": "BIOTECH",
+      "rationale": "Strong prior relative trend plus deep recent relative pullback; top quality evidence score.",
+      "time_window_catalyst": "Q2 pharma results (Lilly Aug 5) and M&A/financing conditions"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Tech sector breaks below its 21-day range or software guidance disappoints",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Positive prior and recent active return with no drawdown from 52-week high; lower volatility than other tech sleeves.",
+      "time_window_catalyst": "August software/security earnings and enterprise IT spending updates"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Sharp rate cut repricing that reignites pure growth leadership",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Positive 21-day active return, low volatility, shallow drawdown, at 52-week high.",
+      "time_window_catalyst": "CPI Aug 12 and GDP second estimate Aug 26"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Credit spreads widening materially or regional bank stress",
+      "option_id": "FINANCIALS",
+      "rationale": "Steep curve (30y 5.18% vs 1y 4.04%), positive active return, smallest drawdown among sectors.",
+      "time_window_catalyst": "Treasury refunding Aug 5; credit and labor data through Sep 4"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.69,
+  "portfolio_rationale": "Anchor in SPY with modest tilts to areas combining prior relative strength with recent relative pullback (biotech, cybersecurity) and to low-drawdown value/financials that benefit from a steep curve and still-elevated inflation.",
+  "provider": "anthropic",
+  "rationale_summary": "Diversified, near-benchmark portfolio with small alpha tilts; equity backdrop is supportive (records, ISM 55.6, high positive-asset breadth) but inflation is sticky and the Fed has hawkish dissenters, so risk budget is limited.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27781,
+    "latency_seconds": 56.32987450808287,
+    "output_tokens": 3231,
+    "total_tokens": 31012
+  }
+}

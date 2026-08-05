@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.35,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record close, broad participation, strong ISM manufacturing 55.6.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 record close 7,736.52, +1.8% on Aug 4",
+        "spy_return_5s +4.11%",
+        "positive_asset_share_5s 79.71%"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Break below 21-day average on hawkish data",
+      "option_id": "SP500",
+      "reversal_case": "Elevated inflation (core PCE 3.3% y/y), three FOMC dissents favoring hikes, overbought 5-day move.",
+      "time_window_catalyst": "Aug 5 ISM Services, Aug 7 July Employment Situation"
+    },
+    {
+      "continuation_case": "Strong prior relative trend plus deepest recent relative pullback historically mean-reverts.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s -7.20%, worst pullback rank 0.970",
+        "prior_16s_active +4.66%",
+        "beta_spy_63s -0.226"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLV underperforms SPY by another 2% after Lilly print",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Sustained rotation into growth keeps defensives bid down.",
+      "time_window_catalyst": "Eli Lilly Q2 results Aug 5"
+    },
+    {
+      "continuation_case": "Steep curve, benign credit (HYG +0.65% 5s), record index breadth.",
+      "decision": "selected",
+      "evidence": [
+        "quality score 0.732; prior active rank 0.821",
+        "active_return_5s -3.63%, at 52w high",
+        "30y yield 5.18% vs 2y 4.20% steep curve"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "HYG turns negative and curve flattens sharply",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Payroll weakness or credit deterioration hits banks.",
+      "time_window_catalyst": "Aug 5 Treasury refunding; Aug 7 payrolls"
+    },
+    {
+      "continuation_case": "Sharp relative washout against strong prior trend; low drawdown.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_5s -6.05%, pullback rank 0.925",
+        "prior_16s_active +4.91%",
+        "beta -0.384, drawdown only -3.03%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLP makes new relative low versus SPY midweek",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Risk-on tape and elevated goods inflation squeeze margins.",
+      "time_window_catalyst": "Aug 7 payrolls, rotation dynamics"
+    },
+    {
+      "continuation_case": "Powerful AI-led momentum with beta 3.1.",
+      "decision": "rejected",
+      "evidence": [
+        "return_3s +6.83%, active_5s +4.59%",
+        "volatility_21s 52.69%, drawdown -17.48%",
+        "quality score 0.064"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Two consecutive down days versus SPY",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme volatility, -13.9% from 52w high, weakest quality evidence; sharp giveback likely.",
+      "time_window_catalyst": "No scheduled sector event before Aug 11"
+    },
+    {
+      "continuation_case": "Gulf exports still 16.1 vs 24 mb/d prewar keeps supply risk premium.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent $79.36, -5.3% on Aug 4",
+        "XLE active_5s -2.46% but prior_16s +9.74%",
+        "Iran-Oman Hormuz talks progressing"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Brent breaks below $75",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation headlines could push crude sharply lower.",
+      "time_window_catalyst": "Hormuz negotiation headlines"
+    },
+    {
+      "continuation_case": "Weak payrolls could rally duration.",
+      "decision": "rejected",
+      "evidence": [
+        "30y at 5.18%; tlt_return_21s -2.69%",
+        "FOMC held with three hike dissents",
+        "volume_zscore 2.201"
+      ],
+      "forecast_base_pct": -0.1,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "30y yield above 5.30%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Refunding supply and 5.7% gross-domestic-purchases price index pressure long end.",
+      "time_window_catalyst": "Aug 5 refunding announcement; Aug 7 payrolls"
+    },
+    {
+      "continuation_case": "Strong prior relative trend and risk-on tape.",
+      "decision": "rejected",
+      "evidence": [
+        "prior_16s_active +8.32% but active_5s -6.46%",
+        "volatility_21s 40.22%",
+        "-61.33% from 52w high"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -9.0,
+      "invalidation_condition": "Further 5% relative decline versus SPY",
+      "option_id": "ETHEREUM_ETF",
+      "reversal_case": "Momentum already broke down in latest window; extreme volatility.",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.44,
+  "expected_alpha_vs_sp500_pct": 0.25,
+  "is_official_score": true,
+  "key_risks": [
+    "Momentum/tech continuation extends SPY gains while low-beta laggards stay flat",
+    "Hot July payrolls Aug 7 hits rate-sensitive and broad equities",
+    "Healthcare single-name event risk from Lilly results",
+    "Defensive names continue de-rating in a risk-on tape"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 45,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Hot payrolls/hawkish repricing driving SPY below its 21-day average",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure at record highs with broad participation.",
+      "time_window_catalyst": "Aug 7 July jobs report; Aug 5 ISM Services"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Continued sector underperformance after Lilly results or negative policy headline",
+      "option_id": "HEALTHCARE",
+      "rationale": "Deep relative pullback (-7.2% 5s active) with strong prior trend and low beta; mean-reversion candidate with Lilly Q2 catalyst.",
+      "time_window_catalyst": "Eli Lilly Q2 results Aug 5"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Credit spread widening or sharp curve flattening",
+      "option_id": "FINANCIALS",
+      "rationale": "High quality-evidence score, prior positive active trend, at 52w high, steep curve supportive.",
+      "time_window_catalyst": "Aug 5 Treasury refunding; Aug 7 payrolls"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Further defensive de-rating as risk appetite extends",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Largest recent relative pullback among defensives with strong prior trend; hedges tech-led drawdown risk.",
+      "time_window_catalyst": "Aug 7 payrolls; sector rotation post record highs"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.6,
+  "portfolio_rationale": "SPY just returned +4.1% in five sessions with extreme tech leadership; we keep a large benchmark core and add three high-quality-evidence, low-beta laggards (healthcare, financials, staples) that pulled back hardest on a relative basis into event-heavy week.",
+  "provider": "anthropic",
+  "rationale_summary": "Barbell of SPY core plus mean-reversion defensives/financials rather than chasing semis and software that already ran 7-9% in three sessions with 30-50% volatility.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27787,
+    "latency_seconds": 40.197955133160576,
+    "output_tokens": 2938,
+    "total_tokens": 30725
+  }
+}

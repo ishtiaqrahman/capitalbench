@@ -1,0 +1,170 @@
+{
+  "benchmark_expected_return_pct": 1.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record closes and positive asset share persist into September close.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at record 7736.52 up 1.8%",
+        "Q2 GDP 1.5% annualized"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "SPY closes below 7500 on sustained volume",
+      "option_id": "SP500",
+      "reversal_case": "Inflation reacceleration or weak August jobs data.",
+      "time_window_catalyst": "August employment and CPI releases"
+    },
+    {
+      "continuation_case": "Tech earnings and manufacturing expansion continue.",
+      "decision": "selected",
+      "evidence": [
+        "TECHNOLOGY 5-day return 9.24%",
+        "ISM Manufacturing PMI 55.6"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": 0.8,
+      "invalidation_condition": "Core PCE above 3.5% on August 12",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Rate-sensitive selloff on hotter CPI.",
+      "time_window_catalyst": "August 5 ISM Services and earnings from tech names"
+    },
+    {
+      "continuation_case": "Export strength and stable global growth outlook.",
+      "decision": "selected",
+      "evidence": [
+        "JAPAN quality evidence score 0.681",
+        "5-day return 5.32%"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": 0.6,
+      "invalidation_condition": "Yen strengthens beyond 145 per dollar",
+      "option_id": "JAPAN",
+      "reversal_case": "Yen carry trade unwind.",
+      "time_window_catalyst": "Global growth forecast stability from IMF"
+    },
+    {
+      "continuation_case": "Value rotation continues amid elevated inflation.",
+      "decision": "selected",
+      "evidence": [
+        "LARGE_VALUE 21-day active return +1.13%",
+        "Low volatility rank 0.761"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": 0.4,
+      "invalidation_condition": "Unemployment rises above 4.5%",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Broad equity rally broadens beyond value.",
+      "time_window_catalyst": "July employment situation follow-through"
+    },
+    {
+      "continuation_case": "Geopolitical supply tightness persists.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude $79.36 down 5.3% on day",
+        "Gulf oil exports sharply lower"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Oil falls below $70",
+      "option_id": "ENERGY",
+      "reversal_case": "Strait of Hormuz shipping routes normalize.",
+      "time_window_catalyst": "Iran-Oman talks outcome"
+    },
+    {
+      "continuation_case": "Defensive rotation on growth concerns.",
+      "decision": "rejected",
+      "evidence": [
+        "UTILITIES 21-day active return -5.30%",
+        "10-year yield 4.63%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "10-year yield rises above 4.8%",
+      "option_id": "UTILITIES",
+      "reversal_case": "Rates stabilize or decline.",
+      "time_window_catalyst": "August 7 employment data"
+    },
+    {
+      "continuation_case": "AI demand momentum holds.",
+      "decision": "rejected",
+      "evidence": [
+        "SEMICONDUCTORS quality evidence score 0.736",
+        "5-day return 8.71%"
+      ],
+      "forecast_base_pct": 2.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "SMH drawdown exceeds 15%",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Supply chain or valuation compression.",
+      "time_window_catalyst": "Tech earnings season"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 0.43,
+  "is_official_score": true,
+  "key_risks": [
+    "Elevated inflation readings could pressure growth stocks",
+    "Geopolitical developments in Strait of Hormuz",
+    "Weaker than expected Q2 GDP revision on August 26"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "SPY closes below 7500 on sustained volume",
+      "option_id": "SP500",
+      "rationale": "Broad US equity exposure with record closes and stable macro backdrop.",
+      "time_window_catalyst": "August employment and CPI releases"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Core PCE above 3.5% on August 12",
+      "option_id": "TECHNOLOGY",
+      "rationale": "Strong recent relative performance and ISM manufacturing strength support outperformance.",
+      "time_window_catalyst": "August 5 ISM Services and earnings from tech names"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Yen strengthens beyond 145 per dollar",
+      "option_id": "JAPAN",
+      "rationale": "High quality evidence score and positive 5-day return versus SPY.",
+      "time_window_catalyst": "Global growth forecast stability from IMF"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Unemployment rises above 4.5%",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Positive 21-day active return and lower volatility profile.",
+      "time_window_catalyst": "July employment situation follow-through"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.93,
+  "portfolio_rationale": "Mix of broad market, growth tilt, and international diversification with base forecasts exceeding SPY.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings show base-case outperformance supported by recent relative strength and scheduled data releases within the window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15744,
+    "latency_seconds": 23.748288895003498,
+    "output_tokens": 1561,
+    "reasoning_tokens": 899,
+    "total_tokens": 18204
+  }
+}

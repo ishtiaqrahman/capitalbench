@@ -1,0 +1,199 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong breadth, easing oil, and firm manufacturing data sustain the uptrend",
+      "decision": "selected",
+      "evidence": [
+        "Record close 7,736.52 up 1.8% on Aug 4",
+        "ISM Manufacturing 55.6 up from 53.3",
+        "79.7% of assets positive over 5 sessions"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Risk-off break below prior week's low on macro shock",
+      "option_id": "SP500",
+      "reversal_case": "After +4.1% in 5 sessions, hot payrolls or refunding supply could trigger consolidation",
+      "time_window_catalyst": "Aug 5 ISM Services, Aug 7 payrolls"
+    },
+    {
+      "continuation_case": "Recovery from prior pullback with earnings momentum and falling energy prices",
+      "decision": "selected",
+      "evidence": [
+        "+3.05% active return over 5 sessions after -5.16% prior active",
+        "Nasdaq Composite up 2.6% on Aug 4",
+        "Brent down 5.3% easing inflation pressure"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "10y yield spike or >3% tech drawdown intraweek",
+      "option_id": "NASDAQ100",
+      "reversal_case": "High beta (1.71) makes it vulnerable to rate spikes from refunding or strong jobs data",
+      "time_window_catalyst": "Aug 7 payrolls; ongoing earnings"
+    },
+    {
+      "continuation_case": "Deep oversold relative move mean-reverts, aided by Lilly earnings catalyst",
+      "decision": "selected",
+      "evidence": [
+        "Recent pullback rank 0.97 with quality score 0.80",
+        "-7.2% active over 5 sessions after +4.66% prior active",
+        "Eli Lilly Q2 results Aug 5"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Lilly miss and XLV breaking 21-day low",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Continued risk-on rotation keeps defensives lagging",
+      "time_window_catalyst": "Eli Lilly Q2 Aug 5"
+    },
+    {
+      "continuation_case": "Sharp relative pullback vs solid prior trend suggests snapback if rally cools",
+      "decision": "selected",
+      "evidence": [
+        "Recent pullback rank 0.94, prior active +3.94%",
+        "-6.14% active over 5 sessions",
+        "Quality evidence score 0.81"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "SPY extending gains >2% with defensives flat",
+      "option_id": "LOW_VOL",
+      "reversal_case": "Momentum-led melt-up continues, defensives lag further",
+      "time_window_catalyst": "Post-payrolls rotation Aug 7"
+    },
+    {
+      "continuation_case": "Geopolitical risk premium plus weak dollar support gold into event-heavy week",
+      "decision": "selected",
+      "evidence": [
+        "Hormuz talks unresolved; cargo ship hit by projectile Aug 4",
+        "Dollar weak: UUP -1.47% over 5 sessions",
+        "IAU +1.31% over 5 sessions"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Finalized shipping deal plus dollar rebound",
+      "option_id": "GOLD",
+      "reversal_case": "Hormuz deal finalized and yields rise, pressuring gold",
+      "time_window_catalyst": "Hormuz talks; Aug 5 refunding announcement"
+    },
+    {
+      "continuation_case": "Further de-escalation continues unwinding the war premium",
+      "decision": "rejected",
+      "evidence": [
+        "Brent -5.3% on Aug 4 on Hormuz talks progress",
+        "68.9% volatility, -17% drawdown 21s"
+      ],
+      "forecast_base_pct": -2.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Confirmed shipping agreement removing supply risk",
+      "option_id": "OIL",
+      "reversal_case": "Talks collapse or strait incident escalates, spiking crude",
+      "time_window_catalyst": "Iran-Oman negotiations status"
+    },
+    {
+      "continuation_case": "Earnings-driven momentum could persist",
+      "decision": "rejected",
+      "evidence": [
+        "+7.02% active over 5 sessions",
+        "Lowest recent pullback rank (0.015) \u2014 extended"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Failure to hold gains post-rally",
+      "option_id": "SOFTWARE",
+      "reversal_case": "Most extended recent winner in universe; high reversal risk with no fresh catalyst",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Weak payrolls could rally duration",
+      "decision": "rejected",
+      "evidence": [
+        "30y at 5.18%; Fed held with 3 dissents for a hike",
+        "Inflation elevated: core PCE 3.3% y/y",
+        "TLT -2.69% over 21 sessions"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Hot jobs report pushing long yields higher",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Refunding supply and sticky inflation keep yields elevated",
+      "time_window_catalyst": "Aug 5 refunding, Aug 7 payrolls"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.135,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot July payrolls or hawkish refunding pushes yields up, hurting growth and gold simultaneously",
+    "Tech momentum reverses after a 4%+ SPY week, dragging the QQQ overweight",
+    "Hormuz resolution triggers a cyclical rally that leaves healthcare and low-vol lagging",
+    "Elevated inflation prints keep Fed hawkish, capping equity upside broadly"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Payroll or ISM shock triggering broad risk-off below prior week's low",
+      "option_id": "SP500",
+      "rationale": "Record close with strong breadth (79.7% positive assets 5s) and firm ISM manufacturing; core diversified anchor.",
+      "time_window_catalyst": "Aug 5 ISM Services, Aug 7 July payrolls, Aug 11 close"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Rates spike above 4.8% on 10y or tech reversal >3% intraweek",
+      "option_id": "NASDAQ100",
+      "rationale": "Strong 5-day recovery (+3.05% active) after prior pullback; earnings momentum and easing oil supports growth beta.",
+      "time_window_catalyst": "Mega-cap earnings follow-through, Aug 7 payrolls"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Lilly earnings miss dragging XLV below its 21-day low",
+      "option_id": "HEALTHCARE",
+      "rationale": "Deep recent relative pullback with top-tier quality evidence score (0.80) and Eli Lilly Q2 catalyst Aug 5; defensive ballast.",
+      "time_window_catalyst": "Eli Lilly Q2 results Aug 5"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "Continued sharp growth-led rally leaving defensives lagging further",
+      "option_id": "LOW_VOL",
+      "rationale": "Highest recent-pullback rank (0.94) with solid prior trend; mean-reversion candidate with low downside.",
+      "time_window_catalyst": "Rotation after Aug 7 payrolls if growth fades"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Hormuz agreement finalized and dollar rebound pushing gold below recent range",
+      "option_id": "GOLD",
+      "rationale": "Hedge against Hormuz escalation and refunding/CPI rate volatility; recent modest gain despite soft dollar backdrop.",
+      "time_window_catalyst": "Iran-Oman Hormuz talks unresolved; Aug 5 refunding announcement"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.435,
+  "portfolio_rationale": "Anchor in SPY with a growth tilt via NASDAQ100 riding earnings momentum, balanced by oversold defensive healthcare/low-vol mean reversion and a gold hedge against unresolved Strait of Hormuz risk and the refunding announcement.",
+  "provider": "anthropic",
+  "rationale_summary": "Barbell of continuing tech strength and mean-reverting defensives around a SPY core, with gold as a geopolitical hedge into an event-heavy week (ISM services, payrolls, refunding).",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27787,
+    "latency_seconds": 55.81099296105094,
+    "output_tokens": 3633,
+    "total_tokens": 31420
+  }
+}
