@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record highs, broad positive asset share, and recent index strength support near-term trend persistence.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at a record 7,736.52, up 1.8% on August 4.",
+        "SPY return was 4.11% over 5 sessions and 2.67% over 21 sessions.",
+        "SPY 21-session volatility was 14.34% with a -3.38% 21-session max drawdown."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "SPY loses the August 4 breakout/record-close posture and broad market breadth deteriorates materially.",
+      "option_id": "SP500",
+      "reversal_case": "The 5-day rally leaves the benchmark vulnerable to profit-taking if services data or employment data revive inflation and rate concerns.",
+      "time_window_catalyst": "August 5 ISM Services PMI and August 7 July Employment Situation before the exit close."
+    },
+    {
+      "continuation_case": "Very strong short-term active momentum can persist if risk appetite remains constructive and services/earnings tone supports growth equities.",
+      "decision": "selected",
+      "evidence": [
+        "Software returned 9.31% over 3 sessions and had 7.02% 5-session active return versus SPY.",
+        "Software 21-session volatility was 29.84% and max drawdown was -8.11%.",
+        "Quality evidence score was weak at 0.185, so the case relies on near-term continuation with caveat."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Software gives back most of its latest active outperformance or broad growth equities reverse sharply before the exit close.",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High volatility and weak quality evidence increase the risk that the rally reverses or was a short-covering move.",
+      "time_window_catalyst": "July ISM Services PMI, large-cap earnings tone, and July Employment Situation before the exit close."
+    },
+    {
+      "continuation_case": "Breakout/high-close behavior and strong active momentum support additional follow-through if growth sentiment remains firm.",
+      "decision": "selected",
+      "evidence": [
+        "Cybersecurity returned 8.80% over 3 sessions and had 5.59% 5-session active return versus SPY.",
+        "Cybersecurity was at a 0.00% distance from its 52-week high.",
+        "Its 21-session volatility was 29.06%, below several higher-beta technology themes."
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Break below the entry-date high/relative strength pattern or a broad technology reversal invalidates the continuation case.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "A broad technology reversal or disappointment in risk appetite could pull the group back after a fast rally.",
+      "time_window_catalyst": "July ISM Services PMI, large-cap earnings tone, and July Employment Situation before the exit close."
+    },
+    {
+      "continuation_case": "A sharp selloff creates rebound potential if unresolved Hormuz risk restores geopolitical premium.",
+      "decision": "selected",
+      "evidence": [
+        "Oil returned -9.18% over 3 sessions and had -8.02% 5-session active return versus SPY.",
+        "Associated Press reported Brent crude at $79.36 on August 4, down 5.3% on the day.",
+        "Iran-Oman talks on Strait of Hormuz shipping routes were not final, and a cargo ship was reported damaged by an unknown projectile."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Talks are finalized with clear shipping-route de-escalation or crude continues breaking lower after the August 4 selloff.",
+      "option_id": "OIL",
+      "reversal_case": "If de-escalation progresses or the market focuses on weaker demand/refinery-run data, crude could continue falling.",
+      "time_window_catalyst": "Further headlines on Iran-Oman Strait of Hormuz talks, shipping disruptions, or energy-risk premium before August 11."
+    },
+    {
+      "continuation_case": "Strong prior active trend plus recent pullback can recover quickly if risk appetite and digital-asset liquidity remain supportive.",
+      "decision": "selected",
+      "evidence": [
+        "Ethereum ETF had 8.32% prior 16-session active return and -6.46% 5-session active return versus SPY.",
+        "Quality evidence score was 0.776, including 0.970 prior active rank and 0.955 recent pullback rank.",
+        "21-session volatility was high at 40.22%."
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Crypto risk appetite deteriorates and Ethereum extends its recent 5-day underperformance versus SPY.",
+      "option_id": "ETHEREUM_ETF",
+      "reversal_case": "Very high volatility and recent underperformance can persist if speculative assets de-risk.",
+      "time_window_catalyst": "Digital-asset flow and liquidity conditions during the week; no specific scheduled catalyst identified."
+    },
+    {
+      "continuation_case": "Unusually high volume and modest short-term strength could extend if employment data trigger risk aversion or lower US-rate expectations.",
+      "decision": "selected",
+      "evidence": [
+        "Yen returned 0.99% over 3 sessions and had -0.27% 5-session active return versus SPY.",
+        "Yen volume z-score was 5.086, the highest among assessed candidates.",
+        "Yen quality evidence score was 0.493 with shallow drawdown rank of 0.925."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "US yields and risk appetite rise together, renewing pressure on yen exposure.",
+      "option_id": "YEN",
+      "reversal_case": "If risk appetite remains strong and US yield differentials widen, yen exposure can lag equities again.",
+      "time_window_catalyst": "July Employment Situation and any associated shift in rate-differential or risk-aversion expectations before the exit close."
+    },
+    {
+      "continuation_case": "High quality evidence, strong prior relative trend, and shallow drawdown could attract defensive equity flows.",
+      "decision": "rejected",
+      "evidence": [
+        "Dividend equities had a high quality evidence score of 0.861.",
+        "Prior 16-session active return was 6.50%, but 5-session active return was -4.23%.",
+        "21-session volatility was 13.27% with a -1.42% max drawdown."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Dividend equities continue to lag SPY materially despite a risk-off or defensive tape.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Recent underperformance versus SPY may persist if growth leadership continues and dividend factors lag.",
+      "time_window_catalyst": "Potential factor rotation around ISM Services PMI and July Employment Situation."
+    },
+    {
+      "continuation_case": "Low volatility and positive carry provide stable but small expected return if risk assets stumble.",
+      "decision": "rejected",
+      "evidence": [
+        "Short Treasury 3-session return was 0.05% and 21-session volatility was 0.19%.",
+        "Quality evidence score was 0.760 with low-volatility and shallow-drawdown ranks both 1.000.",
+        "Treasury 1-year par yield was 4.04% at the August 4 close."
+      ],
+      "forecast_base_pct": 0.08,
+      "forecast_high_pct": 0.12,
+      "forecast_low_pct": 0.02,
+      "invalidation_condition": "Equities continue to rally strongly, making the low-return cash-like profile unattractive versus SPY.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Cash-like exposure is very unlikely to outperform SPY if equities continue their recent rally.",
+      "time_window_catalyst": "None identified beyond carry and possible risk-off demand around scheduled data."
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.4725,
+  "is_official_score": true,
+  "key_risks": [
+    "A broad equity reversal after record S&P 500 and Dow closes could hit software, cybersecurity, and crypto simultaneously.",
+    "Technology-and-growth strength may prove to be a short-covering bounce given weak quality evidence and high volatility in several growth themes.",
+    "Hormuz negotiations could de-escalate quickly, removing oil's rebound catalyst after the sharp crude selloff.",
+    "The July Employment Situation could strengthen rate-hike concerns and pressure risk assets while also weakening yen exposure."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Software gives back most of its latest active outperformance or broad growth equities reverse sharply before the exit close.",
+      "option_id": "SOFTWARE",
+      "rationale": "Strongest short-term relative price action in the universe among assessed finalists, with a plausible risk-on continuation case into the one-week window despite weak quality evidence.",
+      "time_window_catalyst": "July ISM Services PMI, large-cap earnings tone, and July Employment Situation before the exit close."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "Break below the entry-date high/relative strength pattern or a broad technology reversal invalidates the continuation case.",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Cybersecurity combines strong 3-day and 5-day active momentum with a 52-week high, offering a cleaner continuation setup than many higher-volatility technology themes.",
+      "time_window_catalyst": "July ISM Services PMI, large-cap earnings tone, and July Employment Situation before the exit close."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Talks are finalized with clear shipping-route de-escalation or crude continues breaking lower after the August 4 selloff.",
+      "option_id": "OIL",
+      "rationale": "Crude exposure has a near-term rebound/geopolitical-risk premium setup after a sharp drop, with Hormuz shipping risks unresolved inside the scoring window.",
+      "time_window_catalyst": "Further headlines on Iran-Oman Strait of Hormuz talks, shipping disruptions, or energy-risk premium before August 11."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Crypto risk appetite deteriorates and Ethereum extends its recent 5-day underperformance versus SPY.",
+      "option_id": "ETHEREUM_ETF",
+      "rationale": "Ethereum has strong prior active performance and high quality evidence after a recent pullback, providing convex upside if risk appetite persists.",
+      "time_window_catalyst": "Digital-asset flow and liquidity conditions during the week; no specific scheduled catalyst identified."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "US yields and risk appetite rise together, renewing pressure on yen exposure.",
+      "option_id": "YEN",
+      "rationale": "Yen provides a diversifying risk-off component with unusually high volume activity and a small positive short-term price move, while still clearing the SPY base forecast.",
+      "time_window_catalyst": "July Employment Situation and any associated shift in rate-differential or risk-aversion expectations before the exit close."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.7225,
+  "portfolio_rationale": "The portfolio emphasizes active holdings with base forecasts above SPY while capping technology-and-growth exposure at 50%. It pairs growth continuation in software/cybersecurity with oil rebound risk, crypto convexity, and yen diversification around the employment and services-data catalysts.",
+  "provider": "openai",
+  "rationale_summary": "SPY is near record highs after a strong 5-day move, so the active portfolio favors selected areas with stronger near-term continuation or reversal catalysts. The main expected edge is from software/cybersecurity momentum plus oil geopolitical rebound potential.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15535,
+    "latency_seconds": 43.73438937286846,
+    "output_tokens": 2929,
+    "reasoning_tokens": 479,
+    "total_tokens": 18464
+  }
+}

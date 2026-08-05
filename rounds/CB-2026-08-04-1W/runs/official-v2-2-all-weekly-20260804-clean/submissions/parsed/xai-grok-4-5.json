@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record close and broad positive asset share sustain modest upside into jobs data",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at record 7736.52 up 1.8% on August 4",
+        "spy_return_5s at 4.11% with distance_52w_high of 0.00%",
+        "FOMC held funds rate at 3.50%-3.75% on July 29"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Break below recent highs on weak macro data",
+      "option_id": "SP500",
+      "reversal_case": "Overbought short-term conditions reverse on soft employment or sticky inflation signals",
+      "time_window_catalyst": "July Employment Situation on August 7"
+    },
+    {
+      "continuation_case": "Strong rebound momentum continues with risk-on flows into growth software",
+      "decision": "selected",
+      "evidence": [
+        "SOFTWARE return_3s of 9.31% and active_return_5s of 7.02%",
+        "Nasdaq Composite up 2.6% to 26584.99 on August 4",
+        "volume_zscore_5v60 negative at -0.694"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Sharp reversal in Nasdaq or software names on weak ISM Services or jobs miss",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High recent gains and distance to 52w high of -13.39% invite mean reversion",
+      "time_window_catalyst": "August 5 Disney results and broader tech sentiment into July employment data"
+    },
+    {
+      "continuation_case": "Fresh highs and positive momentum persist with defensive growth characteristics",
+      "decision": "selected",
+      "evidence": [
+        "CYBERSECURITY return_3s 8.80% and active_return_5s 5.59%",
+        "distance_52w_high at 0.00%",
+        "corr_spy_63s of 0.494"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Broad tech selloff or spike in equity volatility before exit close",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "Sector beta to tech could amplify any broad growth selloff",
+      "time_window_catalyst": "Risk appetite persistence into August 7 Employment Situation"
+    },
+    {
+      "continuation_case": "Manufacturing strength and industrial demand support further gains",
+      "decision": "selected",
+      "evidence": [
+        "COPPER active_return_5s +0.61% and prior_16s_active_return +2.68%",
+        "July ISM Manufacturing PMI rose to 55.6 with prices at 71.1",
+        "distance_52w_high only -1.13%"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Sudden USD strength or China-linked demand scare",
+      "option_id": "COPPER",
+      "reversal_case": "Global growth concerns or USD rebound pressure industrial metals",
+      "time_window_catalyst": "July ISM Services PMI on August 5 and industrial production follow-through"
+    },
+    {
+      "continuation_case": "Value/financials catch-up and stable rates backdrop aid relative performance",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS prior_16s_active_return +3.99% and quality evidence score 0.732",
+        "distance_52w_high 0.00% with volatility_21s 13.35%",
+        "Treasury 10-year yield at 4.63% on August 4"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Sharp yield curve inversion or regional bank stress signal",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit or deposit concerns resurface around employment data",
+      "time_window_catalyst": "Treasury refunding announcement August 5 and jobs data August 7"
+    },
+    {
+      "continuation_case": "Recent outperformance extends on mega-cap leadership",
+      "decision": "rejected",
+      "evidence": [
+        "TECHNOLOGY return_3s 6.36% and active_return_5s 5.13%",
+        "volatility_21s elevated at 36.69% with max_drawdown_21s -10.34%",
+        "prior_16s_active_return -5.41%"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Nasdaq breakdown or rates spike",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "High beta and prior underperformance raise snap-back risk after rebound",
+      "time_window_catalyst": "Tech-heavy earnings and ISM Services August 5"
+    },
+    {
+      "continuation_case": "Prior strength and geopolitical premium reassert if Hormuz tensions rise",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude at $79.36 down 5.3% on August 4",
+        "ENERGY return_3s -0.75% and OIL return_3s -9.18%",
+        "prior_16s_active_return for ENERGY +9.74%"
+      ],
+      "forecast_base_pct": -0.8,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Further sharp drop in crude below recent lows",
+      "option_id": "ENERGY",
+      "reversal_case": "Continued oil price decline from supply progress dominates",
+      "time_window_catalyst": "Iran-Oman talks updates and IEA-related flows"
+    },
+    {
+      "continuation_case": "Capital preservation holds if equities correct",
+      "decision": "rejected",
+      "evidence": [
+        "SHORT_TREASURY quality evidence score 0.760 with low volatility rank 1.000",
+        "return_3s 0.05% and volatility_21s 0.19%",
+        "one-year Treasury yield 4.04%"
+      ],
+      "forecast_base_pct": 0.08,
+      "forecast_high_pct": 0.12,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Sustained equity rally rendering opportunity cost high",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Risk-on environment leaves cash-like returns lagging",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.695,
+  "is_official_score": true,
+  "key_risks": [
+    "Post-record profit-taking after 4%+ SPY 5-session gain",
+    "July employment miss or hot inflation print triggering rate-hike fears",
+    "Geopolitical flare-up in Strait of Hormuz reversing oil and risk assets",
+    "Tech concentration reversal given elevated recent returns and volatility"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Sharp reversal in Nasdaq or software names on weak ISM Services or jobs miss",
+      "option_id": "SOFTWARE",
+      "rationale": "Strong recent rebound and high beta to continued risk-on after record closes supports outperformance vs SPY over one week.",
+      "time_window_catalyst": "August 5 Disney results and broader tech sentiment into July employment data"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Broad tech selloff or spike in equity volatility before exit close",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Positive 3-session momentum and lower relative drawdown than pure semis support continuation above SPY base.",
+      "time_window_catalyst": "Risk appetite persistence into August 7 Employment Situation"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Sudden USD strength or China-linked demand scare",
+      "option_id": "COPPER",
+      "rationale": "Positive active return and industrial demand proxy with base case above SPY amid manufacturing PMI strength.",
+      "time_window_catalyst": "July ISM Services PMI on August 5 and industrial production follow-through"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Sharp yield curve inversion or regional bank stress signal",
+      "option_id": "FINANCIALS",
+      "rationale": "Solid prior active trend and quality score with rates backdrop supporting modest outperformance.",
+      "time_window_catalyst": "Treasury refunding announcement August 5 and jobs data August 7"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Break below recent highs on weak macro data",
+      "option_id": "SP500",
+      "rationale": "Core benchmark holding to anchor after record close while active sleeves seek alpha.",
+      "time_window_catalyst": "July Employment Situation on August 7"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.195,
+  "portfolio_rationale": "Overweight software and cybersecurity within the 50% tech cluster cap plus copper and financials for diversification, all with base forecasts above SPY, while retaining a SPY anchor after the record close. One-week horizon favors continuation of the recent risk-on rebound into scheduled data.",
+  "provider": "xai",
+  "rationale_summary": "Selected higher-base active holdings in software, cybersecurity, copper and financials capped by cluster rules, paired with SPY. Focused on momentum continuation and near-term catalysts inside the August 4-11 window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16599,
+    "latency_seconds": 45.32408303208649,
+    "output_tokens": 2615,
+    "reasoning_tokens": 747,
+    "total_tokens": 19961
+  }
+}

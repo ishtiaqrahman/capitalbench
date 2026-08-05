@@ -1,0 +1,184 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record close, broad breadth, strong ISM Manufacturing 55.6",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 record close 7,736.52 up 1.8%",
+        "spy_return_5s 4.11%",
+        "positive_asset_share_5s 79.71%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY closes below 7,550",
+      "option_id": "SP500",
+      "reversal_case": "Hot jobs print lifts yields; extended after strong 5-day run",
+      "time_window_catalyst": "July jobs Aug 7, ISM Services Aug 5"
+    },
+    {
+      "continuation_case": "Tech leadership reasserting after prior underperformance",
+      "decision": "selected",
+      "evidence": [
+        "XLK 5s active +5.13%",
+        "XLK 3s +6.36%",
+        "beta 2.161"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "XLK drops more than 3% on rate spike",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "High vol 36.7%, rate-sensitive to jobs surprise",
+      "time_window_catalyst": "ISM Services Aug 5, jobs Aug 7"
+    },
+    {
+      "continuation_case": "Growth momentum with record close",
+      "decision": "selected",
+      "evidence": [
+        "QQQ 5s active +3.05%",
+        "Nasdaq record close up 2.6%",
+        "3s +5.90%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "QQQ below prior week close",
+      "option_id": "NASDAQ100",
+      "reversal_case": "High beta 1.714, sensitive to yield backup",
+      "time_window_catalyst": "Jobs Aug 7"
+    },
+    {
+      "continuation_case": "Deep pullback, defensive rotation potential",
+      "decision": "rejected",
+      "evidence": [
+        "XLV 5s active -7.20%",
+        "3s -0.87%",
+        "high quality score 0.804"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "XLV underperforms SPY further",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Lagging badly in risk-on tape",
+      "time_window_catalyst": "Eli Lilly Q2 Aug 5"
+    },
+    {
+      "continuation_case": "Duration bounce if jobs weak",
+      "decision": "rejected",
+      "evidence": [
+        "TLT 5s active -5.40%",
+        "30y yield 5.18%",
+        "FOMC hawkish 9-3"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "10y yield breaks above 4.75%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky inflation, hawkish Fed, refunding supply",
+      "time_window_catalyst": "Treasury refunding Aug 5, jobs Aug 7"
+    },
+    {
+      "continuation_case": "Hormuz risk premium potential",
+      "decision": "rejected",
+      "evidence": [
+        "Brent down 5.3% to $79.36",
+        "XLE 3s -0.75%",
+        "USO 3s -9.18%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Brent falls below $72",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil falling sharply, Iran-Oman talks progress",
+      "time_window_catalyst": "Hormuz negotiations"
+    },
+    {
+      "continuation_case": "Safe-haven if risk-off",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 5s active -2.80%",
+        "iau_return_5s +1.31%",
+        "distance 52w high -24.5%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Gold breaks recent support",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields headwind",
+      "time_window_catalyst": "Jobs/CPI window"
+    },
+    {
+      "continuation_case": "Strong AI-driven momentum",
+      "decision": "rejected",
+      "evidence": [
+        "SMH 5s active +4.59%",
+        "3s +6.83%",
+        "vol 52.7% beta 3.098"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "SMH drops more than 5%",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme volatility, sharp reversal risk",
+      "time_window_catalyst": "Chip earnings/sentiment"
+    }
+  ],
+  "confidence": 0.53,
+  "expected_alpha_vs_sp500_pct": 0.18,
+  "is_official_score": true,
+  "key_risks": [
+    "Strong July jobs report Aug 7 could lift yields and hit high-beta growth",
+    "Tech is extended with high volatility and could mean-revert",
+    "Geopolitical oil/Hormuz headlines could spike risk-off"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "SPY closes below 7,550 on risk-off shift",
+      "option_id": "SP500",
+      "rationale": "Broad large-cap momentum with record close and strong breadth; core anchor.",
+      "time_window_catalyst": "July jobs report Aug 7; ISM Services Aug 5"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "XLK reverses more than 3% on rate spike from strong jobs print",
+      "option_id": "TECHNOLOGY",
+      "rationale": "Strong recent tech leadership with 5s active +5.13% and 3s +6.36%, supported by growth-stock resilience.",
+      "time_window_catalyst": "Mega-cap tech follow-through post-earnings, ISM Services Aug 5"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "QQQ falls below prior week close on rate-driven selloff",
+      "option_id": "NASDAQ100",
+      "rationale": "Large-cap growth momentum continuation with 5s active +3.05% and record Nasdaq close.",
+      "time_window_catalyst": "Growth-stock sentiment into jobs/CPI window"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.68,
+  "portfolio_rationale": "Anchor on SPY with a tilt to technology-and-growth clusters showing the strongest recent active returns and breadth support, while keeping cluster exposure at the 50% cap.",
+  "provider": "anthropic",
+  "rationale_summary": "Core SPY plus growth/tech tilt to capture continued mega-cap leadership over a one-week window with heavy macro data flow.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 27793,
+    "latency_seconds": 38.024308254010975,
+    "output_tokens": 2412,
+    "total_tokens": 30205
+  }
+}

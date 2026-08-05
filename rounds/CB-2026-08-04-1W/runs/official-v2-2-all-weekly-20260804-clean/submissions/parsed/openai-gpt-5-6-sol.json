@@ -1,0 +1,178 @@
+{
+  "benchmark_expected_return_pct": 0.45,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad positive participation and record highs support continued risk appetite.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY gained 4.11% over five sessions and closed at a record.",
+        "Positive asset share was 79.71% over five sessions.",
+        "July employment data are scheduled for August 7."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "SPY loses the recent breakout and closes below its pre-rally range after the employment report.",
+      "option_id": "SP500",
+      "reversal_case": "A 4.11% five-session gain leaves the benchmark vulnerable to profit-taking, while elevated inflation and hawkish FOMC dissent constrain valuation support.",
+      "time_window_catalyst": "July ISM Services on August 5 and July employment report on August 7."
+    },
+    {
+      "continuation_case": "Strong prior relative performance plus a deep, high-volume pullback supports mean reversion without relying on recent price strength.",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score was 0.861, highest in the universe.",
+        "Prior 16-session active return was 6.50%.",
+        "Five-session active return was -4.23% with reported volume z-score 2.392."
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 3.4,
+      "forecast_low_pct": -2.1,
+      "invalidation_condition": "Dividend equities continue underperforming SPY materially after the August 7 employment report.",
+      "option_id": "DIVIDEND",
+      "reversal_case": "The market may remain concentrated in growth stocks, extending dividend underperformance.",
+      "time_window_catalyst": "July employment report on August 7 and rotation after the narrow record-setting rally."
+    },
+    {
+      "continuation_case": "Strong prior relative trend and a deep pullback can reverse if Treasury yields stabilize after scheduled macro releases.",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score was 0.843.",
+        "Prior 16-session active return was 5.27% versus a five-session active return of -5.94%.",
+        "Twenty-one-session drawdown was only -2.04% despite the recent relative pullback."
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.8,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Ten-year Treasury yield rises decisively above the supplied 4.63% level and real estate makes a new 21-session low.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "A strong employment report or refunding-driven yield increase would pressure rate-sensitive real estate.",
+      "time_window_catalyst": "Treasury refunding announcement August 5 and July employment report August 7 may move yields."
+    },
+    {
+      "continuation_case": "Constrained Gulf exports and unresolved shipping risk can trigger an energy rebound after the abrupt oil decline.",
+      "decision": "selected",
+      "evidence": [
+        "Prior 16-session active return was 9.74% and prior active rank was 0.985.",
+        "Brent fell 5.3% on August 4 while Hormuz shipping negotiations remained unresolved.",
+        "IEA reported June Gulf exports at 16.1 million barrels per day versus a 24 million prewar average."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.8,
+      "invalidation_condition": "Brent extends its August 4 decline as shipping negotiations become final and de-escalatory.",
+      "option_id": "ENERGY",
+      "reversal_case": "Final de-escalatory shipping arrangements could remove the geopolitical premium and extend the selloff.",
+      "time_window_catalyst": "Any change in unresolved Iran-Oman shipping talks or Strait of Hormuz disruptions before August 11."
+    },
+    {
+      "continuation_case": "A strong prior trend combined with a sharp recent pullback supports a tactical rebound if broad risk appetite persists.",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score was 0.776.",
+        "Prior active rank was 0.970 and recent pullback rank was 0.955.",
+        "Prior 16-session active return was 8.32%, followed by five-session active return of -6.46%."
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 8.5,
+      "forecast_low_pct": -6.5,
+      "invalidation_condition": "Ethereum ETF breaks below its recent 21-session drawdown trough while SPY remains firm.",
+      "option_id": "ETHEREUM_ETF",
+      "reversal_case": "High 40.22% volatility and weak three-session performance can produce continued deleveraging rather than mean reversion.",
+      "time_window_catalyst": "Risk-asset reaction to August 5 services data and August 7 employment data; no crypto-specific event identified."
+    },
+    {
+      "continuation_case": "Strong immediate momentum could persist if the record-setting technology rally broadens.",
+      "decision": "rejected",
+      "evidence": [
+        "Three-session return was 9.31% and five-session active return was 7.02%.",
+        "Quality evidence score was only 0.185 and recent pullback rank was 0.015.",
+        "Prior 16-session active return was -1.79%."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 5.8,
+      "forecast_low_pct": -4.8,
+      "invalidation_condition": "Software loses more than half of its recent five-session active gain.",
+      "option_id": "SOFTWARE",
+      "reversal_case": "The surge lacks independent briefing support and follows a weak prior relative trend, increasing reversal risk.",
+      "time_window_catalyst": "July ISM Services on August 5 and July employment report on August 7; no software-specific event identified."
+    },
+    {
+      "continuation_case": "Low volatility and positive carry should preserve capital through macro-event risk.",
+      "decision": "rejected",
+      "evidence": [
+        "Quality evidence score was 0.760.",
+        "Twenty-one-session volatility was 0.19% with no drawdown.",
+        "One-year Treasury par yield was 4.04%."
+      ],
+      "forecast_base_pct": 0.08,
+      "forecast_high_pct": 0.14,
+      "forecast_low_pct": 0.02,
+      "invalidation_condition": "An abrupt repricing of very short Treasury yields produces a negative weekly total return.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Its one-week carry is too small to match a continued equity advance.",
+      "time_window_catalyst": "Treasury quarterly refunding announcement August 5."
+    }
+  ],
+  "confidence": 0.57,
+  "expected_alpha_vs_sp500_pct": 0.4125,
+  "is_official_score": true,
+  "key_risks": [
+    "The August 7 employment report could lift Treasury yields and pressure real estate and dividend equities.",
+    "Final Iran-Oman shipping progress could extend the oil and energy reversal.",
+    "The record-setting equity rally could remain concentrated in technology, leaving selected laggards behind.",
+    "Ethereum's 40.22% annualized 21-session volatility creates substantial one-week downside risk."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "Dividend equities continue underperforming SPY materially after the August 7 employment report.",
+      "option_id": "DIVIDEND",
+      "rationale": "Strong prior relative trend, deep recent relative pullback, and the universe's highest quality score support a short-term rebound.",
+      "time_window_catalyst": "July employment report on August 7 and rotation after the narrow record-setting rally."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Ten-year Treasury yield rises decisively above the supplied 4.63% level and real estate makes a new 21-session low.",
+      "option_id": "REAL_ESTATE",
+      "rationale": "High quality evidence and a sizable pullback create a favorable rebound setup if yields stabilize.",
+      "time_window_catalyst": "Treasury refunding announcement August 5 and July employment report August 7 may move yields."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Brent extends its August 4 decline as shipping negotiations become final and de-escalatory.",
+      "option_id": "ENERGY",
+      "rationale": "Strong prior relative trend and unresolved Hormuz risk offer rebound potential after the oil-led selloff.",
+      "time_window_catalyst": "Any change in unresolved Iran-Oman shipping talks or Strait of Hormuz disruptions before August 11."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Ethereum ETF breaks below its recent 21-session drawdown trough while SPY remains firm.",
+      "option_id": "ETHEREUM_ETF",
+      "rationale": "Top-tier prior trend and pullback ranks support a tactical rebound, though volatility keeps the position capped.",
+      "time_window_catalyst": "Risk-asset reaction to August 5 services data and August 7 employment data; no crypto-specific event identified."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.8625,
+  "portfolio_rationale": "The portfolio favors independently supported pullback-and-rebound setups across defensive equity, rate-sensitive equity, energy, and crypto clusters. Diversification and the 50% cluster cap limit dependence on any single macro outcome.",
+  "provider": "openai",
+  "rationale_summary": "Dividend and real estate combine strong quality scores with recent underperformance, while energy and Ethereum retain strong prior trends after sharp pullbacks. Each selected candidate has a base forecast above SPY's.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15537,
+    "latency_seconds": 27.886419725837186,
+    "output_tokens": 1915,
+    "reasoning_tokens": 0,
+    "total_tokens": 17452
+  }
+}

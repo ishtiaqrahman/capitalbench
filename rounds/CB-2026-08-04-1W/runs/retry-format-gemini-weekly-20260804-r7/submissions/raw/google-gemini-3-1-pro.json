@@ -1,0 +1,137 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued economic resilience and positive earnings surprises.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at a record 7,736.52 on August 4.",
+        "Q2 GDP growth estimated at 1.5%."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A sharp drop in the ISM Services PMI below 50.",
+      "option_id": "SP500",
+      "reversal_case": "A sharp deterioration in economic data or an escalation of geopolitical conflicts.",
+      "time_window_catalyst": "July ISM Services PMI on August 5."
+    },
+    {
+      "continuation_case": "Fed maintains current policy stance, keeping short-term rates elevated.",
+      "decision": "selected",
+      "evidence": [
+        "One-year Treasury yield at 4.04%.",
+        "Fed held rates steady at 3.50%-3.75%."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.15,
+      "forecast_low_pct": 0.05,
+      "invalidation_condition": "A sudden, unexpected shift in Fed policy signaling immediate rate cuts.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Fed signals immediate and aggressive rate cuts.",
+      "time_window_catalyst": "Treasury quarterly refunding announcement on August 5."
+    },
+    {
+      "continuation_case": "Strong earnings from mega-cap tech companies.",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq Composite up 2.6% on August 4.",
+        "High volatility (26.54% over 21 days)."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Significant earnings misses from major tech components.",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Rising interest rates or a rotation out of growth stocks.",
+      "time_window_catalyst": "Tech earnings reports during the week."
+    },
+    {
+      "continuation_case": "Escalation of geopolitical conflicts driving safe-haven demand.",
+      "decision": "rejected",
+      "evidence": [
+        "Geopolitical tensions in the Middle East.",
+        "Gold down 0.79% over the last 3 days."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A definitive resolution to the Middle East conflict.",
+      "option_id": "GOLD",
+      "reversal_case": "Easing of geopolitical tensions and a stronger US dollar.",
+      "time_window_catalyst": "Developments in Iran-Oman talks."
+    },
+    {
+      "continuation_case": "Supply disruptions due to geopolitical events.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude down 5.3% on August 4.",
+        "IEA reported lower Gulf oil exports."
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A significant increase in global oil production.",
+      "option_id": "OIL",
+      "reversal_case": "Weakening global demand or increased production.",
+      "time_window_catalyst": "Developments in the Strait of Hormuz."
+    },
+    {
+      "continuation_case": "Stable European economic data and ECB policy.",
+      "decision": "rejected",
+      "evidence": [
+        "ECB held rates steady.",
+        "Euro area growth projected at 0.9%."
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 1.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A surprise rate cut by the ECB.",
+      "option_id": "EURO",
+      "reversal_case": "A sharp divergence in US and European monetary policy.",
+      "time_window_catalyst": "None identified."
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": -0.2,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden escalation in geopolitical tensions could negatively impact equities.",
+    "Weaker-than-expected economic data could lead to a broader market sell-off.",
+    "Unexpected shifts in Federal Reserve policy could increase volatility."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "A sharp drop in the ISM Services PMI below 50.",
+      "option_id": "SP500",
+      "rationale": "Core holding providing broad market exposure amid mixed economic signals.",
+      "time_window_catalyst": "July ISM Services PMI on August 5."
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.1,
+      "invalidation_condition": "A sudden, unexpected shift in Fed policy signaling immediate rate cuts.",
+      "option_id": "SHORT_TREASURY",
+      "rationale": "Defensive allocation to preserve capital given elevated market volatility and geopolitical risks.",
+      "time_window_catalyst": "Treasury quarterly refunding announcement on August 5."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.3,
+  "portfolio_rationale": "This portfolio balances broad equity exposure with a significant cash-like allocation to manage risk in a volatile environment. The S&P 500 provides upside potential, while short-term Treasuries offer stability and yield.",
+  "provider": "google",
+  "rationale_summary": "A balanced approach using SPY for equity exposure and BIL for capital preservation.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-04-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17020,
+    "latency_seconds": 13.797514789039269,
+    "output_tokens": 1606,
+    "total_tokens": 18626
+  }
+}
