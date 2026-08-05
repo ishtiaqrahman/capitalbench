@@ -568,6 +568,14 @@ function buildActiveExposureSummary() {
     weekly: new Set(activeAllocations.filter((row) => row.track === "weekly").map((row) => row.round_id)),
     monthly: new Set(activeAllocations.filter((row) => row.track === "monthly").map((row) => row.round_id))
   };
+  const latestByTrack = Object.fromEntries(
+    Object.entries(roundIdsByTrack).map(([track, roundIds]) => [
+      track,
+      apiReadModel.rounds
+        .filter((round) => roundIds.has(round.round_id))
+        .sort((left, right) => roundSortKey(right).localeCompare(roundSortKey(left)))[0]
+    ])
+  );
   const rows = Array.from(assets.values())
     .map((row) => ({
       ...row,
@@ -584,6 +592,7 @@ function buildActiveExposureSummary() {
     active_round_count: new Set(activeAllocations.map((row) => row.round_id)).size,
     weekly_round_count: roundIdsByTrack.weekly.size,
     monthly_round_count: roundIdsByTrack.monthly.size,
+    latest_by_track: latestByTrack,
     rows
   };
 }
@@ -2210,6 +2219,14 @@ for (const [attribute, value] of [
 ]) {
   includes(homepageLiveSummaryHtml, `${attribute}="${value}"`, `homepage live dashboard ${attribute}`);
   includes(liveHtml, `${attribute}="${value}"`, `live dashboard ${attribute}`);
+}
+for (const [track, round] of Object.entries(activeExposure.latest_by_track || {})) {
+  if (!round?.round_id) continue;
+  includes(
+    homepageLiveSummaryHtml,
+    `/rounds/${round.round_id}/`,
+    `homepage current ${track} test link`
+  );
 }
 const liveTestsHeadingHtml = htmlSection(
   liveHtml,

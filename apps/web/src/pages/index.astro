@@ -58,12 +58,16 @@ const aggregateScorecards = [
 
 const latestOfficialResultTracks = buildLatestOfficialResultTracks(roundRows);
 const {
+  activeExposureRounds,
   openRoundCounts,
   livePortfolioCount,
   liveHeldAssetCount,
   latestCloseDate: latestLiveCloseDate,
   nextScoreDate: nextLiveScoreDate
 } = buildLiveRoundState(roundRows);
+const activeRoundRows = activeExposureRounds.map((item) => item.round);
+const latestActiveWeeklyRound = latestRoundForTrack(activeRoundRows, "weekly");
+const latestActiveMonthlyRound = latestRoundForTrack(activeRoundRows, "monthly");
 const liveRiskSnapshot = apiReadModel.risk_appetite;
 const currentRiskPulse = liveRiskSnapshot.current_decision_pulse;
 const outstandingBookRisk = liveRiskSnapshot.outstanding_live_book;
@@ -685,6 +689,12 @@ function riskWidth(value: number | null | undefined): string {
         <ArrowRight size={16} aria-hidden="true" />
       </a>
       <a class="home-secondary-cta" href="/live/#open-tests">Review open tests</a>
+      {latestActiveWeeklyRound && (
+        <a class="home-secondary-cta" href={`/rounds/${latestActiveWeeklyRound.round_id}/`}>Current weekly test</a>
+      )}
+      {latestActiveMonthlyRound && (
+        <a class="home-secondary-cta" href={`/rounds/${latestActiveMonthlyRound.round_id}/`}>Current monthly test</a>
+      )}
     </div>
   </section>
 
