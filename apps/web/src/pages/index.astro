@@ -564,17 +564,17 @@ function riskWidth(value: number | null | undefined): string {
       })}
     </ol>
 
-    <aside class="benchmark-protocol-callout" aria-label="Single-turn non-agentic protocol">
+    <aside class="benchmark-protocol-callout" aria-label="Direct model evaluation protocol">
       <div>
         <span class="panel-kicker">Protocol</span>
-        <strong>Single-turn, non-agentic benchmark</strong>
-        <p>Models do not run as agents. Each model receives the brief once, returns one portfolio, and does not browse, call tools, or revise its answer.</p>
+        <strong>One brief. One scored decision. No tools.</strong>
+        <p>Each model receives the same frozen information once and submits one scored decision without browsing, code execution, agent loops, or answer refinement.</p>
       </div>
       <div class="benchmark-protocol-pills" aria-label="Protocol controls">
-        <span>One model call</span>
-        <span>No tools</span>
-        <span>No follow-up</span>
-        <span>One portfolio</span>
+        <span>One scored decision</span>
+        <span>No model tools</span>
+        <span>No agent loop</span>
+        <span>No answer refinement</span>
       </div>
     </aside>
 

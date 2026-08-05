@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-08-05
+
+### Direct model protocol clarity
+
+- Clarified the existing official protocol in plain language: one frozen brief,
+  one scored decision, no participant tools, and no agent loop.
+- Documented that official results do not use best-of-many selection,
+  self-critique, debate, or follow-up refinement.
+- Added the corresponding limitation that providers expose different internal
+  reasoning controls and that tool-enabled agent systems may perform differently.
+
 ## 2026-07-31
 
 ### Evidence-backed model behavior profiles

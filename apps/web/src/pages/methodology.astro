@@ -70,14 +70,14 @@ const behaviorRules: any = behaviorMethod.rules ?? {};
   <PageHeader
     eyebrow="Methodology"
     title="Same Information. Frozen Portfolios. Real Scores."
-    summary="Every model gets the same market brief and asset list in a single-turn, non-agentic call. Each model submits one portfolio. Market prices decide the score after one week or one month."
+    summary="Every model gets the same frozen market information once and makes one scored decision without tools or an agent loop. Market prices decide the result after one week or one month."
   />
 
   <section class="methodology-lede" aria-label="Methodology summary">
     <div>
       <span class="metric-label">Call protocol</span>
-      <strong>Single-turn, non-agentic</strong>
-      <p>One model call per public round. No agent loop, browsing, tool use, live retrieval, or follow-up prompts.</p>
+      <strong>One brief, one decision</strong>
+      <p>One scored decision per model, with no agent loop or repeated attempts to improve the answer.</p>
     </div>
     <div>
       <span class="metric-label">Model task</span>
@@ -86,8 +86,8 @@ const behaviorRules: any = behaviorMethod.rules ?? {};
     </div>
     <div>
       <span class="metric-label">Information rule</span>
-      <strong>Same information</strong>
-      <p>No browsing, tools, live retrieval, or extra market data during the model call.</p>
+      <strong>No model tools</strong>
+      <p>Models cannot browse, run code, retrieve live data, or call other models during the test.</p>
     </div>
     <div>
       <span class="metric-label">Scoring rule</span>
@@ -152,15 +152,24 @@ const behaviorRules: any = behaviorMethod.rules ?? {};
       </section>
 
       <section id="single-turn">
-        <h2>Single-Turn, Non-Agentic Evaluation</h2>
+        <h2>Direct Model Evaluation</h2>
         <p>
-          CapitalBench evaluates models through a single model call per public round. The model receives the same
-          market brief and asset choices, then submits one portfolio. It does not operate as an agent, use tools,
-          browse, retrieve live data, or iterate through follow-up prompts.
+          CapitalBench gives every model the same frozen market brief and asset choices once, then scores one valid
+          investment decision. The model does not operate as an agent, browse, run code, retrieve live data, call
+          other models, or revise a valid answer through follow-up prompts.
         </p>
         <p>
-          This separates model allocation behavior from workflow engineering. The result reflects the model's
-          response to the controlled brief, not an autonomous research loop, toolchain, or multi-step trading agent.
+          CapitalBench prepares the briefing and market data before the call and scores the result afterward. Those
+          benchmark operations are separate from the model itself, which receives no tools during the decision.
+        </p>
+        <div class="method-callout">
+          <strong>Low overhead by design.</strong>
+          Official results do not use extra model calls to improve or select an answer. Where a provider offers the
+          control, reasoning is set to the lowest level that still returns the required structured decision.
+        </div>
+        <p>
+          This measures the model's direct response to a controlled briefing. It does not measure the best result an
+          agentic system might achieve with tools, more compute, or repeated attempts.
         </p>
       </section>
 
@@ -361,8 +370,8 @@ const behaviorRules: any = behaviorMethod.rules ?? {};
         <div class="split-cards">
           <div class="method-card">
             <span class="panel-kicker">Public run</span>
-            <h3>One call per model</h3>
-            <p>The public result is one valid provider call in the selected public run, scored under the round's declared submission format.</p>
+            <h3>One scored decision</h3>
+            <p>The public result uses one valid decision per model. Technical or formatting failures are disclosed and are never used to shop for a better answer.</p>
           </div>
           <div class="method-card">
             <span class="panel-kicker">Consistency</span>
@@ -373,9 +382,10 @@ const behaviorRules: any = behaviorMethod.rules ?? {};
         <ul>
           <li>Every model receives the same prompt, briefing, asset list, and saved market-data artifact.</li>
           <li>Temperature is set to <code>0</code> where supported.</li>
-          <li>Tools, browsing, web search, code execution, and external retrieval are disabled at the API level where supported.</li>
+          <li>Models receive no tools, browsing, web search, code execution, or external retrieval during the decision.</li>
           <li>Live market data and intentional use of post-cutoff facts, prices, news, or events are not allowed.</li>
           <li>Reasoning or thinking is set to the lowest provider-supported setting that still allows valid structured output.</li>
+          <li>Official scores do not use extra model calls to improve or select a valid answer.</li>
           <li>Hidden reasoning tokens are recorded when exposed but are not treated as directly comparable across providers.</li>
           <li>Provider token usage, latency, and cost are logged when available.</li>
         </ul>

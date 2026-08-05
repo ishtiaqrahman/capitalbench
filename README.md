@@ -33,7 +33,7 @@ Public artifact license: CC BY 4.0
 | Evaluation horizon | One week or one month, depending on the track |
 | Model input | Frozen briefing, prompt, options, and optional mechanical market-data table |
 | Model output | Strict JSON submission |
-| Official result | One call per model, one official score |
+| Official result | One scored decision per model, with no tools, agent loop, or answer refinement |
 | Stability result | Multiple calls per model, usually five, reported separately |
 | Benchmark scoring | CapitalBench Score, S&P 500 comparison, cash comparison, regret where full prices exist |
 | API calls | Never made unless `--allow-real-api-calls` is passed |
@@ -48,6 +48,11 @@ not time-resolved. CapitalBench makes the question concrete:
 
 > Given the same information at the same decision time, what market decision
 > does a model make, and how does that decision perform one month later?
+
+The official benchmark is a direct model evaluation: one frozen brief, one
+scored decision, and no model access to browsing, code execution, live
+retrieval, other models, or follow-up refinement. CapitalBench prepares the
+common inputs before the call and scores the decision afterward.
 
 The framework emphasizes reproducibility:
 

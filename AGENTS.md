@@ -24,6 +24,13 @@ exposure clusters, low/base/high forecasts, the active-holding SPY hurdle, and
 the 50% non-benchmark economic-exposure cap. Score only the final frozen
 portfolio; retain the candidate ledger for calibration and audit.
 
+Preserve the direct model protocol for every new official round: one scored
+decision per model, no participant tools or browsing, no agent loop, and no
+best-of-many selection or follow-up refinement. Use the lowest
+provider-supported reasoning setting that still returns the required valid
+structured decision. Technical or formatting retries must remain disclosed and
+must never be used to seek a different portfolio.
+
 The active production roster has eight models: GPT-5.5, GPT-5.6 SOL, Grok 4.3,
 Grok 4.5, Gemini 3.1 Pro, Claude Opus 4.8, Claude Opus 5, and Claude Fable 5.
 Claude Opus 5 joined future rounds effective July 24, 2026 using the Anthropic

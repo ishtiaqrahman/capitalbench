@@ -19,6 +19,7 @@ Use these rules for a fair round:
 - Collect submissions before the decision deadline.
 - Preserve invalid raw submissions instead of deleting them.
 - Use provider-native deterministic settings: temperature `0` where supported, tools/search disabled in API payloads, and the lowest provider-supported reasoning or thinking setting that still produces valid structured output.
+- Do not use best-of-many selection, debate, self-critique, or follow-up refinement to improve an official answer.
 - Record token usage, including reasoning or thinking tokens when exposed, but do not treat hidden reasoning counts as directly comparable across providers.
 - Use the same local entry and exit price source for every option, and refresh both final adjusted-close prices after the scoring window ends.
 - State the entry and exit rules in `manifest.yaml`.
@@ -34,8 +35,10 @@ Use these rules for a fair round:
 - Do not backfill new models into old official rounds.
 - Label any manual old-round run as retrospective and exclude it from public official and cumulative leaderboards.
 
-For official scoring, each model gets one attempt and one schema-valid decision
-under the round's declared submission format. For stability analysis, each
+For official scoring, each model contributes one schema-valid decision under
+the round's declared submission format. A disclosed retry is allowed only for
+technical or formatting failure and must never be used to shop for a better
+portfolio. For stability analysis, each
 model can be called multiple times with the same prompt, briefing, and option
 list. Stability reports consistency and repeated return statistics, but it is
 not the official benchmark score.

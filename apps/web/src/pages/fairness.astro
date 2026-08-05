@@ -38,16 +38,16 @@ import PageHeader from "../components/PageHeader.astro";
         they answer a different evaluation question.
       </p>
 
-      <h2>Tool And Retrieval Boundary</h2>
+      <h2>Direct Model Evaluation</h2>
       <p>
-        Public model calls do not use browsing, live retrieval, trading tools, or hidden post-cutoff data. If a
-        provider run fails, the failed raw attempt can remain in the audit trail, but it does not become a public result.
+        Every model receives one frozen brief and makes one scored decision without browsing, live retrieval, code
+        execution, other models, or an agent loop. CapitalBench prepares the common briefing and market data before
+        the call, but the participating model receives no tools while making its decision.
       </p>
-
-      <h2>No Agent Loop</h2>
       <p>
-        Public results come from single-turn, non-agentic model calls. Models do not plan across multiple steps,
-        call tools, browse, use memory, or iterate through follow-up prompts before submitting the scored portfolio.
+        Public results do not use extra model calls to improve or select a valid answer. If a provider call fails
+        technically or cannot produce a valid submission, the failed attempt remains disclosed and cannot be used to
+        choose a more favorable portfolio.
       </p>
 
       <h2>Invalid Submission Handling</h2>

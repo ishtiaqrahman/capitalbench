@@ -15,6 +15,18 @@ market prices, news, or events dated after the research cutoff. The common
 briefing, options, and market-data artifacts are supplied to every model, but
 CapitalBench does not treat models as blank slates.
 
+The official benchmark is a single-turn, tool-free, minimal-scaffold
+evaluation: one frozen brief and one scored decision per model. It does not use
+an agent loop, best-of-many selection, debate, self-critique, or follow-up
+refinement. CapitalBench prepares the shared inputs before the model call and
+scores the result afterward; the participating model receives no tools during
+the decision.
+
+CapitalBench does not request hidden chain-of-thought. Where a provider offers
+the control, reasoning is set to the lowest level that still permits a valid
+structured decision. Providers expose different controls, so this protocol
+does not claim equal internal compute or zero internal reasoning.
+
 Each round is a directory under `rounds/<round_id>/`. The round contains the
 briefing, option list, prompt, hashes, price files, and isolated runs.
 Market data and scoring are offline. Operators supply all round inputs and all
@@ -184,7 +196,7 @@ round has multiple runs and no run id is supplied, those commands fail clearly.
 
 Each run also has a `run_type`:
 
-- `official`: one call per model; this is the headline benchmark leaderboard.
+- `official`: one scored decision per model; this is the headline benchmark leaderboard.
 - `stability`: repeated calls per model; this measures decision consistency.
 - `mock`: deterministic dry-run output for testing the framework.
 - `provider_smoke`: private provider checks outside benchmark runs.

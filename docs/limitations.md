@@ -24,6 +24,7 @@ CapitalBench is intentionally narrow in this version.
 - Multi-run stability analysis measures consistency, not a separate investment skill score.
 - Stability results must not be combined with the official leaderboard into one headline number.
 - Providers expose different reasoning or thinking controls, and some models require hidden reasoning tokens. CapitalBench records reported token usage where available but does not treat hidden reasoning tokens as directly comparable.
+- The official result measures one direct model response without tools or an agent loop. It is not a maximum-capability result, and the same model may perform differently with browsing, tools, repeated attempts, or additional inference compute.
 - A format retry can be necessary when a provider returns malformed or truncated structured output. Such retries must be disclosed and must not be used to change an otherwise valid asset choice.
 - The v1.5 universe is a fixed ETF universe and does not cover every investable asset.
 
