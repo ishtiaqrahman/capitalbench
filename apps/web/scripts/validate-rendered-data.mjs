@@ -2696,7 +2696,7 @@ if (
 }
 includes(indexHtml, "Monthly and weekly are separate comparison tracks.", "homepage short horizon note");
 includes(indexHtml, "Read scoring rules", "homepage scoring rules CTA");
-includes(indexHtml, 'How does CapitalBench keep <span class="no-orphan">scores comparable?</span>', "homepage trust proof heading");
+includes(indexHtml, 'What makes each model <span class="no-orphan">test comparable?</span>', "homepage trust proof heading");
 includes(indexHtml, 'What evidence supports <span class="no-orphan">each score?</span>', "homepage evidence panel heading");
 
 for (const track of ["weekly", "monthly"]) {
