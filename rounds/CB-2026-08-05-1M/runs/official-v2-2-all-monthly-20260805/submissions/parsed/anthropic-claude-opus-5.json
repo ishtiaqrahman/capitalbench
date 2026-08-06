@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 1.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings, robust ISM manufacturing 55.6 and services 54.1 support risk appetite.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed 7,723.55 on Aug 5; Dow at record",
+        "Aggregate reported profit growth estimate 50% with ~75% reported",
+        "spy_return_5s 5.53%, 21s 2.95%"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "SPY falls more than 5% from entry",
+      "option_id": "SP500",
+      "reversal_case": "Elevated inflation, hawkish FOMC dissents, soft payrolls and heavy coupon supply could cause a pullback after a sharp 5-session run.",
+      "time_window_catalyst": "Aug 12 CPI, Aug 26 GDP, Sep 4 payrolls"
+    },
+    {
+      "continuation_case": "Deep relative pullback with shallow drawdown and defensive characteristics offers catch-up potential.",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score 0.691 with high recent pullback rank 0.776",
+        "active_return_21s -3.12%, max drawdown only -3.74%",
+        "Beta to SPY 0.270"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "XLV lags SPY by more than 3% during the window",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Healthcare has lagged persistently; policy/pricing headlines could extend underperformance.",
+      "time_window_catalyst": "Late-August macro data flow and defensive rotation"
+    },
+    {
+      "continuation_case": "Steep curve, benign credit (HYG at highs) and low realized volatility support financials.",
+      "decision": "selected",
+      "evidence": [
+        "Distance to 52-week high 0.00%, max drawdown -2.08%",
+        "active_return_21s +0.53%",
+        "30y 5.17% vs 2y 4.18% steep curve"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "XLF falls 4% below entry or HY spreads widen materially",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit deterioration or an inverted growth scare after weak payrolls would hit banks.",
+      "time_window_catalyst": "Aug 11-13 Treasury auctions; Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Narrow mega-cap leadership tends to mean-revert; broad positive asset share 85.5% supports breadth.",
+      "decision": "selected",
+      "evidence": [
+        "rsp_minus_spy_5s -3.67%",
+        "volatility_63s 11.13%, drawdown -2.04%",
+        "quality evidence score 0.648"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "RSP underperforms SPY by a further 3%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "AI-driven mega-cap earnings momentum could keep cap-weighted leadership intact.",
+      "time_window_catalyst": "Aug 14 retail sales; Sep 1 ISM Manufacturing"
+    },
+    {
+      "continuation_case": "AI demand and Nvidia strength sustain the leadership trend.",
+      "decision": "rejected",
+      "evidence": [
+        "return_5s 12.99%, prior active 37.20%",
+        "volatility 55.95%, drawdown -24.62%, beta 2.364",
+        "AMD fell 7% on Aug 5"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 16.0,
+      "forecast_low_pct": -14.0,
+      "invalidation_condition": "SMH drops 10% from entry",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme volatility and 14.8% below 52w high with mixed single-name reactions raise reversal risk.",
+      "time_window_catalyst": "August AI supply-chain earnings and guidance"
+    },
+    {
+      "continuation_case": "Any growth scare on Sep 4 payrolls would rally duration.",
+      "decision": "rejected",
+      "evidence": [
+        "30y par yield 5.17%",
+        "tlt_return_21s -1.44%",
+        "$125bn refunding including $25bn 30-year"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "30y yield rises above 5.35%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Stalled disinflation and hawkish dissents keep the long end under supply pressure.",
+      "time_window_catalyst": "Aug 13 thirty-year auction; Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Weak dollar (UUP -1.09% 21s) and elevated inflation support gold.",
+      "decision": "rejected",
+      "evidence": [
+        "iau_return_5s 5.01%",
+        "prior active -25.85%, drawdown -16.01%",
+        "21.4% below 52-week high"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "IAU falls 5% below entry",
+      "option_id": "GOLD",
+      "reversal_case": "Deep prior drawdown and de-escalation in Hormuz reduce safe-haven demand.",
+      "time_window_catalyst": "Aug 12 CPI and Aug 26 PCE"
+    },
+    {
+      "continuation_case": "Supply still 9.4mb/d below prewar could keep a floor under prices.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent $79.45, down from $102 wartime peak",
+        "uso_return_5s -11.16%",
+        "Draft Strait of Hormuz arrangement pending Iranian approval"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Brent falls below $70",
+      "option_id": "ENERGY",
+      "reversal_case": "Finalized Hormuz deal and recovering tanker traffic would push crude lower.",
+      "time_window_catalyst": "Iranian approval of Hormuz arrangement"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.3,
+  "is_official_score": true,
+  "key_risks": [
+    "Sticky inflation (core PCE 3.3%, PPI 5.5% y/y) with three FOMC hawkish dissents could lift yields and hit equities",
+    "Continued mega-cap/AI leadership would leave equal-weight and defensive tilts trailing SPY",
+    "Weak Sep 4 payrolls after 57k June and 44k ADP July could trigger a growth scare",
+    "Hormuz arrangement failure could re-spike oil and pressure margins",
+    "Heavy August Treasury refunding supply pressuring long-end yields and rate-sensitive equities"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "SPY closes more than 5% below entry before exit",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure with strong earnings season and record Dow.",
+      "time_window_catalyst": "Aug 12 CPI, Aug 26 GDP second estimate, Sep 4 jobs report"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "XLV underperforms SPY by more than 3% intra-window",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with high quality evidence score, recent underperformance, low beta and shallow drawdown.",
+      "time_window_catalyst": "Late-August macro data and defensive rotation"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Credit spreads widen sharply or XLF falls 4% below entry",
+      "option_id": "FINANCIALS",
+      "rationale": "At 52-week high with low volatility and smallest drawdown; steep curve (5.17% 30y vs 3.50-3.75% funds) supports margins.",
+      "time_window_catalyst": "Aug 11-13 Treasury auctions and July CPI"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Mega-cap leadership widens further with RSP-SPY gap exceeding another 3%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth catch-up after RSP lagged SPY by 3.67% in five sessions; lowest volatility broad equity sleeve.",
+      "time_window_catalyst": "Aug 14 retail sales, Sep 1 ISM"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.4,
+  "portfolio_rationale": "Equity-tilted with a benchmark core plus lower-volatility, positively-carrying diversifiers that have recently lagged the cap-weighted index, avoiding stretched high-beta semis and Korea/Taiwan exposure into a heavy macro calendar.",
+  "provider": "anthropic",
+  "rationale_summary": "Hold SPY as the anchor and add healthcare, financials and equal-weight for mean-reversion of a very narrow five-session mega-cap advance, while capping any non-benchmark cluster at 40%.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28242,
+    "latency_seconds": 43.71171269193292,
+    "output_tokens": 3237,
+    "total_tokens": 31479
+  }
+}

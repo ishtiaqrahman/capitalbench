@@ -1,0 +1,187 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings and ISM momentum sustain the rally",
+      "decision": "selected",
+      "evidence": [
+        "SPY +5.53% over 5 sessions, -0.20% from 52w high",
+        "~75% of S&P 500 reported with ~50% aggregate profit growth estimate",
+        "July ISM Manufacturing 55.6, highest since May 2022"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Hot CPI or weak auctions driving yields up sharply",
+      "option_id": "SP500",
+      "reversal_case": "Stretched after 5.5% weekly gain; CPI and auction risk into exit",
+      "time_window_catalyst": "Aug 7 payrolls, Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Strong prior relative trend resumes after sharp short-term underperformance",
+      "decision": "selected",
+      "evidence": [
+        "Top equity quality-evidence score 0.860 with 0.925 prior active rank",
+        "-6.09% active return over 5 sessions after +6.41% prior 16-session active trend",
+        "Low volatility 13.34% and shallow -1.42% drawdown"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Further growth-led rally with dividend active return below -2% mid-week",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth leadership persists, dividend stocks keep lagging",
+      "time_window_catalyst": "CPI Aug 12 and Treasury auctions favoring low-beta yield names"
+    },
+    {
+      "continuation_case": "Mean reversion of oversold defensive sector with positive prior trend",
+      "decision": "selected",
+      "evidence": [
+        "Quality score 0.728; prior active rank 0.776 with 0.896 pullback rank",
+        "-6.78% active return over 5 sessions after +3.54% prior active trend"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "Sustained cyclical rotation or adverse healthcare policy news",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on tape keeps defensives lagging",
+      "time_window_catalyst": "Data-heavy week culminating in Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Snap-back of oversold defensive with strong prior relative trend",
+      "decision": "selected",
+      "evidence": [
+        "Quality score 0.808 with deepest defensive pullback rank 0.955",
+        "-7.85% active return over 5 sessions after +5.39% prior active trend",
+        "June CPI fell 0.4% m/m, supporting real consumer purchasing power"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Staples active return worsening beyond -3% additional mid-week",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Continued growth melt-up leaves staples behind",
+      "time_window_catalyst": "Aug 12 CPI defensive positioning"
+    },
+    {
+      "continuation_case": "Deal stalls, supply stays 9.4 mb/d below prewar, prices rebound",
+      "decision": "rejected",
+      "evidence": [
+        "Hormuz draft arrangement nearing approval could add supply and depress oil",
+        "USO -11.16% over 5 sessions; XLE -7.81% active"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Deal collapse with Brent back above $90",
+      "option_id": "ENERGY",
+      "reversal_case": "Deal approval accelerates supply normalization, oil and energy fall further",
+      "time_window_catalyst": "Possible Hormuz deal finalization within window"
+    },
+    {
+      "continuation_case": "AI earnings momentum continues",
+      "decision": "rejected",
+      "evidence": [
+        "+2.87% active over 5 sessions but -4.28% prior active trend and -8.79% drawdown",
+        "Mixed chip news: Nvidia +3.4%, AMD -7% on Aug 5"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Soft CPI plus strong tech tape",
+      "option_id": "NASDAQ100",
+      "reversal_case": "High beta (1.72) into CPI week after sharp bounce; extended positioning",
+      "time_window_catalyst": "Aug 12 CPI rate sensitivity"
+    },
+    {
+      "continuation_case": "Weak jobs data drives duration rally",
+      "decision": "rejected",
+      "evidence": [
+        "30y yield 5.17%; $125B refunding with 10y auction Aug 12",
+        "Core CPI 2.6% y/y easing but PCE inflation still elevated"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Poor 10y auction tail with rising yields",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Heavy auction supply and elevated inflation pressure long yields",
+      "time_window_catalyst": "Aug 11-12 Treasury auctions and CPI"
+    },
+    {
+      "continuation_case": "Dollar weakness and inflation persistence support gold",
+      "decision": "rejected",
+      "evidence": [
+        "IAU +5.01% over 5 sessions; dollar weakening (UUP -1.16% 5s)",
+        "Middling quality score 0.371, -21.38% from 52w high"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Geopolitical deal completion plus dollar rebound",
+      "option_id": "GOLD",
+      "reversal_case": "Hormuz de-escalation reduces safe-haven demand",
+      "time_window_catalyst": "Aug 12 CPI real-rate repricing"
+    }
+  ],
+  "confidence": 0.52,
+  "expected_alpha_vs_sp500_pct": 0.17,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot July CPI on Aug 12 could pressure all equities including defensives",
+    "Continued mega-cap tech momentum would leave defensive tilt lagging SPY",
+    "Weak Treasury auction demand Aug 11-12 could lift yields and hit rate-sensitive dividend payers",
+    "Hormuz deal completion could spark broad risk-on cyclical rally"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Hot CPI print driving yields sharply higher",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure amid strong ISM data and solid earnings season; anchors portfolio through jobs and CPI prints.",
+      "time_window_catalyst": "Aug 7 payrolls and Aug 12 CPI before exit close"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Continued mega-cap growth melt-up with defensives underperforming further",
+      "option_id": "DIVIDEND",
+      "rationale": "Highest quality-evidence score among equities (0.86), strong prior trend with deep recent relative pullback, near-zero beta cushions CPI-week risk.",
+      "time_window_catalyst": "Rotation back toward laggard defensives around Aug 12 CPI and auctions"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Sector-specific policy shock or sustained risk-on rotation away from defensives",
+      "option_id": "HEALTHCARE",
+      "rationale": "Quality score 0.73, prior positive relative trend with recent -6.8% relative pullback offers mean-reversion into a data-heavy week.",
+      "time_window_catalyst": "Defensive bid into Aug 12 CPI and Treasury auctions"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Strong risk-on tape lifting cyclicals while staples lag further",
+      "option_id": "CONSUMER_STAPLES",
+      "rationale": "Quality score 0.81 with the deepest recent relative pullback (0.955 rank) among defensives; low correlation to SPY hedges macro-event risk.",
+      "time_window_catalyst": "CPI print Aug 12; falling June CPI/PCE supports staples margins"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.47,
+  "portfolio_rationale": "SPY just rallied 5.5% in five sessions while defensive, high-quality-evidence segments (dividend, healthcare, staples) lagged sharply; with payrolls, CPI, and heavy Treasury auctions before the exit close, tilting toward pulled-back defensives with strong prior trends offers positive expected alpha with reduced event risk.",
+  "provider": "anthropic",
+  "rationale_summary": "Core SPY plus overweight to lagging defensive equity segments with the strongest supplied quality-evidence scores, positioned for mean reversion after a sharp growth-led rally into a data-heavy week.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28248,
+    "latency_seconds": 52.01547949016094,
+    "output_tokens": 3545,
+    "total_tokens": 31793
+  }
+}

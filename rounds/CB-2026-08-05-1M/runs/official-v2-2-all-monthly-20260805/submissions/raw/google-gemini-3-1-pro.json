@@ -1,0 +1,169 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued strong corporate earnings and resilient economic growth.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7,723.55, down 0.2% on August 5.",
+        "Wall Street's aggregate profit-growth estimate for the completed season was reported at 50%."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant miss in upcoming macroeconomic data.",
+      "option_id": "SP500",
+      "reversal_case": "Resurgent inflation or a sudden economic slowdown.",
+      "time_window_catalyst": "August 12 CPI release."
+    },
+    {
+      "continuation_case": "Ongoing strength in mega-cap tech earnings and AI-driven momentum.",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score of 0.517 with a high prior active rank of 0.910.",
+        "Nvidia rose 3.4% following company-specific news."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A significant upside surprise in inflation leading to higher rate expectations.",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Rising interest rates disproportionately impacting growth valuations.",
+      "time_window_catalyst": "August 12 CPI and real earnings data."
+    },
+    {
+      "continuation_case": "Sustained expansion in manufacturing activity and new orders.",
+      "decision": "selected",
+      "evidence": [
+        "July ISM Manufacturing PMI was 55.6, the highest since May 2022.",
+        "Quality evidence score of 0.596."
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A sharp downward revision in GDP or weak durable goods orders.",
+      "option_id": "INDUSTRIALS",
+      "reversal_case": "A sudden contraction in industrial production or manufacturing PMI.",
+      "time_window_catalyst": "August 26 Q2 GDP second estimate and durable-goods advance report."
+    },
+    {
+      "continuation_case": "Persistent inflation concerns and ongoing geopolitical uncertainty.",
+      "decision": "selected",
+      "evidence": [
+        "Geopolitical tensions remain, with Iranian and Omani negotiators working on a Strait of Hormuz arrangement.",
+        "IMF stated that global disinflation had stalled."
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A rapid de-escalation of geopolitical tensions and strong disinflation.",
+      "option_id": "GOLD",
+      "reversal_case": "Rapid disinflation and a strong US dollar.",
+      "time_window_catalyst": "August 12 CPI release and ongoing geopolitical developments."
+    },
+    {
+      "continuation_case": "Investors seeking defensive positioning amid market volatility.",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score of 0.691 with a recent pullback rank of 0.776.",
+        "Defensive sector characteristics amid mixed economic signals."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A broad market rally driven by cyclical sectors leaving defensives behind.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A strong risk-on rally favoring cyclical sectors.",
+      "time_window_catalyst": "August 7 Employment Situation report."
+    },
+    {
+      "continuation_case": "Stable short-term rates anchored by Fed policy.",
+      "decision": "rejected",
+      "evidence": [
+        "Treasury's August 5 par yields were 4.03% at one year.",
+        "Quality evidence score of 0.640."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 0.5,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "A sudden shift in Fed policy expectations.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "An unexpected rate cut by the Fed.",
+      "time_window_catalyst": "August 12 CPI release."
+    },
+    {
+      "continuation_case": "Slowing economic growth leading to lower long-term yields.",
+      "decision": "rejected",
+      "evidence": [
+        "Treasury's August 5 par yields were 5.17% at thirty years.",
+        "Treasury announced $125 billion of August refunding securities."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A significant upside surprise in inflation data.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky inflation forcing yields higher.",
+      "time_window_catalyst": "August 13 Treasury thirty-year bond auction."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.36,
+  "is_official_score": true,
+  "key_risks": [
+    "Higher-than-expected inflation data could trigger a sell-off in growth sectors like technology.",
+    "Geopolitical de-escalation could reduce the safe-haven appeal of gold.",
+    "A sudden deterioration in macroeconomic data could negatively impact industrials."
+  ],
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "A significant upside surprise in inflation leading to higher rate expectations.",
+      "option_id": "TECHNOLOGY",
+      "rationale": "Strong recent momentum and high quality evidence score support continued outperformance.",
+      "time_window_catalyst": "August 12 CPI and real earnings data."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "A sharp downward revision in GDP or weak durable goods orders.",
+      "option_id": "INDUSTRIALS",
+      "rationale": "Supported by strong ISM Manufacturing PMI data and solid quality evidence.",
+      "time_window_catalyst": "August 26 Q2 GDP second estimate and durable-goods advance report."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "A rapid de-escalation of geopolitical tensions and strong disinflation.",
+      "option_id": "GOLD",
+      "rationale": "Provides a hedge against geopolitical risks and potential inflation persistence.",
+      "time_window_catalyst": "August 12 CPI release and ongoing geopolitical developments."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "A broad market rally driven by cyclical sectors leaving defensives behind.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive characteristics with a strong quality evidence score and recent pullback.",
+      "time_window_catalyst": "August 7 Employment Situation report."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.36,
+  "portfolio_rationale": "The portfolio balances growth and defensive exposures, overweighting technology and industrials based on strong momentum and manufacturing data. Gold and healthcare provide defensive ballast against geopolitical and macroeconomic uncertainties. This allocation aims to capture upside while managing downside risk over the one-month horizon.",
+  "provider": "google",
+  "rationale_summary": "A balanced approach favoring technology and industrials for growth, with gold and healthcare for defense.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17408,
+    "latency_seconds": 21.907305888831615,
+    "output_tokens": 2123,
+    "reasoning_tokens": 821,
+    "total_tokens": 20352
+  }
+}

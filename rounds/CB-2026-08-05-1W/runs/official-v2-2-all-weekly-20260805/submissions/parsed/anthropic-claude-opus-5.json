@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings season (aggregate profit growth reported at 50%), ISM manufacturing highest since 2022.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed 7,723.55 on Aug 5, down 0.2%",
+        "spy_return_5s +5.53%, 21s +2.95%",
+        "0.20% from 52-week high"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "CPI surprise pushing yields sharply higher and SPY down more than 2%",
+      "option_id": "SP500",
+      "reversal_case": "Sharp 5-day advance leaves market extended into CPI and payrolls; inflation still elevated with 3 FOMC hawkish dissents.",
+      "time_window_catalyst": "Aug 7 Employment Situation; Aug 12 July CPI"
+    },
+    {
+      "continuation_case": "Strong prior relative trend plus deep one-week relative pullback historically mean-reverts.",
+      "decision": "selected",
+      "evidence": [
+        "quality score 0.728; recent pullback rank 0.896",
+        "active_return_5s -6.78% with prior 16s active +3.54%",
+        "beta_spy -0.237, vol 18.2%"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLV lags SPY by over 2% by mid-week",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Persistent risk-on rotation into tech keeps defensives bleeding.",
+      "time_window_catalyst": "July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Weak dollar, sticky core inflation, elevated 30y yield at 5.17% supports hedge demand.",
+      "decision": "selected",
+      "evidence": [
+        "iau_return_5s +5.01%, 21s +3.21%",
+        "uup_return_5s -1.16%",
+        "IMF says global disinflation stalled"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Dollar rebound with gold breaking prior-week low",
+      "option_id": "GOLD",
+      "reversal_case": "Gold is 21% below 52-week high and volatile; a hawkish CPI-driven real-rate jump could hit it.",
+      "time_window_catalyst": "July CPI Aug 12; Treasury auctions Aug 11-12"
+    },
+    {
+      "continuation_case": "Sector at highs with low volatility, strong prior relative trend, and supportive credit (HYG +0.84% 5s).",
+      "decision": "selected",
+      "evidence": [
+        "distance_52w_high 0.00%",
+        "prior_16s_active +3.56%, active_5s -3.20%",
+        "vol 13.3%, max drawdown -1.93%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "HYG declines materially or XLF breaks below prior-week low",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak labor data (ADP 44k) could raise credit concerns; curve moves against banks.",
+      "time_window_catalyst": "Treasury 3y and 10y auctions Aug 11-12"
+    },
+    {
+      "continuation_case": "Nvidia +3.4% and AI capex narrative could extend the squeeze.",
+      "decision": "rejected",
+      "evidence": [
+        "active_return_5s +7.46% after prior 16s -10.84%",
+        "volatility 51.2%, max drawdown -17.5%",
+        "AMD fell 7% on Aug 5"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "SMH drops more than 5% from entry",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme volatility and lowest quality score (0.028); sharp reversal risk after a 7.5% weekly active gain.",
+      "time_window_catalyst": "Chip earnings/supplier news within week"
+    },
+    {
+      "continuation_case": "Supply still 9.4 mb/d below prewar could re-tighten if talks fail.",
+      "decision": "rejected",
+      "evidence": [
+        "uso_return_5s -11.16%",
+        "Brent $79.45, had reached $102 during conflict",
+        "Draft Strait of Hormuz arrangement lacks final Iranian approval"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Final Hormuz deal signed",
+      "option_id": "OIL",
+      "reversal_case": "De-escalation headlines would keep crushing crude; 67% vol.",
+      "time_window_catalyst": "Iran/Oman Hormuz approval news"
+    },
+    {
+      "continuation_case": "Duration hedge if labor data weakens.",
+      "decision": "rejected",
+      "evidence": [
+        "quality score 0.684, low vol 3.69%",
+        "10y 4.63%, 30y 5.17%",
+        "$125bn refunding auctions Aug 11-13"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.9,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "10y yield rises above 4.85%",
+      "option_id": "AGGREGATE_BONDS",
+      "reversal_case": "Heavy supply and elevated inflation cap rallies.",
+      "time_window_catalyst": "CPI Aug 12 and auctions"
+    },
+    {
+      "continuation_case": "Breadth catch-up trade after extreme mega-cap concentration.",
+      "decision": "rejected",
+      "evidence": [
+        "rsp_minus_spy_5s -3.67%",
+        "quality score 0.670",
+        "vol 11.4%, drawdown -1.46%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "RSP lags SPY by another 2%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap leadership can persist for weeks.",
+      "time_window_catalyst": "CPI Aug 12"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.34,
+  "is_official_score": true,
+  "key_risks": [
+    "Tech momentum continues and mega-cap leadership extends SPY gains beyond our tilts",
+    "Hot July CPI on Aug 12 hurts gold-adjacent and rate-sensitive names simultaneously",
+    "Financials give back gains if Treasury auctions go poorly and curve flattens",
+    "Healthcare defensive bid fades if risk appetite stays elevated"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "CPI upside surprise or payroll shock driving SPY below -2% intraweek",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure given a strong tape and record Dow; limits tracking error.",
+      "time_window_catalyst": "Aug 7 jobs report and Aug 12 July CPI"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "XLV underperforms SPY by more than 2% mid-week",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong prior relative trend and deep recent relative pullback; negative SPY beta offers CPI-day hedge.",
+      "time_window_catalyst": "July CPI Aug 12; ongoing earnings tail"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Dollar rallies sharply and gold breaks below prior-week low",
+      "option_id": "GOLD",
+      "rationale": "Sticky inflation (core PCE 3.3%, disinflation stalled), weak dollar 5s/21s, hedge into CPI print.",
+      "time_window_catalyst": "July CPI Aug 12; Treasury auctions Aug 11-12"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Credit spreads widen (HYG falls) or curve flattens sharply",
+      "option_id": "FINANCIALS",
+      "rationale": "At 52-week high with strong prior active return, low volatility and shallow drawdown; lagged last week so mean-reversion room.",
+      "time_window_catalyst": "Treasury 3y/10y auctions Aug 11-12 shaping curve"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.64,
+  "portfolio_rationale": "SPY just ran +5.5% in five sessions with all leadership in high-beta tech; breadth lagged badly (RSP-SPY -3.67%). We keep 40% core SPY and add quality-evidence-supported laggards (healthcare, financials) plus gold as a CPI hedge, avoiding chase of semis/Korea extremes.",
+  "provider": "anthropic",
+  "rationale_summary": "Modest positive SPY base case into jobs and CPI, with a rotation tilt toward defensively-ranked, recently-lagging exposures and gold rather than extended momentum/tech.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28248,
+    "latency_seconds": 43.135010513011366,
+    "output_tokens": 3143,
+    "total_tokens": 31391
+  }
+}

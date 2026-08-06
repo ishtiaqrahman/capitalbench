@@ -1,0 +1,152 @@
+{
+  "benchmark_expected_return_pct": 1.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Positive ISM readings and stable corporate profit estimates support moderate equity gains",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7723.55 on August 5",
+        "July ISM Manufacturing PMI 55.6 highest since May 2022",
+        "Advance Q2 GDP 1.5% annualized"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Inflation reacceleration above 4% year-over-year",
+      "option_id": "SP500",
+      "reversal_case": "July CPI and PPI show persistent price pressures above target",
+      "time_window_catalyst": "August Employment Situation and Q2 GDP second estimate"
+    },
+    {
+      "continuation_case": "Broad market participation with positive asset share at 71%",
+      "decision": "rejected",
+      "evidence": [
+        "VTI 5-day return 5.34%",
+        "June industrial production up 0.1%",
+        "Retail sales up 0.2% in June"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "Unemployment rising above 4.5%",
+      "option_id": "TOTAL_US_MARKET",
+      "reversal_case": "ADP July jobs estimate at only 44k signals slowdown",
+      "time_window_catalyst": "August Employment Situation and Q2 GDP second estimate"
+    },
+    {
+      "continuation_case": "Recent momentum in mega-cap tech names",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ 5-day return 8.40%",
+        "Nvidia rose 3.4% on August 5",
+        "Semiconductor volume z-score positive"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Tech earnings misses exceeding 20%",
+      "option_id": "NASDAQ100",
+      "reversal_case": "High volatility 26.48% and distance to 52-week high -3.76%",
+      "time_window_catalyst": "July CPI and real earnings release"
+    },
+    {
+      "continuation_case": "Lower volatility 11.73% and shallow drawdown",
+      "decision": "rejected",
+      "evidence": [
+        "IWD prior active rank 0.821",
+        "Financials sector closed at 52-week high",
+        "Dividend yield support in value names"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": 0.8,
+      "invalidation_condition": "Yield curve steepening beyond 2%",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Value underperformance versus growth in recent 5-day window",
+      "time_window_catalyst": "Treasury refunding auctions August 11-13"
+    },
+    {
+      "continuation_case": "Defensive characteristics amid elevated inflation",
+      "decision": "rejected",
+      "evidence": [
+        "XLV quality evidence score 0.691",
+        "June job openings 7.4 million stable",
+        "Healthcare low drawdown rank 0.731"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "Sector relative performance below -3%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Regulatory or policy shifts post-FOMC",
+      "time_window_catalyst": "July personal income and outlays August 26"
+    },
+    {
+      "continuation_case": "High quality evidence from pullback and low volatility",
+      "decision": "rejected",
+      "evidence": [
+        "XBI quality evidence score 0.785 highest in table",
+        "Recent pullback rank 0.985",
+        "Biotech volume z-score -0.315"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XBI drawdown exceeding 15%",
+      "option_id": "BIOTECH",
+      "reversal_case": "Clinical or financing risk in high-beta names",
+      "time_window_catalyst": "July new-home sales August 25"
+    },
+    {
+      "continuation_case": "Safe-haven demand amid global growth forecast 3.0%",
+      "decision": "rejected",
+      "evidence": [
+        "UUP quality evidence score 0.733",
+        "Dollar prior active rank 0.537",
+        "Shallow drawdown rank 0.925"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Dollar index falling below 100",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "FOMC maintaining 3.50-3.75% target range",
+      "time_window_catalyst": "July CPI and real earnings August 12"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.0,
+  "is_official_score": true,
+  "key_risks": [
+    "Higher than expected inflation from PCE and CPI data",
+    "Labor market softening in July Employment Situation",
+    "Geopolitical supply risks in energy markets"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 100,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Inflation reacceleration above 4% year-over-year",
+      "option_id": "SP500",
+      "rationale": "No active option base forecast exceeds SPY; broad diversified US equity exposure aligns with neutral data and scheduled releases.",
+      "time_window_catalyst": "August Employment Situation and Q2 GDP second estimate"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.8,
+  "portfolio_rationale": "SPY base forecast not exceeded by any active candidate; 100% allocation to benchmark maximizes expected return under rules.",
+  "provider": "xai",
+  "rationale_summary": "Ledger spans four clusters with SP500 included; only SP500 selected as no superior base forecasts identified.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16049,
+    "latency_seconds": 27.01506543508731,
+    "output_tokens": 1480,
+    "reasoning_tokens": 946,
+    "total_tokens": 18475
+  }
+}

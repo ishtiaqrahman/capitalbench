@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad index trend remains positive over 5 and 21 sessions, earnings context is supportive, and macro activity data such as ISM manufacturing and services are expansionary.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7,723.55 on August 5, down 0.2% on the day.",
+        "SPY return_5s was 5.53% and return_21s was 2.95%.",
+        "About three quarters of S&P 500 companies had reported, with aggregate profit-growth estimate reported at 50%."
+      ],
+      "forecast_base_pct": 1,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -3,
+      "invalidation_condition": "Invalidated if SPY loses recent positive breadth and falls below its recent drawdown range while macro data raise rate or growth concerns.",
+      "option_id": "SP500",
+      "reversal_case": "The index is near a 52-week high after a strong 5-session move, so inflation or labor surprises could trigger valuation and rate-driven consolidation.",
+      "time_window_catalyst": "July employment, July CPI/PPI, retail sales, Q2 GDP second estimate, July personal income/outlays, and August employment data before the exit close."
+    },
+    {
+      "continuation_case": "Strong prior active trend plus the deepest recent pullback rank can support a rebound if risk appetite and financing conditions stabilize.",
+      "decision": "selected",
+      "evidence": [
+        "BIOTECH had the highest quality evidence score in the table at 0.785.",
+        "Prior 105-session active return was 19.48%, while active_return_21s was -9.58%.",
+        "Volatility_63s was 31.12% and distance from 52-week high was -6.86%."
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 8,
+      "forecast_low_pct": -5.5,
+      "invalidation_condition": "Case weakens if XBI continues to underperform SPY and breaks materially below its recent pullback without evidence of broader risk appetite recovery.",
+      "option_id": "BIOTECH",
+      "reversal_case": "High volatility and a large recent active drawdown may signal deteriorating sector sentiment rather than a temporary pullback.",
+      "time_window_catalyst": "July CPI/PPI, Q2 GDP second estimate, July personal income/outlays, and August employment data may affect financing conditions and risk appetite before September 4."
+    },
+    {
+      "continuation_case": "The strongest prior active trend among US technology candidates and high quality score support continued AI-linked leadership if the recent rebound persists.",
+      "decision": "selected",
+      "evidence": [
+        "SEMICONDUCTORS had a quality evidence score of 0.738.",
+        "Prior 105-session active return was 37.20% and recent active_return_21s was -4.97%.",
+        "Return_5s was 12.99%, volatility_63s was 55.95%, and max_drawdown_63s was -24.62%."
+      ],
+      "forecast_base_pct": 1.7,
+      "forecast_high_pct": 9.5,
+      "forecast_low_pct": -7,
+      "invalidation_condition": "Invalidated if the post-earnings chip rally fails and SMH underperforms SPY while volatility and drawdown expand materially.",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Very high volatility, large drawdown, and a strong 5-session rally create substantial mean-reversion risk.",
+      "time_window_catalyst": "Large-cap technology earnings digestion, July CPI/PPI, GDP/profits data, and August employment data can drive AI and growth-equity sentiment before exit."
+    },
+    {
+      "continuation_case": "Semiconductor-linked international exposure has very strong prior relative momentum and recent price strength that can continue if AI and electronics sentiment remains firm.",
+      "decision": "selected",
+      "evidence": [
+        "TAIWAN had the highest prior active rank at 1.000 and quality evidence score of 0.717.",
+        "Prior 105-session active return was 39.00%, with return_5s of 13.75%.",
+        "Volatility_63s was 44.86% and distance from 52-week high was -8.81%."
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 8.5,
+      "forecast_low_pct": -6,
+      "invalidation_condition": "Invalidated if Taiwan semiconductor-linked equities reverse sharply and EWT loses relative strength versus SPY.",
+      "option_id": "TAIWAN",
+      "reversal_case": "High volatility and geopolitical sensitivity can overwhelm trend signals over a one-month window.",
+      "time_window_catalyst": "Global electronics and AI sentiment, US macro data, and risk appetite around September 4 employment data."
+    },
+    {
+      "continuation_case": "Positive recent active return and proximity to a 52-week high indicate resilient growth leadership within technology.",
+      "decision": "selected",
+      "evidence": [
+        "CYBERSECURITY prior 105-session active return was 28.78%.",
+        "Active_return_21s was 2.86% and distance from 52-week high was -0.38%.",
+        "Quality evidence score was 0.511, below the top-ranked candidates but with strong prior rank of 0.940."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -4,
+      "invalidation_condition": "Invalidated if CIBR fails to hold near its 52-week high and turns into sustained relative underperformance versus SPY.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "The quality score is only mid-pack because the recent pullback rank is low, so the setup may be crowded and vulnerable to growth rotation.",
+      "time_window_catalyst": "Growth-stock sentiment around inflation, GDP, profits, and employment releases through September 4."
+    },
+    {
+      "continuation_case": "Expansionary activity data, relative 21-day strength, and a 52-week high support continued cyclical participation outside technology.",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS active_return_21s was 0.53% and distance from 52-week high was 0.00%.",
+        "Volatility_63s was 13.63%, below SPY's 14.23%.",
+        "The July ISM Manufacturing PMI rose to 55.6 and ISM Services PMI was 54.1."
+      ],
+      "forecast_base_pct": 1.15,
+      "forecast_high_pct": 5,
+      "forecast_low_pct": -3,
+      "invalidation_condition": "Invalidated if XLF loses its 52-week-high breakout and financials begin underperforming SPY on weaker credit or rate expectations.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Elevated inflation and rate uncertainty could pressure credit, loan demand, or valuation multiples for financials.",
+      "time_window_catalyst": "July employment, CPI/PPI, retail sales, GDP/profits, and August employment data may affect yield-curve and credit expectations."
+    },
+    {
+      "continuation_case": "Strong quality score, positive prior active return, and domestic cyclicality could benefit from resilient US activity data.",
+      "decision": "rejected",
+      "evidence": [
+        "SMALL_CAP quality evidence score was 0.684.",
+        "Prior 105-session active return was 4.16%, but active_return_21s was -1.74%.",
+        "Volatility_63s was 18.58%, beta_spy_252s was 1.217, and distance from 52-week high was -0.64%."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 6,
+      "forecast_low_pct": -5,
+      "invalidation_condition": "Invalidated if IWM fails to regain relative strength versus SPY and credit/rate-sensitive cyclicals weaken.",
+      "option_id": "SMALL_CAP",
+      "reversal_case": "Small caps are sensitive to financing conditions, and recent 21-day underperformance may persist if rates or credit concerns rise.",
+      "time_window_catalyst": "July and August labor data, CPI/PPI, retail sales, and GDP updates before September 4."
+    },
+    {
+      "continuation_case": "Supply constraints and unresolved Hormuz arrangement terms could reignite an energy risk premium.",
+      "decision": "rejected",
+      "evidence": [
+        "OIL return_5s was -11.16% while return_21s was 5.47%.",
+        "Prior 105-session active return was 31.58%, but volatility_63s was 54.46% and max_drawdown_63s was -32.49%.",
+        "IEA reported June global oil supply 9.4 million barrels per day below prewar levels, while a draft Strait of Hormuz arrangement still lacked final Iranian approval."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 9,
+      "forecast_low_pct": -10,
+      "invalidation_condition": "Invalidated if de-escalation is finalized and oil fails to recover from the recent 5-session decline.",
+      "option_id": "OIL",
+      "reversal_case": "Brent had fallen to $79.45 from $102 during the conflict, and de-escalation or tanker-traffic recovery could keep crude under pressure.",
+      "time_window_catalyst": "Any development in the Strait of Hormuz arrangement, port-blockade relief terms, or tanker-traffic recovery before September 4."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.625,
+  "is_official_score": true,
+  "key_risks": [
+    "A hotter July CPI/PPI or employment report could lift rate expectations and pressure high-beta growth, biotech, and semiconductor exposures.",
+    "Recent high-volatility winners such as semiconductors and Taiwan could mean-revert sharply over a one-month horizon.",
+    "Geopolitical or supply-chain stress could hurt Taiwan and semiconductor-linked holdings despite strong prior momentum.",
+    "If market leadership broadens defensively or rotates to cash-like assets, the portfolio may underperform SPY's large-cap benchmark composition."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Case weakens if XBI continues to underperform SPY and breaks materially below its recent pullback without evidence of broader risk appetite recovery.",
+      "option_id": "BIOTECH",
+      "rationale": "Highest quality evidence score among the assessed candidates, with a strong prior active trend and a deep recent relative pullback that can rebound if risk appetite remains firm.",
+      "time_window_catalyst": "July CPI/PPI, Q2 GDP second estimate, July personal income/outlays, and August employment data may affect financing conditions and risk appetite before September 4."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.7,
+      "invalidation_condition": "Invalidated if the post-earnings chip rally fails and SMH underperforms SPY while volatility and drawdown expand materially.",
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Very strong prior active return and high quality score support continuation, while the recent pullback provides potential rebound fuel into the one-month window.",
+      "time_window_catalyst": "Large-cap technology earnings digestion, July CPI/PPI, GDP/profits data, and August employment data can drive AI and growth-equity sentiment before exit."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Invalidated if Taiwan semiconductor-linked equities reverse sharply and EWT loses relative strength versus SPY.",
+      "option_id": "TAIWAN",
+      "rationale": "Taiwan has the top prior active rank in the quality table and strong semiconductor-linked momentum, offering differentiated international tech exposure within the cluster cap.",
+      "time_window_catalyst": "Global electronics and AI sentiment, US macro data, and risk appetite around September 4 employment data."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Invalidated if CIBR fails to hold near its 52-week high and turns into sustained relative underperformance versus SPY.",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Cybersecurity combines positive 21-day active return, strong prior active return, and a shallow distance from its 52-week high relative to other growth options.",
+      "time_window_catalyst": "Growth-stock sentiment around inflation, GDP, profits, and employment releases through September 4."
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.15,
+      "invalidation_condition": "Invalidated if XLF loses its 52-week-high breakout and financials begin underperforming SPY on weaker credit or rate expectations.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials provide non-technology cyclical exposure with positive recent active return, a new 52-week high, and lower volatility than most high-beta selections.",
+      "time_window_catalyst": "July employment, CPI/PPI, retail sales, GDP/profits, and August employment data may affect yield-curve and credit expectations."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.625,
+  "portfolio_rationale": "The portfolio targets candidates with base forecasts above SPY, emphasizing supplied quality evidence, prior relative strength, and recent pullback/rebound setups. Technology-and-growth exposure is capped at 40%, with healthcare, international equity, and financials diversifying the active risk.",
+  "provider": "openai",
+  "rationale_summary": "SPY is forecast at a modest positive base return, but selected active candidates have stronger one-month base cases from quality ranks and relative trend/pullback evidence. The allocation balances upside from semiconductors, Taiwan, cybersecurity, and biotech with a smaller financials position.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15833,
+    "latency_seconds": 43.80429464485496,
+    "output_tokens": 3009,
+    "reasoning_tokens": 286,
+    "total_tokens": 18842
+  }
+}

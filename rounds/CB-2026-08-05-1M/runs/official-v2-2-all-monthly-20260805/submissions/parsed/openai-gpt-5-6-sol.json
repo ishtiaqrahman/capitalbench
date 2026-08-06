@@ -1,0 +1,178 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings, expanding manufacturing and services activity, and broad positive asset participation can sustain gains.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY gained 5.53% over five sessions and 2.95% over 21 sessions.",
+        "About three quarters of S&P 500 companies had reported, with aggregate completed-season profit growth estimated at 50%.",
+        "Inflation remained elevated and three FOMC members preferred a 25-basis-point increase."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 7.5,
+      "forecast_low_pct": -7.5,
+      "invalidation_condition": "SPY loses its recent advance and breaks below its existing 63-session drawdown trough while yields rise.",
+      "option_id": "SP500",
+      "reversal_case": "The sharp five-session rise, hawkish FOMC dissent, elevated inflation, and slowing employment could cause valuation compression.",
+      "time_window_catalyst": "July CPI and PPI, July retail sales, the August 26 GDP and PCE releases, and the September 4 Employment Situation."
+    },
+    {
+      "continuation_case": "Strong prior relative momentum, a recent relative reset, improving manufacturing activity, and broad earnings strength support renewed leadership.",
+      "decision": "selected",
+      "evidence": [
+        "The quality evidence score was 0.738, with a 0.985 prior-active rank and 0.940 pullback rank.",
+        "Prior 105-session active return was 37.20%, while the latest 21-session active return was -4.97%.",
+        "July manufacturing PMI rose to 55.6, while Nvidia gained 3.4% on August 5."
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 18.0,
+      "forecast_low_pct": -15.0,
+      "invalidation_condition": "A renewed rise in long yields combined with semiconductor underperformance versus SPY and a break below its recent 63-session drawdown trough.",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "The 12.99% five-session gain may be overextended, and 55.95% volatility plus sensitivity to yields creates substantial downside risk.",
+      "time_window_catalyst": "July CPI and PPI, July retail sales, August ISM manufacturing, and the August Employment Situation before the exit close."
+    },
+    {
+      "continuation_case": "A strong prior trend and deep recent relative pullback support mean reversion if inflation and yields remain contained.",
+      "decision": "selected",
+      "evidence": [
+        "Biotech had the highest quality evidence score at 0.785.",
+        "Prior 105-session active return was 19.48%, followed by a 21-session active return of -9.58%.",
+        "Its 63-session volatility was 31.12% and maximum drawdown was -10.51%."
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 14.0,
+      "forecast_low_pct": -10.0,
+      "invalidation_condition": "Biotech continues underperforming SPY after the inflation releases and exceeds its existing 63-session drawdown.",
+      "option_id": "BIOTECH",
+      "reversal_case": "The pullback may reflect persistent sector weakness rather than temporary dislocation; supplied sector-specific fundamental support is limited.",
+      "time_window_catalyst": "July CPI and PPI, July personal income and outlays, and the August Employment Situation before the exit close."
+    },
+    {
+      "continuation_case": "Expanding manufacturing and strong recent relative performance could support industrial-metal demand.",
+      "decision": "rejected",
+      "evidence": [
+        "Copper's 21-session active return was 6.30% and it was at its 52-week high.",
+        "July ISM manufacturing reached 55.6, with new orders at 56.7 and production at 58.5.",
+        "Its quality evidence score was only 0.195 and prior active return was -9.26%."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 11.0,
+      "forecast_low_pct": -9.0,
+      "invalidation_condition": "Copper falls from its 52-week high and begins underperforming SPY while manufacturing new orders weaken.",
+      "option_id": "COPPER",
+      "reversal_case": "The lack of a pullback, weak prior trend, and China-linked demand sensitivity leave the move vulnerable to profit-taking.",
+      "time_window_catalyst": "August ISM manufacturing on September 1 and the scheduled July trade, housing, and durable-goods releases."
+    },
+    {
+      "continuation_case": "Hawkish policy risk, elevated inflation, and safe-haven demand could reverse the recent decline.",
+      "decision": "rejected",
+      "evidence": [
+        "The dollar's quality evidence score was 0.733, supported by low volatility and shallow drawdown ranks.",
+        "UUP declined 1.16% over five sessions and 1.09% over 21 sessions.",
+        "Three FOMC members preferred a rate increase, while the one-year Treasury yield was 4.03%."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "The dollar extends its decline after inflation releases while US yields and relative rate expectations fall.",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "Cooling monthly inflation and slowing employment could lower expected US rates and extend dollar weakness.",
+      "time_window_catalyst": "July CPI and PPI, the August 26 PCE release, and the September 4 Employment Situation."
+    },
+    {
+      "continuation_case": "Positive risk appetite, strong aggregate corporate profit growth, and resilient private domestic demand can keep spreads contained.",
+      "decision": "rejected",
+      "evidence": [
+        "High-yield credit had 3.60% volatility and a shallow -1.01% 63-session maximum drawdown.",
+        "It returned 0.84% over five sessions but underperformed SPY by 2.77% over 21 sessions.",
+        "Its quality evidence score was 0.627."
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "High-yield credit develops a drawdown beyond -1.01% as equity breadth deteriorates and credit spreads reprice.",
+      "option_id": "HIGH_YIELD_CREDIT",
+      "reversal_case": "Weak labor data or renewed inflation could widen spreads and leave high yield behind equities and short Treasuries.",
+      "time_window_catalyst": "July and August labor reports, July retail sales, and the August 26 GDP and corporate-profits update."
+    },
+    {
+      "continuation_case": "Persistently impaired supply and failure to finalize the Hormuz arrangement could rapidly restore the geopolitical premium.",
+      "decision": "rejected",
+      "evidence": [
+        "Oil fell 11.16% over five sessions but retained a 2.52% 21-session active return.",
+        "Global oil supply was reported 9.4 million barrels per day below prewar levels.",
+        "A draft Strait of Hormuz arrangement lacked final Iranian approval and disputed terms remained."
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 20.0,
+      "forecast_low_pct": -18.0,
+      "invalidation_condition": "The Hormuz arrangement is finalized, tanker traffic recovers, and oil fails to rebound from its five-session decline.",
+      "option_id": "OIL",
+      "reversal_case": "Final approval of the arrangement and recovering tanker traffic could extend the sharp recent decline.",
+      "time_window_catalyst": "Any resolution or breakdown of the reported Strait of Hormuz arrangement before September 4."
+    },
+    {
+      "continuation_case": "A shallow drawdown and prior relative strength could support a rebound if inflation cools and yields decline.",
+      "decision": "rejected",
+      "evidence": [
+        "Real estate's quality evidence score was 0.710, with a 0.791 prior-active rank and 0.761 shallow-drawdown rank.",
+        "Prior 105-session active return was 2.68%, followed by a 21-session active return of -2.26%.",
+        "The 10-year Treasury yield was 4.63%, and three FOMC members preferred a rate increase."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "The 10-year yield rises materially above 4.63% and real estate exceeds its existing -3.38% 63-session drawdown.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "High long-term yields, hawkish policy risk, and weaker permits could pressure financing-sensitive property equities.",
+      "time_window_catalyst": "July CPI and PPI, July housing starts and permits, and the August 26 PCE release."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 1.25,
+  "is_official_score": true,
+  "key_risks": [
+    "Higher-than-expected CPI, PPI, or PCE data could lift yields and compress high-duration equity valuations.",
+    "Semiconductor gains could reverse after the 12.99% five-session advance and amid 55.95% annualized volatility.",
+    "Biotech's rebound thesis relies mainly on mechanical quality and pullback evidence rather than a supplied sector-specific catalyst.",
+    "Weak payroll, consumer, or GDP data could trigger a broad risk-off move before September 4."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "A renewed rise in long yields combined with semiconductor underperformance versus SPY and a break below its recent 63-session drawdown trough.",
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Strong prior benchmark-relative trend and a high quality-evidence score support continuation after a relative pullback, while manufacturing strength and aggregate earnings growth provide independent support.",
+      "time_window_catalyst": "July CPI and PPI, July retail sales, August ISM manufacturing, and the August Employment Situation before the exit close."
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Biotech continues underperforming SPY after the inflation releases and exceeds its existing 63-session drawdown.",
+      "option_id": "BIOTECH",
+      "rationale": "The highest quality-evidence score and a deep recent relative pullback create a rebound setup that complements semiconductor exposure, though sector-specific fundamental evidence is limited.",
+      "time_window_catalyst": "July CPI and PPI, July personal income and outlays, and the August Employment Situation before the exit close."
+    }
+  ],
+  "portfolio_expected_return_pct": 2.25,
+  "portfolio_rationale": "The portfolio combines the strongest quality-ranked pullback candidate with a high-quality technology trend candidate. Formal exposure is split evenly between technology-and-growth and healthcare-and-biotech, keeping each non-benchmark cluster at the 50% cap.",
+  "provider": "openai",
+  "rationale_summary": "Semiconductors offer trend continuation backed by manufacturing and earnings evidence, while biotech offers a contrarian rebound setup. Both base forecasts exceed SPY's forecast for the one-month window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15835,
+    "latency_seconds": 66.63132464094087,
+    "output_tokens": 3920,
+    "reasoning_tokens": 1727,
+    "total_tokens": 19755
+  }
+}

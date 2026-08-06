@@ -1,0 +1,146 @@
+{
+  "benchmark_expected_return_pct": 0.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Steady equity participation supported by manufacturing strength and corporate earnings season completion",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7,723.55 down 0.2% on August 5",
+        "July ISM Manufacturing PMI at 55.6 highest since May 2022"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "SPY closes below 7650 on August 12",
+      "option_id": "SP500",
+      "reversal_case": "Disappointing July CPI or employment data triggers risk-off rotation",
+      "time_window_catalyst": "July CPI release August 12"
+    },
+    {
+      "continuation_case": "Defensive dividend tilt persists on rate stability",
+      "decision": "rejected",
+      "evidence": [
+        "High quality evidence score 0.860",
+        "Recent active return negative versus SPY"
+      ],
+      "forecast_base_pct": -0.2,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SPY closes below 7650 on August 12",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth rotation accelerates after CPI print",
+      "time_window_catalyst": "July CPI release August 12"
+    },
+    {
+      "continuation_case": "Defensive staples hold on consumer caution",
+      "decision": "rejected",
+      "evidence": [
+        "High quality evidence score 0.808",
+        "June retail sales up only 0.2%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 0.9,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "SPY closes below 7650 on August 12",
+      "option_id": "CONSUMER_STAPLES",
+      "reversal_case": "Stronger than expected CPI lifts cyclical sectors",
+      "time_window_catalyst": "July CPI release August 12"
+    },
+    {
+      "continuation_case": "Geopolitical supply concerns support energy",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude at $79.45",
+        "High quality evidence score 0.818"
+      ],
+      "forecast_base_pct": -0.8,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SPY closes below 7650 on August 12",
+      "option_id": "ENERGY",
+      "reversal_case": "Strait of Hormuz draft agreement reduces risk premium",
+      "time_window_catalyst": "July CPI release August 12"
+    },
+    {
+      "continuation_case": "Defensive healthcare benefits from labor stability",
+      "decision": "rejected",
+      "evidence": [
+        "High quality evidence score 0.728",
+        "June job openings little changed"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 1.1,
+      "forecast_low_pct": -1.6,
+      "invalidation_condition": "SPY closes below 7650 on August 12",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "CPI upside surprises pressure rate-sensitive defensives",
+      "time_window_catalyst": "July CPI release August 12"
+    },
+    {
+      "continuation_case": "Duration provides ballast ahead of data releases",
+      "decision": "rejected",
+      "evidence": [
+        "10-year Treasury yield 4.63%",
+        "High quality evidence score 0.705"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.9,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "SPY closes below 7650 on August 12",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Stronger growth data pushes yields higher",
+      "time_window_catalyst": "July CPI release August 12"
+    },
+    {
+      "continuation_case": "Safe-haven demand amid geopolitical and inflation uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 5-day return 5.01%",
+        "Quality evidence score 0.371"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "SPY closes below 7650 on August 12",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar strength or risk-on equity rally reduces gold appeal",
+      "time_window_catalyst": "July CPI release August 12"
+    }
+  ],
+  "confidence": 0.52,
+  "expected_alpha_vs_sp500_pct": 0.0,
+  "is_official_score": true,
+  "key_risks": [
+    "July CPI release on August 12 could trigger volatility",
+    "FOMC dissent signals persistent inflation concerns",
+    "Weak June payrolls and ADP data point to labor softening"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 100,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "SPY closes below 7650 on August 12",
+      "option_id": "SP500",
+      "rationale": "No active option base forecast exceeds SPY; broad equity exposure aligns with neutral one-week outlook amid mixed macro data.",
+      "time_window_catalyst": "July CPI release August 12"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.4,
+  "portfolio_rationale": "SPY selected as sole holding after screening showed no qualifying active options with superior base-case forecasts. Allocation maximizes expected return within constraints for the one-week window.",
+  "provider": "xai",
+  "rationale_summary": "SPY base forecast set at 0.4% given recent close and scheduled data releases; portfolio expected return equals benchmark with zero alpha.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16053,
+    "latency_seconds": 17.805536492029205,
+    "output_tokens": 1391,
+    "reasoning_tokens": 652,
+    "total_tokens": 18096
+  }
+}

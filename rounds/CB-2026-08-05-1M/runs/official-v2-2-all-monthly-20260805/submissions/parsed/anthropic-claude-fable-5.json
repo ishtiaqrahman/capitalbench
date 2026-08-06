@@ -1,0 +1,195 @@
+{
+  "benchmark_expected_return_pct": 1.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings and firm activity data sustain record-level equity prices",
+      "decision": "selected",
+      "evidence": [
+        "S&P closed 7,723.55, -0.20% from 52w high",
+        "ISM Manufacturing 55.6, highest since May 2022",
+        "~50% aggregate S&P profit growth reported this season"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "CPI reacceleration forcing hike expectations",
+      "option_id": "SP500",
+      "reversal_case": "Elevated inflation (Q2 core PCE 3.4% annualized) with hawkish FOMC dissents could reprice rates higher",
+      "time_window_catalyst": "Aug 7 payrolls, Aug 12 CPI, Aug 26 GDP second estimate"
+    },
+    {
+      "continuation_case": "AI capex cycle and earnings beats extend semiconductor leadership",
+      "decision": "selected",
+      "evidence": [
+        "Prior 105s active return +37.2%; highest quality-rank pillars (prior 0.985, pullback 0.940)",
+        "Nvidia +3.4% on earnings/supplier news Aug 5",
+        "50% aggregate profit growth season supports AI capex"
+      ],
+      "forecast_base_pct": 3.0,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Major hyperscaler capex cuts or hot CPI above 3.5% y/y",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "AMD -7% shows single-name earnings risk; 56% volatility means sharp drawdowns possible",
+      "time_window_catalyst": "Ongoing AI earnings and Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Rotation into laggard software within a strong tech tape continues",
+      "decision": "selected",
+      "evidence": [
+        "+4.67% recent active return with deep prior relative pullback",
+        "13.98% below 52w high offers valuation cushion vs other tech"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "10y yield above 4.9%",
+      "option_id": "SOFTWARE",
+      "reversal_case": "Rate backup compresses long-duration software multiples",
+      "time_window_catalyst": "Aug 12 CPI and remaining software earnings"
+    },
+    {
+      "continuation_case": "Semiconductor supply-chain strength plus weak dollar drives continued outperformance",
+      "decision": "selected",
+      "evidence": [
+        "Highest prior active rank (1.000), prior 105s active +39%",
+        "Dollar weakness: UUP -1.09% over 21 sessions"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Sharp dollar rally or semiconductor guidance cuts",
+      "option_id": "TAIWAN",
+      "reversal_case": "Geopolitical risk or chip-cycle peak reverses crowded trade",
+      "time_window_catalyst": "Chip demand data and dollar trend through Sep 4"
+    },
+    {
+      "continuation_case": "Rebound from sharp relative pullback within intact uptrend as rate-cut odds firm",
+      "decision": "selected",
+      "evidence": [
+        "Top quality evidence score 0.785: strong prior trend (+19.5% prior active) with deepest recent pullback (rank 0.985)",
+        "-9.58% 21s active return provides mean-reversion entry"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "10y yield above 5% or continued relative breakdown vs SPY",
+      "option_id": "BIOTECH",
+      "reversal_case": "Rates rise further, extending biotech underperformance",
+      "time_window_catalyst": "Aug 12 CPI and Sep 4 payrolls influencing rate path"
+    },
+    {
+      "continuation_case": "Dollar weakness and Fed pause could extend the bounce",
+      "decision": "rejected",
+      "evidence": [
+        "Prior active rank 0.045, -25.85% prior active return, 21% below 52w high",
+        "Recent 5s bounce +5.01% with dollar weakness"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Dollar rebound or rate hike pricing",
+      "option_id": "GOLD",
+      "reversal_case": "Broken downtrend and stalled disinflation without cuts keep real rates elevated",
+      "time_window_catalyst": "Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Weak July payrolls (ADP 44k) could rally duration",
+      "decision": "rejected",
+      "evidence": [
+        "30y at 5.17%; -4.39% 21s active return",
+        "$25bn 30y auction Aug 13 supply event"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Auction tails or CPI upside surprise",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky inflation (core PCE 3.3% y/y) and heavy refunding supply pressure long yields",
+      "time_window_catalyst": "Aug 11-13 refunding auctions, Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Mean reversion if rates fall on soft labor data",
+      "decision": "rejected",
+      "evidence": [
+        "-7.42% 21s active return, highest pullback rank 0.955",
+        "Rate-sensitive; 10y at 4.63%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Rates rising or continued cyclical leadership",
+      "option_id": "UTILITIES",
+      "reversal_case": "Risk-on tape and steady rates keep defensive laggards underperforming",
+      "time_window_catalyst": "Aug 7 and Sep 4 payrolls"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 1.24,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot July/August CPI (services prices at 70.3 ISM) triggers Fed hike pricing and growth-stock derating",
+    "High beta (~1.6 blended) means any broad selloff produces sizable negative alpha",
+    "Hormuz deal collapse spikes oil and inflation expectations",
+    "Semiconductor concentration: single-sector guidance disappointment hits three holdings simultaneously"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 3.0,
+      "invalidation_condition": "CPI surprise above 3.5% y/y or major AI capex guidance cuts",
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Strongest prior trend (37% prior active return, top quality score 0.738) with AI earnings momentum (Nvidia +3.4% on earnings); reported 50% aggregate S&P profit growth supports the AI capex cycle.",
+      "time_window_catalyst": "Continued AI-driven earnings flow and August CPI (Aug 12) enabling growth multiple support"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Renewed rise in 10y yield above 4.9% or weak software earnings guidance",
+      "option_id": "SOFTWARE",
+      "rationale": "Positive recent active return (+4.67% 21s) with deep prior pullback offering mean-reversion entry; benefits from same disinflation/rate path as growth.",
+      "time_window_catalyst": "Late-cycle software earnings and Aug 12 CPI print"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Semiconductor demand deterioration or sharp dollar rebound",
+      "option_id": "TAIWAN",
+      "rationale": "Top prior active rank (1.00) on semiconductor supply-chain strength; dollar weakness (UUP -1.09% 21s) supports non-US equity returns.",
+      "time_window_catalyst": "Global chip demand data and continued dollar softness through early September"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Rates back up sharply (10y above 5%) crushing long-duration biotech financing",
+      "option_id": "BIOTECH",
+      "rationale": "Highest quality evidence score (0.785): strong prior trend (+19.5% prior active) with deep recent pullback (-9.58% 21s active), a favorable buy-the-dip setup; benefits from any rate relief.",
+      "time_window_catalyst": "Aug 12 CPI and Sep 4 payrolls shaping rate-cut expectations"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Hot CPI reigniting hike expectations after 9-3 FOMC hold with hawkish dissent",
+      "option_id": "SP500",
+      "rationale": "Benchmark ballast near record levels with strong ISM (55.6) and record Dow close.",
+      "time_window_catalyst": "Aug 7 payrolls, Aug 12 CPI, Aug 26 GDP second estimate"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.44,
+  "portfolio_rationale": "Tilt toward AI/semiconductor leadership with independently supported earnings momentum, plus pulled-back biotech and Taiwan for mean-reversion carry, anchored by a small SPY position. Tech cluster capped at exactly 50%.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight semiconductors/software on AI earnings strength and disinflation trajectory, add biotech and Taiwan with high quality-evidence scores, keep 10% SPY as ballast.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28242,
+    "latency_seconds": 55.8778324960731,
+    "output_tokens": 3721,
+    "total_tokens": 31963
+  }
+}

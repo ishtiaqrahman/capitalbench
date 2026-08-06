@@ -1,0 +1,185 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong recent momentum, solid ISM readings, and completed earnings season support further gains into jobs/CPI.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed 7723.55 down 0.2% on Aug 5 with 5s return 5.53%",
+        "About three quarters of S&P 500 companies reported with aggregate profit-growth estimate 50%",
+        "July ISM Manufacturing PMI 55.6 highest since May 2022"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Payrolls or CPI print triggers sharp risk-off move below recent lows",
+      "option_id": "SP500",
+      "reversal_case": "Elevated inflation (core PCE 3.3% y/y) and FOMC split vote raise risk of hawkish data reaction.",
+      "time_window_catalyst": "July Employment Situation Aug 7 and July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Recent relative outperformance and mega-cap earnings momentum can extend if labor/CPI data cooperate.",
+      "decision": "selected",
+      "evidence": [
+        "TECHNOLOGY return_3s 6.02% and active_return_5s 6.08%",
+        "Nvidia rose 3.4% on Aug 5 following company-specific news",
+        "Nasdaq Composite closed down 0.8% on Aug 5"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Hotter-than-expected CPI or weak tech follow-through after Nvidia move",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "High 21s volatility 35.64% and deep prior active weakness leave room for sharp mean reversion.",
+      "time_window_catalyst": "July Employment Situation Aug 7 and July CPI Aug 12"
+    },
+    {
+      "continuation_case": "High quality rank and strong prior active trend favor bounce if Hormuz de-escalation progresses.",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY quality evidence score 0.818 with prior_16s_active_return 9.78%",
+        "Brent crude at $79.45 down 0.1%; had reached $102 during conflict",
+        "Iranian and Omani negotiators completed draft Strait of Hormuz arrangement"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Further oil price decline below recent levels or failed de-escalation news",
+      "option_id": "ENERGY",
+      "reversal_case": "Recent 3s return -3.76% and oil supply still 9.4 mb/d below prewar could extend weakness.",
+      "time_window_catalyst": "Strait of Hormuz draft arrangement updates before Aug 12"
+    },
+    {
+      "continuation_case": "Elevated inflation readings and recent positive returns support further gains as haven/inflation hedge.",
+      "decision": "selected",
+      "evidence": [
+        "GOLD return_3s 4.83% and iau_return_5s 5.01%",
+        "Headline PCE rose 3.7% y/y; FOMC said inflation remained elevated relative to 2%",
+        "distance_52w_high -21.38%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Sharp USD rebound or cooler CPI reducing haven demand",
+      "option_id": "GOLD",
+      "reversal_case": "USD strength or cooler CPI could reverse the 5s advance given distance from highs.",
+      "time_window_catalyst": "July CPI release on Aug 12"
+    },
+    {
+      "continuation_case": "At 52-week high with stable labor data and solid quality rank, modest upside continues.",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS quality evidence score 0.667 and distance_52w_high 0.00%",
+        "BLS reported 57,000 June payrolls and unemployment 4.2% little changed",
+        "Treasury par yields 4.63% at ten years on Aug 5"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Payrolls surprise sharply weaker or yield curve stress from auctions",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Auction supply and any curve steepening or credit stress could pressure banks/insurers.",
+      "time_window_catalyst": "July Employment Situation on Aug 7"
+    },
+    {
+      "continuation_case": "High quality score, low vol, and Dow record support mild outperformance versus cap-weighted SPY.",
+      "decision": "selected",
+      "evidence": [
+        "LARGE_VALUE quality evidence score 0.678 with shallow drawdown rank 0.866",
+        "prior_16s_active_return 3.16% and volatility_21s 10.09%",
+        "Dow closed at record 54349.12 up 0.5% on Aug 5"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Broad equity reversal on hot CPI or strong USD",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "If growth/tech re-accelerates strongly, value relative lag could resume.",
+      "time_window_catalyst": "Treasury refunding auctions Aug 11-12"
+    },
+    {
+      "continuation_case": "Near-zero vol and positive carry provide stable positive return in any risk-off scenario.",
+      "decision": "rejected",
+      "evidence": [
+        "SHORT_TREASURY quality evidence score 0.796 with low volatility rank 1.000",
+        "Treasury one-year par yield 4.03% on Aug 5",
+        "return_3s 0.03%"
+      ],
+      "forecast_base_pct": 0.08,
+      "forecast_high_pct": 0.12,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Sustained equity rally making cash drag decisive",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Strong risk-on equity week would cause large relative underperformance versus SPY.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.555,
+  "is_official_score": true,
+  "key_risks": [
+    "Hotter July CPI on Aug 12 triggers rate-hike fears and equity selloff",
+    "Weaker-than-expected Employment Situation on Aug 7 sparks growth scare",
+    "Treasury auction supply on Aug 11-12 pressures yields and risk assets",
+    "Failure of Hormuz draft leads to renewed energy volatility drag"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Hotter-than-expected CPI or weak tech follow-through after Nvidia move",
+      "option_id": "TECHNOLOGY",
+      "rationale": "Recent relative strength and mega-cap earnings support with Nvidia bounce; base exceeds SPY for weekly alpha.",
+      "time_window_catalyst": "July Employment Situation Aug 7 and July CPI Aug 12"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Further oil price decline below recent levels or failed de-escalation news",
+      "option_id": "ENERGY",
+      "rationale": "High quality score and prior active strength plus Hormuz draft news support mean-reversion bounce from recent oil weakness.",
+      "time_window_catalyst": "Strait of Hormuz draft arrangement updates before Aug 12"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Sharp USD rebound or cooler CPI reducing haven demand",
+      "option_id": "GOLD",
+      "rationale": "Positive 5s return and inflation still elevated vs 2% target provide weekly support above SPY base.",
+      "time_window_catalyst": "July CPI release on Aug 12"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Payrolls surprise sharply weaker or yield curve stress from auctions",
+      "option_id": "FINANCIALS",
+      "rationale": "Solid quality rank, at 52w high, and stable labor data support modest outperformance vs SPY base.",
+      "time_window_catalyst": "July Employment Situation on Aug 7"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Broad equity reversal on hot CPI or strong USD",
+      "option_id": "LARGE_VALUE",
+      "rationale": "High quality evidence score and shallower drawdown favor mild continuation above SPY base in risk-on week.",
+      "time_window_catalyst": "Treasury refunding auctions Aug 11-12"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.155,
+  "portfolio_rationale": "Portfolio concentrates in four clusters with base forecasts above SPY, balancing tech momentum, energy reversion, gold inflation hedge, and value/financials quality while respecting 50% cluster cap.",
+  "provider": "xai",
+  "rationale_summary": "Selected holdings clear the SPY base hurdle on recent relative trends, quality ranks, and near-term catalysts including jobs, CPI, and Hormuz news; weighted base targets modest alpha over the one-week window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16913,
+    "latency_seconds": 67.91581050911918,
+    "output_tokens": 2506,
+    "reasoning_tokens": 1747,
+    "total_tokens": 21166
+  }
+}

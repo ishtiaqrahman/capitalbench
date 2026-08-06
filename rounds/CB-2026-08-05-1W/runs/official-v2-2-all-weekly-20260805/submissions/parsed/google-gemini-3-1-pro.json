@@ -1,0 +1,125 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Steady economic growth and corporate earnings support current valuations.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7,723.55, down 0.2% on August 5.",
+        "Advance estimate of annualized Q2 real GDP growth was 1.5%."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A significant upside surprise in CPI data leading to a sharp market sell-off.",
+      "option_id": "SP500",
+      "reversal_case": "A negative surprise in upcoming inflation data or geopolitical events.",
+      "time_window_catalyst": "July CPI data on August 12"
+    },
+    {
+      "continuation_case": "Yields remain stable in the short term.",
+      "decision": "rejected",
+      "evidence": [
+        "Treasury's August 5 par yields were 4.03% at one year."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.2,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "A significant change in short-term interest rates.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "A sudden shift in Fed policy expectations.",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Continued strength in tech earnings and AI themes.",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq Composite closed at 26,363.44, down 0.8% on August 5."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A sharp increase in Treasury yields.",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "A rotation out of growth stocks due to rising rate expectations.",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Oil prices stabilize or rise due to geopolitical tensions.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent crude was reported at $79.45 a barrel, down 0.1%."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A significant drop in oil prices.",
+      "option_id": "ENERGY",
+      "reversal_case": "A resolution to geopolitical conflicts or weaker global demand.",
+      "time_window_catalyst": "Developments in the Strait of Hormuz arrangement"
+    },
+    {
+      "continuation_case": "Safe-haven demand increases due to market uncertainty.",
+      "decision": "rejected",
+      "evidence": [
+        "Gold has a quality evidence score of 0.371."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A sharp increase in real interest rates.",
+      "option_id": "GOLD",
+      "reversal_case": "A strong US dollar or rising real interest rates.",
+      "time_window_catalyst": "July CPI data on August 12"
+    },
+    {
+      "continuation_case": "European economic data shows signs of improvement.",
+      "decision": "rejected",
+      "evidence": [
+        "ECB kept its deposit rate at 2.25%."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A significant deterioration in European economic indicators.",
+      "option_id": "EUROPE",
+      "reversal_case": "Energy costs rise or economic data weakens.",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.0,
+  "is_official_score": true,
+  "key_risks": [
+    "Unexpected inflation data from the July CPI report.",
+    "Geopolitical escalation impacting global markets.",
+    "A sudden shift in Federal Reserve rate expectations."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 100,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "A significant upside surprise in CPI data leading to a sharp market sell-off.",
+      "option_id": "SP500",
+      "rationale": "Given the mixed economic data and lack of clear catalysts for active outperformance over a one-week horizon, a 100% allocation to the S&P 500 is the most prudent approach.",
+      "time_window_catalyst": "July CPI data on August 12"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.5,
+  "portfolio_rationale": "The portfolio is fully allocated to the S&P 500 benchmark. This reflects a neutral stance given the mixed economic signals and the short one-week horizon.",
+  "provider": "google",
+  "rationale_summary": "A 100% SPY allocation is selected due to the lack of compelling active opportunities with a higher base forecast over the one-week scoring window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17369,
+    "latency_seconds": 12.677618731977418,
+    "output_tokens": 1474,
+    "total_tokens": 18843
+  }
+}

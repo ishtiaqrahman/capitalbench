@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 0.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad earnings support remains, with about three quarters of S&P 500 companies reported and aggregate profit-growth estimate at 50%.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 0.2% on August 5 while Nasdaq fell 0.8%.",
+        "SPY return_5s was 5.53% and return_21s was 2.95%.",
+        "SPY volatility_21s was 14.22% and distance from 52-week high was -0.20%."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.7,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "SPY breaks above its 52-week-high area on broad participation and equal-weight improves versus market-cap weight.",
+      "option_id": "SP500",
+      "reversal_case": "The 5-session advance is extended and could fade around payrolls, CPI, or rate volatility.",
+      "time_window_catalyst": "July Employment Situation on August 7, July CPI on August 12, and Treasury auctions on August 11-12."
+    },
+    {
+      "continuation_case": "Strong prior relative trend plus a sharp pullback can rebound if supply constraints and disputed Hormuz terms keep geopolitical risk premium alive.",
+      "decision": "selected",
+      "evidence": [
+        "Energy quality evidence score was 0.818 with prior active rank 0.970 and recent pullback rank 0.940.",
+        "ENERGY prior_16s_active_return was 9.78%, but active_return_5s was -7.81%.",
+        "IEA reported June global oil supply 9.4 million barrels per day below prewar levels, with Gulf exports below prewar average."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Final de-escalation or port-blockade relief that clearly restores Gulf exports and pushes energy equities below recent relative lows.",
+      "option_id": "ENERGY",
+      "reversal_case": "Energy may continue to lag if crude weakness persists or a final Hormuz deal reduces supply-risk premium.",
+      "time_window_catalyst": "Hormuz arrangement status and oil-supply/geopolitical headlines before August 12."
+    },
+    {
+      "continuation_case": "High pullback and prior trend ranks support a short-term rebound if labor or CPI data ease rate-pressure concerns.",
+      "decision": "selected",
+      "evidence": [
+        "Real estate quality evidence score was 0.816 with prior active rank 0.851 and recent pullback rank 0.925.",
+        "REAL_ESTATE active_return_5s was -7.18% after prior_16s_active_return of 4.82%.",
+        "REAL_ESTATE volatility_21s was 14.13% and max_drawdown_21s was -2.04%."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "A hotter CPI or stronger rate selloff that lifts longer Treasury yields and breaks the recent drawdown range.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Hot CPI, firm wage data, or Treasury-auction pressure could lift yields and extend rate-sensitive underperformance.",
+      "time_window_catalyst": "July Employment Situation on August 7 and July CPI on August 12."
+    },
+    {
+      "continuation_case": "Recent strength has some prior support and may continue if technology risk appetite persists after company-specific earnings news.",
+      "decision": "selected",
+      "evidence": [
+        "SOFTWARE return_3s was 7.12% and active_return_5s was 4.15%.",
+        "SOFTWARE prior_16s_active_return was 0.57%, unlike several high-beta technology groups with negative prior active returns.",
+        "SOFTWARE volatility_21s was 29.83% and max_drawdown_21s was -7.47%."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.2,
+      "invalidation_condition": "Growth stocks reverse sharply versus SPY or software loses its recent 3-day leadership.",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High volatility and recent gains create risk of a sharp factor reversal, especially if rates rise on CPI.",
+      "time_window_catalyst": "Continuation of post-earnings technology risk appetite through the weekly close."
+    },
+    {
+      "continuation_case": "Strong prior active trend and moderate recent pullback support a rebound if international risk appetite holds.",
+      "decision": "selected",
+      "evidence": [
+        "CHINA quality evidence score was 0.743 with prior active rank 0.955.",
+        "CHINA prior_16s_active_return was 8.79% while active_return_5s was -3.82%.",
+        "CHINA volatility_21s was 17.23% and max_drawdown_21s was -2.22%."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.4,
+      "invalidation_condition": "China equities fail to stabilize after the pullback or global risk-off flows intensify.",
+      "option_id": "CHINA",
+      "reversal_case": "Country-specific policy or geopolitical risk could keep China equities weak despite the prior trend.",
+      "time_window_catalyst": "Global risk appetite and any China-sensitive commodity or trade sentiment before August 12."
+    },
+    {
+      "continuation_case": "Near-52-week-high positioning and positive prior relative performance may continue if growth data remain firm and credit concerns stay contained.",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS quality evidence score was 0.667 with prior active rank 0.791.",
+        "FINANCIALS prior_16s_active_return was 3.56%, while active_return_5s was -3.20%.",
+        "FINANCIALS distance_52w_high was 0.00% and volatility_21s was 13.31%."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Yield-curve or credit concerns cause financials to underperform and lose their 52-week-high area.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "A risk-off move, yield-curve pressure, or weaker labor data could reverse financial leadership.",
+      "time_window_catalyst": "July Employment Situation and Treasury refunding/rate-curve reaction before August 12."
+    },
+    {
+      "continuation_case": "Safe-haven demand could persist if geopolitical uncertainty or inflation concerns rise into CPI.",
+      "decision": "rejected",
+      "evidence": [
+        "GOLD return_5s was 5.01% and return_21s was 3.21%.",
+        "GOLD active_return_5s was -0.52% despite strong absolute gains.",
+        "GOLD quality evidence score was 0.371 and distance_52w_high was -21.38%."
+      ],
+      "forecast_base_pct": 0.05,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Gold fails to outperform SPY during risk-off or inflation-risk episodes.",
+      "option_id": "GOLD",
+      "reversal_case": "A firmer dollar or higher real-rate expectations could undercut gold after recent gains.",
+      "time_window_catalyst": "July CPI on August 12 and geopolitical headlines before the weekly close."
+    },
+    {
+      "continuation_case": "Cash-like Treasury bill exposure should remain stable through employment, CPI, and auction events.",
+      "decision": "rejected",
+      "evidence": [
+        "SHORT_TREASURY quality evidence score was 0.796 with low volatility rank 1.000 and shallow drawdown rank 1.000.",
+        "SHORT_TREASURY return_3s was 0.03% and volatility_21s was 0.19%.",
+        "Treasury one-year par yield was 4.03% on August 5."
+      ],
+      "forecast_base_pct": 0.07,
+      "forecast_high_pct": 0.1,
+      "forecast_low_pct": 0.02,
+      "invalidation_condition": "Short-bill ETF price stability breaks or equity upside materially exceeds cash-like carry.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Its low risk also means it is unlikely to beat SPY if equities rise over the week.",
+      "time_window_catalyst": "None identified beyond ordinary short-bill carry through the scoring window."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.3275,
+  "is_official_score": true,
+  "key_risks": [
+    "July payrolls or CPI surprise in a way that favors mega-cap SPY over active sector tilts.",
+    "A rapid geopolitical de-escalation could hurt the energy allocation.",
+    "Technology leadership could reverse after recent sharp gains, weighing on software.",
+    "Treasury refunding or inflation data could push yields higher and pressure real estate."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Final de-escalation or port-blockade relief that clearly restores Gulf exports and pushes energy equities below recent relative lows.",
+      "option_id": "ENERGY",
+      "rationale": "Energy has the strongest prior active return and high quality evidence, with crude-related geopolitical supply constraints still unresolved despite recent weakness.",
+      "time_window_catalyst": "Hormuz arrangement status and oil-supply/geopolitical headlines before August 12."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "A hotter CPI or stronger rate selloff that lifts longer Treasury yields and breaks the recent drawdown range.",
+      "option_id": "REAL_ESTATE",
+      "rationale": "Real estate combines high quality evidence with a recent pullback and shallow drawdown, offering rebound potential if CPI or labor data ease rate pressure.",
+      "time_window_catalyst": "July Employment Situation on August 7 and July CPI on August 12."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "Growth stocks reverse sharply versus SPY or software loses its recent 3-day leadership.",
+      "option_id": "SOFTWARE",
+      "rationale": "Software has strong short-term price action and a positive prior active return, with less severe drawdown than the most speculative technology subsectors.",
+      "time_window_catalyst": "Continuation of post-earnings technology risk appetite through the weekly close."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "China equities fail to stabilize after the pullback or global risk-off flows intensify.",
+      "option_id": "CHINA",
+      "rationale": "China has a very strong prior active trend and moderate pullback evidence, providing differentiated international equity exposure.",
+      "time_window_catalyst": "Global risk appetite and any China-sensitive commodity or trade sentiment before August 12."
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Yield-curve or credit concerns cause financials to underperform and lose their 52-week-high area.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials have positive prior relative performance, low volatility versus SPY, and are near a 52-week high, supported by firm domestic activity data.",
+      "time_window_catalyst": "July Employment Situation and Treasury refunding/rate-curve reaction before August 12."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.4275,
+  "portfolio_rationale": "The portfolio tilts away from the recently concentrated SPY advance toward candidates with better pullback or independent catalyst support. It balances energy supply risk, rate-sensitive rebound potential, technology continuation, international mean reversion, and financials without breaching the 50% cluster cap.",
+  "provider": "openai",
+  "rationale_summary": "SPY has strong recent gains but faces reversal risk around payrolls, CPI, and Treasury auctions. The selected holdings each have base forecasts above SPY and span multiple clusters for one-week alpha potential.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15837,
+    "latency_seconds": 38.07414512895048,
+    "output_tokens": 2685,
+    "reasoning_tokens": 259,
+    "total_tokens": 18522
+  }
+}

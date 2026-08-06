@@ -1,0 +1,183 @@
+{
+  "benchmark_expected_return_pct": 0.55,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong breadth and record Dow support continued grind higher",
+      "decision": "selected",
+      "evidence": [
+        "SPY +5.53% 5s return",
+        "near 52w high -0.20%",
+        "spy_return_21s 2.95%"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "CPI well above expectations",
+      "option_id": "SP500",
+      "reversal_case": "Hot CPI Aug 12 or weak jobs Aug 7 sparks pullback",
+      "time_window_catalyst": "Aug 7 jobs, Aug 12 CPI"
+    },
+    {
+      "continuation_case": "Mega-cap earnings strength sustains tech leadership",
+      "decision": "selected",
+      "evidence": [
+        "XLK 3s +6.02%, 5s active +6.08%",
+        "Nvidia +3.4% Aug 5",
+        "prior 16s active -4.60% rebound"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "10y yield spikes on hot CPI",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "High beta 2.15 vulnerable to rate shock",
+      "time_window_catalyst": "CPI Aug 12"
+    },
+    {
+      "continuation_case": "Growth momentum re-accelerating",
+      "decision": "selected",
+      "evidence": [
+        "IWF 5s active +3.10%",
+        "3s +4.71%",
+        "rebound from prior -3.57%"
+      ],
+      "forecast_base_pct": 0.75,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Growth-stock momentum breaks lower",
+      "option_id": "LARGE_GROWTH",
+      "reversal_case": "Rate-sensitive growth hit by yield rise",
+      "time_window_catalyst": "CPI Aug 12"
+    },
+    {
+      "continuation_case": "Chip demand and AI theme",
+      "decision": "rejected",
+      "evidence": [
+        "SMH 5s active +7.46%",
+        "beta 3.09",
+        "vol 51%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Semi sentiment reverses sharply",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme beta and 51% vol create large drawdown risk",
+      "time_window_catalyst": "CPI Aug 12"
+    },
+    {
+      "continuation_case": "Defensive rotation if risk-off",
+      "decision": "rejected",
+      "evidence": [
+        "XLV 5s active -6.78%",
+        "defensive negative beta",
+        "quality score 0.728"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Risk-on continues, defensives lag",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Lagging in risk-on tape",
+      "time_window_catalyst": "CPI Aug 12"
+    },
+    {
+      "continuation_case": "Safe-haven and weak dollar tailwind",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 3s +4.83%",
+        "iau_return_5s 5.01%",
+        "distance 52w high -21%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Real yields spike higher",
+      "option_id": "GOLD",
+      "reversal_case": "Risk-on equities reduce gold demand",
+      "time_window_catalyst": "CPI Aug 12"
+    },
+    {
+      "continuation_case": "Duration rally if growth slows",
+      "decision": "rejected",
+      "evidence": [
+        "IEF low vol 4.17%",
+        "quality score 0.705",
+        "tlt 21s -1.44%"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Hot CPI lifts yields",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Sticky inflation keeps yields elevated",
+      "time_window_catalyst": "Aug 11-12 auctions, CPI"
+    },
+    {
+      "continuation_case": "Hormuz risk premium",
+      "decision": "rejected",
+      "evidence": [
+        "XLE 3s -3.76%, 5s active -7.81%",
+        "Brent $79.45 down",
+        "oil 5s -11.16%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Oil continues declining",
+      "option_id": "ENERGY",
+      "reversal_case": "Falling crude and negative momentum",
+      "time_window_catalyst": "Hormuz negotiations"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.14,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot July CPI Aug 12 triggers rate-driven equity selloff especially high-beta tech",
+    "Jobs report Aug 7 surprise shifts Fed expectations",
+    "Tech momentum reverses after strong run"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "CPI surprise sharply higher drives equity selloff",
+      "option_id": "SP500",
+      "rationale": "Core broad US large-cap; strong 5s momentum and near 52w high, benchmark anchor.",
+      "time_window_catalyst": "Aug 7 jobs report and Aug 12 CPI"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Rate spike from hot CPI hits high-beta tech",
+      "option_id": "TECHNOLOGY",
+      "rationale": "Tech sector showing strong recent 3s/5s active return, Nvidia earnings tailwind, momentum after deep prior pullback.",
+      "time_window_catalyst": "Mega-cap earnings momentum and CPI Aug 12"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.75,
+      "invalidation_condition": "Rising long yields pressure growth valuations",
+      "option_id": "LARGE_GROWTH",
+      "rationale": "Large-cap growth leading with positive 5s active return and rebound after prior weakness.",
+      "time_window_catalyst": "CPI Aug 12; growth-stock sentiment"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.69,
+  "portfolio_rationale": "Overweight core SP500 with tech and large-growth tilts capturing recent strong relative momentum, kept within cluster caps (tech cluster 50%).",
+  "provider": "anthropic",
+  "rationale_summary": "Blend of benchmark plus recent leaders in technology/growth for modest alpha over the one-week window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-05-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28254,
+    "latency_seconds": 38.77630604803562,
+    "output_tokens": 2342,
+    "total_tokens": 30596
+  }
+}
