@@ -736,6 +736,18 @@ test("model behavior endpoint exposes canonical behavior profiles", async () => 
   assert.ok(detail.body.sample.portfolio_count > 0);
   assert.ok(detail.body.metrics.average_risk_pulse >= 0);
   assert.ok(detail.body.metrics.average_risk_pulse <= 100);
+  assert.ok(detail.body.metrics.recent_winner_tilt_score >= 0);
+  assert.ok(detail.body.metrics.recent_winner_tilt_score <= 100);
+  assert.equal(detail.body.recent_winner.version, "capitalbench_recent_winner_tilt_v1");
+  assert.ok(detail.body.recent_winner.current_methodology.observation_count > 0);
+  assert.equal(detail.body.recent_winner.current_methodology.combined.combined_available, true);
+  assert.equal(detail.body.recent_winner.current_methodology.combined.weighting, "50% monthly + 50% weekly");
+  assert.equal(
+    detail.body.recent_winner.current_methodology.average_tilt_score,
+    detail.body.recent_winner.current_methodology.combined.average_tilt_score
+  );
+  assert.equal(detail.body.recent_winner.methodology.outcome_policy, "future returns and resolved outcomes are excluded");
+  assert.ok(patterns.body.rows.every((row) => row.recent_winner?.current_methodology?.observation_count > 0));
   assert.ok(detail.body.methodology_href.includes("/models/patterns/#methodology"));
   assert.equal(detail.body.behavior_v2.version, "model_behavior_v2");
   assert.deepEqual(detail.body.behavior_v2.pills.map((pill) => pill.role), ["Signature", "Construction", "Tempo", "Now"]);

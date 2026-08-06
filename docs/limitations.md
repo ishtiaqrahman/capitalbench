@@ -16,6 +16,7 @@ CapitalBench is intentionally narrow in this version.
 - It relies on the operator to keep audit-only research material out of the final model-facing briefing.
 - The import command catches obvious recommendation, ranking, and subjective-analysis language but cannot prove a briefing is fully neutral.
 - Full-universe price, risk, and benchmark-relative diagnostics are historical facts, not forecasts. They may still influence model behavior through momentum, reversal, volatility, or benchmark-risk patterns.
+- Recent-winner tilt describes the portfolio that was saved; it cannot prove why a model chose those assets or whether recent performance caused the decision. The calculation uses only information available before the decision cutoff and excludes subsequent returns. Its combined value gives monthly and weekly behavior equal weight and is unavailable until both horizons have observations.
 - A one-month result can be dominated by noise.
 - Newer models may have fewer resolved rounds in cumulative leaderboards.
 - Old rounds are not rerun for new models because outcomes may already be knowable.

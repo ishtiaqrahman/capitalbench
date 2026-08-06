@@ -1715,9 +1715,10 @@ def _round_snapshot(round_path: Path, asset_risk: dict[str, Any]) -> dict[str, A
                 f"resolved round {manifest.round_id} has incomplete official outputs: {', '.join(missing)}"
             )
     status = "resolved" if has_leaderboard else "active"
+    track = _track_from_manifest(manifest)
     return {
         "round_id": manifest.round_id,
-        "track": _track_from_manifest(manifest),
+        "track": track,
         "status": status,
         "title": manifest.title,
         "decision_date": _text(manifest.decision_date),
@@ -1745,7 +1746,7 @@ def _round_snapshot(round_path: Path, asset_risk: dict[str, Any]) -> dict[str, A
         "returns": returns,
         "allocations": _result_allocation_rows(run_paths, options_by_id),
         "interim_performance": _interim_rows(run_paths),
-        "trailing_returns": _trailing_return_rows(round_path, options_by_id),
+        "trailing_returns": _trailing_return_rows(round_path, options_by_id, track),
     }
 
 
@@ -2006,9 +2007,22 @@ def _interim_rows(run_paths) -> list[dict[str, Any]]:
     return rows
 
 
-def _trailing_return_rows(round_path: Path, options_by_id: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
-    path = round_path / "market_data" / "universe_trailing_returns.json"
-    if not path.exists():
+def _trailing_return_rows(
+    round_path: Path,
+    options_by_id: dict[str, dict[str, Any]],
+    track: str,
+) -> list[dict[str, Any]]:
+    decision_context_path = round_path / "market_data" / "universe_decision_context.json"
+    trailing_returns_path = round_path / "market_data" / "universe_trailing_returns.json"
+    if decision_context_path.exists():
+        path = decision_context_path
+        value_field = "active_return_5s" if track == "weekly" else "active_return_21s"
+        window_label = "5 trading sessions relative to SPY" if track == "weekly" else "21 trading sessions relative to SPY"
+    elif trailing_returns_path.exists():
+        path = trailing_returns_path
+        value_field = "return_7d" if track == "weekly" else "return_30d"
+        window_label = "7-day trailing return" if track == "weekly" else "30-day trailing return"
+    else:
         return []
     payload = read_json(path)
     rows = []
@@ -2024,6 +2038,10 @@ def _trailing_return_rows(round_path: Path, options_by_id: dict[str, dict[str, A
                 "return_30d": _optional_float(raw.get("return_30d")),
                 "return_6m": _optional_float(raw.get("return_6m")),
                 "return_1y": _optional_float(raw.get("return_1y")),
+                "recent_return": _optional_float(raw.get(value_field)),
+                "recent_return_field": value_field,
+                "recent_return_window": window_label,
+                "source_path": str(path.relative_to(round_path.parent.parent)).replace("\\", "/"),
                 "status": _text(raw.get("status")),
             }
         )
@@ -2185,53 +2203,107 @@ def _horizon_agreement_insights(snapshot: dict[str, Any], generated_at: str) -> 
 def _momentum_exposure_insights(snapshot: dict[str, Any], generated_at: str) -> list[dict[str, Any]]:
     insights = []
     for round_item in _current_active_rounds(snapshot):
-        trailing = [row for row in round_item["trailing_returns"] if _finite(row.get("return_30d"))]
+        trailing = [
+            row
+            for row in round_item["trailing_returns"]
+            if row.get("option_id") not in {"SP500", "CASH"} and _finite(row.get("recent_return"))
+        ]
         if len(trailing) < 10 or not round_item["portfolios"]:
             continue
+        ordered = sorted(trailing, key=lambda row: (float(row["recent_return"]), str(row["option_id"])))
+        percentile_by_id: dict[str, float] = {}
+        denominator = max(1, len(ordered) - 1)
+        cursor = 0
+        while cursor < len(ordered):
+            end = cursor + 1
+            while end < len(ordered) and ordered[end]["recent_return"] == ordered[cursor]["recent_return"]:
+                end += 1
+            percentile = 50.0 if len(ordered) == 1 else (((cursor + end - 1) / 2) / denominator) * 100
+            for index in range(cursor, end):
+                percentile_by_id[str(ordered[index]["option_id"])] = percentile
+            cursor = end
         top_count = max(1, math.ceil(len(trailing) * 0.2))
-        ranked_30d = sorted(trailing, key=lambda row: row["return_30d"], reverse=True)
-        top_ids = {row["option_id"] for row in ranked_30d[:top_count]}
-        bottom_ids = {row["option_id"] for row in ranked_30d[-top_count:]}
-        top_allocation = _allocation_to_ids(round_item["portfolios"], top_ids)
-        bottom_allocation = _allocation_to_ids(round_item["portfolios"], bottom_ids)
-        top_asset = _asset_name(_find_option([round_item], ranked_30d[0]["option_id"]))
+        ranked = sorted(trailing, key=lambda row: (-float(row["recent_return"]), str(row["option_id"])))
+        top_ids = {str(row["option_id"]) for row in ranked[:top_count]}
+        model_rows = []
+        for portfolio in round_item["portfolios"]:
+            total_weight = sum(float(row.get("allocation_pct") or 0) for row in portfolio.get("allocations") or [])
+            covered_weight = 0.0
+            weighted_score = 0.0
+            top_allocation = 0.0
+            for allocation in portfolio.get("allocations") or []:
+                option_id = str(allocation.get("option_id") or "")
+                weight = float(allocation.get("allocation_pct") or 0)
+                percentile = 50.0 if option_id in {"SP500", "CASH"} else percentile_by_id.get(option_id)
+                if percentile is None:
+                    continue
+                covered_weight += weight
+                weighted_score += weight * percentile
+                if option_id in top_ids:
+                    top_allocation += weight
+            coverage_pct = (covered_weight / total_weight) * 100 if total_weight else 0.0
+            if coverage_pct < 90 or not covered_weight:
+                continue
+            model_rows.append(
+                {
+                    "model_id": str(portfolio.get("model_id") or ""),
+                    "tilt_score": weighted_score / covered_weight,
+                    "top_quintile_allocation_pct": (top_allocation / total_weight) * 100,
+                }
+            )
+        if len(model_rows) < 2:
+            continue
+        for model_row in model_rows:
+            peers = [row["tilt_score"] for row in model_rows if row["model_id"] != model_row["model_id"]]
+            model_row["peer_delta_points"] = model_row["tilt_score"] - statistics.median(peers)
+        leader = max(model_rows, key=lambda row: (row["tilt_score"], row["model_id"]))
+        lowest = min(model_rows, key=lambda row: (row["tilt_score"], row["model_id"]))
+        spread = leader["tilt_score"] - lowest["tilt_score"]
+        window_label = str(trailing[0].get("recent_return_window") or "pre-decision recent return")
+        source_path = str(trailing[0].get("source_path") or f"rounds/{round_item['round_id']}/market_data")
         data_as_of = _round_date(round_item)
         insights.append(
             _insight(
-                insight_id=f"momentum-exposure-{round_item['round_id']}",
+                insight_id=f"recent-winner-tilt-{round_item['round_id']}",
                 generated_at=generated_at,
                 data_as_of=data_as_of,
                 category="model_behavior",
                 audiences=["traders", "ai_researchers", "capital_allocators"],
-                title=f"{_track_label(round_item['track'])} models are leaning into recent winners",
+                title=f"{_model_label(leader['model_id'])} has the strongest current {_track_label(round_item['track']).lower()} recent-winner tilt",
                 summary=(
-                    f"The newest {_track_label(round_item['track']).lower()} portfolios allocate "
-                    f"{_fmt_pct(top_allocation / 100)} to the top 20% of assets by prior 30-day return. "
-                    f"The strongest 30-day asset in the input table was {top_asset}."
+                    f"Its score is {leader['tilt_score']:.1f} out of 100, with "
+                    f"{leader['top_quintile_allocation_pct']:.1f}% in the top recent-return quintile. "
+                    f"{_model_label(lowest['model_id'])} is lowest at {lowest['tilt_score']:.1f}."
                 ),
                 why=(
-                    "This measures whether models are chasing recent momentum or allocating away from it before outcomes "
-                    "are known."
+                    "This compares how strongly current model portfolios favor assets that had already outperformed. "
+                    "It describes the allocation and does not infer why the model chose it."
                 ),
-                importance=80 if top_allocation >= 50 else 68,
+                importance=78 if spread >= 10 else 68,
                 calculations=[
                     {
-                        "name": "allocation_to_top_30d_momentum_quintile",
-                        "value": round(top_allocation, 4),
-                        "unit": "percentage_points",
-                        "formula": "average allocation to assets in the top 20% by pre-run 30-day trailing return",
+                        "name": "leader_recent_winner_tilt_score",
+                        "value": round(leader["tilt_score"], 4),
+                        "unit": "score_100",
+                        "formula": f"allocation-weighted percentile of {window_label}",
                     },
                     {
-                        "name": "allocation_to_bottom_30d_momentum_quintile",
-                        "value": round(bottom_allocation, 4),
+                        "name": "leader_top_recent_winner_quintile_allocation",
+                        "value": round(leader["top_quintile_allocation_pct"], 4),
                         "unit": "percentage_points",
-                        "formula": "average allocation to assets in the bottom 20% by pre-run 30-day trailing return",
+                        "formula": f"allocation to the top 20% by {window_label}",
+                    },
+                    {
+                        "name": "leader_peer_delta",
+                        "value": round(leader["peer_delta_points"], 4),
+                        "unit": "score_points",
+                        "formula": "model tilt score minus the median score of other models in the same round",
                     },
                 ],
                 evidence=[
-                    {"label": f"{_track_label(round_item['track'])} round", "href": f"/rounds/{round_item['round_id']}", "source": f"rounds/{round_item['round_id']}/market_data/universe_trailing_returns.json"}
+                    {"label": f"{_track_label(round_item['track'])} round", "href": f"/rounds/{round_item['round_id']}", "source": source_path}
                 ],
-                related=[{"label": "Round list", "href": "/rounds"}],
+                related=[{"label": "Model behavior patterns", "href": "/models/patterns/#recent-winner-title"}],
                 context=_round_context(round_item, status_label="Live portfolios"),
             )
         )

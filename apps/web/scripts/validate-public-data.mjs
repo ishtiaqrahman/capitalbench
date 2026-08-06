@@ -1296,6 +1296,50 @@ if (!modelBehavior || modelBehavior.version !== "model_behavior_v2") {
       const value = profile.turnover?.[field];
       if (value !== null && value !== undefined) percentInRange(value, field, context);
     }
+    const recentWinner = profile.recent_winner;
+    if (!recentWinner || recentWinner.version !== "capitalbench_recent_winner_tilt_v1") {
+      failures.push(`${context} is missing recent-winner tilt v1`);
+    } else {
+      const current = recentWinner.current_methodology ?? {};
+      if (!recentWinner.current_methodology_version) failures.push(`${context} recent-winner tilt is missing current methodology`);
+      if (Number(current.observation_count ?? 0) <= 0) failures.push(`${context} recent-winner tilt has no observations`);
+      for (const track of ["weekly", "monthly"]) {
+        const trackSummary = current.tracks?.[track] ?? {};
+        if (Number(trackSummary.observation_count ?? 0) > 0) {
+          percentInRange(trackSummary.average_tilt_score, `recent_winner.${track}.average_tilt_score`, context);
+        }
+      }
+      const combined = current.combined ?? {};
+      const monthly = current.tracks?.monthly ?? {};
+      const weekly = current.tracks?.weekly ?? {};
+      const hasBothTracks = Number(monthly.observation_count ?? 0) > 0 && Number(weekly.observation_count ?? 0) > 0;
+      if (current.combined_available !== hasBothTracks || combined.combined_available !== hasBothTracks) {
+        failures.push(`${context} recent-winner combined availability does not match track coverage`);
+      }
+      if (hasBothTracks) {
+        if (combined.weighting !== "50% monthly + 50% weekly") {
+          failures.push(`${context} recent-winner combined weighting must be 50% monthly + 50% weekly`);
+        }
+        if (combined.monthly_weight_pct !== 50 || combined.weekly_weight_pct !== 50) {
+          failures.push(`${context} recent-winner combined track weights must both equal 50`);
+        }
+        for (const field of ["average_tilt_score", "average_top_quintile_allocation_pct", "average_context_coverage_pct"]) {
+          percentInRange(combined[field], `recent_winner.combined.${field}`, context);
+          const expected = Number(((monthly[field] + weekly[field]) / 2).toFixed(2));
+          if (!approxEqual(combined[field], expected)) {
+            failures.push(`${context} recent-winner combined ${field} ${combined[field]} does not match equal-track value ${expected}`);
+          }
+          if (!approxEqual(current[field], combined[field])) {
+            failures.push(`${context} recent-winner headline ${field} must match the combined value`);
+          }
+        }
+        if (!approxEqual(current.median_peer_delta_points, combined.median_peer_delta_points)) {
+          failures.push(`${context} recent-winner headline peer delta must match the combined value`);
+        }
+      } else if (current.average_tilt_score !== null || combined.average_tilt_score !== null) {
+        failures.push(`${context} recent-winner combined score must be null until both horizons are available`);
+      }
+    }
     for (const [field, value] of Object.entries(profile.peer_percentiles ?? {})) {
       if (value !== null && value !== undefined) percentInRange(value, `peer_percentiles.${field}`, context);
     }
@@ -1368,7 +1412,7 @@ if (!modelBehavior || modelBehavior.version !== "model_behavior_v2") {
     }
     const metricDefinitions = Array.isArray(patternReport.metric_definitions) ? patternReport.metric_definitions : [];
     const metricKeys = new Set(metricDefinitions.map((metric) => metric.key));
-    for (const requiredMetric of ["risk_taking_score", "average_holding_count", "average_top_allocation_pct", "defensive_pct", "benchmark_pct", "peer_similarity", "average_turnover_pct"]) {
+    for (const requiredMetric of ["risk_taking_score", "average_holding_count", "average_top_allocation_pct", "defensive_pct", "benchmark_pct", "peer_similarity", "average_turnover_pct", "recent_winner_tilt_score", "recent_winner_top_quintile_pct"]) {
       if (!metricKeys.has(requiredMetric)) failures.push(`pattern_report metric_definitions missing ${requiredMetric}`);
     }
     for (const row of patternRows) {
@@ -1392,6 +1436,9 @@ if (!modelBehavior || modelBehavior.version !== "model_behavior_v2") {
       }
       if (!row.key_numbers || !isFiniteNumber(row.key_numbers.risk_taking_score)) {
         failures.push(`${context} key_numbers missing risk_taking_score`);
+      }
+      if (row.recent_winner?.version !== "capitalbench_recent_winner_tilt_v1") {
+        failures.push(`${context} is missing recent-winner tilt evidence`);
       }
       const expectedRisk = Number(profile.metrics.average_risk_pulse.toFixed(2));
       if (row.key_numbers?.risk_taking_score !== expectedRisk) {

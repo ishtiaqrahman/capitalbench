@@ -580,3 +580,51 @@ def test_resolved_round_requires_complete_official_outputs(tmp_path: Path) -> No
             generated_at="2026-01-09T04:35:00Z",
             repo_root=tmp_path,
         )
+
+
+def test_recent_winner_insight_is_horizon_specific_and_model_level() -> None:
+    trailing_returns = [
+        {
+            "option_id": f"ASSET_{index}",
+            "recent_return": index / 100,
+            "recent_return_window": "5 trading sessions relative to SPY",
+            "source_path": "rounds/test/market_data/universe_decision_context.json",
+        }
+        for index in range(10)
+    ]
+    snapshot = {
+        "rounds": [
+            {
+                "round_id": "TEST-1W",
+                "run_id": "official",
+                "track": "weekly",
+                "status": "active",
+                "decision_date": "2026-08-01",
+                "entry_date": "2026-08-02",
+                "exit_date": "2026-08-09",
+                "results": [],
+                "returns": [],
+                "options": [],
+                "trailing_returns": trailing_returns,
+                "portfolios": [
+                    {
+                        "model_id": "model-high",
+                        "allocations": [{"option_id": "ASSET_9", "allocation_pct": 100}],
+                    },
+                    {
+                        "model_id": "model-low",
+                        "allocations": [{"option_id": "ASSET_0", "allocation_pct": 100}],
+                    },
+                ],
+            }
+        ]
+    }
+
+    insights = insights_module._momentum_exposure_insights(snapshot, "2026-08-02T00:00:00Z")
+
+    assert len(insights) == 1
+    assert "strongest current weekly recent-winner tilt" in insights[0]["title"]
+    calculations = {row["name"]: row for row in insights[0]["calculations"]}
+    assert calculations["leader_recent_winner_tilt_score"]["value"] == 100
+    assert calculations["leader_peer_delta"]["value"] == 100
+    assert "5 trading sessions relative to SPY" in calculations["leader_recent_winner_tilt_score"]["formula"]

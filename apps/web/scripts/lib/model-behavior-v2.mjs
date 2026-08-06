@@ -11,6 +11,13 @@ export const BEHAVIOR_SIGNAL_RULES = Object.freeze({
   established_persistence_rate_pct: 75
 });
 
+export const RECENT_WINNER_RULES = Object.freeze({
+  materiality_floor_points: 5,
+  neutral_score: 50,
+  recent_winner_threshold: 60,
+  recent_laggard_threshold: 40
+});
+
 const DIMENSIONS = Object.freeze([
   {
     key: "risk_taking",
@@ -247,6 +254,205 @@ function observationSummary(observations) {
 
 function latestMethodology(observations) {
   return [...observations].sort((left, right) => left.chronology.localeCompare(right.chronology)).at(-1)?.methodology_version ?? null;
+}
+
+function recentWinnerPeerObservations(scoredRows) {
+  const byModel = new Map();
+  const groups = groupBy(scoredRows, (row) => `${row.round_id}:${row.run_id}:${row.track}`);
+  for (const rows of groups.values()) {
+    const eligibleRows = rows.filter((row) => finite(row.recent_winner_tilt_score));
+    if (new Set(eligibleRows.map((row) => row.model_id)).size < 3) continue;
+    for (const row of eligibleRows) {
+      const peerValues = eligibleRows
+        .filter((peer) => peer.model_id !== row.model_id)
+        .map((peer) => peer.recent_winner_tilt_score)
+        .filter(finite);
+      const peerMedian = median(peerValues);
+      if (!finite(peerMedian)) continue;
+      const observations = byModel.get(row.model_id) ?? [];
+      observations.push({
+        round_id: row.round_id,
+        run_id: row.run_id,
+        track: row.track,
+        decision_date: row.decision_date || row.entry_date || row.round_id,
+        methodology_version: row.methodology_version || "unknown",
+        chronology: row.chronology || `${row.decision_date || row.entry_date || ""}:${row.round_id}`,
+        tilt_score: row.recent_winner_tilt_score,
+        top_quintile_allocation_pct: row.recent_winner_top_quintile_pct,
+        context_coverage_pct: row.recent_winner_context_coverage_pct,
+        context_source: row.recent_winner_context_source,
+        window_label: row.recent_winner_window_label,
+        peer_median: peerMedian,
+        peer_delta: row.recent_winner_tilt_score - peerMedian,
+        peer_count: peerValues.length
+      });
+      byModel.set(row.model_id, observations);
+    }
+  }
+  return byModel;
+}
+
+function recentWinnerSummary(observations) {
+  if (!observations.length) {
+    return {
+      observation_count: 0,
+      decision_date_count: 0,
+      average_tilt_score: null,
+      average_top_quintile_allocation_pct: null,
+      average_context_coverage_pct: null,
+      median_peer_tilt_score: null,
+      median_peer_delta_points: null,
+      above_peer_rate_pct: null,
+      below_peer_rate_pct: null
+    };
+  }
+  return {
+    observation_count: observations.length,
+    decision_date_count: unique(observations.map((row) => row.decision_date)).length,
+    average_tilt_score: rounded(average(observations.map((row) => row.tilt_score))),
+    average_top_quintile_allocation_pct: rounded(average(observations.map((row) => row.top_quintile_allocation_pct))),
+    average_context_coverage_pct: rounded(average(observations.map((row) => row.context_coverage_pct))),
+    median_peer_tilt_score: rounded(median(observations.map((row) => row.peer_median))),
+    median_peer_delta_points: rounded(median(observations.map((row) => row.peer_delta))),
+    above_peer_rate_pct: rounded((observations.filter((row) => row.peer_delta > 0).length / observations.length) * 100),
+    below_peer_rate_pct: rounded((observations.filter((row) => row.peer_delta < 0).length / observations.length) * 100)
+  };
+}
+
+function recentWinnerEvidence(summary) {
+  if (summary.combined_available === false) {
+    return {
+      status: "early_sample",
+      label: "Not enough data",
+      peer_label: "Both horizons required",
+      established: false
+    };
+  }
+  const enoughSample =
+    summary.observation_count >= BEHAVIOR_SIGNAL_RULES.minimum_matched_portfolios &&
+    summary.decision_date_count >= BEHAVIOR_SIGNAL_RULES.minimum_independent_decision_dates;
+  const score = summary.average_tilt_score;
+  const absoluteLabel = !finite(score)
+    ? "Not enough data"
+    : score >= RECENT_WINNER_RULES.recent_winner_threshold
+      ? "Leans toward recent winners"
+      : score <= RECENT_WINNER_RULES.recent_laggard_threshold
+        ? "Leans toward recent laggards"
+        : "Mixed recent-performance exposure";
+  if (!enoughSample) {
+    return {
+      status: "early_sample",
+      label: absoluteLabel,
+      peer_label: "Early pattern",
+      established: false
+    };
+  }
+  if (
+    Number(summary.median_peer_delta_points) >= RECENT_WINNER_RULES.materiality_floor_points &&
+    Number(summary.above_peer_rate_pct) >= BEHAVIOR_SIGNAL_RULES.persistence_rate_pct
+  ) {
+    return {
+      status: "above_peers",
+      label: absoluteLabel,
+      peer_label: "More recent-winner tilted than peers",
+      established: true
+    };
+  }
+  if (
+    Number(summary.median_peer_delta_points) <= -RECENT_WINNER_RULES.materiality_floor_points &&
+    Number(summary.below_peer_rate_pct) >= BEHAVIOR_SIGNAL_RULES.persistence_rate_pct
+  ) {
+    return {
+      status: "below_peers",
+      label: absoluteLabel,
+      peer_label: "Less recent-winner tilted than peers",
+      established: true
+    };
+  }
+  return {
+    status: "near_peers",
+    label: absoluteLabel,
+    peer_label: "Near the peer pattern",
+    established: false
+  };
+}
+
+function combinedRecentWinnerSummary(summary, tracks) {
+  const requiredTracks = [tracks.monthly, tracks.weekly];
+  const trackCount = requiredTracks.filter((track) => track.observation_count > 0).length;
+  const combinedAvailable =
+    trackCount === 2 && requiredTracks.every((track) => finite(track.average_tilt_score));
+  const equalTrackAverage = (key) => {
+    if (!combinedAvailable || !requiredTracks.every((track) => finite(track[key]))) return null;
+    return rounded(average(requiredTracks.map((track) => track[key])));
+  };
+  return {
+    observation_count: summary.observation_count,
+    decision_date_count: summary.decision_date_count,
+    track_count: trackCount,
+    combined_available: combinedAvailable,
+    weighting: "50% monthly + 50% weekly",
+    monthly_weight_pct: combinedAvailable ? 50 : null,
+    weekly_weight_pct: combinedAvailable ? 50 : null,
+    availability_note: combinedAvailable ? null : "Both monthly and weekly observations are required.",
+    average_tilt_score: equalTrackAverage("average_tilt_score"),
+    average_top_quintile_allocation_pct: equalTrackAverage("average_top_quintile_allocation_pct"),
+    average_context_coverage_pct: equalTrackAverage("average_context_coverage_pct"),
+    median_peer_tilt_score: equalTrackAverage("median_peer_tilt_score"),
+    median_peer_delta_points: equalTrackAverage("median_peer_delta_points"),
+    above_peer_rate_pct: equalTrackAverage("above_peer_rate_pct"),
+    below_peer_rate_pct: equalTrackAverage("below_peer_rate_pct")
+  };
+}
+
+function recentWinnerScope(observations) {
+  const summary = recentWinnerSummary(observations);
+  const tracks = {
+    weekly: recentWinnerSummary(observations.filter((row) => row.track === "weekly")),
+    monthly: recentWinnerSummary(observations.filter((row) => row.track === "monthly"))
+  };
+  const combined = combinedRecentWinnerSummary(summary, tracks);
+  return {
+    ...combined,
+    combined,
+    evidence: recentWinnerEvidence(combined),
+    tracks
+  };
+}
+
+export function buildRecentWinnerProfiles(scoredRows) {
+  const observationsByModel = recentWinnerPeerObservations(scoredRows);
+  return new Map(
+    Array.from(observationsByModel.entries()).map(([modelId, observations]) => {
+      const currentMethodology = latestMethodology(observations);
+      const currentObservations = currentMethodology
+        ? observations.filter((row) => row.methodology_version === currentMethodology)
+        : [];
+      const latestObservation = [...currentObservations].sort((left, right) => left.chronology.localeCompare(right.chronology)).at(-1);
+      return [
+        modelId,
+        {
+          version: "capitalbench_recent_winner_tilt_v1",
+          current_methodology_version: currentMethodology,
+          current_methodology: recentWinnerScope(currentObservations),
+          all_history: recentWinnerScope(observations),
+          latest_context_source: latestObservation?.context_source ?? null,
+          latest_window_label: latestObservation?.window_label ?? null,
+          methodology: {
+            score_definition: "allocation-weighted percentile rank of pre-decision recent returns",
+            combined_formula: "50% monthly tilt + 50% weekly tilt",
+            combined_availability: "both monthly and weekly observations are required",
+            neutral_assets: ["SP500", "CASH"],
+            neutral_asset_score: RECENT_WINNER_RULES.neutral_score,
+            weekly_current_window: "5 trading sessions relative to SPY",
+            monthly_current_window: "21 trading sessions relative to SPY",
+            peer_baseline: "leave-one-model-out same-round peer median",
+            outcome_policy: "future returns and resolved outcomes are excluded"
+          }
+        }
+      ];
+    })
+  );
 }
 
 function dimensionEvidence(definition, observations) {
@@ -779,6 +985,7 @@ export function behaviorMethodologyDefinitions() {
       "asset risk and regime definitions",
       "round track, methodology, roster, and lifecycle metadata",
       "same-round peer allocations",
+      "cutoff-safe recent-return ranks from the frozen round market-data files",
       "structured candidate ledgers, forecasts, confidence, and key-risk counts when available",
       "currently open official portfolios for the Now pill"
     ],
@@ -787,7 +994,19 @@ export function behaviorMethodologyDefinitions() {
       "ineligible, invalid, retrospective, or pilot runs",
       "free-form rationale wording as a classification input",
       "market briefing prose and future information"
-    ]
+    ],
+    recent_winner_tilt: {
+      version: "capitalbench_recent_winner_tilt_v1",
+      definition: "allocation-weighted percentile rank of pre-decision recent returns",
+      current_methodology_policy: "headline values use only the latest methodology represented in the model sample",
+      weekly_window: "5 trading sessions relative to SPY",
+      monthly_window: "21 trading sessions relative to SPY",
+      combined_formula: "50% monthly tilt + 50% weekly tilt",
+      combined_availability: "both monthly and weekly observations are required",
+      neutral_score: RECENT_WINNER_RULES.neutral_score,
+      peer_materiality_floor_points: RECENT_WINNER_RULES.materiality_floor_points,
+      outcome_policy: "resolved returns do not enter the score"
+    }
   };
 }
 
@@ -796,5 +1015,9 @@ export const __test__ = {
   observationSummary,
   peerObservations,
   exposureCandidates,
-  labelFor
+  labelFor,
+  recentWinnerEvidence,
+  combinedRecentWinnerSummary,
+  recentWinnerPeerObservations,
+  recentWinnerSummary
 };

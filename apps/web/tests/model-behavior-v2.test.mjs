@@ -5,7 +5,8 @@ import {
   BEHAVIOR_SIGNAL_RULES,
   MODEL_BEHAVIOR_METHOD_VERSION,
   MODEL_BEHAVIOR_VERSION,
-  buildModelBehaviorV2
+  buildModelBehaviorV2,
+  buildRecentWinnerProfiles
 } from "../scripts/lib/model-behavior-v2.mjs";
 
 const MODEL_IDS = ["model-a", "model-b", "model-c"];
@@ -90,6 +91,86 @@ function buildFixture(rowFactory, profileOverrides = new Map(), modelOverrides =
     }))
   });
 }
+
+test("recent-winner profiles use current-method scores and same-round peer medians", () => {
+  const rows = [];
+  for (let index = 0; index < 8; index += 1) {
+    for (const modelId of MODEL_IDS) {
+      rows.push(
+        scoredRow({
+          modelId,
+          index,
+          track: index % 2 === 0 ? "monthly" : "weekly",
+          recent_winner_tilt_score: modelId === "model-a" ? 80 : 50,
+          recent_winner_top_quintile_pct: modelId === "model-a" ? 70 : 20,
+          recent_winner_context_coverage_pct: 100,
+          recent_winner_context_source: "universe_decision_context",
+          recent_winner_window_label: index % 2 === 0 ? "21 trading sessions relative to SPY" : "5 trading sessions relative to SPY"
+        })
+      );
+    }
+  }
+  const recency = buildRecentWinnerProfiles(rows).get("model-a");
+  assert.equal(recency.current_methodology_version, "portfolio-v2.2");
+  assert.equal(recency.current_methodology.average_tilt_score, 80);
+  assert.equal(recency.current_methodology.combined.average_tilt_score, 80);
+  assert.equal(recency.current_methodology.combined.weighting, "50% monthly + 50% weekly");
+  assert.equal(recency.current_methodology.median_peer_delta_points, 30);
+  assert.equal(recency.current_methodology.evidence.status, "above_peers");
+  assert.equal(recency.current_methodology.tracks.weekly.observation_count, 4);
+  assert.equal(recency.current_methodology.tracks.monthly.observation_count, 4);
+});
+
+test("recent-winner combined score gives monthly and weekly equal weight despite unequal samples", () => {
+  const rows = [];
+  for (let index = 0; index < 10; index += 1) {
+    const track = index === 0 ? "monthly" : "weekly";
+    for (const modelId of MODEL_IDS) {
+      rows.push(
+        scoredRow({
+          modelId,
+          index,
+          track,
+          recent_winner_tilt_score: modelId === "model-a" ? (track === "monthly" ? 90 : 30) : 50,
+          recent_winner_top_quintile_pct: modelId === "model-a" ? (track === "monthly" ? 80 : 20) : 25,
+          recent_winner_context_coverage_pct: 100,
+          recent_winner_context_source: "universe_decision_context",
+          recent_winner_window_label: track === "monthly" ? "21 trading sessions relative to SPY" : "5 trading sessions relative to SPY"
+        })
+      );
+    }
+  }
+  const recency = buildRecentWinnerProfiles(rows).get("model-a").current_methodology;
+  assert.equal(recency.observation_count, 10);
+  assert.equal(recency.combined_available, true);
+  assert.equal(recency.average_tilt_score, 60);
+  assert.equal(recency.combined.average_tilt_score, 60);
+  assert.equal(recency.combined.average_top_quintile_allocation_pct, 50);
+  assert.notEqual(recency.average_tilt_score, 36, "combined must not use the portfolio-count-weighted average");
+});
+
+test("recent-winner combined score requires both horizons", () => {
+  const rows = [];
+  for (let index = 0; index < 8; index += 1) {
+    for (const modelId of MODEL_IDS) {
+      rows.push(
+        scoredRow({
+          modelId,
+          index,
+          track: "weekly",
+          recent_winner_tilt_score: modelId === "model-a" ? 80 : 50,
+          recent_winner_top_quintile_pct: modelId === "model-a" ? 70 : 20,
+          recent_winner_context_coverage_pct: 100
+        })
+      );
+    }
+  }
+  const recency = buildRecentWinnerProfiles(rows).get("model-a").current_methodology;
+  assert.equal(recency.combined_available, false);
+  assert.equal(recency.average_tilt_score, null);
+  assert.equal(recency.combined.availability_note, "Both monthly and weekly observations are required.");
+  assert.equal(recency.evidence.peer_label, "Both horizons required");
+});
 
 test("behavior v2 ignores a market-wide exposure shift", () => {
   const profiles = buildFixture(({ modelId, index }) =>
@@ -379,5 +460,7 @@ test("generated production profiles publish v2, retain v1 shadow, and exclude re
   for (const profileRow of apiReadModel.model_behavior.profiles) {
     assert.equal(profileRow.behavior_v2.pills.length, 4);
     assert.ok(profileRow.archetype.description.length > 40);
+    assert.equal(profileRow.recent_winner.version, "capitalbench_recent_winner_tilt_v1");
+    assert.ok(profileRow.recent_winner.current_methodology.observation_count > 0);
   }
 });

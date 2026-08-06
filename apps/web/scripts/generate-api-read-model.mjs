@@ -13,7 +13,8 @@ import {
   MODEL_BEHAVIOR_VERSION,
   MODEL_PATTERN_REPORT_VERSION,
   behaviorMethodologyDefinitions,
-  buildModelBehaviorV2
+  buildModelBehaviorV2,
+  buildRecentWinnerProfiles
 } from "./lib/model-behavior-v2.mjs";
 
 const repoRoot = resolve(process.cwd(), "../..");
@@ -363,6 +364,118 @@ function parseCsv(text) {
   });
 }
 
+function percentileRanksByOption(rows) {
+  const ordered = rows
+    .filter((row) => row.option_id && finiteNumber(row.value))
+    .sort((left, right) => left.value - right.value || left.option_id.localeCompare(right.option_id));
+  const ranks = new Map();
+  if (!ordered.length) return ranks;
+  const denominator = Math.max(ordered.length - 1, 1);
+  let cursor = 0;
+  while (cursor < ordered.length) {
+    let end = cursor + 1;
+    while (end < ordered.length && ordered[end].value === ordered[cursor].value) end += 1;
+    const percentile = ordered.length === 1 ? 50 : (((cursor + end - 1) / 2) / denominator) * 100;
+    for (let index = cursor; index < end; index += 1) ranks.set(ordered[index].option_id, percentile);
+    cursor = end;
+  }
+  return ranks;
+}
+
+function loadRecentWinnerContext(roundPath, track) {
+  const decisionContextPath = join(roundPath, "market_data", "universe_decision_context.csv");
+  const trailingReturnsPath = join(roundPath, "market_data", "universe_trailing_returns.csv");
+  let sourcePath = "";
+  let source = "";
+  let valueField = "";
+  let windowLabel = "";
+  if (existsSync(decisionContextPath)) {
+    sourcePath = decisionContextPath;
+    source = "universe_decision_context";
+    valueField = track === "weekly" ? "active_return_5s" : "active_return_21s";
+    windowLabel = track === "weekly" ? "5 trading sessions relative to SPY" : "21 trading sessions relative to SPY";
+  } else if (existsSync(trailingReturnsPath)) {
+    sourcePath = trailingReturnsPath;
+    source = "universe_trailing_returns";
+    valueField = track === "weekly" ? "return_7d" : "return_30d";
+    windowLabel = track === "weekly" ? "7-day trailing return" : "30-day trailing return";
+  } else {
+    return null;
+  }
+  const values = parseCsv(readText(sourcePath))
+    .map((row) => ({
+      option_id: String(row.option_id ?? ""),
+      value: numberValue(row[valueField])
+    }))
+    .filter(
+      (row) =>
+        row.option_id &&
+        !["SP500", "CASH"].includes(row.option_id.toUpperCase()) &&
+        finiteNumber(row.value)
+    );
+  if (values.length < 10) return null;
+  const percentileByOptionId = percentileRanksByOption(values);
+  const topCount = Math.max(1, Math.ceil(values.length * 0.2));
+  const topQuintileIds = new Set(
+    [...values]
+      .sort((left, right) => right.value - left.value || left.option_id.localeCompare(right.option_id))
+      .slice(0, topCount)
+      .map((row) => row.option_id)
+  );
+  return {
+    source,
+    value_field: valueField,
+    window_label: windowLabel,
+    option_count: values.length,
+    percentile_by_option_id: percentileByOptionId,
+    top_quintile_ids: topQuintileIds
+  };
+}
+
+function recentWinnerPortfolioMetrics(allocations, context, assetsById) {
+  if (!context || !allocations.length) {
+    return {
+      tilt_score: null,
+      top_quintile_allocation_pct: null,
+      context_coverage_pct: null
+    };
+  }
+  const totalPct = allocations.reduce((total, allocation) => total + allocation.allocation_pct, 0);
+  if (totalPct <= 0) {
+    return {
+      tilt_score: null,
+      top_quintile_allocation_pct: null,
+      context_coverage_pct: null
+    };
+  }
+  let coveredPct = 0;
+  let weightedScore = 0;
+  let topQuintilePct = 0;
+  for (const allocation of allocations) {
+    const optionId = String(allocation.option_id);
+    const asset = assetsById.get(optionId);
+    const neutral = optionId === "SP500" || optionId === "CASH" || Boolean(asset?.is_cash);
+    const percentile = neutral ? 50 : context.percentile_by_option_id.get(optionId);
+    if (!finiteNumber(percentile)) continue;
+    coveredPct += allocation.allocation_pct;
+    weightedScore += allocation.allocation_pct * percentile;
+    if (context.top_quintile_ids.has(optionId)) topQuintilePct += allocation.allocation_pct;
+  }
+  const coveragePct = (coveredPct / totalPct) * 100;
+  if (coveragePct < 90) {
+    return {
+      tilt_score: null,
+      top_quintile_allocation_pct: null,
+      context_coverage_pct: coveragePct
+    };
+  }
+  return {
+    tilt_score: weightedScore / coveredPct,
+    top_quintile_allocation_pct: (topQuintilePct / totalPct) * 100,
+    context_coverage_pct: coveragePct
+  };
+}
+
 function numberValue(value) {
   if (value === undefined || value === null || value === "") return null;
   const numeric = Number(value);
@@ -670,6 +783,11 @@ function scoredBehaviorPortfolios({ portfolios, rounds, assetsById }) {
         candidate_includes_sp500: portfolio.candidate_includes_sp500,
         average_candidate_forecast_range_pct: portfolio.average_candidate_forecast_range_pct,
         expected_alpha_vs_sp500_pct: portfolio.expected_alpha_vs_sp500_pct,
+        recent_winner_tilt_score: portfolio.recent_winner_tilt_score,
+        recent_winner_top_quintile_pct: portfolio.recent_winner_top_quintile_pct,
+        recent_winner_context_coverage_pct: portfolio.recent_winner_context_coverage_pct,
+        recent_winner_context_source: portfolio.recent_winner_context_source,
+        recent_winner_window_label: portfolio.recent_winner_window_label,
         submission_confidence: portfolio.confidence,
         key_risk_count:
           typeof portfolio.key_risk_count === "number" && Number.isFinite(portfolio.key_risk_count)
@@ -1115,6 +1233,18 @@ function modelPatternMetricDefinitions() {
       definition: "Average one-half summed absolute allocation change between consecutive same-track portfolios."
     },
     {
+      key: "recent_winner_tilt_score",
+      label: "Recent-winner tilt",
+      unit: "score_100",
+      definition: "Equal-weighted monthly and weekly allocation-weighted percentile rank of assets' pre-decision recent returns. A score of 50 is neutral; higher values lean toward recent winners."
+    },
+    {
+      key: "recent_winner_top_quintile_pct",
+      label: "Top recent-winner allocation",
+      unit: "percentage_points",
+      definition: "Equal-weighted monthly and weekly portfolio allocation to assets in the top 20% of the applicable pre-decision recent-return window."
+    },
+    {
       key: "average_rank",
       label: "Avg rank",
       unit: "rank",
@@ -1165,6 +1295,9 @@ function modelPatternKeyNumbers(profile) {
     peer_similarity: roundedNumber(profile.peer?.average_peer_similarity, 4),
     outlier_round_count: Number(profile.peer?.outlier_round_count ?? 0),
     average_turnover_pct: roundedNumber(profile.turnover?.average_turnover_pct, 2),
+    recent_winner_tilt_score: roundedNumber(profile.recent_winner?.current_methodology?.average_tilt_score, 2),
+    recent_winner_top_quintile_pct: roundedNumber(profile.recent_winner?.current_methodology?.average_top_quintile_allocation_pct, 2),
+    recent_winner_peer_delta_points: roundedNumber(profile.recent_winner?.current_methodology?.median_peer_delta_points, 2),
     average_rank: roundedNumber(profile.performance?.average_rank, 2),
     first_place_count: Number(profile.performance?.win_count ?? 0),
     last_place_count: Number(profile.performance?.last_count ?? 0),
@@ -1419,6 +1552,7 @@ function buildModelPatternReport({ profiles, pairwise, summary, dataAsOf, genera
       signals: behaviorV2.signals ?? {},
       qualifying_signals: behaviorV2.qualifying_signals ?? [],
       decision_process: behaviorV2.decision_process ?? {},
+      recent_winner: profile.recent_winner,
       key_numbers: keyNumbers,
       top_assets: topAssets,
       top_categories: (profile.top_categories ?? []).slice(0, 5),
@@ -1479,6 +1613,7 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
   const peer = peerSimilarityStats(scoredRows);
   const turnover = turnoverStats(scoredRows);
   const performance = performanceBehaviorStats(results);
+  const recentWinner = buildRecentWinnerProfiles(scoredRows);
   const rowsByModel = new Map();
   for (const row of scoredRows) {
     rowsByModel.set(row.model_id, [...(rowsByModel.get(row.model_id) ?? []), row]);
@@ -1492,6 +1627,23 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
     const priorRows = sortedRows.filter((row) => !new Set(latestRows.map((item) => item.key)).has(row.key)).slice(-latestRows.length || -1);
     const weeklyRows = rows.filter((row) => row.track === "weekly");
     const monthlyRows = rows.filter((row) => row.track === "monthly");
+    const recentWinnerForModel = recentWinner.get(model.model_id) ?? {
+      version: "capitalbench_recent_winner_tilt_v1",
+      current_methodology_version: null,
+      current_methodology: {
+        observation_count: 0,
+        decision_date_count: 0,
+        average_tilt_score: null,
+        average_top_quintile_allocation_pct: null,
+        median_peer_delta_points: null,
+        evidence: { status: "early_sample", label: "Not enough data", peer_label: "Early pattern", established: false },
+        tracks: { weekly: {}, monthly: {} }
+      },
+      all_history: { observation_count: 0, decision_date_count: 0, tracks: { weekly: {}, monthly: {} } },
+      latest_context_source: null,
+      latest_window_label: null,
+      methodology: {}
+    };
     const sample = {
       portfolio_count: rows.length,
       weekly_portfolio_count: weeklyRows.length,
@@ -1517,6 +1669,8 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
       international_pct: average(rows.map((row) => row.international_pct)) ?? 0,
       real_assets_pct: average(rows.map((row) => row.real_assets_pct)) ?? 0,
       benchmark_pct: average(rows.map((row) => row.benchmark_pct)) ?? 0,
+      recent_winner_tilt_score: recentWinnerForModel.current_methodology.average_tilt_score,
+      recent_winner_top_quintile_pct: recentWinnerForModel.current_methodology.average_top_quintile_allocation_pct,
       average_holding_count: average(rows.map((row) => row.holding_count)),
       average_top_allocation_pct: average(rows.map((row) => row.top_allocation_pct)),
       concentration_hhi: average(rows.map((row) => row.concentration_hhi)),
@@ -1557,6 +1711,7 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
       metrics,
       peer: peerStats,
       turnover: turnoverStatsForModel,
+      recent_winner: recentWinnerForModel,
       performance: performance.get(model.model_id) ?? {
         resolved_round_count: 0,
         average_return_pct: null,
@@ -1594,6 +1749,7 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
         defensiveness: percentileValue(cohort, profile.model_id, (row) => row.metrics.defensive_pct),
         peer_similarity: percentileValue(cohort, profile.model_id, (row) => row.peer.average_peer_similarity),
         turnover_stability: percentileValue(cohort, profile.model_id, (row) => row.turnover.average_turnover_pct, { lowerIsHigher: true }),
+        recent_winner_tilt: percentileValue(cohort, profile.model_id, (row) => row.metrics.recent_winner_tilt_score),
         capitalbench_score: percentileValue(cohort, profile.model_id, (row) => row.performance.average_capitalbench_score)
       }
     };
@@ -1629,7 +1785,9 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
     most_defensive_model_id: leaderBy(activeProfiles, (row) => row.metrics.defensive_pct)?.model_id ?? null,
     most_consensus_aligned_model_id: leaderBy(activeProfiles, (row) => row.peer.average_peer_similarity)?.model_id ?? null,
     most_distinctive_model_id: leaderBy(activeProfiles, (row) => row.peer.average_peer_similarity, "asc")?.model_id ?? null,
-    lowest_turnover_model_id: leaderBy(activeProfiles, (row) => row.turnover.average_turnover_pct, "asc")?.model_id ?? null
+    lowest_turnover_model_id: leaderBy(activeProfiles, (row) => row.turnover.average_turnover_pct, "asc")?.model_id ?? null,
+    highest_recent_winner_tilt_model_id: leaderBy(activeProfiles, (row) => row.metrics.recent_winner_tilt_score)?.model_id ?? null,
+    lowest_recent_winner_tilt_model_id: leaderBy(activeProfiles, (row) => row.metrics.recent_winner_tilt_score, "asc")?.model_id ?? null
   };
   const legacySummary = {
     model_count: profiles.length,
@@ -1640,7 +1798,9 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
     most_defensive_model_id: leaderBy(profiles, (row) => row.metrics.defensive_pct)?.model_id ?? null,
     most_consensus_aligned_model_id: leaderBy(profiles, (row) => row.peer.average_peer_similarity)?.model_id ?? null,
     most_distinctive_model_id: leaderBy(profiles, (row) => row.peer.average_peer_similarity, "asc")?.model_id ?? null,
-    lowest_turnover_model_id: leaderBy(profiles, (row) => row.turnover.average_turnover_pct, "asc")?.model_id ?? null
+    lowest_turnover_model_id: leaderBy(profiles, (row) => row.turnover.average_turnover_pct, "asc")?.model_id ?? null,
+    highest_recent_winner_tilt_model_id: leaderBy(profiles, (row) => row.metrics.recent_winner_tilt_score)?.model_id ?? null,
+    lowest_recent_winner_tilt_model_id: leaderBy(profiles, (row) => row.metrics.recent_winner_tilt_score, "asc")?.model_id ?? null
   };
   const legacyProfiles = profiles.map((profile) => {
     const legacyProfile = { ...profile, archetype: profile.legacy_archetype };
@@ -1694,12 +1854,13 @@ function loadRound(row) {
   const resultsPath = selectedRun ? join(roundPath, "runs", selectedRun.run_id, "results", "leaderboard.csv") : "";
   const entryDate = String(manifest.entry_date ?? "");
   const exitDate = String(manifest.exit_date ?? "");
+  const track = trackFromRound(manifest);
   const status = selectedRun ? roundStatus({ hasResults: existsSync(resultsPath), exitDate }) : "draft";
   const round = {
     round_id: String(manifest.round_id),
     title: String(manifest.title ?? manifest.round_id),
     description: String(manifest.description ?? "CapitalBench benchmark round."),
-    track: trackFromRound(manifest),
+    track,
     status,
     decision_date: String(manifest.decision_date ?? ""),
     decision_deadline_utc: String(manifest.decision_deadline ?? ""),
@@ -1723,10 +1884,10 @@ function loadRound(row) {
       hashes: readJson(join(roundPath, "hashes.json"), [])
     }
   };
-  return { roundPath, round, selectedRun };
+  return { roundPath, round, selectedRun, recentWinnerContext: loadRecentWinnerContext(roundPath, track) };
 }
 
-function loadSubmissions({ roundPath, round, selectedRun, assetsById }) {
+function loadSubmissions({ roundPath, round, selectedRun, assetsById, recentWinnerContext }) {
   const parsedPath = join(roundPath, "runs", selectedRun.run_id, "submissions", "parsed");
   if (!existsSync(parsedPath)) return { portfolios: [], allocations: [] };
   const portfolios = [];
@@ -1745,6 +1906,7 @@ function loadSubmissions({ roundPath, round, selectedRun, assetsById }) {
         return low === null || high === null ? null : high - low;
       })
       .filter((value) => typeof value === "number" && Number.isFinite(value));
+    const recentWinner = recentWinnerPortfolioMetrics(portfolioAllocations, recentWinnerContext, assetsById);
     const portfolio = {
       round_id: round.round_id,
       run_id: selectedRun.run_id,
@@ -1771,6 +1933,11 @@ function loadSubmissions({ roundPath, round, selectedRun, assetsById }) {
       benchmark_expected_return_pct: numberValue(payload.benchmark_expected_return_pct),
       portfolio_expected_return_pct: numberValue(payload.portfolio_expected_return_pct),
       expected_alpha_vs_sp500_pct: numberValue(payload.expected_alpha_vs_sp500_pct),
+      recent_winner_tilt_score: recentWinner.tilt_score,
+      recent_winner_top_quintile_pct: recentWinner.top_quintile_allocation_pct,
+      recent_winner_context_coverage_pct: recentWinner.context_coverage_pct,
+      recent_winner_context_source: recentWinnerContext?.source ?? null,
+      recent_winner_window_label: recentWinnerContext?.window_label ?? null,
       rationale_summary: String(payload.rationale_summary ?? payload.portfolio_rationale ?? ""),
       portfolio_rationale: String(payload.portfolio_rationale ?? ""),
       key_risk_count: Array.isArray(payload.key_risks) ? payload.key_risks.length : null,

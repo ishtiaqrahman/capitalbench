@@ -1119,7 +1119,7 @@
           "Models"
         ],
         "summary": "Model behavior profiles",
-        "description": "Canonical peer-normalized model behavior profiles with evidence-gated archetypes, fixed-role pills, risk, concentration, turnover, current positioning, structured decision context, and a versioned methodology.",
+        "description": "Canonical peer-normalized model behavior profiles with evidence-gated archetypes, fixed-role pills, recent-winner tilt, risk, concentration, turnover, current positioning, structured decision context, and a versioned methodology.",
         "responses": {
           "200": {
             "description": "Model behavior profile collection",
@@ -1173,7 +1173,7 @@
           "Models"
         ],
         "summary": "One model behavior profile",
-        "description": "One model's deterministic behavior profile, including allocation style, sample size, peer similarity, turnover, and methodology link.",
+        "description": "One model's deterministic behavior profile, including allocation style, recent-winner tilt, sample size, peer similarity, turnover, and methodology link.",
         "parameters": [
           {
             "$ref": "#/components/parameters/ModelIdPath"
@@ -4512,6 +4512,10 @@
                 },
                 "methodology_href": {
                   "type": "string"
+                },
+                "recent_winner": {
+                  "type": "object",
+                  "description": "Current-method and all-history recent-winner tilt evidence for this model."
                 }
               },
               "required": [
@@ -4523,9 +4527,10 @@
                 "behavior_summary",
                 "traits",
                 "pills",
-                "key_numbers",
-                "top_assets",
-                "methodology_href"
+              "key_numbers",
+              "top_assets",
+              "recent_winner",
+              "methodology_href"
               ]
             }
           },
@@ -4718,6 +4723,22 @@
                 ],
                 "minimum": 0,
                 "maximum": 1
+              },
+              "recent_winner_tilt_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "recent_winner_top_quintile_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
               }
             }
           },
@@ -4778,6 +4799,145 @@
               }
             }
           },
+          "recent_winner": {
+            "type": "object",
+            "description": "Cutoff-safe recent-winner allocation behavior. Headline values use the latest methodology represented in the model sample, give monthly and weekly behavior equal weight, and never use subsequent returns.",
+            "properties": {
+              "version": {
+                "type": "string"
+              },
+              "current_methodology_version": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "current_methodology": {
+                "type": "object",
+                "properties": {
+                  "observation_count": {
+                    "type": "integer"
+                  },
+                  "decision_date_count": {
+                    "type": "integer"
+                  },
+                  "combined_available": {
+                    "type": "boolean",
+                    "description": "True only when the model has both monthly and weekly observations under the current methodology."
+                  },
+                  "combined": {
+                    "type": "object",
+                    "description": "Equal-horizon headline summary: 50% monthly recent-winner tilt plus 50% weekly recent-winner tilt.",
+                    "properties": {
+                      "combined_available": {
+                        "type": "boolean"
+                      },
+                      "weighting": {
+                        "type": "string",
+                        "const": "50% monthly + 50% weekly"
+                      },
+                      "monthly_weight_pct": {
+                        "type": ["number", "null"]
+                      },
+                      "weekly_weight_pct": {
+                        "type": ["number", "null"]
+                      },
+                      "average_tilt_score": {
+                        "type": ["number", "null"],
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      "average_top_quintile_allocation_pct": {
+                        "type": ["number", "null"],
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      "median_peer_delta_points": {
+                        "type": ["number", "null"],
+                        "minimum": -100,
+                        "maximum": 100
+                      }
+                    },
+                    "required": [
+                      "combined_available",
+                      "weighting",
+                      "monthly_weight_pct",
+                      "weekly_weight_pct",
+                      "average_tilt_score",
+                      "average_top_quintile_allocation_pct",
+                      "median_peer_delta_points"
+                    ]
+                  },
+                  "average_tilt_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "average_top_quintile_allocation_pct": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "median_peer_delta_points": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": -100,
+                    "maximum": 100
+                  },
+                  "evidence": {
+                    "type": "object"
+                  },
+                  "tracks": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "observation_count",
+                  "decision_date_count",
+                  "combined_available",
+                  "combined",
+                  "average_tilt_score",
+                  "average_top_quintile_allocation_pct",
+                  "median_peer_delta_points",
+                  "evidence",
+                  "tracks"
+                ]
+              },
+              "all_history": {
+                "type": "object"
+              },
+              "latest_context_source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "latest_window_label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "methodology": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "version",
+              "current_methodology_version",
+              "current_methodology",
+              "all_history",
+              "methodology"
+            ]
+          },
           "performance": {
             "type": "object"
           },
@@ -4833,6 +4993,7 @@
           "metrics",
           "peer",
           "turnover",
+          "recent_winner",
           "behavior_v2",
           "methodology_href"
         ]

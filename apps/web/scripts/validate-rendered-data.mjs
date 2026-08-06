@@ -6,6 +6,7 @@ import { buildBenchmarkSetsData } from "../src/lib/benchmarkSets.js";
 import { buildBenchmarkStatus, buildBenchmarkTickerTape } from "../src/lib/benchmarkStatus.js";
 import { capitalBenchScore, cumulativeCapitalBenchScore } from "../src/lib/capitalBenchScore.js";
 import { buildCumulativeLeaderboardData, createMemoryApiAuthRepository, handleDataApiRequest } from "../src/lib/dataApi.js";
+import { calculationValue, combinedRecentWinnerInsight } from "../src/lib/insights.js";
 import {
   currentRiskDateLabel,
   pulseDateLabel,
@@ -1928,6 +1929,34 @@ const changelogSource = readRepoText("apps", "web", "src", "data", "changelog.ts
 const globalStylesSource = readRepoText("apps", "web", "src", "styles", "global.css");
 const latestChangelogMatch = changelogSource.match(/id:\s*"([^"]+)"[\s\S]*?date:\s*"(\d{4}-\d{2}-\d{2})"[\s\S]*?title:\s*"([^"]+)"/);
 const changelogEntryCount = [...changelogSource.matchAll(/^\s*id:\s*"/gm)].length;
+const homepageInsightHtml = htmlSection(indexHtml, 'id="benchmark-insights"', "homepage benchmark insights");
+const homepageRecentWinnerInsight = combinedRecentWinnerInsight(apiReadModel);
+if (!homepageRecentWinnerInsight) {
+  failures.push("homepage combined recent-winner insight is unavailable");
+} else {
+  includesCollapsed(
+    homepageInsightHtml,
+    homepageRecentWinnerInsight.title,
+    "homepage combined recent-winner insight title"
+  );
+  includesCollapsed(
+    homepageInsightHtml,
+    homepageRecentWinnerInsight.summary,
+    "homepage combined recent-winner insight summary"
+  );
+  includes(
+    homepageInsightHtml,
+    calculationValue(homepageRecentWinnerInsight.calculations[0]),
+    "homepage combined recent-winner insight score"
+  );
+  includes(
+    homepageInsightHtml,
+    'href="/models/patterns/#recent-winner-title"',
+    "homepage combined recent-winner insight link"
+  );
+  includes(homepageInsightHtml, "Compare every model", "homepage combined recent-winner insight CTA");
+  excludes(homepageInsightHtml, 'data-insight-category="risk_regime"', "homepage repeated risk-regime insight");
+}
 for (const track of ["weekly", "monthly"]) {
   const trackData = apiReadModel.market_environment?.tracks?.[track] ?? {};
   const comparableRows = (trackData.regime_leaderboard ?? []).filter(
@@ -3277,6 +3306,7 @@ const patternReport = apiReadModel.model_behavior?.pattern_report;
 includes(modelPatternsHtml, "How The AI Allocators Differ", "model patterns page title");
 includes(modelPatternsHtml, "Distinct Behavior By Model", "model patterns comparison section");
 includes(modelPatternsHtml, "Behavior Metrics In One Table", "model patterns key numbers section");
+includes(modelPatternsHtml, "Which Models Follow Recent Winners?", "model patterns recent-winner section");
 includes(modelPatternsHtml, "How Behavior Labels And Pills Are Determined", "model patterns methodology section");
 if (patternReport) {
   includes(modelPatternsHtml, patternReport.llm_provenance?.prompt_version ?? "", "model patterns prompt provenance");
@@ -3299,6 +3329,26 @@ if (patternReport) {
     includes(modelPatternsHtml, `${numberLabel(row.key_numbers.risk_taking_score, 1)} / 100`, `${context} risk-taking score`);
     includes(modelPatternsHtml, numberLabel(row.key_numbers.average_holding_count, 2), `${context} average holding count`);
     includes(modelPatternsHtml, pctValue(row.key_numbers.average_top_allocation_pct), `${context} average top holding`);
+    const recentWinner = row.recent_winner?.current_methodology;
+    if (typeof recentWinner?.average_tilt_score === "number") {
+      includes(
+        modelPatternsHtml,
+        `Recent winners ${numberLabel(recentWinner.average_tilt_score, 0)}`,
+        `${context} recent-winner comparison pill`
+      );
+      for (const track of row.lifecycle_status === "retired" ? [] : ["combined", "monthly", "weekly"]) {
+        const trackSummary = track === "combined" ? recentWinner.combined : recentWinner.tracks?.[track];
+        if (typeof trackSummary?.average_tilt_score !== "number") continue;
+        const trackContext = `${context} ${track} recent-winner`;
+        includes(modelPatternsHtml, numberLabel(trackSummary.average_tilt_score, 1), `${trackContext} score`);
+        includes(
+          modelPatternsHtml,
+          `${Math.round(trackSummary.average_top_quintile_allocation_pct)}% in top 20%`,
+          `${trackContext} top quintile`
+        );
+        includes(modelPatternsHtml, `${trackSummary.observation_count} portfolios`, `${trackContext} sample`);
+      }
+    }
     if (row.sample_caveat) includesAny(modelPatternsHtml, [row.sample_caveat, htmlText(row.sample_caveat)], `${context} sample caveat`);
     for (const pill of (row.pills ?? []).slice(0, 2)) {
       includesAny(modelPatternsHtml, htmlTextVariants(pill.label), `${context} pill ${pill.key}`);
@@ -3318,6 +3368,8 @@ if (patternReport) {
   includes(modelPatternsHtml, "median behavior-metric value of the other models in that same round", "model patterns peer normalization method");
   includes(modelPatternsHtml, "Published materiality floors", "model patterns materiality floors");
   includes(modelPatternsHtml, "Realized returns, ranks, ineligible or pilot runs", "model patterns headline exclusions");
+  includes(modelPatternsHtml, "future returns never enter the calculation", "model patterns recent-winner outcome exclusion");
+  includes(modelPatternsHtml, "Combined gives monthly and weekly behavior equal weight", "model patterns recent-winner combined explanation");
   for (const finding of patternReport.comparative_findings ?? []) {
     includesAny(modelPatternsHtml, [finding.title, htmlText(finding.title)], `model patterns finding ${finding.key} title`);
     includesAny(modelPatternsHtml, [finding.body, htmlText(finding.body)], `model patterns finding ${finding.key} body`);
@@ -3482,6 +3534,16 @@ for (const model of apiReadModel.models) {
     }
     if (typeof behavior.turnover.average_turnover_pct === "number") {
       includes(html, pctValue(behavior.turnover.average_turnover_pct), `${context} behavior turnover`);
+    }
+    if (typeof behavior.recent_winner?.current_methodology?.average_tilt_score === "number") {
+      includes(html, "Does this model follow recent winners?", `${context} recent-winner section`);
+      includes(html, "Recent-winner tilt · Combined", `${context} recent-winner combined label`);
+      includes(html, "Combined gives monthly and weekly behavior equal weight", `${context} recent-winner combined explanation`);
+      includes(
+        html,
+        numberLabel(behavior.recent_winner.current_methodology.combined.average_tilt_score, 1),
+        `${context} recent-winner score`
+      );
     }
     includes(html, "/models/patterns/#methodology", `${context} behavior methodology link`);
     for (const pill of behavior.behavior_v2?.pills ?? []) {

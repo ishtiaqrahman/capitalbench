@@ -17,6 +17,7 @@ export function confidenceLabel(value) {
 }
 
 export function insightHref(insight) {
+  if (insight?.href) return String(insight.href);
   return insight?.id ? `/insights#${encodeURIComponent(insight.id)}` : "/insights";
 }
 
@@ -60,7 +61,7 @@ export function calculationValue(calculation) {
   if (typeof value !== "number" || !Number.isFinite(value)) return value ?? "n/a";
   const unit = String(calculation.unit ?? "").toLowerCase();
   const name = String(calculation.name ?? "").toLowerCase();
-  if (name.includes("risk_taking_score")) return `${value.toFixed(1)}/100`;
+  if (unit === "score_100" || name.includes("risk_taking_score")) return `${value.toFixed(1)}/100`;
   if (unit === "percent" || unit === "percentage_points") {
     return `${value > 0 ? "+" : ""}${value.toFixed(Math.abs(value) >= 10 ? 1 : 2)}%`;
   }
@@ -159,6 +160,9 @@ export function insightDefinition(insight) {
     case "performance_attribution":
       return "Attribution multiplies each frozen holding's weight by its asset return to show what helped or hurt the model portfolio.";
     case "model_behavior":
+      if (insight?.context?.insight_kind === "combined_recent_winner_tilt") {
+        return "Recent-winner tilt measures how much weight a model placed in assets that had already risen before the portfolio was frozen. Higher does not mean better performance.";
+      }
       return "Momentum exposure measures how much of the frozen portfolio went into assets that had already been recent winners before the model made its allocation.";
     case "live_performance":
       return "Live alpha is interim model return minus interim S&P 500 return. It is provisional until the round reaches its official score date.";
@@ -342,19 +346,91 @@ function surfaceCategoryLeads(rows, categories) {
   return categories.map((category) => rows.find((insight) => insight.category === category)).filter(Boolean);
 }
 
+export function combinedRecentWinnerInsight(readModel) {
+  const behavior = readModel?.model_behavior ?? {};
+  const profiles = Array.isArray(behavior.profiles) ? behavior.profiles : [];
+  const rows = profiles
+    .filter((profile) => profile?.lifecycle_status !== "retired")
+    .map((profile) => {
+      const combined = profile?.recent_winner?.current_methodology?.combined;
+      const score = combined?.average_tilt_score;
+      if (combined?.combined_available !== true || typeof score !== "number" || !Number.isFinite(score)) return null;
+      return {
+        model_id: String(profile.model_id ?? ""),
+        label: String(profile.label ?? profile.model_id ?? "Model"),
+        score,
+        observation_count: Number(combined.observation_count ?? profile?.recent_winner?.current_methodology?.observation_count ?? 0)
+      };
+    })
+    .filter(Boolean);
+
+  if (rows.length < 2) return null;
+
+  const highestFirst = [...rows].sort((left, right) => right.score - left.score || left.label.localeCompare(right.label));
+  const lowestFirst = [...rows].sort((left, right) => left.score - right.score || left.label.localeCompare(right.label));
+  const leader = highestFirst[0];
+  const lowest = lowestFirst[0];
+  const dataAsOf = behavior.data_as_of ?? null;
+
+  return {
+    id: "combined-recent-winner-tilt",
+    status: "published",
+    category: "model_behavior",
+    confidence: "medium",
+    publication_tier: "category",
+    importance_score: 80,
+    source_type: "deterministic",
+    generated_at: behavior.generated_at ?? readModel?.generated_at ?? null,
+    data_as_of: dataAsOf,
+    title: `${leader.label} follows recent winners most`,
+    summary: `${lowest.label} has the lowest combined tilt at ${lowest.score.toFixed(1)}. Monthly and weekly behavior receive equal weight.`,
+    why_it_matters: "This describes how models allocate, not whether following recent winners produced a better return.",
+    calculations: [
+      {
+        name: "highest_combined_tilt",
+        value: Number(leader.score.toFixed(4)),
+        unit: "score_100",
+        formula: "50% monthly recent-winner tilt plus 50% weekly recent-winner tilt"
+      }
+    ],
+    evidence: [
+      {
+        label: "Recent-winner tilt benchmark",
+        href: "/models/patterns/#recent-winner-title",
+        source: "/api/v1/models/behavior"
+      }
+    ],
+    related: [{ label: "Model behavior patterns", href: "/models/patterns/" }],
+    href: "/models/patterns/#recent-winner-title",
+    cta_label: "Compare every model",
+    context: {
+      scope: "model_behavior_history",
+      insight_kind: "combined_recent_winner_tilt",
+      maturity: "ready",
+      data_as_of: dataAsOf,
+      primary_label: "50% monthly / 50% weekly",
+      model_count: rows.length,
+      model_ids: rows.map((row) => row.model_id),
+      best: { model_id: leader.model_id, label: leader.label, score: leader.score },
+      worst: { model_id: lowest.model_id, label: lowest.label, score: lowest.score }
+    }
+  };
+}
+
 export function insightsForSurface(readModel, surface, limit = 3) {
   const rows = publishedInsights(readModel);
   const currentRows = rows.filter((insight) => isCurrentLiveInsight(readModel, insight));
   const market = marketEnvironmentSynthesis(currentRows);
   if (surface === "home") {
-    const base = surfaceCategoryLeads(currentRows, [
-      "current_positioning",
+    const positioning = currentRows.find((insight) => insight.category === "current_positioning");
+    const recentWinner = combinedRecentWinnerInsight(readModel);
+    const fallback = surfaceCategoryLeads(currentRows, [
       "risk_regime",
       "horizon_agreement",
       "live_performance",
       "oracle_comparison"
     ]);
-    return uniqueInsights([base[0], market, ...base.slice(1)]).slice(0, limit);
+    return uniqueInsights([positioning, market, recentWinner, ...fallback]).slice(0, limit);
   }
   if (surface === "results") {
     const base = topInsightsByCategory(

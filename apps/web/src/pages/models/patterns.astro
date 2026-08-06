@@ -8,6 +8,7 @@ type PatternRow = {
   label: string;
   provider: string;
   provider_label: string;
+  lifecycle_status: string;
   archetype: { label: string; description: string; confidence?: string };
   sample_status: string;
   sample_caveat?: string | null;
@@ -16,6 +17,7 @@ type PatternRow = {
   traits: Array<{ key: string; label: string; evidence: string; metric_keys: string[] }>;
   pills: Array<{ key: string; role: string; label: string; evidence: string; tone?: string; scope?: string }>;
   decision_process?: Record<string, number | null>;
+  recent_winner?: any;
   key_numbers: Record<string, number | null>;
   top_assets: Array<{ display: string; average_allocation_pct?: number; frequency_pct?: number }>;
   closest_peer?: { label?: string; similarity_pct?: number | null } | null;
@@ -60,6 +62,22 @@ const leaderCards = [
   })
   .filter(Boolean) as Array<{ label: string; description: string; row: PatternRow }>;
 
+const recentWinnerTracks = ["combined", "monthly", "weekly"].map((track) => ({
+  track,
+  label: track === "combined" ? "Combined" : track === "monthly" ? "Monthly" : "Weekly",
+  rows: rows
+    .filter((row) => row.lifecycle_status !== "retired")
+    .map((row) => ({
+      row,
+      summary:
+        track === "combined"
+          ? row.recent_winner?.current_methodology?.combined
+          : row.recent_winner?.current_methodology?.tracks?.[track]
+    }))
+    .filter((item) => typeof item.summary?.average_tilt_score === "number")
+    .sort((left, right) => right.summary.average_tilt_score - left.summary.average_tilt_score || left.row.label.localeCompare(right.row.label))
+}));
+
 const keyMetricColumns = [
   ["risk_taking_score", "Risk"],
   ["average_holding_count", "Holdings"],
@@ -102,6 +120,16 @@ function numberLabel(value: number | null | undefined, digits = 1) {
 function pctLabel(value: number | null | undefined, digits = 1) {
   if (typeof value !== "number" || !Number.isFinite(value)) return "n/a";
   return `${value.toFixed(digits)}%`;
+}
+
+function signedPoints(value: number | null | undefined) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "n/a";
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)} vs peers`;
+}
+
+function scorePosition(value: number | null | undefined) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "50%";
+  return `${Math.min(100, Math.max(0, value)).toFixed(2)}%`;
 }
 
 function materialityFloorLabel(dimension: any) {
@@ -184,6 +212,75 @@ function rowLogoSrc(row: PatternRow) {
     ))}
   </section>
 
+  <section class="section pattern-section recent-winner-section" aria-labelledby="recent-winner-title" data-recent-winner-benchmark>
+    <div class="home-section-heading recent-winner-heading">
+      <span class="panel-kicker">Recent-winner tilt</span>
+      <h2 id="recent-winner-title">Which Models Follow Recent Winners?</h2>
+      <p>
+        Higher scores mean the model placed more weight on assets that had already outperformed before its portfolio was frozen.
+        The score measures behavior, not whether that decision was correct.
+      </p>
+    </div>
+
+    <div class="recent-winner-tabs" role="tablist" aria-label="Recent-winner tilt time horizon">
+      {recentWinnerTracks.map((item, index) => (
+        <button
+          type="button"
+          role="tab"
+          class:list={{ "is-active": index === 0 }}
+          aria-selected={index === 0 ? "true" : "false"}
+          data-recent-winner-tab={item.track}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+
+    {recentWinnerTracks.map((item, index) => (
+      <div
+        class:list={["recent-winner-panel", { "is-active": index === 0 }]}
+        data-recent-winner-panel={item.track}
+        hidden={index !== 0}
+      >
+        <div class="recent-winner-axis" aria-hidden="true">
+          <span>Recent laggards</span>
+          <span>Neutral</span>
+          <span>Recent winners</span>
+        </div>
+        <div class="recent-winner-list">
+          {item.rows.map(({ row, summary }) => {
+            const logo = rowLogoSrc(row);
+            return (
+              <article class="recent-winner-row">
+                <a class="recent-winner-model" href={`/models/${row.model_id}/#model-behavior`}>
+                  <span>{logo ? <img src={logo} alt="" loading="lazy" /> : row.provider_label.slice(0, 1)}</span>
+                  <strong>{row.label}</strong>
+                </a>
+                <div class="recent-winner-scale" style={`--recent-winner-position: ${scorePosition(summary.average_tilt_score)};`}>
+                  <span class="recent-winner-midline" aria-hidden="true"></span>
+                  <span class="recent-winner-marker" aria-hidden="true"></span>
+                </div>
+                <div class="recent-winner-score">
+                  <strong>{numberLabel(summary.average_tilt_score, 1)}</strong>
+                  <span>/ 100</span>
+                </div>
+                <div class="recent-winner-context">
+                  <span>{signedPoints(summary.median_peer_delta_points)}</span>
+                  <span>{pctLabel(summary.average_top_quintile_allocation_pct, 0)} in top 20%</span>
+                  <span>{summary.observation_count} portfolios</span>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    ))}
+    <p class="recent-winner-note">
+      Combined gives monthly and weekly behavior equal weight. Monthly uses the prior 21 trading sessions; weekly uses
+      the prior 5. S&amp;P 500 and cash receive the neutral score of 50.
+    </p>
+  </section>
+
   <section class="section pattern-section" aria-labelledby="comparison-title">
     <div class="home-section-heading home-section-heading-with-action">
       <div>
@@ -225,6 +322,14 @@ function rowLogoSrc(row: PatternRow) {
             {(row.pills ?? []).slice(0, 4).map((pill) => (
               <span title={pill.evidence}>{pill.label}</span>
             ))}
+            {typeof row.recent_winner?.current_methodology?.average_tilt_score === "number" && (
+              <span
+                class="is-recent-winner"
+                title="Allocation-weighted percentile of pre-decision recent returns under the current methodology."
+              >
+                Recent winners {numberLabel(row.recent_winner.current_methodology.average_tilt_score, 0)}
+              </span>
+            )}
           </div>
           <div class="pattern-asset-cell" role="cell">
             {row.top_assets.slice(0, 3).map((asset) => (
@@ -238,6 +343,26 @@ function rowLogoSrc(row: PatternRow) {
       ))}
     </div>
   </section>
+
+  <script is:inline>
+    document.querySelectorAll("[data-recent-winner-benchmark]").forEach((root) => {
+      const tabs = Array.from(root.querySelectorAll("[data-recent-winner-tab]"));
+      const panels = Array.from(root.querySelectorAll("[data-recent-winner-panel]"));
+      const activate = (track) => {
+        tabs.forEach((tab) => {
+          const active = tab.dataset.recentWinnerTab === track;
+          tab.classList.toggle("is-active", active);
+          tab.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        panels.forEach((panel) => {
+          const active = panel.dataset.recentWinnerPanel === track;
+          panel.classList.toggle("is-active", active);
+          panel.hidden = !active;
+        });
+      };
+      tabs.forEach((tab) => tab.addEventListener("click", () => activate(tab.dataset.recentWinnerTab)));
+    });
+  </script>
 
   <section class="section pattern-section" aria-labelledby="numbers-title">
     <div class="home-section-heading">
@@ -331,6 +456,12 @@ function rowLogoSrc(row: PatternRow) {
         classification inputs. Structured candidate-ledger, forecast, confidence, and key-risk fields are retained as
         decision-process context when coverage exists, but they do not override allocation evidence. Page-level “most”
         leader cards use active models only; retired profiles remain available as historical evidence.
+      </p>
+      <p>
+        Recent-winner tilt is a separate behavior measure and does not change the archetype. Each eligible asset receives
+        a 0–100 percentile from its return before the decision cutoff, and the model's portfolio weights produce one
+        allocation-weighted score. Current weekly portfolios use 5 trading sessions relative to SPY; monthly portfolios
+        use 21. S&amp;P 500 and cash are neutral at 50, and future returns never enter the calculation.
       </p>
       <p class="pattern-provenance">
         Method version: <strong>{behaviorMethod.version ?? modelBehavior.method_version ?? "n/a"}</strong><br />

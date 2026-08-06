@@ -518,6 +518,14 @@ const behaviorRules: any = behaviorMethod.rules ?? {};
             <h3>Two Time Scopes</h3>
             <p>“Typical” uses eligible history. “Now” uses only open official portfolios; retired models receive a lifecycle pill instead.</p>
           </div>
+          <div>
+            <h3>Recent-Winner Tilt</h3>
+            <p>
+              A separate 0–100 score weights each holding by its cutoff-safe recent-return rank. Weekly uses the prior
+              5 trading sessions relative to SPY; monthly uses 21. The combined value gives the two horizons equal
+              weight. Future returns never enter the score.
+            </p>
+          </div>
         </div>
         <p>
           The strongest qualifying risk or exposure signal supplies the caption modifier. Peer-relative construction,
@@ -529,6 +537,12 @@ const behaviorRules: any = behaviorMethod.rules ?? {};
           Realized returns and ranks, free-form rationale wording, briefing prose, and ineligible, invalid,
           retrospective, or pilot runs cannot assign a behavior label. Structured candidate ledgers, forecasts,
           confidence, and key risks appear only as separately labeled decision-process context.
+        </p>
+        <p>
+          Recent-winner tilt does not assign the archetype. It reports whether a frozen portfolio favored assets that
+          had already outperformed before the decision cutoff. S&amp;P 500 and cash receive the neutral score of 50;
+          peer context uses the median of the other models in the same round. A combined value is published only when
+          both monthly and weekly observations are available.
         </p>
         <div class="method-callout">
           <strong>Versioned and auditable.</strong>

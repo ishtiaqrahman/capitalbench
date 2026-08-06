@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  calculationValue,
+  combinedRecentWinnerInsight,
   currentLiveRoundIds,
   featuredInsightRows,
+  insightHref,
   insightsForModel,
   insightsForRound,
   insightsForSurface,
@@ -226,6 +229,108 @@ test("home and results surfaces include a ready non-low market-environment synth
   assert.ok(insightsForSurface(readModel, "results", 3).some((row) => row.id === "market-ready"));
   assert.ok(!insightsForSurface(readModel, "home", 3).some((row) => row.id === "market-forming"));
   assert.equal(insightsForSurface(readModel, "ticker", 1)[0].id, "market-ready");
+});
+
+test("home surface replaces the repeated risk card with the combined recent-winner insight", () => {
+  const liveRoundIds = ["CB-2026-08-04-1W", "CB-2026-08-04-1M"];
+  const base = {
+    status: "published",
+    data_as_of: "2026-08-04",
+    confidence: "high",
+    publication_tier: "category",
+    importance_score: 90
+  };
+  const recentWinner = (model_id, label, score, lifecycle_status = "active") => ({
+    model_id,
+    label,
+    lifecycle_status,
+    recent_winner: {
+      current_methodology: {
+        observation_count: 20,
+        combined: {
+          combined_available: true,
+          average_tilt_score: score
+        }
+      }
+    }
+  });
+  const readModel = {
+    generated_at: "2026-08-04T23:00:00Z",
+    risk_appetite: {
+      current_decision_pulse: {
+        weekly: { round_id: liveRoundIds[0] },
+        monthly: { round_id: liveRoundIds[1] }
+      }
+    },
+    model_behavior: {
+      generated_at: "2026-08-04T22:00:00Z",
+      data_as_of: "2026-08-04",
+      profiles: [
+        recentWinner("model-high", "Model High", 78.66),
+        recentWinner("model-low", "Model Low", 55.77),
+        recentWinner("model-retired", "Retired Model", 99.9, "retired")
+      ]
+    },
+    insights: {
+      insights: [
+        {
+          ...base,
+          id: "positioning",
+          category: "current_positioning",
+          context: { scope: "live_rounds", round_ids: liveRoundIds }
+        },
+        {
+          ...base,
+          id: "risk",
+          category: "risk_regime",
+          context: { scope: "live_rounds", round_ids: liveRoundIds }
+        },
+        {
+          ...base,
+          id: "market-ready",
+          category: "market_environment",
+          confidence: "medium",
+          context: { scope: "resolved_history", maturity: "ready", insight_kind: "synthesis" }
+        }
+      ]
+    }
+  };
+
+  const insight = combinedRecentWinnerInsight(readModel);
+  assert.equal(insight.title, "Model High follows recent winners most");
+  assert.equal(insight.summary, "Model Low has the lowest combined tilt at 55.8. Monthly and weekly behavior receive equal weight.");
+  assert.equal(insight.context.model_count, 2);
+  assert.equal(insight.context.best.model_id, "model-high");
+  assert.equal(insight.context.worst.model_id, "model-low");
+  assert.equal(calculationValue(insight.calculations[0]), "78.7/100");
+  assert.equal(insightHref(insight), "/models/patterns/#recent-winner-title");
+  assert.deepEqual(insightsForSurface(readModel, "home", 3).map((row) => row.id), [
+    "positioning",
+    "market-ready",
+    "combined-recent-winner-tilt"
+  ]);
+  assert.ok(!insightsForSurface(readModel, "home", 3).some((row) => row.id === "risk"));
+});
+
+test("combined recent-winner homepage insight requires two valid active models", () => {
+  const readModel = {
+    model_behavior: {
+      profiles: [
+        {
+          model_id: "model-a",
+          label: "Model A",
+          lifecycle_status: "active",
+          recent_winner: {
+            current_methodology: {
+              combined: { combined_available: false, average_tilt_score: null }
+            }
+          }
+        }
+      ]
+    }
+  };
+
+  assert.equal(combinedRecentWinnerInsight(readModel), null);
 });
 
 test("live insight helpers identify the canonical current weekly and monthly rounds", () => {

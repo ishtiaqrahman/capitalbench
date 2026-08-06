@@ -114,7 +114,7 @@ const sharedTimeframe = timeframeLabels.length > 1 && timeframeLabels.every((lab
             {titleParts.lead && <>{titleParts.lead}{" "}</>}
             <span class="no-orphan">{titleParts.tail}</span>
           </h2>
-          <span class="home-info-tip" tabindex="0" aria-label="Insights summarize live positioning, risk, agreement, and finished benchmark results.">
+          <span class="home-info-tip" tabindex="0" aria-label="Insights summarize live positioning, market environments, model behavior, and finished benchmark results.">
             <Info size={15} aria-hidden="true" />
           </span>
         </div>
@@ -194,7 +194,7 @@ const sharedTimeframe = timeframeLabels.length > 1 && timeframeLabels.every((lab
                   </span>
                 )}
                 <a class="signal-card-link" href={insightHref(insight)}>
-                  Read insight
+                  {insight.cta_label ?? "Read insight"}
                   <ArrowRight size={14} aria-hidden="true" />
                 </a>
               </footer>

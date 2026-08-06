@@ -137,10 +137,13 @@ const modelBehaviorExample = exampleBlock("/api/v1/models/behavior", {
           metrics: {
             average_risk_pulse: modelBehaviorTop.metrics.average_risk_pulse,
             average_top_allocation_pct: modelBehaviorTop.metrics.average_top_allocation_pct,
-            defensive_pct: modelBehaviorTop.metrics.defensive_pct
+            defensive_pct: modelBehaviorTop.metrics.defensive_pct,
+            recent_winner_tilt_score: modelBehaviorTop.metrics.recent_winner_tilt_score,
+            recent_winner_top_quintile_pct: modelBehaviorTop.metrics.recent_winner_top_quintile_pct
           },
           peer: modelBehaviorTop.peer,
-          turnover: modelBehaviorTop.turnover
+          turnover: modelBehaviorTop.turnover,
+          recent_winner: modelBehaviorTop.recent_winner
         }
       ]
     : [],
@@ -311,9 +314,9 @@ const endpointGroups = [
       ["GET", "/v1/models/{model_id}/portfolios", "Portfolio-level model records with rationales, key risks, proof paths, and allocations."],
       ["GET", "/v1/models/{model_id}/live-performance", "One model's live return across live rounds."],
       ["GET", "/v1/models/{model_id}/style", "Risk appetite and allocation fingerprint metrics."],
-      ["GET", "/v1/models/behavior", "Canonical model behavior profiles plus the dynamic pattern report, peer comparisons, turnover, concentration, and archetype labels."],
+      ["GET", "/v1/models/behavior", "Canonical model behavior profiles plus the dynamic pattern report, recent-winner tilt, peer comparisons, turnover, concentration, and archetype labels."],
       ["GET", "/v1/models/patterns", "Direct access to the dynamic model behavior pattern report used by the comparison page."],
-      ["GET", "/v1/models/{model_id}/behavior", "One model's behavior profile with methodology and peer-context fields."],
+      ["GET", "/v1/models/{model_id}/behavior", "One model's behavior profile with methodology, recent-winner tilt, and peer-context fields."],
       ["GET", "/v1/universe/current", "Current list of valid model choices."],
       ["GET", "/v1/assets", "All generated asset metadata, optionally filtered to current or inactive assets."],
       ["GET", "/v1/assets/{option_id}", "Asset metadata and ticker mapping."],
@@ -334,6 +337,7 @@ const concepts = [
   ["CapitalBench Score", "Model return relative to the hindsight oracle; cumulative rows divide total model return by total oracle return."],
   ["AI Risk Appetite", "A 0-100 allocation signal calculated from the newest live weekly and monthly AI model portfolios. It does not use prices or returns."],
   ["Model Behavior", "A deterministic model-level profile describing allocation style, concentration, turnover, peer similarity, pattern-report summaries, and resolved performance context."],
+  ["Recent-Winner Tilt", "A 0-100 behavior score showing how much portfolio weight went to assets that had already outperformed before the decision cutoff. The combined value gives monthly and weekly behavior equal weight and does not use future returns."],
   ["Insight", "A deterministic or LLM-assisted finding with source evidence, calculations, confidence, and audience tags."],
   ["Shared Rounds", "Resolved rounds included in a comparison set because every set model has an official result."]
 ];
@@ -348,6 +352,9 @@ const fields = [
   ["importance_score", "0-100 editorial ranking used to order public insights by usefulness and urgency."],
   ["average_peer_similarity", "Average cosine similarity between one model's portfolio weights and peer portfolio weights in the same official rounds."],
   ["average_turnover_pct", "Average round-to-round portfolio change, calculated as one-half of summed absolute allocation changes."],
+  ["recent_winner_tilt_score", "Combined allocation-weighted percentile rank of cutoff-safe recent asset returns: 50% monthly plus 50% weekly. 50 is neutral; higher values mean more weight in recent winners."],
+  ["recent_winner_top_quintile_pct", "Portfolio allocation to assets in the top 20% of the applicable pre-decision recent-return window."],
+  ["recent_winner_peer_delta_points", "Model recent-winner tilt minus the leave-one-model-out median for other models in the same rounds, in score points."],
   ["archetype", "Peer-normalized, evidence-gated model behavior label with a model-specific description and confidence level."],
   ["model_id", "Stable CapitalBench model identifier."],
   ["next_cursor", "Pagination cursor returned when more records are available."],

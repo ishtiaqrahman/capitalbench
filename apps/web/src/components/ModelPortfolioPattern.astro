@@ -10,6 +10,9 @@ const behaviorV2 = behavior?.behavior_v2;
 const behaviorPills = Array.isArray(behaviorV2?.pills) ? behaviorV2.pills : [];
 const decisionProcess = behaviorV2?.decision_process ?? {};
 const hasDecisionProcess = Number(decisionProcess.structured_candidate_coverage_count ?? 0) > 0;
+const recentWinner = behavior?.recent_winner?.current_methodology ?? null;
+const combinedRecentWinner = recentWinner?.combined ?? recentWinner;
+const hasRecentWinner = typeof combinedRecentWinner?.average_tilt_score === "number";
 const riskAppetite = profile.fingerprint.riskAppetite;
 
 function pct(value: number | null | undefined): string {
@@ -23,6 +26,16 @@ function number(value: number | null | undefined): string {
 
 function score100(value: number | null | undefined): string {
   return value === null || value === undefined || !Number.isFinite(value) ? "n/a" : `${value.toFixed(1)} / 100`;
+}
+
+function signedPoints(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)} points vs peers`;
+}
+
+function scorePosition(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "50%";
+  return `${Math.min(100, Math.max(0, value)).toFixed(2)}%`;
 }
 
 function similarity(value: number | null | undefined): string {
@@ -150,6 +163,40 @@ const behaviorMetrics = behavior
         </div>
         <a href="/models/patterns/">Compare every model's pattern</a>
       </article>
+
+      {hasRecentWinner && (
+        <article class="model-recent-winner-card">
+          <div class="model-recent-winner-copy">
+            <span class="metric-label">Recent-winner tilt · Combined</span>
+            <h3>Does this model follow recent winners?</h3>
+            <p>
+              {recentWinner.evidence?.label}. Combined gives monthly and weekly behavior equal weight. The score uses
+              only prices available before each portfolio was frozen.
+            </p>
+          </div>
+          <div class="model-recent-winner-score">
+            <strong>{number(combinedRecentWinner.average_tilt_score)}</strong>
+            <span>/ 100</span>
+            <div class="model-recent-winner-scale" style={`--recent-winner-position: ${scorePosition(combinedRecentWinner.average_tilt_score)};`}>
+              <i aria-hidden="true"></i>
+              <b aria-hidden="true"></b>
+            </div>
+            <small>{signedPoints(combinedRecentWinner.median_peer_delta_points)}</small>
+          </div>
+          <div class="model-recent-winner-tracks">
+            {(["monthly", "weekly"] as const).map((track) => {
+              const summary = recentWinner.tracks?.[track];
+              return (
+                <div>
+                  <span>{track}</span>
+                  <strong>{number(summary?.average_tilt_score)}</strong>
+                  <small>{pct(summary?.average_top_quintile_allocation_pct)} in the top 20%</small>
+                </div>
+              );
+            })}
+          </div>
+        </article>
+      )}
 
       {hasDecisionProcess && (
         <article class="model-decision-process">
