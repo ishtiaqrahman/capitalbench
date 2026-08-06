@@ -8,15 +8,15 @@ Each round is a separate market decision with its own declared scoring window. O
 
 | Rank | Model | Provider | Resolved Rounds | Avg Return | Avg S&P Return | Avg Alpha | Hit Rate vs S&P | Avg Regret | Cumulative Return | Cumulative S&P Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | openai-gpt-5-6-sol | openai | 12 | 0.50% | -0.01% | 0.51% | 50.00% | 7.77% | 5.84% | -0.31% |
-| 2 | xai-grok-4-3 | xai | 41 | 0.16% | 0.09% | 0.08% | 46.34% | 8.59% | 4.60% | 3.10% |
-| 3 | xai-grok-4-5 | xai | 14 | 0.07% | 0.07% | -0.01% | 50.00% | 8.47% | 0.32% | 0.82% |
-| 4 | anthropic-claude-fable-5 | anthropic | 21 | 0.09% | 0.28% | -0.19% | 47.62% | 8.92% | 1.40% | 5.79% |
-| 5 | anthropic-claude-opus-4-8 | anthropic | 39 | -0.36% | 0.02% | -0.38% | 41.03% | 8.93% | -14.05% | 0.43% |
-| 6 | anthropic-claude-opus-4-7 | anthropic | 35 | -0.45% | -0.04% | -0.41% | 42.86% | 9.39% | -15.83% | -1.58% |
-| 7 | openai-gpt-5-5 | openai | 41 | -0.57% | 0.09% | -0.65% | 36.59% | 9.32% | -23.46% | 3.10% |
-| 8 | google-gemini-3-1-pro | google | 41 | -0.72% | 0.09% | -0.81% | 39.02% | 9.47% | -28.10% | 3.10% |
-| 9 | anthropic-claude-opus-5 | anthropic | 3 | 0.47% | 2.57% | -2.11% | 0.00% | 8.75% | 1.41% | 7.90% |
+| 1 | openai-gpt-5-6-sol | openai | 13 | 0.48% | 0.42% | 0.06% | 46.15% | 8.49% | 6.03% | 5.20% |
+| 2 | xai-grok-4-3 | xai | 42 | 0.18% | 0.22% | -0.04% | 45.24% | 8.78% | 5.42% | 8.80% |
+| 3 | xai-grok-4-5 | xai | 15 | 0.12% | 0.44% | -0.32% | 46.67% | 9.00% | 1.13% | 6.39% |
+| 4 | anthropic-claude-fable-5 | anthropic | 22 | 0.11% | 0.52% | -0.41% | 45.45% | 9.28% | 1.89% | 11.64% |
+| 5 | anthropic-claude-opus-4-7 | anthropic | 35 | -0.45% | -0.04% | -0.41% | 42.86% | 9.39% | -15.83% | -1.58% |
+| 6 | anthropic-claude-opus-4-8 | anthropic | 40 | -0.33% | 0.16% | -0.49% | 40.00% | 9.12% | -13.26% | 5.98% |
+| 7 | openai-gpt-5-5 | openai | 42 | -0.52% | 0.22% | -0.74% | 35.71% | 9.47% | -22.34% | 8.80% |
+| 8 | google-gemini-3-1-pro | google | 42 | -0.74% | 0.22% | -0.96% | 38.10% | 9.70% | -29.38% | 8.80% |
+| 9 | anthropic-claude-opus-5 | anthropic | 4 | 0.74% | 3.31% | -2.57% | 0.00% | 10.49% | 3.00% | 13.87% |
 
 ## Cumulative Stability Leaderboard
 
@@ -67,6 +67,7 @@ _No rows._
 | CB-2026-07-24-1W | official-v2-2-all-weekly-20260724 |  | yes | no |  |
 | CB-2026-07-27-1W | official-v2-2-all-weekly-20260727-clean |  | yes | no |  |
 | CB-2026-07-28-1W | official-v2-2-all-weekly-20260728-clean |  | yes | no |  |
+| CB-2026-07-29-1W | official-v2-2-all-weekly-20260729-clean |  | yes | no |  |
 
 ## Methodology
 
@@ -92,6 +93,6 @@ The official leaderboard measures the saved public model decision. The stability
 ## Warnings
 
 - Round CB-2026-07-16-1W has no scored official or stability runs.
-- Round CB-2026-07-29-1W has no scored official or stability runs.
 - Round CB-2026-07-30-1W has no scored official or stability runs.
 - Round CB-2026-07-31-1W has no scored official or stability runs.
+- Round CB-2026-08-04-1W has no scored official or stability runs.
