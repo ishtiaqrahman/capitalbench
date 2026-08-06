@@ -18,6 +18,7 @@ type PatternRow = {
   pills: Array<{ key: string; role: string; label: string; evidence: string; tone?: string; scope?: string }>;
   decision_process?: Record<string, number | null>;
   recent_winner?: any;
+  portfolio_difference?: any;
   key_numbers: Record<string, number | null>;
   top_assets: Array<{ display: string; average_allocation_pct?: number; frequency_pct?: number }>;
   closest_peer?: { label?: string; similarity_pct?: number | null } | null;
@@ -53,8 +54,8 @@ const leaderCards = [
   ["Most concentrated", report.summary?.most_concentrated_model_id, "Highest concentration across saved portfolios"],
   ["Most defensive", report.summary?.most_defensive_model_id, "Largest defensive allocation"],
   ["Lowest turnover", report.summary?.lowest_turnover_model_id, "Smallest average portfolio turnover"],
-  ["Closest to peers", report.summary?.most_consensus_aligned_model_id, "Highest average peer overlap"],
-  ["Most distinctive", report.summary?.most_distinctive_model_id, "Lowest average peer overlap"]
+  ["Most like the group", report.summary?.most_like_group_model_id, "Lowest Portfolio Difference"],
+  ["Most different", report.summary?.most_different_model_id, "Highest Portfolio Difference"]
 ]
   .map(([label, modelId, description]) => {
     const row = rowById.get(String(modelId ?? ""));
@@ -78,13 +79,29 @@ const recentWinnerTracks = ["combined", "monthly", "weekly"].map((track) => ({
     .sort((left, right) => right.summary.average_tilt_score - left.summary.average_tilt_score || left.row.label.localeCompare(right.row.label))
 }));
 
+const portfolioDifferenceTracks = ["combined", "monthly", "weekly"].map((track) => ({
+  track,
+  label: track === "combined" ? "Combined" : track === "monthly" ? "Monthly" : "Weekly",
+  rows: rows
+    .filter((row) => row.lifecycle_status !== "retired")
+    .map((row) => ({
+      row,
+      summary:
+        track === "combined"
+          ? row.portfolio_difference?.current_methodology?.combined
+          : row.portfolio_difference?.current_methodology?.tracks?.[track]
+    }))
+    .filter((item) => typeof item.summary?.average_difference_score === "number")
+    .sort((left, right) => right.summary.average_difference_score - left.summary.average_difference_score || left.row.label.localeCompare(right.row.label))
+}));
+
 const keyMetricColumns = [
   ["risk_taking_score", "Risk"],
   ["average_holding_count", "Holdings"],
   ["average_top_allocation_pct", "Top holding"],
   ["high_risk_pct", "High risk"],
   ["defensive_pct", "Defensive"],
-  ["peer_similarity", "Peer overlap"],
+  ["portfolio_difference", "Portfolio difference"],
   ["average_turnover_pct", "Turnover"]
 ];
 
@@ -149,8 +166,8 @@ function metricValue(row: PatternRow, key: string) {
       return numberLabel(value, 2);
     case "average_rank":
       return numberLabel(value, 2);
-    case "peer_similarity":
-      return pctLabel(typeof value === "number" ? value * 100 : null, 1);
+    case "portfolio_difference":
+      return `${numberLabel(value, 1)} / 100`;
     case "first_last":
       return `${row.key_numbers?.first_place_count ?? 0} / ${row.key_numbers?.last_place_count ?? 0}`;
     case "beat_sp500_rate_pct":
@@ -171,7 +188,7 @@ function rowLogoSrc(row: PatternRow) {
 
 <BaseLayout
   title="AI Model Behavior Patterns"
-  description="Compare AI models by risk appetite, concentration, defensive ballast, overlap, turnover, and resolved performance profile."
+  description="Compare AI models by risk appetite, concentration, defensive ballast, Portfolio Difference, turnover, and resolved performance profile."
 >
   <section class="pattern-hero" aria-labelledby="pattern-title">
     <div class="pattern-hero-copy">
@@ -210,6 +227,75 @@ function rowLogoSrc(row: PatternRow) {
         <small>{card.description}</small>
       </a>
     ))}
+  </section>
+
+  <section class="section pattern-section recent-winner-section portfolio-difference-section" aria-labelledby="portfolio-difference-title" data-portfolio-difference-benchmark>
+    <div class="home-section-heading recent-winner-heading">
+      <span class="panel-kicker">Portfolio Difference</span>
+      <h2 id="portfolio-difference-title">How Differently Does Each Model Invest?</h2>
+      <p>
+        The score is the share of a model's allocation that would need to change to match the average portfolio selected
+        by the other models in the same rounds.
+      </p>
+    </div>
+
+    <div class="recent-winner-tabs" role="tablist" aria-label="Portfolio Difference time horizon">
+      {portfolioDifferenceTracks.map((item, index) => (
+        <button
+          type="button"
+          role="tab"
+          class:list={{ "is-active": index === 0 }}
+          aria-selected={index === 0 ? "true" : "false"}
+          data-portfolio-difference-tab={item.track}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+
+    {portfolioDifferenceTracks.map((item, index) => (
+      <div
+        class:list={["recent-winner-panel", { "is-active": index === 0 }]}
+        data-portfolio-difference-panel={item.track}
+        hidden={index !== 0}
+      >
+        <div class="recent-winner-axis" aria-hidden="true">
+          <span>Same as the group</span>
+          <span>50</span>
+          <span>Completely different</span>
+        </div>
+        <div class="recent-winner-list">
+          {item.rows.map(({ row, summary }) => {
+            const logo = rowLogoSrc(row);
+            return (
+              <article class="recent-winner-row portfolio-difference-row">
+                <a class="recent-winner-model" href={`/models/${row.model_id}/#model-behavior`}>
+                  <span>{logo ? <img src={logo} alt="" loading="lazy" /> : row.provider_label.slice(0, 1)}</span>
+                  <strong>{row.label}</strong>
+                </a>
+                <div class="recent-winner-scale" style={`--recent-winner-position: ${scorePosition(summary.average_difference_score)};`}>
+                  <span class="recent-winner-midline" aria-hidden="true"></span>
+                  <span class="recent-winner-marker" aria-hidden="true"></span>
+                </div>
+                <div class="recent-winner-score">
+                  <strong>{numberLabel(summary.average_difference_score, 1)}</strong>
+                  <span>/ 100</span>
+                </div>
+                <div class="recent-winner-context">
+                  <span>{numberLabel(summary.average_difference_score, 1)}% would need to change</span>
+                    <span>{summary.observation_count} same-round comparisons</span>
+                  <span>{summary.evidence?.label ?? (summary.observation_count >= 8 ? "Established sample" : "Early sample")}</span>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    ))}
+    <p class="recent-winner-note">
+      Combined gives monthly and weekly behavior equal weight. The measured model is excluded when the other models'
+      average portfolio is calculated. This measures portfolio difference, not copying or influence.
+    </p>
   </section>
 
   <section class="section pattern-section recent-winner-section" aria-labelledby="recent-winner-title" data-recent-winner-benchmark>
@@ -345,6 +431,24 @@ function rowLogoSrc(row: PatternRow) {
   </section>
 
   <script is:inline>
+    document.querySelectorAll("[data-portfolio-difference-benchmark]").forEach((root) => {
+      const tabs = Array.from(root.querySelectorAll("[data-portfolio-difference-tab]"));
+      const panels = Array.from(root.querySelectorAll("[data-portfolio-difference-panel]"));
+      const activate = (track) => {
+        tabs.forEach((tab) => {
+          const active = tab.dataset.portfolioDifferenceTab === track;
+          tab.classList.toggle("is-active", active);
+          tab.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        panels.forEach((panel) => {
+          const active = panel.dataset.portfolioDifferencePanel === track;
+          panel.classList.toggle("is-active", active);
+          panel.hidden = !active;
+        });
+      };
+      tabs.forEach((tab) => tab.addEventListener("click", () => activate(tab.dataset.portfolioDifferenceTab)));
+    });
+
     document.querySelectorAll("[data-recent-winner-benchmark]").forEach((root) => {
       const tabs = Array.from(root.querySelectorAll("[data-recent-winner-tab]"));
       const panels = Array.from(root.querySelectorAll("[data-recent-winner-panel]"));
@@ -442,7 +546,7 @@ function rowLogoSrc(row: PatternRow) {
       <p>
         Qualifying signals are ordered by absolute median peer difference divided by their materiality floor, then by
         persistence and a stable metric key. The strongest exposure or risk signal supplies the label modifier;
-        peer-normalized construction, turnover, or overlap supplies the allocation-style noun.
+        peer-normalized construction, turnover, or Portfolio Difference supplies the allocation-style noun.
       </p>
       <p>
         Evidence is “established” only after {behaviorMethod.rules?.established_minimum_decision_dates ?? 16} decision
@@ -456,6 +560,13 @@ function rowLogoSrc(row: PatternRow) {
         classification inputs. Structured candidate-ledger, forecast, confidence, and key-risk fields are retained as
         decision-process context when coverage exists, but they do not override allocation evidence. Page-level “most”
         leader cards use active models only; retired profiles remain available as historical evidence.
+      </p>
+      <p>
+        Portfolio Difference is one-half of the summed absolute difference between a model's allocation and the average
+        allocation selected by every other model in the same round. The measured model is left out of that average. A
+        score of 42 means about 42% of allocation would need to change to match the group portfolio. Combined scores give
+        monthly and weekly results equal weight and require observations from both horizons. The score measures output
+        difference; it does not show that one model copied or influenced another.
       </p>
       <p>
         Recent-winner tilt is a separate behavior measure and does not change the archetype. Each eligible asset receives

@@ -1,6 +1,7 @@
 export const MODEL_BEHAVIOR_VERSION = "model_behavior_v2";
 export const MODEL_BEHAVIOR_METHOD_VERSION = "capitalbench_behavior_evidence_v2";
 export const MODEL_PATTERN_REPORT_VERSION = "model_behavior_pattern_report_v2";
+export const PORTFOLIO_DIFFERENCE_VERSION = "capitalbench_portfolio_difference_v1";
 
 export const BEHAVIOR_SIGNAL_RULES = Object.freeze({
   minimum_matched_portfolios: 8,
@@ -455,6 +456,166 @@ export function buildRecentWinnerProfiles(scoredRows) {
   );
 }
 
+function normalizedAllocationMap(allocations) {
+  const positive = (Array.isArray(allocations) ? allocations : []).filter(
+    (allocation) => allocation?.option_id && finite(allocation.allocation_pct) && allocation.allocation_pct > 0
+  );
+  const total = positive.reduce((sum, allocation) => sum + allocation.allocation_pct, 0);
+  if (total <= 0) return null;
+  const normalized = new Map();
+  for (const allocation of positive) {
+    normalized.set(
+      allocation.option_id,
+      (normalized.get(allocation.option_id) ?? 0) + (allocation.allocation_pct / total) * 100
+    );
+  }
+  return normalized;
+}
+
+function portfolioDifferenceObservations(scoredRows) {
+  const byModel = new Map();
+  const groups = groupBy(scoredRows, (row) => `${row.round_id}:${row.run_id}:${row.track}`);
+  for (const rows of groups.values()) {
+    const uniqueRows = Array.from(new Map(rows.map((row) => [row.model_id, row])).values())
+      .map((row) => ({ row, allocations: normalizedAllocationMap(row.allocations) }))
+      .filter((entry) => entry.allocations);
+    if (uniqueRows.length < 3) continue;
+
+    for (const entry of uniqueRows) {
+      const peers = uniqueRows.filter((peer) => peer.row.model_id !== entry.row.model_id);
+      if (peers.length < 2) continue;
+      const assetIds = new Set([
+        ...entry.allocations.keys(),
+        ...peers.flatMap((peer) => Array.from(peer.allocations.keys()))
+      ]);
+      let absoluteDifference = 0;
+      for (const assetId of assetIds) {
+        const peerAverage = average(peers.map((peer) => peer.allocations.get(assetId) ?? 0)) ?? 0;
+        absoluteDifference += Math.abs((entry.allocations.get(assetId) ?? 0) - peerAverage);
+      }
+      const differenceScore = Math.min(100, Math.max(0, absoluteDifference / 2));
+      const observations = byModel.get(entry.row.model_id) ?? [];
+      observations.push({
+        round_id: entry.row.round_id,
+        run_id: entry.row.run_id,
+        track: entry.row.track,
+        decision_date: entry.row.decision_date || entry.row.entry_date || entry.row.round_id,
+        methodology_version: entry.row.methodology_version || "unknown",
+        chronology: entry.row.chronology || `${entry.row.decision_date || entry.row.entry_date || ""}:${entry.row.round_id}`,
+        difference_score: rounded(differenceScore, 4),
+        shared_allocation_pct: rounded(100 - differenceScore, 4),
+        peer_count: peers.length
+      });
+      byModel.set(entry.row.model_id, observations);
+    }
+  }
+  return byModel;
+}
+
+function portfolioDifferenceSummary(observations) {
+  if (!observations.length) {
+    return {
+      observation_count: 0,
+      decision_date_count: 0,
+      average_difference_score: null,
+      average_shared_allocation_pct: null,
+      average_peer_count: null
+    };
+  }
+  return {
+    observation_count: observations.length,
+    decision_date_count: unique(observations.map((row) => row.decision_date)).length,
+    average_difference_score: rounded(average(observations.map((row) => row.difference_score))),
+    average_shared_allocation_pct: rounded(average(observations.map((row) => row.shared_allocation_pct))),
+    average_peer_count: rounded(average(observations.map((row) => row.peer_count)), 1)
+  };
+}
+
+function combinedPortfolioDifferenceSummary(summary, tracks) {
+  const requiredTracks = [tracks.monthly, tracks.weekly];
+  const trackCount = requiredTracks.filter((track) => track.observation_count > 0).length;
+  const combinedAvailable =
+    trackCount === 2 && requiredTracks.every((track) => finite(track.average_difference_score));
+  const equalTrackAverage = (key) => {
+    if (!combinedAvailable || !requiredTracks.every((track) => finite(track[key]))) return null;
+    return rounded(average(requiredTracks.map((track) => track[key])));
+  };
+  return {
+    observation_count: summary.observation_count,
+    decision_date_count: summary.decision_date_count,
+    track_count: trackCount,
+    combined_available: combinedAvailable,
+    weighting: "50% monthly + 50% weekly",
+    monthly_weight_pct: combinedAvailable ? 50 : null,
+    weekly_weight_pct: combinedAvailable ? 50 : null,
+    availability_note: combinedAvailable ? null : "Both monthly and weekly observations are required.",
+    average_difference_score: equalTrackAverage("average_difference_score"),
+    average_shared_allocation_pct: equalTrackAverage("average_shared_allocation_pct"),
+    average_peer_count: equalTrackAverage("average_peer_count")
+  };
+}
+
+function portfolioDifferenceEvidence(summary) {
+  if (summary.combined_available === false) {
+    return { status: "early_sample", label: "Not enough data", established: false };
+  }
+  const established =
+    summary.observation_count >= BEHAVIOR_SIGNAL_RULES.minimum_matched_portfolios &&
+    summary.decision_date_count >= BEHAVIOR_SIGNAL_RULES.minimum_independent_decision_dates;
+  return {
+    status: established ? "established" : "early_sample",
+    label: established ? "Established sample" : "Early sample",
+    established
+  };
+}
+
+function portfolioDifferenceScope(observations) {
+  const summary = portfolioDifferenceSummary(observations);
+  const tracks = {
+    weekly: portfolioDifferenceSummary(observations.filter((row) => row.track === "weekly")),
+    monthly: portfolioDifferenceSummary(observations.filter((row) => row.track === "monthly"))
+  };
+  const combined = combinedPortfolioDifferenceSummary(summary, tracks);
+  return {
+    ...combined,
+    combined,
+    evidence: portfolioDifferenceEvidence(combined),
+    tracks
+  };
+}
+
+export function buildPortfolioDifferenceProfiles(scoredRows) {
+  const observationsByModel = portfolioDifferenceObservations(scoredRows);
+  return new Map(
+    Array.from(observationsByModel.entries()).map(([modelId, observations]) => {
+      const currentMethodology = latestMethodology(observations);
+      const currentObservations = currentMethodology
+        ? observations.filter((row) => row.methodology_version === currentMethodology)
+        : [];
+      return [
+        modelId,
+        {
+          version: PORTFOLIO_DIFFERENCE_VERSION,
+          current_methodology_version: currentMethodology,
+          current_methodology: portfolioDifferenceScope(currentObservations),
+          all_history: portfolioDifferenceScope(observations),
+          methodology: {
+            score_definition: "one-half of the absolute allocation difference from the leave-one-model-out same-round average portfolio",
+            plain_english: "the percentage of allocation that would need to change to match the other models' average portfolio",
+            range: "0 means the same as the group; 100 means completely different",
+            combined_formula: "50% monthly score + 50% weekly score",
+            combined_availability: "both monthly and weekly observations are required",
+            peer_policy: "the measured model is excluded from its comparison portfolio",
+            round_weighting: "each eligible model-round observation receives equal weight",
+            minimum_round_roster: 3,
+            interpretation_limit: "the score measures portfolio difference, not copying, influence, or intent"
+          }
+        }
+      ];
+    })
+  );
+}
+
 function dimensionEvidence(definition, observations) {
   const overall = observationSummary(observations);
   const weekly = observationSummary(observations.filter((row) => row.track === "weekly"));
@@ -626,24 +787,25 @@ function structureCandidates(evidenceByKey, profile) {
     });
   }
 
-  const similarityPercentile = profile.peer_percentiles?.peer_similarity;
-  if (finite(similarityPercentile) && Number(profile.peer?.similarity_observation_count ?? 0) >= 8 && similarityPercentile <= 20) {
+  const differencePercentile = profile.peer_percentiles?.portfolio_difference;
+  const differenceCount = Number(profile.portfolio_difference?.current_methodology?.observation_count ?? 0);
+  if (finite(differencePercentile) && differenceCount >= 8 && differencePercentile >= 80) {
     candidates.push({
       key: "distinctive",
       noun: "distinctive allocator",
       tone: "distinctive",
-      strength: { materiality_ratio: rounded((20 - similarityPercentile) / 20 + 1, 4), persistence_rate_pct: null },
-      metric_keys: ["peer_similarity"],
+      strength: { materiality_ratio: rounded((differencePercentile - 80) / 20 + 1, 4), persistence_rate_pct: null },
+      metric_keys: ["portfolio_difference"],
       evidence_keys: []
     });
   }
-  if (finite(similarityPercentile) && Number(profile.peer?.similarity_observation_count ?? 0) >= 8 && similarityPercentile >= 80) {
+  if (finite(differencePercentile) && differenceCount >= 8 && differencePercentile <= 20) {
     candidates.push({
       key: "consensus",
-      noun: "consensus-aligned allocator",
+      noun: "group-aligned allocator",
       tone: "stability",
-      strength: { materiality_ratio: rounded((similarityPercentile - 80) / 20 + 1, 4), persistence_rate_pct: null },
-      metric_keys: ["peer_similarity"],
+      strength: { materiality_ratio: rounded((20 - differencePercentile) / 20 + 1, 4), persistence_rate_pct: null },
+      metric_keys: ["portfolio_difference"],
       evidence_keys: []
     });
   }
@@ -713,9 +875,9 @@ function structureEvidence(profile, structure, evidenceByKey) {
     const tail = structure.key === "high_turnover" ? "higher-turnover" : "lower-turnover";
     return `${pct(profile.turnover?.average_turnover_pct)} average turnover across ${profile.turnover?.turnover_observation_count ?? 0} consecutive same-track comparisons places the model in the ${tail} tail of the comparison cohort.`;
   }
-  const alignment = structure.key === "distinctive" ? "lower-overlap" : "higher-overlap";
-  const similarity = profile.peer?.average_peer_similarity;
-  return `${pct(finite(similarity) ? similarity * 100 : null)} average cosine overlap across ${profile.peer?.similarity_observation_count ?? 0} same-round comparisons places the model in the ${alignment} tail of the comparison cohort.`;
+  const alignment = structure.key === "distinctive" ? "more-different" : "more-group-like";
+  const difference = profile.portfolio_difference?.current_methodology?.average_difference_score;
+  return `${finite(difference) ? difference.toFixed(1) : "n/a"}/100 Portfolio Difference across ${profile.portfolio_difference?.current_methodology?.observation_count ?? 0} matched rounds places the model in the ${alignment} tail of the comparison cohort.`;
 }
 
 function confidenceFor({ primary, evidenceByKey }) {
@@ -1006,6 +1168,17 @@ export function behaviorMethodologyDefinitions() {
       neutral_score: RECENT_WINNER_RULES.neutral_score,
       peer_materiality_floor_points: RECENT_WINNER_RULES.materiality_floor_points,
       outcome_policy: "resolved returns do not enter the score"
+    },
+    portfolio_difference: {
+      version: PORTFOLIO_DIFFERENCE_VERSION,
+      definition: "one-half of the absolute allocation difference from the leave-one-model-out same-round average portfolio",
+      plain_english: "the percentage of allocation that would need to change to match the other models' average portfolio",
+      range: "0 means the same as the group; 100 means completely different",
+      current_methodology_policy: "headline values use only the latest methodology represented in the model sample",
+      combined_formula: "50% monthly score + 50% weekly score",
+      combined_availability: "both monthly and weekly observations are required",
+      minimum_round_roster: 3,
+      interpretation_limit: "portfolio difference does not establish copying, influence, or intent"
     }
   };
 }
@@ -1019,5 +1192,10 @@ export const __test__ = {
   recentWinnerEvidence,
   combinedRecentWinnerSummary,
   recentWinnerPeerObservations,
-  recentWinnerSummary
+  recentWinnerSummary,
+  normalizedAllocationMap,
+  portfolioDifferenceObservations,
+  portfolioDifferenceSummary,
+  combinedPortfolioDifferenceSummary,
+  portfolioDifferenceEvidence
 };

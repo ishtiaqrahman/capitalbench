@@ -1292,6 +1292,51 @@ if (!modelBehavior || modelBehavior.version !== "model_behavior_v2") {
     if (isFiniteNumber(profile.peer?.average_peer_similarity) && (profile.peer.average_peer_similarity < 0 || profile.peer.average_peer_similarity > 1)) {
       failures.push(`${context} average_peer_similarity ${profile.peer.average_peer_similarity} is outside 0-1`);
     }
+    const portfolioDifference = profile.portfolio_difference;
+    if (!portfolioDifference || portfolioDifference.version !== "capitalbench_portfolio_difference_v1") {
+      failures.push(`${context} is missing Portfolio Difference v1`);
+    } else {
+      const current = portfolioDifference.current_methodology ?? {};
+      if (!portfolioDifference.current_methodology_version) failures.push(`${context} Portfolio Difference is missing current methodology`);
+      if (Number(current.observation_count ?? 0) <= 0) failures.push(`${context} Portfolio Difference has no observations`);
+      for (const track of ["weekly", "monthly"]) {
+        const trackSummary = current.tracks?.[track] ?? {};
+        if (Number(trackSummary.observation_count ?? 0) > 0) {
+          percentInRange(trackSummary.average_difference_score, `portfolio_difference.${track}.average_difference_score`, context);
+          percentInRange(trackSummary.average_shared_allocation_pct, `portfolio_difference.${track}.average_shared_allocation_pct`, context);
+          if (!approxEqual(trackSummary.average_difference_score + trackSummary.average_shared_allocation_pct, 100)) {
+            failures.push(`${context} Portfolio Difference ${track} score and shared allocation must sum to 100`);
+          }
+        }
+      }
+      const combined = current.combined ?? {};
+      const monthly = current.tracks?.monthly ?? {};
+      const weekly = current.tracks?.weekly ?? {};
+      const hasBothTracks = Number(monthly.observation_count ?? 0) > 0 && Number(weekly.observation_count ?? 0) > 0;
+      if (current.combined_available !== hasBothTracks || combined.combined_available !== hasBothTracks) {
+        failures.push(`${context} Portfolio Difference combined availability does not match track coverage`);
+      }
+      if (hasBothTracks) {
+        if (combined.weighting !== "50% monthly + 50% weekly") {
+          failures.push(`${context} Portfolio Difference combined weighting must be 50% monthly + 50% weekly`);
+        }
+        if (combined.monthly_weight_pct !== 50 || combined.weekly_weight_pct !== 50) {
+          failures.push(`${context} Portfolio Difference combined track weights must both equal 50`);
+        }
+        for (const field of ["average_difference_score", "average_shared_allocation_pct"]) {
+          percentInRange(combined[field], `portfolio_difference.combined.${field}`, context);
+          const expected = Number(((monthly[field] + weekly[field]) / 2).toFixed(2));
+          if (!approxEqual(combined[field], expected)) {
+            failures.push(`${context} Portfolio Difference combined ${field} ${combined[field]} does not match equal-track value ${expected}`);
+          }
+          if (!approxEqual(current[field], combined[field])) {
+            failures.push(`${context} Portfolio Difference headline ${field} must match the combined value`);
+          }
+        }
+      } else if (current.average_difference_score !== null || combined.average_difference_score !== null) {
+        failures.push(`${context} Portfolio Difference combined score must be null until both horizons are available`);
+      }
+    }
     for (const field of ["average_turnover_pct", "weekly_turnover_pct", "monthly_turnover_pct"]) {
       const value = profile.turnover?.[field];
       if (value !== null && value !== undefined) percentInRange(value, field, context);
@@ -1412,7 +1457,7 @@ if (!modelBehavior || modelBehavior.version !== "model_behavior_v2") {
     }
     const metricDefinitions = Array.isArray(patternReport.metric_definitions) ? patternReport.metric_definitions : [];
     const metricKeys = new Set(metricDefinitions.map((metric) => metric.key));
-    for (const requiredMetric of ["risk_taking_score", "average_holding_count", "average_top_allocation_pct", "defensive_pct", "benchmark_pct", "peer_similarity", "average_turnover_pct", "recent_winner_tilt_score", "recent_winner_top_quintile_pct"]) {
+    for (const requiredMetric of ["risk_taking_score", "average_holding_count", "average_top_allocation_pct", "defensive_pct", "benchmark_pct", "portfolio_difference", "peer_similarity", "average_turnover_pct", "recent_winner_tilt_score", "recent_winner_top_quintile_pct"]) {
       if (!metricKeys.has(requiredMetric)) failures.push(`pattern_report metric_definitions missing ${requiredMetric}`);
     }
     for (const row of patternRows) {
@@ -1439,6 +1484,12 @@ if (!modelBehavior || modelBehavior.version !== "model_behavior_v2") {
       }
       if (row.recent_winner?.version !== "capitalbench_recent_winner_tilt_v1") {
         failures.push(`${context} is missing recent-winner tilt evidence`);
+      }
+      if (row.portfolio_difference?.version !== "capitalbench_portfolio_difference_v1") {
+        failures.push(`${context} is missing Portfolio Difference evidence`);
+      }
+      if (row.key_numbers?.portfolio_difference !== profile.portfolio_difference?.current_methodology?.average_difference_score) {
+        failures.push(`${context} Portfolio Difference key number does not match the behavior profile`);
       }
       const expectedRisk = Number(profile.metrics.average_risk_pulse.toFixed(2));
       if (row.key_numbers?.risk_taking_score !== expectedRisk) {

@@ -166,8 +166,8 @@ export function insightDefinition(insight) {
       return "Momentum exposure measures how much of the frozen portfolio went into assets that had already been recent winners before the model made its allocation.";
     case "live_performance":
       return "Live alpha is interim model return minus interim S&P 500 return. It is provisional until the round reaches its official score date.";
-    case "model_similarity":
-      return "Cosine similarity measures allocation overlap between model portfolios. A value near 1.00 means the weights are very similar.";
+    case "portfolio_difference":
+      return "Portfolio Difference is the percentage of allocation that would need to change to match the average portfolio selected by the other models in the same rounds. Different does not mean better.";
     case "market_environment":
       return "Market environments group resolved rounds by the S&P 500 return over the same weekly or monthly window. Models are compared only on shared rounds; high confidence requires at least six observations and stable leadership.";
     default:
@@ -258,7 +258,9 @@ export function publishedInsightRows(rows) {
 
 export function publishedInsights(readModel) {
   const rows = Array.isArray(readModel?.insights?.insights) ? readModel.insights.insights : [];
-  return publishedInsightRows(rows);
+  const visibleRows = rows.filter((insight) => insight?.category !== "model_similarity");
+  const portfolioDifference = combinedPortfolioDifferenceInsight(readModel);
+  return publishedInsightRows([...visibleRows, portfolioDifference].filter(Boolean));
 }
 
 export function currentLiveRoundIds(readModel) {
@@ -417,6 +419,84 @@ export function combinedRecentWinnerInsight(readModel) {
   };
 }
 
+export function combinedPortfolioDifferenceInsight(readModel) {
+  const behavior = readModel?.model_behavior ?? {};
+  const profiles = Array.isArray(behavior.profiles) ? behavior.profiles : [];
+  const rows = profiles
+    .filter((profile) => profile?.lifecycle_status !== "retired")
+    .map((profile) => {
+      const currentMethodology = profile?.portfolio_difference?.current_methodology;
+      const combined = currentMethodology?.combined;
+      const score = combined?.average_difference_score;
+      if (combined?.combined_available !== true || typeof score !== "number" || !Number.isFinite(score)) return null;
+      return {
+        model_id: String(profile.model_id ?? ""),
+        label: String(profile.label ?? profile.model_id ?? "Model"),
+        score,
+        observation_count: Number(combined.observation_count ?? currentMethodology?.observation_count ?? 0)
+      };
+    })
+    .filter(Boolean);
+
+  if (rows.length < 2) return null;
+
+  const highestFirst = [...rows].sort((left, right) => right.score - left.score || left.label.localeCompare(right.label));
+  const lowestFirst = [...rows].sort((left, right) => left.score - right.score || left.label.localeCompare(right.label));
+  const mostDifferent = highestFirst[0];
+  const mostLikeGroup = lowestFirst[0];
+  const dataAsOf = behavior.data_as_of ?? null;
+
+  return {
+    id: "combined-portfolio-difference",
+    status: "published",
+    category: "portfolio_difference",
+    confidence: "medium",
+    publication_tier: "category",
+    importance_score: 79,
+    source_type: "deterministic",
+    generated_at: behavior.generated_at ?? readModel?.generated_at ?? null,
+    data_as_of: dataAsOf,
+    title: `${mostDifferent.label} invests most differently from the group`,
+    summary: `${mostLikeGroup.label} is most like the group at ${mostLikeGroup.score.toFixed(1)}/100. Monthly and weekly behavior receive equal weight.`,
+    why_it_matters: "This shows how far model portfolios differ from the group. It does not say that being different produced a better return.",
+    calculations: [
+      {
+        name: "highest_portfolio_difference",
+        value: Number(mostDifferent.score.toFixed(4)),
+        unit: "score_100",
+        formula: "50% monthly Portfolio Difference plus 50% weekly Portfolio Difference"
+      },
+      {
+        name: "lowest_portfolio_difference",
+        value: Number(mostLikeGroup.score.toFixed(4)),
+        unit: "score_100",
+        formula: "50% monthly Portfolio Difference plus 50% weekly Portfolio Difference"
+      }
+    ],
+    evidence: [
+      {
+        label: "Portfolio Difference benchmark",
+        href: "/models/patterns/#portfolio-difference-title",
+        source: "/api/v1/models/behavior"
+      }
+    ],
+    related: [{ label: "Model behavior benchmarks", href: "/models/patterns/" }],
+    href: "/models/patterns/#portfolio-difference-title",
+    cta_label: "Compare every model",
+    context: {
+      scope: "model_behavior_history",
+      insight_kind: "combined_portfolio_difference",
+      maturity: "ready",
+      data_as_of: dataAsOf,
+      primary_label: "50% monthly / 50% weekly",
+      model_count: rows.length,
+      model_ids: rows.map((row) => row.model_id),
+      best: { model_id: mostDifferent.model_id, label: mostDifferent.label, score: mostDifferent.score },
+      worst: { model_id: mostLikeGroup.model_id, label: mostLikeGroup.label, score: mostLikeGroup.score }
+    }
+  };
+}
+
 export function insightsForSurface(readModel, surface, limit = 3) {
   const rows = publishedInsights(readModel);
   const currentRows = rows.filter((insight) => isCurrentLiveInsight(readModel, insight));
@@ -525,7 +605,7 @@ export function insightsForModel(readModel, { modelId, modelName, limit = 3, inc
   if (!includeFallback) return uniqueInsights(direct).slice(0, limit);
   const fallback = topInsightsByCategory(
     readModel,
-    ["performance_attribution", "confidence_calibration", "model_behavior", "model_similarity"],
+    ["performance_attribution", "confidence_calibration", "model_behavior", "portfolio_difference"],
     limit
   );
   return uniqueInsights([...direct, ...fallback]).slice(0, limit);

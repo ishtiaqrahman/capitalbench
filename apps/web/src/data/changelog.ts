@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-08-06-portfolio-difference-benchmark",
+    date: "2026-08-06",
+    title: "Portfolio Difference benchmark published",
+    category: "Methodology",
+    status: "published",
+    summary:
+      "CapitalBench now compares how far each model's portfolio differs from the average portfolio selected by the other models in the same rounds.",
+    details: [
+      "Portfolio Difference runs from 0 for the same portfolio as the group to 100 for a completely different allocation.",
+      "The measured model is excluded from the comparison portfolio, and Combined gives monthly and weekly observations equal weight.",
+      "The homepage publishes Overall, Monthly, and Weekly active-model comparisons, with Overall selected by default.",
+      "The metric compares portfolio outputs and does not establish copying, influence, intent, or investment quality."
+    ],
+    links: [
+      { label: "Portfolio Difference", href: "/models/patterns/#portfolio-difference-title" },
+      { label: "Model behavior benchmarks", href: "/models/patterns" },
+      { label: "Methodology", href: "/methodology/#behavior-profiles" }
+    ]
+  },
+  {
     id: "2026-07-24-claude-opus-5-added",
     date: "2026-07-24",
     title: "Claude Opus 5 joins future CapitalBench rounds",

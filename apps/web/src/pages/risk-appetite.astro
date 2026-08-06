@@ -23,7 +23,7 @@ const currentRiskSummaryLabel = `${currentRiskAsOfLabel} / ${pulse.label}`;
 const weeklyRiskSummaryLabel = `${pulseDateLabel(pulse.weekly, "Latest weekly decision")} / ${pulse.weekly?.label ?? "n/a"}`;
 const monthlyRiskSummaryLabel = `${pulseDateLabel(pulse.monthly, "Latest monthly decision")} / ${pulse.monthly?.label ?? "n/a"}`;
 const modelBehavior = apiReadModel.model_behavior ?? { summary: {}, profiles: [] };
-const riskInsights = topInsightsByCategory(apiReadModel, ["risk_regime", "horizon_agreement", "model_similarity"], 3);
+const riskInsights = topInsightsByCategory(apiReadModel, ["risk_regime", "horizon_agreement", "portfolio_difference"], 3);
 const assetsById = new Map(apiReadModel.assets.map((asset) => [asset.option_id, asset]));
 const assetDefinitions = Object.entries(riskModel.assets)
   .map(([optionId, definition]) => ({
@@ -344,10 +344,10 @@ function width(value: number | null | undefined): string {
         </p>
       </article>
       <article>
-        <strong>Peer overlap</strong>
+        <strong>Portfolio Difference</strong>
         <p>
-          Portfolio overlap is cosine similarity between allocation vectors from models in the same official round.
-          Higher values mean a model tends to look more like the rest of the roster.
+          This 0-100 score measures how much allocation would need to change to match the average portfolio selected
+          by the other models in the same rounds. <a href="/models/patterns/#portfolio-difference-title">Compare the models.</a>
         </p>
       </article>
       <article>

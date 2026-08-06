@@ -154,6 +154,7 @@ export type ModelBehaviorProfile = {
   performance: Record<string, any>;
   recent: Record<string, any>;
   recent_winner?: Record<string, any>;
+  portfolio_difference?: Record<string, any>;
   top_assets: Array<Record<string, any>>;
   top_categories: Array<Record<string, any>>;
   peer_percentiles?: Record<string, number | null>;

@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-08-06
+
+### Portfolio Difference benchmark
+
+- Added a 0-100 Portfolio Difference metric showing how much of a model's
+  allocation would need to change to match the average portfolio selected by
+  the other models in the same rounds.
+- Published Overall, Monthly, and Weekly active-model comparisons on the
+  homepage and the full model behavior page, with Overall selected by default.
+- Kept legacy cosine similarity available only as an API compatibility field
+  and removed it from public website explanations and insights.
+- Clarified that portfolio difference does not indicate better performance or
+  prove copying, influence, or intent.
+
 ## 2026-08-05
 
 ### Direct model protocol clarity

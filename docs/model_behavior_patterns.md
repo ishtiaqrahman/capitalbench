@@ -57,7 +57,7 @@ methodology produces an evolving-pattern caveat.
 The strongest qualifying exposure or risk signal supplies the archetype
 modifier. Signal strength is the absolute median peer difference divided by the
 dimension's materiality floor, with persistence and then the stable metric key
-as tie-breakers. Peer-normalized construction, turnover, or peer overlap
+as tie-breakers. Peer-normalized construction, turnover, or Portfolio Difference
 supplies the allocation-style noun. `Peer-balanced allocator` is used only when
 no signal passes the gates; it is not a generic rule-ladder fallback.
 
@@ -107,8 +107,12 @@ models retain their historical profiles but cannot become a current “most” l
   lower-risk ballast.
 - `tech_pct`: average allocation to technology, semiconductors, Nasdaq-style
   growth, and AI-linked technology exposure.
-- `peer_similarity`: average cosine similarity to peer portfolios in matching
-  official rounds.
+- `portfolio_difference`: the percentage of allocation that would need to
+  change to match the leave-one-model-out average portfolio in matching
+  official rounds. `0` means the same as the group and `100` means completely
+  different.
+- `peer_similarity`: legacy API-only cosine-similarity field retained for
+  compatibility. It is no longer the displayed peer-comparison metric.
 - `average_turnover_pct`: one-half summed absolute allocation change between
   consecutive same-track portfolios.
 - `recent_winner_tilt_score`: allocation-weighted percentile rank of each
@@ -153,6 +157,29 @@ This is descriptive, not causal: a high score shows that the saved portfolio
 favored recent winners. It does not prove the model relied on momentum, and it
 does not say that following recent winners was profitable. Future returns and
 resolved outcomes never enter the calculation.
+
+## Portfolio Difference Interpretation
+
+Portfolio Difference answers: how differently does this model invest from the
+other AI models in the same rounds?
+
+For each eligible round with at least three models, the measured model is left
+out and the other models' normalized portfolios are averaged. The score is
+one-half of the summed absolute allocation difference:
+
+```text
+Portfolio Difference = 0.5 x sum(abs(model weight - other-model average weight))
+```
+
+A score of `42` means about 42% of allocation would need to change to match the
+other models' average portfolio. Every eligible model-round receives equal
+weight. Weekly and monthly scores are arithmetic means of their round scores;
+the combined headline is `50% monthly + 50% weekly` and is available only when
+both horizons have observations. Headline values use the latest methodology,
+while all-history values remain in the API for auditability.
+
+This is a portfolio-output comparison. It does not prove copying, influence,
+intentional conformity, or intentional contrarian reasoning.
 
 ## Behavior Labels
 

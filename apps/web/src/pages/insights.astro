@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import apiReadModel from "../generated/apiReadModel.js";
-import { featuredInsightRows, publishedInsightRows, roundReferenceTokens } from "../lib/insights.js";
+import { featuredInsightRows, publishedInsights, roundReferenceTokens } from "../lib/insights.js";
 import { itemListSchema } from "../lib/seo";
 
 type InsightCalculation = {
@@ -75,9 +75,7 @@ const snapshot = apiReadModel.insights ?? {
   insight_count: 0,
   insights: []
 };
-const insights = Array.isArray(snapshot.insights)
-  ? (publishedInsightRows(snapshot.insights) as InsightRecord[])
-  : [];
+const insights = publishedInsights(apiReadModel) as InsightRecord[];
 const featuredInsights = featuredInsightRows(insights) as InsightRecord[];
 const featuredIds = new Set(featuredInsights.map((insight) => insight.id));
 const leadInsight = featuredInsights[0] ?? insights[0];
@@ -261,8 +259,8 @@ function insightDefinition(insight: InsightRecord) {
       return "Momentum exposure measures how much of the frozen portfolio went into assets that had already been recent winners before the model made its allocation.";
     case "live_performance":
       return "Live alpha is interim model return minus interim S&P 500 return. It is provisional until the round reaches its official score date.";
-    case "model_similarity":
-      return "Cosine similarity measures allocation overlap between model portfolios. A value near 1.00 means the weights are very similar.";
+    case "portfolio_difference":
+      return "Portfolio Difference measures how much allocation would need to change to match the average portfolio selected by the other models in the same rounds. Different does not mean better.";
     case "market_environment":
       return "Market environments group resolved rounds by the S&P 500 return over the same weekly or monthly window. Models are compared only on shared rounds; high confidence requires at least six observations and stable leadership.";
     default:
@@ -290,8 +288,8 @@ function categoryDescription(category: string) {
       return "Whether weekly and monthly live portfolios point in the same regime direction.";
     case "live_performance":
       return "How open portfolios are moving versus the S&P 500 before final score dates.";
-    case "model_similarity":
-      return "How much the live portfolios overlap across models and which model is the allocation outlier.";
+    case "portfolio_difference":
+      return "Which models invest most differently from the other models in the same rounds.";
     case "risk_regime":
       return "Whether live portfolios are collectively defensive, balanced, or aggressive based on holdings.";
     case "market_environment":

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   calculationValue,
+  combinedPortfolioDifferenceInsight,
   combinedRecentWinnerInsight,
   currentLiveRoundIds,
   featuredInsightRows,
@@ -11,6 +12,7 @@ import {
   insightsForSurface,
   isCurrentLiveInsight,
   publishedInsightRows,
+  publishedInsights,
   roundReferenceTokens,
   staleLiveInsights
 } from "../src/lib/insights.js";
@@ -331,6 +333,57 @@ test("combined recent-winner homepage insight requires two valid active models",
   };
 
   assert.equal(combinedRecentWinnerInsight(readModel), null);
+});
+
+test("public insight surfaces replace legacy model similarity with Portfolio Difference", () => {
+  const differenceProfile = (model_id, label, score, lifecycle_status = "active") => ({
+    model_id,
+    label,
+    lifecycle_status,
+    portfolio_difference: {
+      current_methodology: {
+        observation_count: 18,
+        combined: {
+          combined_available: true,
+          average_difference_score: score,
+          observation_count: 18
+        }
+      }
+    }
+  });
+  const readModel = {
+    generated_at: "2026-08-06T12:00:00Z",
+    model_behavior: {
+      generated_at: "2026-08-06T11:00:00Z",
+      data_as_of: "2026-08-06",
+      profiles: [
+        differenceProfile("model-different", "Model Different", 74.4),
+        differenceProfile("model-group", "Model Group", 28.2),
+        differenceProfile("model-retired", "Retired Model", 90, "retired")
+      ]
+    },
+    insights: {
+      insights: [
+        {
+          id: "legacy-similarity",
+          status: "published",
+          category: "model_similarity",
+          title: "Legacy cosine insight",
+          generated_at: "2026-08-06T10:00:00Z"
+        }
+      ]
+    }
+  };
+
+  const insight = combinedPortfolioDifferenceInsight(readModel);
+  assert.equal(insight.title, "Model Different invests most differently from the group");
+  assert.equal(insight.summary, "Model Group is most like the group at 28.2/100. Monthly and weekly behavior receive equal weight.");
+  assert.equal(calculationValue(insight.calculations[0]), "74.4/100");
+  assert.equal(insightHref(insight), "/models/patterns/#portfolio-difference-title");
+
+  const visible = publishedInsights(readModel);
+  assert.ok(visible.some((row) => row.id === "combined-portfolio-difference"));
+  assert.ok(!visible.some((row) => row.category === "model_similarity"));
 });
 
 test("live insight helpers identify the canonical current weekly and monthly rounds", () => {

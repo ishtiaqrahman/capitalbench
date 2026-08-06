@@ -6,6 +6,7 @@ import {
   MODEL_BEHAVIOR_METHOD_VERSION,
   MODEL_BEHAVIOR_VERSION,
   buildModelBehaviorV2,
+  buildPortfolioDifferenceProfiles,
   buildRecentWinnerProfiles
 } from "../scripts/lib/model-behavior-v2.mjs";
 
@@ -28,6 +29,9 @@ function profile(modelId, overrides = {}) {
       benchmark_pct: 20
     },
     peer: { average_peer_similarity: 0.5, similarity_observation_count: 8, outlier_round_count: 0 },
+    portfolio_difference: {
+      current_methodology: { observation_count: 8, average_difference_score: 50 }
+    },
     turnover: { average_turnover_pct: 40, turnover_observation_count: 0 },
     performance: {},
     recent: { active_portfolio_count: 0, current_top_assets: [], top_assets: [] },
@@ -36,6 +40,7 @@ function profile(modelId, overrides = {}) {
       concentration: 50,
       defensiveness: 50,
       peer_similarity: 50,
+      portfolio_difference: 50,
       turnover_stability: 50,
       capitalbench_score: null
     },
@@ -170,6 +175,94 @@ test("recent-winner combined score requires both horizons", () => {
   assert.equal(recency.average_tilt_score, null);
   assert.equal(recency.combined.availability_note, "Both monthly and weekly observations are required.");
   assert.equal(recency.evidence.peer_label, "Both horizons required");
+});
+
+test("Portfolio Difference measures allocation needed to match the leave-one-out group portfolio", () => {
+  const rows = [
+    scoredRow({
+      modelId: "model-a",
+      index: 0,
+      allocations: [{ option_id: "A", allocation_pct: 100 }]
+    }),
+    scoredRow({
+      modelId: "model-b",
+      index: 0,
+      allocations: [
+        { option_id: "A", allocation_pct: 50 },
+        { option_id: "B", allocation_pct: 50 }
+      ]
+    }),
+    scoredRow({
+      modelId: "model-c",
+      index: 0,
+      allocations: [
+        { option_id: "A", allocation_pct: 50 },
+        { option_id: "B", allocation_pct: 50 }
+      ]
+    })
+  ];
+  const difference = buildPortfolioDifferenceProfiles(rows).get("model-a").current_methodology;
+  assert.equal(difference.tracks.weekly.average_difference_score, 50);
+  assert.equal(difference.tracks.weekly.average_shared_allocation_pct, 50);
+  assert.equal(difference.tracks.weekly.average_peer_count, 2);
+});
+
+test("Portfolio Difference reaches zero for the group portfolio and 100 for a disjoint portfolio", () => {
+  const sameRows = MODEL_IDS.map((modelId) =>
+    scoredRow({ modelId, index: 0, allocations: [{ option_id: "A", allocation_pct: 100 }] })
+  );
+  const disjointRows = [
+    scoredRow({ modelId: "model-a", index: 0, allocations: [{ option_id: "A", allocation_pct: 100 }] }),
+    scoredRow({ modelId: "model-b", index: 0, allocations: [{ option_id: "B", allocation_pct: 100 }] }),
+    scoredRow({ modelId: "model-c", index: 0, allocations: [{ option_id: "B", allocation_pct: 100 }] })
+  ];
+  assert.equal(
+    buildPortfolioDifferenceProfiles(sameRows).get("model-a").current_methodology.tracks.weekly.average_difference_score,
+    0
+  );
+  assert.equal(
+    buildPortfolioDifferenceProfiles(disjointRows).get("model-a").current_methodology.tracks.weekly.average_difference_score,
+    100
+  );
+});
+
+test("Portfolio Difference combines monthly and weekly with equal weight", () => {
+  const rows = [];
+  for (let index = 0; index < 10; index += 1) {
+    const track = index === 0 ? "monthly" : "weekly";
+    for (const modelId of MODEL_IDS) {
+      const allocations =
+        modelId === "model-a"
+          ? track === "monthly"
+            ? [{ option_id: "A", allocation_pct: 100 }]
+            : [
+                { option_id: "A", allocation_pct: 20 },
+                { option_id: "B", allocation_pct: 80 }
+              ]
+          : [{ option_id: "B", allocation_pct: 100 }];
+      rows.push(scoredRow({ modelId, index, track, allocations }));
+    }
+  }
+  const difference = buildPortfolioDifferenceProfiles(rows).get("model-a").current_methodology;
+  assert.equal(difference.tracks.monthly.average_difference_score, 100);
+  assert.equal(difference.tracks.weekly.average_difference_score, 20);
+  assert.equal(difference.average_difference_score, 60);
+  assert.equal(difference.average_shared_allocation_pct, 40);
+  assert.notEqual(difference.average_difference_score, 28, "combined must not be weighted by round count");
+});
+
+test("Portfolio Difference requires at least three models and both horizons for a combined score", () => {
+  const twoModelRows = ["model-a", "model-b"].map((modelId) =>
+    scoredRow({ modelId, index: 0, allocations: [{ option_id: modelId, allocation_pct: 100 }] })
+  );
+  assert.equal(buildPortfolioDifferenceProfiles(twoModelRows).size, 0);
+
+  const weeklyRows = MODEL_IDS.map((modelId) =>
+    scoredRow({ modelId, index: 0, allocations: [{ option_id: modelId, allocation_pct: 100 }] })
+  );
+  const difference = buildPortfolioDifferenceProfiles(weeklyRows).get("model-a").current_methodology;
+  assert.equal(difference.combined_available, false);
+  assert.equal(difference.average_difference_score, null);
 });
 
 test("behavior v2 ignores a market-wide exposure shift", () => {
@@ -384,11 +477,15 @@ test("construction evidence names the metric that actually supplied the style", 
       "model-a",
       {
         peer: { average_peer_similarity: 0.3, similarity_observation_count: 8, outlier_round_count: 0 },
+        portfolio_difference: {
+          current_methodology: { observation_count: 8, average_difference_score: 70 }
+        },
         peer_percentiles: {
           risk_pulse: 50,
           concentration: 50,
           defensiveness: 50,
           peer_similarity: 0,
+          portfolio_difference: 100,
           turnover_stability: 50,
           capitalbench_score: null
         }
@@ -398,7 +495,7 @@ test("construction evidence names the metric that actually supplied the style", 
   const profiles = buildFixture(({ modelId, index }) => scoredRow({ modelId, index }), profileOverrides);
   const model = profiles.find((row) => row.model_id === "model-a");
   assert.equal(model.behavior_v2.construction_signal_key, "distinctive");
-  assert.match(model.behavior_v2.pills[1].evidence, /average cosine overlap/);
+  assert.match(model.behavior_v2.pills[1].evidence, /70\.0\/100 Portfolio Difference/);
   assert.doesNotMatch(model.behavior_v2.pills[1].evidence, /based on peer-normalized holding count/);
 });
 
@@ -462,5 +559,9 @@ test("generated production profiles publish v2, retain v1 shadow, and exclude re
     assert.ok(profileRow.archetype.description.length > 40);
     assert.equal(profileRow.recent_winner.version, "capitalbench_recent_winner_tilt_v1");
     assert.ok(profileRow.recent_winner.current_methodology.observation_count > 0);
+    assert.equal(profileRow.portfolio_difference.version, "capitalbench_portfolio_difference_v1");
+    assert.ok(profileRow.portfolio_difference.current_methodology.observation_count > 0);
+    assert.ok(profileRow.portfolio_difference.current_methodology.average_difference_score >= 0);
+    assert.ok(profileRow.portfolio_difference.current_methodology.average_difference_score <= 100);
   }
 });

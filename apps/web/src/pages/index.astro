@@ -6,6 +6,7 @@ import InsightStrip from "../components/InsightStrip.astro";
 import LatestOfficialResultsTabs from "../components/LatestOfficialResultsTabs.astro";
 import MarketRegimePreview from "../components/MarketRegimePreview.astro";
 import ModelRiskBenchmark from "../components/ModelRiskBenchmark.astro";
+import PortfolioDifferenceBenchmark from "../components/PortfolioDifferenceBenchmark.astro";
 import TrackScorecardTabs from "../components/TrackScorecardTabs.astro";
 import {
   ArrowRight,
@@ -340,9 +341,11 @@ function riskWidth(value: number | null | undefined): string {
 
   <TrackScorecardTabs scorecards={aggregateScorecards} />
 
+  <LatestOfficialResultsTabs tracks={latestOfficialResultTracks} />
+
   <ModelRiskBenchmark modelBehavior={modelBehavior} variant="home" />
 
-  <LatestOfficialResultsTabs tracks={latestOfficialResultTracks} />
+  <PortfolioDifferenceBenchmark modelBehavior={modelBehavior} />
 
   {heroModelBehaviorRows.length > 0 && (
     <div class="home-hero-console hero-behavior-card hero-positioning-card-mobile" aria-label="Model behavior pattern snapshot">

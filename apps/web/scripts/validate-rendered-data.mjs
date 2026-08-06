@@ -1930,6 +1930,11 @@ const globalStylesSource = readRepoText("apps", "web", "src", "styles", "global.
 const latestChangelogMatch = changelogSource.match(/id:\s*"([^"]+)"[\s\S]*?date:\s*"(\d{4}-\d{2}-\d{2})"[\s\S]*?title:\s*"([^"]+)"/);
 const changelogEntryCount = [...changelogSource.matchAll(/^\s*id:\s*"/gm)].length;
 const homepageInsightHtml = htmlSection(indexHtml, 'id="benchmark-insights"', "homepage benchmark insights");
+const homepagePortfolioDifferenceHtml = htmlSection(
+  indexHtml,
+  'id="portfolio-difference-benchmark"',
+  "homepage Portfolio Difference benchmark"
+);
 const homepageRecentWinnerInsight = combinedRecentWinnerInsight(apiReadModel);
 if (!homepageRecentWinnerInsight) {
   failures.push("homepage combined recent-winner insight is unavailable");
@@ -1956,6 +1961,47 @@ if (!homepageRecentWinnerInsight) {
   );
   includes(homepageInsightHtml, "Compare every model", "homepage combined recent-winner insight CTA");
   excludes(homepageInsightHtml, 'data-insight-category="risk_regime"', "homepage repeated risk-regime insight");
+}
+includes(
+  homepagePortfolioDifferenceHtml,
+  "Which AI models invest most differently from the group?",
+  "homepage Portfolio Difference question"
+);
+includes(
+  homepagePortfolioDifferenceHtml,
+  "Different does not mean better or worse.",
+  "homepage Portfolio Difference interpretation"
+);
+includes(
+  homepagePortfolioDifferenceHtml,
+  'href="/models/patterns/#portfolio-difference-title"',
+  "homepage Portfolio Difference CTA"
+);
+includes(homepagePortfolioDifferenceHtml, 'aria-label="Portfolio Difference time horizon"', "homepage Portfolio Difference horizon tabs");
+includes(homepagePortfolioDifferenceHtml, 'data-portfolio-difference-tab="overall"', "homepage Portfolio Difference overall tab");
+includes(homepagePortfolioDifferenceHtml, 'data-portfolio-difference-tab="monthly"', "homepage Portfolio Difference monthly tab");
+includes(homepagePortfolioDifferenceHtml, 'data-portfolio-difference-tab="weekly"', "homepage Portfolio Difference weekly tab");
+includes(homepagePortfolioDifferenceHtml, 'aria-selected="true"', "homepage Portfolio Difference defaults to Overall");
+for (const profile of (apiReadModel.model_behavior?.profiles ?? []).filter((row) => row.lifecycle_status !== "retired")) {
+  const context = `homepage Portfolio Difference ${profile.model_id}`;
+  includes(homepagePortfolioDifferenceHtml, profile.label, context);
+  const current = profile.portfolio_difference?.current_methodology;
+  for (const [view, summary] of [
+    ["overall", current?.combined],
+    ["monthly", current?.tracks?.monthly],
+    ["weekly", current?.tracks?.weekly]
+  ]) {
+    if (typeof summary?.average_difference_score !== "number" || Number(summary.observation_count ?? 0) <= 0) continue;
+    includes(homepagePortfolioDifferenceHtml, numberLabel(summary.average_difference_score, 1), `${context} ${view} score`);
+    includes(homepagePortfolioDifferenceHtml, `<strong>${summary.observation_count}</strong>`, `${context} ${view} evidence count`);
+  }
+}
+includes(homepagePortfolioDifferenceHtml, "same-round comparisons", "homepage Portfolio Difference sample label");
+const latestResultPosition = indexHtml.indexOf('id="latest-official-results-title"');
+const riskBenchmarkPosition = indexHtml.indexOf('id="model-risk-benchmark"');
+const portfolioDifferencePosition = indexHtml.indexOf('id="portfolio-difference-benchmark"');
+if (!(latestResultPosition >= 0 && riskBenchmarkPosition > latestResultPosition && portfolioDifferencePosition > riskBenchmarkPosition)) {
+  failures.push("homepage result, risk, and Portfolio Difference sections are out of order");
 }
 for (const track of ["weekly", "monthly"]) {
   const trackData = apiReadModel.market_environment?.tracks?.[track] ?? {};
@@ -3306,6 +3352,7 @@ const patternReport = apiReadModel.model_behavior?.pattern_report;
 includes(modelPatternsHtml, "How The AI Allocators Differ", "model patterns page title");
 includes(modelPatternsHtml, "Distinct Behavior By Model", "model patterns comparison section");
 includes(modelPatternsHtml, "Behavior Metrics In One Table", "model patterns key numbers section");
+includes(modelPatternsHtml, "How Differently Does Each Model Invest?", "model patterns Portfolio Difference section");
 includes(modelPatternsHtml, "Which Models Follow Recent Winners?", "model patterns recent-winner section");
 includes(modelPatternsHtml, "How Behavior Labels And Pills Are Determined", "model patterns methodology section");
 if (patternReport) {
@@ -3330,6 +3377,20 @@ if (patternReport) {
     includes(modelPatternsHtml, numberLabel(row.key_numbers.average_holding_count, 2), `${context} average holding count`);
     includes(modelPatternsHtml, pctValue(row.key_numbers.average_top_allocation_pct), `${context} average top holding`);
     const recentWinner = row.recent_winner?.current_methodology;
+    const portfolioDifference = row.portfolio_difference?.current_methodology;
+    if (row.lifecycle_status !== "retired" && typeof portfolioDifference?.average_difference_score === "number") {
+      includes(
+        modelPatternsHtml,
+        `${numberLabel(portfolioDifference.average_difference_score, 1)}% would need to change`,
+        `${context} Portfolio Difference explanation`
+      );
+      for (const track of row.lifecycle_status === "retired" ? [] : ["combined", "monthly", "weekly"]) {
+        const trackSummary = track === "combined" ? portfolioDifference.combined : portfolioDifference.tracks?.[track];
+        if (typeof trackSummary?.average_difference_score !== "number") continue;
+        includes(modelPatternsHtml, numberLabel(trackSummary.average_difference_score, 1), `${context} ${track} Portfolio Difference score`);
+        includes(modelPatternsHtml, `${trackSummary.observation_count} same-round comparisons`, `${context} ${track} Portfolio Difference sample`);
+      }
+    }
     if (typeof recentWinner?.average_tilt_score === "number") {
       includes(
         modelPatternsHtml,
@@ -3368,6 +3429,8 @@ if (patternReport) {
   includes(modelPatternsHtml, "median behavior-metric value of the other models in that same round", "model patterns peer normalization method");
   includes(modelPatternsHtml, "Published materiality floors", "model patterns materiality floors");
   includes(modelPatternsHtml, "Realized returns, ranks, ineligible or pilot runs", "model patterns headline exclusions");
+  includes(modelPatternsHtml, "42% of allocation would need to change", "model patterns Portfolio Difference definition");
+  includes(modelPatternsHtml, "not copying or influence", "model patterns Portfolio Difference limit");
   includes(modelPatternsHtml, "future returns never enter the calculation", "model patterns recent-winner outcome exclusion");
   includes(modelPatternsHtml, "Combined gives monthly and weekly behavior equal weight", "model patterns recent-winner combined explanation");
   for (const finding of patternReport.comparative_findings ?? []) {
@@ -3529,8 +3592,15 @@ for (const model of apiReadModel.models) {
     includesAny(html, [behavior.archetype.description, htmlText(behavior.archetype.description)], `${context} behavior description`);
     includes(html, `${behavior.metrics.average_risk_pulse.toFixed(1)} / 100`, `${context} behavior risk score`);
     includes(html, pctValue(behavior.metrics.average_top_allocation_pct), `${context} behavior average top holding`);
-    if (typeof behavior.peer.average_peer_similarity === "number") {
-      includes(html, pctValue(behavior.peer.average_peer_similarity * 100), `${context} behavior peer overlap`);
+    if (typeof behavior.portfolio_difference?.current_methodology?.average_difference_score === "number") {
+      includes(html, "How different is this portfolio from the group?", `${context} Portfolio Difference section`);
+      includes(html, "Portfolio Difference / Combined", `${context} Portfolio Difference combined label`);
+      includes(
+        html,
+        numberLabel(behavior.portfolio_difference.current_methodology.average_difference_score, 1),
+        `${context} Portfolio Difference score`
+      );
+      includes(html, "/models/patterns/#portfolio-difference-title", `${context} Portfolio Difference link`);
     }
     if (typeof behavior.turnover.average_turnover_pct === "number") {
       includes(html, pctValue(behavior.turnover.average_turnover_pct), `${context} behavior turnover`);

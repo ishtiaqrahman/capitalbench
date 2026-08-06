@@ -216,7 +216,7 @@ export const routeMeta: RouteMeta[] = [
     path: "/models/patterns",
     title: "AI Model Behavior Patterns",
     description:
-      "Compare AI models by risk appetite, concentration, defensive ballast, overlap, turnover, and resolved performance profile.",
+      "Compare AI models by risk appetite, concentration, defensive ballast, Portfolio Difference, turnover, and resolved performance profile.",
     priority: 0.84,
     changefreq: "weekly",
     lastmod: latestDataDate

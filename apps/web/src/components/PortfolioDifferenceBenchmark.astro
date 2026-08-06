@@ -1,0 +1,218 @@
+---
+import { ArrowRight, Info } from "lucide-react";
+import { buildPortfolioDifferenceBenchmark } from "../lib/portfolioDifferenceBenchmark.js";
+import { longMonthDayYear } from "../lib/riskFormatting.js";
+import { providerLogoSrc } from "../lib/scoreReturnChart";
+
+interface Props {
+  modelBehavior: any;
+}
+
+interface PortfolioDifferenceRow {
+  modelId: string;
+  label: string;
+  provider: string;
+  providerLabel: string;
+  score: number;
+  position: number;
+  observationCount: number;
+  evidenceLabel: string;
+  href: string;
+  distinction: string | null;
+}
+
+interface PortfolioDifferenceView {
+  key: string;
+  label: string;
+  scoreLabel: string;
+  rows: PortfolioDifferenceRow[];
+}
+
+const { modelBehavior } = Astro.props;
+const benchmark = buildPortfolioDifferenceBenchmark(modelBehavior) as {
+  dataAsOf: string;
+  methodologyHref: string;
+  views: PortfolioDifferenceView[];
+};
+const hasRows = benchmark.views.some((view) => view.rows.length > 0);
+const updatedLabel = longMonthDayYear(benchmark.dataAsOf, "latest official portfolios");
+
+function score(value: number): string {
+  return value.toFixed(1);
+}
+---
+
+{hasRows && (
+  <section
+    class="model-portfolio-difference"
+    id="portfolio-difference-benchmark"
+    aria-labelledby="portfolio-difference-benchmark-title"
+    data-portfolio-difference-benchmark
+  >
+    <header class="model-portfolio-difference-heading">
+      <span class="panel-kicker">Portfolio Difference</span>
+      <div class="model-portfolio-difference-title-row">
+        <h2 id="portfolio-difference-benchmark-title">Which AI models invest most differently from the group?</h2>
+        <span
+          class="home-info-tip"
+          tabindex="0"
+          aria-label="A score of 42 means about 42 percent of the allocation would need to change to match the average portfolio selected by the other models in the same rounds."
+        >
+          <Info size={15} aria-hidden="true" />
+        </span>
+      </div>
+      <p>Compare each model's portfolio with the choices made by the other models in the same rounds.</p>
+      <div class="model-portfolio-difference-freshness">
+        <span>Updated through {updatedLabel}</span>
+        <span aria-hidden="true">/</span>
+        <strong>Overall: 50% monthly / 50% weekly</strong>
+      </div>
+    </header>
+
+    <div class="model-portfolio-difference-tabs" role="tablist" aria-label="Portfolio Difference time horizon">
+      {benchmark.views.map((view, index) => (
+        <button
+          type="button"
+          role="tab"
+          id={`portfolio-difference-tab-${view.key}`}
+          aria-controls={`portfolio-difference-panel-${view.key}`}
+          aria-selected={index === 0 ? "true" : "false"}
+          tabindex={index === 0 ? 0 : -1}
+          data-portfolio-difference-tab={view.key}
+        >
+          {view.label}
+        </button>
+      ))}
+    </div>
+
+    <div class="model-portfolio-difference-board">
+      {benchmark.views.map((view, index) => (
+        <div
+          class="model-portfolio-difference-panel"
+          id={`portfolio-difference-panel-${view.key}`}
+          role="tabpanel"
+          aria-labelledby={`portfolio-difference-tab-${view.key}`}
+          hidden={index !== 0}
+          data-portfolio-difference-panel={view.key}
+        >
+          <div class="model-portfolio-difference-axis" aria-hidden="true">
+            <span>Model</span>
+            <div>
+              <span>0 Similar to group</span>
+              <span>50</span>
+              <span>100 Different from group</span>
+            </div>
+            <span>{view.scoreLabel}</span>
+            <span>Evidence</span>
+          </div>
+
+          <div class="model-portfolio-difference-rows">
+            {view.rows.map((row) => {
+              const logoSrc = providerLogoSrc(row.provider);
+              return (
+                <article class="model-portfolio-difference-row">
+                  <a class="model-portfolio-difference-model" href={row.href}>
+                    <span class:list={["model-portfolio-difference-logo", row.provider && `is-${row.provider}`]}>
+                      {logoSrc ? (
+                        <img src={logoSrc} alt="" width="26" height="26" loading="lazy" />
+                      ) : (
+                        <span aria-hidden="true">{row.label.slice(0, 1)}</span>
+                      )}
+                    </span>
+                    <span>
+                      <strong>{row.label}</strong>
+                      <small>{row.providerLabel}</small>
+                    </span>
+                    {row.distinction && <em>{row.distinction}</em>}
+                  </a>
+
+                  <div class="model-portfolio-difference-spectrum">
+                    <div class="model-portfolio-difference-track" style={`--difference-position: ${row.position}%;`}>
+                      <span data-reveal-bar="horizontal" aria-hidden="true"></span>
+                      <i
+                        style={`--pulse-position: ${row.position}%;`}
+                        data-reveal-meter="true"
+                        aria-hidden="true"
+                      ><b></b></i>
+                    </div>
+                    <div class="model-portfolio-difference-mobile-axis" aria-hidden="true">
+                      <span>Similar</span>
+                      <span>50</span>
+                      <span>Different</span>
+                    </div>
+                  </div>
+
+                  <div class="model-portfolio-difference-score">
+                    <strong>{score(row.score)}<small>/100</small></strong>
+                  </div>
+
+                  <div class="model-portfolio-difference-evidence">
+                    <strong>{row.observationCount}</strong>
+                    <span>same-round comparisons</span>
+                    <small>{row.evidenceLabel}</small>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <footer class="model-portfolio-difference-footer">
+      <p><strong>Different does not mean better or worse.</strong> The score compares portfolio outputs; it does not prove copying, influence, or intent.</p>
+      <a class="home-primary-cta" href={benchmark.methodologyHref}>
+        Explore Portfolio Difference
+        <ArrowRight size={16} aria-hidden="true" />
+      </a>
+    </footer>
+  </section>
+)}
+
+<script>
+  function bindPortfolioDifferenceBenchmarks() {
+    document.querySelectorAll("[data-portfolio-difference-benchmark]").forEach((root) => {
+      if (!(root instanceof HTMLElement) || root.dataset.tabsBound === "true") return;
+      root.dataset.tabsBound = "true";
+
+      const tabs = Array.from(root.querySelectorAll("[data-portfolio-difference-tab]"));
+      const panels = Array.from(root.querySelectorAll("[data-portfolio-difference-panel]"));
+
+      function activate(key: string, focus = false) {
+        tabs.forEach((tab) => {
+          if (!(tab instanceof HTMLButtonElement)) return;
+          const active = tab.dataset.portfolioDifferenceTab === key;
+          tab.setAttribute("aria-selected", String(active));
+          tab.tabIndex = active ? 0 : -1;
+          if (active && focus) tab.focus();
+        });
+        panels.forEach((panel) => {
+          if (!(panel instanceof HTMLElement)) return;
+          panel.hidden = panel.dataset.portfolioDifferencePanel !== key;
+        });
+      }
+
+      tabs.forEach((tab, tabIndex) => {
+        if (!(tab instanceof HTMLButtonElement)) return;
+        tab.addEventListener("click", () => activate(tab.dataset.portfolioDifferenceTab ?? "overall"));
+        tab.addEventListener("keydown", (event) => {
+          let nextIndex = tabIndex;
+          if (event.key === "ArrowRight") nextIndex = (tabIndex + 1) % tabs.length;
+          else if (event.key === "ArrowLeft") nextIndex = (tabIndex - 1 + tabs.length) % tabs.length;
+          else if (event.key === "Home") nextIndex = 0;
+          else if (event.key === "End") nextIndex = tabs.length - 1;
+          else return;
+
+          event.preventDefault();
+          const nextTab = tabs[nextIndex];
+          if (nextTab instanceof HTMLButtonElement) {
+            activate(nextTab.dataset.portfolioDifferenceTab ?? "overall", true);
+          }
+        });
+      });
+    });
+  }
+
+  bindPortfolioDifferenceBenchmarks();
+  document.addEventListener("astro:page-load", bindPortfolioDifferenceBenchmarks);
+</script>

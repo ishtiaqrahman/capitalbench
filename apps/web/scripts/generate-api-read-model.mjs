@@ -14,6 +14,7 @@ import {
   MODEL_PATTERN_REPORT_VERSION,
   behaviorMethodologyDefinitions,
   buildModelBehaviorV2,
+  buildPortfolioDifferenceProfiles,
   buildRecentWinnerProfiles
 } from "./lib/model-behavior-v2.mjs";
 
@@ -1224,7 +1225,13 @@ function modelPatternMetricDefinitions() {
       key: "peer_similarity",
       label: "Peer overlap",
       unit: "0-1",
-      definition: "Average cosine similarity between this model's allocation weights and peer model portfolios in the same rounds."
+      definition: "Legacy API-only average cosine similarity between this model's allocation weights and peer model portfolios in the same rounds."
+    },
+    {
+      key: "portfolio_difference",
+      label: "Portfolio Difference",
+      unit: "score_100",
+      definition: "The percentage of allocation that would need to change to match the average portfolio selected by the other models in the same rounds."
     },
     {
       key: "average_turnover_pct",
@@ -1292,6 +1299,7 @@ function modelPatternKeyNumbers(profile) {
     international_pct: roundedNumber(profile.metrics?.international_pct, 2),
     real_assets_pct: roundedNumber(profile.metrics?.real_assets_pct, 2),
     benchmark_pct: roundedNumber(profile.metrics?.benchmark_pct, 2),
+    portfolio_difference: roundedNumber(profile.portfolio_difference?.current_methodology?.average_difference_score, 2),
     peer_similarity: roundedNumber(profile.peer?.average_peer_similarity, 4),
     outlier_round_count: Number(profile.peer?.outlier_round_count ?? 0),
     average_turnover_pct: roundedNumber(profile.turnover?.average_turnover_pct, 2),
@@ -1313,7 +1321,7 @@ function modelPatternKeyNumbers(profile) {
 function modelPatternTraits(profile, summary) {
   const metrics = profile.metrics ?? {};
   const performance = profile.performance ?? {};
-  const peer = profile.peer ?? {};
+  const portfolioDifference = profile.portfolio_difference?.current_methodology;
   const traits = [];
   const add = (key, label, evidence, metric_keys) => traits.push({ key, label, evidence, metric_keys });
 
@@ -1332,11 +1340,11 @@ function modelPatternTraits(profile, summary) {
   if (summary.lowest_turnover_model_id === profile.model_id) {
     add("lowest_turnover", "Lowest turnover", `${percentLabel(profile.turnover?.average_turnover_pct)} average turnover.`, ["average_turnover_pct"]);
   }
-  if (summary.most_consensus_aligned_model_id === profile.model_id) {
-    add("most_consensus_aligned", "Most consensus-aligned", `${percentLabel((peer.average_peer_similarity ?? 0) * 100)} average peer overlap.`, ["peer_similarity"]);
+  if (summary.most_like_group_model_id === profile.model_id) {
+    add("most_like_group", "Most like the group", `${scoreLabel(portfolioDifference?.average_difference_score)} / 100 Portfolio Difference, lowest in the active roster.`, ["portfolio_difference"]);
   }
-  if (summary.most_distinctive_model_id === profile.model_id) {
-    add("most_distinctive", "Most distinctive", `${percentLabel((peer.average_peer_similarity ?? 0) * 100)} average peer overlap, lowest in the roster.`, ["peer_similarity"]);
+  if (summary.most_different_model_id === profile.model_id) {
+    add("most_different", "Most different", `${scoreLabel(portfolioDifference?.average_difference_score)} / 100 Portfolio Difference, highest in the active roster.`, ["portfolio_difference"]);
   }
   if (finiteNumber(metrics.tech_pct) && metrics.tech_pct >= 45) {
     add("technology_tilt", "Technology tilt", `${percentLabel(metrics.tech_pct)} average technology-linked allocation.`, ["tech_pct"]);
@@ -1354,9 +1362,6 @@ function modelPatternTraits(profile, summary) {
   }
   if (Number(performance.resolved_round_count ?? 0) >= 5 && Number(performance.win_count ?? 0) === 0 && Number(performance.last_count ?? 0) === 0) {
     add("middle_stable", "Middle-stable results", "No first-place or last-place finishes in resolved rounds.", ["first_place_count", "last_place_count"]);
-  }
-  if (Number(peer.outlier_round_count ?? 0) >= 4) {
-    add("outlier_rounds", "Often different from peers", `${peer.outlier_round_count} rounds with unusually low peer overlap.`, ["outlier_round_count"]);
   }
   if (traits.length === 0) {
     add(
@@ -1411,7 +1416,7 @@ function buildModelPatternFindings(rows, summary) {
   const mostConcentrated = byId.get(summary.most_concentrated_model_id);
   const mostDefensive = byId.get(summary.most_defensive_model_id);
   const lowestTurnover = byId.get(summary.lowest_turnover_model_id);
-  const mostConsensus = byId.get(summary.most_consensus_aligned_model_id);
+  const mostLikeGroup = byId.get(summary.most_like_group_model_id);
   const findings = [];
   if (highestRisk && mostConcentrated && highestRisk.model_id !== mostConcentrated.model_id) {
     findings.push({
@@ -1439,14 +1444,14 @@ function buildModelPatternFindings(rows, summary) {
       });
     }
   }
-  if (mostConsensus) {
+  if (mostLikeGroup) {
     findings.push({
-      key: "consensus_alignment",
-      title: `${mostConsensus.label} is closest to the model crowd`,
+      key: "portfolio_difference",
+      title: `${mostLikeGroup.label} invests most like the group`,
       body:
-        `${mostConsensus.label} has the highest average peer overlap at ${percentLabel(mostConsensus.key_numbers.peer_similarity * 100)}. This means its allocation weights have looked more like the rest of the roster than the most distinctive models.`,
-      model_ids: [mostConsensus.model_id],
-      supported_metric_keys: ["peer_similarity"]
+        `${mostLikeGroup.label} has the lowest Portfolio Difference at ${scoreLabel(mostLikeGroup.key_numbers.portfolio_difference)} / 100. That is the share of allocation that would need to change to match the average portfolio of the other models.`,
+      model_ids: [mostLikeGroup.model_id],
+      supported_metric_keys: ["portfolio_difference"]
     });
   }
   return findings.slice(0, 5);
@@ -1553,6 +1558,7 @@ function buildModelPatternReport({ profiles, pairwise, summary, dataAsOf, genera
       qualifying_signals: behaviorV2.qualifying_signals ?? [],
       decision_process: behaviorV2.decision_process ?? {},
       recent_winner: profile.recent_winner,
+      portfolio_difference: profile.portfolio_difference,
       key_numbers: keyNumbers,
       top_assets: topAssets,
       top_categories: (profile.top_categories ?? []).slice(0, 5),
@@ -1614,6 +1620,7 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
   const turnover = turnoverStats(scoredRows);
   const performance = performanceBehaviorStats(results);
   const recentWinner = buildRecentWinnerProfiles(scoredRows);
+  const portfolioDifference = buildPortfolioDifferenceProfiles(scoredRows);
   const rowsByModel = new Map();
   for (const row of scoredRows) {
     rowsByModel.set(row.model_id, [...(rowsByModel.get(row.model_id) ?? []), row]);
@@ -1644,6 +1651,27 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
       latest_window_label: null,
       methodology: {}
     };
+    const portfolioDifferenceForModel = portfolioDifference.get(model.model_id) ?? {
+      version: "capitalbench_portfolio_difference_v1",
+      current_methodology_version: null,
+      current_methodology: {
+        observation_count: 0,
+        decision_date_count: 0,
+        track_count: 0,
+        combined_available: false,
+        weighting: "50% monthly + 50% weekly",
+        monthly_weight_pct: null,
+        weekly_weight_pct: null,
+        availability_note: "Both monthly and weekly observations are required.",
+        average_difference_score: null,
+        average_shared_allocation_pct: null,
+        average_peer_count: null,
+        evidence: { status: "early_sample", label: "Not enough data", established: false },
+        tracks: { weekly: {}, monthly: {} }
+      },
+      all_history: { observation_count: 0, decision_date_count: 0, tracks: { weekly: {}, monthly: {} } },
+      methodology: {}
+    };
     const sample = {
       portfolio_count: rows.length,
       weekly_portfolio_count: weeklyRows.length,
@@ -1671,6 +1699,7 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
       benchmark_pct: average(rows.map((row) => row.benchmark_pct)) ?? 0,
       recent_winner_tilt_score: recentWinnerForModel.current_methodology.average_tilt_score,
       recent_winner_top_quintile_pct: recentWinnerForModel.current_methodology.average_top_quintile_allocation_pct,
+      portfolio_difference_score: portfolioDifferenceForModel.current_methodology.average_difference_score,
       average_holding_count: average(rows.map((row) => row.holding_count)),
       average_top_allocation_pct: average(rows.map((row) => row.top_allocation_pct)),
       concentration_hhi: average(rows.map((row) => row.concentration_hhi)),
@@ -1712,6 +1741,7 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
       peer: peerStats,
       turnover: turnoverStatsForModel,
       recent_winner: recentWinnerForModel,
+      portfolio_difference: portfolioDifferenceForModel,
       performance: performance.get(model.model_id) ?? {
         resolved_round_count: 0,
         average_return_pct: null,
@@ -1748,6 +1778,11 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
         concentration: percentileValue(cohort, profile.model_id, (row) => row.metrics.concentration_hhi),
         defensiveness: percentileValue(cohort, profile.model_id, (row) => row.metrics.defensive_pct),
         peer_similarity: percentileValue(cohort, profile.model_id, (row) => row.peer.average_peer_similarity),
+        portfolio_difference: percentileValue(
+          cohort,
+          profile.model_id,
+          (row) => row.portfolio_difference?.current_methodology?.average_difference_score
+        ),
         turnover_stability: percentileValue(cohort, profile.model_id, (row) => row.turnover.average_turnover_pct, { lowerIsHigher: true }),
         recent_winner_tilt: percentileValue(cohort, profile.model_id, (row) => row.metrics.recent_winner_tilt_score),
         capitalbench_score: percentileValue(cohort, profile.model_id, (row) => row.performance.average_capitalbench_score)
@@ -1773,6 +1808,15 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
   const dataAsOf = portfolios.map((portfolio) => portfolio.entry_date || portfolio.exit_date || "").filter(Boolean).sort().at(-1) ?? null;
   const generatedAt = new Date().toISOString();
   const activeProfiles = profiles.filter((profile) => profile.lifecycle_status !== "retired");
+  const mostLikeGroup = leaderBy(
+    activeProfiles,
+    (row) => row.portfolio_difference?.current_methodology?.average_difference_score,
+    "asc"
+  );
+  const mostDifferent = leaderBy(
+    activeProfiles,
+    (row) => row.portfolio_difference?.current_methodology?.average_difference_score
+  );
   const summary = {
     model_count: profiles.length,
     active_model_count: activeProfiles.length,
@@ -1783,8 +1827,10 @@ function buildModelBehavior({ models, rounds, portfolios, results, assetsById })
     highest_risk_model_id: leaderBy(activeProfiles, (row) => row.metrics.average_risk_pulse)?.model_id ?? null,
     most_concentrated_model_id: leaderBy(activeProfiles, (row) => row.metrics.concentration_hhi)?.model_id ?? null,
     most_defensive_model_id: leaderBy(activeProfiles, (row) => row.metrics.defensive_pct)?.model_id ?? null,
-    most_consensus_aligned_model_id: leaderBy(activeProfiles, (row) => row.peer.average_peer_similarity)?.model_id ?? null,
-    most_distinctive_model_id: leaderBy(activeProfiles, (row) => row.peer.average_peer_similarity, "asc")?.model_id ?? null,
+    most_like_group_model_id: mostLikeGroup?.model_id ?? null,
+    most_different_model_id: mostDifferent?.model_id ?? null,
+    most_consensus_aligned_model_id: mostLikeGroup?.model_id ?? null,
+    most_distinctive_model_id: mostDifferent?.model_id ?? null,
     lowest_turnover_model_id: leaderBy(activeProfiles, (row) => row.turnover.average_turnover_pct, "asc")?.model_id ?? null,
     highest_recent_winner_tilt_model_id: leaderBy(activeProfiles, (row) => row.metrics.recent_winner_tilt_score)?.model_id ?? null,
     lowest_recent_winner_tilt_model_id: leaderBy(activeProfiles, (row) => row.metrics.recent_winner_tilt_score, "asc")?.model_id ?? null

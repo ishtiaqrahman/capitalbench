@@ -4516,6 +4516,10 @@
                 "recent_winner": {
                   "type": "object",
                   "description": "Current-method and all-history recent-winner tilt evidence for this model."
+                },
+                "portfolio_difference": {
+                  "type": "object",
+                  "description": "Current-method and all-history Portfolio Difference evidence for this model."
                 }
               },
               "required": [
@@ -4530,6 +4534,7 @@
               "key_numbers",
               "top_assets",
               "recent_winner",
+              "portfolio_difference",
               "methodology_href"
               ]
             }
@@ -4739,6 +4744,14 @@
                 ],
                 "minimum": 0,
                 "maximum": 100
+              },
+              "portfolio_difference_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
               }
             }
           },
@@ -4938,6 +4951,59 @@
               "methodology"
             ]
           },
+          "portfolio_difference": {
+            "type": "object",
+            "description": "The allocation percentage that would need to change to match the leave-one-model-out same-round average portfolio. Headline values give monthly and weekly observations equal weight.",
+            "properties": {
+              "version": {
+                "type": "string",
+                "const": "capitalbench_portfolio_difference_v1"
+              },
+              "current_methodology_version": {
+                "type": ["string", "null"]
+              },
+              "current_methodology": {
+                "type": "object",
+                "properties": {
+                  "observation_count": { "type": "integer" },
+                  "decision_date_count": { "type": "integer" },
+                  "combined_available": { "type": "boolean" },
+                  "average_difference_score": {
+                    "type": ["number", "null"],
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "average_shared_allocation_pct": {
+                    "type": ["number", "null"],
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "combined": { "type": "object" },
+                  "tracks": { "type": "object" },
+                  "evidence": { "type": "object" }
+                },
+                "required": [
+                  "observation_count",
+                  "decision_date_count",
+                  "combined_available",
+                  "average_difference_score",
+                  "average_shared_allocation_pct",
+                  "combined",
+                  "tracks",
+                  "evidence"
+                ]
+              },
+              "all_history": { "type": "object" },
+              "methodology": { "type": "object" }
+            },
+            "required": [
+              "version",
+              "current_methodology_version",
+              "current_methodology",
+              "all_history",
+              "methodology"
+            ]
+          },
           "performance": {
             "type": "object"
           },
@@ -4994,6 +5060,7 @@
           "peer",
           "turnover",
           "recent_winner",
+          "portfolio_difference",
           "behavior_v2",
           "methodology_href"
         ]
