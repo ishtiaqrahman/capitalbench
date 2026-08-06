@@ -359,8 +359,14 @@ test("market environments return canonical weekly and monthly analytics", async 
   assert.equal(weekly.body.data.environments.length, 5);
   assert.equal(weekly.body.data.directions.length, 3);
   assert.ok(weekly.body.data.round_count > 0);
-  assert.ok(weekly.body.data.signals.some((signal) => signal.kind === "synthesis" && signal.maturity === "ready"));
-  for (const signal of weekly.body.data.signals.filter((row) => row.kind === "direction_leader" && row.maturity === "ready")) {
+  const readyDirectionSignals = weekly.body.data.signals.filter(
+    (signal) => signal.kind === "direction_leader" && signal.maturity === "ready"
+  );
+  const readySynthesisSignals = weekly.body.data.signals.filter(
+    (signal) => signal.kind === "synthesis" && signal.maturity === "ready"
+  );
+  assert.equal(readySynthesisSignals.length, readyDirectionSignals.length >= 2 ? 1 : 0);
+  for (const signal of readyDirectionSignals) {
     assert.ok(signal.environment_round_count >= weekly.body.thresholds.environment_rounds);
     assert.ok(signal.model.tests >= weekly.body.thresholds.model_observations);
   }

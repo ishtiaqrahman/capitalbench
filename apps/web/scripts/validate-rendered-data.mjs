@@ -2960,7 +2960,12 @@ for (const [optionId, definition] of Object.entries(riskConfig.assets ?? {})) {
 const largestActiveExposure = activeExposure.rows[0];
 if (largestActiveExposure) {
   includes(liveHtml, "Live AI positioning", "live dashboard active exposure");
-  includes(liveHtml, `${assetDisplay(largestActiveExposure)} is the largest live allocation.`, "live dashboard active exposure top asset");
+  const largestActiveExposureSentence = `${assetDisplay(largestActiveExposure)} is the largest live allocation.`;
+  includesAny(
+    liveHtml,
+    [largestActiveExposureSentence, htmlText(largestActiveExposureSentence)],
+    "live dashboard active exposure top asset"
+  );
   includes(liveHtml, compactExposurePct(largestActiveExposure.exposure_pct), "live dashboard active exposure top percentage");
   includesAny(
     liveHtml,
