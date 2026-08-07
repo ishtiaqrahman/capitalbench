@@ -1,0 +1,185 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad index momentum, positive asset breadth, solid activity surveys, and strong earnings context can keep the market bid.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 had a 3.62% 5-session return and 3.11% 21-session return through August 6.",
+        "About 85% of S&P 500 companies had reported quarterly results, with aggregate earnings growth shaping up as the strongest since 2021.",
+        "Scheduled July employment, CPI, PPI, and retail-sales releases fall inside the one-week window."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "SPY breaks below recent momentum while rates rise or macro releases create broad risk-off conditions.",
+      "option_id": "SP500",
+      "reversal_case": "The index is close to its 52-week high after a strong partial week, leaving it vulnerable to negative labor or inflation surprises.",
+      "time_window_catalyst": "July Employment Situation, CPI, PPI, and retail-sales releases before the exit close."
+    },
+    {
+      "continuation_case": "Prior relative strength, a sharp pullback, and renewed oil-geopolitical risk support a rebound in energy equities.",
+      "decision": "selected",
+      "evidence": [
+        "Energy had a 0.798 quality evidence score, with prior active rank 0.925 and recent pullback rank 0.940.",
+        "XLE showed prior 16-session active return of 6.54% but 5-session active return of -4.98%.",
+        "Brent crude was reported at $82.49 on August 6, up 3.8% for the session, with Strait of Hormuz uncertainty continuing."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Oil prices fail to stabilize after the recent drop or energy continues underperforming SPY by more than 2 percentage points early in the window.",
+      "option_id": "ENERGY",
+      "reversal_case": "The recent energy drawdown may reflect weakening demand or fading positioning, and XLE remains below its 52-week high with elevated volatility.",
+      "time_window_catalyst": "Middle East and Strait of Hormuz uncertainty, plus CPI/PPI inflation data that could reinforce energy-price sensitivity before exit close."
+    },
+    {
+      "continuation_case": "A very sharp pullback after strong prior trend could mean-revert if geopolitical risk keeps a crude risk premium in place.",
+      "decision": "selected",
+      "evidence": [
+        "Oil had the maximum prior active rank and recent pullback rank, both 1.000, in the quality table.",
+        "USO had prior 16-session active return of 14.11% but 5-session active return of -10.38%.",
+        "Brent crude was reported up 3.8% on August 6 amid continuing Strait of Hormuz uncertainty."
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Brent/geopolitical risk premium fades and USO extends its 5-session relative underperformance rather than mean-reverting.",
+      "option_id": "OIL",
+      "reversal_case": "USO volatility was 67.91% and max drawdown was -17.64%, so the recent selloff could extend quickly.",
+      "time_window_catalyst": "Strait of Hormuz uncertainty after Brent was reported up 3.8% on August 6, plus July CPI/PPI and retail-sales releases that can affect inflation and demand expectations."
+    },
+    {
+      "continuation_case": "Recent upside with a positive manufacturing backdrop can persist if inflation and demand data support commodity-linked equities.",
+      "decision": "selected",
+      "evidence": [
+        "XME returned 7.02% over 3 sessions and had 5-session active return of 4.71%.",
+        "Prior 16-session active return was positive at 0.42%.",
+        "July ISM manufacturing PMI was 55.6, with production at 58.5 and new orders at 56.7."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "The 3-session surge reverses sharply or XME loses relative strength versus SPY after the inflation releases.",
+      "option_id": "METALS_MINING",
+      "reversal_case": "The quality score was only 0.249 and recent strength may be overextended, with volatility above 40%.",
+      "time_window_catalyst": "July ISM manufacturing expansion and in-window CPI/PPI data that may sustain inflation and commodity-linked equity interest."
+    },
+    {
+      "continuation_case": "Solid economic activity, a high-quality prior trend, and positive earnings backdrop can support financial-sector catch-up after recent lag.",
+      "decision": "selected",
+      "evidence": [
+        "Financials had a 0.707 quality evidence score and the highest sector prior active rank among major equity sectors listed after energy at 0.851.",
+        "XLF had prior 16-session active return of 4.19% and low 21-session volatility of 11.11%.",
+        "The Fed held rates at 3.50%-3.75%, while Treasury yields ranged from 3.99% at six months to 5.22% at thirty years on August 6."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Rates fall sharply on weak labor/inflation data or financials keep lagging SPY by more than 1.5 percentage points early in the window.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak employment or disinflationary data could lower yields and pressure bank and financial margins or risk appetite.",
+      "time_window_catalyst": "July Employment Situation, CPI/PPI, and retail-sales releases can influence growth, yield-curve, and credit expectations before the exit close."
+    },
+    {
+      "continuation_case": "Strong prior relative trend, deep recent pullback, and low volatility create a rebound setup if global risk appetite holds.",
+      "decision": "selected",
+      "evidence": [
+        "United Kingdom had the highest supplied quality evidence score at 0.867.",
+        "EWU had prior 16-session active return of 5.21%, recent pullback rank 0.910, and 21-session volatility of 11.65%.",
+        "ECB policy was data-dependent with high uncertainty, and energy-shock inflation impact was described as not fully appeared."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Sterling or UK equity exposure weakens and EWU fails to rebound from its recent relative pullback versus SPY.",
+      "option_id": "UNITED_KINGDOM",
+      "reversal_case": "European energy and policy uncertainty could pressure regional equities and currency-sensitive returns.",
+      "time_window_catalyst": "Global risk appetite around U.S. labor, CPI/PPI, and retail-sales releases, plus Europe/energy uncertainty affecting UK large-cap sector mix."
+    },
+    {
+      "continuation_case": "Precious-metals momentum and inflation/geopolitical concerns could continue into CPI and PPI releases.",
+      "decision": "rejected",
+      "evidence": [
+        "Gold returned 4.83% over 3 sessions and IAU had a 3.32% 5-session return in mechanical market state.",
+        "Gold's quality evidence score was 0.401, with only a 0.269 recent pullback rank.",
+        "Real Treasury yields were 2.17% at five years, 2.43% at ten years, and 2.98% at thirty years on August 6."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Gold loses recent momentum as real-rate or dollar pressure rises after macro releases.",
+      "option_id": "GOLD",
+      "reversal_case": "High real yields and weak quality evidence make gold vulnerable to reversal after its recent jump.",
+      "time_window_catalyst": "July CPI and PPI releases, plus geopolitical safe-haven demand before the exit close."
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.715,
+  "is_official_score": true,
+  "key_risks": [
+    "The July employment, CPI, PPI, or retail-sales releases could trigger a broad risk-off move that hurts cyclical and commodity-sensitive holdings more than SPY.",
+    "Energy and oil positions could continue reversing lower if the Strait of Hormuz risk premium fades or demand expectations weaken.",
+    "Recent strength in metals/mining could be a short-term exhaustion move rather than continuation.",
+    "SPY mega-cap growth leadership could resume and outperform the diversified active tilts over the one-week horizon."
+  ],
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Oil prices fail to stabilize after the recent drop or energy continues underperforming SPY by more than 2 percentage points early in the window.",
+      "option_id": "ENERGY",
+      "rationale": "Energy has the strongest supplied quality evidence among U.S. sectors, a large prior active trend, and a sharp recent relative pullback while oil-related geopolitical uncertainty remains in-window relevant.",
+      "time_window_catalyst": "Middle East and Strait of Hormuz uncertainty, plus CPI/PPI inflation data that could reinforce energy-price sensitivity before exit close."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Brent/geopolitical risk premium fades and USO extends its 5-session relative underperformance rather than mean-reverting.",
+      "option_id": "OIL",
+      "rationale": "Crude oil offers direct exposure to the supplied geopolitical oil-risk catalyst after a severe short-term drawdown, with the highest prior active return and pullback ranks but very high volatility.",
+      "time_window_catalyst": "Strait of Hormuz uncertainty after Brent was reported up 3.8% on August 6, plus July CPI/PPI and retail-sales releases that can affect inflation and demand expectations."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "The 3-session surge reverses sharply or XME loses relative strength versus SPY after the inflation releases.",
+      "option_id": "METALS_MINING",
+      "rationale": "Metals and mining has recent absolute and relative strength, modest positive prior active return, and leverage to firm manufacturing and commodity demand data.",
+      "time_window_catalyst": "July ISM manufacturing expansion and in-window CPI/PPI data that may sustain inflation and commodity-linked equity interest."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Rates fall sharply on weak labor/inflation data or financials keep lagging SPY by more than 1.5 percentage points early in the window.",
+      "option_id": "FINANCIALS",
+      "rationale": "Financials combine high quality evidence, a strong prior active trend, low relative volatility, and support from solid activity and earnings context despite recent underperformance.",
+      "time_window_catalyst": "July Employment Situation, CPI/PPI, and retail-sales releases can influence growth, yield-curve, and credit expectations before the exit close."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "Sterling or UK equity exposure weakens and EWU fails to rebound from its recent relative pullback versus SPY.",
+      "option_id": "UNITED_KINGDOM",
+      "rationale": "UK equities have the highest supplied quality evidence score, strong prior active return, low volatility, and a recent pullback that creates a one-week rebound setup.",
+      "time_window_catalyst": "Global risk appetite around U.S. labor, CPI/PPI, and retail-sales releases, plus Europe/energy uncertainty affecting UK large-cap sector mix."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.965,
+  "portfolio_rationale": "The portfolio tilts toward supplied high-quality pullback and commodity/geopolitical exposures whose base forecasts exceed SPY over the one-week window. Energy exposure is capped at 50%, with diversifiers in financials, metals/mining, and UK equities to reduce single-cluster dependence.",
+  "provider": "openai",
+  "rationale_summary": "SPY has positive broad-market momentum and earnings support, but several active candidates have stronger one-week setups from high quality evidence, sharp pullbacks, and identifiable in-window macro or geopolitical catalysts. The expected portfolio base return is 0.965%, or 0.715 percentage points above SPY.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-07-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15673,
+    "latency_seconds": 41.53133409307338,
+    "output_tokens": 2817,
+    "reasoning_tokens": 246,
+    "total_tokens": 18490
+  }
+}

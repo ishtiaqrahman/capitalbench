@@ -1,0 +1,154 @@
+{
+  "benchmark_expected_return_pct": 1.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad equity participation continues on earnings strength",
+      "decision": "rejected",
+      "evidence": [
+        "SPY 5-day return 3.62%",
+        "August 7 employment data unreleased at cutoff"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 3.4,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "SPY closes below 7500",
+      "option_id": "SP500",
+      "reversal_case": "July employment or CPI surprise triggers risk-off",
+      "time_window_catalyst": "August 12-13 CPI and PPI releases"
+    },
+    {
+      "continuation_case": "Semiconductor leadership persists on AI demand",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score 0.745",
+        "prior active rank 1.000"
+      ],
+      "forecast_base_pct": 3.5,
+      "forecast_high_pct": 6.2,
+      "forecast_low_pct": 0.8,
+      "invalidation_condition": "Semiconductor sector drawdown exceeding 8% from entry close",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Supply chain or China trade concerns intensify",
+      "time_window_catalyst": "August 12-13 CPI and PPI releases plus August 26 GDP second estimate"
+    },
+    {
+      "continuation_case": "Biotech pullback reverses on clinical and M&A activity",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score 0.772",
+        "recent pullback rank 0.970"
+      ],
+      "forecast_base_pct": 2.8,
+      "forecast_high_pct": 5.1,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Biotech sector drawdown exceeding 8% from entry close",
+      "option_id": "BIOTECH",
+      "reversal_case": "Rate volatility or regulatory setbacks",
+      "time_window_catalyst": "August 12-13 CPI and PPI releases plus August 26 GDP second estimate"
+    },
+    {
+      "continuation_case": "Defensive flows into utilities on growth concerns",
+      "decision": "rejected",
+      "evidence": [
+        "Quality evidence score 0.729",
+        "recent pullback rank 0.955"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Utilities close below prior 21-day low",
+      "option_id": "UTILITIES",
+      "reversal_case": "Rate volatility increases duration pressure",
+      "time_window_catalyst": "August 19 FOMC minutes"
+    },
+    {
+      "continuation_case": "Safe-haven demand persists amid geopolitical uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 5-day return 3.32%",
+        "prior active rank 0.030"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Gold closes below 200-day moving average proxy",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger USD or higher real yields",
+      "time_window_catalyst": "August 26 GDP second estimate"
+    },
+    {
+      "continuation_case": "USD strength on relative rate differentials",
+      "decision": "rejected",
+      "evidence": [
+        "UUP 5-day return 0.18%",
+        "quality evidence score 0.719"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.3,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "DXY closes below 100",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "FOMC minutes signal dovish tilt",
+      "time_window_catalyst": "August 19 FOMC minutes"
+    },
+    {
+      "continuation_case": "Defense budget stability supports sector",
+      "decision": "rejected",
+      "evidence": [
+        "ITA 5-day return 4.98%",
+        "prior active rank 0.582"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Aerospace defense closes below 52-week high minus 10%",
+      "option_id": "AEROSPACE_DEFENSE",
+      "reversal_case": "Broader equity rotation away from cyclicals",
+      "time_window_catalyst": "August 26 GDP second estimate"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 1.35,
+  "is_official_score": true,
+  "key_risks": [
+    "Technology and biotech sector volatility spikes on inflation data",
+    "Labor Day holiday liquidity reduction near exit",
+    "Potential reversal in recent momentum names within semiconductors"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 3.5,
+      "invalidation_condition": "Semiconductor sector drawdown exceeding 8% from entry close",
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Highest quality evidence score and strong prior active rank support outperformance versus SPY over the one-month window.",
+      "time_window_catalyst": "August 12-13 CPI and PPI releases plus August 26 GDP second estimate"
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 2.8,
+      "invalidation_condition": "Biotech sector drawdown exceeding 8% from entry close",
+      "option_id": "BIOTECH",
+      "rationale": "Top quality evidence score with recent pullback rank and shallow drawdown support relative strength versus SPY.",
+      "time_window_catalyst": "August 12-13 CPI and PPI releases plus August 26 GDP second estimate"
+    }
+  ],
+  "portfolio_expected_return_pct": 3.15,
+  "portfolio_rationale": "Allocates to the two candidates with base forecasts exceeding SPY while respecting the 50% cluster cap and 5% increments.",
+  "provider": "xai",
+  "rationale_summary": "Selects SEMICONDUCTORS and BIOTECH for superior base-case expected returns driven by quality evidence metrics.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-07-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15898,
+    "latency_seconds": 24.80066166794859,
+    "output_tokens": 1433,
+    "reasoning_tokens": 962,
+    "total_tokens": 18293
+  }
+}

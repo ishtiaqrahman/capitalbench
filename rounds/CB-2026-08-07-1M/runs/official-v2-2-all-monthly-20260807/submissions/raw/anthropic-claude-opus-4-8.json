@@ -1,0 +1,178 @@
+{
+  "benchmark_expected_return_pct": 1.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings and solid services activity support continued grind higher",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 YTD +12.6% through Aug 6",
+        "~85% of companies reported, strongest earnings growth since 2021",
+        "GDP Q2 +1.5%, real final sales to private domestic purchasers +3.9%"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "CPI or payrolls surprise driving broad equity selloff",
+      "option_id": "SP500",
+      "reversal_case": "Elevated PCE inflation (3.7% y/y) and hawkish dissents could pressure multiples",
+      "time_window_catalyst": "Aug 12 CPI, Sep 4 payrolls"
+    },
+    {
+      "continuation_case": "AI/software demand and reaccelerating relative strength persist",
+      "decision": "selected",
+      "evidence": [
+        "Active 21s return +4.40%, strongest software leadership",
+        "Recent pullback rank 0.045 indicates deep relative pullback earlier",
+        "return_5s +6.55%"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "10y yield jumps sharply or growth rotation reverses",
+      "option_id": "SOFTWARE",
+      "reversal_case": "Rate spike hits high-multiple software; high vol 34.66%",
+      "time_window_catalyst": "AI capex/earnings tail commentary"
+    },
+    {
+      "continuation_case": "Solid economy and steep-ish curve support bank earnings",
+      "decision": "selected",
+      "evidence": [
+        "Active 21s return +2.06%",
+        "Shallow drawdown rank 0.866, max_drawdown only -2.08%",
+        "Elevated rates 2y 4.25% supportive of margins"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Sharp yield-curve flattening or credit event",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield decline or credit stress from regional exposures",
+      "time_window_catalyst": "FOMC minutes Aug 19"
+    },
+    {
+      "continuation_case": "Momentum trend could resume",
+      "decision": "rejected",
+      "evidence": [
+        "Prior active +18.49% but 21s active -5.23%",
+        "Highest volatility 39.14%, drawdown -17.99%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -10.0,
+      "invalidation_condition": "Continued factor unwind",
+      "option_id": "MOMENTUM",
+      "reversal_case": "Recent -5.23% active shows sharp factor reversal underway",
+      "time_window_catalyst": "CPI/payrolls"
+    },
+    {
+      "continuation_case": "AI chip demand persists",
+      "decision": "rejected",
+      "evidence": [
+        "Active 21s -6.74% despite strong prior +46%",
+        "Volatility 55%, drawdown -24.6%"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 14.0,
+      "forecast_low_pct": -14.0,
+      "invalidation_condition": "Further semis relative underperformance",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Recent relative weakness and extreme vol signal reversal risk",
+      "time_window_catalyst": "Chip earnings"
+    },
+    {
+      "continuation_case": "Safe-haven demand amid Middle East risk",
+      "decision": "rejected",
+      "evidence": [
+        "iau_return_21s +4.08%",
+        "Large 52w drawdown -21.36%, low quality score 0.16"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Real yields rise sharply",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar stabilization and risk-on equity reduce gold demand",
+      "time_window_catalyst": "Geopolitics, real yields"
+    },
+    {
+      "continuation_case": "Duration rally if growth slows",
+      "decision": "rejected",
+      "evidence": [
+        "tlt_return_21s -1.79%",
+        "Active 21s -4.89%, elevated inflation 3.7% y/y"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Inflation reaccelerates",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky inflation and hawkish dissents pressure long bonds",
+      "time_window_catalyst": "CPI/PPI Aug 12-13"
+    },
+    {
+      "continuation_case": "Geopolitical tensions support defense demand",
+      "decision": "rejected",
+      "evidence": [
+        "Active 21s +1.22%",
+        "return_5s +4.98%, near 52w high"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "De-escalation of Middle East conflict",
+      "option_id": "AEROSPACE_DEFENSE",
+      "reversal_case": "High vol and possible pullback from extended level",
+      "time_window_catalyst": "Geopolitical developments"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.3,
+  "is_official_score": true,
+  "key_risks": [
+    "Hotter July CPI on Aug 12 triggering equity/rate shock",
+    "AI/tech growth rotation reversing SOFTWARE gains",
+    "Financials hit by yield-curve flattening or credit stress"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "CPI surprise materially hotter, driving equity drawdown",
+      "option_id": "SP500",
+      "rationale": "Broad large-cap core with strongest earnings season since 2021 and solid GDP/services activity backdrop.",
+      "time_window_catalyst": "Aug 12 CPI, Aug 27-29 Jackson Hole, Sep 4 payrolls"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Sharp rate spike or growth-stock rotation lower",
+      "option_id": "SOFTWARE",
+      "rationale": "Strong recent 21s active return (+4.4%) with deep prior pullback, leadership in AI/tech with room to run vs stretched semis.",
+      "time_window_catalyst": "Tech earnings tail and AI capex commentary"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Credit stress or sharp yield decline",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive active 21s return (+2.06%), shallowest drawdown, strong quality drawdown rank amid solid economy and elevated rates.",
+      "time_window_catalyst": "Yield-curve moves, FOMC minutes Aug 19"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.4,
+  "portfolio_rationale": "Core SPY plus a moderate tech-growth and financials tilt aiming to capture strong earnings momentum and stable macro while capping any single cluster at 50%.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight quality US equity with SOFTWARE and FINANCIALS tilts that clear the SPY hurdle on recent relative strength and shallow drawdowns.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-07-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28062,
+    "latency_seconds": 44.384494306053966,
+    "output_tokens": 2552,
+    "total_tokens": 30614
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings and solid growth momentum extend gains",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 +2.9% partial-week, +12.6% YTD through Aug 6",
+        "85% of S&P 500 reported; strongest earnings growth since 2021",
+        "Fed held at 3.50%-3.75% with three dissents for a hike"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "CPI surprise above expectations driving rate-hike repricing",
+      "option_id": "SP500",
+      "reversal_case": "Hot CPI or weak payrolls after strong run-up prompts pullback",
+      "time_window_catalyst": "Payrolls Aug 7, CPI Aug 12, PPI Aug 13, retail sales Aug 14"
+    },
+    {
+      "continuation_case": "Geopolitical supply risk sustains oil prices; sector rebounds from pullback",
+      "decision": "selected",
+      "evidence": [
+        "Brent $82.49 on Aug 6, up 3.8% with Strait of Hormuz uncertainty",
+        "XLE prior 16s active return +6.54% but recent 5s active -4.98%",
+        "Fed cited Middle East conflict as source of elevated uncertainty"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent below $75 on de-escalation",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation or demand fears crush crude and energy shares",
+      "time_window_catalyst": "Ongoing Hormuz supply-risk headlines within the week"
+    },
+    {
+      "continuation_case": "Sticky inflation prints and geopolitical hedging sustain gold bid",
+      "decision": "selected",
+      "evidence": [
+        "Core PCE 3.3% y/y; ISM prices indices above 70",
+        "IAU +4.08% over 21 sessions; +4.83% over last 3 sessions",
+        "Elevated geopolitical uncertainty cited by Fed"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "10y real yield rises materially above 2.43% on hot data",
+      "option_id": "GOLD",
+      "reversal_case": "Hawkish rate repricing lifts real yields and dollar, pressuring gold",
+      "time_window_catalyst": "CPI Aug 12, PPI Aug 13"
+    },
+    {
+      "continuation_case": "Strong prior relative trend resumes after pullback; oil strength supports index heavyweights",
+      "decision": "selected",
+      "evidence": [
+        "Prior 16s active return +5.21%; recent 5s active -4.40%",
+        "Highest quality evidence score in universe (0.867)",
+        "Low 21s volatility (11.65%) and shallow drawdown (-1.23%)"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Brent decline below $75 undermining UK energy majors",
+      "option_id": "UNITED_KINGDOM",
+      "reversal_case": "Sterling weakness or commodity declines extend underperformance",
+      "time_window_catalyst": "Firm Brent supporting energy-heavy UK index during window"
+    },
+    {
+      "continuation_case": "Higher-for-longer rates and solid economy sustain bank outperformance",
+      "decision": "selected",
+      "evidence": [
+        "Prior 16s active return +4.19%, strongest among broad US sectors",
+        "30y Treasury at 5.22% vs 2y 4.25%: positively sloped long end",
+        "Solid GDP (private final sales +3.9%) supports credit quality"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sharp bull-flattening rally in Treasuries on recession fears",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak payrolls spark growth scare and flatten curve",
+      "time_window_catalyst": "CPI/PPI keeping yields elevated through Aug 14"
+    },
+    {
+      "continuation_case": "Earnings strength keeps mega-cap growth bid",
+      "decision": "rejected",
+      "evidence": [
+        "Prior 16s active return -3.42% despite recent +0.93% bounce",
+        "21s volatility 25.93% with -8.79% drawdown",
+        "Beta to SPY 1.72"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Yields fall and growth re-rates higher",
+      "option_id": "NASDAQ100",
+      "reversal_case": "High beta and negative prior trend vulnerable to hot inflation prints",
+      "time_window_catalyst": "CPI Aug 12 rate sensitivity"
+    },
+    {
+      "continuation_case": "Weak payrolls could spark duration rally",
+      "decision": "rejected",
+      "evidence": [
+        "30y yield 5.22%; TLT 21s return -1.79%",
+        "Inflation elevated: core PCE 3.3% y/y, three FOMC dissents for a hike"
+      ],
+      "forecast_base_pct": -0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Soft inflation prints driving yields sharply lower",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sticky CPI/PPI pushes long yields higher",
+      "time_window_catalyst": "CPI Aug 12, PPI Aug 13"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.33,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot CPI/PPI prints could sink all risk assets including satellites",
+    "Middle East de-escalation would reverse oil and energy positioning",
+    "Weak July payrolls could trigger growth scare hurting financials and energy",
+    "Continued mega-cap tech leadership would leave value tilts lagging SPY"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Hot CPI print above 0.4% m/m triggers broad equity selloff",
+      "option_id": "SP500",
+      "rationale": "Benchmark core with strong earnings season backdrop; anchors the portfolio through jobs/CPI data.",
+      "time_window_catalyst": "July payrolls (Aug 7) and CPI (Aug 12)"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Brent falls below $75 on de-escalation",
+      "option_id": "ENERGY",
+      "rationale": "Brent at $82.49 with Strait of Hormuz risk premium; sector pulled back -4.98% vs SPY last week despite +6.54% prior trend, offering mean-reversion entry.",
+      "time_window_catalyst": "Middle East / Strait of Hormuz supply headlines during window"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Real yields rise sharply on hot data driving gold down >2%",
+      "option_id": "GOLD",
+      "rationale": "Elevated inflation (core PCE 3.3% y/y, ISM prices >70) plus geopolitical uncertainty; CPI/PPI prints in window support hedge demand.",
+      "time_window_catalyst": "CPI Aug 12 and PPI Aug 13; geopolitical safe-haven flows"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Oil and commodity prices decline sharply, pressuring UK index heavyweights",
+      "option_id": "UNITED_KINGDOM",
+      "rationale": "Strong prior relative trend (+5.21%) with deep recent pullback (-4.40%); value/energy/dividend tilt benefits from firm oil and highest quality evidence score in universe (0.867).",
+      "time_window_catalyst": "Oil-linked earnings support and mean reversion of last week's underperformance"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Weak payrolls drive recession fears and yield-curve rally hurting financials",
+      "option_id": "FINANCIALS",
+      "rationale": "Best prior active trend among US sectors (+4.19%) with recent -2.20% pullback; solid growth, hawkish-tilted Fed, and steep 30y at 5.22% support bank margins.",
+      "time_window_catalyst": "Rate backdrop and CPI/PPI reinforcing higher-for-longer yields"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.63,
+  "portfolio_rationale": "Core SPY plus value/inflation-tilted satellites: energy and gold hedge the elevated-inflation, geopolitical backdrop into CPI/PPI, while UK equities and US financials combine strong prior relative trends with recent pullbacks and supportive rate/oil fundamentals.",
+  "provider": "anthropic",
+  "rationale_summary": "Barbell of benchmark core with inflation-sensitive (energy, gold) and value (UK, financials) exposures positioned for a data-heavy week with elevated inflation prints and Middle East supply risk.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-07-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28034,
+    "latency_seconds": 52.86646814295091,
+    "output_tokens": 3542,
+    "total_tokens": 31576
+  }
+}

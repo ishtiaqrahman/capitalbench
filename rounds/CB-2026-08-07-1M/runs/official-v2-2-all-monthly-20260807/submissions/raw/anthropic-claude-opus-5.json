@@ -1,0 +1,201 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid activity plus best earnings growth since 2021 supports drift higher.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 +12.6% YTD through Aug 6",
+        "~85% of companies reported; strongest earnings growth since 2021",
+        "ISM manufacturing 55.6, services 54.1"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "10y yield above 5% with SPY down more than 5%",
+      "option_id": "SP500",
+      "reversal_case": "Elevated inflation (Q2 PCE 5.1%) and three FOMC hike dissents risk a hawkish repricing.",
+      "time_window_catalyst": "CPI Aug 12, FOMC minutes Aug 19, Jackson Hole Aug 27-29"
+    },
+    {
+      "continuation_case": "Steep curve and resilient credit support bank earnings power.",
+      "decision": "selected",
+      "evidence": [
+        "XLF 21-day active return +2.06%",
+        "Max 63-day drawdown only -2.08%, near 52w high",
+        "Curve: 2y 4.25% vs 30y 5.22%"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "HYG breaks 63-day low or XLF falls more than 5%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Recession or credit-quality scare compresses valuations quickly.",
+      "time_window_catalyst": "CPI/FOMC minutes driving curve shape"
+    },
+    {
+      "continuation_case": "Persistent relative trend with recent confirmation and limited drawdown vs other tech.",
+      "decision": "selected",
+      "evidence": [
+        "Prior 105-day active return +28.9%",
+        "21-day active return +2.05%",
+        "Only -1.58% from 52-week high, vol 33%"
+      ],
+      "forecast_base_pct": 1.9,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -7.0,
+      "invalidation_condition": "CIBR down more than 8% from entry",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "Broad growth-factor unwind; 33% volatility means large downside tail.",
+      "time_window_catalyst": "Late-August software/security earnings"
+    },
+    {
+      "continuation_case": "Geopolitical risk premium and defense budgets support orders.",
+      "decision": "selected",
+      "evidence": [
+        "ITA 21-day active return +1.22%, 5-day +4.98%",
+        "Fed cites Middle East conflict as uncertainty source",
+        "Only -0.91% from 52-week high"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "ITA underperforms SPY by more than 3%",
+      "option_id": "AEROSPACE_DEFENSE",
+      "reversal_case": "De-escalation removes the premium; sector is cyclical to budget news.",
+      "time_window_catalyst": "Strait of Hormuz and Middle East headlines"
+    },
+    {
+      "continuation_case": "Broad participation with lower volatility than cap-weighted index.",
+      "decision": "selected",
+      "evidence": [
+        "RSP 21-day return 3.01% vs SPY 3.11%",
+        "Volatility 11.13%, drawdown -2.04%",
+        "Positive asset share 72% over 21 sessions"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "RSP lags SPY by more than 2%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap concentration continues to dominate returns.",
+      "time_window_catalyst": "August retail sales and CPI"
+    },
+    {
+      "continuation_case": "AI capex cycle intact and 5-day return +6.05%.",
+      "decision": "rejected",
+      "evidence": [
+        "Prior active return +46%, but 21-day active -6.74%",
+        "Volatility 55%, drawdown -24.6%",
+        "-14.6% from 52-week high"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 14.0,
+      "forecast_low_pct": -14.0,
+      "invalidation_condition": "SMH falls more than 10% from entry",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Recent sharp underperformance and extreme volatility indicate crowded unwind risk.",
+      "time_window_catalyst": "Late-August chip earnings"
+    },
+    {
+      "continuation_case": "Elevated inflation and geopolitics support safe-haven bid.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 21-day return +4.08%, 5-day +3.32%",
+        "-21.4% from 52-week high",
+        "Real 10y yield 2.43%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Real 10y yield rises above 2.7%",
+      "option_id": "GOLD",
+      "reversal_case": "High real yields and hawkish Fed cap gold; deep prior downtrend.",
+      "time_window_catalyst": "CPI Aug 12 and Jackson Hole"
+    },
+    {
+      "continuation_case": "High yields offer carry and haven value if growth slows.",
+      "decision": "rejected",
+      "evidence": [
+        "TLT 21-day -1.79%",
+        "30y yield 5.22%",
+        "Three FOMC voters preferred a hike"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "30y yield rises above 5.4%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Inflation at 5.1% annualized and hawkish dissents keep duration pressured.",
+      "time_window_catalyst": "CPI/PPI and FOMC minutes"
+    }
+  ],
+  "confidence": 0.53,
+  "expected_alpha_vs_sp500_pct": 0.42,
+  "is_official_score": true,
+  "key_risks": [
+    "July CPI/PPI surprise on the upside given 5.1% Q2 PCE inflation, pressuring multiples",
+    "Hawkish Jackson Hole or FOMC minutes with three voters already favoring a hike",
+    "Momentum/growth unwind hitting cybersecurity and high-beta tilts",
+    "Middle East escalation spiking oil and hurting cyclicals",
+    "Weak July payrolls released hours after entry"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Hot CPI/PPI prints push 10y above ~5% and SPY breaks below its 63-day low",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure with strong earnings season and solid activity data.",
+      "time_window_catalyst": "July CPI Aug 12, FOMC minutes Aug 19, Jackson Hole Aug 27-29"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Credit spreads widen with HYG breaking below its 63-day low or a sharp curve flattening",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive 21-day active return, lowest drawdown among sectors, steep curve (30y 5.22% vs 2y 4.25%) supports margins.",
+      "time_window_catalyst": "July CPI and FOMC minutes repricing of curve steepness"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.9,
+      "invalidation_condition": "Growth-factor drawdown taking CIBR more than 8% below entry",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Strong prior active trend (+28.9%) with positive recent active return and only -1.6% from 52-week high; less crowded than semis.",
+      "time_window_catalyst": "Remaining Q2 software/security earnings through late August"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Rapid geopolitical de-escalation plus ITA underperforming SPY by more than 3%",
+      "option_id": "AEROSPACE_DEFENSE",
+      "rationale": "Positive recent active return, near 52-week high, geopolitical risk premium from Middle East conflict cited by the Fed.",
+      "time_window_catalyst": "Middle East/Strait of Hormuz headlines during the window"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Renewed mega-cap-only leadership with RSP lagging SPY by more than 2%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Low volatility and shallow drawdown breadth exposure; hedges mega-cap concentration risk.",
+      "time_window_catalyst": "August retail sales and CPI shaping breadth"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.42,
+  "portfolio_rationale": "Keep a large SPY core given strong earnings breadth and solid ISM, then add modest tilts to financials (curve steepness, shallow drawdown), cybersecurity (durable trend, near highs), defense (geopolitical premium) and equal weight for breadth.",
+  "provider": "anthropic",
+  "rationale_summary": "Mildly constructive one-month view on US equities with diversified, moderate-beta tilts rather than crowded semiconductor/momentum exposure that carries very high volatility and deep drawdowns.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-07-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28056,
+    "latency_seconds": 48.34479489410296,
+    "output_tokens": 3225,
+    "total_tokens": 31281
+  }
+}

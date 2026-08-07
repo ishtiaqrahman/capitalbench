@@ -1,0 +1,184 @@
+{
+  "benchmark_expected_return_pct": 0.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Earnings strength and solid demand support further gains",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 +2.9% partial week through Aug 6",
+        "Strongest aggregate earnings growth since 2021",
+        "GDP final sales to private domestic purchasers +3.9%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Broad equity selloff below prior week levels",
+      "option_id": "SP500",
+      "reversal_case": "Hot CPI reprices rate hikes",
+      "time_window_catalyst": "CPI Aug 12, PPI Aug 13, retail sales Aug 14"
+    },
+    {
+      "continuation_case": "Tech earnings and AI demand sustain leadership",
+      "decision": "selected",
+      "evidence": [
+        "XLK 3-session return +4.09%",
+        "Positive active return 5s +1.84%",
+        "Tech cluster leadership"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "10yr yield spikes on hot inflation",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "High beta 2.16 amplifies any rate-driven selloff",
+      "time_window_catalyst": "CPI reaction and earnings"
+    },
+    {
+      "continuation_case": "Growth leadership persists into CPI",
+      "decision": "selected",
+      "evidence": [
+        "IWF active return 5s +1.55%",
+        "3s return +2.18%",
+        "Growth cluster leadership"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Growth underperforms on yield spike",
+      "option_id": "LARGE_GROWTH",
+      "reversal_case": "Rate-sensitive growth vulnerable to hot print",
+      "time_window_catalyst": "CPI Aug 12"
+    },
+    {
+      "continuation_case": "Chip momentum strong",
+      "decision": "rejected",
+      "evidence": [
+        "SMH 3s +4.77%",
+        "Beta 3.06 very high",
+        "Lowest quality score 0.043"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Sharp semi reversal",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme volatility and drawdown risk",
+      "time_window_catalyst": "CPI and tech flows"
+    },
+    {
+      "continuation_case": "Oil geopolitics could spike",
+      "decision": "rejected",
+      "evidence": [
+        "XLE active 5s -4.98%",
+        "USO 5s -6.75%",
+        "Brent volatile on Hormuz"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Oil continues falling",
+      "option_id": "ENERGY",
+      "reversal_case": "Recent sharp weakness",
+      "time_window_catalyst": "Middle East headlines"
+    },
+    {
+      "continuation_case": "Strong prior trend",
+      "decision": "rejected",
+      "evidence": [
+        "XLF high quality score 0.707",
+        "Active 5s -2.20%",
+        "Prior active +4.19%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Rate-hike fears hit banks",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Recent pullback",
+      "time_window_catalyst": "CPI/yield curve"
+    },
+    {
+      "continuation_case": "Elevated uncertainty supports gold",
+      "decision": "rejected",
+      "evidence": [
+        "IAU 3s +4.83%",
+        "21s return +4.08%",
+        "Safe-haven demand"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Real yields rise sharply",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields pressure gold",
+      "time_window_catalyst": "CPI real-yield reaction"
+    },
+    {
+      "continuation_case": "Safe duration if risk-off",
+      "decision": "rejected",
+      "evidence": [
+        "IEF low volatility 4.33%",
+        "High quality bond ranks",
+        "Fed on hold 3.50-3.75%"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Yields rise on hot prints",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Hot inflation lifts yields",
+      "time_window_catalyst": "CPI Aug 12"
+    }
+  ],
+  "confidence": 0.52,
+  "expected_alpha_vs_sp500_pct": 0.2,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot July CPI/PPI reviving rate-hike fears and hitting high-beta growth",
+    "Broad risk-off from Middle East oil shock",
+    "Tech mean-reversion after recent leadership"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.4,
+      "invalidation_condition": "CPI surprises hot pushing rate-hike odds and equity selloff",
+      "option_id": "SP500",
+      "rationale": "Strong earnings season with best growth since 2021, solid GDP final sales, benign broad equity trend.",
+      "time_window_catalyst": "July CPI Aug 12, PPI Aug 13, retail sales Aug 14"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Hot CPI/PPI lifts long yields hurting high-beta tech",
+      "option_id": "TECHNOLOGY",
+      "rationale": "Tech leading with strongest 3-session return, positive momentum in growth cluster and earnings strength.",
+      "time_window_catalyst": "Ongoing earnings and CPI reaction"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Rate-hike repricing hits duration-sensitive growth",
+      "option_id": "LARGE_GROWTH",
+      "rationale": "Large growth showed positive active return and leadership; complements SPY with growth tilt.",
+      "time_window_catalyst": "CPI Aug 12 inflation print"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.6,
+  "portfolio_rationale": "Overweight the leading US growth/tech complex on strong earnings and positive breadth while anchoring half in SPY for diversification; tech cluster capped at 50%.",
+  "provider": "anthropic",
+  "rationale_summary": "US equities carry strong earnings momentum; tilt to growth/tech for modest alpha while keeping SPY as core anchor.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-07-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28040,
+    "latency_seconds": 35.25728512997739,
+    "output_tokens": 2322,
+    "total_tokens": 30362
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Recent 2.9% weekly gain and earnings momentum persist into next week",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7709.96 on August 6",
+        "85% of S&P 500 companies reported earnings with strongest growth since 2021"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "SPY closes below 7600 on August 14",
+      "option_id": "SP500",
+      "reversal_case": "Weak July jobs or CPI data triggers risk-off rotation",
+      "time_window_catalyst": "July Employment Situation and CPI releases"
+    },
+    {
+      "continuation_case": "High quality evidence and prior rank support continued relative strength",
+      "decision": "selected",
+      "evidence": [
+        "FINANCIALS quality evidence score 0.707",
+        "prior active rank 0.851"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "XLF closes below prior week low on August 14",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Rate volatility from CPI or jobs data weighs on banks",
+      "time_window_catalyst": "July Employment Situation and CPI releases"
+    },
+    {
+      "continuation_case": "Highest quality evidence score and Brent at $82.49 support continuation",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY quality evidence score 0.798",
+        "prior active rank 0.925"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "XLE closes below prior week low on August 14",
+      "option_id": "ENERGY",
+      "reversal_case": "Easing Middle East tensions reduce oil price support",
+      "time_window_catalyst": "Brent crude price stability around $82"
+    },
+    {
+      "continuation_case": "Top quality evidence score and prior active rank indicate relative strength",
+      "decision": "selected",
+      "evidence": [
+        "UNITED_KINGDOM quality evidence score 0.867",
+        "prior active rank 0.881"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "EWU closes below prior week low on August 14",
+      "option_id": "UNITED_KINGDOM",
+      "reversal_case": "Global risk-off from US data surprises hits international equities",
+      "time_window_catalyst": "July Employment Situation and CPI releases"
+    },
+    {
+      "continuation_case": "No market exposure preserves capital",
+      "decision": "rejected",
+      "evidence": [
+        "Cash yields zero in this setup"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 0.0,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Any positive equity return over the week",
+      "option_id": "CASH",
+      "reversal_case": "Equity rally continues",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Safe-haven demand from uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "GOLD quality evidence score 0.401"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "IAU closes below prior week low on August 14",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger equity risk appetite reduces gold demand",
+      "time_window_catalyst": "none identified"
+    },
+    {
+      "continuation_case": "Rate stability supports modest bond gains",
+      "decision": "rejected",
+      "evidence": [
+        "INTERMEDIATE_TREASURY quality evidence score 0.640"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "IEF closes below prior week low on August 14",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Stronger growth data pushes yields higher",
+      "time_window_catalyst": "July Employment Situation and CPI releases"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.24,
+  "is_official_score": true,
+  "key_risks": [
+    "July Employment Situation surprise on August 7",
+    "CPI release on August 12 could shift rate expectations",
+    "Energy price reversal if Middle East tensions ease"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "SPY closes below 7600 on August 14",
+      "option_id": "SP500",
+      "rationale": "Broad US equity exposure with solid recent momentum and earnings growth backdrop.",
+      "time_window_catalyst": "July Employment Situation and CPI releases"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "XLF closes below prior week low on August 14",
+      "option_id": "FINANCIALS",
+      "rationale": "High quality evidence score and prior active rank support outperformance versus SPY.",
+      "time_window_catalyst": "July Employment Situation and CPI releases"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "XLE closes below prior week low on August 14",
+      "option_id": "ENERGY",
+      "rationale": "Highest quality evidence score with strong prior active rank and commodity support.",
+      "time_window_catalyst": "Brent crude price stability around $82"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "EWU closes below prior week low on August 14",
+      "option_id": "UNITED_KINGDOM",
+      "rationale": "Top quality evidence score and prior active rank indicate relative strength.",
+      "time_window_catalyst": "July Employment Situation and CPI releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.84,
+  "portfolio_rationale": "Portfolio tilts toward high quality evidence names with base forecasts exceeding SPY while remaining diversified across four clusters and capped at 50% per cluster.",
+  "provider": "xai",
+  "rationale_summary": "40% SP500 plus three active holdings each with base forecast above SPY base of 0.6%. Weighted expected return 0.84%.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-07-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15887,
+    "latency_seconds": 17.09181441506371,
+    "output_tokens": 1578,
+    "reasoning_tokens": 587,
+    "total_tokens": 18052
+  }
+}

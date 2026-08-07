@@ -1,0 +1,170 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings and expanding manufacturing and services activity can sustain broad-equity demand.",
+      "decision": "rejected",
+      "evidence": [
+        "SPY gained 3.62% over five sessions and was 0.36% below its 52-week high.",
+        "About 85% of S&P 500 companies had reported, with aggregate earnings growth shaping up as the strongest since 2021.",
+        "July CPI, PPI, and retail sales are scheduled within the scoring window."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 3.1,
+      "forecast_low_pct": -3.2,
+      "invalidation_condition": "SPY breaks materially below its 21-session range while equal-weight breadth and high-yield credit also weaken.",
+      "option_id": "SP500",
+      "reversal_case": "The recent 3.62% advance and weak equal-weight breadth leave SPY vulnerable to hot inflation or weak consumption data.",
+      "time_window_catalyst": "August 12 CPI, August 13 PPI, and August 14 retail sales."
+    },
+    {
+      "continuation_case": "Geopolitical supply risk and elevated inflation can revive the strong prior energy trend after the recent pullback.",
+      "decision": "selected",
+      "evidence": [
+        "Energy had a 6.54% prior 16-session active return and a 4.98% recent active pullback.",
+        "Its quality-evidence score was 0.798.",
+        "Brent rose 3.8% to $82.49 on August 6 amid Strait of Hormuz uncertainty."
+      ],
+      "forecast_base_pct": 0.85,
+      "forecast_high_pct": 5.4,
+      "forecast_low_pct": -4.1,
+      "invalidation_condition": "Brent reverses its August 6 rise and energy equities continue underperforming SPY after CPI and PPI.",
+      "option_id": "ENERGY",
+      "reversal_case": "Rapid geopolitical de-escalation or weaker demand expectations could extend the sector's recent decline.",
+      "time_window_catalyst": "Middle East and Strait of Hormuz developments, plus August 12 CPI and August 13 PPI."
+    },
+    {
+      "continuation_case": "Firm economic activity and an upward-sloping two-to-ten-year yield curve can support financial earnings and a rebound from the pullback.",
+      "decision": "selected",
+      "evidence": [
+        "Financials had a 4.19% prior 16-session active return followed by a 2.20% recent active pullback.",
+        "Its quality-evidence score was 0.707 and 21-session volatility was 11.11%.",
+        "The Treasury curve stood at 4.25% for two years and 4.69% for ten years."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 3.4,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Treasury yields fall sharply while financials remain below their recent high and underperform SPY.",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Weak retail sales, falling yields, or renewed credit concerns could overwhelm the prior relative trend.",
+      "time_window_catalyst": "August 12 CPI, August 13 PPI, and August 14 retail sales."
+    },
+    {
+      "continuation_case": "Strong prior relative performance, shallow drawdown, and a deep pullback support a value-oriented rebound.",
+      "decision": "selected",
+      "evidence": [
+        "United Kingdom equities had the highest quality-evidence score at 0.867.",
+        "Prior active return was 5.21%, followed by a 4.40% recent active pullback.",
+        "Its 21-session volatility was 11.65% and maximum drawdown was 1.23%."
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.4,
+      "invalidation_condition": "EWU breaks below its 21-session drawdown range or its active underperformance versus SPY accelerates.",
+      "option_id": "UNITED_KINGDOM",
+      "reversal_case": "A stronger dollar, weaker global growth expectations, or falling energy prices could prolong underperformance.",
+      "time_window_catalyst": "U.S. inflation releases and Middle East energy developments affecting global value and energy-sensitive equities."
+    },
+    {
+      "continuation_case": "A softer inflation report and lower yields could trigger a rebound from the recent pullback.",
+      "decision": "rejected",
+      "evidence": [
+        "Real estate had a 0.771 quality-evidence score and a 3.10% prior active return.",
+        "It experienced a 4.70% recent active pullback.",
+        "Ten-year and thirty-year Treasury yields were elevated at 4.69% and 5.22%."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3.1,
+      "forecast_low_pct": -2.7,
+      "invalidation_condition": "The ten-year Treasury yield rises further and XLRE falls beyond its 21-session maximum drawdown.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Persistent inflation and rising long-term yields would pressure rate-sensitive valuations.",
+      "time_window_catalyst": "August 12 CPI and August 13 PPI."
+    },
+    {
+      "continuation_case": "Geopolitical uncertainty and renewed inflation concerns could sustain safe-haven demand.",
+      "decision": "rejected",
+      "evidence": [
+        "Gold gained 3.32% over five sessions and 4.08% over 21 sessions.",
+        "Its quality-evidence score was only 0.401.",
+        "Ten-year real Treasury yields were 2.43%, while Middle East uncertainty remained elevated."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.3,
+      "invalidation_condition": "Gold loses its recent five-session advance while real Treasury yields rise.",
+      "option_id": "GOLD",
+      "reversal_case": "High real yields and reversal of the recent price surge could pressure gold.",
+      "time_window_catalyst": "August 12 CPI, August 13 PPI, and Middle East developments."
+    },
+    {
+      "continuation_case": "Positive active returns across both measured windows could persist if inflation data lower rate expectations.",
+      "decision": "rejected",
+      "evidence": [
+        "Software posted a 2.93% five-session active return and a 1.40% prior active return.",
+        "Its quality-evidence score was 0.328.",
+        "It had 29.94% volatility and a negative 0.829 volume z-score."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 5.1,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "Software loses its recent relative gain and underperforms SPY following the inflation releases.",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High volatility, weak volume confirmation, and sensitivity to yields create substantial reversal risk.",
+      "time_window_catalyst": "August 12 CPI and August 13 PPI."
+    }
+  ],
+  "confidence": 0.57,
+  "expected_alpha_vs_sp500_pct": 0.43,
+  "is_official_score": true,
+  "key_risks": [
+    "A benign CPI or PPI report could lower yields and reverse the energy and financials theses.",
+    "De-escalation around the Strait of Hormuz could sharply reduce crude prices and energy-sector returns.",
+    "Weak August 14 retail sales could undermine cyclical and financial exposures.",
+    "Recent pullbacks may represent trend deterioration rather than temporary dislocations."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-6-sol",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.85,
+      "invalidation_condition": "Brent reverses its August 6 rise and energy equities continue underperforming SPY after CPI and PPI.",
+      "option_id": "ENERGY",
+      "rationale": "Strong prior relative trend and a deep recent pullback are reinforced by elevated crude prices and continuing Strait of Hormuz uncertainty.",
+      "time_window_catalyst": "Middle East and Strait of Hormuz developments, plus August 12 CPI and August 13 PPI."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Treasury yields fall sharply while financials remain below their recent high and underperform SPY.",
+      "option_id": "FINANCIALS",
+      "rationale": "Strong prior active performance, low recent volatility, and firm activity data support a rebound from recent underperformance.",
+      "time_window_catalyst": "August 12 CPI, August 13 PPI, and August 14 retail sales."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "EWU breaks below its 21-session drawdown range or its active underperformance versus SPY accelerates.",
+      "option_id": "UNITED_KINGDOM",
+      "rationale": "The highest quality-evidence score combines strong prior relative performance, a deep pullback, and comparatively low volatility.",
+      "time_window_catalyst": "U.S. inflation releases and Middle East energy developments affecting global value and energy-sensitive equities."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.68,
+  "portfolio_rationale": "The portfolio favors three distinct clusters with strong prior relative trends and recent pullbacks, while avoiding the weakest high-volatility momentum trades. Energy receives the cap allocation because geopolitical support complements its mechanical evidence.",
+  "provider": "openai",
+  "rationale_summary": "Energy, financials, and UK equities each have base forecasts above SPY and offer differentiated exposure to inflation, yields, global value, and geopolitical developments during the scoring week.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-07-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15675,
+    "latency_seconds": 40.32455779192969,
+    "output_tokens": 2859,
+    "reasoning_tokens": 974,
+    "total_tokens": 18534
+  }
+}

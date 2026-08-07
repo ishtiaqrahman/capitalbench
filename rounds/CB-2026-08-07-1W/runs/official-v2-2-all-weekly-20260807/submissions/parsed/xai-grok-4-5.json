@@ -1,0 +1,178 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid GDP final sales, ISM expansion, and earnings momentum sustain modest upside",
+      "decision": "rejected",
+      "evidence": [
+        "SPY return_5s +3.62% and partial-week +2.9% through Aug 6",
+        "S&P 500 closed 7709.96 down 0.2% on Aug 6 with YTD +12.6%",
+        "About 85% of S&P 500 companies reported with strongest aggregate earnings growth since 2021"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "SPY breaks below Aug 6 close by more than 1.5% on data reaction",
+      "option_id": "SP500",
+      "reversal_case": "Post-run consolidation or hot CPI/employment data prompts profit-taking",
+      "time_window_catalyst": "July Employment Situation, CPI, and PPI releases Aug 7-13"
+    },
+    {
+      "continuation_case": "Earnings strength and growth leadership persist into data week",
+      "decision": "selected",
+      "evidence": [
+        "TECHNOLOGY return_3s +4.09% and active_return_5s +1.84%",
+        "ISM manufacturing and services prices elevated at 71.1 and 70.3",
+        "Nasdaq Composite partial-week +3.8% through Aug 6"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLK underperforms SPY by >1.5% or loses 3-session support",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Rate-sensitive growth sells off on hotter-than-expected inflation",
+      "time_window_catalyst": "CPI/PPI and any mega-cap follow-through before Aug 14"
+    },
+    {
+      "continuation_case": "Momentum and AI-related demand narrative extend the bounce",
+      "decision": "selected",
+      "evidence": [
+        "SEMICONDUCTORS active_return_5s +2.42% and return_3s +4.77%",
+        "High beta_spy_63s of 3.058 with recent relative outperformance",
+        "Quality evidence score low but prior pullback deep"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "SMH active return turns negative or drops >3% any session",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "High volatility_21s 50.65% and distance_52w_high -14.57% invite sharp fade",
+      "time_window_catalyst": "Risk appetite around Aug 12-14 macro prints"
+    },
+    {
+      "continuation_case": "Inflation persistence and safe-haven demand support further gains",
+      "decision": "selected",
+      "evidence": [
+        "GOLD return_3s +4.83% with IAU 21s +4.08%",
+        "PCE price index up 3.7% YoY and gross-domestic-purchases price index +5.7% annualized",
+        "Middle East conflict cited by Fed as elevating uncertainty"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "IAU closes below prior-week low or real yields jump >15 bp",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger dollar or cooler data reduce hedge demand",
+      "time_window_catalyst": "CPI release and oil/geopolitical headlines"
+    },
+    {
+      "continuation_case": "Geopolitical premium and recent oil strength carry into the week",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY quality evidence score 0.798 with prior active rank 0.925",
+        "Brent crude at $82.49 up 3.8% on Aug 6 amid Hormuz uncertainty",
+        "prior_16s_active_return +6.54%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "XLE breaks 21s max drawdown low or oil falls >5% from Aug 6",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation or demand concerns reverse the commodity bid",
+      "time_window_catalyst": "Oil price reaction to any Strait of Hormuz developments"
+    },
+    {
+      "continuation_case": "Relative value and prior active strength continue",
+      "decision": "rejected",
+      "evidence": [
+        "EUROPE prior_16s_active_return +3.68% and quality score 0.676",
+        "ECB held rates steady on July 23 citing high uncertainty",
+        "distance_52w_high only -0.02%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "VGK underperforms SPY by >1% on consecutive sessions",
+      "option_id": "EUROPE",
+      "reversal_case": "Stronger USD or weaker European data weigh on VGK",
+      "time_window_catalyst": "US data spillovers and any ECB commentary echoes"
+    },
+    {
+      "continuation_case": "Yield curve and earnings support modest outperformance",
+      "decision": "rejected",
+      "evidence": [
+        "FINANCIALS quality evidence score 0.707 and prior active rank 0.851",
+        "prior_16s_active_return +4.19%",
+        "Fed held funds rate at 3.50%-3.75% with three dissenters preferring hike"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "XLF closes below its recent range low on data day",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Flattening yields or credit concerns reverse the factor",
+      "time_window_catalyst": "Employment data impact on rate expectations"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.685,
+  "is_official_score": true,
+  "key_risks": [
+    "July employment and CPI surprises trigger broad equity risk-off",
+    "Geopolitical de-escalation reverses energy and gold bids",
+    "Tech/semiconductor mean-reversion after elevated recent gains",
+    "Cluster concentration amplifies sector-specific drawdowns"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Tech sector underperforms SPY by more than 1.5% intraday on CPI day or breaks recent 3-session lows",
+      "option_id": "TECHNOLOGY",
+      "rationale": "Strong recent relative momentum and earnings backdrop support higher base return than SPY over the one-week window.",
+      "time_window_catalyst": "July CPI and PPI releases plus continued post-earnings tech sentiment before Aug 14 close"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "SMH drops more than 3% on any session or active return turns negative versus SPY",
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Highest recent active return among growth names with quality pullback setup exceeding SPY base case.",
+      "time_window_catalyst": "Semiconductor supply-chain updates and risk-on continuation into Aug 12-14 data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Gold falls below prior-week low or real yields spike sharply on data",
+      "option_id": "GOLD",
+      "rationale": "Elevated inflation readings and Middle East uncertainty support precious-metals bid above SPY base.",
+      "time_window_catalyst": "CPI print and any Hormuz-related oil volatility before exit"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "XLE closes below its 21-session low or oil reverses more than 5% from Aug 6 level",
+      "option_id": "ENERGY",
+      "rationale": "High quality-evidence score, prior active strength, and oil price spike provide superior base forecast.",
+      "time_window_catalyst": "Brent crude reaction to geopolitical headlines and inventory data within window"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.185,
+  "portfolio_rationale": "Selected only names with base forecasts strictly above SPY while respecting the 50% cluster cap; tilted to recent relative strength in tech/growth, energy, and gold amid elevated inflation and solid activity data.",
+  "provider": "xai",
+  "rationale_summary": "SPY base set conservatively after strong 5-session run; active holdings chosen for higher expected one-week returns from momentum, commodities, and inflation hedges with catalysts inside the scoring window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-07-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16759,
+    "latency_seconds": 48.26523493602872,
+    "output_tokens": 2364,
+    "reasoning_tokens": 644,
+    "total_tokens": 19767
+  }
+}
