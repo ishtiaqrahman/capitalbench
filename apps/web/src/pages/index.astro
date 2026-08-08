@@ -341,8 +341,6 @@ function riskWidth(value: number | null | undefined): string {
 
   <TrackScorecardTabs scorecards={aggregateScorecards} />
 
-  <LatestOfficialResultsTabs tracks={latestOfficialResultTracks} />
-
   <ModelRiskBenchmark modelBehavior={modelBehavior} variant="home" />
 
   <PortfolioDifferenceBenchmark modelBehavior={modelBehavior} />
@@ -644,6 +642,8 @@ function riskWidth(value: number | null | undefined): string {
       <a class="home-secondary-cta" href="/live/">Open live dashboard</a>
     </div>
   </section>
+
+  <LatestOfficialResultsTabs tracks={latestOfficialResultTracks} />
 
   <section class="live-dashboard-promo" aria-labelledby="live-dashboard-promo-title">
     <div class="live-dashboard-promo-copy home-question-heading home-question-heading-in-panel">
