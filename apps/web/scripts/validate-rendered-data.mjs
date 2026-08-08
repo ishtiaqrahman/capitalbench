@@ -2000,8 +2000,16 @@ includes(homepagePortfolioDifferenceHtml, "same-round comparisons", "homepage Po
 const latestResultPosition = indexHtml.indexOf('id="latest-official-results-title"');
 const riskBenchmarkPosition = indexHtml.indexOf('id="model-risk-benchmark"');
 const portfolioDifferencePosition = indexHtml.indexOf('id="portfolio-difference-benchmark"');
-if (!(latestResultPosition >= 0 && riskBenchmarkPosition > latestResultPosition && portfolioDifferencePosition > riskBenchmarkPosition)) {
-  failures.push("homepage result, risk, and Portfolio Difference sections are out of order");
+const benchmarkUniversePosition = indexHtml.indexOf('id="current-setup-title"');
+const liveDashboardPosition = indexHtml.indexOf('id="live-dashboard-promo-title"');
+if (!(
+  riskBenchmarkPosition >= 0
+  && portfolioDifferencePosition > riskBenchmarkPosition
+  && benchmarkUniversePosition > portfolioDifferencePosition
+  && latestResultPosition > benchmarkUniversePosition
+  && liveDashboardPosition > latestResultPosition
+)) {
+  failures.push("homepage risk, Portfolio Difference, benchmark universe, latest results, and live sections are out of order");
 }
 for (const track of ["weekly", "monthly"]) {
   const trackData = apiReadModel.market_environment?.tracks?.[track] ?? {};
@@ -2746,9 +2754,6 @@ if (aiPositioningIndex !== -1 && modelPerformanceIndex !== -1 && modelPerformanc
 }
 if (latestOfficialIndex !== -1 && modelPerformanceIndex !== -1 && latestOfficialIndex < modelPerformanceIndex) {
   failures.push("homepage latest official results appear before model performance");
-}
-if (latestOfficialIndex !== -1 && aiPositioningIndex !== -1 && latestOfficialIndex > aiPositioningIndex) {
-  failures.push("homepage latest official results appear after AI positioning");
 }
 if (aiPositioningIndex !== -1 && methodologyIndex !== -1 && methodologyIndex < aiPositioningIndex) {
   failures.push("homepage methodology section appears before AI positioning");
