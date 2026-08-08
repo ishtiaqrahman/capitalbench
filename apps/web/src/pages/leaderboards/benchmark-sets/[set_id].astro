@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import BenchmarkEvidencePanel from "../../../components/BenchmarkEvidencePanel.astro";
+import BenchmarkSetRiskReturn from "../../../components/BenchmarkSetRiskReturn";
 import PageHeader from "../../../components/PageHeader.astro";
 import TrackScorecard from "../../../components/TrackScorecard.astro";
 import apiReadModel from "../../../generated/apiReadModel.js";
+import { buildBenchmarkSetRiskReturn } from "../../../lib/benchmarkSetRiskReturn.js";
 import { benchmarkSetToScorecard, buildBenchmarkSetsData } from "../../../lib/benchmarkSets";
 import {
   buildBenchmarkSetComparison,
@@ -27,6 +29,7 @@ interface Props {
 
 const { set } = Astro.props as Props;
 const scorecard = benchmarkSetToScorecard(set) as TrackScorecardData | null;
+const riskReturn = scorecard ? buildBenchmarkSetRiskReturn(apiReadModel, set) : null;
 const status = set.is_current ? "Current Benchmark" : set.is_qualified ? "Qualified Comparison Set" : "Benchmark Forming";
 const trackLabel = set.track === "weekly" ? "Weekly" : "Monthly";
 const remainingRounds = Math.max(0, set.qualification_threshold - set.comparison.comparison_round_count);
@@ -98,6 +101,12 @@ const detailComparison =
           </div>
         </div>
       </div>
+    </section>
+  )}
+
+  {riskReturn && (
+    <section id="risk-return-map" class="section benchmark-set-risk-return-section">
+      <BenchmarkSetRiskReturn data={riskReturn} client:load />
     </section>
   )}
 
