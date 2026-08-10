@@ -1,0 +1,175 @@
+{
+  "benchmark_expected_return_pct": 0.35,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record highs, positive breadth, strong week momentum",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed Aug 7 at record 7,757.64, +3.6% week",
+        "spy_return_5s 3.51%"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Sustained close below prior support on hot inflation",
+      "option_id": "SP500",
+      "reversal_case": "Hot CPI/PPI lifts yields and reverses gains",
+      "time_window_catalyst": "July CPI Aug 12, PPI Aug 13, retail sales Aug 14"
+    },
+    {
+      "continuation_case": "Weak payrolls and rate-cut hopes lower real rates; safe-haven demand",
+      "decision": "selected",
+      "evidence": [
+        "GOLD return_3s 6.51%, active_return_5s 3.72%",
+        "iau_return_5s 7.23%"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Real yields spike above recent range",
+      "option_id": "GOLD",
+      "reversal_case": "Hot inflation lifts real yields and dollar",
+      "time_window_catalyst": "CPI/PCE data and Fed cut expectations"
+    },
+    {
+      "continuation_case": "Defensive rotation on soft labor data, negative beta hedge",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE return_3s 2.21%, beta_spy -0.240",
+        "low drawdown -3.09%"
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Strong risk-on melt-up leaves healthcare lagging",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rally favors cyclicals over defensives",
+      "time_window_catalyst": "Weak payrolls, defensive flows"
+    },
+    {
+      "continuation_case": "Tech leadership and strong week momentum",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq +5.2% week",
+        "active_return_5s 1.58%, beta 1.729"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Yield spike hits growth",
+      "option_id": "NASDAQ100",
+      "reversal_case": "High beta amplifies inflation-print selloff",
+      "time_window_catalyst": "CPI Aug 12"
+    },
+    {
+      "continuation_case": "Soft labor supports duration",
+      "decision": "rejected",
+      "evidence": [
+        "Weak payrolls -23k",
+        "tlt_return_5s 1.03%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Inflation surprise higher",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Hot CPI lifts yields",
+      "time_window_catalyst": "CPI/PPI"
+    },
+    {
+      "continuation_case": "Hormuz risk could spike oil",
+      "decision": "rejected",
+      "evidence": [
+        "ENERGY active_return_5s -6.95%",
+        "uso_return_5s -8.66%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Oil resumes decline",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil weakness continuing, sharp recent drop",
+      "time_window_catalyst": "Middle East developments"
+    },
+    {
+      "continuation_case": "Quality tilt, stable spreads",
+      "decision": "rejected",
+      "evidence": [
+        "FINANCIALS active_return_5s -2.35%",
+        "high quality score 0.739"
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Credit spreads widen",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Recent underperformance, yield-curve pressure",
+      "time_window_catalyst": "CPI/PPI, rates"
+    },
+    {
+      "continuation_case": "Solid prior trend",
+      "decision": "rejected",
+      "evidence": [
+        "EUROPE active_return_5s -1.29%",
+        "quality score 0.690"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Euro weakness and risk-off",
+      "option_id": "EUROPE",
+      "reversal_case": "Recent lag vs SPY",
+      "time_window_catalyst": "Global risk sentiment"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.09,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot July CPI/PPI on Aug 12-13 lifts yields and hurts gold and equities",
+    "Risk-on continuation leaves defensives and gold lagging SPY",
+    "Middle East/oil shock triggers broad risk-off"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Hot CPI/PPI drives yields sharply higher and equities sell off",
+      "option_id": "SP500",
+      "rationale": "Broad US large-cap at record highs with strong week momentum; core position with lower single-cluster risk.",
+      "time_window_catalyst": "July CPI Aug 12, PPI Aug 13, retail sales Aug 14"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Hot inflation lifts real yields and dollar, pressuring gold",
+      "option_id": "GOLD",
+      "rationale": "Gold surged 6.5% recently with weak payrolls and rate-cut hopes supporting real-rate declines; safe-haven amid Middle East conflict.",
+      "time_window_catalyst": "CPI/PCE inflation data and Fed-cut expectations amid weak labor data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "Risk-on melt-up leaves defensives lagging broad market",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong recent 3-session return (+2.21%), negative SPY beta, low drawdown; hedge on soft labor backdrop.",
+      "time_window_catalyst": "Defensive rotation on weak payrolls and softening growth"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.44,
+  "portfolio_rationale": "Core SPY anchor complemented by gold safe-haven strength and defensive healthcare, balancing continued equity strength against weakening labor data and inflation-print risk.",
+  "provider": "anthropic",
+  "rationale_summary": "Half SPY, quarter gold for momentum/safe-haven, quarter healthcare for defensive tilt given soft payrolls.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-09-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28196,
+    "latency_seconds": 34.63465815410018,
+    "output_tokens": 2400,
+    "total_tokens": 30596
+  }
+}

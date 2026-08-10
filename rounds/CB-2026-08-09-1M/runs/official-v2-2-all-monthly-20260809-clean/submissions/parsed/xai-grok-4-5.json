@@ -1,0 +1,186 @@
+{
+  "benchmark_expected_return_pct": 1.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid domestic demand and services expansion support further equity gains from record levels.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed August 7 at record 7757.64, up 3.6% for the week",
+        "Q2 real final sales to private domestic purchasers grew 3.9% annualized",
+        "July Services PMI at 54.1 with business activity 59.1"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "July CPI core reacceleration above 0.3% mom or payroll revisions signaling deeper contraction",
+      "option_id": "SP500",
+      "reversal_case": "Negative payroll surprise and downward revisions could trigger risk-off if unemployment rises further.",
+      "time_window_catalyst": "August CPI/PPI releases and FOMC minutes"
+    },
+    {
+      "continuation_case": "Extreme prior relative strength plus deep recent pullback favors mean-reversion bounce in high-momentum semis.",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score 0.754 with prior active rank 1.000 and recent pullback rank 0.970",
+        "return_5s of 7.80% and prior_105s_active_return 47.96%",
+        "volatility_63s 55.02% and distance_52w_high -12.89%"
+      ],
+      "forecast_base_pct": 2.8,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Break below recent 5-session lows on rising vol or negative semiconductor supply-chain news",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Elevated volatility and max drawdown of -24.62% leave room for sharp continuation of pullback on growth scare.",
+      "time_window_catalyst": "Jackson Hole symposium and August industrial production"
+    },
+    {
+      "continuation_case": "Strong quality composite and recent relative pullback after prior outperformance support rebound.",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score 0.778 highest in table with prior active rank 0.910 and pullback rank 0.985",
+        "return_5s 7.05% after active_return_21s -7.07%",
+        "prior_105s_active_return 24.69%"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Failure to hold above 21-session active return trough or risk-off equity selloff",
+      "option_id": "BIOTECH",
+      "reversal_case": "High beta to risk appetite and financing conditions could reverse if labor data worsens credit sentiment.",
+      "time_window_catalyst": "August employment situation and Q2 GDP second estimate"
+    },
+    {
+      "continuation_case": "Broad tech momentum and AI linkage could extend recent 5-session gains.",
+      "decision": "rejected",
+      "evidence": [
+        "Quality score 0.645 with prior active rank 0.925",
+        "return_5s 7.20% and prior_105s_active_return 25.47%",
+        "distance_52w_high -5.05%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Nasdaq relative underperformance exceeding 3% on rising yields",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "High volatility_63s 35.97% and sector concentration risk if rates stay elevated.",
+      "time_window_catalyst": "July CPI and Jackson Hole"
+    },
+    {
+      "continuation_case": "Deep pullback after massive prior active gain offers bounce potential tied to semis exports.",
+      "decision": "rejected",
+      "evidence": [
+        "Quality score 0.740 with prior active rank 0.970 and pullback rank 1.000",
+        "return_5s 5.72% but active_return_21s -12.97%",
+        "volatility_63s 82.46% extreme"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Won weakness or further 5% relative underperformance vs SPY",
+      "option_id": "SOUTH_KOREA",
+      "reversal_case": "Extreme volatility and -34.21% max drawdown amplify downside on global trade or FX stress.",
+      "time_window_catalyst": "August ISM and trade data"
+    },
+    {
+      "continuation_case": "Rate differential and safe-haven flows could stabilize dollar after recent softness.",
+      "decision": "rejected",
+      "evidence": [
+        "Quality score 0.708 with high low-vol and shallow-drawdown ranks",
+        "return_5s -0.35% and active_return_21s -3.89%",
+        "Treasury yields elevated with 10y at 4.65%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sustained drop in 2y yield below 4.00% or risk-on equity surge",
+      "option_id": "US_DOLLAR",
+      "reversal_case": "Softening labor data may pressure Fed path and reverse dollar strength.",
+      "time_window_catalyst": "FOMC minutes and August employment"
+    },
+    {
+      "continuation_case": "Recent strength and geopolitical oil risk could extend safe-haven bid.",
+      "decision": "rejected",
+      "evidence": [
+        "return_5s 7.23% and active_return_21s 2.51%",
+        "prior_105s_active_return -25.91% and distance_52w_high -19.58%",
+        "quality score only 0.113"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Real 10y yield rising above 2.50% or dollar rebound",
+      "option_id": "GOLD",
+      "reversal_case": "Low quality score and deep prior underperformance leave gold vulnerable to real-yield rise.",
+      "time_window_catalyst": "CPI release and Middle East developments"
+    },
+    {
+      "continuation_case": "Domestic growth sensitivity and recent catch-up could continue if soft-landing holds.",
+      "decision": "rejected",
+      "evidence": [
+        "Quality score 0.694 with prior active rank 0.836",
+        "return_5s 3.56% and Russell 2000 up 3.5% for the week",
+        "active_return_21s -1.41%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "IWM relative lag exceeding 2% on rising credit spreads",
+      "option_id": "SMALL_CAP",
+      "reversal_case": "Higher beta and credit sensitivity vulnerable to further payroll weakness.",
+      "time_window_catalyst": "August retail sales and employment situation"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.87,
+  "is_official_score": true,
+  "key_risks": [
+    "Further labor market deterioration from negative payroll revisions",
+    "Sticky core inflation delaying any policy easing narrative",
+    "Geopolitical oil supply disruption from unresolved Strait of Hormuz",
+    "High-volatility reversal in momentum tech/biotech names"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "July CPI core reacceleration above 0.3% mom or payroll revisions signaling deeper contraction",
+      "option_id": "SP500",
+      "rationale": "Core benchmark holding given record highs, solid GDP final sales, and services PMI expansion amid mixed labor data.",
+      "time_window_catalyst": "August CPI/PPI releases and FOMC minutes"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.8,
+      "invalidation_condition": "Break below recent 5-session lows on rising vol or negative semiconductor supply-chain news",
+      "option_id": "SEMICONDUCTORS",
+      "rationale": "Highest quality evidence score with extreme prior active trend and recent pullback support for continuation into AI/tech demand.",
+      "time_window_catalyst": "Jackson Hole symposium and August industrial production"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Failure to hold above 21-session active return trough or risk-off equity selloff",
+      "option_id": "BIOTECH",
+      "rationale": "Top quality score with deep recent pullback after strong prior active return, offering asymmetric recovery potential.",
+      "time_window_catalyst": "August employment situation and Q2 GDP second estimate"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.07,
+  "portfolio_rationale": "Overweight high-quality-score growth and biotech exposures with base forecasts exceeding SPY while capping tech/healthcare clusters under 50% and retaining SPY core for diversification into the one-month window.",
+  "provider": "xai",
+  "rationale_summary": "SPY base case is modest given record levels and softening payrolls; SEMICONDUCTORS and BIOTECH clear the active hurdle on quality ranks, prior trends, and pullback depth with catalysts before September 10.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-09-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17436,
+    "latency_seconds": 50.47472517192364,
+    "output_tokens": 2477,
+    "reasoning_tokens": 902,
+    "total_tokens": 20815
+  }
+}

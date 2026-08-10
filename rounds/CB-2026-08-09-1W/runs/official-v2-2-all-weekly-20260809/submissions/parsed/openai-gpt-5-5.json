@@ -1,0 +1,202 @@
+{
+  "benchmark_expected_return_pct": 0.15,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record-high momentum and broad positive asset participation could persist if macro releases support a soft-landing view.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed August 7 at a record 7,757.64 after rising 3.6% for the week.",
+        "SPY return was 3.51% over 5 sessions and 2.87% over 21 sessions.",
+        "Scheduled CPI, PPI, and retail-sales releases occur before the exit close."
+      ],
+      "forecast_base_pct": 0.15,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "SPY breaks above the record with broad participation after CPI/PPI and maintains leadership versus selected diversifiers.",
+      "option_id": "SP500",
+      "reversal_case": "After a strong weekly gain, weak payroll data and inflation-event risk could trigger profit-taking or factor rotation away from the index.",
+      "time_window_catalyst": "August 12 CPI, August 13 PPI, and August 14 retail sales."
+    },
+    {
+      "continuation_case": "Geopolitical supply restrictions plus a deep recent pullback can drive a sharp rebound if risk premiums rebuild during the week.",
+      "decision": "selected",
+      "evidence": [
+        "AP reported Brent crude at $83.55 on August 7, up 1.3% for the session.",
+        "AP reported the U.S.-Iran conflict continued to restrict oil flows and Hormuz reopening arrangements remained unresolved.",
+        "OIL had a 19.12% prior 16-session active return but a -12.17% 5-session active return, with quality evidence score 0.754."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Clear announcement that Hormuz reopening arrangements are resolved or crude fails to hold its post-pullback rebound.",
+      "option_id": "OIL",
+      "reversal_case": "Very high volatility and a large prior advance raise the risk that recent weakness continues if supply fears fade.",
+      "time_window_catalyst": "Middle East oil-flow headlines and any inflation-sensitive reaction around August 12 CPI and August 13 PPI."
+    },
+    {
+      "continuation_case": "Recent strength can continue if geopolitical uncertainty or inflation surprises support safe-haven and real-asset demand.",
+      "decision": "selected",
+      "evidence": [
+        "Gold returned 7.23% over 5 sessions and 5.38% over 21 sessions in the mechanical market state.",
+        "GOLD had a 6.51% 3-session return and 3.72% 5-session active return.",
+        "The briefing cites elevated uncertainty partly because of the Middle East conflict."
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Real yields or the U.S. dollar rise sharply after CPI/PPI while gold reverses below its recent breakout.",
+      "option_id": "GOLD",
+      "reversal_case": "The quality evidence score is low at 0.237, so recent price strength may be stretched and vulnerable to a dollar or real-yield rebound.",
+      "time_window_catalyst": "August 12 CPI, August 13 PPI, and continuing Middle East uncertainty before the exit close."
+    },
+    {
+      "continuation_case": "Strong recent relative performance with elevated volume may persist if commodity and cyclical risk appetite remain firm.",
+      "decision": "selected",
+      "evidence": [
+        "METALS_MINING had a 7.31% 3-session return and 11.48% 5-session active return.",
+        "Volume z-score was 0.846, indicating elevated recent reported volume versus baseline.",
+        "Volatility was high at 43.09% and distance to 52-week high was -12.81%."
+      ],
+      "forecast_base_pct": 0.65,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "A sharp commodity reversal or loss of the recent 5-day relative-strength leadership.",
+      "option_id": "METALS_MINING",
+      "reversal_case": "The option has weak quality evidence of 0.131 and very high volatility, making a short-term reversal plausible after a sharp run.",
+      "time_window_catalyst": "August 14 retail sales and commodity-linked risk appetite during the scoring week."
+    },
+    {
+      "continuation_case": "Strong prior trend, shallow drawdown, and recent pullback create a short-term mean-reversion setup if value/defensive global equities recover.",
+      "decision": "selected",
+      "evidence": [
+        "UNITED_KINGDOM had the highest listed quality evidence score among equity country options at 0.838.",
+        "Prior 16-session active return was 4.93% while 5-session active return was -3.04%.",
+        "Volatility was 11.71% and max drawdown was -1.23%, both relatively contained versus many equity options."
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "UK equities continue underperforming SPY after the macro releases or sterling-linked risk weakens materially.",
+      "option_id": "UNITED_KINGDOM",
+      "reversal_case": "If U.S. mega-cap momentum continues, lower-beta UK exposure may lag SPY further.",
+      "time_window_catalyst": "U.S. CPI/PPI and retail sales shaping global rate and equity-factor rotation during the week."
+    },
+    {
+      "continuation_case": "Recent absolute strength and defensive characteristics can outperform if weak labor data or inflation uncertainty pressures broad risk assets.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE had a 2.21% 3-session return despite a -1.59% 5-session active return.",
+        "The briefing states health-care employment continued to trend up.",
+        "HEALTHCARE had negative 63-session beta to SPY of -0.240 and correlation of -0.183."
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "Healthcare loses its recent 3-day relative improvement or high-beta equity leadership broadens decisively.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "If risk appetite remains strong after macro releases, defensive healthcare may lag higher-beta sectors and SPY.",
+      "time_window_catalyst": "Defensive rotation around August 12 CPI, August 13 PPI, and August 14 retail sales."
+    },
+    {
+      "continuation_case": "Cash-like yield and low volatility should preserve capital if risk assets reverse during macro-event risk.",
+      "decision": "rejected",
+      "evidence": [
+        "SHORT_TREASURY quality evidence score was 0.783, supported by low volatility and shallow drawdown ranks of 1.000.",
+        "3-month Treasury yield was 3.87% on August 7.",
+        "SHORT_TREASURY had 0.07% 3-session return and 0.19% 21-session volatility."
+      ],
+      "forecast_base_pct": 0.07,
+      "forecast_high_pct": 0.1,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "SPY remains positive after the inflation releases, making Treasury-bill carry insufficient for alpha.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Its expected one-week return is unlikely to beat SPY unless equities sell off, and it had -3.43% 5-session active return versus SPY.",
+      "time_window_catalyst": "No direct upside catalyst identified beyond risk-off reaction to CPI, PPI, or retail sales."
+    },
+    {
+      "continuation_case": "Recent strong active performance could persist if growth-stock sentiment remains favorable after macro data.",
+      "decision": "rejected",
+      "evidence": [
+        "SOFTWARE had 5.06% 5-session active return and 1.37% prior 16-session active return.",
+        "Volatility was 31.39% and max drawdown was -7.28%.",
+        "Quality evidence score was 0.361, with very low recent pullback rank of 0.060."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Software underperforms SPY immediately after CPI/PPI or rate-sensitive growth leadership fades.",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High volatility, limited pullback support, and broad tech sensitivity to rates make a CPI/PPI-driven reversal plausible.",
+      "time_window_catalyst": "August 12 CPI and August 13 PPI effects on rates and growth-stock valuation sentiment."
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.5025,
+  "is_official_score": true,
+  "key_risks": [
+    "CPI or PPI comes in benign enough to lift broad U.S. growth equities and reduce demand for gold and defensive exposures.",
+    "A rapid de-escalation or reopening arrangement for the Strait of Hormuz reverses oil and energy-sensitive trades.",
+    "Recent commodity and metals strength proves overextended and mean-reverts during the scoring week.",
+    "SPY momentum persists after its record close, led by mega-cap technology not represented in the selected portfolio."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Clear announcement that Hormuz reopening arrangements are resolved or crude fails to hold its post-pullback rebound.",
+      "option_id": "OIL",
+      "rationale": "Direct crude exposure has the strongest one-week event support from unresolved Hormuz restrictions and a deep recent pullback despite a very strong prior active trend.",
+      "time_window_catalyst": "Middle East oil-flow headlines and any inflation-sensitive reaction around August 12 CPI and August 13 PPI."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Real yields or the U.S. dollar rise sharply after CPI/PPI while gold reverses below its recent breakout.",
+      "option_id": "GOLD",
+      "rationale": "Gold has recent strength and potential support from geopolitical uncertainty and inflation-event risk, with lower equity-market dependence than SPY.",
+      "time_window_catalyst": "August 12 CPI, August 13 PPI, and continuing Middle East uncertainty before the exit close."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.65,
+      "invalidation_condition": "A sharp commodity reversal or loss of the recent 5-day relative-strength leadership.",
+      "option_id": "METALS_MINING",
+      "rationale": "Metals and mining shows the strongest recent active move in the ledger, supported by broad commodity sensitivity and potential continuation if cyclical commodity appetite persists.",
+      "time_window_catalyst": "August 14 retail sales and commodity-linked risk appetite during the scoring week."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "UK equities continue underperforming SPY after the macro releases or sterling-linked risk weakens materially.",
+      "option_id": "UNITED_KINGDOM",
+      "rationale": "UK equities combine high quality evidence, strong prior active trend, low drawdown, and a recent pullback that may mean-revert if global value/defensive exposures recover.",
+      "time_window_catalyst": "U.S. CPI/PPI and retail sales shaping global rate and equity-factor rotation during the week."
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Healthcare loses its recent 3-day relative improvement or high-beta equity leadership broadens decisively.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare offers a defensive equity diversifier with positive short-term absolute momentum and lower SPY beta, useful if weak labor data weighs on broad cyclicals.",
+      "time_window_catalyst": "Defensive rotation around August 12 CPI, August 13 PPI, and August 14 retail sales."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.6525,
+  "portfolio_rationale": "The portfolio avoids relying on SPY after a record close and instead combines event-sensitive commodity/safe-haven exposures with defensive and international diversifiers. Selected holdings have base forecasts above the SPY base case and no non-benchmark cluster exceeds the 50% cap.",
+  "provider": "openai",
+  "rationale_summary": "One-week alpha is expected to come from unresolved oil-supply risk, precious-metals support, commodity/mining momentum, and selective defensive rotation around CPI, PPI, and retail-sales releases. The main tradeoff is higher idiosyncratic volatility versus the benchmark.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-09-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15826,
+    "latency_seconds": 42.95608085510321,
+    "output_tokens": 2822,
+    "reasoning_tokens": 311,
+    "total_tokens": 18648
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "$id": "https://capitalbench.org/schemas/portfolio_submission_v2.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_expected_return_pct": {
+      "type": "number"
+    },
+    "candidate_ledger": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "continuation_case": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "selected",
+              "rejected"
+            ]
+          },
+          "evidence": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "type": "array"
+          },
+          "forecast_base_pct": {
+            "type": "number"
+          },
+          "forecast_high_pct": {
+            "type": "number"
+          },
+          "forecast_low_pct": {
+            "type": "number"
+          },
+          "invalidation_condition": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "option_id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "reversal_case": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "time_window_catalyst": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "option_id",
+          "decision",
+          "forecast_low_pct",
+          "forecast_base_pct",
+          "forecast_high_pct",
+          "evidence",
+          "continuation_case",
+          "reversal_case",
+          "time_window_catalyst",
+          "invalidation_condition"
+        ],
+        "type": "object"
+      },
+      "maxItems": 8,
+      "minItems": 6,
+      "type": "array"
+    },
+    "confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    },
+    "expected_alpha_vs_sp500_pct": {
+      "type": "number"
+    },
+    "key_risks": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 5,
+      "minItems": 2,
+      "type": "array"
+    },
+    "mode": {
+      "const": "closed_capability"
+    },
+    "model_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "portfolio": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "allocation_pct": {
+            "maximum": 100,
+            "minimum": 5,
+            "multipleOf": 5,
+            "type": "integer"
+          },
+          "expected_return_pct": {
+            "type": "number"
+          },
+          "invalidation_condition": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "option_id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "rationale": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "time_window_catalyst": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "option_id",
+          "allocation_pct",
+          "expected_return_pct",
+          "time_window_catalyst",
+          "invalidation_condition",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "maxItems": 5,
+      "minItems": 1,
+      "type": "array"
+    },
+    "portfolio_expected_return_pct": {
+      "type": "number"
+    },
+    "portfolio_rationale": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "provider": {
+      "enum": [
+        "openai",
+        "anthropic",
+        "google",
+        "xai"
+      ]
+    },
+    "rationale_summary": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "round_id": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "round_id",
+    "model_id",
+    "provider",
+    "mode",
+    "candidate_ledger",
+    "portfolio",
+    "benchmark_expected_return_pct",
+    "portfolio_expected_return_pct",
+    "expected_alpha_vs_sp500_pct",
+    "confidence",
+    "portfolio_rationale",
+    "rationale_summary",
+    "key_risks"
+  ],
+  "title": "CapitalBench portfolio-v2.2 Submission",
+  "type": "object"
+}

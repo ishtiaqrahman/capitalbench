@@ -1,0 +1,170 @@
+{
+  "benchmark_expected_return_pct": 0.6,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Recent 3.51% 5-day gain persists into CPI week",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed August 7 at record 7757.64 up 0.6% session",
+        "July nonfarm payrolls -23000 with downward revisions"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "CPI print above 0.3% month-over-month",
+      "option_id": "SP500",
+      "reversal_case": "Weak employment data triggers risk-off rotation",
+      "time_window_catalyst": "August 12 CPI release"
+    },
+    {
+      "continuation_case": "Geopolitical tension sustains safe-haven bids",
+      "decision": "selected",
+      "evidence": [
+        "IAU 5-day return 7.23%",
+        "Brent crude at 83.55 with Hormuz unresolved"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "US dollar index rises above prior week close",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar strengthens on hotter CPI",
+      "time_window_catalyst": "August 12 CPI release"
+    },
+    {
+      "continuation_case": "Yen carry trade unwind supports equity flows",
+      "decision": "selected",
+      "evidence": [
+        "EWJ 3-day return 2.42%",
+        "Developed ex-US equity with 0.93% 3-day gain"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "Yen strengthens more than 1% versus USD",
+      "option_id": "JAPAN",
+      "reversal_case": "Yen strengthens sharply on risk aversion",
+      "time_window_catalyst": "August 12 CPI release"
+    },
+    {
+      "continuation_case": "Defensive rotation after weak payrolls",
+      "decision": "selected",
+      "evidence": [
+        "XLV 3-day return 2.21%",
+        "Health-care employment continued to trend up"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "July PPI exceeds 0.2% month-over-month",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "PPI upside surprises raise rate-hike odds",
+      "time_window_catalyst": "August 12 CPI release"
+    },
+    {
+      "continuation_case": "Oil supply restrictions from Hormuz persist",
+      "decision": "rejected",
+      "evidence": [
+        "XLE 5-day return -6.95%",
+        "USO 5-day return -8.66%"
+      ],
+      "forecast_base_pct": -1.5,
+      "forecast_high_pct": 1.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Brent crude falls below 80",
+      "option_id": "ENERGY",
+      "reversal_case": "Demand concerns from weak retail sales dominate",
+      "time_window_catalyst": "August 12 CPI release"
+    },
+    {
+      "continuation_case": "Mega-cap earnings momentum continues",
+      "decision": "rejected",
+      "evidence": [
+        "XLK 5-day return 3.69%",
+        "Nasdaq Composite up 5.2% for the week"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Nasdaq 100 falls below prior week close",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Rate-sensitive growth stocks sell off on CPI",
+      "time_window_catalyst": "August 12 CPI release"
+    },
+    {
+      "continuation_case": "No active return generated",
+      "decision": "rejected",
+      "evidence": [
+        "No market exposure",
+        "Short-term Treasury yields near 4%"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 0.0,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "No market participation",
+      "option_id": "CASH",
+      "reversal_case": "No reversal applicable",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.465,
+  "is_official_score": true,
+  "key_risks": [
+    "CPI and PPI releases on August 12-13 could trigger volatility",
+    "Unresolved Strait of Hormuz issues may reverse commodity flows",
+    "Downward payroll revisions increase recession odds before exit"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "CPI print above 0.3% month-over-month",
+      "option_id": "SP500",
+      "rationale": "Broad US equity exposure with base forecast supported by recent session gains despite labor data weakness.",
+      "time_window_catalyst": "August 12 CPI release"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "US dollar index rises above prior week close",
+      "option_id": "GOLD",
+      "rationale": "Safe-haven demand from unresolved Middle East conflict and recent 5-day return of 7.23%.",
+      "time_window_catalyst": "August 12 CPI release"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Yen strengthens more than 1% versus USD",
+      "option_id": "JAPAN",
+      "rationale": "Strong 3-day return of 2.42% and developed-market equity exposure outside US.",
+      "time_window_catalyst": "August 12 CPI release"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "July PPI exceeds 0.2% month-over-month",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with 2.21% 3-day return amid employment weakness.",
+      "time_window_catalyst": "August 12 CPI release"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.065,
+  "portfolio_rationale": "Mix of SP500 with higher-forecast defensive and international holdings to capture alpha from labor-data caution and geopolitical factors over one week.",
+  "provider": "xai",
+  "rationale_summary": "SP500 at 50% anchors the portfolio while GOLD, JAPAN and HEALTHCARE each exceed SP500 base forecast and stay within cluster caps.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-09-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16044,
+    "latency_seconds": 22.662530970061198,
+    "output_tokens": 1614,
+    "reasoning_tokens": 897,
+    "total_tokens": 18555
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record highs, broad positive asset share, solid services PMI and private final sales.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed Aug 7 at record 7,757.64, +3.6% for the week",
+        "spy_return_21s 2.87%; 63s volatility 14.0%",
+        "FOMC held at 3.50-3.75% with three hawkish dissents"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Inflation upside surprise with 10y above 4.9%",
+      "option_id": "SP500",
+      "reversal_case": "Negative payrolls, 3.5% headline CPI, hawkish dissents could trigger a drawdown from stretched levels.",
+      "time_window_catalyst": "CPI Aug 12, Jackson Hole Aug 27-29, payrolls Sep 4"
+    },
+    {
+      "continuation_case": "Geopolitical premium plus elevated inflation and soft labor data support haven demand.",
+      "decision": "selected",
+      "evidence": [
+        "IAU +7.23% over 5 sessions, +2.51% active over 21",
+        "Brent $83.55 with Hormuz unresolved",
+        "Headline CPI 3.5% y/y, PCE 3.7% y/y"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Hormuz reopening and real yields rising further",
+      "option_id": "GOLD",
+      "reversal_case": "High real yields (10y real 2.40%) and hawkish Fed dissents cap gold; 63s drawdown -16% shows fragility.",
+      "time_window_catalyst": "Middle East headlines; Jackson Hole"
+    },
+    {
+      "continuation_case": "Strong prior trend with a deep recent pullback and renewed risk appetite.",
+      "decision": "selected",
+      "evidence": [
+        "Top quality evidence score 0.778",
+        "XBI +7.05% over 5 sessions after -7.07% active 21s",
+        "prior 105s active +24.7%"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 11.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "XBI underperforming SPY by more than 5% intramonth",
+      "option_id": "BIOTECH",
+      "reversal_case": "30% volatility and rate sensitivity; a yield spike or risk-off would hit XBI hard.",
+      "time_window_catalyst": "FOMC minutes Aug 19; sector newsflow"
+    },
+    {
+      "continuation_case": "Breadth improving; low volatility and shallow drawdown give favorable risk-adjusted exposure.",
+      "decision": "selected",
+      "evidence": [
+        "RSP 21s active +0.22%, volatility 11.1%, drawdown -2.0%",
+        "positive_asset_share_21s 72.5%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "RSP trailing SPY by more than 2% intramonth",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap AI leadership could resume, leaving equal-weight behind as in the last 5 sessions.",
+      "time_window_catalyst": "Retail sales Aug 14; payrolls Sep 4"
+    },
+    {
+      "continuation_case": "Strongest prior relative trend and a sharp 5-session rebound.",
+      "decision": "rejected",
+      "evidence": [
+        "SMH prior 105s active +47.96%, 63s vol 55%",
+        "21s active -6.99%, drawdown -24.6%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 14.0,
+      "forecast_low_pct": -14.0,
+      "invalidation_condition": "SMH failing to reclaim its 52-week high area",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme volatility and crowding make a further unwind plausible within one month.",
+      "time_window_catalyst": "AI capex commentary; CPI-driven rate moves"
+    },
+    {
+      "continuation_case": "Negative payrolls and downward revisions could pull yields lower.",
+      "decision": "rejected",
+      "evidence": [
+        "30y at 5.19%, 10y 4.65%",
+        "TLT 21s -1.65%, active -4.52%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "30y yield above 5.35%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "3.5% CPI and hawkish dissents keep long-end supply and inflation pressure.",
+      "time_window_catalyst": "CPI Aug 12, PPI Aug 13, payrolls Sep 4"
+    },
+    {
+      "continuation_case": "Supply restriction from the conflict supports crude prices.",
+      "decision": "rejected",
+      "evidence": [
+        "Brent $83.55, Hormuz unresolved",
+        "XLE -3.44% over 5 sessions; USO -8.66%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -9.0,
+      "invalidation_condition": "Brent below $72",
+      "option_id": "ENERGY",
+      "reversal_case": "Sharp 5-session oil decline suggests de-escalation pricing already underway.",
+      "time_window_catalyst": "Strait of Hormuz negotiations"
+    },
+    {
+      "continuation_case": "Precious and industrial metals strength plus weak dollar.",
+      "decision": "rejected",
+      "evidence": [
+        "XME +14.99% over 5 sessions, +9.24% active 21s",
+        "Lowest pullback rank 0.000; 63s drawdown -26.5%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 14.0,
+      "forecast_low_pct": -14.0,
+      "invalidation_condition": "Copper and gold both falling more than 5%",
+      "option_id": "METALS_MINING",
+      "reversal_case": "Parabolic short-term move with poor prior trend invites mean reversion.",
+      "time_window_catalyst": "China/global growth data; metals prices"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.48,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot July CPI/PPI on Aug 12-13 lifting yields and hitting equities",
+    "Gold reversal if the Strait of Hormuz reopens",
+    "Biotech's high volatility and factor-reversal risk after a sharp bounce",
+    "Further labor-market deterioration triggering a growth scare"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "CPI/PPI upside surprise pushing 10y above ~4.9% with SPY breaking below its 50-day trend",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure at record highs with broad participation.",
+      "time_window_catalyst": "July CPI Aug 12, Jackson Hole Aug 27-29, Aug payrolls Sep 4"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Hormuz resolution plus a hawkish Fed lifting real yields materially",
+      "option_id": "GOLD",
+      "rationale": "Safe-haven and inflation hedge with Hormuz unresolved; strong recent momentum plus deep prior drawdown.",
+      "time_window_catalyst": "Middle East conflict headlines; Jackson Hole policy tone"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Long yields rising sharply or XBI losing its 5-session gain",
+      "option_id": "BIOTECH",
+      "rationale": "Highest quality-evidence score: strong prior relative trend with a deep recent relative pullback and improving risk appetite.",
+      "time_window_catalyst": "FOMC minutes Aug 19 and rate path; M&A/clinical newsflow"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Breadth narrowing with RSP underperforming SPY by more than 2% intramonth",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Low-volatility broadening exposure; shallow drawdown and improving breadth with 72% of assets positive over 21 sessions.",
+      "time_window_catalyst": "Aug 14 retail sales, Sep 4 payrolls"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.48,
+  "portfolio_rationale": "Core SPY plus modest diversifiers: gold for the unresolved Hormuz/energy-inflation risk, biotech for the best quality-evidence profile, and equal-weight for broadening breadth without mega-cap concentration.",
+  "provider": "anthropic",
+  "rationale_summary": "Market is at record highs with soft labor data and sticky inflation; portfolio keeps benchmark beta while adding two uncorrelated alpha sleeves capped well under cluster limits.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-09-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28187,
+    "latency_seconds": 45.73092824895866,
+    "output_tokens": 3091,
+    "total_tokens": 31278
+  }
+}

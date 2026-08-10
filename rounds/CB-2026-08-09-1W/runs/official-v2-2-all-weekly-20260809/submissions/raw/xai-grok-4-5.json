@@ -1,0 +1,177 @@
+{
+  "benchmark_expected_return_pct": 0.45,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record momentum and solid services PMI keep dip-buying intact into CPI week",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed August 7 at record 7757.64, up 3.6% for the week",
+        "Positive asset share 88.41% over 5 sessions",
+        "July nonfarm payrolls -23k with large downward revisions"
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "SPY fails to hold Friday close on weak data",
+      "option_id": "SP500",
+      "reversal_case": "Labor weakness and elevated inflation uncertainty trigger profit-taking after large weekly gain",
+      "time_window_catalyst": "July CPI August 12 and advance retail sales August 14"
+    },
+    {
+      "continuation_case": "Safe-haven demand persists while geopolitical oil risk remains open",
+      "decision": "selected",
+      "evidence": [
+        "IAU return_3s +6.51% and active_return_5s +3.72%",
+        "AP reported U.S.-Iran conflict continued to restrict oil flows and Hormuz arrangements unresolved",
+        "FOMC noted elevated uncertainty partly because of Middle East conflict"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Gold gives back majority of 5-session outperformance on dollar strength",
+      "option_id": "GOLD",
+      "reversal_case": "Risk-on equity continuation and firmer real yields reverse recent gold spike",
+      "time_window_catalyst": "Any escalation or continued unresolved Hormuz headlines before August 17 close"
+    },
+    {
+      "continuation_case": "Supply-restriction facts and deep recent relative pullback support bounce above SPY",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY quality evidence score 0.834 with prior active rank 0.985",
+        "Brent at $83.55 up 1.3% August 7; Hormuz arrangements unresolved",
+        "Energy sector active_return_5s -6.95% after strong prior_16s_active +9.25%"
+      ],
+      "forecast_base_pct": 0.95,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "XLE makes new 21-session low on falling crude",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation or demand worries from weak labor data extend underperformance",
+      "time_window_catalyst": "Oil-flow headlines and CPI reaction through August 17"
+    },
+    {
+      "continuation_case": "Lower-vol value characteristics and solid domestic activity support relative resilience",
+      "decision": "selected",
+      "evidence": [
+        "LARGE_VALUE quality score 0.710 with prior active rank 0.791 and low-vol rank 0.806",
+        "Distance to 52w high 0.00% and max_drawdown_21s only -1.31%",
+        "July average hourly earnings +3.2% y/y and services PMI 54.1"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "IWD underperforms SPY by >1.5% on growth leadership",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth re-acceleration post-CPI leaves value lagging",
+      "time_window_catalyst": "CPI and PPI releases August 12-13"
+    },
+    {
+      "continuation_case": "Recent relative strength continues if CPI is benign",
+      "decision": "rejected",
+      "evidence": [
+        "TECHNOLOGY active_return_5s +3.69% but quality evidence score only 0.128",
+        "Volatility_21s 35.02% and max_drawdown_21s -10.34%",
+        "Nasdaq Composite up 5.2% for the week to August 7"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "XLK breaks below recent swing low on hotter inflation",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "High vol and deep prior drawdown leave room for sharp mean-reversion after strong week",
+      "time_window_catalyst": "July CPI August 12"
+    },
+    {
+      "continuation_case": "High quality rank and dividend-oriented profile hold up in data week",
+      "decision": "rejected",
+      "evidence": [
+        "UNITED_KINGDOM quality evidence score 0.838 highest among many internationals",
+        "Prior active rank 0.896 and shallow drawdown rank 0.881",
+        "Europe and UK equities near 52w highs with low recent vol"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "EWU active return turns sharply negative versus SPY",
+      "option_id": "UNITED_KINGDOM",
+      "reversal_case": "USD strength or global risk-off hits international equities",
+      "time_window_catalyst": "U.S. CPI spillover and any sterling moves before August 17"
+    },
+    {
+      "continuation_case": "Short-term bounce extends on risk-on breadth",
+      "decision": "rejected",
+      "evidence": [
+        "SEMICONDUCTORS quality score 0.037 lowest tier with prior active rank 0.015",
+        "Volatility_21s 50.35% and distance_52w_high -12.89%",
+        "Active_return_5s +4.29% after deep prior_16s_active -10.43%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "SMH fails to hold Friday levels on any growth scare",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme vol and poor quality score favor fade of recent outperformance",
+      "time_window_catalyst": "CPI week risk sentiment"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.2875,
+  "is_official_score": true,
+  "key_risks": [
+    "Soft July payrolls and revisions raise recession-scare risk-off that hits equities and commodities together",
+    "Stronger-than-expected CPI could reverse rate-cut hopes and pressure gold and duration-sensitive value",
+    "Sudden Hormuz de-escalation would remove energy and gold tailwinds",
+    "High recent SPY momentum leaves room for mean-reversion after 3.5% weekly gain"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "SPY closes below prior-week low on weak CPI or risk-off after data",
+      "option_id": "SP500",
+      "rationale": "Benchmark core holding given record close and broad positive asset share; no stronger diversified active edge clears hurdle cleanly after labor softness.",
+      "time_window_catalyst": "July CPI release August 12 and retail sales August 14"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Gold reverses more than half of 5-session gain on stronger dollar or risk-on equity melt-up",
+      "option_id": "GOLD",
+      "rationale": "Geopolitical oil-flow uncertainty and recent relative strength support short-horizon safe-haven bid above SPY base.",
+      "time_window_catalyst": "Unresolved Strait of Hormuz arrangements and any Middle East escalation headlines before August 17"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.95,
+      "invalidation_condition": "Brent drops sharply on de-escalation news or ENERGY underperforms SPY by >2% mid-week",
+      "option_id": "ENERGY",
+      "rationale": "High quality-evidence score plus supply-restriction facts give base case above SPY despite recent pullback.",
+      "time_window_catalyst": "Continued Hormuz flow restrictions and Brent price reaction through the week"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Value lags as Nasdaq re-accelerates post-CPI",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Strong prior active rank, low vol, and shallow drawdown support modest outperformance versus growth-heavy SPY on data week.",
+      "time_window_catalyst": "CPI and PPI prints August 12-13 favoring value rotation if inflation cools"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.7375,
+  "portfolio_rationale": "Core SPY exposure anchored to record levels and positive breadth, overlaid with gold and energy for geopolitics/supply facts and large-value for quality and defensive tilt. All active legs carry base forecasts above SPY and respect the 50% cluster cap.",
+  "provider": "xai",
+  "rationale_summary": "One-week window dominated by CPI/PPI/retail data and unresolved oil-flow risk. Portfolio mixes benchmark beta with higher-base gold, energy, and value while staying inside allocation and cluster rules.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-09-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17440,
+    "latency_seconds": 50.79487858293578,
+    "output_tokens": 2416,
+    "reasoning_tokens": 484,
+    "total_tokens": 20340
+  }
+}

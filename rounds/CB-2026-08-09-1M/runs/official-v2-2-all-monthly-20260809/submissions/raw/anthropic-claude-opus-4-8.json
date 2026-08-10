@@ -1,0 +1,181 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record highs with solid services activity and stable Fed support continued grind higher.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at record 7,757.64, up 3.6% for the week",
+        "Q2 GDP +1.5% annualized, ISM Services 54.1",
+        "Fed on hold at 3.50-3.75%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Broad equity drawdown on macro shock",
+      "option_id": "SP500",
+      "reversal_case": "Weak July payrolls (-23k) and downward revisions signal labor softening.",
+      "time_window_catalyst": "Aug 12 CPI, Jackson Hole, Sep 4 jobs"
+    },
+    {
+      "continuation_case": "Safe-haven demand plus falling real-yield backdrop and geopolitical tension sustain gold rally.",
+      "decision": "selected",
+      "evidence": [
+        "Gold 5s +7.23%, 21s +5.38%",
+        "Distance from 52w high -19.58%",
+        "Middle East conflict cited by FOMC as elevated uncertainty"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Real yields rise materially and dollar strengthens",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar rally or real-yield spike reverses momentum; deep drawdown history shows volatility.",
+      "time_window_catalyst": "Middle East/Hormuz, Jackson Hole policy signals"
+    },
+    {
+      "continuation_case": "Strong recent leadership with growth sentiment carrying into September.",
+      "decision": "selected",
+      "evidence": [
+        "Software 5s +8.57%, active 21s +6.52%",
+        "Recent pullback rank low (0.045) implying room",
+        "Beta 1.18 to SPY"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Growth selloff on hawkish repricing",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High volatility (34.6%) and rate sensitivity could sharply reverse.",
+      "time_window_catalyst": "Tech earnings and growth sentiment"
+    },
+    {
+      "continuation_case": "Mega-cap tech leadership persists.",
+      "decision": "rejected",
+      "evidence": [
+        "QQQ 5s +5.09%, active 21s -2.90%",
+        "Beta 1.42",
+        "Distance from high -2.99%"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Base below SPY hurdle",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Negative recent active return signals fading momentum.",
+      "time_window_catalyst": "Tech earnings, CPI"
+    },
+    {
+      "continuation_case": "Value rotation with defensive characteristics.",
+      "decision": "rejected",
+      "evidence": [
+        "IWD active 21s +1.67%",
+        "Low volatility 11.37%, shallow drawdown",
+        "Beta 0.70"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Growth outperforms value sharply",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Underperforms in growth-led rally.",
+      "time_window_catalyst": "CPI, jobs report"
+    },
+    {
+      "continuation_case": "Defensive stability amid labor softening.",
+      "decision": "rejected",
+      "evidence": [
+        "XLV 5s +1.93%",
+        "Low beta 0.28",
+        "Shallow drawdown -3.74%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Base below SPY hurdle",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Lags in risk-on tape.",
+      "time_window_catalyst": "Sector earnings"
+    },
+    {
+      "continuation_case": "Labor softening supports rate cuts and bonds.",
+      "decision": "rejected",
+      "evidence": [
+        "IEF 5s +0.58%",
+        "Low volatility 4.99%",
+        "Weak payrolls could aid duration"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Yields rise on hot inflation",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Elevated inflation (CPI 3.5%) keeps yields high.",
+      "time_window_catalyst": "FOMC minutes, jobs report"
+    },
+    {
+      "continuation_case": "n/a",
+      "decision": "rejected",
+      "evidence": [
+        "placeholder"
+      ],
+      "forecast_base_pct": 0,
+      "forecast_high_pct": 0,
+      "forecast_low_pct": 0,
+      "invalidation_condition": "n/a",
+      "option_id": "GOLD",
+      "reversal_case": "n/a",
+      "time_window_catalyst": "n/a"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.62,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot CPI/PPI print reversing risk sentiment before exit",
+    "Gold reversal if dollar and real yields rise",
+    "Tech/software volatility from rate repricing or earnings misses"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 45,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "CPI or jobs shock triggers hawkish repricing and equity drawdown",
+      "option_id": "SP500",
+      "rationale": "Core broad-market exposure at record highs with solid GDP and services activity.",
+      "time_window_catalyst": "Aug 12 CPI, Aug 27-29 Jackson Hole, Sep 4 jobs report"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Real yields spike or dollar rallies sharply reversing gold",
+      "option_id": "GOLD",
+      "rationale": "Deep 52w drawdown (-19.6%) with strong 5s/21s momentum; safe-haven amid Middle East conflict and falling real-yield backdrop.",
+      "time_window_catalyst": "Middle East/Hormuz tension, Fed policy signals at Jackson Hole"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Growth/tech selloff on rate repricing or weak guidance",
+      "option_id": "SOFTWARE",
+      "rationale": "Strong recent leadership (5s +8.6%, positive active 21s) with deep recent pullback rank giving room to run.",
+      "time_window_catalyst": "Tech earnings follow-through and growth sentiment into September"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.42,
+  "portfolio_rationale": "Anchored to SPY with a gold hedge for geopolitical/real-rate protection and a software growth tilt showing recent relative strength and constructive positioning.",
+  "provider": "anthropic",
+  "rationale_summary": "Balanced allocation combining broad US equity core, precious-metals diversification, and a growth-tech satellite to modestly exceed SPY.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-09-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28193,
+    "latency_seconds": 40.48338347999379,
+    "output_tokens": 2497,
+    "total_tokens": 30690
+  }
+}

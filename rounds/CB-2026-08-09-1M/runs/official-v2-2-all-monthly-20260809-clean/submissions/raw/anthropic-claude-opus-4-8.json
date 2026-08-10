@@ -1,0 +1,183 @@
+{
+  "benchmark_expected_return_pct": 0.8,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record highs with solid services and consumer spending support continued grind higher.",
+      "decision": "selected",
+      "evidence": [
+        "Closed Aug 7 at record 7757.64, +3.6% for week",
+        "Q2 GDP +1.5%, services PMI 54.1",
+        "Fed on hold at 3.50-3.75%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Drawdown >5% on inflation or geopolitical shock",
+      "option_id": "SP500",
+      "reversal_case": "Weak July payrolls (-23k) and downward revisions signal labor softening.",
+      "time_window_catalyst": "CPI Aug 12, Jackson Hole, Sept 4 jobs"
+    },
+    {
+      "continuation_case": "High prior trend with deep pullback sets up mean-reversion rebound.",
+      "decision": "selected",
+      "evidence": [
+        "Top quality-evidence score 0.778",
+        "Prior active rank 0.910, recent pullback rank 0.985",
+        "return_5s +7.05%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "XBI breaks recent support or financing tightens",
+      "option_id": "BIOTECH",
+      "reversal_case": "Negative 21s active return (-7.07%) shows recent underperformance may persist.",
+      "time_window_catalyst": "Rate stability supports risk appetite into Jackson Hole"
+    },
+    {
+      "continuation_case": "Strong recent relative momentum and improving breadth.",
+      "decision": "selected",
+      "evidence": [
+        "active_return_21s +6.52%, best in tech",
+        "return_5s +8.57%",
+        "prior active rank 0.851"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "IGV drops >5% or hot CPI spikes rates",
+      "option_id": "SOFTWARE",
+      "reversal_case": "Low recent pullback rank 0.045 signals stretched, low margin of safety.",
+      "time_window_catalyst": "Tech earnings momentum, stable rates"
+    },
+    {
+      "continuation_case": "Strong AI-driven demand and top prior trend.",
+      "decision": "rejected",
+      "evidence": [
+        "Highest prior active rank 1.000",
+        "volatility_63s 55%",
+        "active_return_21s -6.99%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -10.0,
+      "invalidation_condition": "SMH drawdown accelerates past recent lows",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Extreme volatility and recent negative active return raise drawdown risk.",
+      "time_window_catalyst": "AI capex updates"
+    },
+    {
+      "continuation_case": "Safe-haven demand amid Middle East conflict.",
+      "decision": "rejected",
+      "evidence": [
+        "return_5s +7.23%",
+        "active_return_21s +2.51%",
+        "lowest quality score 0.113"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Real yields rise sharply",
+      "option_id": "GOLD",
+      "reversal_case": "Very deep drawdown (-19.6% from high) and weak quality evidence.",
+      "time_window_catalyst": "Geopolitical escalation"
+    },
+    {
+      "continuation_case": "Recent strength and positive active return.",
+      "decision": "rejected",
+      "evidence": [
+        "return_5s +4.82%",
+        "active_return_21s +2.31%",
+        "prior active rank 0.328"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Commodity demand weakens",
+      "option_id": "MATERIALS",
+      "reversal_case": "Weak prior trend and low quality score 0.302.",
+      "time_window_catalyst": "Industrial production Aug 18"
+    },
+    {
+      "continuation_case": "Labor softening could drive duration rally.",
+      "decision": "rejected",
+      "evidence": [
+        "return_5s +1.03%",
+        "active_return_21s -4.52%",
+        "30y yield 5.19%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Inflation reaccelerates",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation (core PCE 3.3%) keeps long yields high.",
+      "time_window_catalyst": "CPI Aug 12, FOMC minutes"
+    },
+    {
+      "continuation_case": "Defensive ballast if equities correct.",
+      "decision": "rejected",
+      "evidence": [
+        "return_5s +0.59%",
+        "active_return_21s -3.11%",
+        "low volatility"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yields spike on hot data",
+      "option_id": "AGGREGATE_BONDS",
+      "reversal_case": "Base return below SPY hurdle.",
+      "time_window_catalyst": "CPI, jobs report"
+    }
+  ],
+  "confidence": 0.5,
+  "expected_alpha_vs_sp500_pct": 0.49,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot July CPI on Aug 12 reprices rates and hits high-beta growth/biotech",
+    "Middle East oil supply shock triggers broad risk-off",
+    "High-beta tech sleeves amplify any market drawdown"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 45,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Core PCE reaccelerates or oil spike triggers risk-off drawdown >5%",
+      "option_id": "SP500",
+      "rationale": "Core broad-market exposure at record highs with solid GDP and services momentum.",
+      "time_window_catalyst": "Aug 12 CPI, Aug 27-29 Jackson Hole, Sept 4 jobs report"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "XBI breaks below recent support or biotech financing conditions tighten sharply",
+      "option_id": "BIOTECH",
+      "rationale": "Highest quality-evidence score (0.778) with strong prior trend and deep recent pullback offering mean-reversion setup.",
+      "time_window_catalyst": "Continued rate-stability supports risk appetite into Jackson Hole"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "IGV drops below 5% from entry or rates spike on hot CPI",
+      "option_id": "SOFTWARE",
+      "rationale": "Strong positive active return (+6.52% 21s) with best recent relative momentum in tech and improving breadth.",
+      "time_window_catalyst": "Tech earnings momentum and stable rates through September"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.29,
+  "portfolio_rationale": "Core SPY anchor blended with two high-quality-evidence growth sleeves (biotech mean-reversion and software momentum), each in distinct clusters and kept at or below the 50% cluster cap.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight SPY plus biotech and software tilts that clear the SPY base hurdle, exploiting strong quality-evidence scores while respecting cluster caps.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-09-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28193,
+    "latency_seconds": 30.71296643395908,
+    "output_tokens": 2544,
+    "total_tokens": 30737
+  }
+}

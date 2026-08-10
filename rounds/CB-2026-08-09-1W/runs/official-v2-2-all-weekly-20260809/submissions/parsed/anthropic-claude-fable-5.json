@@ -1,0 +1,174 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Record-high momentum with broad breadth (88% positive assets over 5 sessions) and solid private demand",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed Aug 7 at record 7,757.64, +3.6% for the week",
+        "Q2 real final sales to private domestic purchasers grew 3.9% annualized",
+        "FOMC held at 3.50%-3.75% with three dissents preferring a hike"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Core CPI acceleration driving 10y yields sharply above 4.65%",
+      "option_id": "SP500",
+      "reversal_case": "Hot July CPI on Aug 12 reprices rate expectations after hawkish dissents",
+      "time_window_catalyst": "July CPI Aug 12, PPI Aug 13, retail sales Aug 14"
+    },
+    {
+      "continuation_case": "Sticky inflation, a weakening dollar, and geopolitical risk sustain safe-haven demand",
+      "decision": "selected",
+      "evidence": [
+        "CPI 3.5% y/y and core PCE 3.3% y/y with Fed on hold",
+        "IAU +7.23% over 5 sessions and +5.38% over 21 sessions",
+        "Middle East conflict cited as elevating uncertainty in FOMC statement"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Real 10y yield rising materially above 2.40% or geopolitical de-escalation",
+      "option_id": "GOLD",
+      "reversal_case": "Strong momentum could mean-revert if CPI is soft and real yields rise",
+      "time_window_catalyst": "July CPI Aug 12; geopolitical headlines"
+    },
+    {
+      "continuation_case": "Restricted oil flows and elevated Brent support earnings; recent pullback offers rebound entry",
+      "decision": "selected",
+      "evidence": [
+        "Brent at $83.55, up 1.3% Aug 7; Hormuz arrangements unresolved",
+        "XLE -6.95% active over 5 sessions after +9.25% prior 16-session active return",
+        "Energy quality evidence score 0.834, among the highest in the universe"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Reopening agreement announced or Brent below ~$78",
+      "option_id": "ENERGY",
+      "reversal_case": "Hormuz resolution collapses the geopolitical premium and extends the recent selloff",
+      "time_window_catalyst": "Strait of Hormuz developments before Aug 17"
+    },
+    {
+      "continuation_case": "Established relative uptrend, value/dividend composition suits sticky inflation, dollar tailwind",
+      "decision": "selected",
+      "evidence": [
+        "EWU prior 16-session active return +4.93% with -3.04% recent pullback",
+        "Highest quality evidence score among equity options (0.838)",
+        "Dollar weakening: UUP -1.02% over 21 sessions"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "UUP rallying >1% or broad risk-off in developed markets",
+      "option_id": "UNITED_KINGDOM",
+      "reversal_case": "Dollar rebound or global risk-off drags international equities",
+      "time_window_catalyst": "US CPI/PPI Aug 12-13 shaping dollar and global rate paths"
+    },
+    {
+      "continuation_case": "Strong weekly bounce could persist if CPI is benign",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq +5.2% last week but QQQ prior 16-session active return -4.26%",
+        "QQQ 21-session volatility 25.6% with -8.8% max drawdown"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Rates rising on hot CPI hitting long-duration growth stocks",
+      "option_id": "NASDAQ100",
+      "reversal_case": "High beta (1.73) and sticky inflation make it vulnerable to a hot CPI; no independent fundamental catalyst supplied",
+      "time_window_catalyst": "July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Value trend intact in sticky-inflation regime",
+      "decision": "rejected",
+      "evidence": [
+        "Prior 16-session active return +2.83% with modest -1.23% pullback",
+        "Low 9.2% volatility and -1.3% drawdown"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Growth factor resuming leadership after CPI",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth rebound continues post soft CPI",
+      "time_window_catalyst": "July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Weak payrolls (-23k) could rally duration on growth fears",
+      "decision": "rejected",
+      "evidence": [
+        "30y yield at 5.19%, 10y at 4.65%",
+        "CPI 3.5% y/y with three FOMC members preferring a hike"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Hot inflation prints pushing long yields higher",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation and hawkish dissents keep upward yield pressure",
+      "time_window_catalyst": "July CPI Aug 12, PPI Aug 13"
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.395,
+  "is_official_score": true,
+  "key_risks": [
+    "Soft July CPI could lift growth/tech and hurt gold and energy relative to SPY",
+    "Sudden Middle East de-escalation or Hormuz reopening would hit energy and gold",
+    "Hot CPI could trigger broad risk-off dragging all equity holdings",
+    "Dollar rebound would pressure gold and international equities"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Soft CPI print driving real yields higher and dollar strength, or geopolitical de-escalation announcement",
+      "option_id": "GOLD",
+      "rationale": "Elevated inflation (CPI 3.5% y/y), Fed on hold, unresolved Middle East conflict, and strong recent gold momentum (+7.2% 5-session) support safe-haven and real-asset demand into the CPI print.",
+      "time_window_catalyst": "July CPI on Aug 12; ongoing Middle East conflict and Strait of Hormuz uncertainty"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Hormuz reopening agreement or Brent falling below ~$78",
+      "option_id": "ENERGY",
+      "rationale": "Brent at $83.55 with Hormuz flows restricted; energy equities pulled back ~7% vs SPY last week despite strong prior trend (top quality-evidence score 0.834), offering a rebound setup with geopolitical support.",
+      "time_window_catalyst": "Unresolved Strait of Hormuz arrangements; any supply disruption headlines before Aug 17"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.6,
+      "invalidation_condition": "Sharp dollar rally or global risk-off exceeding -2% on VEA",
+      "option_id": "UNITED_KINGDOM",
+      "rationale": "Strong prior relative trend with a recent pullback (quality score 0.838, highest ex-cash), value/dividend tilt benefits from sticky inflation and weakening dollar (UUP -1.0% over 21 sessions).",
+      "time_window_catalyst": "Continued dollar weakness; US CPI/PPI Aug 12-13 shaping global rate expectations"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "Hot CPI reigniting hike expectations after 9-3 FOMC hold with three dissents for a hike",
+      "option_id": "SP500",
+      "rationale": "Benchmark ballast at record highs with solid final private demand growth (3.9%); anchors the portfolio against hot-CPI equity risk.",
+      "time_window_catalyst": "July CPI Aug 12, PPI Aug 13, retail sales Aug 14"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.695,
+  "portfolio_rationale": "With inflation elevated, the Fed on hold amid hawkish dissents, oil supply restricted by the unresolved Hormuz situation, and the dollar weakening, I tilt toward gold, pulled-back energy, and UK value equities while keeping a 25% SPY anchor.",
+  "provider": "anthropic",
+  "rationale_summary": "Real-asset and value tilt (gold, energy, UK) funded from a partial SPY anchor, positioned for sticky-inflation prints and geopolitical supply risk during the Aug 10-17 window.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-09-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28190,
+    "latency_seconds": 51.765692793997005,
+    "output_tokens": 3514,
+    "total_tokens": 31704
+  }
+}
