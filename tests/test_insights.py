@@ -628,3 +628,8 @@ def test_recent_winner_insight_is_horizon_specific_and_model_level() -> None:
     assert calculations["leader_recent_winner_tilt_score"]["value"] == 100
     assert calculations["leader_peer_delta"]["value"] == 100
     assert "5 trading sessions relative to SPY" in calculations["leader_recent_winner_tilt_score"]["formula"]
+
+
+def test_public_number_rounding_matches_javascript_half_up_behavior() -> None:
+    assert insights_module._round_public_number(63.90625) == 63.9063
+    assert insights_module._round_public_number(63.90624) == 63.9062

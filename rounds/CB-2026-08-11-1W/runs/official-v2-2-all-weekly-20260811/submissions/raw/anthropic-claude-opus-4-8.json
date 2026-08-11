@@ -1,0 +1,183 @@
+{
+  "benchmark_expected_return_pct": 0.45,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid earnings and activity support grind higher",
+      "decision": "selected",
+      "evidence": [
+        "SPY +2.03% 5s, strong Q2 earnings ~50% YoY",
+        "ISM Manufacturing 55.6, Services 54.1"
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "CPI surprise pushes SPY below 7,600",
+      "option_id": "SP500",
+      "reversal_case": "Hot CPI/PPI revives rate fears",
+      "time_window_catalyst": "July CPI Aug 12, PPI Aug 13, retail sales Aug 14"
+    },
+    {
+      "continuation_case": "Defensive leadership persists into data week",
+      "decision": "selected",
+      "evidence": [
+        "XLV +2.61% 3s, +1.79% active 5s, near 52w high",
+        "Healthcare employment rose 22k in July"
+      ],
+      "forecast_base_pct": 0.65,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLV breaks prior week low",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation into growth",
+      "time_window_catalyst": "July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Inflation elevated, safe-haven demand",
+      "decision": "selected",
+      "evidence": [
+        "IAU +8.30% 21s, +6.27% active 5s",
+        "Gold up early Aug 11 amid geopolitical uncertainty"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Gold below 4,300",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields or dollar strength",
+      "time_window_catalyst": "July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Supply risk keeps crude bid",
+      "decision": "selected",
+      "evidence": [
+        "XLE +5.01% 3s, highest prior active rank 0.985",
+        "Brent up on Hormuz uncertainty"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Brent falls below $80",
+      "option_id": "ENERGY",
+      "reversal_case": "Hormuz reopens, crude drops",
+      "time_window_catalyst": "Hormuz reopening timing uncertainty"
+    },
+    {
+      "continuation_case": "Precious-metals momentum continues",
+      "decision": "rejected",
+      "evidence": [
+        "SLV +5.96% 3s, +11.22% active 5s",
+        "High volatility 39.5%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Silver reverses below prior week open",
+      "option_id": "SILVER",
+      "reversal_case": "Sharp reversal given deep 52w drawdown -43%",
+      "time_window_catalyst": "July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Value stability in data week",
+      "decision": "rejected",
+      "evidence": [
+        "IWD low vol 9.19%, high quality score 0.723",
+        "Positive prior active return 2.64%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Value underperforms SPY sharply",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth rebounds",
+      "time_window_catalyst": "July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Cooler CPI supports duration",
+      "decision": "rejected",
+      "evidence": [
+        "IEF -2.09% active 5s, high volume z 3.49",
+        "10y yield 4.72%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "10y yield rises above 4.85%",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "Hot inflation lifts yields",
+      "time_window_catalyst": "July CPI Aug 12"
+    },
+    {
+      "continuation_case": "Biotech recovery momentum",
+      "decision": "rejected",
+      "evidence": [
+        "XBI +3.28% 3s, +5.25% active 5s",
+        "High volatility 27.5%"
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "XBI breaks below prior week low",
+      "option_id": "BIOTECH",
+      "reversal_case": "Rate sensitivity and volatility",
+      "time_window_catalyst": "July CPI Aug 12"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.2,
+  "is_official_score": true,
+  "key_risks": [
+    "Cooler CPI could spark growth-stock rotation hurting defensives and gold",
+    "Hormuz reopening could crush energy and oil prices",
+    "Gold pullback if dollar/real yields rise"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.65,
+      "invalidation_condition": "XLV breaks below prior week low or sharp risk-on rotation into growth",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with positive recent active return, low beta, near 52w high, and rising healthcare employment; resilient into CPI/PPI week.",
+      "time_window_catalyst": "July CPI Aug 12 and PPI Aug 13"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Gold falls below 4,300 or real yields spike higher",
+      "option_id": "GOLD",
+      "rationale": "Strong recent momentum (+8.3% 21s, +6.27% active 5s), safe-haven demand amid elevated inflation and geopolitical oil risk.",
+      "time_window_catalyst": "July CPI Aug 12 hotter-than-consensus inflation print"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.45,
+      "invalidation_condition": "CPI surprise triggers rate-fear selloff below 7,600",
+      "option_id": "SP500",
+      "rationale": "Broad benchmark exposure with strong Q2 earnings growth (~50% YoY) and solid ISM data.",
+      "time_window_catalyst": "July CPI/PPI and retail sales during window"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Hormuz reopens and crude falls sharply below $80 Brent",
+      "option_id": "ENERGY",
+      "rationale": "Highest prior active rank, Brent up on Hormuz uncertainty, strong 3s (+5.01%) with low drawdown vs energy peers.",
+      "time_window_catalyst": "Strait of Hormuz reopening uncertainty and crude price moves"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.65,
+  "portfolio_rationale": "Balances defensive quality (healthcare), inflation hedge (gold), benchmark core (SPY), and energy momentum into an inflation-data-heavy week.",
+  "provider": "anthropic",
+  "rationale_summary": "Tilt toward defensives and real assets given elevated inflation prints scheduled and geopolitical energy risk, while retaining SPY core.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28377,
+    "latency_seconds": 39.19341445993632,
+    "output_tokens": 2522,
+    "total_tokens": 30899
+  }
+}

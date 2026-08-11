@@ -1,0 +1,191 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings growth, solid activity per FOMC statement, ISM manufacturing 55.6",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed 7,753.11 on Aug 10, at 52-week high",
+        "FactSet tracking ~50% y/y Q2 earnings growth",
+        "63-session volatility 13.9%, max drawdown -4.5%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Index closes more than 6% below entry",
+      "option_id": "SP500",
+      "reversal_case": "10-year at 4.70% rising, payrolls -23k, elevated inflation and hawkish FOMC dissents",
+      "time_window_catalyst": "July CPI Aug 12, FOMC minutes Aug 19, Sep 4 payrolls, Sep 11 CPI"
+    },
+    {
+      "continuation_case": "Supply disruption premium persists; energy CPI up 15.7% y/y",
+      "decision": "selected",
+      "evidence": [
+        "Brent $89.01 early Aug 11 after 5% Aug 10 rise",
+        "Strait of Hormuz reopening timing uncertain",
+        "XLE active return 21s +6.86%, beta to SPY -0.25"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 11.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Brent below $75",
+      "option_id": "ENERGY",
+      "reversal_case": "Hormuz reopens, crude retraces sharply; XLE prior 105s active -5.0%",
+      "time_window_catalyst": "Hormuz headlines and OPEC supply news before Sep 11"
+    },
+    {
+      "continuation_case": "Defensive leadership with low drawdown and improving relative trend",
+      "decision": "selected",
+      "evidence": [
+        "XLV active 21s +2.33%, at 52-week high",
+        "Beta 0.28, max drawdown -3.7%",
+        "July health-care employment rose 22,000"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "XLV 4% below entry",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Prior 105s active -7.0% shows weak longer trend; policy risk",
+      "time_window_catalyst": "Macro data-driven rotation through September 11"
+    },
+    {
+      "continuation_case": "Commodity strength plus low-volatility profile",
+      "decision": "selected",
+      "evidence": [
+        "EWC active 21s +2.46%, at 52-week high",
+        "Volatility 12.1%, drawdown -3.2%",
+        "Crude and metals strength supports index composition"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "EWC 4% below entry",
+      "option_id": "CANADA",
+      "reversal_case": "Commodity reversal and China PMI at 49.2 weighing on resource demand",
+      "time_window_catalyst": "Crude prices and late-August Canadian bank earnings"
+    },
+    {
+      "continuation_case": "AI capex cycle and strong prior trend",
+      "decision": "rejected",
+      "evidence": [
+        "SMH active 21s -9.21% after prior 105s +42.23%",
+        "Volatility 54.4%, drawdown -24.6%, 14.9% below 52w high"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 16.0,
+      "forecast_low_pct": -16.0,
+      "invalidation_condition": "SMH breaks 10% below entry",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Sharp recent underperformance signals crowded-trade unwind",
+      "time_window_catalyst": "AI capex commentary and macro data"
+    },
+    {
+      "continuation_case": "Safe-haven demand amid supply shocks and elevated inflation",
+      "decision": "rejected",
+      "evidence": [
+        "IAU +8.30% in 5 sessions, gold $4,425.50",
+        "Prior 105s active -27.03%, drawdown -16.0%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Gold below $4,100",
+      "option_id": "GOLD",
+      "reversal_case": "Sharp recent spike vulnerable to mean reversion; rising yields",
+      "time_window_catalyst": "CPI prints and FOMC minutes"
+    },
+    {
+      "continuation_case": "Weak payrolls could pull yields lower",
+      "decision": "rejected",
+      "evidence": [
+        "10-year yield 4.70%, 30-year 5.25%",
+        "TLT 21s return -2.46%, three FOMC members preferred a hike"
+      ],
+      "forecast_base_pct": 0.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "10-year above 5.0%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation and hawkish dissents keep long yields rising",
+      "time_window_catalyst": "CPI Aug 12 and Sep 11"
+    },
+    {
+      "continuation_case": "Strong recent relative momentum",
+      "decision": "rejected",
+      "evidence": [
+        "IGV +7.79% in 5 sessions, active 21s +11.24%",
+        "Volatility 34.8%, drawdown -21.3%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 12.0,
+      "forecast_low_pct": -10.0,
+      "invalidation_condition": "IGV 8% below entry",
+      "option_id": "SOFTWARE",
+      "reversal_case": "Very high volatility and lowest recent-pullback rank suggest overextension",
+      "time_window_catalyst": "Late-cycle software earnings in late August"
+    }
+  ],
+  "confidence": 0.53,
+  "cost_usd": 0.21663499999999997,
+  "expected_alpha_vs_sp500_pct": 0.52,
+  "is_official_score": true,
+  "key_risks": [
+    "Rapid Hormuz reopening collapses crude and energy equities",
+    "Hot July/August CPI lifts the 10-year above 5% and compresses equity multiples",
+    "Weak August payrolls trigger a broad risk-off that hits cyclical tilts more than SPY",
+    "Healthcare policy headlines reverse the sector's recent relative strength"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "CPI reaccelerates above 3.8% y/y and 10-year yield exceeds 5.0%",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure with ~50% y/y Q2 earnings growth backdrop and low relative volatility.",
+      "time_window_catalyst": "July/August CPI, FOMC minutes, August employment report"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.2,
+      "invalidation_condition": "Brent falls back below $75 on a confirmed Hormuz reopening",
+      "option_id": "ENERGY",
+      "rationale": "Brent near $89 with Strait of Hormuz reopening uncertain; energy shows strong recent active return and negative SPY beta as a hedge.",
+      "time_window_catalyst": "Hormuz reopening headlines; weekly inventory and OPEC decisions before Sep 11"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "XLV falls more than 4% below entry or adverse policy headlines hit pharma",
+      "option_id": "HEALTHCARE",
+      "rationale": "Positive 21-session active return, at 52-week high, low beta and shallow drawdown; defensive ballast if growth data soften.",
+      "time_window_catalyst": "Sector rotation around August CPI and August payrolls"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Crude drops below $75 or EWC breaks 4% below entry",
+      "option_id": "CANADA",
+      "rationale": "Energy/materials-levered developed market with low volatility (12.1%) and positive active return at 52-week high.",
+      "time_window_catalyst": "Crude and base-metal prices, Canadian bank earnings in late August"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.52,
+  "portfolio_rationale": "Keep a large SPY core, then add three modest, low-correlation tilts: energy for the live Hormuz supply risk, healthcare for defensive quality at highs, and Canada for commodity beta with unusually low volatility. Avoids crowded, very-high-volatility semiconductor/momentum exposure where recent active returns are already sharply negative.",
+  "provider": "anthropic",
+  "rationale_summary": "40% SPY core plus energy, healthcare and Canada tilts backed by supplied crude, active-return and volatility data; expected alpha is modest and deliberately low-variance.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1M",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.21663499999999997,
+    "input_tokens": 28367,
+    "latency_seconds": 46.918901508906856,
+    "output_tokens": 2992,
+    "total_tokens": 31359
+  }
+}

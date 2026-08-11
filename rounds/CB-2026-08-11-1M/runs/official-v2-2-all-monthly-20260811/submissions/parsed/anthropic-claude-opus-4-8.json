@@ -1,0 +1,192 @@
+{
+  "benchmark_expected_return_pct": 1.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings and cooling inflation support continued grind higher",
+      "decision": "selected",
+      "evidence": [
+        "Q2 earnings ~50% YoY per FactSet",
+        "June CPI cooled to 3.5% YoY, core 2.6%",
+        "SPY 21-day return 2.39%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "CPI reaccelerates or 10-year yield spikes above 5%",
+      "option_id": "SP500",
+      "reversal_case": "Soft July payrolls (-23k) signals slowing economy",
+      "time_window_catalyst": "CPI, PPI, FOMC minutes, August jobs before exit"
+    },
+    {
+      "continuation_case": "Defensive rotation as labor market softens",
+      "decision": "selected",
+      "evidence": [
+        "Active return 21s +2.33%",
+        "5-day return 3.82%",
+        "Low beta 0.276, shallow drawdown -3.74%"
+      ],
+      "forecast_base_pct": 1.7,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Healthcare underperforms SPY by >2% in first two weeks",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Growth risk-on rally leaves low-beta defensives behind",
+      "time_window_catalyst": "Soft labor data driving defensive flows"
+    },
+    {
+      "continuation_case": "Steeper curve and stable credit support banks",
+      "decision": "selected",
+      "evidence": [
+        "Active return 21s +1.37%",
+        "Very shallow drawdown -2.08%",
+        "Fed describes activity as solid"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Credit spreads widen materially or regional bank stress",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit spread widening or regional bank stress",
+      "time_window_catalyst": "Yield curve moves post-FOMC minutes"
+    },
+    {
+      "continuation_case": "Quality/dividend flows persist amid uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "Best active return 21s +3.13%",
+        "Low volatility 11.73%",
+        "Low beta 0.253"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Dividend factor lags SPY by >2% mid-window",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth-led rally away from defensives",
+      "time_window_catalyst": "Defensive rotation amid soft macro"
+    },
+    {
+      "continuation_case": "Oil strength on geopolitical supply risk",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 21s +6.86%",
+        "Brent up on Hormuz uncertainty",
+        "High volatility 24.78%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Brent falls below $80",
+      "option_id": "ENERGY",
+      "reversal_case": "Hormuz reopening collapses oil premium",
+      "time_window_catalyst": "Strait of Hormuz developments"
+    },
+    {
+      "continuation_case": "Safe-haven demand and falling real rates",
+      "decision": "rejected",
+      "evidence": [
+        "5-day return 8.30%",
+        "Active return 21s +4.40%",
+        "Deep drawdown -16.01%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Gold falls back below prior support",
+      "option_id": "GOLD",
+      "reversal_case": "Overbought after sharp rally, mean reversion",
+      "time_window_catalyst": "Inflation data and risk sentiment"
+    },
+    {
+      "continuation_case": "Duration rallies if growth slows",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 21s -2.91%",
+        "10-year yield rose to 4.72%",
+        "Low volatility 4.15%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yields break above 5%",
+      "option_id": "AGGREGATE_BONDS",
+      "reversal_case": "Sticky inflation keeps yields elevated",
+      "time_window_catalyst": "CPI/PPI and FOMC minutes"
+    },
+    {
+      "continuation_case": "European earnings and flows continue",
+      "decision": "rejected",
+      "evidence": [
+        "Active return 21s +1.77%",
+        "5-day return 1.46%",
+        "At 52w high"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Europe lags SPY by >2%",
+      "option_id": "EUROPE",
+      "reversal_case": "Dollar strength or global risk-off",
+      "time_window_catalyst": "ECB and global macro data"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.235,
+  "is_official_score": true,
+  "key_risks": [
+    "Sharp risk-on rotation into mega-cap tech leaving defensives behind",
+    "CPI/PPI reacceleration lifting yields and pressuring equities",
+    "Labor market deterioration triggering broad equity drawdown"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "CPI reaccelerates sharply or 10-year yield spikes above 5%",
+      "option_id": "SP500",
+      "rationale": "Core broad US large-cap exposure with strong Q2 earnings growth (~50% YoY) and cooling inflation supporting the tape.",
+      "time_window_catalyst": "July/August CPI, PPI, FOMC minutes, August jobs report before Sept 11 exit"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.7,
+      "invalidation_condition": "Sharp risk-on rotation into high-beta tech leaves defensives behind",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with positive active return, low beta, shallow drawdown, and strong recent 5-day momentum (3.82%).",
+      "time_window_catalyst": "Defensive rotation amid soft labor data before exit"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Regional bank stress or sharp credit spread widening",
+      "option_id": "FINANCIALS",
+      "rationale": "Positive active return, very shallow drawdown, low volatility, and stable credit backdrop with solid economy per Fed.",
+      "time_window_catalyst": "Yield curve steepening and stable credit spreads"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Strong growth risk-on rally pulls flows away from dividend defensives",
+      "option_id": "DIVIDEND",
+      "rationale": "Best recent active return (3.13%) with low volatility and defensive profile suited to a mixed macro backdrop.",
+      "time_window_catalyst": "Defensive/quality flows amid labor softening"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.435,
+  "portfolio_rationale": "Barbell of core SPY plus defensive/quality tilts (healthcare, financials, dividend) that showed positive active returns, low volatility, and shallow drawdowns, appropriate given soft labor data and elevated but cooling inflation.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight defensive-quality equity sectors with strong relative trends and low drawdown while keeping SPY as core, aiming for modest alpha with reduced volatility.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28373,
+    "latency_seconds": 40.29030459886417,
+    "output_tokens": 2639,
+    "total_tokens": 31012
+  }
+}

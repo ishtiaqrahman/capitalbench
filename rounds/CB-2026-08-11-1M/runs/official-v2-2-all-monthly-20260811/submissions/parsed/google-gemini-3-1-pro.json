@@ -1,0 +1,162 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong corporate earnings and solid economic activity support continued equity gains.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7,753.11, down 0.1%.",
+        "FactSet tracking roughly 50% year-over-year second-quarter earnings growth."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant miss in earnings or a spike in inflation.",
+      "option_id": "SP500",
+      "reversal_case": "Inflation concerns or geopolitical shocks could trigger a market correction.",
+      "time_window_catalyst": "Upcoming CPI and PPI data releases."
+    },
+    {
+      "continuation_case": "Geopolitical uncertainty and inflation hedging demand support higher prices.",
+      "decision": "selected",
+      "evidence": [
+        "Gold up 0.1% at $4,425.50 in early trading.",
+        "IAU return_5s is 8.30%."
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A sharp rise in real interest rates or a strong US dollar rally.",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields or a stronger dollar could pressure gold.",
+      "time_window_catalyst": "Continued geopolitical tensions and inflation data releases."
+    },
+    {
+      "continuation_case": "Supply disruptions and geopolitical risks keep oil prices elevated.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude at $87.72 after a 5% rise.",
+        "USO return_5s is 3.11%."
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A rapid de-escalation of geopolitical tensions or a significant global growth slowdown.",
+      "option_id": "OIL",
+      "reversal_case": "Demand destruction from slowing growth or de-escalation of conflicts.",
+      "time_window_catalyst": "Developments in the Strait of Hormuz and global demand indicators."
+    },
+    {
+      "continuation_case": "Defensive characteristics and steady earnings growth attract capital.",
+      "decision": "selected",
+      "evidence": [
+        "XLV return_5s is 3.82%.",
+        "July health-care employment rose 22,000."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A strong risk-on rally favoring high-beta cyclical sectors.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Regulatory changes or a shift towards cyclical sectors.",
+      "time_window_catalyst": "Earnings reports and defensive sector rotation."
+    },
+    {
+      "continuation_case": "Provides stable yield and capital preservation in a volatile market.",
+      "decision": "rejected",
+      "evidence": [
+        "1-month Treasury yield at 3.79%.",
+        "BIL return_5s is 0.07%."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 0.5,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "An unexpected rate cut by the Federal Reserve.",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "A sudden drop in short-term interest rates.",
+      "time_window_catalyst": "Federal Reserve policy expectations."
+    },
+    {
+      "continuation_case": "Strong earnings and AI investments drive continued outperformance.",
+      "decision": "rejected",
+      "evidence": [
+        "XLK return_5s is 4.65%.",
+        "Productivity and capital spending described as strong by the Fed."
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "A significant rise in long-term interest rates.",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Valuation concerns or rising interest rates pressure growth stocks.",
+      "time_window_catalyst": "Tech earnings and economic data affecting rate expectations."
+    },
+    {
+      "continuation_case": "Defensive positioning if economic growth slows significantly.",
+      "decision": "rejected",
+      "evidence": [
+        "XLU return_5s is -2.77%.",
+        "10-year Treasury yield at 4.70%."
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A sharp increase in Treasury yields.",
+      "option_id": "UTILITIES",
+      "reversal_case": "Rising interest rates make utility yields less attractive.",
+      "time_window_catalyst": "Interest rate movements and inflation data."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 1.05,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden resolution to geopolitical conflicts could lead to a sharp drop in oil and gold prices.",
+    "A stronger-than-expected US dollar could pressure commodity prices.",
+    "A broad market rally driven by technology could cause this defensive portfolio to underperform the S&P 500."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "A sharp rise in real interest rates or a strong US dollar rally.",
+      "option_id": "GOLD",
+      "rationale": "Gold has shown strong recent momentum and acts as a hedge against geopolitical uncertainty and potential equity volatility.",
+      "time_window_catalyst": "Continued geopolitical tensions and inflation data releases."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "A rapid de-escalation of geopolitical tensions or a significant global growth slowdown.",
+      "option_id": "OIL",
+      "rationale": "Oil prices are supported by supply concerns and recent price strength.",
+      "time_window_catalyst": "Developments in the Strait of Hormuz and global demand indicators."
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "A strong risk-on rally favoring high-beta cyclical sectors.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare offers defensive growth characteristics and has shown positive recent returns.",
+      "time_window_catalyst": "Earnings reports and defensive sector rotation."
+    }
+  ],
+  "portfolio_expected_return_pct": 2.05,
+  "portfolio_rationale": "The portfolio is positioned defensively with a focus on commodities and defensive equities. Gold and oil provide hedges against inflation and geopolitical risks, while healthcare offers stable growth. This allocation aims to outperform the broader market in an uncertain environment.",
+  "provider": "google",
+  "rationale_summary": "Defensive positioning with commodities and healthcare to navigate geopolitical and inflation risks.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17545,
+    "latency_seconds": 20.894738249015063,
+    "output_tokens": 1965,
+    "reasoning_tokens": 631,
+    "total_tokens": 20141
+  }
+}

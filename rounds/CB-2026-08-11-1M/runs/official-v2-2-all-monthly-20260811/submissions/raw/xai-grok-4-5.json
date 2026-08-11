@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid productivity, capital spending, and earnings growth sustain modest equity drift higher.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed 7753.11 on Aug 10, down 0.1%, near 52-week high distance -0.03%",
+        "FactSet tracking roughly 50% y/y Q2 earnings growth for S&P 500 companies",
+        "FOMC held funds rate 3.50%-3.75% with solid activity but elevated inflation noted"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SPY breaks below recent range with broadening negative breadth and rising yields",
+      "option_id": "SP500",
+      "reversal_case": "Soft July payrolls, elevated energy inflation, or hawkish minutes trigger multiple compression.",
+      "time_window_catalyst": "July CPI Aug 12, FOMC minutes Aug 19, August employment Sep 4, August CPI Sep 11"
+    },
+    {
+      "continuation_case": "Supply-disruption premium and momentum in crude persist through the monthly window.",
+      "decision": "selected",
+      "evidence": [
+        "Brent at $87.72 after 5% Aug 10 rise; early Aug 11 Brent $89.01 and WTI $83.54",
+        "USO return_5s 3.11%, return_21s 15.84%, prior_105s_active_return 31.29%",
+        "Timing and terms of any Strait of Hormuz reopening remained uncertain"
+      ],
+      "forecast_base_pct": 5.0,
+      "forecast_high_pct": 14.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Multi-session crude drop with confirmed supply normalization headlines",
+      "option_id": "OIL",
+      "reversal_case": "Clear Hormuz reopening path or demand scare collapses the geopolitical premium.",
+      "time_window_catalyst": "Ongoing Hormuz uncertainty and energy-price prints before Sep 11 close"
+    },
+    {
+      "continuation_case": "Equity energy follows sustained higher oil prices and supply risk.",
+      "decision": "selected",
+      "evidence": [
+        "XLE active_return_21s +6.86% with return_5s 2.36%",
+        "Brent and WTI higher into the cutoff with Hormuz uncertainty noted by AP",
+        "Energy cluster quality and price context show recent relative strength versus SPY"
+      ],
+      "forecast_base_pct": 3.5,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "XLE underperforms SPY while oil reverses August gains",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil mean-reversion or risk-off equity selloff hits cyclical energy names.",
+      "time_window_catalyst": "Crude price path and any geopolitical supply headlines in the scoring window"
+    },
+    {
+      "continuation_case": "Recent relative strength and growth/earnings support continue into the month.",
+      "decision": "selected",
+      "evidence": [
+        "IGV return_5s 7.79% and active_return_21s +11.24%",
+        "S&P earnings growth backdrop reported strong via FactSet aggregate",
+        "Software distance_52w_high -10.83% after sharp recent bounce"
+      ],
+      "forecast_base_pct": 3.0,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "IGV loses 5s relative leadership and breaks recent bounce lows",
+      "option_id": "SOFTWARE",
+      "reversal_case": "Rates backup or profit-taking after the sharp 5-session rally reverses gains.",
+      "time_window_catalyst": "Residual post-earnings and AI/software demand narrative before exit"
+    },
+    {
+      "continuation_case": "Near-high positioning and defensive demand hold if macro data softens.",
+      "decision": "selected",
+      "evidence": [
+        "XLV return_5s 3.82%, active_return_21s +2.33%, distance_52w_high 0.00%",
+        "July health-care employment rose 22,000 amid softer overall payrolls",
+        "Defensive sector context with lower beta_spy_252s 0.276"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "XLV breaks below recent highs with sustained underperformance versus SPY",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Broad risk-on rotation away from defensives if growth data re-accelerates.",
+      "time_window_catalyst": "CPI, employment, and any defensive rotation around data releases"
+    },
+    {
+      "continuation_case": "Prior strong trend and AI/chip demand resume after pullback.",
+      "decision": "rejected",
+      "evidence": [
+        "SMH prior active rank 1.000 and quality evidence score 0.760",
+        "return_5s 4.39% but active_return_21s -9.21% and max_drawdown_63s -24.62%",
+        "High volatility_63s 54.38% and distance_52w_high -14.87%"
+      ],
+      "forecast_base_pct": 2.2,
+      "forecast_high_pct": 11.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "SMH extends active underperformance with new drawdown lows",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Elevated vol and deep drawdown risk further mean reversion.",
+      "time_window_catalyst": "Any semiconductor supply-chain or demand updates before Sep 11"
+    },
+    {
+      "continuation_case": "Safe-haven bid continues if geopolitical or inflation risks rise.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU return_5s 8.30% and active_return_21s +4.40%",
+        "Gold early Aug 11 at $4425.50 up 0.1%; prior_105s_active_return -27.03%",
+        "Quality evidence score low at 0.113 with deep prior underperformance"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Gold gives back August bounce on rising real yields or USD strength",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger dollar or real-yield rise reverses the short-term bounce.",
+      "time_window_catalyst": "Inflation data and any risk-off flows tied to energy geopolitics"
+    },
+    {
+      "continuation_case": "Momentum and at-high positioning extend with tech risk appetite.",
+      "decision": "rejected",
+      "evidence": [
+        "CIBR return_5s 7.12%, active_return_21s +7.10%, prior_105s_active_return 27.33%",
+        "distance_52w_high 0.00% and quality score 0.502",
+        "Technology-and-growth cluster already represented by stronger software case"
+      ],
+      "forecast_base_pct": 2.4,
+      "forecast_high_pct": 7.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "CIBR rolls over from 52-week high with negative active returns",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High recent gains invite profit-taking if growth stocks correct.",
+      "time_window_catalyst": "Continued cyber/tech spending narrative in the monthly window"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 2.65,
+  "is_official_score": true,
+  "key_risks": [
+    "Rapid de-escalation on Strait of Hormuz could reverse oil and energy gains",
+    "Higher-than-expected July/August inflation or hawkish FOMC minutes could pressure equities and duration-sensitive growth",
+    "High volatility in oil and software could produce large adverse swings inside the scoring window",
+    "Cluster concentration in energy leaves portfolio exposed to commodity-specific shocks"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 5.0,
+      "invalidation_condition": "Sustained multi-day crude decline with Hormuz reopening clarity and oil inventories rising",
+      "option_id": "OIL",
+      "rationale": "Geopolitical supply risk and strong recent crude momentum support higher base return than SPY over the one-month window.",
+      "time_window_catalyst": "Unresolved Strait of Hormuz timing and elevated Brent/WTI prints into September 11 exit"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 3.5,
+      "invalidation_condition": "Sharp oil reversal below recent August highs with sector underperformance versus SPY",
+      "option_id": "ENERGY",
+      "rationale": "Equity energy exposure captures oil upside with somewhat lower pure-commodity beta while still clearing the SPY base hurdle.",
+      "time_window_catalyst": "Continued energy-price strength and any supply-disruption headlines before exit close"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 3.0,
+      "invalidation_condition": "Break of recent software relative strength with rates spike or growth-stock selloff",
+      "option_id": "SOFTWARE",
+      "rationale": "Strong 5-session relative strength and solid earnings backdrop support a base case above SPY without exceeding the tech cluster cap.",
+      "time_window_catalyst": "Post-earnings residual momentum and any AI/software demand commentary in the window"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Healthcare loses relative strength and falls through recent highs on risk-on breadth expansion",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector near 52-week high with positive active 21s return offers diversification and base above SPY.",
+      "time_window_catalyst": "August employment and CPI prints that favor defensive rotation if growth softens"
+    }
+  ],
+  "portfolio_expected_return_pct": 3.65,
+  "portfolio_rationale": "Portfolio concentrates in energy-linked exposures benefiting from elevated crude and Hormuz uncertainty while adding software momentum and healthcare ballast, all with base forecasts above SPY and energy cluster at the 50% cap.",
+  "provider": "xai",
+  "rationale_summary": "One-month alpha is sought via oil/energy continuation plus selective growth and defensive equity sleeves that clear the SPY base hurdle under the supplied macro and price context.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17332,
+    "latency_seconds": 60.53604139201343,
+    "output_tokens": 2698,
+    "reasoning_tokens": 789,
+    "total_tokens": 20819
+  }
+}

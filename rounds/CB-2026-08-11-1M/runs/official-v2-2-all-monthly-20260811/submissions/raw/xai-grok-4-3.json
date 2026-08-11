@@ -1,0 +1,171 @@
+{
+  "benchmark_expected_return_pct": 1.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Earnings growth and solid activity data persist",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7753.11 on Aug 10",
+        "FactSet 50% yoy Q2 earnings growth"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.9%",
+      "option_id": "SP500",
+      "reversal_case": "Inflation reaccelerates and yields spike",
+      "time_window_catalyst": "July CPI and PPI releases plus FOMC minutes"
+    },
+    {
+      "continuation_case": "Geopolitical supply risk keeps oil elevated",
+      "decision": "selected",
+      "evidence": [
+        "Brent rose to 89.01 early Aug 11",
+        "XLE 6.86% active return over 21 sessions"
+      ],
+      "forecast_base_pct": 2.6,
+      "forecast_high_pct": 5.1,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Brent crude falls below $82",
+      "option_id": "ENERGY",
+      "reversal_case": "Strait of Hormuz reopens quickly",
+      "time_window_catalyst": "Strait of Hormuz reopening timeline updates"
+    },
+    {
+      "continuation_case": "Export and corporate earnings momentum holds",
+      "decision": "selected",
+      "evidence": [
+        "EWJ 3.38% 5-session return",
+        "Japan equities show positive active return"
+      ],
+      "forecast_base_pct": 1.9,
+      "forecast_high_pct": 3.4,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "Yen strengthens below 140 per USD",
+      "option_id": "JAPAN",
+      "reversal_case": "Yen carry trade unwind accelerates",
+      "time_window_catalyst": "August ISM manufacturing data"
+    },
+    {
+      "continuation_case": "AI spending cycle continues",
+      "decision": "rejected",
+      "evidence": [
+        "XLK 4.65% 5-session return but -2.10% active 21s"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Nasdaq composite falls 3% from entry",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Rate volatility hits growth valuations",
+      "time_window_catalyst": "Semiconductor earnings reports"
+    },
+    {
+      "continuation_case": "Safe-haven demand from geopolitical tension",
+      "decision": "rejected",
+      "evidence": [
+        "Gold at 4425.50 early Aug 11"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Gold drops below 4300",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar strengthens on higher real yields",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Flight to safety on equity weakness",
+      "decision": "rejected",
+      "evidence": [
+        "10-year yield at 4.70%"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 0.8,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "10-year yield exceeds 4.85%",
+      "option_id": "INTERMEDIATE_TREASURY",
+      "reversal_case": "CPI surprise pushes yields higher",
+      "time_window_catalyst": "July CPI release"
+    },
+    {
+      "continuation_case": "Broad equity participation improves",
+      "decision": "rejected",
+      "evidence": [
+        "VTI 2.08% 5-session return"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 2.6,
+      "forecast_low_pct": 0.1,
+      "invalidation_condition": "Equal-weight RSP underperforms SPY by 1%",
+      "option_id": "TOTAL_US_MARKET",
+      "reversal_case": "Small-cap underperformance persists",
+      "time_window_catalyst": "July retail sales"
+    },
+    {
+      "continuation_case": "Defensive rotation continues",
+      "decision": "rejected",
+      "evidence": [
+        "XLV 3.82% 5-session return and positive active 21s"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 2.3,
+      "forecast_low_pct": 0.4,
+      "invalidation_condition": "XLV falls below entry close by 2%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Policy or regulatory overhang emerges",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.31,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil supply resolution reverses energy gains",
+    "Higher-than-expected CPI triggers rate volatility",
+    "Labor market data weakens growth outlook"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 60,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Sustained rise in 10-year yield above 4.9%",
+      "option_id": "SP500",
+      "rationale": "Broad US equity exposure with solid earnings backdrop and neutral recent momentum.",
+      "time_window_catalyst": "July CPI and PPI releases plus FOMC minutes"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.6,
+      "invalidation_condition": "Brent crude falls below $82",
+      "option_id": "ENERGY",
+      "rationale": "Oil price surge from supply disruption risk supports near-term outperformance.",
+      "time_window_catalyst": "Strait of Hormuz reopening timeline updates"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.9,
+      "invalidation_condition": "Yen strengthens below 140 per USD",
+      "option_id": "JAPAN",
+      "rationale": "Relative strength in recent returns and export exposure to global growth.",
+      "time_window_catalyst": "August ISM manufacturing data"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.71,
+  "portfolio_rationale": "SPY core plus targeted energy and Japan tilts to capture oil momentum and international breadth while staying under cluster caps.",
+  "provider": "xai",
+  "rationale_summary": "Energy and Japan bases exceed SPY forecast; allocations respect 50% cluster limit and 5% increments.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16186,
+    "latency_seconds": 18.883559060050175,
+    "output_tokens": 1575,
+    "reasoning_tokens": 707,
+    "total_tokens": 18468
+  }
+}

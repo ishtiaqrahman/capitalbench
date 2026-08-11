@@ -1,0 +1,194 @@
+{
+  "benchmark_expected_return_pct": 0.25,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad positive asset participation, solid business activity readings, and strong reported S&P 500 earnings growth can support a near-high continuation.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed August 10 down 0.1% and was only 0.03% below its 52-week high.",
+        "SPY return was 2.03% over 5 sessions and 2.39% over 21 sessions.",
+        "Scheduled releases before exit include CPI, PPI, retail sales, housing starts, import/export prices, and industrial production."
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "SPY fails to hold near its 52-week high and closes below the recent 21-session drawdown area while yields rise.",
+      "option_id": "SP500",
+      "reversal_case": "A hot inflation print, higher yields, or weak consumption/production data could trigger pullback from near-record levels.",
+      "time_window_catalyst": "July CPI, July PPI, July retail sales, housing starts, import/export prices, and industrial production before August 18."
+    },
+    {
+      "continuation_case": "Supply-disruption uncertainty and strong near-term price momentum can persist through the one-week window, especially if energy components keep inflation concerns elevated.",
+      "decision": "selected",
+      "evidence": [
+        "WTI was reported up 1.7% at $83.54 in early August 11 trading before the cutoff.",
+        "Brent rose 5% on August 10 and was up another 1.5% early August 11.",
+        "The timing and terms of any reopening of the Strait of Hormuz remained uncertain."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 6.5,
+      "forecast_low_pct": -4.5,
+      "invalidation_condition": "WTI/Brent reverse below pre-August-10 levels or concrete news indicates a durable reopening and de-escalation of the Strait of Hormuz disruption.",
+      "option_id": "OIL",
+      "reversal_case": "Oil is very volatile, has already advanced sharply, and could mean-revert if supply routes normalize or traders take profits.",
+      "time_window_catalyst": "Strait of Hormuz reopening uncertainty, oil price follow-through, and July CPI/PPI/import-price energy components before August 18."
+    },
+    {
+      "continuation_case": "Energy equities can continue to benefit if crude strength persists and investors price better cash flows or geopolitical risk premia.",
+      "decision": "selected",
+      "evidence": [
+        "Energy posted a 5.01% 3-session return and 0.34% 5-session active return versus SPY.",
+        "Energy had 6.38% prior 16-session active return and a 0.985 prior active rank.",
+        "Brent and WTI were higher before the cutoff amid uncertain Strait of Hormuz reopening timing."
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 3.6,
+      "forecast_low_pct": -2.8,
+      "invalidation_condition": "Energy sector gives back the August 10 surge while crude prices fall materially or supply disruption risk is resolved.",
+      "option_id": "ENERGY",
+      "reversal_case": "Energy is below its 52-week high and has high volatility; a drop in crude or easing supply concerns would likely hit the sector.",
+      "time_window_catalyst": "Oil-price follow-through, inflation releases, and any supply-disruption headlines before the exit close."
+    },
+    {
+      "continuation_case": "Recent relative strength and defensive characteristics could attract flows if macro releases raise concerns about growth or inflation.",
+      "decision": "selected",
+      "evidence": [
+        "Healthcare had a 2.61% 3-session return and 1.79% 5-session active return.",
+        "Healthcare was at its 52-week high with a 21-session max drawdown of -3.09%.",
+        "Healthcare had a 63-session beta to SPY of -0.230, offering low broad-market sensitivity."
+      ],
+      "forecast_base_pct": 0.55,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Healthcare loses recent relative strength and closes below its 21-session drawdown range while SPY remains firm.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "If risk appetite broadens into cyclical and high-beta equities, defensive healthcare leadership may fade.",
+      "time_window_catalyst": "Defensive rotation around CPI, PPI, retail sales, and industrial production releases before August 18."
+    },
+    {
+      "continuation_case": "A new-high position plus positive prior and recent active returns support trend continuation if growth sentiment remains resilient.",
+      "decision": "selected",
+      "evidence": [
+        "Cybersecurity posted 3.11% over 3 sessions and 5.10% 5-session active return versus SPY.",
+        "It had 1.85% prior 16-session active return and was at its 52-week high.",
+        "Its 21-session volatility was 27.67%, below several higher-beta technology themes in the table."
+      ],
+      "forecast_base_pct": 0.65,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Cybersecurity breaks below its recent highs and turns negative versus SPY during the entry week.",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "Recent strength could be extended, and the technology-and-growth cluster is vulnerable to higher yields or risk-off rotation.",
+      "time_window_catalyst": "Continuation of recent growth-sector and cybersecurity relative strength through the macro-release window."
+    },
+    {
+      "continuation_case": "Strong prior active trend, low volatility, and a 52-week-high position can support steady relative performance.",
+      "decision": "rejected",
+      "evidence": [
+        "Large value had 2.64% prior 16-session active return and a 0.836 prior active rank.",
+        "It had low 21-session volatility of 9.19% and shallow max drawdown of -1.31%.",
+        "It was at its 52-week high but had -0.43% 5-session active return."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "Large value underperforms SPY further while losing its 52-week-high support.",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Recent active weakness versus SPY suggests value leadership may be stalling, and it lacks a distinct one-week catalyst.",
+      "time_window_catalyst": "Macro data releases may influence value/cyclical rotation, especially CPI, PPI, and retail sales."
+    },
+    {
+      "continuation_case": "A strong pullback score and prior trend could support a rebound if macro releases trigger risk aversion or lower US yields.",
+      "decision": "rejected",
+      "evidence": [
+        "Yen had the highest quality evidence score at 0.856.",
+        "It had 2.74% prior 16-session active return and a 0.955 recent pullback rank.",
+        "It had -3.53% 5-session active return and was 8.28% below its 52-week high."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Yen continues to weaken despite softer US data or US yields rise beyond the recent curve levels.",
+      "option_id": "YEN",
+      "reversal_case": "Recent weakness may continue if rate differentials remain unfavorable or US yields keep rising.",
+      "time_window_catalyst": "US CPI, PPI, retail sales, and industrial production could move yields and safe-haven currency demand."
+    },
+    {
+      "continuation_case": "A cooler CPI/PPI or weak growth data could lower yields and create a duration rebound from the recent pullback.",
+      "decision": "rejected",
+      "evidence": [
+        "Long Treasury had -2.19% 5-session active return and -2.67% prior 16-session active return.",
+        "The 10-year Treasury yield was reported at 4.70%, versus 4.65% on the preceding Friday.",
+        "Long Treasury had a 0.910 recent pullback rank but remained 7.58% below its 52-week high."
+      ],
+      "forecast_base_pct": -0.15,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.6,
+      "invalidation_condition": "Treasury yields rise further after inflation data or long-duration prices break below the recent 21-session drawdown.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "The Fed held rates with three members preferring a hike, inflation is still elevated, and higher yields would continue pressuring duration.",
+      "time_window_catalyst": "July CPI, PPI, housing starts, import/export prices, and industrial production before August 18."
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.575,
+  "is_official_score": true,
+  "key_risks": [
+    "A rapid Strait of Hormuz reopening or geopolitical de-escalation could reverse oil and energy gains sharply.",
+    "July CPI or PPI could surprise in a way that lifts yields and pressures risk assets, especially cybersecurity.",
+    "Retail sales, housing starts, or industrial production could weaken risk appetite before the exit close.",
+    "Recent winners such as oil, energy, healthcare, and cybersecurity may mean-revert after strong short-term moves."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "openai-gpt-5-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "WTI/Brent reverse below pre-August-10 levels or concrete news indicates a durable reopening and de-escalation of the Strait of Hormuz disruption.",
+      "option_id": "OIL",
+      "rationale": "Crude has the clearest one-week catalyst from early August 11 strength and unresolved Strait of Hormuz reopening uncertainty, with strong prior active momentum despite high reversal risk.",
+      "time_window_catalyst": "Strait of Hormuz reopening uncertainty, oil price follow-through, and July CPI/PPI/import-price energy components before August 18."
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Energy sector gives back the August 10 surge while crude prices fall materially or supply disruption risk is resolved.",
+      "option_id": "ENERGY",
+      "rationale": "Energy equities offer leveraged but less futures-specific participation in the oil shock, supported by strong prior active return and high quality prior trend rank.",
+      "time_window_catalyst": "Oil-price follow-through, inflation releases, and any supply-disruption headlines before the exit close."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.55,
+      "invalidation_condition": "Healthcare loses recent relative strength and closes below its 21-session drawdown range while SPY remains firm.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare combines recent relative strength with lower beta to SPY, providing a diversifier if macro data unsettle broad equities.",
+      "time_window_catalyst": "Defensive rotation around CPI, PPI, retail sales, and industrial production releases before August 18."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.65,
+      "invalidation_condition": "Cybersecurity breaks below its recent highs and turns negative versus SPY during the entry week.",
+      "option_id": "CYBERSECURITY",
+      "rationale": "Cybersecurity has strong recent and prior active performance with a 52-week-high position, giving a focused continuation candidate within the technology-and-growth cluster.",
+      "time_window_catalyst": "Continuation of recent growth-sector and cybersecurity relative strength through the macro-release window."
+    }
+  ],
+  "portfolio_expected_return_pct": 0.825,
+  "portfolio_rationale": "The portfolio emphasizes the strongest supplied one-week catalyst: oil and energy supply uncertainty, capped at 50% for the energy cluster. Healthcare and cybersecurity add non-energy active exposures with recent relative strength and distinct macro sensitivities, all with base forecasts above SPY.",
+  "provider": "openai",
+  "rationale_summary": "Selected holdings have stronger base forecasts than SPY for the August 11 to August 18 window. The allocation balances a high-conviction energy catalyst with healthcare and cybersecurity diversifiers while respecting the 50% cluster cap.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 15973,
+    "latency_seconds": 43.78645696397871,
+    "output_tokens": 2640,
+    "reasoning_tokens": 180,
+    "total_tokens": 18613
+  }
+}

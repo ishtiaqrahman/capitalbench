@@ -1,0 +1,170 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Earnings growth and solid economic activity support modest positive return",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed at 7753.11 on August 10 down 0.1%",
+        "FactSet tracking 50% YoY Q2 earnings growth for S&P 500"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "SPY closes below 7700 on August 13 or later",
+      "option_id": "SP500",
+      "reversal_case": "Weaker CPI or retail sales data triggers selloff",
+      "time_window_catalyst": "July CPI release August 12"
+    },
+    {
+      "continuation_case": "Geopolitical supply concerns sustain oil price gains into exit",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude at 87.72 after 5% rise on August 10; early August 11 at 89.01",
+        "USO 3s return 9.61%"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "Brent crude falls below 85 on August 14 or later",
+      "option_id": "ENERGY",
+      "reversal_case": "Strait of Hormuz reopening reduces premium rapidly",
+      "time_window_catalyst": "Brent crude movement before August 18 exit"
+    },
+    {
+      "continuation_case": "Defensive rotation continues amid macro uncertainty",
+      "decision": "selected",
+      "evidence": [
+        "XLV 3s return 2.61%",
+        "Health-care employment rose 22k in July payrolls"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": 0.1,
+      "invalidation_condition": "XLV closes below prior week low on August 14 or later",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Broad equity rally reduces defensive premium",
+      "time_window_catalyst": "July CPI and retail sales releases"
+    },
+    {
+      "continuation_case": "Commodity strength from energy spill-over supports materials",
+      "decision": "selected",
+      "evidence": [
+        "XLB 3s return 1.03%",
+        "BROAD_COMMODITIES 3s return 5.01%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "XLB closes below prior week low on August 14 or later",
+      "option_id": "MATERIALS",
+      "reversal_case": "Dollar strength or demand data disappoints",
+      "time_window_catalyst": "July PPI and import price releases"
+    },
+    {
+      "continuation_case": "Yield curve steepening aids banks",
+      "decision": "rejected",
+      "evidence": [
+        "XLF 3s return -0.33%",
+        "Financial activities employment fell 14k in July"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.1,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "XLF closes below prior week low on August 13 or later",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Credit quality concerns surface in regional banks",
+      "time_window_catalyst": "July CPI release August 12"
+    },
+    {
+      "continuation_case": "Safe-haven bid persists with geopolitical tension",
+      "decision": "rejected",
+      "evidence": [
+        "Gold at 4425.50 up 0.1% early August 11",
+        "IAU 3s return 3.33%"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.9,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Gold falls below 4350 on August 14 or later",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar stabilizes and yields rise further",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Value and income rotation continues",
+      "decision": "rejected",
+      "evidence": [
+        "SCHD 3s return 1.63%",
+        "Dividend equities show high prior active rank 0.896"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 1.3,
+      "forecast_low_pct": -0.3,
+      "invalidation_condition": "SCHD closes below prior week low on August 14 or later",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth stocks rebound on positive earnings",
+      "time_window_catalyst": "July retail sales August 14"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.295,
+  "is_official_score": true,
+  "key_risks": [
+    "Oil reversal if Hormuz uncertainty resolves quickly",
+    "Weaker than expected July CPI triggering broad equity rally",
+    "Higher Treasury yields pressuring rate-sensitive sectors"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 0.5,
+      "invalidation_condition": "SPY closes below 7700 on August 13 or later",
+      "option_id": "SP500",
+      "rationale": "Broad equity exposure with neutral base case amid mixed macro data.",
+      "time_window_catalyst": "July CPI release August 12"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Brent crude falls below 85 on August 14 or later",
+      "option_id": "ENERGY",
+      "rationale": "Oil price surge and supply disruption signals support near-term outperformance.",
+      "time_window_catalyst": "Brent crude movement before August 18 exit"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "XLV closes below prior week low on August 14 or later",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with positive recent relative return and earnings visibility.",
+      "time_window_catalyst": "July CPI and retail sales releases"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "XLB closes below prior week low on August 14 or later",
+      "option_id": "MATERIALS",
+      "rationale": "Commodity-linked sector showing recent strength consistent with energy move.",
+      "time_window_catalyst": "July PPI and import price releases"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.795,
+  "portfolio_rationale": "SP500 core plus targeted energy and defensive tilts where base forecasts exceed SPY; allocations respect 50% cluster cap.",
+  "provider": "xai",
+  "rationale_summary": "Energy and select defensives show higher one-week base forecasts than SPY amid oil and inflation data; 50/25/15/10 mix balances exposure.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16190,
+    "latency_seconds": 24.83884274214506,
+    "output_tokens": 1681,
+    "reasoning_tokens": 780,
+    "total_tokens": 18651
+  }
+}

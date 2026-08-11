@@ -1,0 +1,175 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings and solid ISM readings sustain the uptrend",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 near 52-week high (-0.03%); FactSet tracking ~50% y/y Q2 earnings growth",
+        "10-year yield rose to 4.70%; FOMC 9-3 vote with three preferring a hike",
+        "Brent up 5% Aug 10 with Hormuz reopening uncertain; equity futures lower pre-cutoff"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Inflation surprises hot and yields break higher, forcing risk-off",
+      "option_id": "SP500",
+      "reversal_case": "Oil shock and rising yields compress multiples",
+      "time_window_catalyst": "CPI Aug 12 and Sep 11, FOMC minutes Aug 19, August payrolls Sep 4"
+    },
+    {
+      "continuation_case": "Persistent supply disruption keeps crude elevated, lifting energy earnings expectations",
+      "decision": "selected",
+      "evidence": [
+        "Brent $87.72 after 5% Aug 10 rise, $89.01 pre-cutoff; Hormuz reopening timing uncertain",
+        "XLE active return +6.86% 21s vs USO +13.45%, suggesting equity catch-up room",
+        "Negative beta to SPY (-0.25) provides hedge if oil shock hurts broad market"
+      ],
+      "forecast_base_pct": 3.0,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Brent falls below $80 on supply normalization",
+      "option_id": "ENERGY",
+      "reversal_case": "Hormuz reopens quickly, crude retraces sharply",
+      "time_window_catalyst": "Hormuz developments and crude price path through Sep 11"
+    },
+    {
+      "continuation_case": "Sticky inflation and geopolitical risk sustain gold bid",
+      "decision": "selected",
+      "evidence": [
+        "Gold at $4,425.50 rising pre-cutoff; +8.3% over 5 sessions",
+        "CPI 3.5% y/y and PPI 5.5% y/y keep inflation elevated",
+        "Geopolitical stress from Hormuz uncertainty supports safe-haven demand"
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Real yields rise sharply on hot data with dollar rally",
+      "option_id": "GOLD",
+      "reversal_case": "Hawkish Fed pushes real rates and dollar higher; deep prior drawdown (-18.8% from high) signals fragility",
+      "time_window_catalyst": "CPI releases Aug 12 and Sep 11; Fed minutes Aug 19"
+    },
+    {
+      "continuation_case": "Higher rates and oil sustain value leadership over growth",
+      "decision": "selected",
+      "evidence": [
+        "+2.25% active return 21s, at 52-week high, lowest-drawdown equity profile (-2.4%)",
+        "10-year yield at 4.70% and rising oil favor value's financials/energy tilt"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "10-year yield falls below 4.4% with growth resuming leadership",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Rate relief rotates flows back to mega-cap growth",
+      "time_window_catalyst": "Yield path around CPI and Fed minutes"
+    },
+    {
+      "continuation_case": "Prolonged closure keeps crude squeezing higher",
+      "decision": "rejected",
+      "evidence": [
+        "+13.45% active 21s and +31% prior active; 54.9% volatility, -32.5% max drawdown",
+        "Hormuz reopening timing uncertain per AP"
+      ],
+      "forecast_base_pct": 3.5,
+      "forecast_high_pct": 15.0,
+      "forecast_low_pct": -12.0,
+      "invalidation_condition": "Reopening confirmed and Brent drops below $80; rejected for extreme volatility and reversal risk vs energy equities",
+      "option_id": "OIL",
+      "reversal_case": "Reopening announcement causes sharp mean reversion after a large run",
+      "time_window_catalyst": "Hormuz resolution timing"
+    },
+    {
+      "continuation_case": "Strong earnings growth could reignite mega-cap leadership",
+      "decision": "rejected",
+      "evidence": [
+        "-3.03% active 21s despite +9.4% prior active trend",
+        "Yields rising to 4.70% pressure high-duration growth valuations"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Yields fall and growth reclaims leadership; base below SPY so rejected",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Higher yields and oil-driven inflation compress growth multiples",
+      "time_window_catalyst": "CPI prints and Fed minutes"
+    },
+    {
+      "continuation_case": "Weak payrolls (-23k July) could eventually rally duration",
+      "decision": "rejected",
+      "evidence": [
+        "-4.86% active 21s; 10-year rose to 4.70%, 30-year at 5.25%",
+        "Energy-driven inflation pressure with three FOMC members preferring a hike"
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Inflation prints cool sharply; rejected as oil spike keeps yield pressure upward",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Oil shock feeds inflation, pushing yields higher",
+      "time_window_catalyst": "CPI Aug 12/Sep 11, payrolls Sep 4"
+    }
+  ],
+  "confidence": 0.6,
+  "cost_usd": 0.45962,
+  "expected_alpha_vs_sp500_pct": 1.095,
+  "is_official_score": true,
+  "key_risks": [
+    "Rapid Strait of Hormuz reopening collapses crude and reverses energy/gold gains",
+    "Cool CPI prints and dovish Fed minutes lift growth stocks over value, hurting the tilts",
+    "Higher yields from inflation pressure could drag all equities including holdings",
+    "Gold's steep prior-year drawdown (-27% prior active) signals reversal fragility"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 3.0,
+      "invalidation_condition": "Strait of Hormuz reopens and Brent falls back below $80",
+      "option_id": "ENERGY",
+      "rationale": "Brent rose 5% Aug 10 to $87.72 and continued higher pre-cutoff with Strait of Hormuz reopening uncertain; energy equities lag the crude move (+6.86% active 21s vs USO +13.45%) and offer catch-up with negative SPY beta hedging value.",
+      "time_window_catalyst": "Continued Hormuz supply disruption keeping crude elevated through mid-September"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Sharp inflation downside surprise plus hawkish Fed minutes lifting real rates and the dollar",
+      "option_id": "GOLD",
+      "rationale": "Gold at $4,425 with strong recent momentum (+8.3% 5s), sticky inflation (CPI 3.5% y/y, PPI 5.5% y/y) and rising geopolitical risk support safe-haven and inflation-hedge demand.",
+      "time_window_catalyst": "July CPI Aug 12, August CPI Sep 11; escalation of Hormuz-related geopolitical stress"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Yields fall sharply and mega-cap growth resumes leadership",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value at 52-week high with positive active return (+2.25% 21s), low volatility and shallow drawdown; energy/financial tilt benefits from higher oil and 4.70% 10-year yields while growth faces rate pressure.",
+      "time_window_catalyst": "Rising yields and oil favoring value composition through window"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Hot CPI plus oil spike triggers broad risk-off drawdown",
+      "option_id": "SP500",
+      "rationale": "Benchmark anchor: ~50% y/y Q2 earnings growth and solid ISM data support equities, but rising oil, 4.70% yields and hawkish FOMC dissent cap upside.",
+      "time_window_catalyst": "CPI Aug 12, FOMC minutes Aug 19, August jobs Sep 4, August CPI Sep 11"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.095,
+  "portfolio_rationale": "Oil-supply disruption from Hormuz uncertainty and sticky inflation favor energy equities, gold, and value over the cap-weighted index; a core SPY sleeve limits tracking error while three active tilts target commodity-linked alpha.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight energy equities and gold on the Hormuz-driven oil spike and elevated inflation, with a value tilt suited to 4.70% ten-year yields and a SPY core.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1M",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.45962,
+    "input_tokens": 28367,
+    "latency_seconds": 51.80206144391559,
+    "output_tokens": 3519,
+    "total_tokens": 31886
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "benchmark_expected_return_pct": 0.35,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid activity language from Fed and ~50% FactSet Q2 EPS growth estimate support grind higher if data not disruptive.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed 7753.11 on Aug 10, down 0.1%",
+        "spy_return_5s 2.03% and spy_return_21s 2.39%",
+        "July CPI scheduled Aug 12; PPI Aug 13; retail sales Aug 14"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Large downside surprise in inflation or growth data driving equity selloff",
+      "option_id": "SP500",
+      "reversal_case": "Hot CPI/PPI or Hormuz escalation could reverse recent gains inside the week.",
+      "time_window_catalyst": "July CPI Aug 12, PPI Aug 13, retail sales Aug 14"
+    },
+    {
+      "continuation_case": "Elevated crude and unresolved Hormuz supply risk can sustain energy equity premium through the exit close.",
+      "decision": "selected",
+      "evidence": [
+        "Brent at $87.72 after 5% Aug 10 rise; early Aug 11 Brent $89.01 WTI $83.54",
+        "ENERGY return_3s 5.01% and prior_16s_active_return 6.38%",
+        "Timing/terms of any Strait of Hormuz reopening remained uncertain"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Sharp reversal in crude prices or clear de-escalation removing supply premium",
+      "option_id": "ENERGY",
+      "reversal_case": "Rapid crude pullback or de-escalation headlines would reverse the recent outperformance.",
+      "time_window_catalyst": "Ongoing Strait of Hormuz uncertainty and elevated Brent/WTI prints before Aug 18 close"
+    },
+    {
+      "continuation_case": "Relative strength plus defensive low-beta profile can outperform if data volatility rises mid-week.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE return_3s 2.61% and active_return_5s 1.79%",
+        "distance_52w_high 0.00% and negative corr/beta to SPY on 63s",
+        "July health-care employment rose 22,000 in the labor report"
+      ],
+      "forecast_base_pct": 0.9,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Broad risk-on melt-up that leaves defensives lagging or sector-specific negative news",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Strong risk-on breadth could leave healthcare lagging high-beta cyclicals.",
+      "time_window_catalyst": "July CPI release Aug 12 and defensive rotation if inflation/data surprise"
+    },
+    {
+      "continuation_case": "Supply-risk premium and momentum in crude futures could extend gains.",
+      "decision": "rejected",
+      "evidence": [
+        "USO return_3s 9.61% and prior_16s_active_return 11.99%",
+        "Brent/WTI early Aug 11 gains and Hormuz uncertainty noted by AP",
+        "volatility_21s 70.38% and max_drawdown_21s -17.64%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Crude closes sharply lower on de-escalation or inventory/demand disappointment",
+      "option_id": "OIL",
+      "reversal_case": "Extremely high realized vol and deep recent drawdown capacity favor sharp mean reversion.",
+      "time_window_catalyst": "Hormuz headlines and crude price path before Aug 18"
+    },
+    {
+      "continuation_case": "Safe-haven bid could persist if equity or geopolitical volatility rises.",
+      "decision": "rejected",
+      "evidence": [
+        "Gold early Aug 11 up 0.1% at $4425.50; IAU return_3s 3.33%",
+        "active_return_5s 6.27% but distance_52w_high -18.77%",
+        "10-year yield at 4.70% vs 4.65% prior Friday"
+      ],
+      "forecast_base_pct": 0.6,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Sustained rise in yields/USD with risk-on equities",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields or stronger dollar could pressure gold after the recent run.",
+      "time_window_catalyst": "CPI Aug 12 reaction in real yields and USD"
+    },
+    {
+      "continuation_case": "Value/quality tilt and lower vol can edge SPY if leadership broadens.",
+      "decision": "rejected",
+      "evidence": [
+        "quality evidence score 0.723 with high prior active and shallow drawdown ranks",
+        "return_3s 0.85% and distance_52w_high 0.00%",
+        "volatility_21s 9.19% lower than SPY"
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Sharp growth outperformance or value-specific underperformance vs SPY",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth re-acceleration or energy-specific leadership could leave pure value lagging ENERGY.",
+      "time_window_catalyst": "Post-CPI factor rotation through Aug 18"
+    },
+    {
+      "continuation_case": "Recent momentum could continue if growth risk appetite holds.",
+      "decision": "rejected",
+      "evidence": [
+        "SOFTWARE return_3s 3.65% and active_return_5s 5.76%",
+        "prior_16s_active_return 5.06% but distance_52w_high -10.83%",
+        "volatility_21s 31.10%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Rates spike or growth selloff post-CPI",
+      "option_id": "SOFTWARE",
+      "reversal_case": "High vol and distance from highs raise fade risk into data-heavy week.",
+      "time_window_catalyst": "CPI/rates reaction affecting growth multiples"
+    },
+    {
+      "continuation_case": "Cash-like return is stable if equities correct.",
+      "decision": "rejected",
+      "evidence": [
+        "SHORT_TREASURY quality evidence score 0.704 with top vol/drawdown ranks",
+        "return_3s 0.05% and near-zero volatility",
+        "Fed funds target held at 3.50%-3.75% on July 29"
+      ],
+      "forecast_base_pct": 0.08,
+      "forecast_high_pct": 0.12,
+      "forecast_low_pct": 0.05,
+      "invalidation_condition": "Risk-on equity advance making opportunity cost material",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Positive equity week makes cash a drag versus SPY base.",
+      "time_window_catalyst": "none identified"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.5325,
+  "is_official_score": true,
+  "key_risks": [
+    "Crude mean-reversion after the Aug 10-11 spike removes ENERGY premium",
+    "Hotter-than-expected CPI/PPI triggers broad equity drawdown",
+    "Defensive underperformance if risk appetite expands sharply",
+    "Geopolitical headline volatility amplifies oil and equity swings inside the week"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Sharp reversal in crude prices or clear de-escalation removing supply premium",
+      "option_id": "ENERGY",
+      "rationale": "Oil price surge and Hormuz uncertainty support near-term energy equity continuation into the scoring window.",
+      "time_window_catalyst": "Ongoing Strait of Hormuz uncertainty and elevated Brent/WTI prints before Aug 18 close"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.9,
+      "invalidation_condition": "Broad risk-on melt-up that leaves defensives lagging or sector-specific negative news",
+      "option_id": "HEALTHCARE",
+      "rationale": "Recent relative strength, lower beta, and defensive characteristics with quality evidence support outperformance vs SPY base.",
+      "time_window_catalyst": "July CPI release Aug 12 and defensive rotation if inflation/data surprise"
+    },
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.35,
+      "invalidation_condition": "Large downside surprise in inflation or growth data driving equity selloff",
+      "option_id": "SP500",
+      "rationale": "Core benchmark ballast given mixed macro calendar and to keep non-benchmark cluster exposure inside caps.",
+      "time_window_catalyst": "July CPI Aug 12, PPI Aug 13, retail sales Aug 14"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.8825,
+  "portfolio_rationale": "Overweight ENERGY on supplied oil price strength and Hormuz uncertainty while adding HEALTHCARE for recent relative momentum and lower correlation; residual in SP500 keeps cluster caps and diversifies event risk around the CPI/PPI week.",
+  "provider": "xai",
+  "rationale_summary": "One-week edge is concentrated in energy continuation plus healthcare relative strength; SPY base is modest positive so only higher-base actives are sized, with cluster discipline.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17336,
+    "latency_seconds": 47.774491793010384,
+    "output_tokens": 2515,
+    "reasoning_tokens": 485,
+    "total_tokens": 20336
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Earnings growth supports equities.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed down 0.1% on August 10."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Significant miss in CPI data",
+      "option_id": "SP500",
+      "reversal_case": "Inflation concerns weigh on valuations.",
+      "time_window_catalyst": "July CPI release"
+    },
+    {
+      "continuation_case": "Continued geopolitical tension supports prices.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude rose 5% on August 10.",
+        "Uncertainty regarding the Strait of Hormuz."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "De-escalation in the Middle East",
+      "option_id": "OIL",
+      "reversal_case": "Resolution of supply threats.",
+      "time_window_catalyst": "Strait of Hormuz developments"
+    },
+    {
+      "continuation_case": "Safe-haven demand persists.",
+      "decision": "selected",
+      "evidence": [
+        "Gold up 0.1% in early August 11 trading."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Stronger US dollar and higher real yields",
+      "option_id": "GOLD",
+      "reversal_case": "Risk-on sentiment returns.",
+      "time_window_catalyst": "CPI release and inflation expectations"
+    },
+    {
+      "continuation_case": "Yields remain stable.",
+      "decision": "rejected",
+      "evidence": [
+        "1-month Treasury yield at 3.79%."
+      ],
+      "forecast_base_pct": 0.1,
+      "forecast_high_pct": 0.2,
+      "forecast_low_pct": 0.0,
+      "invalidation_condition": "Significant shift in Fed policy expectations",
+      "option_id": "SHORT_TREASURY",
+      "reversal_case": "Unexpected Fed action.",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "Defensive characteristics attract flows.",
+      "decision": "rejected",
+      "evidence": [
+        "July health-care employment rose 22,000."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Broad market sell-off",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Regulatory concerns emerge.",
+      "time_window_catalyst": "None identified"
+    },
+    {
+      "continuation_case": "ECB maintains hawkish stance.",
+      "decision": "rejected",
+      "evidence": [
+        "US dollar index down slightly."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Strong US inflation data boosting the dollar",
+      "option_id": "EURO",
+      "reversal_case": "US economic data surprises to the upside.",
+      "time_window_catalyst": "US CPI release"
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.85,
+  "is_official_score": true,
+  "key_risks": [
+    "Geopolitical de-escalation leading to a drop in oil prices.",
+    "Stronger-than-expected economic data boosting equities and the US dollar, hurting gold."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "De-escalation in the Middle East",
+      "option_id": "OIL",
+      "rationale": "Oil prices are rising amid geopolitical uncertainty and supply concerns.",
+      "time_window_catalyst": "Strait of Hormuz developments"
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "Stronger US dollar and higher real yields",
+      "option_id": "GOLD",
+      "rationale": "Gold provides a safe haven amid equity volatility and geopolitical risks.",
+      "time_window_catalyst": "CPI release and inflation expectations"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.35,
+  "portfolio_rationale": "The portfolio is positioned defensively with a focus on commodities that benefit from current geopolitical tensions and inflation concerns. Oil and gold offer potential upside while equities face headwinds.",
+  "provider": "google",
+  "rationale_summary": "Defensive positioning with commodities.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17495,
+    "latency_seconds": 13.141872151987627,
+    "output_tokens": 1382,
+    "total_tokens": 18877
+  }
+}

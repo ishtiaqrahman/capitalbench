@@ -12,6 +12,7 @@ import tempfile
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
+from decimal import Decimal, ROUND_HALF_UP
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -2122,7 +2123,7 @@ def _active_positioning_insights(snapshot: dict[str, Any], generated_at: str) ->
                 calculations=[
                     {
                         "name": "live_risk_taking_score",
-                        "value": round(risk_score, 4),
+                        "value": _round_public_number(risk_score),
                         "unit": "points",
                         "formula": "50 + 50 * weighted average asset risk-on loading",
                     }
@@ -2865,6 +2866,12 @@ def _portfolio_risk_score(portfolio: dict[str, Any]) -> float | None:
         score += weight * (50 + 50 * loading)
         denominator += weight
     return score / denominator if denominator else None
+
+
+def _round_public_number(value: float, digits: int = 4) -> float:
+    """Match the decimal half-up rounding used by the public JavaScript validator."""
+    quantum = Decimal(1).scaleb(-digits)
+    return float(Decimal(str(value)).quantize(quantum, rounding=ROUND_HALF_UP))
 
 
 def _portfolio_top_allocation(portfolio: dict[str, Any]) -> float | None:

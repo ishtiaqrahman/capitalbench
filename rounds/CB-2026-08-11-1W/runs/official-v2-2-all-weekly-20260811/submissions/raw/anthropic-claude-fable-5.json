@@ -1,0 +1,175 @@
+{
+  "benchmark_expected_return_pct": 0.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Strong earnings growth and solid activity keep the index resilient",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 closed 7,753.11 Aug 10, down 0.1%, with futures lower Aug 11",
+        "FactSet tracking ~50% y/y Q2 earnings growth",
+        "10-year Treasury yield rose to 4.70%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "CPI well above 3.4% consensus pushing 10-year yields sharply higher",
+      "option_id": "SP500",
+      "reversal_case": "Rising oil and yields plus soft futures pressure equities",
+      "time_window_catalyst": "July CPI Aug 12, PPI Aug 13, retail sales Aug 14"
+    },
+    {
+      "continuation_case": "Persistent supply disruption keeps crude and energy equities bid",
+      "decision": "selected",
+      "evidence": [
+        "Brent +5% Aug 10 to $87.72, +1.5% to $89.01 pre-cutoff",
+        "Strait of Hormuz reopening timing uncertain",
+        "Energy prior 16s active return +6.38% with 0.985 prior active rank"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Confirmed reopening with Brent below ~$84",
+      "option_id": "ENERGY",
+      "reversal_case": "Sudden de-escalation and Hormuz reopening collapses the geopolitical premium",
+      "time_window_catalyst": "Hormuz supply-disruption headlines through Aug 18"
+    },
+    {
+      "continuation_case": "Safe-haven and inflation-hedge demand persists through data-heavy week",
+      "decision": "selected",
+      "evidence": [
+        "Gold at $4,425.50, up 0.1% pre-cutoff",
+        "Geopolitical uncertainty around Hormuz and elevated inflation (CPI 3.5% y/y)",
+        "IAU +8.30% over 5 sessions"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "De-escalation plus dollar and real-yield surge",
+      "option_id": "GOLD",
+      "reversal_case": "Recent 8% 5-session run is extended; a real-yield spike or de-escalation triggers profit taking",
+      "time_window_catalyst": "CPI Aug 12, PPI Aug 13, geopolitical headlines"
+    },
+    {
+      "continuation_case": "Defensive rotation continues amid macro uncertainty and payroll weakness",
+      "decision": "selected",
+      "evidence": [
+        "XLV +2.61% over 3 sessions with +1.79% 5-session active return",
+        "Negative SPY beta (-0.23) and at 52-week high",
+        "Sector at 0% distance from 52w high with moderate 18% vol"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "Broad risk-on rally with tech leadership resuming",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rally rotates flows back into growth and cyclicals",
+      "time_window_catalyst": "Macro data-heavy week favoring defensives if prints run hot"
+    },
+    {
+      "continuation_case": "Bounce continuation after +2.36% active 5s rebound",
+      "decision": "rejected",
+      "evidence": [
+        "Prior 16s active return -11.09%, 21s max drawdown -17.48%",
+        "Volatility 50.8% with beta 3.02"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Yields fall and growth leadership resumes strongly",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Deep prior downtrend and extreme beta expose it to hot-CPI yield spike",
+      "time_window_catalyst": "CPI/PPI prints moving high-beta growth"
+    },
+    {
+      "continuation_case": "Yield rise persists on oil-driven inflation, further pressuring duration",
+      "decision": "rejected",
+      "evidence": [
+        "10-year yield rose to 4.70% from 4.65%",
+        "TLT -2.46% over 21 sessions amid energy-driven inflation pressure"
+      ],
+      "forecast_base_pct": -0.3,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Cool CPI print with yields falling below 4.55%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Soft CPI or growth scare drives a duration rally",
+      "time_window_catalyst": "CPI Aug 12"
+    },
+    {
+      "continuation_case": "Metals rally continues with precious-metals strength",
+      "decision": "rejected",
+      "evidence": [
+        "+11.97% 5-session active return, +5.02% over 3 sessions",
+        "Volatility 43.2% with beta 2.04"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Gold/silver reversal drags miners lower",
+      "option_id": "METALS_MINING",
+      "reversal_case": "Very extended one-week run risks sharp mean reversion; base overlaps GOLD exposure with more equity beta",
+      "time_window_catalyst": "Metals momentum and inflation prints"
+    }
+  ],
+  "confidence": 0.6,
+  "cost_usd": 0.44676000000000005,
+  "expected_alpha_vs_sp500_pct": 0.74,
+  "is_official_score": true,
+  "key_risks": [
+    "Rapid Hormuz reopening triggers a sharp oil and energy-sector reversal",
+    "Cool CPI print sparks a growth/tech rally that this defensive tilt underperforms",
+    "Gold pullback from record levels if real yields rise",
+    "High oil volatility (USO 70% vol) spills into energy equities"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Confirmed Strait of Hormuz reopening and Brent falling back below ~$84",
+      "option_id": "ENERGY",
+      "rationale": "Brent up 5% Aug 10 and another 1.5% pre-cutoff with Strait of Hormuz reopening uncertain; energy sector has strong prior trend (0.985 prior active rank) and low SPY beta hedges an equity pullback.",
+      "time_window_catalyst": "Ongoing Hormuz supply disruption keeping crude bid through Aug 18"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "De-escalation headlines and a sharp rise in real yields/dollar",
+      "option_id": "GOLD",
+      "rationale": "Gold at $4,425 with safe-haven demand amid geopolitical supply shock and elevated inflation; hedges hot CPI/PPI prints during the window.",
+      "time_window_catalyst": "Geopolitical risk plus July CPI Aug 12 and PPI Aug 13 inflation prints"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "Strong risk-on rally rotating flows back into growth/tech",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with recent relative strength (+2.61% 3-session, +1.79% active) and negative SPY beta, cushioning against energy-shock equity weakness.",
+      "time_window_catalyst": "Defensive rotation if CPI surprises hot or futures weakness persists"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 0.2,
+      "invalidation_condition": "CPI well above 3.4% consensus driving yields sharply higher",
+      "option_id": "SP500",
+      "rationale": "Benchmark anchor; ~50% Q2 earnings growth supports equities but oil shock and 4.70% 10-year yield cap upside.",
+      "time_window_catalyst": "July CPI (Aug 12), PPI (Aug 13), retail sales (Aug 14)"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.94,
+  "portfolio_rationale": "An oil supply shock (Hormuz uncertainty, Brent ~$89) with elevated yields and soft equity futures favors energy, gold, and defensive healthcare over the broad index this week, with a SPY anchor to limit tracking error.",
+  "provider": "anthropic",
+  "rationale_summary": "Overweight energy and gold on the geopolitical crude spike and inflation-print week, plus defensive healthcare, against a 25% SPY core.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-11-1W",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.44676000000000005,
+    "input_tokens": 28371,
+    "latency_seconds": 49.953692723065615,
+    "output_tokens": 3261,
+    "total_tokens": 31632
+  }
+}
