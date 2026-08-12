@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-08-04-1W / official-v2-2-all-weekly-20260804-clean
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-08-04-1W
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-v2-2-all-weekly-20260804-clean
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench CB-2026-08-04-1W
+- Description: One-week market allocation evaluation round.
+- Decision date: 2026-08-04
 - Decision deadline: 2026-08-05T12:30:00Z
 - Horizon: one week
-- Official run ID: official-v2-2-all-weekly-20260804-clean
-- Mock: no
+- Entry date: 2026-08-04
+- Exit date: 2026-08-11
+- Entry rule: Use the Tuesday, August 4, 2026 adjusted close supplied in prices/entry_prices.csv.
+- Exit rule: Use the Tuesday, August 11, 2026 adjusted close supplied in prices/exit_prices.csv.
+- Options: 70
 
 ## Model Decisions
 
@@ -96,30 +111,99 @@
 | REAL_ESTATE | Real Estate Sector | 45.17 | 44.08 | -0.02413106043834412 | 69 |
 | BRAZIL | Brazil Equities | 36.09 | 33.97999954223633 | -0.05846496142321067 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| openai-gpt-5-5 | portfolio | SOFTWARE | 5 | 0.55 | 0.018823511460248188 | 0.029171965989297378 | 0.030170241694896894 | 0.07300458099940145 |  | True | True |
-| xai-grok-4-5 | portfolio | SOFTWARE | 5 | 0.58 | 0.018823511460248188 | 0.009731885618512971 | 0.010730161324112487 | 0.09244466137018585 |  | True | True |
-| openai-gpt-5-6-sol | portfolio | DIVIDEND | 4 | 0.57 | 0.012407680945347277 | 0.009721758350627017 | 0.010720034056226534 | 0.0924547886380718 |  | True | True |
-| anthropic-claude-fable-5 | portfolio | SP500 | 5 | 0.55 | -0.0009982757055995162 | 0.009394486873023565 | 0.010392762578623082 | 0.09278206011567526 |  | True | True |
-| anthropic-claude-opus-5 | portfolio | SP500 | 4 | 0.44 | -0.0009982757055995162 | 0.005371338009495913 | 0.00636961371509543 | 0.09680520897920292 |  | True | True |
-| google-gemini-3-1-pro | portfolio | SP500 | 2 | 0.6 | -0.0009982757055995162 | -0.00011628946076303048 | 0.0008819862448364857 | 0.10229283644946185 |  | True | False |
-| xai-grok-4-3 | portfolio | SP500 | 1 | 0.55 | -0.0009982757055995162 | -0.0009982757055995162 | 0.0 | 0.10317482269429834 |  | False | False |
-| anthropic-claude-opus-4-8 | portfolio | SP500 | 3 | 0.53 | -0.0009982757055995162 | -0.0032913201941701664 | -0.0022930444885706502 | 0.10546786718286899 |  | False | False |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-fable-5 | SP500 | 40.0 | -0.0009982757055995162 | -0.0003993102822398065 | Record close with strong breadth (79.7% positive assets 5s) and firm ISM manufacturing; core diversified anchor. |
+| anthropic-claude-fable-5 | NASDAQ100 | 25.0 | -0.007460109138633708 | -0.001865027284658427 | Strong 5-day recovery (+3.05% active) after prior pullback; earnings momentum and easing oil supports growth beta. |
+| anthropic-claude-fable-5 | HEALTHCARE | 15.0 | 0.03645897594077718 | 0.005468846391116577 | Deep recent relative pullback with top-tier quality evidence score (0.80) and Eli Lilly Q2 catalyst Aug 5; defensive ballast. |
+| anthropic-claude-fable-5 | LOW_VOL | 10.0 | -0.009687131823537087 | -0.0009687131823537088 | Highest recent-pullback rank (0.94) with solid prior trend; mean-reversion candidate with low downside. |
+| anthropic-claude-fable-5 | GOLD | 10.0 | 0.07158691231158931 | 0.007158691231158931 | Hedge against Hormuz escalation and refunding/CPI rate volatility; recent modest gain despite soft dollar backdrop. |
+| anthropic-claude-opus-4-8 | SP500 | 50.0 | -0.0009982757055995162 | -0.0004991378527997581 | Broad large-cap momentum with record close and strong breadth; core anchor. |
+| anthropic-claude-opus-4-8 | TECHNOLOGY | 30.0 | -0.004333868378812222 | -0.0013001605136436667 | Strong recent tech leadership with 5s active +5.13% and 3s +6.36%, supported by growth-stock resilience. |
+| anthropic-claude-opus-4-8 | NASDAQ100 | 20.0 | -0.007460109138633708 | -0.0014920218277267418 | Large-cap growth momentum continuation with 5s active +3.05% and record Nasdaq close. |
+| anthropic-claude-opus-5 | SP500 | 45.0 | -0.0009982757055995162 | -0.00044922406751978227 | Core benchmark exposure at record highs with broad participation. |
+| anthropic-claude-opus-5 | HEALTHCARE | 20.0 | 0.03645897594077718 | 0.007291795188155437 | Deep relative pullback (-7.2% 5s active) with strong prior trend and low beta; mean-reversion candidate with Lilly Q2 catalyst. |
+| anthropic-claude-opus-5 | FINANCIALS | 20.0 | -0.0013821700069109877 | -0.00027643400138219757 | High quality-evidence score, prior positive active trend, at 52w high, steep curve supportive. |
+| anthropic-claude-opus-5 | CONSUMER_STAPLES | 15.0 | -0.007965327398383626 | -0.0011947991097575438 | Largest recent relative pullback among defensives with strong prior trend; hedges tech-led drawdown risk. |
+| google-gemini-3-1-pro | SP500 | 50.0 | -0.0009982757055995162 | -0.0004991378527997581 | Core holding to capture broad market momentum and record highs. |
+| google-gemini-3-1-pro | SHORT_TREASURY | 50.0 | 0.0007656967840734552 | 0.0003828483920367276 | Defensive allocation to balance equity risk and capture yield. |
+| openai-gpt-5-5 | SOFTWARE | 25.0 | 0.018823511460248188 | 0.004705877865062047 | Strongest short-term relative price action in the universe among assessed finalists, with a plausible risk-on continuation case into the one-week window despite weak quality evidence. |
+| openai-gpt-5-5 | CYBERSECURITY | 25.0 | 0.020216440360887322 | 0.0050541100902218306 | Cybersecurity combines strong 3-day and 5-day active momentum with a 52-week high, offering a cleaner continuation setup than many higher-volatility technology themes. |
+| openai-gpt-5-5 | OIL | 20.0 | 0.10217654698869882 | 0.020435309397739767 | Crude exposure has a near-term rebound/geopolitical-risk premium setup after a sharp drop, with Hormuz shipping risks unresolved inside the scoring window. |
+| openai-gpt-5-5 | ETHEREUM_ETF | 15.0 | 0.002120162909949208 | 0.0003180244364923812 | Ethereum has strong prior active performance and high quality evidence after a recent pullback, providing convex upside if risk appetite persists. |
+| openai-gpt-5-5 | YEN | 15.0 | -0.008942372001457644 | -0.0013413558002186466 | Yen provides a diversifying risk-off component with unusually high volume activity and a small positive short-term price move, while still clearing the SPY base forecast. |
+| openai-gpt-5-6-sol | DIVIDEND | 30.0 | 0.012407680945347277 | 0.0037223042836041827 | Strong prior relative trend, deep recent relative pullback, and the universe's highest quality score support a short-term rebound. |
+| openai-gpt-5-6-sol | REAL_ESTATE | 20.0 | -0.02413106043834412 | -0.004826212087668824 | High quality evidence and a sizable pullback create a favorable rebound setup if yields stabilize. |
+| openai-gpt-5-6-sol | ENERGY | 25.0 | 0.04118250170881743 | 0.010295625427204358 | Strong prior relative trend and unresolved Hormuz risk offer rebound potential after the oil-led selloff. |
+| openai-gpt-5-6-sol | ETHEREUM_ETF | 25.0 | 0.002120162909949208 | 0.000530040727487302 | Top-tier prior trend and pullback ranks support a tactical rebound, though volatility keeps the position capped. |
+| xai-grok-4-3 | SP500 | 100.0 | -0.0009982757055995162 | -0.0009982757055995162 | No active holding clears the base-forecast hurdle above SP500; market data shows record closes but mixed macro releases with no clear one-week catalyst for outperformance. |
+| xai-grok-4-5 | SOFTWARE | 30.0 | 0.018823511460248188 | 0.005647053438074456 | Strong recent rebound and high beta to continued risk-on after record closes supports outperformance vs SPY over one week. |
+| xai-grok-4-5 | CYBERSECURITY | 20.0 | 0.020216440360887322 | 0.0040432880721774644 | Positive 3-session momentum and lower relative drawdown than pure semis support continuation above SPY base. |
+| xai-grok-4-5 | COPPER | 20.0 | 0.001993054825688123 | 0.00039861096513762464 | Positive active return and industrial demand proxy with base case above SPY amid manufacturing PMI strength. |
+| xai-grok-4-5 | FINANCIALS | 15.0 | -0.0013821700069109877 | -0.00020732550103664814 | Solid prior active trend and quality score with rates backdrop supporting modest outperformance. |
+| xai-grok-4-5 | SP500 | 15.0 | -0.0009982757055995162 | -0.00014974135583992743 | Core benchmark holding to anchor after record close while active sleeves seek alpha. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| openai-gpt-5-5 | SOFTWARE | 5 | 0.55 | 0.018823511460248188 | 0.029171965989297378 | 0.030170241694896894 | 0.07300458099940145 |  | True | True |
+| xai-grok-4-5 | SOFTWARE | 5 | 0.58 | 0.018823511460248188 | 0.009731885618512971 | 0.010730161324112487 | 0.09244466137018585 |  | True | True |
+| openai-gpt-5-6-sol | DIVIDEND | 4 | 0.57 | 0.012407680945347277 | 0.009721758350627017 | 0.010720034056226534 | 0.0924547886380718 |  | True | True |
+| anthropic-claude-fable-5 | SP500 | 5 | 0.55 | -0.0009982757055995162 | 0.009394486873023565 | 0.010392762578623082 | 0.09278206011567526 |  | True | True |
+| anthropic-claude-opus-5 | SP500 | 4 | 0.44 | -0.0009982757055995162 | 0.005371338009495913 | 0.00636961371509543 | 0.09680520897920292 |  | True | True |
+| google-gemini-3-1-pro | SP500 | 2 | 0.6 | -0.0009982757055995162 | -0.00011628946076303048 | 0.0008819862448364857 | 0.10229283644946185 |  | True | False |
+| xai-grok-4-3 | SP500 | 1 | 0.55 | -0.0009982757055995162 | -0.0009982757055995162 | 0.0 | 0.10317482269429834 |  | False | False |
+| anthropic-claude-opus-4-8 | SP500 | 3 | 0.53 | -0.0009982757055995162 | -0.0032913201941701664 | -0.0022930444885706502 | 0.10546786718286899 |  | False | False |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | 8867d2beab94d6e43833c054c911d08bbab8cceafee0184e7c5b94953efd25bc |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | 1a844da9c59ab06e30e88b53a60f08b23075e0cfd4df40bd80afc8570a93c261 |
+| manifest.yaml | 7472dd996e1d766fec750eaf0f2aac5c60b3d1d3526aed27f669bde2ba04470f |
+| submission_schema.json | 722025ee45d276e3f4d132a6be281de790a0c5478dc0051f23ade0524ff79571 |
+| market_data/universe_decision_context.csv | da9dbd052d4380022786951d1cbf96911133205c9d4081501d58d3f96498212d |
+| market_data/universe_decision_context.md | 2b59c57cb801896c27221a85251900a3b3de0278a23a6e3e285d693bf026893e |
+| market_data/universe_decision_context.json | 589243aec1d507067442ce29a2cf3a7b49b6febbd915be43a68f89a810e85f12 |
+| market_data/decision_context_source_history.json | fd01b404826ed74b028c769f0b2af7b495428d20978cd8dea424740b33e259da |
+| market_data/universe_quality_evidence.md | 6022171c342b89d4cf29558744059a2103ded8325d5ac74814b5ebb6adbfce23 |
+| market_data/universe_quality_evidence.json | 900028b12d5108af3026ba0cdcb145f564cc0d8575a6b671aefe3fe5cc90bf42 |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | e9288f14cea5acfdee6d969ab4b469a710fa7c4b6f260b55988bf7169a17ca51 | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | 191f38bebe6dd1623e871a317f42bcb3491ba0865c486a6a0ec2d8ba493b1902 | yes |
+| Final briefing | research/final_briefing.md | model-facing | 8867d2beab94d6e43833c054c911d08bbab8cceafee0184e7c5b94953efd25bc | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-07-16-1W has no scored official run.
-- Round CB-2026-08-05-1W has no scored official run.
-- Round CB-2026-08-07-1W has no scored official run.
-- Round CB-2026-08-09-1W has no scored official run.
-- Round CB-2026-08-11-1W has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.
