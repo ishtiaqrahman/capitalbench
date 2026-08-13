@@ -1,0 +1,161 @@
+{
+  "benchmark_expected_return_pct": 0.4,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Broad equity participation remains positive with 59% of assets positive over 5 days",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7748.50 on August 12 after first gain since August 7 high",
+        "July nonfarm payrolls -23000 with downward revisions to prior months"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.1,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "SPY closes above its August 7 high by more than 1%",
+      "option_id": "SP500",
+      "reversal_case": "Further labor-market weakness or higher-than-expected PPI on August 13 triggers rotation out of equities",
+      "time_window_catalyst": "August 14 retail sales and August 18 industrial production data"
+    },
+    {
+      "continuation_case": "Value factor continues to benefit from higher-for-longer rates environment",
+      "decision": "selected",
+      "evidence": [
+        "LARGE_VALUE quality evidence score 0.701 highest among large-cap options",
+        "Prior 16-week active return +1.37% versus SPY"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.4,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "SPY closes above its August 7 high by more than 1%",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Growth stocks rebound sharply on positive retail sales surprise",
+      "time_window_catalyst": "August 14 retail sales and August 18 industrial production data"
+    },
+    {
+      "continuation_case": "Defensive characteristics persist amid labor-market softening",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE active return +2.26% over trailing 5 days",
+        "Health care employment rose 22000 in July while overall payrolls declined"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "SPY closes above its August 7 high by more than 1%",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Broad risk-on rotation lifts cyclicals more than defensives",
+      "time_window_catalyst": "August 14 retail sales and August 18 industrial production data"
+    },
+    {
+      "continuation_case": "Safe-haven demand supported by geopolitical and labor-market concerns",
+      "decision": "selected",
+      "evidence": [
+        "GOLD 5-day return +3.92% and prior 16-week active return +2.31%",
+        "Brent crude uncertainty tied to Iran conflict noted in August 12 reporting"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -0.9,
+      "invalidation_condition": "SPY closes above its August 7 high by more than 1%",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger-than-expected economic data reduces haven bids",
+      "time_window_catalyst": "August 14 retail sales and August 18 industrial production data"
+    },
+    {
+      "continuation_case": "Higher rates support net interest margins for banks",
+      "decision": "rejected",
+      "evidence": [
+        "FINANCIALS quality evidence score 0.724 second-highest overall",
+        "Financial activities employment fell 14000 in July"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SPY closes above its August 7 high by more than 1%",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Yield-curve flattening accelerates on stronger growth data",
+      "time_window_catalyst": "August 14 retail sales and August 18 industrial production data"
+    },
+    {
+      "continuation_case": "Commodity price stability supports materials equities",
+      "decision": "rejected",
+      "evidence": [
+        "MATERIALS quality evidence score 0.675",
+        "Industrial production rose only 0.1% in June"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "SPY closes above its August 7 high by more than 1%",
+      "option_id": "MATERIALS",
+      "reversal_case": "Weaker retail sales data signals slower industrial demand",
+      "time_window_catalyst": "August 14 retail sales and August 18 industrial production data"
+    },
+    {
+      "continuation_case": "European equities benefit from global risk appetite",
+      "decision": "rejected",
+      "evidence": [
+        "EUROPE quality evidence score 0.702",
+        "Developed ex-US 5-day active return +0.96%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.4,
+      "invalidation_condition": "SPY closes above its August 7 high by more than 1%",
+      "option_id": "EUROPE",
+      "reversal_case": "Stronger US data widens transatlantic growth differential",
+      "time_window_catalyst": "August 14 retail sales and August 18 industrial production data"
+    }
+  ],
+  "confidence": 0.62,
+  "expected_alpha_vs_sp500_pct": 0.56,
+  "is_official_score": true,
+  "key_risks": [
+    "Unexpectedly strong retail sales data lifting growth-sensitive equities",
+    "Resolution of Iran-related crude uncertainty reducing safe-haven flows",
+    "FOMC minutes on August 19 signaling less dovish stance than expected"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-3",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "SPY closes above its August 7 high by more than 1%",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Value tilt with strong quality evidence and recent relative strength versus SPY.",
+      "time_window_catalyst": "August 14 retail sales and August 18 industrial production data"
+    },
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "SPY closes above its August 7 high by more than 1%",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with positive active return and employment resilience in July data.",
+      "time_window_catalyst": "August 14 retail sales and August 18 industrial production data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "SPY closes above its August 7 high by more than 1%",
+      "option_id": "GOLD",
+      "rationale": "Safe-haven demand supported by labor-market softening and geopolitical crude uncertainty.",
+      "time_window_catalyst": "August 14 retail sales and August 18 industrial production data"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.96,
+  "portfolio_rationale": "Selected holdings show base-case forecasts exceeding SPY while respecting cluster caps and one-week horizon.",
+  "provider": "xai",
+  "rationale_summary": "Value, healthcare, and gold allocations target relative strength and defensive characteristics amid softening labor data.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-13-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16069,
+    "latency_seconds": 30.441327881999314,
+    "output_tokens": 1713,
+    "reasoning_tokens": 605,
+    "total_tokens": 18387
+  }
+}

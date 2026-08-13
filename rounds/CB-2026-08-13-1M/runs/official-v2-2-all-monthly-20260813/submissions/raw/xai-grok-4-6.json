@@ -1,0 +1,177 @@
+{
+  "benchmark_expected_return_pct": 1.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid private domestic demand and expanding ISM readings keep the index near highs through mid-September.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 closed at 7748.50 on August 12, first gain since the August 7 all-time high",
+        "SPY 21-session return was 2.75% and distance to 52-week high was -0.10%",
+        "FOMC held 3.50%\u20133.75% on July 29 with inflation still described as elevated"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": 0.2,
+      "invalidation_condition": "A decisive break below the August 12 close with weakening breadth versus equal-weight",
+      "option_id": "SP500",
+      "reversal_case": "Soft payrolls plus still-high energy inflation trigger a post-high mean reversion.",
+      "time_window_catalyst": "August CPI on September 11 and August employment on September 4"
+    },
+    {
+      "continuation_case": "Supply-risk premium and recent relative strength persist into the September 14 close.",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY returned 6.49% over 5 sessions and 4.42% active over 21 sessions",
+        "Brent was $88.98 on August 12 with AP citing Iran-conflict crude-flow uncertainty",
+        "12-month energy CPI remained +14.7% even after a 1.5% July decline"
+      ],
+      "forecast_base_pct": 2.4,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": 0.5,
+      "invalidation_condition": "Energy underperforms SPY for several sessions while crude reverses the August bounce",
+      "option_id": "ENERGY",
+      "reversal_case": "Conflict de-escalation or a sharp crude pullback unwinds the 5-session spike.",
+      "time_window_catalyst": "Iran-related crude headlines plus PPI/CPI energy components through September 11"
+    },
+    {
+      "continuation_case": "Defensive earnings and labor-market resilience in the sector extend the breakout.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE returned 2.61% over 5 sessions and 3.66% active over 21 sessions",
+        "Distance to 52-week high was 0.00%",
+        "July health-care employment rose 22,000 while total payrolls were -23,000"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": 0.3,
+      "invalidation_condition": "Loss of the 52-week high and negative active return versus SPY after jobs/CPI",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A risk-on rotation back into mega-cap growth fades the recent catch-up.",
+      "time_window_catalyst": "August employment report September 4 and August CPI September 11"
+    },
+    {
+      "continuation_case": "Prior relative trend resumes from a shallow pullback near the high.",
+      "decision": "selected",
+      "evidence": [
+        "Quality evidence score 0.534 with prior active rank 0.940",
+        "21-session active return +3.23% and distance to 52-week high -0.21%",
+        "5-session return +2.89%"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A break well below the recent high with rising realized volatility versus SPY",
+      "option_id": "CYBERSECURITY",
+      "reversal_case": "High 32% volatility and a growth-factor fade reverse the near-high setup.",
+      "time_window_catalyst": "July FOMC minutes August 19 and August CPI September 11"
+    },
+    {
+      "continuation_case": "Export-sensitive rebound continues while global manufacturing stays in expansion.",
+      "decision": "selected",
+      "evidence": [
+        "JAPAN returned 2.76% over 5 sessions with 21-session active return +1.41%",
+        "Distance to 52-week high was 0.00%",
+        "ISM manufacturing PMI rose to 55.6, consistent with global industrial expansion"
+      ],
+      "forecast_base_pct": 1.7,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "Japan loses the 52-week high and posts negative active return versus SPY",
+      "option_id": "JAPAN",
+      "reversal_case": "Yen strength or a global growth scare reverses the 5-session surge.",
+      "time_window_catalyst": "July industrial production August 18 and August CPI September 11"
+    },
+    {
+      "continuation_case": "Safe-haven bid extends if labor data stay weak and real yields ease.",
+      "decision": "rejected",
+      "evidence": [
+        "GOLD 5-session return +3.92% and 21-session active return +6.05%",
+        "Prior 105-session active return -28.67% and 52-week distance -18.30%",
+        "Quality evidence score 0.087, among the lowest in the table"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Gold gives back the 5-session gain as the dollar firms",
+      "option_id": "GOLD",
+      "reversal_case": "The bounce is a countertrend rally after a deep prior underperformance.",
+      "time_window_catalyst": "August CPI September 11 and FOMC minutes August 19"
+    },
+    {
+      "continuation_case": "Strong 21-session catch-up continues if growth equities stabilize.",
+      "decision": "rejected",
+      "evidence": [
+        "SOFTWARE 21-session active return +7.34%",
+        "Max drawdown 63-session -21.29% and 52-week distance -12.47%",
+        "Recent pullback rank 0.030 in the quality table"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Software fails to hold the 5-session gain and re-widens the drawdown versus SPY",
+      "option_id": "SOFTWARE",
+      "reversal_case": "Deep drawdown and weak pullback rank favor mean reversion after the bounce.",
+      "time_window_catalyst": "Retail sales August 14 and August CPI September 11"
+    }
+  ],
+  "confidence": 0.56,
+  "expected_alpha_vs_sp500_pct": 0.91,
+  "is_official_score": true,
+  "key_risks": [
+    "A broad equity reversal from the August 7 S&P high would drag high-beta cybersecurity and Japan",
+    "Oil geopolitics can fade quickly, reversing the energy overweight",
+    "Hotter August CPI or a hawkish FOMC-minutes read can compress risk assets before September 14",
+    "Labor-market deterioration beyond the July softness can hit cyclicals and international equities together"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-6",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 2.4,
+      "invalidation_condition": "Brent and energy equities reverse sharply while headline energy CPI/PPI cool without supply disruption",
+      "option_id": "ENERGY",
+      "rationale": "Oil-linked energy has the strongest near-term supplied price impulse and a live geopolitical supply-risk catalyst versus a modest SPY base.",
+      "time_window_catalyst": "Iran-conflict crude-flow uncertainty and scheduled inflation/labor prints through September 11"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Healthcare loses the 52-week high and underperforms SPY after the August jobs or CPI releases",
+      "option_id": "HEALTHCARE",
+      "rationale": "Healthcare is at a 52-week high with recent relative strength and the only major July payroll gain cited, supporting a higher one-month base than SPY.",
+      "time_window_catalyst": "August employment report on September 4 and July/August inflation prints"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Break well below the recent high with a sharp rise in sector volatility versus SPY",
+      "option_id": "CYBERSECURITY",
+      "rationale": "High prior-active rank and near-high price with positive 21-session active return support a continuation base above SPY if risk appetite holds.",
+      "time_window_catalyst": "FOMC minutes August 19 and August CPI September 11"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.7,
+      "invalidation_condition": "Japan loses the 52-week high as the yen strengthens sharply or global risk-off hits exporters",
+      "option_id": "JAPAN",
+      "rationale": "Japan sits at a 52-week high with a strong 5-session bounce and positive 21-session active return, offering international diversification above the SPY base.",
+      "time_window_catalyst": "Global growth and industrial-production data August 18 plus August CPI September 11"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.01,
+  "portfolio_rationale": "The book is entirely in names whose one-month bases exceed SPY, using energy, healthcare, cybersecurity, and Japan so no non-benchmark cluster exceeds 50%. Soft labor, still-elevated inflation, and a live oil-supply overhang favor these over a 100% SPY stance.",
+  "provider": "xai",
+  "rationale_summary": "SPY is near a record with only a modest expected one-month gain. Energy, healthcare, cybersecurity, and Japan have stronger supplied continuation setups and higher bases, producing positive expected alpha versus SPY.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-13-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 16929,
+    "latency_seconds": 40.271523960866034,
+    "output_tokens": 2119,
+    "reasoning_tokens": 759,
+    "total_tokens": 19807
+  }
+}

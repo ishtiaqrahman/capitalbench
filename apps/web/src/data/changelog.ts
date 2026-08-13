@@ -26,18 +26,38 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-08-12-grok-4-6-added",
+    date: "2026-08-12",
+    title: "Grok 4.6 joins future CapitalBench rounds",
+    category: "Benchmark",
+    status: "published",
+    summary:
+      "Grok 4.6 joins the production roster starting with the August 13 weekly and monthly rounds, with no backfill into older tests.",
+    details: [
+      "The model is configured as xai-grok-4-6 using xAI's official API model ID grok-4.6.",
+      "The production adapter disables tools and browsing, requests strict structured output, and pins reasoning effort to the lowest supported setting.",
+      "Its first accepted weekly and monthly portfolios create forward-only model history, model-profile data, and new fair-roster comparison cohorts.",
+      "Published standard-context API pricing is recorded as $2 per million input tokens and $6 per million output tokens."
+    ],
+    links: [
+      { label: "Models", href: "/models" },
+      { label: "Benchmark sets", href: "/leaderboards/benchmark-sets" },
+      { label: "Protocol", href: "/methodology" }
+    ]
+  },
+  {
     id: "2026-08-12-gpt-5-5-retired",
     date: "2026-08-12",
     title: "GPT-5.5 retired from new benchmark rounds",
     category: "Operations",
     status: "updated",
     summary:
-      "Future weekly and monthly rounds use a seven-model production roster while GPT-5.5's complete historical record remains published.",
+      "GPT-5.5 is excluded from future weekly and monthly rounds while its complete historical record remains published.",
     details: [
       "GPT-5.5 remains visible in historical portfolios, scored results, model profiles, and comparison sets.",
       "Existing rounds retain their frozen rosters and will continue to resolve and score GPT-5.5 normally when it was an original participant.",
       "New production rounds initialized after the retirement timestamp exclude GPT-5.5; explicitly labeled retrospective research can still use the retained configuration.",
-      "The first accepted weekly and monthly rounds on the seven-model roster will open successor comparison sets automatically."
+      "The first accepted weekly and monthly rounds on the successor roster will open new comparison sets automatically."
     ],
     links: [
       { label: "Models", href: "/models" },

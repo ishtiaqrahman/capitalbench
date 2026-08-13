@@ -1,0 +1,184 @@
+{
+  "benchmark_expected_return_pct": 1.2,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid economy, cooling core CPI at 2.5%, breadth positive",
+      "decision": "selected",
+      "evidence": [
+        "SPY +2.75% 21s, at all-time high Aug 7",
+        "YTD +13.2%, solid GDP final sales 3.9%"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "SPY breaks below -4% on macro shock",
+      "option_id": "SP500",
+      "reversal_case": "Softening payrolls -23k and hot inflation surprise",
+      "time_window_catalyst": "Aug CPI Sep 11, jobs Sep 4"
+    },
+    {
+      "continuation_case": "Defensive rotation as labor cools, oversold prior recovery",
+      "decision": "selected",
+      "evidence": [
+        "Active return +3.66% 21s, +2.61% 5s",
+        "Low beta 0.274, shallow drawdown -3.74%"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "XLV loses relative strength vs SPY",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Drug policy headlines, growth rally leaves defensives behind",
+      "time_window_catalyst": "Rotation into defensives amid soft data"
+    },
+    {
+      "continuation_case": "Rate-cut repricing, safe-haven, dollar softness",
+      "decision": "selected",
+      "evidence": [
+        "+6.05% active 21s, +3.92% 5s",
+        "Low corr to SPY 0.315"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Gold breaks recent uptrend below prior lows",
+      "option_id": "GOLD",
+      "reversal_case": "Dollar strength and real yield spike",
+      "time_window_catalyst": "FOMC minutes Aug 19"
+    },
+    {
+      "continuation_case": "Quality/defensive leadership continues",
+      "decision": "selected",
+      "evidence": [
+        "+3.65% active 21s, +1.84% 5s",
+        "Low vol 11.73%, beta 0.251"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "SCHD underperforms SPY meaningfully",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth risk-on rotation",
+      "time_window_catalyst": "Defensive positioning through data month"
+    },
+    {
+      "continuation_case": "Geopolitical supply risk lifts crude",
+      "decision": "rejected",
+      "evidence": [
+        "XLE +4.42% active 21s, +6.49% 5s",
+        "Brent $88.98, Iran uncertainty"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Brent falls below $80",
+      "option_id": "ENERGY",
+      "reversal_case": "Oil overbought after +10.81% USO 5s",
+      "time_window_catalyst": "Iran conflict developments"
+    },
+    {
+      "continuation_case": "Mega-cap AI leadership resumes",
+      "decision": "rejected",
+      "evidence": [
+        "-2.19% active 21s, high vol 25.86%",
+        "Drawdown -11.22%"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Growth breaks down on rate spike",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Rate sensitivity, high beta drawdown risk",
+      "time_window_catalyst": "Tech earnings momentum"
+    },
+    {
+      "continuation_case": "Rate cuts lower yields",
+      "decision": "rejected",
+      "evidence": [
+        "-2.98% active 21s",
+        "Yields elevated, 10y 4.68%"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yields spike above prior highs",
+      "option_id": "AGGREGATE_BONDS",
+      "reversal_case": "Sticky inflation keeps yields high",
+      "time_window_catalyst": "FOMC minutes"
+    },
+    {
+      "continuation_case": "Trend persistence",
+      "decision": "rejected",
+      "evidence": [
+        "-4.32% active 21s, high vol 38.65%",
+        "Drawdown -17.99%"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -10.0,
+      "invalidation_condition": "Continued momentum unwind",
+      "option_id": "MOMENTUM",
+      "reversal_case": "Factor rotation, deep drawdown",
+      "time_window_catalyst": "None identified"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.43,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot Aug CPI/PPI reverses rate-cut hopes hurting gold and defensives",
+    "Risk-on growth rally leaves defensives lagging SPY",
+    "Gold pullback after strong run"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "SPY closes below -4% intramonth on hot inflation",
+      "option_id": "SP500",
+      "rationale": "Core broad exposure at all-time highs with solid economy and cooling inflation.",
+      "time_window_catalyst": "Aug CPI Sep 11, Aug jobs Sep 4"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "XLV rolls below prior support with sector underperformance",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong recent active return +3.66%, deep prior pullback, low beta defensive with momentum turning.",
+      "time_window_catalyst": "Defensive rotation as labor softens"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Dollar surges and real yields spike",
+      "option_id": "GOLD",
+      "rationale": "Strong recent momentum +6.05% active, safe-haven demand amid softening labor market and rate-cut odds.",
+      "time_window_catalyst": "FOMC minutes Aug 19, dovish repricing"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Sharp risk-on rotation into growth",
+      "option_id": "DIVIDEND",
+      "rationale": "Leading recent active return +3.65%, low volatility, defensive quality tilt.",
+      "time_window_catalyst": "Defensive positioning through data-heavy month"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.63,
+  "portfolio_rationale": "Barbell of core SPY plus defensive/quality tilts (healthcare, dividend) and gold hedge that have shown recent relative strength and offer downside protection through a data-heavy month with softening labor.",
+  "provider": "anthropic",
+  "rationale_summary": "Core SPY with defensive quality and gold overweight to capture recent leadership while managing macro risk.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-13-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28226,
+    "latency_seconds": 38.231908309971914,
+    "output_tokens": 2447,
+    "total_tokens": 30673
+  }
+}

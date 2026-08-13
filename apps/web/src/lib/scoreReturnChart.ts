@@ -165,6 +165,7 @@ function scoreChartModelColorClass(modelId: string, index: number): string {
     "openai-gpt-5-6-sol": "score-bar-openai",
     "xai-grok-4-3": "score-bar-xai",
     "xai-grok-4-5": "score-bar-xai",
+    "xai-grok-4-6": "score-bar-xai",
     "anthropic-claude-fable-5": "score-bar-anthropic-fable",
     "anthropic-claude-opus-4-7": "score-bar-anthropic",
     "anthropic-claude-opus-4-8": "score-bar-anthropic-alt",

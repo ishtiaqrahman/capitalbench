@@ -31,8 +31,10 @@ provider-supported reasoning setting that still returns the required valid
 structured decision. Technical or formatting retries must remain disclosed and
 must never be used to seek a different portfolio.
 
-The active production roster has seven models: GPT-5.6 SOL, Grok 4.3, Grok
-4.5, Gemini 3.1 Pro, Claude Opus 4.8, Claude Opus 5, and Claude Fable 5.
+The active production roster has eight models: GPT-5.6 SOL, Grok 4.3, Grok
+4.5, Grok 4.6, Gemini 3.1 Pro, Claude Opus 4.8, Claude Opus 5, and Claude
+Fable 5. Grok 4.6 joined future rounds effective `2026-08-13T03:14:52Z`
+using the xAI API model ID `grok-4.6`; do not backfill it into older rounds.
 GPT-5.5 was retired from new rounds by operator direction effective
 `2026-08-13T02:59:24Z` (August 12, 2026 in America/Toronto), with no designated
 successor. Preserve all GPT-5.5 historical submissions, results, profiles, and

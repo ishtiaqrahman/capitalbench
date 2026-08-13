@@ -1,0 +1,197 @@
+{
+  "benchmark_expected_return_pct": 1.0,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid GDP final private demand (3.9%) and strong ISM support the uptrend",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 at 7,748.50, +13.2% YTD, near Aug 7 all-time high",
+        "Core CPI 2.5% y/y, cooling from 2.6%; Fed on hold at 3.50%-3.75%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Broad risk-off on inflation or labor shock",
+      "option_id": "SP500",
+      "reversal_case": "Weak July payrolls (-23k) and hot energy inflation could sour sentiment",
+      "time_window_catalyst": "Aug CPI Sep 11 and payrolls Sep 4"
+    },
+    {
+      "continuation_case": "Elevated long yields and strong manufacturing PMI favor value sectors",
+      "decision": "selected",
+      "evidence": [
+        "+1.68% active return over 21s; prior 105s active +1.48%",
+        "Volatility 11.47%, max drawdown -2.40%, near 52-week high"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Value active return turns decisively negative vs SPY",
+      "option_id": "LARGE_VALUE",
+      "reversal_case": "Renewed mega-cap growth rally would drag on relative performance",
+      "time_window_catalyst": "Retail sales Aug 14, industrial production Aug 18"
+    },
+    {
+      "continuation_case": "Breadth broadening with 72% of assets positive over 21s",
+      "decision": "selected",
+      "evidence": [
+        "RSP minus SPY +0.83% over 21s, +0.26% over 5s",
+        "Lowest equity volatility (11.06%) with -2.04% drawdown, at 52-week high"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 4.2,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "rsp_minus_spy_21s turns negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Concentration in mega-caps could resume",
+      "time_window_catalyst": "Late-August macro releases confirming broad economy"
+    },
+    {
+      "continuation_case": "Relative-strength turn from depressed base plus defensive demand",
+      "decision": "selected",
+      "evidence": [
+        "+3.66% active over 21s after -6.43% prior 105s; at 52-week high",
+        "Health care employment rose 22,000 in July",
+        "Low SPY beta 0.27 offers downside cushion"
+      ],
+      "forecast_base_pct": 1.6,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "XLV falls back below its prior relative range vs SPY",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Reversion if the recent bounce was purely rotation-driven",
+      "time_window_catalyst": "Defensive flows around Sep 4 payrolls and Sep 11 CPI"
+    },
+    {
+      "continuation_case": "Persistent geopolitical supply risk keeps crude and energy equities bid",
+      "decision": "selected",
+      "evidence": [
+        "Brent $88.98 with reported Iran conflict crude-flow uncertainty",
+        "XLE +6.49% over 5s, +4.42% active over 21s",
+        "Gasoline +24.6% y/y, energy +14.7% y/y in CPI"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Brent falls below ~$80 on de-escalation",
+      "option_id": "ENERGY",
+      "reversal_case": "Iran de-escalation or demand weakness drops crude quickly",
+      "time_window_catalyst": "Iran-related supply headlines through mid-September"
+    },
+    {
+      "continuation_case": "AI momentum could reassert with mega-cap strength",
+      "decision": "rejected",
+      "evidence": [
+        "-2.19% active over 21s despite +8.77% prior 105s",
+        "Volatility 25.86%, drawdown -11.22%, 2.9% below 52-week high"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Tech relative strength resumes above prior highs",
+      "option_id": "NASDAQ100",
+      "reversal_case": "Recent underperformance and high rates pressure growth multiples",
+      "time_window_catalyst": "Sep 11 CPI shaping rate expectations"
+    },
+    {
+      "continuation_case": "Geopolitical risk and sticky inflation support safe-haven bounce",
+      "decision": "rejected",
+      "evidence": [
+        "+3.92% over 5s, +6.05% active 21s, but -28.67% prior 105s active and -18.3% from 52-week high",
+        "Lowest quality evidence score cohort (0.087)"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Dollar strength resumes and gold breaks recent lows",
+      "option_id": "GOLD",
+      "reversal_case": "Firm dollar and elevated real yields cap recovery from deep downtrend",
+      "time_window_catalyst": "Sep 11 CPI and Iran headlines"
+    },
+    {
+      "continuation_case": "Weak payrolls could rally duration into Sep FOMC",
+      "decision": "rejected",
+      "evidence": [
+        "30y at 5.24%; TLT -4.70% active over 21s, -7.5% from 52-week high",
+        "Headline CPI still 3.4% y/y with energy +14.7%"
+      ],
+      "forecast_base_pct": -0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "30y yield falls decisively below 5%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation and hawkish dissenters keep long yields high",
+      "time_window_catalyst": "Sep 4 payrolls, Sep 11 CPI"
+    }
+  ],
+  "confidence": 0.58,
+  "cost_usd": 0.47075,
+  "expected_alpha_vs_sp500_pct": 0.37,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot August CPI (Sep 11) reprices Fed expectations and hits all equity sleeves",
+    "Iran de-escalation drops crude prices, reversing the energy tilt",
+    "Mega-cap tech leadership resumes, causing value/equal-weight tilts to lag SPY",
+    "Sharp payroll deterioration on Sep 4 triggers broad risk-off despite defensive tilts"
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-fable-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Hot August CPI or sharp payroll deterioration triggering broad risk-off",
+      "option_id": "SP500",
+      "rationale": "Core benchmark anchor; index near all-time high with cooling core CPI and strong ISM data supporting broad equity.",
+      "time_window_catalyst": "Aug CPI (Sep 11) and Aug payrolls (Sep 4) shaping September Fed expectations"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "Growth/tech leadership reasserting with value active return turning negative",
+      "option_id": "LARGE_VALUE",
+      "rationale": "Positive 21s active return (+1.68%), low volatility and shallow drawdown; value benefits from elevated rates and firm ISM manufacturing.",
+      "time_window_catalyst": "Retail sales Aug 14 and industrial production Aug 18 confirming solid activity"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Mega-cap concentration resumes with rsp_minus_spy turning negative",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Broadening breadth: RSP beat SPY by 0.83% over 21s and 0.26% over 5s with lower volatility (11.06%) and shallow drawdown.",
+      "time_window_catalyst": "Continued breadth expansion into late-August data releases"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.6,
+      "invalidation_condition": "Sector-specific policy headline or reversal of relative strength below entry",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong recent turn (+3.66% active 21s) after deep prior underperformance; low beta (0.27), at 52-week high, health employment growing.",
+      "time_window_catalyst": "Defensive rotation demand around Sep 4 payrolls and Sep 11 CPI"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "De-escalation pushing Brent below ~$80",
+      "option_id": "ENERGY",
+      "rationale": "Brent at $88.98 with Iran conflict supply uncertainty; +4.42% active 21s, negative SPY beta adds diversification.",
+      "time_window_catalyst": "Ongoing Iran-related crude supply risk through mid-September"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.37,
+  "portfolio_rationale": "Tilt toward value, equal-weight breadth, healthcare's defensive turn, and energy geopolitical support around a 30% SPY core; each active sleeve has base forecast above SPY and clusters stay within the 50% cap.",
+  "provider": "anthropic",
+  "rationale_summary": "Breadth is broadening (RSP outperforming), value and healthcare show fresh relative strength with low drawdowns, and energy is supported by Iran-related crude supply risk, all offering modest expected alpha over SPY into mid-September.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-13-1M",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.47075,
+    "input_tokens": 28220,
+    "latency_seconds": 52.12316725589335,
+    "output_tokens": 3771,
+    "total_tokens": 31991
+  }
+}

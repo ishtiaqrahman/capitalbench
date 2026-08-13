@@ -406,6 +406,60 @@ def test_smoke_provider_uses_low_anthropic_reasoning_effort(tmp_path: Path, monk
     assert captured["runtime_reasoning_effort"] == "low"
 
 
+def test_smoke_provider_gives_grok_4_6_low_reasoning_and_long_timeout(
+    tmp_path: Path, monkeypatch
+) -> None:
+    round_path = _copy_example_round(tmp_path)
+    monkeypatch.setenv("XAI_API_KEY", "test-key")
+    captured = {}
+
+    class CapturingProvider:
+        def run_model(self, model_config, prompt, json_schema, runtime_limits):
+            captured["model_reasoning_effort"] = model_config.reasoning_effort
+            captured["model_timeout"] = model_config.max_wall_clock_seconds
+            captured["runtime_reasoning_effort"] = runtime_limits.reasoning_effort
+            captured["runtime_timeout"] = runtime_limits.timeout_seconds
+            from capitalbench.providers.base import ProviderResult
+            from capitalbench.schemas import Usage
+
+            return ProviderResult(
+                raw_text=(
+                    '{"round_id":"example-round","model_id":"xai-smoke","provider":"xai",'
+                    '"mode":"closed_capability","selected_option_id":"SP500","confidence":0.5,'
+                    '"rationale_summary":"Test","key_risks":["Risk one","Risk two"]}'
+                ),
+                parsed_json={
+                    "round_id": "example-round",
+                    "model_id": "xai-smoke",
+                    "provider": "xai",
+                    "mode": "closed_capability",
+                    "selected_option_id": "SP500",
+                    "confidence": 0.5,
+                    "rationale_summary": "Test",
+                    "key_risks": ["Risk one", "Risk two"],
+                },
+                usage=Usage(latency_seconds=0.01),
+                error=None,
+            )
+
+    monkeypatch.setitem(provider_smoke_module.PROVIDER_CLASSES, "xai", CapturingProvider)
+
+    summary = smoke_provider(
+        provider="xai",
+        api_model_name="grok-4.6",
+        round_path=round_path,
+        allow_real_api_calls=True,
+    )
+
+    assert summary.validation_status == "valid"
+    assert captured == {
+        "model_reasoning_effort": "low",
+        "model_timeout": 180,
+        "runtime_reasoning_effort": "low",
+        "runtime_timeout": 180,
+    }
+
+
 def test_check_providers_does_not_print_secrets(monkeypatch, capsys) -> None:
     monkeypatch.setenv("OPENAI_API_KEY", "sk-secret-value")
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)

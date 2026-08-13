@@ -1,0 +1,146 @@
+{
+  "benchmark_expected_return_pct": 1.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued solid economic growth and corporate earnings.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 gained 0.3% on August 12 to 7,748.50.",
+        "Economic activity expanding at a solid pace."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Significant downward revision to GDP or sharp rise in unemployment.",
+      "option_id": "SP500",
+      "reversal_case": "Unexpected economic weakness or inflation resurgence.",
+      "time_window_catalyst": "August 26 GDP estimate and September 4 employment report."
+    },
+    {
+      "continuation_case": "Ongoing job growth and defensive positioning.",
+      "decision": "selected",
+      "evidence": [
+        "Health care employment rose by 22,000.",
+        "Recent 5-day return of 2.61%."
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "Regulatory changes or a sharp reversal in defensive sentiment.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Shift towards cyclical sectors.",
+      "time_window_catalyst": "Continued job growth in the sector and defensive rotation."
+    },
+    {
+      "continuation_case": "Persistent geopolitical tensions and supply constraints.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude at $88.98 a barrel on August 12.",
+        "Continued uncertainty involving the Iran conflict."
+      ],
+      "forecast_base_pct": 2.5,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Resolution of geopolitical tensions leading to a sharp drop in oil prices.",
+      "option_id": "ENERGY",
+      "reversal_case": "Resolution of conflicts or demand destruction.",
+      "time_window_catalyst": "Ongoing Iran conflict and crude flow uncertainty."
+    },
+    {
+      "continuation_case": "Persistent inflation keeping yields high.",
+      "decision": "rejected",
+      "evidence": [
+        "Thirty-year yield was unchanged at 5.24%.",
+        "Inflation remains elevated relative to the 2% goal."
+      ],
+      "forecast_base_pct": -1.0,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "A sharp drop in inflation or unexpected Fed dovishness.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Sudden economic downturn prompting rate cuts.",
+      "time_window_catalyst": "September 11 CPI release."
+    },
+    {
+      "continuation_case": "Continued safe-haven demand amid uncertainty.",
+      "decision": "rejected",
+      "evidence": [
+        "Recent 5-day return of 3.92%.",
+        "Geopolitical uncertainty."
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A significant de-escalation of global tensions.",
+      "option_id": "GOLD",
+      "reversal_case": "Rising real yields or a stronger US dollar.",
+      "time_window_catalyst": "Geopolitical developments."
+    },
+    {
+      "continuation_case": "Stabilization in interest rates.",
+      "decision": "rejected",
+      "evidence": [
+        "Shelter rose 0.1% and accounted for roughly two-thirds of the monthly headline increase.",
+        "Recent 5-day return of -1.57%."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "A sharp rise in mortgage rates.",
+      "option_id": "REAL_ESTATE",
+      "reversal_case": "Further increases in long-term yields.",
+      "time_window_catalyst": "Housing starts data."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.375,
+  "is_official_score": true,
+  "key_risks": [
+    "Geopolitical tensions easing, leading to a drop in energy prices.",
+    "A sudden shift in market sentiment away from defensive sectors like healthcare.",
+    "Unexpectedly weak economic data impacting broad equity markets."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Significant downward revision to GDP or sharp rise in unemployment.",
+      "option_id": "SP500",
+      "rationale": "Core holding providing broad US equity exposure amid solid economic expansion.",
+      "time_window_catalyst": "August 26 GDP estimate and September 4 employment report."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Regulatory changes or a sharp reversal in defensive sentiment.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive growth sector with strong recent momentum and positive employment trends.",
+      "time_window_catalyst": "Continued job growth in the sector and defensive rotation."
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.5,
+      "invalidation_condition": "Resolution of geopolitical tensions leading to a sharp drop in oil prices.",
+      "option_id": "ENERGY",
+      "rationale": "Benefiting from rising crude prices and geopolitical uncertainty.",
+      "time_window_catalyst": "Ongoing Iran conflict and crude flow uncertainty."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.875,
+  "portfolio_rationale": "The portfolio balances core US equity exposure with targeted allocations to healthcare and energy. Healthcare offers defensive growth, while energy provides a hedge against geopolitical risks and rising oil prices. This combination aims to outperform the broader market in a solid but uncertain economic environment.",
+  "provider": "google",
+  "rationale_summary": "A balanced approach combining core US equities with defensive healthcare and inflation-hedging energy.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-13-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17449,
+    "latency_seconds": 15.15673445397988,
+    "output_tokens": 1688,
+    "total_tokens": 19137
+  }
+}

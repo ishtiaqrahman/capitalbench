@@ -23,6 +23,7 @@ EXPECTED_PORTFOLIO_V2_MODEL_IDS = {
     "google-gemini-3-1-pro",
     "xai-grok-4-3",
     "xai-grok-4-5",
+    "xai-grok-4-6",
 }
 EXPECTED_POST_OPUS_4_7_RETIREMENT_MODEL_IDS = EXPECTED_PORTFOLIO_V2_MODEL_IDS - {
     "anthropic-claude-opus-4-7"
@@ -30,34 +31,47 @@ EXPECTED_POST_OPUS_4_7_RETIREMENT_MODEL_IDS = EXPECTED_PORTFOLIO_V2_MODEL_IDS - 
 EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS = EXPECTED_POST_OPUS_4_7_RETIREMENT_MODEL_IDS - {
     "openai-gpt-5-5"
 }
+EXPECTED_PRE_GROK_4_6_MODEL_IDS = EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS - {
+    "xai-grok-4-6"
+}
 
 
-def test_canonical_portfolio_v2_roster_contains_all_nine_models() -> None:
+def test_canonical_portfolio_v2_roster_contains_all_ten_models() -> None:
     assert set(canonical_portfolio_v2_model_ids()) == EXPECTED_PORTFOLIO_V2_MODEL_IDS
 
 
 def test_active_portfolio_v2_roster_excludes_models_after_retirement() -> None:
-    pre_opus_5_ids = EXPECTED_PORTFOLIO_V2_MODEL_IDS - {"anthropic-claude-opus-5"}
+    pre_opus_5_ids = EXPECTED_PORTFOLIO_V2_MODEL_IDS - {
+        "anthropic-claude-opus-5",
+        "xai-grok-4-6",
+    }
     assert set(active_portfolio_v2_model_ids("2026-07-20T23:59:59Z")) == pre_opus_5_ids
     assert set(active_portfolio_v2_model_ids("2026-07-21T00:00:00Z")) == (
-        EXPECTED_POST_OPUS_4_7_RETIREMENT_MODEL_IDS - {"anthropic-claude-opus-5"}
+        EXPECTED_POST_OPUS_4_7_RETIREMENT_MODEL_IDS
+        - {"anthropic-claude-opus-5", "xai-grok-4-6"}
     )
     assert set(
         active_portfolio_v2_model_ids(
             "2026-07-24T00:00:00Z",
             round_id="CB-2026-07-24-1W",
         )
-    ) == EXPECTED_POST_OPUS_4_7_RETIREMENT_MODEL_IDS
+    ) == (EXPECTED_POST_OPUS_4_7_RETIREMENT_MODEL_IDS - {"xai-grok-4-6"})
     assert set(
         active_portfolio_v2_model_ids(
             "2026-08-13T02:59:23Z",
             round_id="CB-2026-08-12-1W",
         )
-    ) == EXPECTED_POST_OPUS_4_7_RETIREMENT_MODEL_IDS
+    ) == (EXPECTED_POST_OPUS_4_7_RETIREMENT_MODEL_IDS - {"xai-grok-4-6"})
     assert set(
         active_portfolio_v2_model_ids(
             "2026-08-13T02:59:24Z",
             round_id="CB-2026-08-12-1W",
+        )
+    ) == EXPECTED_PRE_GROK_4_6_MODEL_IDS
+    assert set(
+        active_portfolio_v2_model_ids(
+            "2026-08-13T03:14:52Z",
+            round_id="CB-2026-08-13-1W",
         )
     ) == EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS
 

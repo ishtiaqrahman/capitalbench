@@ -136,3 +136,22 @@ models:
     first_eligible_date_utc: "2026-07-08T22:00:00Z"
     model_release_date: "2026-07-08"
     notes: CapitalBench Portfolio V2 production participant.
+
+  - model_id: xai-grok-4-6
+    provider: xai
+    api_model_name: grok-4.6
+    enabled: true
+    mode: closed_capability
+    temperature: 0
+    max_completion_tokens: 6000
+    max_wall_clock_seconds: 180
+    reasoning_effort: low
+    first_eligible_round: CB-2026-08-13-1M
+    first_eligible_date_utc: "2026-08-13T03:14:52Z"
+    model_release_date: "2026-08-12"
+    notes: CapitalBench Portfolio V2 production participant starting with the August 13, 2026 weekly and monthly rounds; no backfill into older rounds.
+    metadata:
+      pricing_per_1m_tokens_usd:
+        base_input: 2.0
+        cached_input: 0.5
+        output: 6.0

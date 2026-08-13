@@ -1,0 +1,138 @@
+{
+  "benchmark_expected_return_pct": 0.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Continued economic expansion and stable inflation.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 gained 0.3% on August 12 to 7,748.50.",
+        "Year-to-date gain of 13.2%."
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 2.0,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A significant miss in upcoming economic data releases.",
+      "option_id": "SP500",
+      "reversal_case": "Unexpected negative economic data or a resurgence in inflation.",
+      "time_window_catalyst": "Upcoming retail sales and industrial production data."
+    },
+    {
+      "continuation_case": "Ongoing geopolitical tensions supporting oil prices.",
+      "decision": "selected",
+      "evidence": [
+        "Brent crude at $88.98 a barrel on August 12.",
+        "Continued uncertainty involving the Iran conflict and crude flows."
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "A sharp drop in crude oil prices or a resolution to geopolitical tensions.",
+      "option_id": "ENERGY",
+      "reversal_case": "A resolution to geopolitical conflicts or a sudden increase in oil supply.",
+      "time_window_catalyst": "Continued geopolitical uncertainty supporting oil prices."
+    },
+    {
+      "continuation_case": "Continued defensive rotation and stable earnings.",
+      "decision": "selected",
+      "evidence": [
+        "Health care employment rose by 22,000.",
+        "Strong prior active rank of 0.806."
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "A sudden shift towards high-beta growth sectors.",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "A sudden shift towards high-beta growth sectors.",
+      "time_window_catalyst": "Continued defensive rotation and stable earnings."
+    },
+    {
+      "continuation_case": "A flight to safety or weaker-than-expected economic data.",
+      "decision": "rejected",
+      "evidence": [
+        "Thirty-year yield was unchanged at 5.24%.",
+        "Recent pullback rank of 0.896."
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "A significant increase in long-term interest rates.",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Stronger-than-expected economic data or higher inflation.",
+      "time_window_catalyst": "Upcoming economic data releases."
+    },
+    {
+      "continuation_case": "Continued demand for safe-haven assets.",
+      "decision": "rejected",
+      "evidence": [
+        "Prior active rank of 0.881.",
+        "Return_3s of 1.59%."
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "A significant strengthening of the US dollar.",
+      "option_id": "GOLD",
+      "reversal_case": "A strong US dollar or rising real interest rates.",
+      "time_window_catalyst": "Geopolitical events or changes in inflation expectations."
+    },
+    {
+      "continuation_case": "Strong earnings from mega-cap tech companies.",
+      "decision": "rejected",
+      "evidence": [
+        "Nasdaq Composite gained 0.5% to 26,588.49.",
+        "Volatility_21s of 34.12%."
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "A significant increase in interest rates.",
+      "option_id": "TECHNOLOGY",
+      "reversal_case": "Rising interest rates or a shift towards value sectors.",
+      "time_window_catalyst": "Tech company earnings or product announcements."
+    }
+  ],
+  "confidence": 0.65,
+  "expected_alpha_vs_sp500_pct": 0.85,
+  "is_official_score": true,
+  "key_risks": [
+    "A sudden drop in oil prices could negatively impact the energy allocation.",
+    "A rapid shift in market sentiment towards high-growth sectors could lead to underperformance of healthcare.",
+    "Broader market volatility could affect both sectors."
+  ],
+  "metadata": {},
+  "mode": "closed_capability",
+  "model_id": "google-gemini-3-1-pro",
+  "portfolio": [
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "A sharp drop in crude oil prices or a resolution to geopolitical tensions.",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent momentum and high quality evidence score, supported by crude oil price stability.",
+      "time_window_catalyst": "Continued geopolitical uncertainty supporting oil prices."
+    },
+    {
+      "allocation_pct": 50,
+      "expected_return_pct": 1.2,
+      "invalidation_condition": "A sudden shift towards high-beta growth sectors.",
+      "option_id": "HEALTHCARE",
+      "rationale": "Defensive sector with strong recent performance and positive employment data.",
+      "time_window_catalyst": "Continued defensive rotation and stable earnings."
+    }
+  ],
+  "portfolio_expected_return_pct": 1.35,
+  "portfolio_rationale": "The portfolio balances strong momentum in the energy sector with the defensive characteristics of healthcare. Both sectors have shown recent strength and offer a mix of cyclical and defensive exposure.",
+  "provider": "google",
+  "rationale_summary": "A balanced approach utilizing energy momentum and healthcare defensiveness.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-13-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17399,
+    "latency_seconds": 13.029083150904626,
+    "output_tokens": 1593,
+    "total_tokens": 18992
+  }
+}

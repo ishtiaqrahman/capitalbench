@@ -1,0 +1,175 @@
+{
+  "benchmark_expected_return_pct": 0.3,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid GDP final sales, strong ISM manufacturing support equity uptrend",
+      "decision": "selected",
+      "evidence": [
+        "SPY +0.3% Aug 12, first gain since Aug 7 ATH",
+        "YTD +13.2%, positive breadth 72% 21s"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "SPY closes below prior support on inflation surprise",
+      "option_id": "SP500",
+      "reversal_case": "Hot PPI/CPI or weak retail sales trigger pullback from ATH",
+      "time_window_catalyst": "PPI Aug 13, retail sales Aug 14, FOMC minutes Aug 19"
+    },
+    {
+      "continuation_case": "Defensive rotation continues amid soft labor data",
+      "decision": "selected",
+      "evidence": [
+        "+2.26% active return 5s, +1.32% prior active",
+        "Negative SPY beta -0.215, low drawdown"
+      ],
+      "forecast_base_pct": 0.7,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLV loses active-return leadership",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation into growth leaves defensives behind",
+      "time_window_catalyst": "Retail sales Aug 14, FOMC minutes"
+    },
+    {
+      "continuation_case": "Safe-haven demand from soft labor and geopolitical risk persists",
+      "decision": "selected",
+      "evidence": [
+        "+3.57% active 5s, +8.8% IAU 21s",
+        "Prior active rank 0.881"
+      ],
+      "forecast_base_pct": 0.8,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Gold falls with rising real yields",
+      "option_id": "GOLD",
+      "reversal_case": "USD rally or real yields spike",
+      "time_window_catalyst": "FOMC minutes Aug 19"
+    },
+    {
+      "continuation_case": "Geopolitical crude supply risk sustains energy",
+      "decision": "rejected",
+      "evidence": [
+        "XLE +6.14% 3s, oil +10.81% 5s",
+        "Brent $88.98 with Iran uncertainty"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -3.0,
+      "invalidation_condition": "Brent falls back below $85",
+      "option_id": "ENERGY",
+      "reversal_case": "Sharp mean-reversion after extreme spike, worst recent pullback rank",
+      "time_window_catalyst": "Iran conflict headlines"
+    },
+    {
+      "continuation_case": "Defensive dividend leadership persists",
+      "decision": "rejected",
+      "evidence": [
+        "+1.49% active 5s, +2.08% prior active",
+        "Very low SPY beta 0.07"
+      ],
+      "forecast_base_pct": 0.5,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -0.5,
+      "invalidation_condition": "SCHD loses relative momentum",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth rotation reduces relative strength",
+      "time_window_catalyst": "Retail sales Aug 14"
+    },
+    {
+      "continuation_case": "Recent strength continues with yen dynamics",
+      "decision": "rejected",
+      "evidence": [
+        "+2.41% active 5s, at 52w high",
+        "Low prior active rank"
+      ],
+      "forecast_base_pct": 0.4,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Yen sharp rally hurts exporters",
+      "option_id": "JAPAN",
+      "reversal_case": "High volatility 24.5%, weak prior rank suggests fragility",
+      "time_window_catalyst": "Global trade headlines"
+    },
+    {
+      "continuation_case": "Duration bid on weak labor data",
+      "decision": "rejected",
+      "evidence": [
+        "TLT -1.07% 5s, -1.95% 21s",
+        "30y yield 5.24%"
+      ],
+      "forecast_base_pct": -0.2,
+      "forecast_high_pct": 1.2,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Long yields rise on hot inflation",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation keeps long yields high",
+      "time_window_catalyst": "FOMC minutes Aug 19"
+    },
+    {
+      "continuation_case": "Strong prior rank and low drawdown",
+      "decision": "rejected",
+      "evidence": [
+        "High quality score 0.724, low vol 10.8%",
+        "-0.49% active 5s recently lagging"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 1.5,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "XLF continues underperforming SPY",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Recent active weakness, curve concerns",
+      "time_window_catalyst": "Retail sales Aug 14"
+    }
+  ],
+  "confidence": 0.55,
+  "expected_alpha_vs_sp500_pct": 0.43,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot PPI/CPI or retail sales sparking risk-on growth rally that leaves defensives behind",
+    "Gold pullback on USD strength or rising real yields",
+    "FOMC minutes signaling hawkish tilt hurting rate-sensitive positioning"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-4-8",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.7,
+      "invalidation_condition": "XLV drops below 5s active return leadership or broad risk-on rotation into growth",
+      "option_id": "HEALTHCARE",
+      "rationale": "Strong recent active return (+2.26% 5s), low SPY beta/correlation, defensive quality with high prior rank.",
+      "time_window_catalyst": "Retail sales Aug 14, FOMC minutes Aug 19"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 0.8,
+      "invalidation_condition": "Sharp USD rally or real yields spike higher",
+      "option_id": "GOLD",
+      "rationale": "Strong momentum (+3.57% active 5s, +8.8% 21s IAU), safe-haven demand amid soft labor data and geopolitical crude uncertainty.",
+      "time_window_catalyst": "FOMC minutes Aug 19, softer labor backdrop"
+    },
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 0.3,
+      "invalidation_condition": "SPY breaks below recent range on hot inflation print",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure at all-time high area with positive breadth.",
+      "time_window_catalyst": "PPI Aug 13, retail sales Aug 14"
+    }
+  ],
+  "portfolio_expected_return_pct": 0.73,
+  "portfolio_rationale": "Blend of defensive healthcare leadership, gold safe-haven momentum, and core SPY exposure to modestly outperform with lower drawdown risk.",
+  "provider": "anthropic",
+  "rationale_summary": "Healthcare and gold both show strong recent active returns with low SPY correlation, providing diversification while SPY anchors the core.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-13-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 28230,
+    "latency_seconds": 39.05623474996537,
+    "output_tokens": 2426,
+    "total_tokens": 30656
+  }
+}

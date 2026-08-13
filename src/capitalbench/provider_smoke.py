@@ -65,8 +65,11 @@ def smoke_provider(
         reasoning_effort = "none" if api_model_name.startswith("gpt-5.6") else "minimal"
     elif provider == "anthropic":
         reasoning_effort = "low"
+    elif provider == "xai" and api_model_name.startswith("grok-4.6"):
+        reasoning_effort = "low"
 
     max_output_tokens = 3000 if manifest.submission_format == "portfolio" else 500
+    timeout_seconds = 180 if provider == "xai" and api_model_name.startswith("grok-4.6") else 60
 
     model_config = ModelConfig(
         model_id=f"{provider}-smoke",
@@ -76,7 +79,7 @@ def smoke_provider(
         mode="closed_capability",
         temperature=0,
         max_completion_tokens=max_output_tokens,
-        max_wall_clock_seconds=60,
+        max_wall_clock_seconds=timeout_seconds,
         reasoning_effort=reasoning_effort,
         metadata={
             "round_id": manifest.round_id,
@@ -91,7 +94,7 @@ def smoke_provider(
         },
     )
     runtime_limits = RuntimeSettings(
-        timeout_seconds=60,
+        timeout_seconds=timeout_seconds,
         max_output_tokens=max_output_tokens,
         temperature=0,
         reasoning_effort=reasoning_effort,

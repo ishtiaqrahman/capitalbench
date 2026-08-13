@@ -1,0 +1,200 @@
+{
+  "benchmark_expected_return_pct": 1.1,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid growth and expanding PMIs with index near highs.",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 7,748.50, +13.2% YTD, all-time high Aug 7",
+        "ISM manufacturing 55.6, highest since May 2022",
+        "Fed on hold at 3.50-3.75% with three hawkish dissents"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "SPY drops more than 5% from entry",
+      "option_id": "SP500",
+      "reversal_case": "Negative payrolls, 3.4% CPI and hawkish dissents could compress multiples.",
+      "time_window_catalyst": "Sep 4 jobs, Sep 11 CPI ahead of Sep 15-16 FOMC"
+    },
+    {
+      "continuation_case": "Low-beta leadership with shallow drawdown and improving relative trend.",
+      "decision": "selected",
+      "evidence": [
+        "XLV +3.66% active 21s, +2.61% 5s",
+        "0.00% from 52-week high, -3.74% max drawdown",
+        "Beta 0.274 to SPY"
+      ],
+      "forecast_base_pct": 1.9,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "XLV down more than 4% or policy shock on drug pricing",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Prior 105s active return was -6.43%, so the trend is young.",
+      "time_window_catalyst": "Defensive rotation around Sep 4 payrolls and Sep 11 CPI"
+    },
+    {
+      "continuation_case": "Broadening participation with lower volatility.",
+      "decision": "selected",
+      "evidence": [
+        "rsp_minus_spy 21s +0.83%, 5s +0.26%",
+        "Volatility 11.06% vs SPY 13.96%, drawdown -2.04%",
+        "Russell 2000 +22.7% YTD signals breadth"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "RSP lags SPY by over 1.5%",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "reversal_case": "Mega-cap earnings momentum can quickly re-narrow leadership.",
+      "time_window_catalyst": "Aug 14 retail sales, Sep 4 payrolls"
+    },
+    {
+      "continuation_case": "Geopolitical supply risk plus energy CPI +14.7% y/y.",
+      "decision": "selected",
+      "evidence": [
+        "Brent $88.98, Iran conflict uncertainty",
+        "XLE +6.49% 5s, +4.42% active 21s",
+        "Correlation to SPY -0.154"
+      ],
+      "forecast_base_pct": 2.0,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Brent under $78",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation or demand softening reverses crude quickly; deep 63s drawdown -13.2%.",
+      "time_window_catalyst": "Iran/crude flow headlines through Sep 14"
+    },
+    {
+      "continuation_case": "Weak yen plus global trade strength supports exporters.",
+      "decision": "selected",
+      "evidence": [
+        "EWJ +2.76% 5s, +1.41% active 21s, at 52-week high",
+        "Yen weak: FXY -1.08% 5s",
+        "Volatility 23.3%"
+      ],
+      "forecast_base_pct": 1.7,
+      "forecast_high_pct": 7.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "EWJ down more than 5% or sharp yen rally",
+      "option_id": "JAPAN",
+      "reversal_case": "Prior 105s active -7.81%; BOJ tightening or yen spike hurts.",
+      "time_window_catalyst": "Yen and global trade data through mid-September"
+    },
+    {
+      "continuation_case": "Strongest prior trend and AI capex cycle.",
+      "decision": "rejected",
+      "evidence": [
+        "Prior active +39.11% but 21s active -5.33%",
+        "Volatility 54.17%, drawdown -24.62%",
+        "-12.57% from 52-week high"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 14.0,
+      "forecast_low_pct": -14.0,
+      "invalidation_condition": "SMH breaks further below recent lows",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "Rolling over already with extreme volatility and beta 2.38.",
+      "time_window_catalyst": "AI capex commentary and chip demand data"
+    },
+    {
+      "continuation_case": "Sticky 3.4% CPI and safe-haven demand.",
+      "decision": "rejected",
+      "evidence": [
+        "IAU +3.92% 5s, +8.80% 21s but prior 105s active -28.67%",
+        "-18.30% from 52-week high"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Gold drops below prior consolidation lows",
+      "option_id": "GOLD",
+      "reversal_case": "Hawkish Fed dissents and firm dollar cap gold.",
+      "time_window_catalyst": "Sep 11 CPI"
+    },
+    {
+      "continuation_case": "Weak payrolls could rally duration.",
+      "decision": "rejected",
+      "evidence": [
+        "TLT -1.07% 5s, -1.95% 21s",
+        "30y at 5.24%, unchanged; curve steep"
+      ],
+      "forecast_base_pct": 0.3,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "30-year yield above 5.45%",
+      "option_id": "LONG_TREASURY",
+      "reversal_case": "Elevated inflation and hawkish dissents keep long end pressured.",
+      "time_window_catalyst": "Aug 19 FOMC minutes, Sep 11 CPI"
+    }
+  ],
+  "confidence": 0.55,
+  "cost_usd": 0.219225,
+  "expected_alpha_vs_sp500_pct": 0.43,
+  "is_official_score": true,
+  "key_risks": [
+    "Hot September CPI/PPI revives hike risk given three FOMC dissenters",
+    "Mega-cap tech leadership resumes and SPY outruns equal-weight and defensives",
+    "Crude reverses lower on Iran de-escalation, hitting the energy sleeve",
+    "Further payroll deterioration triggers a broad risk-off drawdown"
+  ],
+  "mode": "closed_capability",
+  "model_id": "anthropic-claude-opus-5",
+  "portfolio": [
+    {
+      "allocation_pct": 40,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "SPY closes more than 5% below entry",
+      "option_id": "SP500",
+      "rationale": "Core benchmark exposure with market at highs and solid ISM prints.",
+      "time_window_catalyst": "Aug 26 GDP revision, Sep 4 jobs report, Sep 11 CPI"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.9,
+      "invalidation_condition": "XLV falls more than 4% below entry or drug-pricing policy shock",
+      "option_id": "HEALTHCARE",
+      "rationale": "Low beta, positive relative trend, at 52-week high with modest drawdown; defensive ballast that has been outperforming.",
+      "time_window_catalyst": "Sector rotation into defensives around Sep 4 payrolls and Sep 11 CPI"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.4,
+      "invalidation_condition": "RSP underperforms SPY by more than 1.5% over the window",
+      "option_id": "EQUAL_WEIGHT_SP500",
+      "rationale": "Breadth improving (RSP beating SPY on 5d and 21d) with lowest volatility and shallow drawdown among broad US equity.",
+      "time_window_catalyst": "Aug 14 retail sales and Sep 4 payrolls broadening data"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 2.0,
+      "invalidation_condition": "Brent falls below $78",
+      "option_id": "ENERGY",
+      "rationale": "Brent near $89 with Iran-related supply uncertainty; XLE strongly positive relative return with negative SPY correlation as hedge.",
+      "time_window_catalyst": "Iran conflict/crude flow headlines through mid-September"
+    },
+    {
+      "allocation_pct": 10,
+      "expected_return_pct": 1.7,
+      "invalidation_condition": "Sharp yen appreciation or EWJ down more than 5%",
+      "option_id": "JAPAN",
+      "rationale": "Positive relative trend at 52-week high with weak yen supporting exporter earnings.",
+      "time_window_catalyst": "Global trade and yen moves through mid-September"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.53,
+  "portfolio_rationale": "Keep a large SPY core, add breadth (RSP) given persistent equal-weight outperformance, a defensive healthcare tilt with strong relative trend and low beta, and small energy plus Japan sleeves for uncorrelated upside.",
+  "provider": "anthropic",
+  "rationale_summary": "Modest alpha construction: benchmark core plus low-beta healthcare, improving breadth, and a commodity-linked hedge into a data-heavy month ahead of the September FOMC.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-13-1M",
+  "run_type": "official",
+  "usage": {
+    "cost_usd": 0.219225,
+    "input_tokens": 28220,
+    "latency_seconds": 45.939495648024604,
+    "output_tokens": 3125,
+    "total_tokens": 31345
+  }
+}

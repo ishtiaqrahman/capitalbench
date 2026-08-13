@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 0.35,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid ISM readings and consumer spending keep broad equities grinding higher near highs.",
+      "decision": "rejected",
+      "evidence": [
+        "S&P 500 gained 0.3% on August 12 to all-time-high area after prior session weakness",
+        "spy_return_5s 0.35% and distance_52w_high -0.10%",
+        "July payrolls -23k with downward revisions; FOMC held 3.50-3.75%"
+      ],
+      "forecast_base_pct": 0.35,
+      "forecast_high_pct": 1.4,
+      "forecast_low_pct": -1.2,
+      "invalidation_condition": "Close-to-close weekly loss exceeding 1.5% or break of recent range lows",
+      "option_id": "SP500",
+      "reversal_case": "Soft labor and elevated inflation prints trigger risk-off or rate-repricing selloff.",
+      "time_window_catalyst": "PPI August 13, retail sales August 14, FOMC minutes August 19"
+    },
+    {
+      "continuation_case": "Geopolitical premium and recent momentum persist through the short window.",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY return_3s 6.14% and active_return_5s 6.14%",
+        "Brent crude $88.98 with continued Iran conflict and crude-flow uncertainty",
+        "OIL/USO also showed large positive active returns"
+      ],
+      "forecast_base_pct": 1.8,
+      "forecast_high_pct": 4.5,
+      "forecast_low_pct": -1.5,
+      "invalidation_condition": "Crude and XLE give back majority of 5-session gains before August 20",
+      "option_id": "ENERGY",
+      "reversal_case": "De-escalation headlines or demand concerns reverse the oil spike.",
+      "time_window_catalyst": "Iran-related crude headlines and industrial production August 18"
+    },
+    {
+      "continuation_case": "Defensive bid and relative strength continue amid mixed macro data.",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE active_return_5s 2.26% and return_3s 1.67%",
+        "distance_52w_high 0.00% and quality evidence score 0.552",
+        "Health care employment rose while broader payrolls were soft"
+      ],
+      "forecast_base_pct": 1.1,
+      "forecast_high_pct": 2.8,
+      "forecast_low_pct": -0.8,
+      "invalidation_condition": "XLV underperforms SPY by more than 1% on a multi-day basis",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation back into growth/tech leaves healthcare lagging.",
+      "time_window_catalyst": "Defensive flows around PPI/retail sales and FOMC minutes"
+    },
+    {
+      "continuation_case": "Inflation residual and safe-haven demand sustain gold strength.",
+      "decision": "selected",
+      "evidence": [
+        "GOLD active_return_5s 3.57% and iau_return_5s 3.92%",
+        "prior_16s_active_return 2.31% with quality score 0.553",
+        "Headline CPI 3.4% and core still elevated versus 2% goal"
+      ],
+      "forecast_base_pct": 1.3,
+      "forecast_high_pct": 3.5,
+      "forecast_low_pct": -1.8,
+      "invalidation_condition": "Gold posts multi-day decline with rising UUP and yields",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger USD or rising real yields reverse the metal.",
+      "time_window_catalyst": "PPI, retail sales, and FOMC minutes impact on real rates/USD"
+    },
+    {
+      "continuation_case": "Industrial expansion signals and prior trend support further gains.",
+      "decision": "selected",
+      "evidence": [
+        "COPPER quality evidence score 0.828 (highest listed)",
+        "prior_16s_active_return 3.60% and recent pullback rank 0.955",
+        "ISM manufacturing PMI 55.6 with prices elevated"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 3.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Copper breaks recent support with rising inventory or USD strength",
+      "option_id": "COPPER",
+      "reversal_case": "Global growth scare or China demand disappointment hits copper.",
+      "time_window_catalyst": "Industrial production and capacity utilization August 18"
+    },
+    {
+      "continuation_case": "Stable credit and modest yield moves support financials grind.",
+      "decision": "rejected",
+      "evidence": [
+        "FINANCIALS quality evidence score 0.724 and prior active rank 0.761",
+        "active_return_5s -0.49% despite solid longer prior trend",
+        "Yield curve still inverted/steepening modestly at long end"
+      ],
+      "forecast_base_pct": 0.25,
+      "forecast_high_pct": 1.6,
+      "forecast_low_pct": -1.3,
+      "invalidation_condition": "XLF underperforms SPY materially on rising credit stress",
+      "option_id": "FINANCIALS",
+      "reversal_case": "Curve or credit-spread widening on soft data hurts banks.",
+      "time_window_catalyst": "FOMC minutes and any rate-path repricing"
+    },
+    {
+      "continuation_case": "Mean-reversion from deep discount if global risk appetite holds.",
+      "decision": "rejected",
+      "evidence": [
+        "CHINA quality evidence score 0.804 with high prior active rank 0.910",
+        "return_3s -2.63% and active_return_5s -2.01%",
+        "distance_52w_high -16.22%"
+      ],
+      "forecast_base_pct": 0.2,
+      "forecast_high_pct": 2.5,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "Further active underperformance versus EM/SPY on weak data",
+      "option_id": "CHINA",
+      "reversal_case": "Policy or growth disappointment extends underperformance.",
+      "time_window_catalyst": "Global risk sentiment and any China-related headlines before August 20"
+    },
+    {
+      "continuation_case": "Dividend factor leadership continues in range-bound tape.",
+      "decision": "rejected",
+      "evidence": [
+        "DIVIDEND active_return_5s 1.49% and prior_16s_active_return 2.08%",
+        "quality evidence score 0.650 with high prior active rank",
+        "distance_52w_high -0.03%"
+      ],
+      "forecast_base_pct": 0.45,
+      "forecast_high_pct": 1.8,
+      "forecast_low_pct": -1.0,
+      "invalidation_condition": "SCHD loses relative strength versus SPY on risk-on move",
+      "option_id": "DIVIDEND",
+      "reversal_case": "Growth reacceleration leaves value/dividend lagging.",
+      "time_window_catalyst": "Defensive rotation around macro prints"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 1.035,
+  "is_official_score": true,
+  "key_risks": [
+    "Geopolitical de-escalation could reverse energy and commodity gains",
+    "Hotter-than-expected PPI or retail sales could lift yields and pressure gold",
+    "Broad equity risk-off could compress active returns across cyclical holdings",
+    "FOMC minutes could reprice rate path and rotate leadership back to mega-cap growth"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 35,
+      "expected_return_pct": 1.8,
+      "invalidation_condition": "Sharp reversal in Brent/crude prices or risk-off equity selloff that erases energy leadership before exit close",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent absolute and active returns plus ongoing Iran-related crude uncertainty support continued outperformance versus SPY over the one-week window.",
+      "time_window_catalyst": "Continued Iran conflict uncertainty and crude price action through August 20 close; PPI and industrial production data"
+    },
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 1.1,
+      "invalidation_condition": "Broad growth/tech leadership resumption that leaves healthcare lagging SPY",
+      "option_id": "HEALTHCARE",
+      "rationale": "Positive active returns, new 52-week high proximity, and defensive characteristics amid soft labor data favor relative strength versus SPY.",
+      "time_window_catalyst": "FOMC minutes August 19 and any defensive rotation on mixed macro prints"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 1.3,
+      "invalidation_condition": "Sharp USD rally or real-yield spike that drives gold lower before August 20",
+      "option_id": "GOLD",
+      "rationale": "Elevated prior active trend and recent strength with inflation still above target support further gains versus SPY.",
+      "time_window_catalyst": "Real-rate and dollar reaction to PPI, retail sales, and FOMC minutes"
+    },
+    {
+      "allocation_pct": 15,
+      "expected_return_pct": 1.0,
+      "invalidation_condition": "Sudden demand scare or inventory spike reversing copper strength",
+      "option_id": "COPPER",
+      "rationale": "Top quality-evidence score, strong prior active return, and industrial demand backdrop support base-case outperformance.",
+      "time_window_catalyst": "Industrial production release August 18 and China/global growth sentiment"
+    }
+  ],
+  "portfolio_expected_return_pct": 1.385,
+  "portfolio_rationale": "Portfolio concentrates in ENERGY, HEALTHCARE, GOLD, and COPPER, each with base forecasts above SPY, spanning distinct clusters under the 50% cap. Selections emphasize recent leadership, quality evidence, and catalysts inside the August 13-20 window while limiting single-cluster risk.",
+  "provider": "xai",
+  "rationale_summary": "SPY base is modest near highs after a soft labor print and mixed inflation. Higher-base active holdings in energy, healthcare, gold, and copper are favored for one-week alpha with diversified economic exposures.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-13-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17221,
+    "latency_seconds": 48.34551217406988,
+    "output_tokens": 2580,
+    "reasoning_tokens": 540,
+    "total_tokens": 20341
+  }
+}

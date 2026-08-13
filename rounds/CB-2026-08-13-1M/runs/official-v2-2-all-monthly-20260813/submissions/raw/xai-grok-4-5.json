@@ -1,0 +1,193 @@
+{
+  "benchmark_expected_return_pct": 1.5,
+  "candidate_ledger": [
+    {
+      "continuation_case": "Solid GDP final sales and ISM expansion sustain grind higher near highs",
+      "decision": "selected",
+      "evidence": [
+        "S&P 500 +0.3% on Aug 12 to 7748.50 after all-time high Aug 7",
+        "YTD gain 13.2% through Aug 12",
+        "21s return 2.75% with distance to 52w high -0.10%"
+      ],
+      "forecast_base_pct": 1.5,
+      "forecast_high_pct": 4.0,
+      "forecast_low_pct": -2.5,
+      "invalidation_condition": "Close below recent range lows with negative breadth",
+      "option_id": "SP500",
+      "reversal_case": "Soft payrolls revisions and elevated inflation keep Fed hawkish, prompting pullback",
+      "time_window_catalyst": "August CPI and September employment report before exit"
+    },
+    {
+      "continuation_case": "Geopolitical premium and crude strength extend sector outperformance",
+      "decision": "selected",
+      "evidence": [
+        "ENERGY 5s return 6.49% and active_return_21s +4.42%",
+        "Brent crude $88.98 with Iran conflict uncertainty",
+        "OIL prior active strength and high quality prior rank"
+      ],
+      "forecast_base_pct": 3.2,
+      "forecast_high_pct": 8.0,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Sustained oil price drop and XLE underperformance vs SPY",
+      "option_id": "ENERGY",
+      "reversal_case": "Conflict de-escalation or demand scare collapses oil prices",
+      "time_window_catalyst": "Iran conflict and crude flow headlines through September"
+    },
+    {
+      "continuation_case": "Defensive bid and relative momentum persist amid labor softness",
+      "decision": "selected",
+      "evidence": [
+        "HEALTHCARE 5s +2.61% and active_return_21s +3.66%",
+        "At 52w high distance 0.00% with moderate vol",
+        "Health care employment rose in July payrolls"
+      ],
+      "forecast_base_pct": 2.8,
+      "forecast_high_pct": 6.0,
+      "forecast_low_pct": -2.0,
+      "invalidation_condition": "Loss of relative strength versus SPY on consecutive sessions",
+      "option_id": "HEALTHCARE",
+      "reversal_case": "Risk-on rotation away from defensives or policy overhang",
+      "time_window_catalyst": "Employment and inflation data in late August/early September"
+    },
+    {
+      "continuation_case": "Recent active outperformance continues if growth holds and rates stable",
+      "decision": "selected",
+      "evidence": [
+        "SOFTWARE active_return_21s +7.34%",
+        "return_5s +1.75% despite deeper max drawdown history",
+        "ISM services still expanding"
+      ],
+      "forecast_base_pct": 2.6,
+      "forecast_high_pct": 7.5,
+      "forecast_low_pct": -5.0,
+      "invalidation_condition": "Break of recent relative uptrend vs SPY",
+      "option_id": "SOFTWARE",
+      "reversal_case": "Higher yields or growth scare reverse software leadership",
+      "time_window_catalyst": "FOMC minutes Aug 19 and pre-CPI positioning"
+    },
+    {
+      "continuation_case": "Long prior trend resumes after pullback",
+      "decision": "rejected",
+      "evidence": [
+        "SEMICONDUCTORS prior_105s_active_return +39.11% but active_return_21s -5.33%",
+        "Very high vol 54% and max drawdown -24.62%",
+        "Quality score high on prior trend but deep pullback risk"
+      ],
+      "forecast_base_pct": 1.2,
+      "forecast_high_pct": 9.0,
+      "forecast_low_pct": -8.0,
+      "invalidation_condition": "Further relative breakdown vs SPY",
+      "option_id": "SEMICONDUCTORS",
+      "reversal_case": "High beta and distance from highs extend underperformance",
+      "time_window_catalyst": "Tech sentiment around data and minutes"
+    },
+    {
+      "continuation_case": "Geopolitical premium sustains crude",
+      "decision": "rejected",
+      "evidence": [
+        "OIL 5s +10.81% and prior active +44.80%",
+        "Brent near $89 with conflict uncertainty",
+        "High vol 53.77% and large drawdown history"
+      ],
+      "forecast_base_pct": 2.9,
+      "forecast_high_pct": 10.0,
+      "forecast_low_pct": -6.0,
+      "invalidation_condition": "Oil price collapse below recent range",
+      "option_id": "OIL",
+      "reversal_case": "Mean reversion after sharp 5s spike and curve dynamics",
+      "time_window_catalyst": "Crude flow and Iran headlines"
+    },
+    {
+      "continuation_case": "Breadth and equal-weight leadership continue",
+      "decision": "rejected",
+      "evidence": [
+        "Russell 2000 YTD +22.7% and 5s +0.98%",
+        "active_return_21s near flat +0.04%",
+        "Soft payrolls and revisions weigh on domestic cyclicals"
+      ],
+      "forecast_base_pct": 1.4,
+      "forecast_high_pct": 5.0,
+      "forecast_low_pct": -3.5,
+      "invalidation_condition": "IWM loses 52w high support",
+      "option_id": "SMALL_CAP",
+      "reversal_case": "Weaker labor data hits small-cap sensitivity",
+      "time_window_catalyst": "August employment report"
+    },
+    {
+      "continuation_case": "Safe-haven bid on macro uncertainty",
+      "decision": "rejected",
+      "evidence": [
+        "GOLD 5s +3.92% and 21s active +6.05%",
+        "Deep prior underperformance prior_105s_active -28.67%",
+        "Distance 52w high -18.30%"
+      ],
+      "forecast_base_pct": 1.0,
+      "forecast_high_pct": 5.5,
+      "forecast_low_pct": -4.0,
+      "invalidation_condition": "Gold fails to hold recent gains on rising real rates",
+      "option_id": "GOLD",
+      "reversal_case": "Stronger dollar or real yields reverse bounce",
+      "time_window_catalyst": "Inflation data and risk sentiment"
+    }
+  ],
+  "confidence": 0.58,
+  "expected_alpha_vs_sp500_pct": 0.99,
+  "is_official_score": true,
+  "key_risks": [
+    "Geopolitical de-escalation or oil supply surprise reverses energy",
+    "Rates reprice higher on sticky inflation data hurting growth/software",
+    "Labor or GDP revisions trigger broad equity drawdown",
+    "Concentration in correlated risk assets if risk appetite fades"
+  ],
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-5",
+  "portfolio": [
+    {
+      "allocation_pct": 30,
+      "expected_return_pct": 3.2,
+      "invalidation_condition": "Brent crude reverses sharply lower or energy sector underperforms SPY on risk-off",
+      "option_id": "ENERGY",
+      "rationale": "Strong recent relative performance with oil price support and geopolitical uncertainty; base case exceeds SPY on energy momentum into the monthly window.",
+      "time_window_catalyst": "Iran conflict uncertainty and crude flow headlines before September 14 exit"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 2.8,
+      "invalidation_condition": "Healthcare loses relative strength or broad equity risk-off dominates defensives",
+      "option_id": "HEALTHCARE",
+      "rationale": "Recent outperformance, shallow drawdown, and defensive characteristics amid soft labor data support higher base return than SPY.",
+      "time_window_catalyst": "August employment report and CPI releases in early September"
+    },
+    {
+      "allocation_pct": 20,
+      "expected_return_pct": 2.6,
+      "invalidation_condition": "Software gives back gains on rates spike or growth rotation failure",
+      "option_id": "SOFTWARE",
+      "rationale": "Strong 21-session active return and quality pullback setup versus high-vol semis; growth exposure with better recent path than SPY.",
+      "time_window_catalyst": "Tech sentiment into FOMC minutes and pre-September data"
+    },
+    {
+      "allocation_pct": 25,
+      "expected_return_pct": 1.5,
+      "invalidation_condition": "Sustained break below recent highs with deteriorating breadth",
+      "option_id": "SP500",
+      "rationale": "Core benchmark ballast given solid but not exceptional macro backdrop and near all-time highs.",
+      "time_window_catalyst": "August CPI/PPI and September employment data path"
+    }
+  ],
+  "portfolio_expected_return_pct": 2.49,
+  "portfolio_rationale": "Portfolio overweight energy and healthcare plus software where base forecasts clear the SPY hurdle, capped by cluster limits, with SPY ballast. Aims for modest alpha from cyclical energy strength and defensive/growth diversifiers over the one-month window.",
+  "provider": "xai",
+  "rationale_summary": "Select active sleeves only where base exceeds SPY; energy leads on oil/geopolitics, healthcare on relative strength, software on recent active gains. Remainder in SPY for diversification under the 50% cluster cap.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-13-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17217,
+    "latency_seconds": 30.282141522038728,
+    "output_tokens": 1907,
+    "reasoning_tokens": 16,
+    "total_tokens": 19140
+  }
+}
