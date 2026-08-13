@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-08-12-gpt-5-5-retired",
+    date: "2026-08-12",
+    title: "GPT-5.5 retired from new benchmark rounds",
+    category: "Operations",
+    status: "updated",
+    summary:
+      "Future weekly and monthly rounds use a seven-model production roster while GPT-5.5's complete historical record remains published.",
+    details: [
+      "GPT-5.5 remains visible in historical portfolios, scored results, model profiles, and comparison sets.",
+      "Existing rounds retain their frozen rosters and will continue to resolve and score GPT-5.5 normally when it was an original participant.",
+      "New production rounds initialized after the retirement timestamp exclude GPT-5.5; explicitly labeled retrospective research can still use the retained configuration.",
+      "The first accepted weekly and monthly rounds on the seven-model roster will open successor comparison sets automatically."
+    ],
+    links: [
+      { label: "Models", href: "/models" },
+      { label: "Benchmark sets", href: "/leaderboards/benchmark-sets" },
+      { label: "Protocol", href: "/methodology" }
+    ]
+  },
+  {
     id: "2026-08-06-portfolio-difference-benchmark",
     date: "2026-08-06",
     title: "Portfolio Difference benchmark published",
