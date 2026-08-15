@@ -61,14 +61,21 @@ test("benchmark-set comparison separates roster and round-window changes", () =>
 });
 
 test("forming sets expose early performance without presenting it as established", () => {
-  const forming = benchmarkSets.find(
-    (set) =>
-      set.comparison.comparison_round_count > 0 &&
-      set.comparison.comparison_round_count < set.qualification_threshold
-  );
-  assert.ok(forming);
-  const baseline = benchmarkSets.find((set) => set.track === forming.track && set.is_current);
+  const baseline = benchmarkSets.find((set) => set.track === "weekly" && set.is_current);
   assert.ok(baseline);
+  const scored = benchmarkSets.find(
+    (set) =>
+      set.track === baseline.track &&
+      set.set_id !== baseline.set_id &&
+      set.comparison.comparison_round_count > 0
+  );
+  assert.ok(scored);
+  const forming = {
+    ...scored,
+    is_current: false,
+    is_qualified: false,
+    qualification_threshold: scored.comparison.comparison_round_count + 2
+  };
   const result = buildBenchmarkSetComparison(apiReadModel, baseline, forming);
   const swapped = buildBenchmarkSetComparison(apiReadModel, forming, baseline);
 
