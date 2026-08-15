@@ -11,9 +11,11 @@ from typing import Any
 from .config import PricingTable, calculate_cost_usd, load_model_configs, load_pricing_config
 from .exposures import exposure_clusters_by_option
 from .io import load_manifest, load_options, write_json
+from .methodology import is_portfolio_v3
+from .portfolio_v3 import build_portfolio_v3_candidate_slate
 from .prompting import build_prompt
 from .providers import AnthropicProvider, GoogleProvider, MockProvider, OpenAIProvider, ProviderResult, XAIProvider
-from .roster import validate_official_portfolio_v2_roster
+from .roster import validate_official_portfolio_roster
 from .portfolio import constraints_from_manifest, submission_format_from_manifest
 from .run_store import (
     create_run_paths,
@@ -24,7 +26,7 @@ from .run_store import (
 )
 from .schemas import ModelConfig, RuntimeSettings, Usage
 from .submission_schema import prompt_for_model, provider_submission_schema
-from .validation import validate_submission_payload
+from .validation import materialize_raw_submission_payload, validate_submission_payload
 
 PROVIDER_CLASSES = {
     "openai": OpenAIProvider,
@@ -75,6 +77,11 @@ def run_round(
     prompt = build_prompt(round_path)
     model_configs = load_model_configs(models_path)
     pricing = load_pricing_config(pricing_path)
+    portfolio_v3_candidate_slate = (
+        build_portfolio_v3_candidate_slate(round_path)
+        if is_portfolio_v3(manifest.methodology_version)
+        else []
+    )
     enabled_models, skipped_reasons = _filter_eligible_models(
         model_configs,
         manifest.round_id,
@@ -86,7 +93,7 @@ def run_round(
     skipped_models = len(model_configs) - len(enabled_models)
 
     if selected_run_type == "official" and not mock and not format_retry:
-        validate_official_portfolio_v2_roster(
+        validate_official_portfolio_roster(
             manifest.methodology_version,
             enabled_models,
             manifest.expected_model_ids,
@@ -137,6 +144,7 @@ def run_round(
                     exposure_clusters=exposure_clusters,
                     benchmark_option_id=benchmark_option_id,
                     cash_option_ids=cash_option_ids,
+                    portfolio_v3_candidate_slate=portfolio_v3_candidate_slate,
                 )
                 started_at = _utc_now()
                 result = _run_one_model(
@@ -157,6 +165,19 @@ def run_round(
                     replicate_count=selected_replicates,
                     is_official_score=selected_run_type == "official",
                 )
+                validation_payload = raw_payload
+                transformation_error: str | None = None
+                if is_portfolio_v3(manifest.methodology_version):
+                    try:
+                        validation_payload = materialize_raw_submission_payload(
+                            raw_payload,
+                            round_path=round_path,
+                            options=options,
+                            methodology_version=manifest.methodology_version,
+                            portfolio_v3_candidate_slate=portfolio_v3_candidate_slate,
+                        )
+                    except Exception as exc:
+                        transformation_error = str(exc)
                 filename_stem = _submission_filename_stem(
                     enriched_config.model_id,
                     selected_run_type,
@@ -169,10 +190,12 @@ def run_round(
                 write_json(raw_file, raw_payload)
 
                 validation_status = "invalid"
-                validation_error = result.error
+                validation_error = result.error or transformation_error
                 try:
+                    if transformation_error:
+                        raise ValueError(transformation_error)
                     submission = validate_submission_payload(
-                        raw_payload,
+                        validation_payload,
                         options,
                         manifest.round_id,
                         run_type=selected_run_type,
@@ -383,6 +406,7 @@ def _with_round_metadata(
     exposure_clusters: dict[str, str],
     benchmark_option_id: str,
     cash_option_ids: list[str],
+    portfolio_v3_candidate_slate: list[dict[str, Any]],
 ) -> ModelConfig:
     metadata = {
         **model_config.metadata,
@@ -398,6 +422,7 @@ def _with_round_metadata(
         "economic_exposure_clusters": exposure_clusters,
         "benchmark_option_id": benchmark_option_id,
         "cash_option_ids": cash_option_ids,
+        "portfolio_v3_candidate_slate": portfolio_v3_candidate_slate,
     }
     return model_config.model_copy(update={"metadata": metadata})
 

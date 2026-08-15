@@ -5,6 +5,8 @@ from pathlib import Path
 
 from .hashing import HASHED_ROUND_FILES, compute_round_hashes
 from .io import load_manifest, load_options, read_json
+from .methodology import is_portfolio_v3
+from .portfolio_v3 import build_portfolio_v3_candidate_slate
 from .prices import selected_price_options
 from .portfolio import constraints_from_manifest, submission_format_from_manifest
 from .prompting import build_prompt
@@ -19,7 +21,12 @@ from .research import (
 )
 from .run_store import RunPaths, get_run_paths, list_runs, read_run_manifest, resolve_run_id
 from .scoring import read_price_records
-from .validation import _load_submission, iter_submission_files, validate_submission_payload
+from .validation import (
+    _load_submission,
+    iter_submission_files,
+    materialize_raw_submission_payload,
+    validate_submission_payload,
+)
 
 REQUIRED_FILES = ["manifest.yaml", "briefing.md", "options.yaml", "prompt.md", "hashes.json"]
 REQUIRED_DIRS = ["prices"]
@@ -62,9 +69,21 @@ def _count_invalid_raw_submissions(round_path: Path, run_paths: RunPaths) -> tup
     replicate_count = int(run_manifest.get("replicates") or 1)
     errors: dict[str, list[str]] = {}
     valid_count = 0
+    portfolio_v3_candidate_slate = (
+        build_portfolio_v3_candidate_slate(round_path)
+        if is_portfolio_v3(manifest.methodology_version)
+        else None
+    )
     for raw_file in raw_files:
         try:
             payload = _load_submission(raw_file)
+            payload = materialize_raw_submission_payload(
+                payload,
+                round_path=round_path,
+                options=options,
+                methodology_version=manifest.methodology_version,
+                portfolio_v3_candidate_slate=portfolio_v3_candidate_slate,
+            )
             validate_submission_payload(
                 payload,
                 options,

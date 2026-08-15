@@ -189,6 +189,12 @@ Portfolio rounds are versioned methodology changes. They do not alter completed
 single-pick rounds, and reports label the submission format so readers can
 interpret results correctly.
 
+New portfolio rounds use `portfolio-v3.0`. Models rank and classify a frozen
+balanced candidate slate in one tool-free response; CapitalBench then applies
+the fixed overreaction-at-55% eligibility rule, 35/35/30 slots, and SPY
+fallback. See `docs/portfolio_v3_methodology.md`. Existing V2 rounds remain
+frozen under their original manifests.
+
 ## CapitalBench Universes
 
 Every public round freezes a versioned option universe before model calls. The
@@ -349,7 +355,9 @@ This is the high-level operator workflow.
 
 ```bash
 capitalbench init-round \
-  --round-id CB-2026-06-01-1M
+  --round-id CB-2026-06-01-1M \
+  --submission-format portfolio \
+  --horizon "one month"
 ```
 
 2. Import research artifacts:
@@ -363,10 +371,10 @@ capitalbench import-research \
   --research-cutoff-utc "2026-06-01T21:00:00Z"
 ```
 
-3. Optionally fetch mechanical price, risk, and benchmark-relative context for the full universe:
+3. Generate the required V3 decision context, quality evidence, and candidate-slate inputs:
 
 ```bash
-capitalbench fetch-universe-performance \
+capitalbench fetch-universe-decision-context \
   --round rounds/CB-2026-06-01-1M \
   --as-of-date 2026-06-01
 ```
@@ -462,10 +470,9 @@ ledgers, URLs, and audit material should remain outside `briefing.md`.
 
 Use [`docs/research_prompt_workflow.md`](docs/research_prompt_workflow.md) for
 the Prompt 1, Prompt 2, and Prompt 3 research workflow. Prompt 3 must not paste
-selected mechanical return rows or V2.2 Q1 quality ranks into
-`final_briefing.md`; the complete Q1 evidence table and full-universe
-price-context appendix are generated separately and inserted by the prompt
-builder.
+selected mechanical return rows, quality ranks, or V3 candidate-slate rows into
+`final_briefing.md`; the complete mechanical evidence, candidate slate, and
+full-universe price context are generated separately by the prompt builder.
 
 The final briefing should contain facts, dates, values, forecasts labeled as
 forecasts, scheduled catalysts, and explicit uncertainties from the source

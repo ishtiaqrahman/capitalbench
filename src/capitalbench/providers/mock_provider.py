@@ -5,7 +5,7 @@ import json
 import time
 from typing import Any
 
-from ..methodology import is_portfolio_v2, is_production_portfolio_v2
+from ..methodology import is_portfolio_v2, is_portfolio_v3, is_production_portfolio_v2
 from ..schemas import ModelConfig, RuntimeSettings
 from .base import ProviderResult, elapsed_usage
 
@@ -29,6 +29,57 @@ class MockProvider:
         index = int(hashlib.sha256(model_config.model_id.encode("utf-8")).hexdigest(), 16) % len(option_ids)
         selected_option_id = option_ids[index]
         confidence = 0.5 + ((index % 4) * 0.08)
+        methodology_version = str(model_config.metadata.get("methodology_version") or "")
+        if (
+            model_config.metadata.get("submission_format") == "portfolio"
+            and is_portfolio_v3(methodology_version)
+        ):
+            slate = list(model_config.metadata.get("portfolio_v3_candidate_slate") or [])
+            assessments = [
+                {
+                    "option_id": str(row["option_id"]),
+                    "origin_lanes": list(row["origin_lanes"]),
+                    "mechanism": "defensive" if row["option_id"] == "SP500" else "no_edge",
+                    "p_beat_spy_pct": 50,
+                    "p_top3_pct": max(1, 20 - position),
+                    "excess_return_p10_pct": -2.0,
+                    "excess_return_p50_pct": 0.0,
+                    "excess_return_p90_pct": 2.0,
+                    "recent_return_interpretation": "no_edge",
+                    "evidence": ["Mock evidence for V3 structural validation."],
+                    "rank": position + 1,
+                }
+                for position, row in enumerate(slate)
+            ]
+            payload = {
+                "round_id": model_config.metadata["round_id"],
+                "model_id": model_config.model_id,
+                "provider": model_config.provider,
+                "mode": model_config.mode,
+                "dispersion_state": "normal",
+                "dominant_pattern": "mixed",
+                "market_rationale": "Mock V3 market judgment for structural validation.",
+                "candidate_assessments": assessments,
+                "top3_option_ids": [row["option_id"] for row in assessments[:3]],
+                "prefer_spy": True,
+                "portfolio_rationale": "Mock V3 ranking; deterministic rules should fall back to SPY.",
+                "key_risks": [
+                    "Mock output is not a real model decision",
+                    "Dry-run data must not be interpreted as benchmark evidence",
+                ],
+            }
+            raw_text = json.dumps(payload, sort_keys=True)
+            usage = elapsed_usage(
+                started_at,
+                input_tokens=len(prompt.split()),
+                output_tokens=len(raw_text.split()),
+            )
+            return ProviderResult(
+                raw_text=raw_text,
+                parsed_json=payload,
+                usage=usage,
+                error=None,
+            )
         base_payload = {
             "round_id": model_config.metadata["round_id"],
             "model_id": model_config.model_id,
@@ -52,7 +103,6 @@ class MockProvider:
             minimum = max(1, int(constraints.get("min_allocation_pct") or 5))
             total = max(1, int(constraints.get("max_total_allocation_pct") or 100))
             feasible_by_minimum = max(1, total // minimum)
-            methodology_version = str(model_config.metadata.get("methodology_version") or "")
             v2 = is_portfolio_v2(methodology_version)
             production_v2 = is_production_portfolio_v2(methodology_version)
             if production_v2:

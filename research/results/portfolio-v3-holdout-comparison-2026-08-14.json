@@ -1,0 +1,112 @@
+{
+  "aggregate": {
+    "by_model": {
+      "google-gemini-3-1-pro": {
+        "mean_control_alpha_pct": -1.745719687220219,
+        "mean_paired_improvement_pct": 3.7789812803335603,
+        "mean_treatment_alpha_pct": 2.033261593113341,
+        "valid_pairs": 3
+      },
+      "openai-gpt-5-6-sol": {
+        "mean_control_alpha_pct": null,
+        "mean_paired_improvement_pct": null,
+        "mean_treatment_alpha_pct": null,
+        "valid_pairs": 0
+      },
+      "xai-grok-4-3": {
+        "mean_control_alpha_pct": 0.8491532368185988,
+        "mean_paired_improvement_pct": 2.0559876565510375,
+        "mean_treatment_alpha_pct": 2.9051408933696363,
+        "valid_pairs": 2
+      },
+      "xai-grok-4-5": {
+        "mean_control_alpha_pct": -0.17628059998707726,
+        "mean_paired_improvement_pct": 1.380056536408822,
+        "mean_treatment_alpha_pct": 1.2037759364217449,
+        "valid_pairs": 3
+      }
+    },
+    "by_period": {
+      "V3-H1": {
+        "mean_control_alpha_pct": 1.798297079918875,
+        "mean_paired_improvement_pct": -1.4849873825331334,
+        "mean_treatment_alpha_pct": 0.3133096973857415,
+        "valid_pairs": 3
+      },
+      "V3-H2": {
+        "mean_control_alpha_pct": -6.018970985791843,
+        "mean_paired_improvement_pct": 7.324060255242799,
+        "mean_treatment_alpha_pct": 1.3050892694509555,
+        "valid_pairs": 2
+      },
+      "V3-H3": {
+        "mean_control_alpha_pct": 0.8584521146141234,
+        "mean_paired_improvement_pct": 3.1319768001476747,
+        "mean_treatment_alpha_pct": 3.9904289147617984,
+        "valid_pairs": 3
+      }
+    },
+    "gate_checks": {
+      "nonnegative_alpha_cells": true,
+      "paired_improvement": true,
+      "positive_models": true,
+      "positive_periods": true,
+      "positive_treatment_alpha": true,
+      "top3_capture_not_worse": true,
+      "valid_pairs": false,
+      "worst_period_alpha": true
+    },
+    "overall": {
+      "control_spy_beats": 4,
+      "control_top3_captures": 2,
+      "full_spy_fallback_cells": 3,
+      "mean_control_alpha_pct": -0.5084617984980864,
+      "mean_control_return_pct": 0.1046435428256661,
+      "mean_paired_improvement_pct": 2.448636095416153,
+      "mean_treatment_alpha_pct": 1.9401742969180662,
+      "mean_treatment_return_pct": 2.553279638241819,
+      "nonnegative_alpha_cells": 8,
+      "positive_pairs": 5,
+      "treatment_spy_beats": 5,
+      "treatment_top3_captures": 3,
+      "valid_pairs": 8
+    },
+    "passes_gate": false,
+    "positive_models": 3,
+    "positive_periods": 3,
+    "worst_period_alpha_pct": 0.3133096973857415
+  },
+  "calls_used": 12,
+  "config_sha256": "77375bbeff55ac0321b74cc42955400da1ef8b5cf10a81a3f366788a10587d6b",
+  "decision": "reject_v3",
+  "experiment_id": "portfolio-v3-holdout-comparison-2026-08-14",
+  "freeze_manifest_sha256": "f5104008da78db30d9be814f19546cd3e9984d91084578c937f98fa15241158a",
+  "generated_at_utc": "2026-08-14T22:52:40+00:00",
+  "max_calls": 12,
+  "official_score_eligible": false,
+  "production_impact": "none_until_operator_adoption",
+  "v1_historical_reference": {
+    "by_model": {
+      "google-gemini-3-1-pro": {
+        "mean_alpha_pct": -0.7577758195750148,
+        "valid_cells": 33
+      },
+      "openai-gpt-5-6-sol": {
+        "mean_alpha_pct": 1.3640027355717825,
+        "valid_cells": 4
+      },
+      "xai-grok-4-3": {
+        "mean_alpha_pct": 0.09091015303404366,
+        "valid_cells": 33
+      },
+      "xai-grok-4-5": {
+        "mean_alpha_pct": 0.8734064559808951,
+        "valid_cells": 6
+      }
+    },
+    "mean_alpha_pct": -0.14881733312736248,
+    "note": "Historical weekly V1 reference only; dates and model coverage differ from the V3 holdout.",
+    "paired": false,
+    "valid_cells": 76
+  }
+}

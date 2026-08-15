@@ -1,0 +1,268 @@
+{
+  "calls": 0,
+  "decision": "development_candidate_only",
+  "diagnostic_id": "portfolio-v3-robustness-diagnostic-2026-08-14",
+  "generated_at_utc": "2026-08-14T22:17:17+00:00",
+  "interpretation": "The positive result is stable to broad probability cutoffs and removal of any one model, period, or cell, but the rule was developed after these historical outcomes were available. It is a V3 development candidate, not prospective validation or a production adoption decision.",
+  "mechanism_controls": {
+    "continuation_probability_at_least_55": {
+      "active_cells": 7,
+      "active_slots": 12,
+      "mean_alpha_pct": -1.1640802340605054,
+      "nonnegative_alpha_cells": 4,
+      "spy_beats": 0
+    },
+    "overreaction_any_probability": {
+      "active_cells": 11,
+      "active_slots": 28,
+      "mean_alpha_pct": 1.2626118359038982,
+      "nonnegative_alpha_cells": 7,
+      "spy_beats": 7
+    },
+    "overreaction_or_continuation_probability_at_least_55": {
+      "active_cells": 11,
+      "active_slots": 22,
+      "mean_alpha_pct": -0.12488154014986319,
+      "nonnegative_alpha_cells": 4,
+      "spy_beats": 4
+    },
+    "overreaction_probability_at_least_55": {
+      "active_cells": 6,
+      "active_slots": 10,
+      "mean_alpha_pct": 1.0391986939106423,
+      "nonnegative_alpha_cells": 9,
+      "spy_beats": 4
+    },
+    "probability_at_least_55_only": {
+      "active_cells": 11,
+      "active_slots": 22,
+      "mean_alpha_pct": -0.12488154014986319,
+      "nonnegative_alpha_cells": 4,
+      "spy_beats": 4
+    }
+  },
+  "post_hoc": true,
+  "primary": {
+    "active_cells": 6,
+    "active_slots": 10,
+    "by_model_alpha_pct": {
+      "google-gemini-3-1-pro": -0.043803265328299194,
+      "openai-gpt-5-6-sol": 0.7262848193827564,
+      "xai-grok-4-3": 2.7766044999433763,
+      "xai-grok-4-5": 0.5934040968021074
+    },
+    "by_period_alpha_pct": {
+      "V3-T1": -0.03881377763180388,
+      "V3-T2": 1.5816298637056039,
+      "V3-T3": 1.7533070962406219
+    },
+    "leave_one_cell_out": [
+      {
+        "mean_alpha_pct": 1.1586440743544282,
+        "omitted_model_id": "openai-gpt-5-6-sol",
+        "omitted_replay_id": "V3-T1"
+      },
+      {
+        "mean_alpha_pct": 1.1431185633017065,
+        "omitted_model_id": "google-gemini-3-1-pro",
+        "omitted_replay_id": "V3-T1"
+      },
+      {
+        "mean_alpha_pct": 1.1431185633017065,
+        "omitted_model_id": "xai-grok-4-3",
+        "omitted_replay_id": "V3-T1"
+      },
+      {
+        "mean_alpha_pct": 1.1431185633017065,
+        "omitted_model_id": "xai-grok-4-5",
+        "omitted_replay_id": "V3-T1"
+      },
+      {
+        "mean_alpha_pct": 0.9823360883724337,
+        "omitted_model_id": "openai-gpt-5-6-sol",
+        "omitted_replay_id": "V3-T2"
+      },
+      {
+        "mean_alpha_pct": 1.1431185633017065,
+        "omitted_model_id": "google-gemini-3-1-pro",
+        "omitted_replay_id": "V3-T2"
+      },
+      {
+        "mean_alpha_pct": 0.6712490927487378,
+        "omitted_model_id": "xai-grok-4-3",
+        "omitted_replay_id": "V3-T2"
+      },
+      {
+        "mean_alpha_pct": 1.1431185633017065,
+        "omitted_model_id": "xai-grok-4-5",
+        "omitted_replay_id": "V3-T2"
+      },
+      {
+        "mean_alpha_pct": 1.1562595429001963,
+        "omitted_model_id": "google-gemini-3-1-pro",
+        "omitted_replay_id": "V3-T3"
+      },
+      {
+        "mean_alpha_pct": 0.7820066838716624,
+        "omitted_model_id": "xai-grok-4-3",
+        "omitted_replay_id": "V3-T3"
+      },
+      {
+        "mean_alpha_pct": 0.9650973342610744,
+        "omitted_model_id": "xai-grok-4-5",
+        "omitted_replay_id": "V3-T3"
+      }
+    ],
+    "leave_one_model_out_alpha_pct": {
+      "google-gemini-3-1-pro": 1.4453244286252453,
+      "openai-gpt-5-6-sol": 1.1087351104723948,
+      "xai-grok-4-3": 0.38767151664836713,
+      "xai-grok-4-5": 1.206371667826343
+    },
+    "leave_one_period_out_alpha_pct": {
+      "V3-T1": 1.6552058205063258,
+      "V3-T2": 0.7292380254563786,
+      "V3-T3": 0.7714080430369
+    },
+    "mean_alpha_pct": 1.0391986939106423,
+    "mean_paired_improvement_pct": 2.659521399864861,
+    "minimum_leave_one_cell_out_alpha_pct": 0.6712490927487378,
+    "nonnegative_alpha_cells": 9,
+    "positive_models": 3,
+    "positive_periods": 2,
+    "spy_beats": 4,
+    "top3_captures": 2,
+    "valid_cells": 11,
+    "worst_period_alpha_pct": -0.03881377763180388
+  },
+  "primary_rule": "Select at most three model-ranked candidates classified as overreaction with at least a 55% estimated probability of beating SPY; fill unused 35/35/30 slots with SPY.",
+  "production_eligible": false,
+  "threshold_sensitivity": [
+    {
+      "active_cells": 10,
+      "active_slots": 27,
+      "mean_alpha_pct": 1.2767259368609178,
+      "mean_paired_improvement_pct": 2.897048642815137,
+      "minimum_leave_one_cell_out_alpha_pct": 0.7950166993468842,
+      "nonnegative_alpha_cells": 8,
+      "positive_models": 2,
+      "positive_periods": 2,
+      "spy_beats": 7,
+      "threshold_pct": 45.0,
+      "top3_captures": 4,
+      "worst_period_alpha_pct": -0.07520646771801265
+    },
+    {
+      "active_cells": 10,
+      "active_slots": 24,
+      "mean_alpha_pct": 1.4735894880169462,
+      "mean_paired_improvement_pct": 3.093912193971165,
+      "minimum_leave_one_cell_out_alpha_pct": 1.0115666056185155,
+      "nonnegative_alpha_cells": 8,
+      "positive_models": 3,
+      "positive_periods": 3,
+      "spy_beats": 7,
+      "threshold_pct": 50.0,
+      "top3_captures": 4,
+      "worst_period_alpha_pct": 0.3920412193010102
+    },
+    {
+      "active_cells": 8,
+      "active_slots": 15,
+      "mean_alpha_pct": 1.251270034432779,
+      "mean_paired_improvement_pct": 2.8715927403869976,
+      "minimum_leave_one_cell_out_alpha_pct": 0.7670152066759314,
+      "nonnegative_alpha_cells": 8,
+      "positive_models": 3,
+      "positive_periods": 3,
+      "spy_beats": 5,
+      "threshold_pct": 52.5,
+      "top3_captures": 3,
+      "worst_period_alpha_pct": 0.5895770221054497
+    },
+    {
+      "active_cells": 6,
+      "active_slots": 10,
+      "mean_alpha_pct": 1.0391986939106423,
+      "mean_paired_improvement_pct": 2.659521399864861,
+      "minimum_leave_one_cell_out_alpha_pct": 0.6712490927487378,
+      "nonnegative_alpha_cells": 9,
+      "positive_models": 3,
+      "positive_periods": 2,
+      "spy_beats": 4,
+      "threshold_pct": 55.0,
+      "top3_captures": 2,
+      "worst_period_alpha_pct": -0.03881377763180388
+    },
+    {
+      "active_cells": 4,
+      "active_slots": 6,
+      "mean_alpha_pct": 0.8149200455698717,
+      "mean_paired_improvement_pct": 2.4352427515240906,
+      "minimum_leave_one_cell_out_alpha_pct": 0.4245425795738902,
+      "nonnegative_alpha_cells": 11,
+      "positive_models": 3,
+      "positive_periods": 2,
+      "spy_beats": 4,
+      "threshold_pct": 57.5,
+      "top3_captures": 2,
+      "worst_period_alpha_pct": 0.0
+    },
+    {
+      "active_cells": 3,
+      "active_slots": 5,
+      "mean_alpha_pct": 0.7722647289532228,
+      "mean_paired_improvement_pct": 2.392587434907442,
+      "minimum_leave_one_cell_out_alpha_pct": 0.3776217312955764,
+      "nonnegative_alpha_cells": 11,
+      "positive_models": 2,
+      "positive_periods": 2,
+      "spy_beats": 3,
+      "threshold_pct": 60.0,
+      "top3_captures": 2,
+      "worst_period_alpha_pct": 0.0
+    },
+    {
+      "active_cells": 2,
+      "active_slots": 2,
+      "mean_alpha_pct": 0.32546167627455436,
+      "mean_paired_improvement_pct": 1.9457843822287733,
+      "minimum_leave_one_cell_out_alpha_pct": 0.04692084827831377,
+      "nonnegative_alpha_cells": 11,
+      "positive_models": 2,
+      "positive_periods": 2,
+      "spy_beats": 2,
+      "threshold_pct": 62.5,
+      "top3_captures": 1,
+      "worst_period_alpha_pct": 0.0
+    },
+    {
+      "active_cells": 2,
+      "active_slots": 2,
+      "mean_alpha_pct": 0.32546167627455436,
+      "mean_paired_improvement_pct": 1.9457843822287733,
+      "minimum_leave_one_cell_out_alpha_pct": 0.04692084827831377,
+      "nonnegative_alpha_cells": 11,
+      "positive_models": 2,
+      "positive_periods": 2,
+      "spy_beats": 2,
+      "threshold_pct": 65.0,
+      "top3_captures": 1,
+      "worst_period_alpha_pct": 0.0
+    },
+    {
+      "active_cells": 1,
+      "active_slots": 1,
+      "mean_alpha_pct": 0.28280635965790546,
+      "mean_paired_improvement_pct": 1.9031290656121245,
+      "minimum_leave_one_cell_out_alpha_pct": 0.0,
+      "nonnegative_alpha_cells": 11,
+      "positive_models": 1,
+      "positive_periods": 1,
+      "spy_beats": 1,
+      "threshold_pct": 67.5,
+      "top3_captures": 1,
+      "worst_period_alpha_pct": 0.0
+    }
+  ]
+}

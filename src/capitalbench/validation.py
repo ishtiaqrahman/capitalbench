@@ -9,7 +9,7 @@ from pydantic import ValidationError
 
 from .exposures import exposure_clusters_by_option
 from .io import load_manifest, load_options, read_json, read_yaml, write_json
-from .methodology import is_portfolio_v2, is_production_portfolio_v2
+from .methodology import is_portfolio_v2, is_portfolio_v3, is_production_portfolio_v2
 from .run_store import get_selected_run_paths, read_run_manifest
 from .portfolio import (
     allocation_increment_bps,
@@ -19,6 +19,10 @@ from .portfolio import (
     selected_option_ids,
     submission_format_from_manifest,
     total_allocation_bps,
+)
+from .portfolio_v3 import (
+    build_portfolio_v3_candidate_slate,
+    materialize_portfolio_v3_submission,
 )
 from .schemas import MarketOption, ModelSubmission, PortfolioConstraints, SubmissionFormat
 
@@ -50,6 +54,62 @@ def _format_validation_error(error: ValidationError) -> list[str]:
         location = ".".join(str(part) for part in item["loc"])
         messages.append(f"{location}: {item['msg']}" if location else item["msg"])
     return messages
+
+
+def materialize_raw_submission_payload(
+    payload: Any,
+    *,
+    round_path: Path,
+    options: list[MarketOption],
+    methodology_version: str | None,
+    portfolio_v3_candidate_slate: list[dict[str, Any]] | None = None,
+) -> Any:
+    """Convert a raw model response into the standard scored submission shape.
+
+    V3 deliberately stores the model's rank-and-classify judgment as the raw
+    response. The scored portfolio is a deterministic protocol output, so every
+    command that reprocesses raw responses must reconstruct it the same way.
+    Historical methodologies already return the standard submission shape and
+    pass through unchanged.
+    """
+
+    if not is_portfolio_v3(methodology_version):
+        return payload
+    if not isinstance(payload, dict):
+        raise ValueError("V3 raw submission must be a JSON/YAML object")
+
+    candidate_slate = portfolio_v3_candidate_slate or build_portfolio_v3_candidate_slate(
+        round_path
+    )
+    required_identifiers = ("round_id", "model_id", "provider", "mode")
+    missing = [
+        field
+        for field in required_identifiers
+        if not str(payload.get(field) or "").strip()
+    ]
+    if missing:
+        raise ValueError(f"V3 raw submission requires {', '.join(missing)}")
+
+    materialized = materialize_portfolio_v3_submission(
+        payload,
+        round_id=str(payload["round_id"]),
+        model_id=str(payload["model_id"]),
+        provider=str(payload["provider"]),
+        mode=str(payload["mode"]),
+        candidate_slate=candidate_slate,
+        allowed_option_ids=[option.option_id for option in options],
+    )
+    for field in (
+        "run_type",
+        "replicate_index",
+        "replicate_count",
+        "is_official_score",
+        "usage",
+        "cost_usd",
+    ):
+        if field in payload:
+            materialized[field] = payload[field]
+    return materialized
 
 
 def validate_submission_payload(
@@ -392,11 +452,23 @@ def validate_submissions(
     valid_count = 0
     raw_files = iter_submission_files(raw_dir)
     parsed_candidates: list[tuple[Path, Path, ModelSubmission]] = []
+    portfolio_v3_candidate_slate = (
+        build_portfolio_v3_candidate_slate(round_path)
+        if is_portfolio_v3(manifest.methodology_version)
+        else None
+    )
 
     for raw_file in raw_files:
         parsed_file = parsed_dir / f"{raw_file.stem}.json"
         try:
             payload = _load_submission(raw_file)
+            payload = materialize_raw_submission_payload(
+                payload,
+                round_path=round_path,
+                options=options,
+                methodology_version=manifest.methodology_version,
+                portfolio_v3_candidate_slate=portfolio_v3_candidate_slate,
+            )
             submission = validate_submission_payload(
                 payload,
                 options,

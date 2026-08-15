@@ -1,0 +1,338 @@
+{
+  "by_model": {
+    "google-gemini-3-1-pro": {
+      "mean_change_vs_original_v3a_pct": 2.0551933888729996,
+      "mean_gated_alpha_pct": -0.043803265328299194,
+      "mean_paired_improvement_pct": 3.1292446397400813,
+      "valid_pairs": 3
+    },
+    "openai-gpt-5-6-sol": {
+      "mean_change_vs_original_v3a_pct": 0.05297179307286426,
+      "mean_gated_alpha_pct": 0.7262848193827564,
+      "mean_paired_improvement_pct": 1.384499686923867,
+      "valid_pairs": 2
+    },
+    "xai-grok-4-3": {
+      "mean_change_vs_original_v3a_pct": 0.04739651033266027,
+      "mean_gated_alpha_pct": 2.7766044999433763,
+      "mean_paired_improvement_pct": 3.651013148506158,
+      "valid_pairs": 3
+    },
+    "xai-grok-4-5": {
+      "mean_change_vs_original_v3a_pct": 2.3649148492468393,
+      "mean_gated_alpha_pct": 0.5934040968021074,
+      "mean_paired_improvement_pct": 2.0483208866423404,
+      "valid_pairs": 3
+    }
+  },
+  "by_period": {
+    "V3-T1": {
+      "mean_change_vs_original_v3a_pct": 2.4200882500619922,
+      "mean_gated_alpha_pct": -0.03881377763180388,
+      "mean_paired_improvement_pct": 0.6269589554753061,
+      "valid_pairs": 4
+    },
+    "V3-T2": {
+      "mean_change_vs_original_v3a_pct": 1.0371541955639707,
+      "mean_gated_alpha_pct": 1.5816298637056039,
+      "mean_paired_improvement_pct": 5.66204826119632,
+      "valid_pairs": 4
+    },
+    "V3-T3": {
+      "mean_change_vs_original_v3a_pct": -0.10683731700020882,
+      "mean_gated_alpha_pct": 1.7533070962406219,
+      "mean_paired_improvement_pct": 1.3662355106089894,
+      "valid_pairs": 3
+    }
+  },
+  "calls": 0,
+  "candidate_calibration": {
+    "all_candidates": {
+      "candidate_count": 145,
+      "mean_alpha_pct": -0.5120561971451089,
+      "mean_model_probability_pct": 45.02758620689655,
+      "spy_beat_count": 58,
+      "spy_beat_rate": 0.4
+    },
+    "continuation_probability_at_least_55": {
+      "candidate_count": 12,
+      "mean_alpha_pct": -3.0402539616854436,
+      "mean_model_probability_pct": 59.25,
+      "spy_beat_count": 1,
+      "spy_beat_rate": 0.08333333333333333
+    },
+    "overreaction_probability_at_least_55": {
+      "candidate_count": 10,
+      "mean_alpha_pct": 3.25193359445058,
+      "mean_model_probability_pct": 59.6,
+      "spy_beat_count": 7,
+      "spy_beat_rate": 0.7
+    },
+    "probability_at_least_55": {
+      "candidate_count": 22,
+      "mean_alpha_pct": -0.18016870889634187,
+      "mean_model_probability_pct": 59.40909090909091,
+      "spy_beat_count": 8,
+      "spy_beat_rate": 0.36363636363636365
+    },
+    "warning": "Candidate rows repeat models and assets within only three periods and are not independent observations. These descriptive rates cannot support inference."
+  },
+  "decision": "diagnostic_only",
+  "diagnostic_id": "portfolio-v3-anti-extrapolation-compliance-diagnostic-2026-08-13",
+  "generated_at_utc": "2026-08-14T22:07:42+00:00",
+  "interpretation": "This diagnostic was defined after V3A outcomes were inspected. It identifies a plausible confidence-and-evidence gate but cannot validate it, change the frozen V3A decision, or support production adoption.",
+  "invalid_operations": [
+    {
+      "model_id": "openai-gpt-5-6-sol",
+      "provider_error": "openai API request failed with HTTP 429: {\n  \"error\": {\n    \"message\": \"You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.\",\n    \"type\": \"insufficient_quota\",\n    \"param\": null,\n    \"code\": \"credit_balance_exhausted\"\n  }\n}",
+      "replay_id": "V3-T3"
+    }
+  ],
+  "overall": {
+    "control_improvements": 8,
+    "invalid_pairs": 1,
+    "mean_change_vs_original_v3a_pct": 1.2280416210457479,
+    "mean_gated_alpha_pct": 1.0391986939106423,
+    "mean_original_v3a_alpha_pct": -0.18884292713510553,
+    "mean_paired_improvement_pct": 2.659521399864861,
+    "nonnegative_alpha_cells": 9,
+    "spy_beats": 4,
+    "top3_captures": 2,
+    "valid_pairs": 11,
+    "winner_captures": 2
+  },
+  "post_hoc": true,
+  "production_eligible": false,
+  "rows": [
+    {
+      "allocation": {
+        "CYBERSECURITY": 35.0,
+        "SP500": 65.0
+      },
+      "change_vs_original_v3a_pct": -1.4646501616454513,
+      "control_return_pct": 0.918833390943391,
+      "model_id": "openai-gpt-5-6-sol",
+      "original_v3a_return_pct": 0.31778567382130424,
+      "paired_improvement_pct": -2.065697878767538,
+      "replay_id": "V3-T1",
+      "reranked_alpha_pct": -0.15525511052721552,
+      "reranked_return_pct": -1.146864487824147,
+      "spy_return_pct": -0.9916093772969314,
+      "top3_capture": false,
+      "top3_option_ids": [
+        "CYBERSECURITY"
+      ],
+      "valid": true,
+      "winner_capture": false
+    },
+    {
+      "allocation": {
+        "SP500": 100.0
+      },
+      "change_vs_original_v3a_pct": 5.247468246288351,
+      "control_return_pct": -3.9730613099400127,
+      "model_id": "google-gemini-3-1-pro",
+      "original_v3a_return_pct": -6.239077623585283,
+      "paired_improvement_pct": 2.9814519326430813,
+      "replay_id": "V3-T1",
+      "reranked_alpha_pct": 0.0,
+      "reranked_return_pct": -0.9916093772969314,
+      "spy_return_pct": -0.9916093772969314,
+      "top3_capture": false,
+      "top3_option_ids": [],
+      "valid": true,
+      "winner_capture": false
+    },
+    {
+      "allocation": {
+        "SP500": 100.0
+      },
+      "change_vs_original_v3a_pct": 2.531808630452512,
+      "control_return_pct": -0.9916093772969314,
+      "model_id": "xai-grok-4-3",
+      "original_v3a_return_pct": -3.5234180077494432,
+      "paired_improvement_pct": 0.0,
+      "replay_id": "V3-T1",
+      "reranked_alpha_pct": 0.0,
+      "reranked_return_pct": -0.9916093772969314,
+      "spy_return_pct": -0.9916093772969314,
+      "top3_capture": false,
+      "top3_option_ids": [],
+      "valid": true,
+      "winner_capture": false
+    },
+    {
+      "allocation": {
+        "SP500": 100.0
+      },
+      "change_vs_original_v3a_pct": 3.3657262851525576,
+      "control_return_pct": -2.5836911453226126,
+      "model_id": "xai-grok-4-5",
+      "original_v3a_return_pct": -4.357335662449489,
+      "paired_improvement_pct": 1.5920817680256811,
+      "replay_id": "V3-T1",
+      "reranked_alpha_pct": 0.0,
+      "reranked_return_pct": -0.9916093772969314,
+      "spy_return_pct": -0.9916093772969314,
+      "top3_capture": false,
+      "top3_option_ids": [],
+      "valid": true,
+      "winner_capture": false
+    },
+    {
+      "allocation": {
+        "SEMICONDUCTORS": 35.0,
+        "SP500": 65.0
+      },
+      "change_vs_original_v3a_pct": 1.5705937477911798,
+      "control_return_pct": 0.8859176445925361,
+      "model_id": "openai-gpt-5-6-sol",
+      "original_v3a_return_pct": 4.150021149416628,
+      "paired_improvement_pct": 4.834697252615272,
+      "replay_id": "V3-T2",
+      "reranked_alpha_pct": 1.6078247492927282,
+      "reranked_return_pct": 5.720614897207808,
+      "spy_return_pct": 4.11279014791508,
+      "top3_capture": false,
+      "top3_option_ids": [
+        "SEMICONDUCTORS"
+      ],
+      "valid": true,
+      "winner_capture": false
+    },
+    {
+      "allocation": {
+        "SP500": 100.0
+      },
+      "change_vs_original_v3a_pct": 0.9181119203306478,
+      "control_return_pct": -2.5131002591306295,
+      "model_id": "google-gemini-3-1-pro",
+      "original_v3a_return_pct": 3.194678227584432,
+      "paired_improvement_pct": 6.625890407045709,
+      "replay_id": "V3-T2",
+      "reranked_alpha_pct": 0.0,
+      "reranked_return_pct": 4.11279014791508,
+      "spy_return_pct": 4.11279014791508,
+      "top3_capture": false,
+      "top3_option_ids": [],
+      "valid": true,
+      "winner_capture": false
+    },
+    {
+      "allocation": {
+        "SEMICONDUCTORS": 35.0,
+        "SOUTH_KOREA": 35.0,
+        "SP500": 30.0
+      },
+      "change_vs_original_v3a_pct": -1.3751236064715666,
+      "control_return_pct": 1.4895642022267341,
+      "model_id": "xai-grok-4-3",
+      "original_v3a_return_pct": 10.206608459916334,
+      "paired_improvement_pct": 7.341920651218032,
+      "replay_id": "V3-T2",
+      "reranked_alpha_pct": 4.718694705529687,
+      "reranked_return_pct": 8.831484853444767,
+      "spy_return_pct": 4.11279014791508,
+      "top3_capture": true,
+      "top3_option_ids": [
+        "SOUTH_KOREA",
+        "SEMICONDUCTORS"
+      ],
+      "valid": true,
+      "winner_capture": true
+    },
+    {
+      "allocation": {
+        "SP500": 100.0
+      },
+      "change_vs_original_v3a_pct": 3.035034720605622,
+      "control_return_pct": 0.2671054140088135,
+      "model_id": "xai-grok-4-5",
+      "original_v3a_return_pct": 1.077755427309458,
+      "paired_improvement_pct": 3.8456847339062663,
+      "replay_id": "V3-T2",
+      "reranked_alpha_pct": 0.0,
+      "reranked_return_pct": 4.11279014791508,
+      "spy_return_pct": 4.11279014791508,
+      "top3_capture": false,
+      "top3_option_ids": [],
+      "valid": true,
+      "winner_capture": false
+    },
+    {
+      "model_id": "openai-gpt-5-6-sol",
+      "provider_error": "openai API request failed with HTTP 429: {\n  \"error\": {\n    \"message\": \"You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.\",\n    \"type\": \"insufficient_quota\",\n    \"param\": null,\n    \"code\": \"credit_balance_exhausted\"\n  }\n}",
+      "replay_id": "V3-T3",
+      "valid": false
+    },
+    {
+      "allocation": {
+        "DIVIDEND": 35.0,
+        "LOW_VOL": 35.0,
+        "UTILITIES": 30.0
+      },
+      "change_vs_original_v3a_pct": 0.0,
+      "control_return_pct": -0.011628946076303048,
+      "model_id": "google-gemini-3-1-pro",
+      "original_v3a_return_pct": -0.2312373665448492,
+      "paired_improvement_pct": -0.21960842046854614,
+      "replay_id": "V3-T3",
+      "reranked_alpha_pct": -0.13140979598489758,
+      "reranked_return_pct": -0.2312373665448492,
+      "spy_return_pct": -0.09982757055995162,
+      "top3_capture": false,
+      "top3_option_ids": [
+        "DIVIDEND",
+        "LOW_VOL",
+        "UTILITIES"
+      ],
+      "valid": true,
+      "winner_capture": false
+    },
+    {
+      "allocation": {
+        "OIL": 35.0,
+        "SP500": 65.0
+      },
+      "change_vs_original_v3a_pct": -1.0144954929829644,
+      "control_return_pct": -0.09982757055995162,
+      "model_id": "xai-grok-4-3",
+      "original_v3a_return_pct": 4.525786716723454,
+      "paired_improvement_pct": 3.6111187943004412,
+      "replay_id": "V3-T3",
+      "reranked_alpha_pct": 3.6111187943004412,
+      "reranked_return_pct": 3.5112912237404896,
+      "spy_return_pct": -0.09982757055995162,
+      "top3_capture": true,
+      "top3_option_ids": [
+        "OIL"
+      ],
+      "valid": true,
+      "winner_capture": true
+    },
+    {
+      "allocation": {
+        "DIVIDEND": 35.0,
+        "HEALTHCARE": 35.0,
+        "SP500": 30.0
+      },
+      "change_vs_original_v3a_pct": 0.6939835419823379,
+      "control_return_pct": 0.9731885618512971,
+      "model_id": "xai-grok-4-5",
+      "original_v3a_return_pct": 0.9864011778640325,
+      "paired_improvement_pct": 0.7071961579950733,
+      "replay_id": "V3-T3",
+      "reranked_alpha_pct": 1.780212290406322,
+      "reranked_return_pct": 1.6803847198463704,
+      "spy_return_pct": -0.09982757055995162,
+      "top3_capture": false,
+      "top3_option_ids": [
+        "DIVIDEND",
+        "HEALTHCARE"
+      ],
+      "valid": true,
+      "winner_capture": false
+    }
+  ],
+  "rule": "An active candidate is eligible only when the model labels the setup as an overreaction and assigns at least a 55% probability of beating SPY. Preserve model rank among eligible candidates and allocate unused 35/35/30 slots to SPY. A prospective version may also admit continuation only when it cites machine-verifiable, candidate-specific non-price evidence."
+}

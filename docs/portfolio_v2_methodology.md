@@ -1,7 +1,7 @@
 # CapitalBench Portfolio V2.0 Methodology
 
 Status: historical production methodology for rounds initialized from July 17
-through July 20, 2026. New rounds use `portfolio-v2.2`; frozen V2.0 rounds
+through July 20, 2026. New rounds use `portfolio-v3.0`; frozen V2.0 rounds
 retain this methodology unchanged.
 
 ## Adoption Record
@@ -74,9 +74,10 @@ alpha, CapitalBench score, regret, and publication rules are unchanged. The
 candidate ledger and forecasts are audit and calibration data; they do not
 receive a separate official score and cannot be edited after the call.
 
-New production V2 rounds belong to the primary stream. Historical V1 rounds
-are not regenerated, and the July 13 pilot remains excluded from primary
-aggregates under its frozen experiment contract.
+Rounds initialized under production V2 belong to the primary stream. New
+portfolio rounds now use V3. Historical V1 and V2 rounds are not regenerated,
+and the July 13 pilot remains excluded from primary aggregates under its frozen
+experiment contract.
 
 ## Success Evaluation
 

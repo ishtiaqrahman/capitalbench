@@ -1,0 +1,95 @@
+{
+  "aggregate": {
+    "by_model": {
+      "google-gemini-3-1-pro": {
+        "mean_paired_improvement_pct": 1.0740512508670816,
+        "mean_treatment_alpha_pct": -2.098996654201299,
+        "valid_pairs": 3
+      },
+      "openai-gpt-5-6-sol": {
+        "mean_paired_improvement_pct": 1.3315278938510025,
+        "mean_treatment_alpha_pct": 0.673313026309892,
+        "valid_pairs": 2
+      },
+      "xai-grok-4-3": {
+        "mean_paired_improvement_pct": 3.6036166381734978,
+        "mean_treatment_alpha_pct": 2.7292079896107158,
+        "valid_pairs": 3
+      },
+      "xai-grok-4-5": {
+        "mean_paired_improvement_pct": -0.31659396260449907,
+        "mean_treatment_alpha_pct": -1.771510752444732,
+        "valid_pairs": 3
+      }
+    },
+    "by_period": {
+      "V3-T1": {
+        "mean_paired_improvement_pct": -1.7931292945866866,
+        "mean_treatment_alpha_pct": -2.4589020276937963,
+        "slate_top3_capture_count": 1,
+        "slate_winner_capture": true,
+        "valid_pairs": 4
+      },
+      "V3-T2": {
+        "mean_paired_improvement_pct": 4.62489406563235,
+        "mean_treatment_alpha_pct": 0.5444756681416332,
+        "slate_top3_capture_count": 1,
+        "slate_winner_capture": true,
+        "valid_pairs": 4
+      },
+      "V3-T3": {
+        "mean_paired_improvement_pct": 1.4730728276091982,
+        "mean_treatment_alpha_pct": 1.8601444132408307,
+        "slate_top3_capture_count": 1,
+        "slate_winner_capture": true,
+        "valid_pairs": 3
+      }
+    },
+    "gate_checks": {
+      "paired_improvement": true,
+      "positive_models": false,
+      "positive_pairs": false,
+      "positive_periods": true,
+      "positive_treatment_alpha": false,
+      "top3_capture_not_worse": true,
+      "valid_pairs": true,
+      "worst_period": false
+    },
+    "overall": {
+      "control_spy_beats": 3,
+      "control_top3_captures": 1,
+      "control_winner_captures": 0,
+      "mean_candidate_rank_spearman": 0.004947325401870827,
+      "mean_control_alpha_pct": -1.6203227059542187,
+      "mean_paired_improvement_pct": 1.4314797788191131,
+      "mean_treatment_alpha_pct": -0.1888429271351055,
+      "mean_treatment_return_pct": 0.9189061974824162,
+      "positive_pairs": 6,
+      "treatment_spy_beats": 5,
+      "treatment_top3_captures": 3,
+      "treatment_winner_captures": 3,
+      "valid_pairs": 11
+    },
+    "passes_gate": false,
+    "positive_models": 2,
+    "positive_periods": 2,
+    "worst_period_improvement_pct": -1.7931292945866866
+  },
+  "attempt_disclosure": {
+    "explicit_transport_recovery_attempts": 3,
+    "initial_replay_provider_attempts": 12,
+    "note": "Three initial Gemini quota failures were replaced on explicit operator request using the same frozen packets and model. Credential smoke checks are excluded.",
+    "planned_model_period_cells": 12,
+    "total_replay_provider_attempts": 15
+  },
+  "calls_used": 12,
+  "config_sha256": "18abeee2fd2967aa3e8eb6fd93f96eb428b5d61a5fb8b5f868e47e96b56d6e1a",
+  "decision": "rejected",
+  "experiment_id": "portfolio-v3-anti-extrapolation-replay-2026-08-13",
+  "freeze_manifest_sha256": "e72516d4797fe63f757b5bafe5e2b5e39de2957583df01ab316d542f966d90d7",
+  "generated_at_utc": "2026-08-14T22:06:14+00:00",
+  "max_calls": 12,
+  "official_score_eligible": false,
+  "production_impact": "none",
+  "test_sets": 3
+}

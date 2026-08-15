@@ -3512,7 +3512,8 @@ for (const model of apiReadModel.models) {
 
   const liveExposure = modelLiveExposure(model.model_id);
   if (liveExposure.portfolio_count > 0) {
-    includes(html, `${liveExposure.portfolio_count} open portfolios`, `${context} live holdings open portfolio label`);
+    const openPortfolioLabel = liveExposure.portfolio_count === 1 ? "1 open portfolio" : `${liveExposure.portfolio_count} open portfolios`;
+    includes(html, openPortfolioLabel, `${context} live holdings open portfolio label`);
     for (const holding of liveExposure.holdings.slice(0, 5)) {
       includesAny(
         html,

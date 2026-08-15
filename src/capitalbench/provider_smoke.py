@@ -9,11 +9,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .io import load_manifest, load_options, write_json
+from .methodology import is_portfolio_v3
+from .portfolio_v3 import build_portfolio_v3_candidate_slate
 from .prompting import build_prompt
 from .runner import PROVIDER_CLASSES
 from .schemas import ModelConfig, ProviderName, RuntimeSettings
 from .submission_schema import prompt_for_model, provider_submission_schema
-from .validation import validate_submission_payload
+from .validation import materialize_raw_submission_payload, validate_submission_payload
 
 PROVIDER_KEY_ENV_VARS = {
     "openai": "OPENAI_API_KEY",
@@ -54,6 +56,11 @@ def smoke_provider(
     manifest = load_manifest(round_path)
     options = load_options(round_path)
     prompt = build_prompt(round_path)
+    portfolio_v3_candidate_slate = (
+        build_portfolio_v3_candidate_slate(round_path)
+        if is_portfolio_v3(manifest.methodology_version)
+        else []
+    )
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     smoke_dir = round_path / "provider-smoke-tests" / f"{provider}-{timestamp}"
     smoke_dir.mkdir(parents=True, exist_ok=False)
@@ -68,7 +75,11 @@ def smoke_provider(
     elif provider == "xai" and api_model_name.startswith("grok-4.6"):
         reasoning_effort = "low"
 
-    max_output_tokens = 3000 if manifest.submission_format == "portfolio" else 500
+    max_output_tokens = (
+        6000
+        if is_portfolio_v3(manifest.methodology_version)
+        else (3000 if manifest.submission_format == "portfolio" else 500)
+    )
     timeout_seconds = 180 if provider == "xai" and api_model_name.startswith("grok-4.6") else 60
 
     model_config = ModelConfig(
@@ -91,6 +102,7 @@ def smoke_provider(
             "submission_format": manifest.submission_format,
             "portfolio_constraints": manifest.portfolio_constraints.model_dump(mode="json"),
             "methodology_version": manifest.methodology_version,
+            "portfolio_v3_candidate_slate": portfolio_v3_candidate_slate,
         },
     )
     runtime_limits = RuntimeSettings(
@@ -165,8 +177,18 @@ def smoke_provider(
     try:
         if parsed_json is None:
             raise ValueError("provider response did not contain a JSON object")
+        validation_payload = parsed_json
+        if is_portfolio_v3(manifest.methodology_version):
+            validation_payload = materialize_raw_submission_payload(
+                parsed_json,
+                round_path=round_path,
+                options=options,
+                methodology_version=manifest.methodology_version,
+                portfolio_v3_candidate_slate=portfolio_v3_candidate_slate,
+            )
+            write_json(smoke_dir / "materialized_submission.json", validation_payload)
         validate_submission_payload(
-            parsed_json,
+            validation_payload,
             options,
             manifest.round_id,
             run_type="provider_smoke",

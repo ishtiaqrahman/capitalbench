@@ -595,22 +595,23 @@ def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
     prompt = (round_path / "prompt.md").read_text(encoding="utf-8")
     assert exit_code == 0
     assert manifest["submission_format"] == "portfolio"
-    assert manifest["methodology_version"] == "portfolio-v2.2"
-    assert manifest["model_roster_version"].startswith("portfolio-v2-roster-")
+    assert manifest["methodology_version"] == "portfolio-v3.0"
+    assert manifest["model_roster_version"].startswith("portfolio-v3-roster-")
     assert manifest["model_roster_frozen_at_utc"]
     assert len(manifest["expected_model_ids"]) == 8
     assert "anthropic-claude-opus-4-7" not in manifest["expected_model_ids"]
     assert "openai-gpt-5-5" not in manifest["expected_model_ids"]
     assert "anthropic-claude-opus-5" in manifest["expected_model_ids"]
     assert "xai-grok-4-6" in manifest["expected_model_ids"]
-    assert manifest["portfolio_constraints"]["max_economic_exposure_pct"] == 50
+    assert manifest["portfolio_constraints"]["max_holdings"] == 3
+    assert manifest["portfolio_constraints"]["max_economic_exposure_pct"] is None
     assert (round_path / "submission_schema.json").exists()
     assert "portfolio" in prompt
-    assert "maximize expected realized portfolio return" in prompt
-    assert "close-to-close one-month scoring window" in prompt
-    assert "candidate ledger of 6-8 unique options" in prompt
-    assert "span at least four listed economic-exposure clusters" in prompt
-    assert "base forecast is greater than SPY's base forecast" in prompt
-    assert "no economic-exposure cluster may exceed" in prompt
-    assert "sum to exactly 100" in prompt
-    assert "CapitalBench portfolio-v2.2 Task" in prompt
+    assert "CapitalBench portfolio-v3.0 Task" in prompt
+    assert "rank assets for realized return over exactly one month" in prompt
+    assert "deterministic candidate slate" in prompt
+    assert "label its recent return as overreaction" in prompt
+    assert "at least a 55% probability of beating SPY" in prompt
+    assert "35%, 35%, and 30%" in prompt
+    assert "every unused slot in SPY" in prompt
+    assert "You do not submit allocations" in prompt

@@ -5,10 +5,17 @@ from pathlib import Path
 
 from .hashing import compute_round_hashes
 from .io import load_manifest, load_options
+from .methodology import is_portfolio_v3
 from .portfolio import constraints_from_manifest, submission_format_from_manifest
+from .portfolio_v3 import build_portfolio_v3_candidate_slate
 from .research import final_briefing_matches_round_briefing, research_artifact_rows
 from .run_store import RunPaths, get_run_paths, get_selected_run_paths, read_run_manifest
-from .validation import _load_submission, iter_submission_files, validate_submission_payload
+from .validation import (
+    _load_submission,
+    iter_submission_files,
+    materialize_raw_submission_payload,
+    validate_submission_payload,
+)
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
@@ -43,10 +50,22 @@ def _invalid_submission_summary(round_path: Path, run_paths: RunPaths) -> tuple[
     run_type = str(run_manifest.get("run_type") or "mock")
     replicate_count = int(run_manifest.get("replicates") or 1)
     invalid_files: list[str] = []
+    portfolio_v3_candidate_slate = (
+        build_portfolio_v3_candidate_slate(round_path)
+        if is_portfolio_v3(manifest.methodology_version)
+        else None
+    )
     for raw_file in iter_submission_files(run_paths.raw_dir):
         try:
-            validate_submission_payload(
+            payload = materialize_raw_submission_payload(
                 _load_submission(raw_file),
+                round_path=round_path,
+                options=options,
+                methodology_version=manifest.methodology_version,
+                portfolio_v3_candidate_slate=portfolio_v3_candidate_slate,
+            )
+            validate_submission_payload(
+                payload,
                 options,
                 manifest.round_id,
                 run_type=run_type,

@@ -8,6 +8,28 @@ started. Future rounds may use improved prompt wording, option universes,
 provider settings, retry policies, reporting, or scoring rules, as long as those
 changes are documented before the future round is frozen.
 
+## portfolio-v3.0 Current Default
+
+Used for newly initialized portfolio rounds from August 15, 2026. Existing
+rounds keep the methodology in their frozen manifest.
+
+Key properties:
+
+- One single-turn, non-agentic, tool-free judgment per model.
+- A deterministic candidate slate balances reversal, medium-strength,
+  continuation, quality-pullback, and volume-dislocation search lanes.
+- Models rank and classify candidates but do not choose allocation weights.
+- A non-SPY candidate is eligible only when labeled `overreaction` with at
+  least a 55% estimated probability of beating SPY.
+- CapitalBench fills fixed 35%, 35%, and 30% slots in model-rank order and puts
+  every unused slot in SPY.
+- Raw model judgments and the deterministic construction audit are retained.
+- Adoption was an explicit operator decision after promising V3 development
+  and holdout returns. The holdout's frozen validity-count gate still failed
+  and must not be reported as passed.
+
+See `docs/portfolio_v3_methodology.md`.
+
 ## round1-v1.0
 
 Used for `CB-2026-05-10-1M`.
@@ -32,9 +54,10 @@ Key properties:
   run because `raw_responses/` sidecar preservation was added afterward. The
   run log preserves SHA256 hashes of the original provider text seen at runtime.
 
-## v1.1 Planned Default
+## v1.1 Historical Planned Default
 
-Use for future rounds unless superseded.
+This was the planned default for future single-pick rounds at that point in the
+project. It has been superseded for new portfolio rounds.
 
 Changes from `round1-v1.0`:
 
@@ -44,10 +67,11 @@ Changes from `round1-v1.0`:
 - `raw_responses/` sidecars preserve exact provider text for every model call.
 - Run logs include raw response sidecar paths and SHA256 hashes.
 
-## portfolio-v1.0 Planned Protocol
+## portfolio-v1.0 Historical Planned Protocol
 
-Use for future portfolio-allocation rounds when the round manifest sets
-`submission_format: portfolio`.
+This was the planned protocol for future portfolio-allocation rounds when the
+round manifest set `submission_format: portfolio`. It is retained as version
+history and is not the current default.
 
 Changes from `v1.1`:
 

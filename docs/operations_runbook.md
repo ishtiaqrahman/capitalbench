@@ -19,7 +19,7 @@ tokens, and raw provider responses.
 1. Create and freeze the round inputs.
 
    ```bash
-   capitalbench init-round ...
+   capitalbench init-round --round-id <round_id> --submission-format portfolio --horizon "one week|one month"
    capitalbench import-research --round rounds/<round_id> ...
    capitalbench fetch-universe-decision-context --round rounds/<round_id> ...
    capitalbench hash-round --round rounds/<round_id>
@@ -37,11 +37,11 @@ tokens, and raw provider responses.
    ```
 
    `configs/models.v2.yaml` is the production model registry. Each new
-   Portfolio V2 round freezes the active model IDs in its own manifest. The
+   Portfolio V3 round freezes the active model IDs in its own manifest. The
    runner rejects an official call before provider invocation if that exact
    frozen roster is incomplete or has unexpected models, and `accept-run`
    repeats the check before publication. The four-model experiment roster must
-   never be used for a production V2 round.
+   never be used for a production portfolio round.
 
    Claude Opus 4.7 is retired from new rounds effective July 21, 2026. It
    remains in the registry and in historical data. Do not remove it from old

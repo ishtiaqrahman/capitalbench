@@ -1,11 +1,11 @@
 schema_version: 1
-last_updated: 2026-07-21
+last_updated: 2026-08-15
 current_program:
-  experiment_id: llm-quality-input-replay-2026-07-21
-  objective: Evaluate operator-adopted Portfolio V2.2 prospectively while preserving the rejected Q2 result and the unconfirmed status of Q1.
-  production_impact: Q1 information-only evidence adopted by explicit operator direction; no Q2 quotas and no retrospective round changes.
-  production_methodology: portfolio-v2.2
-  next_gate: Resolve fresh complete eight-model V2.2 rounds and evaluate return, SPY alpha, model breadth, candidate coverage, and calibration without tuning the fixed evidence formula.
+  experiment_id: portfolio-v3-production-adoption-2026-08-15
+  objective: Preserve the explicit operator adoption of unchanged Portfolio V3.0 without rewriting the failed holdout validity gate.
+  production_impact: Portfolio V3.0 is the default for newly initialized portfolio rounds; frozen V1 and V2 rounds are unchanged.
+  production_methodology: portfolio-v3.0
+  next_gate: Evaluate unchanged V3.0 prospectively as new weekly and monthly production rounds resolve. Do not tune on exhausted development or holdout windows.
 
 experiments:
   - id: model-performance-predictability-2026-07-20
@@ -163,7 +163,7 @@ experiments:
       - V1 average alpha versus SPY was 5.46%; V2 average alpha was 3.34%.
       - V2 trailed V1 by 2.13 points and 0 of 4 models improved; both versions beat SPY 4 of 4.
     lessons:
-      - The pilot rejected V2 under its gate; production V2 is active only by separate operator decision.
+      - The pilot rejected V2 under its gate; V2 was adopted only by a separate operator decision and was later superseded for new rounds by V3.
     limitations:
       - One weekly period, four models, and no V2 candidate ledgers.
     canonical_artifacts:
@@ -229,8 +229,8 @@ experiments:
 
   - id: v2-july17-ledger-diagnostic-2026-07-24
     date: 2026-07-21
-    status: active
-    decision: active
+    status: complete
+    decision: diagnostic_only
     question: In the first complete eight-model production V2 weekly round, is return lost mainly in candidate search, candidate ranking, or portfolio construction?
     method: Resolve one frozen shared price snapshot, then decompose oracle regret and audit candidate forecasts, rejected candidates, SPY hurdle decisions, and construction counterfactuals.
     sample: CB-2026-07-17-1W after the July 24 close; eight frozen production models with complete candidate ledgers.
@@ -238,17 +238,20 @@ experiments:
     calls: 0
     gates: No model calls. A loss stage is dominant only if its aggregate share exceeds 50%; the result authorizes design work only, not production adoption.
     findings:
-      - No result yet; the frozen weekly round resolves after the July 24 close.
+      - V2 averaged 1.71% alpha versus SPY in this one window, and five of eight candidate ledgers contained the eventual winner.
+      - Search, ranking, and construction contributed 27.37%, 41.72%, and 30.91% of regret; no stage exceeded the frozen 50% dominance threshold.
+      - Mean candidate forecast rank correlation was 0.344, interval coverage was 77.01%, and average forecast error was 1.85 percentage points.
     lessons:
-      - This is the first clean opportunity to inspect complete prospective V2 candidate ledgers rather than reconstructing them retrospectively.
+      - The complete prospective ledger supports measuring every loss stage without hindsight reconstruction, but one window cannot justify a targeted method change.
     limitations:
       - One weekly period and overlap with earlier July windows limit independence.
     canonical_artifacts:
       - docs/experiments/v2-next-research-2026-07-21.md
       - experiments/v2-next-research-2026-07-21.yaml
       - scripts/analyze_v2_resolution_diagnostics.py
+      - docs/v2_next_research_july17_diagnostic.md
     related: [v2-july13-resolution-diagnostic-2026-07-21, vnext-event-ranking-replay-2026-07-21]
-    next_action: After the July 24 close, fetch one frozen adjusted-close snapshot, resolve CB-2026-07-17-1W, and run the existing diagnostic script.
+    next_action: Preserve this completed one-window result and use the later multi-round V2.2 evidence when designing return-improvement treatments.
 
   - id: vnext-symmetric-coverage-replay-2026-07-21
     date: 2026-07-21
@@ -392,3 +395,162 @@ experiments:
       - research/results/llm-quality-input-confirmation-2026-07-21.json
     related: [llm-quality-input-replay-2026-07-21, vnext-historical-replay-stage1b-2026-07-21]
     next_action: Stop Q2. Preserve Q1 unchanged for a four-model confirmation after Google capacity returns; do not alter production.
+
+  - id: portfolio-v3-anti-extrapolation-replay-2026-08-13
+    date: 2026-08-13
+    status: complete
+    decision: rejected
+    question: Can one fixed anti-extrapolation candidate-slate and probabilistic-ranking treatment produce positive weekly alpha versus SPY and improve over paired V2.2 decisions?
+    method: Build a deterministic cutoff-safe candidate slate, require every model to rank the full slate with probabilities and return quantiles, and apply fixed 35/35/30 construction in one offline call.
+    sample: Exactly three non-overlapping post-release V2.2 weekly windows (July 21-28, July 28-August 4, and August 4-11) and four approved model families.
+    models: [openai-gpt-5-6-sol, google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5]
+    calls: 12
+    gates: Require 10 valid pairs, positive treatment alpha, at least 1.00-point paired improvement, 8 positive pairs, 3 positive models, 2 positive periods, no worse than -0.50 point in the weakest period, and non-declining selected top-three capture.
+    findings:
+      - The pre-test V2.2 diagnosis found -1.16-point approved-model alpha across 44 cells, 13/44 ledger top-three captures, 6/44 selected top-three captures, and negative within-ledger forecast rank correlation.
+      - Eleven valid cells produced -0.19% mean V3A alpha versus SPY, compared with -1.62% for their saved V2.2 controls, for a 1.43-point paired improvement.
+      - V3A beat SPY in 5 of 11 valid cells and improved on V2.2 in 6 of 11; selected winner capture rose from 0 to 3 and selected top-three capture rose from 1 to 3.
+      - Grok 4.3 averaged 2.73% alpha and a 3.60-point paired improvement, Gemini averaged -2.10% alpha while improving 1.07 points over its V2.2 controls, and Grok 4.5 averaged -1.77% alpha.
+      - The slate contained the eventual winner in all three periods, but V3A averaged -2.46% versus SPY in its weakest period and failed the positive-alpha, positive-pair, positive-model, and worst-period gates.
+      - All three Gemini transport failures were filled with valid responses; one OpenAI credit-balance failure remains, leaving 11 of 12 valid cells.
+      - The completed record contains 12 planned cells and 15 replay provider attempts because the operator explicitly authorized one replacement attempt for each of the three original Gemini quota failures.
+    lessons:
+      - Balanced cutoff-safe search substantially improved candidate coverage; ranking discipline and unsupported continuation remained the main failure.
+      - A positive average and one strong model do not justify overriding a frozen breadth and downside gate.
+    limitations:
+      - The candidate-slate idea was designed after reviewing resolved V2.2 behavior, so historical replay can advance only to a fresh prospective shadow.
+      - Three test sets are a small sample and cannot prove persistent alpha.
+      - One OpenAI provider failure left 11 valid cells and only two OpenAI periods.
+      - The three operator-authorized Gemini replacement attempts exceeded the original twelve-attempt ceiling, so the expanded-coverage result cannot qualify as a frozen-gate acceptance even if other gates had passed.
+    canonical_artifacts:
+      - docs/experiments/portfolio-v3-anti-extrapolation-replay-2026-08-13.md
+      - experiments/portfolio-v3-anti-extrapolation-replay-2026-08-13.yaml
+      - scripts/run_portfolio_v3_replay.py
+      - docs/portfolio_v3_anti_extrapolation_replay_report.md
+      - research/results/portfolio-v3-anti-extrapolation-replay-2026-08-13.json
+    related: [llm-quality-input-confirmation-2026-07-21, llm-quality-input-replay-2026-07-21, v2-july17-ledger-diagnostic-2026-07-24]
+    next_action: Keep V3A rejected. Do not tune or rerun these three sets; use the separately labeled compliance diagnostic only to design a fresh prospective successor.
+
+  - id: portfolio-v3-anti-extrapolation-compliance-diagnostic-2026-08-13
+    date: 2026-08-13
+    status: complete
+    decision: diagnostic_only
+    question: Would strict enforcement of V3A's anti-continuation instruction improve the already-saved model selections?
+    method: Zero-call post-hoc gate that admits overreaction calls only at a model-estimated 55% or greater chance of beating SPY, preserves model rank, and allocates every unused 35/35/30 slot to SPY.
+    sample: The eleven valid model-period responses from the three-set V3A replay.
+    models: [openai-gpt-5-6-sol, google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5]
+    calls: 0
+    gates: Diagnostic only; the rule was defined after outcomes were inspected and cannot pass an adoption gate.
+    findings:
+      - Counterfactual mean alpha was 1.04% versus SPY, 1.23 points above original V3A and 2.66 points above saved V2.2 controls.
+      - Nine of eleven cells were nonnegative versus SPY, eight improved on V2.2, and the weakest period averaged -0.04% alpha.
+      - OpenAI averaged 0.73% alpha, Gemini -0.04%, Grok 4.3 2.78%, and Grok 4.5 0.59%; three of four represented models were positive on average.
+    lessons:
+      - The strongest initial lead was to require a confidence margin, reject unsupported continuation, and allocate unfilled slots to SPY; the later robustness diagnostic simplified this further by excluding continuation entirely.
+      - Candidate coverage is no longer the dominant bottleneck in these three periods.
+    limitations:
+      - This is an outcome-informed counterfactual on the same eleven cells and cannot validate future alpha.
+      - One OpenAI cell remains missing; no value was imputed.
+    canonical_artifacts:
+      - scripts/analyze_portfolio_v3_compliance.py
+      - docs/portfolio_v3_anti_extrapolation_compliance_diagnostic.md
+      - docs/experiments/portfolio-v3-confidence-evidence-successor-2026-08-13.md
+      - research/results/portfolio-v3-anti-extrapolation-compliance-diagnostic-2026-08-13.json
+    related: [portfolio-v3-anti-extrapolation-replay-2026-08-13]
+    next_action: Preserve this intermediate diagnostic as research history and follow the later overreaction-only V3.0 candidate; do not apply either post-hoc result to production.
+
+  - id: portfolio-v3-robustness-diagnostic-2026-08-14
+    date: 2026-08-14
+    status: complete
+    decision: diagnostic_only
+    question: Is the positive overreaction-and-SPY-fallback result robust enough to define a simple Portfolio V3.0 development candidate?
+    method: Reconstruct the fixed 35/35/30 portfolio from all eleven valid V3A responses, admit only model-ranked overreaction calls at a 55% SPY-beat probability, sweep nearby thresholds, and remove each model, period, and cell without making another model call.
+    sample: Eleven valid model-period responses across the three exhausted V3A weekly development windows and four approved model families.
+    models: [openai-gpt-5-6-sol, google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5]
+    calls: 0
+    gates: Diagnostic only; positive removal and threshold checks may define a development candidate but cannot establish prospective validation or authorize production adoption.
+    findings:
+      - The 55% overreaction-only rule averaged 1.04% alpha versus SPY and improved 2.66 points over paired V2.2 controls.
+      - Four of eleven cells strictly beat SPY, nine were nonnegative, three of four model families were positive, two of three periods were positive, and the weakest period averaged -0.04%.
+      - Mean alpha remained positive after removing any one model (0.39% minimum), any one period (0.73% minimum), or any one cell (0.67% minimum).
+      - Every tested probability threshold from 45% through 67.5% remained above SPY; 55% was retained because it preceded the Gemini responses rather than because it maximized this sweep.
+      - A 55% probability hurdle without the overreaction label averaged -0.12%, confident continuation averaged -1.16%, and combining continuation with overreaction averaged -0.12%.
+    lessons:
+      - The useful model signal is the overreaction classification, not confidence alone; continuation should be excluded from the initial V3 candidate.
+      - SPY fallback converts honest lack of edge into abstention and prevents forced low-confidence positions.
+    limitations:
+      - This is a post-hoc development analysis on three historical periods, not a prospective or independent confirmation.
+      - Five of eleven cells used 100% SPY, and one OpenAI cell remains unavailable.
+    canonical_artifacts:
+      - docs/portfolio_v3_candidate_methodology.md
+      - src/capitalbench/portfolio_v3.py
+      - scripts/analyze_portfolio_v3_robustness.py
+      - docs/portfolio_v3_robustness_report.md
+      - research/results/portfolio-v3-robustness-diagnostic-2026-08-14.json
+    related: [portfolio-v3-anti-extrapolation-replay-2026-08-13, portfolio-v3-anti-extrapolation-compliance-diagnostic-2026-08-13]
+    next_action: Preserve this exact V3.0 candidate and stop tuning on the three development periods; any next model calls must be a separately authorized fresh prospective shadow.
+
+  - id: portfolio-v3-holdout-comparison-2026-08-14
+    date: 2026-08-14
+    status: complete
+    decision: rejected
+    question: Does unchanged V3.0 beat SPY and exact paired V2.2 controls strongly enough to replace V2.2 in a same-size twelve-attempt test?
+    method: Freeze three non-overlapping one-day-shifted V2.2 weekly rounds, call the same four approved model families once per period, apply the fixed overreaction-at-55-percent rule with SPY fallback, and reuse official V2.2 results without baseline calls.
+    sample: Twelve planned model-period cells across July 22-29, July 29-August 5, and August 5-12; eight responses were valid.
+    models: [openai-gpt-5-6-sol, google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5]
+    calls: 12
+    gates: Require 10 valid exact pairs, positive V3 alpha, at least 1.00-point improvement over V2.2, 8 nonnegative cells, 3 positive models, 2 positive periods, weakest-period alpha at least -0.50%, and non-declining selected top-three capture.
+    findings:
+      - Eight valid V3 cells averaged +1.94% versus SPY and improved 2.45 percentage points over exact V2.2 controls, whose mean alpha was -0.51%.
+      - All eight valid cells were at or above SPY; Gemini, Grok 4.3, and Grok 4.5 all had positive mean alpha, and all three periods were positive.
+      - V3 exceeded the saved -0.15% weekly V1 same-ID historical reference, but that reference is not paired and has uneven model coverage.
+      - Three GPT-5.6 SOL calls failed because the OpenAI account had no credits, and one Grok 4.3 response failed the frozen top-three/schema consistency check.
+      - Every performance gate passed, but the 8 valid cells failed the frozen minimum of 10, so V3.0 was not accepted.
+    lessons:
+      - The fixed overreaction gate and SPY fallback continue to show a broad positive return signal against exact V2.2 controls.
+      - Provider availability and structured-output validity must be solved prospectively; they cannot be repaired or waived after returns are known.
+    limitations:
+      - The holdout windows are one day shifted from the V3 development windows and share much of the same market history, so they are not statistically independent proof.
+      - V1 ended before these rounds and two tested models had sparse V1 history; the V1 comparison is context only.
+      - Only eight cells were valid, below the predeclared minimum.
+    canonical_artifacts:
+      - docs/experiments/portfolio-v3-holdout-comparison-2026-08-14.md
+      - experiments/portfolio-v3-holdout-comparison-2026-08-14.yaml
+      - scripts/run_portfolio_v3_holdout.py
+      - docs/portfolio_v3_holdout_comparison_report.md
+      - research/results/portfolio-v3-holdout-comparison-2026-08-14.json
+    related: [portfolio-v3-robustness-diagnostic-2026-08-14, portfolio-v3-anti-extrapolation-replay-2026-08-13]
+    next_action: Historical closeout was to keep V2.2 and avoid tuning these windows; that research instruction remains, while the separate August 15 operator decision adopted unchanged V3.0 for future rounds.
+
+  - id: portfolio-v3-production-adoption-2026-08-15
+    date: 2026-08-15
+    status: complete
+    decision: accepted
+    question: Should the unchanged V3.0 candidate replace V2.2 for newly initialized production rounds by explicit operator decision?
+    method: Record a forward-only operator methodology decision after reviewing the frozen V3 development and holdout evidence; make no additional model calls and do not alter either historical gate result.
+    sample: Existing V3 evidence only, including eleven valid development cells and eight valid holdout cells; no new performance sample was created for adoption.
+    models: [openai-gpt-5-6-sol, google-gemini-3-1-pro, xai-grok-4-3, xai-grok-4-5]
+    calls: 0
+    gates: Operator adoption is not a research-gate pass. The August 14 holdout remains rejected on its frozen 10-valid-cell requirement.
+    findings:
+      - The fixed V3 development rule averaged +1.04% alpha versus SPY across eleven valid cells.
+      - Eight valid holdout cells averaged +1.94% alpha versus SPY and improved 2.45 percentage points over exact paired V2.2 controls.
+      - All valid holdout cells were nonnegative, and every represented model family and period had positive mean alpha.
+      - The holdout had only eight valid cells versus ten required, so its historical decision remains rejected.
+    lessons:
+      - Production methodology can change by explicit operator judgment without falsifying or weakening the research record.
+      - V3 must be evaluated prospectively and changed only through a future versioned, forward-only decision.
+    limitations:
+      - The holdout windows overlap much of the development market history and are not independent proof of future alpha.
+      - OpenAI credit failures and one xAI schema mismatch reduced the valid holdout sample.
+      - Monthly V3 performance has not yet resolved prospectively.
+    canonical_artifacts:
+      - AGENTS.md
+      - docs/portfolio_v3_methodology.md
+      - docs/portfolio_v3_holdout_comparison_report.md
+      - research/results/portfolio-v3-holdout-comparison-2026-08-14.json
+      - src/capitalbench/methodology.py
+      - src/capitalbench/portfolio_v3.py
+      - CHANGELOG.md
+    related: [portfolio-v3-holdout-comparison-2026-08-14, portfolio-v3-robustness-diagnostic-2026-08-14]
+    next_action: Run future newly initialized weekly and monthly portfolio rounds under unchanged portfolio-v3.0 and evaluate resolved performance against SPY and frozen V2.2 history without retroactive conversion.

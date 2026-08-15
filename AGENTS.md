@@ -2,13 +2,15 @@
 
 ## Current Production Methodology
 
-All newly initialized portfolio rounds use `portfolio-v2.2` by default. The
-operator explicitly directed V2.2 adoption on July 21, 2026 after Q1 improved
-8 of 9 valid historical development pairs. This is not evidence-based
-confirmation: Gemini was unavailable, the periods were historical, and Q1 has
-not passed an unchanged confirmation. Before creating, running, resolving, or
-changing a new portfolio round, read:
+All newly initialized portfolio rounds use `portfolio-v3.0` by default. The
+operator explicitly directed V3 adoption on August 15, 2026. The frozen V3
+holdout did not pass its 10-valid-cell gate, but its eight valid cells averaged
++1.94% alpha versus SPY and improved 2.45 percentage points over exact paired
+V2.2 controls. Record this as an explicit operator adoption supported by
+promising evidence, not as a passed research gate. Before creating, running,
+resolving, or changing a new portfolio round, read:
 
+- `docs/portfolio_v3_methodology.md`
 - `docs/portfolio_v2_2_methodology.md`
 - `docs/portfolio_v2_methodology.md`
 - `docs/research_prompt_workflow.md`
@@ -16,13 +18,12 @@ changing a new portfolio round, read:
 - `docs/first_round_checklist.md`
 
 Use `capitalbench init-round --submission-format portfolio`. Do not manually
-downgrade the generated manifest to `portfolio-v1.0`. Production V2.2 requires
-a single-turn, non-agentic call, the complete compact decision-context table,
-a complete Q1 option-level quality evidence table, a
-6-8 option candidate ledger including SP500 and at least four economic
-exposure clusters, low/base/high forecasts, the active-holding SPY hurdle, and
-the 50% non-benchmark economic-exposure cap. Score only the final frozen
-portfolio; retain the candidate ledger for calibration and audit.
+downgrade the generated manifest. Production V3 requires a single-turn,
+non-agentic call, the complete decision context and quality evidence, the
+fixed balanced candidate slate, ranked probabilistic candidate assessments,
+and the deterministic 35/35/30 overreaction rule with SPY filling every unused
+slot. The participant model does not submit allocations. Preserve its raw
+judgment and score only the portfolio materialized by CapitalBench.
 
 Preserve the direct model protocol for every new official round: one scored
 decision per model, no participant tools or browsing, no agent loop, and no
@@ -60,22 +61,21 @@ remain ineligible for official scoring. A permanent retirement opens a new
 comparison set when the first accepted frozen-roster run is published; a
 temporary provider outage does not.
 
-The first complete official production V2.0 rounds are:
+The first complete official production V2.0 rounds were:
 
 - `CB-2026-07-17-1W`, accepted run
-  `official-v2-all-weekly-final-20260717`, due for resolution after the July
-  24, 2026 close.
+  `official-v2-all-weekly-final-20260717`, resolved after the July 24, 2026
+  close.
 - `CB-2026-07-17-1M`, accepted run `official-v2-all-final-20260717`, due for
   resolution after the August 17, 2026 close.
 
-Both are primary-stream unresolved rounds and contain all eight production
-models. Preserve their frozen research, decision context, candidate ledgers,
-forecasts, portfolios, entry prices, and hashes. Resolve them with the normal
-pricing and scoring pipeline; do not rerun or revise them after observing
-market outcomes.
+Both contain all eight production models. Preserve their frozen research,
+decision context, candidate ledgers, forecasts, portfolios, entry prices, and
+hashes. Resolve any still-open historical round with the normal pricing and
+scoring pipeline; do not rerun or revise it after observing market outcomes.
 
-Do not convert those V2.0 rounds to V2.2. V2.2 applies only to newly
-initialized rounds and must generate and hash
+Do not convert those V2.0 rounds to V2.2 or V3. V2.2 applied only to rounds
+initialized while that version was current and must generate and hash
 `market_data/universe_quality_evidence.json` and
 `market_data/universe_quality_evidence.md` before model calls.
 
@@ -98,11 +98,11 @@ round was resolved and **rejected** under its frozen acceptance rule on July
 V2 beat SPY but underperformed paired V1 by 2.13 percentage points on average,
 and 0 of 4 models improved. Preserve both V1 and V2 artifacts without
 retroactive edits. Do not add the four-model pilot to primary latest,
-cumulative, market-environment, or insight data. Production V2 remains active
-because it was separately adopted by operator direction; do not rewrite the
-rejected pilot as having caused or reversed that adoption.
+cumulative, market-environment, or insight data. Production V2 was separately
+adopted by operator direction and was later superseded for new rounds by V3;
+do not rewrite the rejected pilot as having caused or reversed either decision.
 
-## Active V2 Diagnostics
+## Historical Return Diagnostics
 
 The zero-cost diagnostic program is frozen in:
 
@@ -112,12 +112,13 @@ The zero-cost diagnostic program is frozen in:
 The July 13 pilot lacked candidate ledgers. Its selected sets captured strong
 assets, but equal-weight and holding-cap counterfactuals did not improve mean
 return. Do not create a retrospective ledger. The complete July 17 production
-weekly round remains the next clean production-ledger diagnostic after the
-July 24 close.
+weekly ledger diagnostic is finished and recorded in
+`docs/v2_next_research_july17_diagnostic.md`; no loss stage exceeded its frozen
+50% dominance threshold.
 
 On July 21, the operator separately authorized private historical research on
 balanced candidate search, structured event evidence, pairwise ranking, and
-abstention. This does not alter production V2 or official scores. Before
+abstention. At that time this did not alter production V2 or official scores. Before
 continuing return-improvement research, read:
 
 - `research/README.md`
@@ -131,14 +132,41 @@ registry with the result and next action, and run
 `python scripts/validate_research_registry.py`. Never describe adaptive
 development episodes as sealed confirmation data.
 
-That event-register search was completed and rejected on July 21. H7 improved
+The August 13 V3A replay is complete and rejected. After valid Gemini responses
+were added, 11 cells averaged -0.19% versus SPY while improving 1.43 points over
+paired V2.2. A post-hoc overreaction-only gate with a 55% SPY-beat probability
+and SPY fallback averaged +1.04% and remained positive after removing any one
+model, period, or cell. This defined the Portfolio V3.0 development candidate
+in `docs/portfolio_v3_candidate_methodology.md`; at that stage it was not
+prospective validation and did not change production. Its later operator
+adoption does not alter that historical status. Do not tune it further on the
+July 21, July 28, or August 4 windows, and do not reintroduce continuation into
+the candidate without a separate frozen experiment.
+
+The August 14 low-cost V3.0 holdout comparison is also complete. It used twelve
+new one-shot attempts on the July 22, July 29, and August 5 weekly rounds and
+reused exact official V2.2 controls at zero baseline-call cost. Eight valid
+cells averaged +1.94% alpha versus SPY and improved 2.45 points over V2.2; all
+eight were nonnegative, all three represented model families were positive,
+and all three periods were positive. The saved weekly V1 same-ID historical
+reference was -0.15% but is not paired. The frozen V3 gate nevertheless failed
+because it required 10 valid cells: all three GPT-5.6 SOL calls failed for lack
+of OpenAI credits and one Grok 4.3 response had a schema mismatch. Do not lower
+the gate, repair the invalid cell, or rewrite this historical result as a pass.
+The operator subsequently adopted the unchanged V3 rule as the forward
+production default on August 15, 2026. That separate decision supersedes V2.2
+for newly initialized rounds only. Read
+`docs/portfolio_v3_holdout_comparison_report.md` and
+`docs/portfolio_v3_methodology.md` before any further V3 change.
+
+The event-register search was completed and rejected on July 21. H7 improved
 mean top-five alpha over balanced H4 by 0.16 percentage points, improved 8 of
 13 valid pairs and 2 of 4 episodes, increased top-three capture by 2, but
 worsened mean shortlist regret by 0.48 points. H8 pairwise ranking was not run
 because the frozen search gate failed. Do not resume or reframe this branch as
-a pass. The no-call July 17 complete-ledger diagnostic remains scheduled after
-the July 24 close; the current production program is prospective V2.2
-evaluation as recorded in `research/registry.yaml`.
+a pass. The no-call July 17 complete-ledger diagnostic is also complete; the
+current production program is prospective V3.0 evaluation as recorded in
+`research/registry.yaml`.
 
 Two additional July 21 branches are now complete. Symmetric option evidence
 with fixed lane quotas was rejected: valid H9 cells produced -0.43% mean alpha,
@@ -164,7 +192,7 @@ Gemini calls were unavailable because of Google quota errors, but the valid
 models already failed the breadth gate. Q2 is rejected. Do not tune or resume
 it. Q1 remains unconfirmed, but the operator subsequently adopted its
 information-only table as production V2.2. This adoption must not be described
-as a passed research gate; evaluate it prospectively on fresh rounds.
+as a passed research gate. V2.2 was later superseded by V3 for new rounds.
 
 CapitalBench prompt and model-input changes affect benchmark fairness. Before
 editing round prompts, research import rules, market-data appendices, or model
@@ -183,23 +211,24 @@ Prompt 1, Prompt 2, and Prompt 3 generate research artifacts only:
 - Prompt 2 -> `briefing_audit_report.md`, audit-only.
 - Prompt 3 -> `final_briefing.md`, model-facing briefing only.
 
-The effective production V2 model input is assembled by
+The effective production V3 model input is assembled by
 `capitalbench.prompting.build_prompt` from:
 
 - `prompt.md`
 - round metadata
-- `market_data/universe_quality_evidence.md`, generated mechanically for V2.2
+- `market_data/universe_quality_evidence.md`, generated mechanically for V3
   and placed before the briefing
+- the deterministic V3 candidate slate, generated from frozen entry-time data
 - `briefing.md`, copied from Prompt 3's `final_briefing.md`
 - `market_data/universe_decision_context.md`, generated mechanically and kept
   complete in frozen option order
 - `options.yaml`, rendered as a compact neutral table with static economic
   exposure clusters
 
-Prompt 1 must not calculate or summarize the Q1 evidence table. Prompt 2 must
-audit its coverage, fixed formula, single inclusion, and lack of Q2 quotas.
-Prompt 3 must not reproduce or interpret Q1 ranks or scores; the prompt builder
-adds the complete frozen table separately.
+Prompt 1 must not calculate or summarize the quality evidence or V3 slate.
+Prompt 2 must audit their coverage, fixed construction, single inclusion, and
+lack of outcome leakage. Prompt 3 must not reproduce or interpret their ranks
+or scores; the prompt builder adds both frozen mechanical artifacts separately.
 
 The mechanical price-context appendix is generated by:
 
@@ -234,13 +263,18 @@ research.
 - Do not use model APIs or model search features to prepare research reports.
 - Do use the pricing pipeline/API when mechanical price context is required.
 - Do not manually rank, recommend, or map allowed options in model-facing briefing text.
-- For production V2, enforce the neutral SPY forecast hurdle defined in
+- For frozen production V2 rounds, enforce the neutral SPY forecast hurdle defined in
   `docs/portfolio_v2_methodology.md`; do not reintroduce the old V1 benchmark
   allocation wording.
-- For production V2.2, generate the complete Q1 evidence files with the
+- For frozen production V2.2 rounds, generate the complete Q1 evidence files with the
   decision-context command. Do not manually edit, rank, or reorder their rows.
 - Do not add Q2-style minimum high-score quotas. V2.2 models remain free to
   reject the Q1 evidence.
+- For production V3, do not ask the participant model to allocate. Validate its
+  ranked assessments, then apply the fixed overreaction-at-55% rule and
+  35/35/30 slots through `capitalbench.portfolio_v3`.
+- Do not admit continuation candidates or change the SPY fallback without a
+  new frozen methodology version.
 - Keep source URLs, citations, and source ledgers out of `final_briefing.md`.
 - Treat price history as descriptive context, not as a forecast.
 - Keep the price-context appendix complete, mechanically generated, and sorted by option order rather than performance.
@@ -254,9 +288,9 @@ research.
 - Initialized round prompt wording: `src/capitalbench/rounds.py`
 - Model input assembly and guardrails: `src/capitalbench/prompting.py`
 - Mechanical price-context generation: `src/capitalbench/performance.py`
-- V2 horizon-specific decision context: `src/capitalbench/decision_context.py`
+- Horizon-specific portfolio decision context: `src/capitalbench/decision_context.py`
 - Static economic exposure clusters: `src/capitalbench/exposures.py`
-- V2 provider schema and validation: `src/capitalbench/submission_schema.py`
+- Portfolio provider schemas and validation: `src/capitalbench/submission_schema.py`
   and `src/capitalbench/validation.py`
 - Research import validation: `src/capitalbench/research.py`
 - Operator prompt workflow docs: `docs/research_prompt_workflow.md`

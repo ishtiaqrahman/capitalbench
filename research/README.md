@@ -19,10 +19,48 @@ and summary are stored in tracked paths and registered in
 
 ## Current Conclusion
 
-The evidence does not support changing the production Portfolio V2.0 method
-yet. Historical work has consistently found that selection is the main
+Portfolio V3.0 is the production default for newly initialized rounds by
+explicit operator direction on August 15, 2026. This adoption does not change
+the historical research verdict: the frozen holdout gate failed because only
+8 of 12 calls were valid against a required 10. Existing V2.2 rounds remain
+frozen. Historical work continues to show that selection is the main
 bottleneck; construction-only changes, generic context expansion, and simple
-mechanical momentum/reversal rules have not produced robust improvement.
+mechanical momentum/reversal rules did not produce robust improvement.
+
+The August 13 V3A replay is rejected under its frozen gate. After the three
+Gemini transport failures were filled with valid responses, 11 cells produced
+-0.19% mean alpha versus SPY, compared with -1.62% for paired V2.2 controls.
+The deterministic slate contained the eventual winner in all three periods,
+and Grok 4.3 averaged +2.73% alpha, but Gemini averaged -2.10%. The experiment
+failed the positive-alpha, breadth, positive-pair, and worst-period gates; one
+OpenAI credit failure remains. Do not adopt V3A.
+
+A zero-call post-hoc diagnostic required at least a 55% model-estimated chance
+of beating SPY, admitted overreaction calls rather than unaudited continuation,
+and put unused slots in SPY. Across the 11 valid cells, it reached +1.04% mean
+alpha: 9 of 11 were nonnegative, and three of four represented models had
+positive mean alpha while Gemini nearly matched SPY at -0.04%. This is a strong
+design lead, not validation. The three V3A test periods must not be reused as
+confirmation.
+The follow-on robustness audit found the result stayed positive after removing
+any one model, period, or cell and across every tested cutoff from 45% through
+67.5%. Confidence alone and confident continuation remained negative. The
+simplest V3.0 candidate therefore admits only confident overreaction calls and
+uses SPY for every unused slot. Its exact method is in
+`docs/portfolio_v3_candidate_methodology.md`; it authorizes no additional calls
+and makes no production change.
+
+The frozen August 14 holdout then spent exactly twelve attempts on three
+different V2.2 rounds. Eight valid V3 cells averaged +1.94% versus SPY and
+improved 2.45 points over exact same-model, same-date V2.2 controls. Every valid
+cell was at or above SPY, and every represented model family and period was
+positive. V3 also exceeded the -0.15% saved V1 same-ID weekly historical
+reference, although V1 is not a paired comparison. The result is promising but
+did not pass: three SOL calls failed for exhausted OpenAI credits and one Grok
+response failed schema validation, leaving 8 valid cells against a frozen
+minimum of 10. Do not weaken that rule or describe it as passed. The operator
+later adopted this exact V3 rule as a separate forward methodology decision;
+see `docs/portfolio_v3_methodology.md`.
 
 Balanced candidate search remains the strongest prompt-search lead, but two
 July 21 extensions failed. A compact event register gained only 0.16 points
@@ -70,7 +108,12 @@ That production decision must not be described as a passed research gate.
 | 2026-07-21 | LLM quality-input development | Q2 gained 2.90 points across all eight valid OpenAI/xAI pairs, but failed the four-model and regret gates after Google quota errors. |
 | 2026-07-21 | LLM quality-input confirmation | Rejected: Q2 improved only 3/8 valid pairs and 1/3 periods, with -0.42% treatment alpha. |
 | 2026-07-21 | Portfolio V2.2 operator adoption | Q1's information-only table was versioned into new production rounds by explicit direction; it remains prospectively unconfirmed and Q2 remains rejected. |
-| 2026-07-24 | July 17 ledger diagnostic | Planned after the close; no model calls and no production change. |
+| 2026-07-24 | July 17 ledger diagnostic | Complete: +1.71% alpha in one week, with regret distributed across search (27%), ranking (42%), and construction (31%); no stage crossed 50%. |
+| 2026-08-13 | Portfolio V3A anti-extrapolation replay | Rejected: 11 valid cells averaged -0.19% versus SPY while improving 1.43 points over paired V2.2; breadth and downside gates failed. |
+| 2026-08-13 | V3A compliance diagnostic | Post-hoc only: a 55% confidence/evidence gate plus SPY fallback reached +1.04% alpha with 9/11 nonnegative cells. |
+| 2026-08-14 | V3 robustness diagnostic | Development candidate only: +1.04% alpha survived every leave-one-model, leave-one-period, and leave-one-cell test; continuation remained negative. |
+| 2026-08-14 | V3 holdout comparison | Rejected on validity: 8/12 valid cells averaged +1.94% versus SPY and +2.45 points versus exact V2.2 controls, but the frozen minimum was 10 valid cells. |
+| 2026-08-15 | Portfolio V3.0 operator adoption | The unchanged confident-overreaction rule and SPY fallback became the forward production default by explicit direction. The August 14 gate remains recorded as failed. |
 
 ## Non-Negotiable Interpretation Rules
 
@@ -84,5 +127,7 @@ That production decision must not be described as a passed research gate.
   periods as confirmation data.
 - Do not publish private experiments into latest, cumulative, market-regime,
   insight, or official score streams.
-- Production methodology changes require a frozen gate and a prospective
-  shadow run after historical validation.
+- Research-based acceptance claims require a frozen gate and prospective
+  evidence after historical validation. An operator may still make a
+  forward-only methodology decision, but it must be recorded separately and
+  must not rewrite a failed gate as passed.

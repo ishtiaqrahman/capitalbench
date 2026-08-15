@@ -592,7 +592,9 @@ def render_report(summary: dict[str, Any], rows: Sequence[dict[str, Any]]) -> st
             "",
             "## Interpretation",
             "",
-            "This is one prospective decision window and cannot establish a production improvement. The July 17 production round includes the candidate ledger needed for complete search, ranking, and construction diagnostics after it resolves on July 24. Paid challenger calls remain unauthorized until that zero-cost analysis passes its feasibility gate.",
+            "This is one prospective decision window and cannot establish a production improvement. "
+            "No stage exceeded the frozen 50% dominance threshold, so this result does not authorize a targeted challenger branch. "
+            "Preserve the completed diagnostic and use multiple later resolved observations before attributing underperformance to one stage.",
             "",
         ]
     )

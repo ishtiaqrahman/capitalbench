@@ -130,6 +130,32 @@ def test_provider_submission_schema_requires_production_v2_candidate_ledger() ->
     assert "forecast_base_pct" in candidate_schema["items"]["required"]
 
 
+def test_provider_submission_schema_uses_v3_judgment_shape() -> None:
+    slate = [
+        {"option_id": f"OPTION_{index}", "origin_lanes": ["shock_reversal"]}
+        for index in range(1, 10)
+    ] + [{"option_id": "SP500", "origin_lanes": ["benchmark"]}]
+    config = _portfolio_model_config().model_copy(
+        update={
+            "metadata": {
+                **_portfolio_model_config().metadata,
+                "methodology_version": "portfolio-v3.0",
+                "option_ids": [row["option_id"] for row in slate] + ["CASH"],
+                "portfolio_v3_candidate_slate": slate,
+            }
+        }
+    )
+
+    schema = provider_submission_schema(config)
+
+    assert "candidate_assessments" in schema["required"]
+    assert "portfolio" not in schema["properties"]
+    candidate_schema = schema["properties"]["candidate_assessments"]
+    assert candidate_schema["minItems"] == 10
+    assert candidate_schema["maxItems"] == 12
+    assert "recent_return_interpretation" in candidate_schema["items"]["required"]
+
+
 def test_mock_provider_respects_portfolio_allocation_constraints() -> None:
     config = _portfolio_model_config().model_copy(
         update={

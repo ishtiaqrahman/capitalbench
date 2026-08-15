@@ -14,7 +14,7 @@ from typing import Any, Callable
 
 from .exposures import economic_exposure_cluster
 from .io import load_manifest, load_options, write_json
-from .methodology import is_portfolio_v2_2, is_production_portfolio_v2
+from .methodology import is_production_portfolio, uses_quality_evidence
 from .scoring import _is_cash_option
 from .universe import TIINGO_API_KEY_ENV, fetch_tiingo_eod_prices
 
@@ -59,7 +59,7 @@ def fetch_universe_decision_context(
 ) -> DecisionContextOutput:
     manifest = load_manifest(round_path)
     profile = _profile_for_manifest(manifest)
-    compact = is_production_portfolio_v2(manifest.methodology_version)
+    compact = is_production_portfolio(manifest.methodology_version)
     market_data_dir = round_path / "market_data"
     market_data_dir.mkdir(parents=True, exist_ok=True)
     csv_path = market_data_dir / DECISION_CONTEXT_CSV
@@ -68,7 +68,7 @@ def fetch_universe_decision_context(
     history_path = market_data_dir / DECISION_CONTEXT_HISTORY_JSON
     quality_json_path = market_data_dir / QUALITY_EVIDENCE_JSON
     quality_markdown_path = market_data_dir / QUALITY_EVIDENCE_MD
-    include_quality_evidence = is_portfolio_v2_2(manifest.methodology_version)
+    include_quality_evidence = uses_quality_evidence(manifest.methodology_version)
     output_paths = [csv_path, json_path, markdown_path, history_path]
     if include_quality_evidence:
         output_paths.extend([quality_json_path, quality_markdown_path])
@@ -119,7 +119,7 @@ def fetch_universe_decision_context(
 
     _add_benchmark_metrics(internal_rows, profile)
     quality_evidence = (
-        _quality_evidence_report(internal_rows, profile, as_of)
+        _quality_evidence_report(internal_rows, profile, as_of, manifest.methodology_version)
         if include_quality_evidence
         else None
     )
@@ -371,6 +371,7 @@ def _quality_evidence_report(
     rows: list[dict[str, Any]],
     profile: str,
     as_of: date,
+    methodology_version: str | None,
 ) -> dict[str, Any]:
     if profile == "weekly":
         component_fields = {
@@ -425,7 +426,7 @@ def _quality_evidence_report(
     coverage = len(evidence_rows) / total_active if total_active else 0.0
     return {
         "version": "capitalbench_quality_evidence_v1",
-        "methodology_version": "portfolio-v2.2",
+        "methodology_version": methodology_version,
         "profile": profile,
         "as_of_date_requested": as_of.isoformat(),
         "total_active_options": total_active,

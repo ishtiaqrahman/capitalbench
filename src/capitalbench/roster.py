@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 from .config import load_model_configs
-from .methodology import is_production_portfolio_v2
+from .methodology import is_portfolio_v3, is_production_portfolio, is_production_portfolio_v2
 from .schemas import ModelConfig
 
 
@@ -48,6 +48,27 @@ def portfolio_v2_roster_version(model_ids: Iterable[str]) -> str:
     _validate_model_ids(normalized, "Portfolio V2 roster")
     digest = sha256("\n".join(normalized).encode("utf-8")).hexdigest()[:12]
     return f"portfolio-v2-roster-{digest}"
+
+
+def active_portfolio_model_ids(
+    methodology_version: str | None,
+    as_of_utc: datetime | str | None = None,
+    round_id: str | None = None,
+) -> tuple[str, ...]:
+    if not is_production_portfolio(methodology_version):
+        return ()
+    return active_portfolio_v2_model_ids(as_of_utc, round_id)
+
+
+def portfolio_roster_version(
+    methodology_version: str | None,
+    model_ids: Iterable[str],
+) -> str:
+    normalized = tuple(sorted(str(model_id).strip() for model_id in model_ids))
+    _validate_model_ids(normalized, "production portfolio roster")
+    digest = sha256("\n".join(normalized).encode("utf-8")).hexdigest()[:12]
+    prefix = "portfolio-v3-roster" if is_portfolio_v3(methodology_version) else "portfolio-v2-roster"
+    return f"{prefix}-{digest}"
 
 
 def model_is_retired(model_config: ModelConfig, as_of_utc: datetime | str) -> bool:
@@ -95,6 +116,35 @@ def validate_official_portfolio_v2_roster(
     return actual_ids
 
 
+def validate_official_portfolio_roster(
+    methodology_version: str | None,
+    model_configs: Iterable[ModelConfig],
+    expected_model_ids: Iterable[str] | None = None,
+) -> tuple[str, ...]:
+    configs = tuple(model_configs)
+    actual_ids = tuple(config.model_id for config in configs)
+    if not is_production_portfolio(methodology_version):
+        return actual_ids
+    if is_production_portfolio_v2(methodology_version):
+        return validate_official_portfolio_v2_roster(
+            methodology_version, configs, expected_model_ids
+        )
+    expected_ids = _expected_model_ids(methodology_version, expected_model_ids)
+    if Counter(actual_ids) != Counter(expected_ids):
+        missing = sorted(Counter(expected_ids) - Counter(actual_ids))
+        unexpected = sorted(Counter(actual_ids) - Counter(expected_ids))
+        details: list[str] = []
+        if missing:
+            details.append(f"missing: {', '.join(missing)}")
+        if unexpected:
+            details.append(f"unexpected: {', '.join(unexpected)}")
+        raise ValueError(
+            "official production portfolio runs require the complete frozen model roster"
+            + (f" ({'; '.join(details)})" if details else "")
+        )
+    return actual_ids
+
+
 def validate_official_portfolio_v2_run_manifest(
     methodology_version: str | None,
     run_manifest: Mapping[str, Any],
@@ -118,6 +168,33 @@ def validate_official_portfolio_v2_run_manifest(
         raise ValueError("official Portfolio V2 run model_ids do not match the complete frozen roster")
 
 
+def validate_official_portfolio_run_manifest(
+    methodology_version: str | None,
+    run_manifest: Mapping[str, Any],
+    expected_model_ids: Iterable[str] | None = None,
+) -> None:
+    if not is_production_portfolio(methodology_version):
+        return
+    if is_production_portfolio_v2(methodology_version):
+        validate_official_portfolio_v2_run_manifest(
+            methodology_version, run_manifest, expected_model_ids
+        )
+        return
+    expected_ids = _expected_model_ids(methodology_version, expected_model_ids)
+    model_count = int(run_manifest.get("model_count") or 0)
+    if model_count != len(expected_ids):
+        raise ValueError(
+            "official production portfolio run model_count does not match the frozen roster: "
+            f"{model_count} != {len(expected_ids)}"
+        )
+    raw_model_ids = run_manifest.get("model_ids")
+    if raw_model_ids is not None and (
+        not isinstance(raw_model_ids, list)
+        or Counter(str(model_id) for model_id in raw_model_ids) != Counter(expected_ids)
+    ):
+        raise ValueError("official production portfolio run model_ids do not match the frozen roster")
+
+
 def _expected_model_ids(
     methodology_version: str | None,
     expected_model_ids: Iterable[str] | None,
@@ -129,7 +206,7 @@ def _expected_model_ids(
     if methodology_version == LEGACY_PORTFOLIO_V2_METHODOLOGY:
         return canonical_portfolio_v2_model_ids()
     raise ValueError(
-        "official Portfolio V2 rounds must freeze expected_model_ids in the round manifest"
+        "official production portfolio rounds must freeze expected_model_ids in the round manifest"
     )
 
 

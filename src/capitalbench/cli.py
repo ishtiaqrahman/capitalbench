@@ -571,7 +571,7 @@ def build_parser() -> argparse.ArgumentParser:
     init_parser.add_argument("--horizon", default="one month", help='round horizon label, for example "one week"')
     init_parser.add_argument(
         "--methodology-version",
-        help="methodology label; portfolio rounds default to portfolio-v2.2",
+        help="methodology label; portfolio rounds default to portfolio-v3.0",
     )
     init_parser.set_defaults(func=_cmd_init_round)
 
@@ -636,7 +636,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     fetch_decision_context_parser = subparsers.add_parser(
         "fetch-universe-decision-context",
-        help="fetch horizon-specific price, volume, risk, and benchmark context for portfolio-v2 rounds",
+        help="fetch horizon-specific price, volume, risk, and benchmark context for portfolio rounds",
     )
     fetch_decision_context_parser.add_argument("--round", type=Path, required=True)
     fetch_decision_context_parser.add_argument("--as-of-date", required=True)

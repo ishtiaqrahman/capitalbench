@@ -5,8 +5,15 @@ from pathlib import Path
 from typing import Literal
 
 from .io import write_json, write_yaml
-from .methodology import PORTFOLIO_V2_VERSION, is_production_portfolio_v2
-from .roster import active_portfolio_v2_model_ids, portfolio_v2_roster_version
+from .methodology import (
+    DEFAULT_PORTFOLIO_VERSION,
+    PORTFOLIO_V2_VERSION,
+    PORTFOLIO_V3_VERSION,
+    is_portfolio_v3,
+    is_production_portfolio,
+    is_production_portfolio_v2,
+)
+from .roster import active_portfolio_model_ids, portfolio_roster_version
 
 ROUND_FILES = ["manifest.yaml", "briefing.md", "options.yaml", "prompt.md", "hashes.json"]
 ROUND_DIRS = ["prices", "runs"]
@@ -33,7 +40,7 @@ def init_round(
     resolved_methodology_version = (
         methodology_version.strip()
         if methodology_version
-        else (PORTFOLIO_V2_VERSION if submission_format == "portfolio" else "single_pick-v1.0")
+        else (DEFAULT_PORTFOLIO_VERSION if submission_format == "portfolio" else "single_pick-v1.0")
     )
     horizon_label = horizon.replace(" ", "-").capitalize()
     if universe_path is None and (default_universe_path := _default_universe_path()) is not None:
@@ -50,9 +57,13 @@ def init_round(
         created_at = datetime.now(timezone.utc)
         expected_model_ids: tuple[str, ...] = ()
         model_roster_version: str | None = None
-        if is_production_portfolio_v2(resolved_methodology_version):
-            expected_model_ids = active_portfolio_v2_model_ids(created_at, round_id)
-            model_roster_version = portfolio_v2_roster_version(expected_model_ids)
+        if is_production_portfolio(resolved_methodology_version):
+            expected_model_ids = active_portfolio_model_ids(
+                resolved_methodology_version, created_at, round_id
+            )
+            model_roster_version = portfolio_roster_version(
+                resolved_methodology_version, expected_model_ids
+            )
         write_yaml(
             manifest_path,
             {
@@ -70,7 +81,7 @@ def init_round(
                 "submission_format": submission_format,
                 "portfolio_constraints": {
                     "min_holdings": 1,
-                    "max_holdings": 5,
+                    "max_holdings": 3 if is_portfolio_v3(resolved_methodology_version) else 5,
                     "allocation_increment_pct": 5,
                     "min_allocation_pct": 5,
                     "max_total_allocation_pct": 100,
@@ -141,12 +152,16 @@ def init_round(
 
     submission_schema_path = round_path / "submission_schema.json"
     if (
-        is_production_portfolio_v2(resolved_methodology_version)
+        is_production_portfolio(resolved_methodology_version)
         and not submission_schema_path.exists()
     ):
         write_json(
             submission_schema_path,
-            _portfolio_v2_submission_schema(resolved_methodology_version),
+            (
+                _portfolio_v3_submission_schema()
+                if is_portfolio_v3(resolved_methodology_version)
+                else _portfolio_v2_submission_schema(resolved_methodology_version)
+            ),
         )
 
     return round_path
@@ -265,12 +280,114 @@ def _portfolio_v2_submission_schema(methodology_version: str = PORTFOLIO_V2_VERS
     }
 
 
+def _portfolio_v3_submission_schema() -> dict[str, object]:
+    assessment_properties = {
+        "option_id": {"type": "string", "minLength": 1},
+        "origin_lanes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 5,
+            "items": {
+                "enum": [
+                    "shock_reversal",
+                    "medium_strength",
+                    "short_continuation",
+                    "quality_pullback",
+                    "volume_dislocation",
+                    "benchmark",
+                    "wildcard",
+                ]
+            },
+        },
+        "mechanism": {
+            "enum": ["continuation", "reversal", "catalyst", "defensive", "no_edge"]
+        },
+        "p_beat_spy_pct": {"type": "integer", "minimum": 0, "maximum": 100},
+        "p_top3_pct": {"type": "integer", "minimum": 0, "maximum": 100},
+        "excess_return_p10_pct": {"type": "number"},
+        "excess_return_p50_pct": {"type": "number"},
+        "excess_return_p90_pct": {"type": "number"},
+        "recent_return_interpretation": {
+            "enum": [
+                "overreaction",
+                "fundamental_deterioration",
+                "supported_continuation",
+                "no_edge",
+            ]
+        },
+        "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {"type": "string", "minLength": 1},
+        },
+        "rank": {"type": "integer", "minimum": 1, "maximum": 18},
+    }
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://capitalbench.org/schemas/portfolio_judgment_v3.json",
+        "title": f"CapitalBench {PORTFOLIO_V3_VERSION} Model Judgment",
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "round_id": {"type": "string", "minLength": 1},
+            "model_id": {"type": "string", "minLength": 1},
+            "provider": {"enum": ["openai", "anthropic", "google", "xai"]},
+            "mode": {"const": "closed_capability"},
+            "dispersion_state": {"enum": ["low", "normal", "high"]},
+            "dominant_pattern": {"enum": ["continuation", "reversal", "mixed"]},
+            "market_rationale": {"type": "string", "minLength": 1},
+            "candidate_assessments": {
+                "type": "array",
+                "minItems": 10,
+                "maxItems": 18,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": assessment_properties,
+                    "required": list(assessment_properties),
+                },
+            },
+            "top3_option_ids": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {"type": "string", "minLength": 1},
+            },
+            "prefer_spy": {"type": "boolean"},
+            "portfolio_rationale": {"type": "string", "minLength": 1},
+            "key_risks": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 5,
+                "items": {"type": "string", "minLength": 1},
+            },
+        },
+        "required": [
+            "round_id",
+            "model_id",
+            "provider",
+            "mode",
+            "dispersion_state",
+            "dominant_pattern",
+            "market_rationale",
+            "candidate_assessments",
+            "top3_option_ids",
+            "prefer_spy",
+            "portfolio_rationale",
+            "key_risks",
+        ],
+    }
+
+
 def _default_prompt_text(
     submission_format: SubmissionFormat = "single_pick",
     horizon: str = "one month",
     methodology_version: str | None = None,
 ) -> str:
     if submission_format == "portfolio":
+        if is_portfolio_v3(methodology_version):
+            return _portfolio_v3_prompt_text(horizon)
         if is_production_portfolio_v2(methodology_version):
             return _portfolio_v2_prompt_text(horizon, methodology_version)
         return _apply_horizon("""# CapitalBench Task
@@ -416,6 +533,75 @@ Rules:
 - Do not include a second portfolio, backup allocation, financial-advice disclaimer, or extra field.
 """
     return _apply_horizon(template.replace("__METHODOLOGY_VERSION__", version), horizon)
+
+
+def _portfolio_v3_prompt_text(horizon: str) -> str:
+    template = """# CapitalBench portfolio-v3.0 Task
+
+You are participating in an offline, time-resolved CapitalBench evaluation round. Every model receives the same frozen information and makes one single-turn, non-agentic judgment without tools, browsing, retrieval, or follow-up.
+
+Your objective is to rank assets for realized return over exactly one month and identify candidates that can beat SPY. CapitalBench, not you, constructs the scored portfolio from your judgment using the fixed rule below.
+
+The deterministic candidate slate exists to prevent omission; it is not a recommendation. Assess every slate candidate. You may add at most two wildcard options from the complete allowed universe, but only when the frozen briefing supplies a specific reason the mechanical slate missed.
+
+Use only facts and mechanical market data supplied in this input. You may use internal learned knowledge and general priors, but do not intentionally rely on facts, prices, news, or events after the research cutoff. Treat section order, mention count, option order, table order, and slate inclusion as neutral presentation choices rather than recommendation signals.
+
+Do not extrapolate recent returns mechanically. A recent winner has no positive edge without independent in-window support. Give extreme recent losers a fair reversal test, but distinguish temporary price overreaction from fundamental deterioration. Use the supplied cross-sectional dispersion, medium-horizon relative strength, volatility, drawdown, volume, briefing evidence, and quality evidence. Optimize for the stated close-to-close scoring window only.
+
+For every assessed candidate, provide probabilities and an 80% excess-return range relative to SPY. Rank every assessment without ties. top3_option_ids must be the options ranked 1, 2, and 3. prefer_spy is a diagnostic judgment and does not override the deterministic rule.
+
+CapitalBench applies this rule after your response:
+
+1. Preserve your candidate ranks.
+2. A non-SPY candidate is eligible only when you label its recent return as overreaction and give it at least a 55% probability of beating SPY.
+3. Select at most the first three eligible candidates in your rank order.
+4. Fill fixed portfolio slots of 35%, 35%, and 30% in that order.
+5. Put every unused slot in SPY.
+
+You do not submit allocations or an alternative portfolio. Return only valid JSON. Do not include markdown, citations, prose, or commentary outside the JSON.
+
+Required JSON format:
+
+{
+  "round_id": "<round_id>",
+  "model_id": "<model_id>",
+  "provider": "<provider>",
+  "mode": "closed_capability",
+  "dispersion_state": "low, normal, or high",
+  "dominant_pattern": "continuation, reversal, or mixed",
+  "market_rationale": "<concise market-level judgment>",
+  "candidate_assessments": [
+    {
+      "option_id": "<allowed option ID>",
+      "origin_lanes": ["<exact lane or lanes from the deterministic slate, or wildcard>"],
+      "mechanism": "continuation, reversal, catalyst, defensive, or no_edge",
+      "p_beat_spy_pct": <integer 0-100>,
+      "p_top3_pct": <integer 0-100>,
+      "excess_return_p10_pct": <number>,
+      "excess_return_p50_pct": <number>,
+      "excess_return_p90_pct": <number>,
+      "recent_return_interpretation": "overreaction, fundamental_deterioration, supported_continuation, or no_edge",
+      "evidence": ["<1-3 concise facts from the supplied input>"],
+      "rank": <unique contiguous integer beginning at 1>
+    }
+  ],
+  "top3_option_ids": ["<rank 1>", "<rank 2>", "<rank 3>"],
+  "prefer_spy": <boolean>,
+  "portfolio_rationale": "<concise explanation of the ranked judgment>",
+  "key_risks": ["<risk 1>", "<risk 2>"]
+}
+
+Rules:
+- assess every deterministic slate candidate and no more than two optional wildcards;
+- use origin_lanes exactly as shown for slate candidates and ["wildcard"] for additions;
+- probabilities are whole percentages from 0 to 100;
+- excess-return estimates are percentage points relative to SPY and must satisfy p10 <= p50 <= p90;
+- ranks must be unique and contiguous from 1 through the number of assessments;
+- evidence must refer only to supplied input and contain no URLs;
+- key_risks must contain 2-5 concrete risks;
+- do not output portfolio allocations, a second ranking, a financial-advice disclaimer, or extra fields.
+"""
+    return _apply_horizon(template, horizon)
 
 
 def _single_pick_prompt_text(horizon: str) -> str:

@@ -1,5 +1,9 @@
 # Weekly CapitalBench Rounds Plan
 
+Status: **historical rollout plan**. Use `docs/first_round_checklist.md` and
+`docs/portfolio_v3_methodology.md` for current rounds; do not copy the legacy
+methodology or universe examples below into a new round.
+
 This plan adds a weekly CapitalBench cadence alongside the existing one-month
 cadence as a separate benchmark track. Weekly and monthly results must not be
 mixed in leaderboards, cumulative scores, homepage summary cards, or public

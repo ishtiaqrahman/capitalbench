@@ -7,7 +7,7 @@ Use this checklist before running a public CapitalBench round.
 - Choose a `round_id`.
 - Create a production portfolio round with
   `capitalbench init-round --round-id <id> --submission-format portfolio`.
-  This defaults to `portfolio-v2.2`; do not downgrade it for a new round.
+  This defaults to `portfolio-v3.0`; do not downgrade it for a new round.
 - Fill in `manifest.yaml`, including decision deadline, horizon, entry rule, and exit rule.
 - Confirm `model_roster_version`, `model_roster_frozen_at_utc`, and
   `expected_model_ids` are present. Do not edit the frozen roster after
@@ -24,7 +24,7 @@ Use this checklist before running a public CapitalBench round.
 - Keep source links and source ledgers in audit artifacts, not in `final_briefing.md`.
 - Confirm `briefing.md` is facts-only: no interpretation, scenario analysis, "why it matters" commentary, affected-market mapping, recommendations, or rankings.
 - Confirm the final briefing passes a salience-bias check: no performance-sorted return table, no one theme dominating row count, no direct option recommendations, and counterbalancing source-reported facts preserved where available.
-- Run `capitalbench fetch-universe-decision-context --round rounds/<id> --as-of-date <cutoff-date>` for every production V2 round.
+- Run `capitalbench fetch-universe-decision-context --round rounds/<id> --as-of-date <cutoff-date>` for every production portfolio round.
 - Confirm `market_data/universe_decision_context.md` is sorted by option order,
   covers all options, uses the horizon-specific profile, and contains no
   recommendations, rankings, or interpretive commentary.
@@ -40,9 +40,13 @@ Use this checklist before running a public CapitalBench round.
 
 - Use the same prompt and round files for every model.
 - Require `mode: closed_capability`.
-- For Portfolio V2.2, require the Q1 evidence table, 6-8 option candidate
-  ledger, and final 1-5 holding portfolio defined in
-  `docs/portfolio_v2_2_methodology.md`.
+- For Portfolio V3.0, require every deterministic slate candidate, no more than
+  two wildcards, contiguous candidate ranks, probability and excess-return
+  estimates, and the recent-return interpretation defined in
+  `docs/portfolio_v3_methodology.md`.
+- Confirm the model returned judgments rather than allocations. The runner must
+  materialize the scored portfolio using the fixed 35/35/30 rule and SPY
+  fallback.
 - Choose a unique `run_id` for each collection attempt.
 - Decide which run will be the official public run.
 - Use `--run-type official` for the public leaderboard.
@@ -58,7 +62,7 @@ Use this checklist before running a public CapitalBench round.
 - Do not change the option universe after seeing model picks just to force more variety. Any universe change belongs in a future round.
 - Use `--run-type retrospective` for any manual old-round exploration; retrospective runs are excluded from public leaderboards.
 - For manual collection, save raw submissions in `runs/<run_id>/submissions/raw/`.
-- For simple dry-run testing, run `capitalbench run-round --round rounds/<id> --models configs/models.example.yaml --mock --run-id <run_id> --run-type mock`.
+- For a production-roster V3 dry run, run `capitalbench run-round --round rounds/<id> --models configs/models.v2.yaml --mock --run-id <run_id> --run-type mock`.
 - Use `capitalbench list-runs --round rounds/<id>` to confirm run isolation.
 - For real API calls, create local copies of `.env.example`, `configs/models.example.yaml`, and `configs/pricing.example.yaml`.
 - Export API keys with `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, and `XAI_API_KEY`.
@@ -87,7 +91,7 @@ Official mock rehearsal:
 ```bash
 capitalbench run-round \
   --round rounds/<id> \
-  --models configs/models.example.yaml \
+  --models configs/models.v2.yaml \
   --mock \
   --run-id official-mock \
   --run-type official
@@ -98,7 +102,7 @@ Stability mock rehearsal:
 ```bash
 capitalbench run-round \
   --round rounds/<id> \
-  --models configs/models.example.yaml \
+  --models configs/models.v2.yaml \
   --mock \
   --run-id stability-mock \
   --run-type stability \

@@ -4,10 +4,10 @@ CapitalBench evaluates one thing: given the same frozen market context, what
 official market decision does a model make for the next month?
 
 Earlier rounds use a `single_pick` protocol: each model selects exactly one
-option. Future portfolio rounds can use a `portfolio` protocol: each model
-allocates 100% across a small number of allowed options under constraints
-declared in the round manifest. The submission format is part of the frozen
-round configuration and is never changed after model calls begin.
+option. Portfolio rounds produce a 100% allocation under constraints declared
+in the round manifest. In current V3 rounds the model ranks and classifies
+candidates, then CapitalBench constructs that allocation deterministically.
+The submission format and methodology are frozen before model calls begin.
 
 Models may use their internal learned knowledge and general market priors. They
 must not browse, call tools, retrieve live data, or intentionally rely on facts,
@@ -42,15 +42,16 @@ The public inputs are:
 - `prompt.md`: the exact task instruction
 - `submission_schema.json`, if present: the exact machine-readable response schema
 - `market_data/universe_trailing_returns.md`, for historical V1 rounds: mechanical full-universe price, risk, and benchmark-relative context
-- `market_data/universe_decision_context.md`, for Portfolio V2 rounds: compact horizon-specific full-universe decision context
-- `market_data/universe_quality_evidence.md`, for Portfolio V2.2 rounds: the complete cutoff-safe Q1 option-level evidence table
+- `market_data/universe_decision_context.md`, for production portfolio rounds: compact horizon-specific full-universe decision context
+- `market_data/universe_quality_evidence.md`, for V2.2 and V3 rounds: complete cutoff-safe option-level quality evidence
+- the deterministic V3 candidate slate, rendered by the prompt builder from frozen market-data artifacts
 
 Before collecting submissions, run `capitalbench hash-round`. This freezes the
 input files by writing SHA256 hashes to `hashes.json`.
 
 ## Model Roster And Retirement
 
-Every newly initialized production Portfolio V2 round freezes three roster
+Every newly initialized production portfolio round freezes three roster
 fields in `manifest.yaml`:
 
 - `model_roster_version`: a deterministic identifier for the exact model list;
@@ -146,7 +147,7 @@ This artifact is factual prompt context. It is not used for scoring, it is not a
 leaderboard, and it should not include commentary. Re-run `hash-round` after
 generating it.
 
-Production `portfolio-v2.2` rounds use:
+Production portfolio rounds use:
 
 ```bash
 capitalbench fetch-universe-decision-context \
@@ -154,12 +155,12 @@ capitalbench fetch-universe-decision-context \
   --as-of-date YYYY-MM-DD
 ```
 
-The V2 table is horizon-specific and compact. It separates the latest decision
+The table is horizon-specific and compact. It separates the latest decision
 window from the preceding window, includes static economic-exposure clusters,
 and retains volatility, drawdown, volume, SPY correlation, SPY beta, and
 52-week position. It is complete and sorted in frozen option order.
 
-V2.2 also generates `market_data/universe_quality_evidence.md` and `.json`.
+V3 also generates `market_data/universe_quality_evidence.md` and `.json`.
 That complete option-level Q1 table contains cutoff-safe percentile ranks for
 prior active trend, recent active pullback, low volatility, and shallow
 drawdown plus their fixed 45/30/15/10 score. It is evidence rather than a
@@ -182,8 +183,10 @@ rounds/<round_id>/runs/<run_id>/
 ```
 
 `raw_responses/` stores the exact text returned by the provider for each call.
-`submissions/raw/` stores the normalized raw submission payload used for
-validation, and `submissions/parsed/` stores only validated submissions.
+`submissions/raw/` stores the normalized provider judgment. For V3, validation
+then materializes the deterministic portfolio and stores that scored submission
+under `submissions/parsed/`, including the original judgment in metadata.
+Other methodology versions validate the raw payload directly.
 `run_log.jsonl` records the path and SHA256 hash of each raw response text file.
 
 Repeated runs must use different run ids. If a run id already exists,
@@ -270,43 +273,45 @@ manifest and are injected into the provider response schema and prompt. This
 keeps the public protocol auditable and lets future methodology versions adjust
 limits without rewriting old rounds.
 
-New portfolio rounds default to `portfolio-v2.2`. In addition to the final
-portfolio, V2.2 supplies the Q1 option-level evidence table and requires a 6-8
-option candidate ledger that includes SP500 and at
-least four static economic-exposure clusters. Candidate rows retain low, base,
-and high forecasts; evidence; continuation and reversal cases; a catalyst; and
-an invalidation condition. Selected non-SP500, non-CASH holdings must have base
-forecasts above the SP500 base forecast, and no non-benchmark economic-exposure
-cluster may exceed 50%. These fields are validated and frozen, but only the
-final portfolio is scored.
+New portfolio rounds default to `portfolio-v3.0`. V3 supplies the complete
+quality-evidence table and a deterministic balanced candidate slate. The model
+ranks and classifies every slate candidate and may add at most two wildcards;
+it does not submit allocations. CapitalBench admits only ranked non-SPY
+`overreaction` candidates with at least a 55% estimated probability of beating
+SPY, assigns fixed 35%, 35%, and 30% slots, and places every unused slot in
+SPY. The raw judgment and construction audit are frozen, but only the
+materialized portfolio is scored.
 
-See `docs/portfolio_v2_2_methodology.md` for the current input contract.
-Frozen V2.0 rounds retain the historical contract in
-`docs/portfolio_v2_methodology.md`.
+See `docs/portfolio_v3_methodology.md` for the current input contract. Frozen
+V2.2 and V2.0 rounds retain their historical contracts in
+`docs/portfolio_v2_2_methodology.md` and `docs/portfolio_v2_methodology.md`.
 
 ## Submission Rule
 
-Each model must submit one JSON or YAML object. It must include:
+Each model must return one JSON object with:
 
 - `round_id`
 - `model_id`
 - `provider`
 - `mode: closed_capability`
-- `run_type`
-- `replicate_index`
-- `replicate_count`
-- `is_official_score`
-- `confidence`
-- `rationale_summary`
 - `key_risks`
 
 For `single_pick` rounds, the object must include `selected_option_id`.
 
-For `portfolio` rounds, the object must include:
+For legacy `portfolio` rounds, the object includes the portfolio and its
+rationale. For `portfolio-v3.0`, the model instead returns:
 
-- `portfolio`: one object per holding, with `option_id`, `allocation_pct`, and
-  per-holding `rationale`
-- `portfolio_rationale`: short explanation of the overall allocation
+- `dispersion_state` and `dominant_pattern`
+- `market_rationale` and `portfolio_rationale`
+- `candidate_assessments` for the complete deterministic slate and no more
+  than two wildcards
+- `top3_option_ids` matching ranks 1-3
+- `prefer_spy` as a diagnostic field
+
+The runner adds `run_type`, replicate fields, usage, and cost metadata. For V3,
+it then validates the judgment and creates the scored `portfolio`, `confidence`,
+and `rationale_summary` fields deterministically. See the frozen response schema
+inside each round.
 
 Legacy multi-select fields such as `selected_option_ids`, `selected_options`,
 or `selections` are invalid. Invalid raw submissions are preserved but are not
@@ -322,7 +327,9 @@ are unique, and require `is_official_score: false`.
 The official leaderboard uses one valid submission per model from one selected
 official run. The model gets one attempt. In a `single_pick` round, the
 selected asset from that attempt is the official score. In a `portfolio` round,
-the weighted realized return of the submitted allocation is the official score.
+the weighted realized return of the validated allocation is the official score.
+For V3 this is the allocation materialized by CapitalBench, not a model-authored
+allocation.
 
 ```bash
 capitalbench run-round \

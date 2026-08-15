@@ -12,9 +12,17 @@ from .decision_context import (
 )
 from .exposures import economic_exposure_cluster
 from .io import load_manifest, load_options, read_json, read_yaml
-from .methodology import is_portfolio_v2, is_portfolio_v2_2, is_production_portfolio_v2
+from .methodology import (
+    is_portfolio_v2,
+    is_portfolio_v3,
+    is_production_portfolio,
+    is_production_portfolio_v2,
+    uses_portfolio_decision_context,
+    uses_quality_evidence,
+)
 from .performance import MARKET_DATA_DIRNAME, UNIVERSE_PRICE_CONTEXT_TITLE, UNIVERSE_TRAILING_RETURNS_MD
 from .portfolio import constraints_from_manifest, submission_format_from_manifest
+from .portfolio_v3 import build_portfolio_v3_candidate_slate, render_portfolio_v3_candidate_slate
 from .schemas import MarketOption
 
 DISALLOWED_MODEL_INPUT_SNIPPETS = (
@@ -51,18 +59,26 @@ def build_prompt(round_path: Path) -> str:
     briefing = (round_path / "briefing.md").read_text(encoding="utf-8").strip()
     metadata = render_round_metadata(round_path, manifest)
     context_title, universe_performance = _market_context_section(round_path, manifest)
-    if is_portfolio_v2(manifest.methodology_version) and not universe_performance:
+    if uses_portfolio_decision_context(manifest.methodology_version) and not universe_performance:
         raise FileNotFoundError(
-            f"portfolio-v2 round requires market_data/{DECISION_CONTEXT_MD}"
+            f"portfolio round requires market_data/{DECISION_CONTEXT_MD}"
         )
     if _briefing_contains_universe_performance(briefing):
         universe_performance = None
     options = render_options_for_prompt(
         load_options(round_path),
-        compact=is_production_portfolio_v2(manifest.methodology_version),
+        compact=is_production_portfolio(manifest.methodology_version),
     )
     quality_evidence = _quality_evidence_section(round_path, manifest)
     parts = [f"{prompt}\n\n## Round Metadata\n\n{metadata}"]
+    if is_portfolio_v3(manifest.methodology_version):
+        slate = build_portfolio_v3_candidate_slate(round_path)
+        parts.append(
+            "## Deterministic V3 Candidate Slate\n\n"
+            "This slate prevents omission and is not a recommendation. Assess every row. "
+            "The origin_lanes in your response must exactly match this table.\n\n"
+            f"{render_portfolio_v3_candidate_slate(slate)}"
+        )
     if quality_evidence:
         parts.append(f"## {QUALITY_EVIDENCE_TITLE}\n\n{quality_evidence}")
     parts.append(f"## Briefing\n\n{briefing}")
@@ -133,6 +149,17 @@ def render_round_metadata(round_path: Path, manifest) -> str:
                 "Expected-return units: percentage points; 1.25 means an expected return of +1.25%.",
             ]
         )
+    if is_portfolio_v3(manifest.methodology_version):
+        lines.extend(
+            [
+                "Decision protocol: single-turn, non-agentic, with no tools or follow-up calls.",
+                "Search protocol: assess the complete deterministic V3 slate and add no more than two evidence-backed wildcards.",
+                "Model role: rank and classify candidates; CapitalBench constructs the final portfolio deterministically.",
+                "Portfolio rule: select at most three ranked non-SPY candidates labeled overreaction with at least 55% probability of beating SPY.",
+                "Allocation rule: fill 35%, 35%, and 30% slots in rank order; every unused slot goes to SPY.",
+                "Probability units: report p_beat_spy_pct and p_top3_pct as whole percentages from 0 to 100.",
+            ]
+        )
     if is_production_portfolio_v2(manifest.methodology_version):
         constraints = constraints_from_manifest(manifest)
         lines.extend(
@@ -177,28 +204,28 @@ def _universe_performance_section(round_path: Path) -> str | None:
 
 
 def _market_context_section(round_path: Path, manifest) -> tuple[str, str | None]:
-    if is_portfolio_v2(manifest.methodology_version):
+    if uses_portfolio_decision_context(manifest.methodology_version):
         path = round_path / MARKET_DATA_DIRNAME / DECISION_CONTEXT_MD
         return DECISION_CONTEXT_TITLE, _strip_context_heading(path, DECISION_CONTEXT_TITLE)
     return UNIVERSE_PRICE_CONTEXT_TITLE, _universe_performance_section(round_path)
 
 
 def _quality_evidence_section(round_path: Path, manifest) -> str | None:
-    if not is_portfolio_v2_2(manifest.methodology_version):
+    if not uses_quality_evidence(manifest.methodology_version):
         return None
     market_data = round_path / MARKET_DATA_DIRNAME
     markdown_path = market_data / QUALITY_EVIDENCE_MD
     json_path = market_data / QUALITY_EVIDENCE_JSON
     if not markdown_path.exists() or not json_path.exists():
         raise FileNotFoundError(
-            "portfolio-v2.2 round requires "
+            "this portfolio methodology requires "
             f"market_data/{QUALITY_EVIDENCE_MD} and market_data/{QUALITY_EVIDENCE_JSON}"
         )
     report = read_json(json_path)
     coverage = float(report.get("coverage") or 0.0)
     if coverage < QUALITY_EVIDENCE_MINIMUM_COVERAGE:
         raise ValueError(
-            "portfolio-v2.2 quality-evidence coverage is below the required "
+            "portfolio quality-evidence coverage is below the required "
             f"{QUALITY_EVIDENCE_MINIMUM_COVERAGE:.0%}: {coverage:.1%}"
         )
     return _strip_context_heading(markdown_path, QUALITY_EVIDENCE_TITLE)

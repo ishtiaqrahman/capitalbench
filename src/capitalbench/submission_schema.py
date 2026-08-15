@@ -1,6 +1,12 @@
 from __future__ import annotations
 
-from .methodology import is_portfolio_v2, is_production_portfolio_v2
+from .methodology import is_portfolio_v2, is_portfolio_v3, is_production_portfolio_v2
+from .portfolio_v3 import (
+    MAXIMUM_WILDCARDS,
+    V3_LANES,
+    V3_MECHANISMS,
+    V3_RECENT_INTERPRETATIONS,
+)
 from .schemas import ModelConfig
 
 
@@ -10,12 +16,14 @@ def provider_submission_schema(model_config: ModelConfig) -> dict[str, object]:
         option_ids = ["CASH"]
     submission_format = str(model_config.metadata.get("submission_format") or "single_pick")
     if submission_format == "portfolio":
+        methodology_version = str(model_config.metadata.get("methodology_version") or "")
+        if is_portfolio_v3(methodology_version):
+            return _portfolio_v3_provider_schema(model_config, option_ids)
         constraints = dict(model_config.metadata.get("portfolio_constraints") or {})
         min_holdings = int(constraints.get("min_holdings") or 1)
         max_holdings = int(constraints.get("max_holdings") or 5)
         increment = int(constraints.get("allocation_increment_pct") or 5)
         minimum = int(constraints.get("min_allocation_pct") or 5)
-        methodology_version = str(model_config.metadata.get("methodology_version") or "")
         v2 = is_portfolio_v2(methodology_version)
         production_v2 = is_production_portfolio_v2(methodology_version)
         holding_properties: dict[str, object] = {
@@ -207,6 +215,25 @@ def prompt_for_model(prompt: str, model_config: ModelConfig) -> str:
     if submission_format == "portfolio":
         constraints = dict(model_config.metadata.get("portfolio_constraints") or {})
         methodology_version = str(model_config.metadata.get("methodology_version") or "")
+        if is_portfolio_v3(methodology_version):
+            slate = list(model_config.metadata.get("portfolio_v3_candidate_slate") or [])
+            slate_ids = ", ".join(str(row["option_id"]) for row in slate)
+            return (
+                f"{prompt}\n\n"
+                "For this specific call, return only the V3 judgment JSON. CapitalBench, not you, "
+                "will construct the scored portfolio from that judgment.\n"
+                f"- round_id: {model_config.metadata['round_id']}\n"
+                f"- model_id: {model_config.model_id}\n"
+                f"- provider: {model_config.provider}\n"
+                f"- mode: {model_config.mode}\n"
+                f"- deterministic slate IDs that must all be assessed: {slate_ids}\n"
+                f"- allowed option_id values, including at most {MAXIMUM_WILDCARDS} optional wildcards: {option_ids}\n"
+                "- origin_lanes for every deterministic candidate must exactly match its slate row\n"
+                "- an optional added candidate must use origin_lanes=[\"wildcard\"]\n"
+                "- rank every assessment once with contiguous ranks beginning at 1\n"
+                "- top3_option_ids must exactly match ranks 1, 2, and 3\n"
+                "- key_risks must contain 2-5 concrete non-empty risks\n"
+            )
         v2_instructions = ""
         if is_portfolio_v2(methodology_version):
             v2_instructions = (
@@ -251,3 +278,107 @@ def prompt_for_model(prompt: str, model_config: ModelConfig) -> str:
         f"- mode: {model_config.mode}\n"
         f"- allowed selected_option_id values: {option_ids}\n"
     )
+
+
+def _portfolio_v3_provider_schema(
+    model_config: ModelConfig,
+    option_ids: list[str],
+) -> dict[str, object]:
+    slate = list(model_config.metadata.get("portfolio_v3_candidate_slate") or [])
+    if not slate:
+        raise ValueError("portfolio-v3 requires portfolio_v3_candidate_slate metadata")
+    slate_size = len(slate)
+    allowed_assessment_ids = [option_id for option_id in option_ids if option_id != "CASH"]
+    assessment = {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "option_id": {"type": "string", "enum": allowed_assessment_ids},
+            "origin_lanes": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {"type": "string", "enum": list(V3_LANES)},
+            },
+            "mechanism": {"type": "string", "enum": list(V3_MECHANISMS)},
+            "p_beat_spy_pct": {"type": "integer", "minimum": 0, "maximum": 100},
+            "p_top3_pct": {"type": "integer", "minimum": 0, "maximum": 100},
+            "excess_return_p10_pct": {"type": "number"},
+            "excess_return_p50_pct": {"type": "number"},
+            "excess_return_p90_pct": {"type": "number"},
+            "recent_return_interpretation": {
+                "type": "string",
+                "enum": list(V3_RECENT_INTERPRETATIONS),
+            },
+            "evidence": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 3,
+                "items": {"type": "string"},
+            },
+            "rank": {"type": "integer", "minimum": 1, "maximum": slate_size + MAXIMUM_WILDCARDS},
+        },
+        "required": [
+            "option_id",
+            "origin_lanes",
+            "mechanism",
+            "p_beat_spy_pct",
+            "p_top3_pct",
+            "excess_return_p10_pct",
+            "excess_return_p50_pct",
+            "excess_return_p90_pct",
+            "recent_return_interpretation",
+            "evidence",
+            "rank",
+        ],
+    }
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "round_id": {"type": "string", "enum": [str(model_config.metadata["round_id"])]},
+            "model_id": {"type": "string", "enum": [model_config.model_id]},
+            "provider": {"type": "string", "enum": [model_config.provider]},
+            "mode": {"type": "string", "enum": [model_config.mode]},
+            "dispersion_state": {"type": "string", "enum": ["low", "normal", "high"]},
+            "dominant_pattern": {
+                "type": "string",
+                "enum": ["continuation", "reversal", "mixed"],
+            },
+            "market_rationale": {"type": "string"},
+            "candidate_assessments": {
+                "type": "array",
+                "minItems": slate_size,
+                "maxItems": slate_size + MAXIMUM_WILDCARDS,
+                "items": assessment,
+            },
+            "top3_option_ids": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {"type": "string", "enum": allowed_assessment_ids},
+            },
+            "prefer_spy": {"type": "boolean"},
+            "portfolio_rationale": {"type": "string"},
+            "key_risks": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 5,
+                "items": {"type": "string"},
+            },
+        },
+        "required": [
+            "round_id",
+            "model_id",
+            "provider",
+            "mode",
+            "dispersion_state",
+            "dominant_pattern",
+            "market_rationale",
+            "candidate_assessments",
+            "top3_option_ids",
+            "prefer_spy",
+            "portfolio_rationale",
+            "key_risks",
+        ],
+    }

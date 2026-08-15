@@ -81,8 +81,8 @@ const behaviorRules: any = behaviorMethod.rules ?? {};
     </div>
     <div>
       <span class="metric-label">Model task</span>
-      <strong>Compare, then allocate</strong>
-      <p>V2 models review a fixed candidate set, estimate each case, and then submit one frozen portfolio.</p>
+      <strong>Rank, then construct</strong>
+      <p>V3 models rank and classify a balanced candidate slate. CapitalBench applies the same portfolio rule to every response.</p>
     </div>
     <div>
       <span class="metric-label">Information rule</span>
@@ -99,7 +99,7 @@ const behaviorRules: any = behaviorMethod.rules ?? {};
   <nav class="protocol-jump" aria-label="Methodology sections">
     <a href="#lifecycle">Steps</a>
     <a href="#single-turn">Protocol</a>
-    <a href="#portfolio-v2">V2 rules</a>
+    <a href="#portfolio-v3">V3 rules</a>
     <a href="#artifacts">Artifacts</a>
     <a href="#execution">Execution</a>
     <a href="#pricing">Scoring</a>
@@ -173,30 +173,30 @@ const behaviorRules: any = behaviorMethod.rules ?? {};
         </p>
       </section>
 
-      <section id="portfolio-v2">
-        <h2>Portfolio V2.0 Decision Rules</h2>
+      <section id="portfolio-v3">
+        <h2>Portfolio V3.0 Decision Rules</h2>
         <p>
-          New portfolio rounds use Portfolio V2.0. Before allocating, each model reviews 6 to 8 allowed assets. The
-          list must include the S&amp;P 500 and cover at least four predefined economic-exposure groups. Rejected
-          finalists stay in the audit record alongside selected assets.
+          New portfolio rounds use Portfolio V3.0. Each model assesses the same balanced slate built from frozen
+          market data, ranks every candidate, and may add at most two evidence-backed choices from the full asset list.
+          The model records its judgment but does not choose allocation weights.
         </p>
         <div class="leaderboard-defs">
           <div>
-            <h3>Estimate Each Candidate</h3>
-            <p>Record low, base, and high return estimates plus supporting facts, a continuation case, and a reversal case.</p>
+            <h3>Assess Each Candidate</h3>
+            <p>Estimate its chance of beating the S&amp;P 500, its chance of finishing in the top three, and an excess-return range.</p>
           </div>
           <div>
             <h3>Use A Clear Hurdle</h3>
-            <p>An active holding must have a higher base return estimate than the model's S&amp;P 500 estimate for the same window.</p>
+            <p>An active candidate qualifies only when the model calls its recent move an overreaction and gives it at least a 55% chance of beating the S&amp;P 500.</p>
           </div>
           <div>
-            <h3>Limit Concentration</h3>
-            <p>One non-benchmark economic-exposure group cannot exceed 50% of the final portfolio.</p>
+            <h3>Apply One Rule</h3>
+            <p>The first three qualifying candidates fill 35%, 35%, and 30% slots in rank order. Every unused slot goes to the S&amp;P 500.</p>
           </div>
         </div>
         <p>
-          The final portfolio still contains 1 to 5 holdings in 5% increments and totals 100%. Only its realized return
-          is scored. Candidate estimates are saved for audit and forecast calibration; they do not create a second score.
+          CapitalBench preserves the raw model judgment, constructs the scored portfolio deterministically, and stores
+          the complete construction audit. Earlier rounds keep the methodology frozen in their own records.
         </p>
       </section>
 
@@ -206,10 +206,10 @@ const behaviorRules: any = behaviorMethod.rules ?? {};
           <li><strong>Create the test directory.</strong> Each test lives under <code>rounds/&lt;round_id&gt;/</code> with its rules, prompt, briefing, asset list, price files, hashes, and run folders.</li>
           <li><strong>Prepare the model-facing material.</strong> Operators write or import the factual briefing, exact prompt, and saved asset list.</li>
           <li><strong>Validate the asset list.</strong> Non-cash ETF tickers must pass Tiingo EOD validation before a public test is saved.</li>
-          <li><strong>Generate the decision context.</strong> V2 uses a complete horizon-specific table of returns, benchmark-relative movement, volatility, drawdown, volume, beta, correlation, and 52-week position, sorted by option order.</li>
+          <li><strong>Generate the decision context.</strong> V3 uses a complete horizon-specific market table, a separate quality-evidence table, and a balanced candidate slate built before any model call.</li>
           <li><strong>Save the inputs.</strong> <code>capitalbench hash-round</code> writes SHA-256 hashes for the test inputs before submissions are collected.</li>
           <li><strong>Collect model calls before the deadline.</strong> Public runs use one call per model. Consistency checks use repeated calls and a different <code>run_id</code>.</li>
-          <li><strong>Validate submissions.</strong> Raw provider responses are preserved. Only schema-valid submissions move into parsed submissions and scoring.</li>
+          <li><strong>Validate submissions.</strong> Raw provider judgments are preserved. For V3, CapitalBench applies the fixed portfolio rule and stores only the validated materialized portfolio for scoring.</li>
           <li><strong>Fetch prices and score after the test ends.</strong> Starting prices can be collected while a test is pending; ending prices are collected only after the test period is over.</li>
           <li><strong>Publish normalized artifacts.</strong> Public results, hashes, reports, and leaderboard rows are synced to the website read model when Supabase sync is configured.</li>
         </ol>

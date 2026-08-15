@@ -15,7 +15,7 @@ from .roster import (
     LEGACY_PORTFOLIO_V2_METHODOLOGY,
     active_portfolio_v2_model_ids,
     portfolio_v2_roster_version,
-    validate_official_portfolio_v2_run_manifest,
+    validate_official_portfolio_run_manifest,
 )
 from .run_store import get_run_paths, list_run_ids, read_run_manifest, update_run_manifest
 from .scoring import score_round
@@ -485,7 +485,7 @@ def _validate_acceptance_gate(round_path: Path, run_manifest: dict[str, Any]) ->
         raise ValueError(f"valid submissions do not match model_count: {valid_submissions} != {model_count}")
     if invalid_submissions != 0:
         raise ValueError(f"run has invalid submissions: {invalid_submissions}")
-    validate_official_portfolio_v2_run_manifest(
+    validate_official_portfolio_run_manifest(
         manifest.methodology_version,
         run_manifest,
         _expected_model_ids_for_run(manifest, run_manifest),

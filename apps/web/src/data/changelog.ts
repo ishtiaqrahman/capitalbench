@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-08-15-portfolio-v3-production",
+    date: "2026-08-15",
+    title: "Portfolio V3.0 becomes the production protocol",
+    category: "Methodology",
+    status: "published",
+    summary:
+      "New portfolio rounds now separate model judgment from portfolio construction and use a fixed S&P 500 fallback rule.",
+    details: [
+      "Each model ranks and classifies the same balanced candidate slate in one tool-free response and may add at most two evidence-backed wildcards.",
+      "An active candidate qualifies only when the model labels its recent move an overreaction and assigns at least a 55% chance of beating the S&P 500.",
+      "CapitalBench fills fixed 35%, 35%, and 30% slots in model-rank order, with every unused slot allocated to the S&P 500.",
+      "The operator adopted V3 for future rounds after promising development and holdout returns. The holdout still remains recorded as rejected because only 8 of its required 10 valid cells completed.",
+      "Existing V1, V2.0, and V2.2 rounds remain unchanged under their frozen methodology versions."
+    ],
+    links: [
+      { label: "Methodology", href: "/methodology/#portfolio-v3" },
+      { label: "Changelog", href: "/changelog" }
+    ]
+  },
+  {
     id: "2026-08-12-grok-4-6-added",
     date: "2026-08-12",
     title: "Grok 4.6 joins future CapitalBench rounds",

@@ -115,6 +115,47 @@ def _valid_production_v2_payload() -> dict[str, object]:
     }
 
 
+def _valid_v3_judgment() -> dict[str, object]:
+    slate = [
+        ("ACTIVE_A", ["shock_reversal"]),
+        ("ACTIVE_B", ["medium_strength"]),
+        ("ACTIVE_C", ["short_continuation"]),
+        ("SP500", ["benchmark"]),
+    ]
+    assessments = []
+    for rank, (option_id, origin_lanes) in enumerate(slate, start=1):
+        selected = option_id in {"ACTIVE_A", "ACTIVE_B"}
+        assessments.append(
+            {
+                "option_id": option_id,
+                "origin_lanes": origin_lanes,
+                "mechanism": "reversal" if selected else "no_edge",
+                "p_beat_spy_pct": 60 if selected else 50,
+                "p_top3_pct": 25,
+                "excess_return_p10_pct": -1,
+                "excess_return_p50_pct": 1,
+                "excess_return_p90_pct": 3,
+                "recent_return_interpretation": "overreaction" if selected else "no_edge",
+                "evidence": ["Frozen input evidence."],
+                "rank": rank,
+            }
+        )
+    return {
+        "round_id": "round-a",
+        "model_id": "model-a",
+        "provider": "openai",
+        "mode": "closed_capability",
+        "dispersion_state": "normal",
+        "dominant_pattern": "mixed",
+        "market_rationale": "Mixed conditions.",
+        "candidate_assessments": assessments,
+        "top3_option_ids": ["ACTIVE_A", "ACTIVE_B", "ACTIVE_C"],
+        "prefer_spy": False,
+        "portfolio_rationale": "Two active candidates pass the frozen rule.",
+        "key_risks": ["Reversal fails.", "SPY accelerates."],
+    }
+
+
 def test_invalid_selected_option_rejection(tmp_path: Path) -> None:
     round_path = tmp_path / "round"
     _write_round_base(round_path)
@@ -431,3 +472,69 @@ def test_production_portfolio_v2_enforces_active_hurdle_and_exposure_cap() -> No
             submission_format="portfolio",
             methodology_version="portfolio-v2.0",
         )
+
+
+def test_validate_submissions_materializes_v3_raw_judgment(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    round_path = tmp_path / "round"
+    _write_round_base(round_path)
+    manifest_path = round_path / "manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest.update(
+        {
+            "submission_format": "portfolio",
+            "methodology_version": "portfolio-v3.0",
+            "portfolio_constraints": {
+                "min_holdings": 1,
+                "max_holdings": 3,
+                "allocation_increment_pct": 5,
+                "min_allocation_pct": 5,
+                "max_total_allocation_pct": 100,
+                "allow_cash": True,
+                "allow_benchmark_asset": True,
+            },
+        }
+    )
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    slate = [
+        {"option_id": "ACTIVE_A", "origin_lanes": ["shock_reversal"]},
+        {"option_id": "ACTIVE_B", "origin_lanes": ["medium_strength"]},
+        {"option_id": "ACTIVE_C", "origin_lanes": ["short_continuation"]},
+        {"option_id": "SP500", "origin_lanes": ["benchmark"]},
+    ]
+    monkeypatch.setattr(
+        "capitalbench.validation.build_portfolio_v3_candidate_slate",
+        lambda _: slate,
+    )
+    options = [
+        MarketOption(option_id="SP500", label="S&P 500", asset_symbol="SPY", is_benchmark=True),
+        MarketOption(option_id="CASH", label="Cash", asset_symbol="USD", is_cash=True),
+        MarketOption(option_id="ACTIVE_A", label="Active A", asset_symbol="AAA"),
+        MarketOption(option_id="ACTIVE_B", label="Active B", asset_symbol="BBB"),
+        MarketOption(option_id="ACTIVE_C", label="Active C", asset_symbol="CCC"),
+    ]
+    raw_file = round_path / "submissions" / "raw" / "v3.json"
+    raw_file.write_text(json.dumps(_valid_v3_judgment()), encoding="utf-8")
+
+    summary = validate_submissions(round_path, options)
+
+    assert summary.valid_count == 1
+    assert summary.invalid_count == 0
+    assert "portfolio" not in json.loads(raw_file.read_text(encoding="utf-8"))
+    parsed = json.loads(
+        (
+            round_path
+            / "runs"
+            / "legacy-run"
+            / "submissions"
+            / "parsed"
+            / "v3.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert [(row["option_id"], row["allocation_pct"]) for row in parsed["portfolio"]] == [
+        ("ACTIVE_A", 35),
+        ("ACTIVE_B", 35),
+        ("SP500", 30),
+    ]
+    assert parsed["metadata"]["portfolio_v3"]["methodology_version"] == "portfolio-v3.0"

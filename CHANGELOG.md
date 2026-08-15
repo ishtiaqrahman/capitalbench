@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-08-15
+
+### Portfolio V3.0 production adoption
+
+- Made `portfolio-v3.0` the default for newly initialized weekly and monthly
+  portfolio rounds by explicit operator direction; all existing V1 and V2
+  manifests remain unchanged.
+- Replaced model-authored allocation with a model-ranked balanced candidate
+  slate and deterministic 35/35/30 construction. Only non-SPY candidates
+  labeled `overreaction` with at least a 55% estimated chance of beating SPY
+  are eligible; unused slots go to SPY.
+- Preserved each provider's raw V3 judgment and stored the complete candidate
+  assessment and construction audit with the validated scored submission.
+- Made validation, audit, and report regeneration rebuild the same deterministic
+  V3 portfolio from the preserved raw judgment.
+- Recorded the evidence boundary: eight valid holdout cells averaged +1.94%
+  alpha versus SPY and +2.45 points versus paired V2.2, but the frozen
+  10-valid-cell gate failed. V3 adoption is an operator decision, not a
+  rewritten research pass.
+
 ## 2026-08-06
 
 ### Portfolio Difference benchmark
