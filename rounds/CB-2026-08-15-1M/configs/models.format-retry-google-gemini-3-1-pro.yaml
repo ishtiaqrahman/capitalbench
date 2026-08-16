@@ -1,0 +1,14 @@
+models:
+  - model_id: "google-gemini-3-1-pro"
+    provider: "google"
+    api_model_name: "gemini-3.1-pro-preview"
+    enabled: true
+    mode: "closed_capability"
+    temperature: 0
+    max_completion_tokens: 6000
+    max_wall_clock_seconds: 120
+    reasoning_effort: low
+    first_eligible_round: "CB-2026-05-10-1M"
+    first_eligible_date_utc: "2026-05-10T22:00:00Z"
+    model_release_date: null
+    notes: "Schema-format retry for the preserved truncated monthly source response; same deterministic provider settings with output ceiling raised from 3000 to 6000 tokens."

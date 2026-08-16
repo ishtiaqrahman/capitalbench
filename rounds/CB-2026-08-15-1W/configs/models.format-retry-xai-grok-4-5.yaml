@@ -1,0 +1,14 @@
+models:
+  - model_id: "xai-grok-4-5"
+    provider: "xai"
+    api_model_name: "grok-4.5"
+    enabled: true
+    mode: "closed_capability"
+    temperature: 0
+    max_completion_tokens: 6000
+    max_wall_clock_seconds: 180
+    reasoning_effort: low
+    first_eligible_round: "CB-2026-07-08-1M"
+    first_eligible_date_utc: "2026-07-08T22:00:00Z"
+    model_release_date: "2026-07-08"
+    notes: "Schema-format retry for the preserved truncated weekly source response; same deterministic provider settings with output ceiling raised from 3000 to 6000 tokens."

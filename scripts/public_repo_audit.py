@@ -16,6 +16,7 @@ import re
 import subprocess
 import sys
 from dataclasses import dataclass
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
@@ -186,6 +187,17 @@ def int_field(value: str | None) -> int:
         return 0
 
 
+def entry_prices_are_due(round_path: Path, *, today_utc: date | None = None) -> bool:
+    """Require entry prices only after the declared entry date has passed."""
+    try:
+        manifest = flat_yaml(round_path / "manifest.yaml")
+        entry_date = date.fromisoformat(manifest.get("entry_date", ""))
+    except (OSError, ValueError):
+        return True
+    current_date = today_utc or datetime.now(timezone.utc).date()
+    return current_date > entry_date
+
+
 def audit_path(path: Path) -> list[Finding]:
     path_str = rel(path)
     findings: list[Finding] = []
@@ -337,7 +349,10 @@ def audit_automation_readiness() -> list[Finding]:
         if invalid_submissions != 0:
             findings.append(Finding(rel(run_manifest_path), f"scheduled automation run has invalid submissions: {invalid_submissions}"))
 
-        if not (round_path / "prices" / "entry_prices.csv").exists():
+        if (
+            not (round_path / "prices" / "entry_prices.csv").exists()
+            and entry_prices_are_due(round_path)
+        ):
             findings.append(Finding(path_str, "scheduled automation round is missing prices/entry_prices.csv"))
     return findings
 
