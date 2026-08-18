@@ -173,6 +173,46 @@ def test_update_interim_performance_reuses_one_snapshot_for_multiple_monthly_rou
         assert [row["target_date"] for row in rows] == dates
 
 
+def test_update_interim_performance_falls_back_to_yahoo_when_tiingo_fails(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    rounds_dir = tmp_path / "rounds"
+    _create_round(rounds_dir, "round-one", entry_date="2026-01-02", exit_date="2026-02-02")
+    snapshots_dir = tmp_path / "snapshots"
+
+    monkeypatch.setenv("TIINGO_API_KEY", "test-key")
+    monkeypatch.setattr(
+        "capitalbench.interim.fetch_tiingo_eod_prices",
+        lambda *_args: (_ for _ in ()).throw(RuntimeError("Tiingo unavailable")),
+    )
+    monkeypatch.setattr(
+        "capitalbench.prices._fetch_yahoo_chart_adjclose",
+        lambda _symbol, _start, end: [
+            {
+                "date": end.isoformat(),
+                "close": 101.0,
+                "adjClose": 101.0,
+                "volume": 1_000,
+            }
+        ],
+    )
+
+    output = update_interim_performance(
+        rounds_dir=rounds_dir,
+        snapshot_date="2026-01-06",
+        snapshots_dir=snapshots_dir,
+        track="all",
+        sync=False,
+        min_snapshot_rows=1,
+    )
+
+    assert output.snapshot_status == "created"
+    rows = _read_csv(snapshots_dir / "2026-01-06.csv")
+    assert len(rows) == 4
+    assert {row["source"] for row in rows} == {"cash", "yahoo_chart_adjclose"}
+
+
 def test_update_interim_performance_skips_weekly_track_by_default(tmp_path: Path) -> None:
     rounds_dir = tmp_path / "rounds"
     weekly = _create_round(

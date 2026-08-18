@@ -186,7 +186,13 @@ def _ensure_daily_snapshot(
     selected_round = universe_round or _latest_universe_round(rounds_dir)
     options = load_options(selected_round)
     fetch = fetcher or fetch_tiingo_eod_prices
-    rows = _price_rows_for_date(options, snapshot_date, api_key, fetch)
+    rows = _price_rows_for_date(
+        options,
+        snapshot_date,
+        api_key,
+        fetch,
+        allow_yahoo_fallback=fetcher is None,
+    )
     snapshots_dir.mkdir(parents=True, exist_ok=True)
     _write_price_csv(snapshot_path, rows)
     return "overwritten" if overwrite_snapshot and existed else "created"

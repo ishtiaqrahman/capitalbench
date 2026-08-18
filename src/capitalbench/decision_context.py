@@ -1,20 +1,18 @@
 from __future__ import annotations
 
 import csv
-import json
 import math
 import os
 import statistics
-import urllib.parse
-import urllib.request
 from dataclasses import dataclass
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
 
 from .exposures import economic_exposure_cluster
 from .io import load_manifest, load_options, write_json
 from .methodology import is_production_portfolio, uses_quality_evidence
+from .performance import _fetch_yahoo_chart_adjclose
 from .scoring import _is_cash_option
 from .universe import TIINGO_API_KEY_ENV, fetch_tiingo_eod_prices
 
@@ -195,43 +193,14 @@ def _default_history_fetcher(symbol: str, start: date, end: date) -> tuple[list[
 
 
 def _fetch_yahoo_history(symbol: str, start: date, end: date) -> list[dict[str, Any]]:
-    period1 = int(datetime.combine(start, time.min, tzinfo=timezone.utc).timestamp())
-    period2 = int(datetime.combine(end + timedelta(days=2), time.min, tzinfo=timezone.utc).timestamp())
-    query = urllib.parse.urlencode(
-        {"period1": period1, "period2": period2, "interval": "1d", "events": "history"}
-    )
-    encoded_symbol = urllib.parse.quote(symbol, safe="")
-    request = urllib.request.Request(
-        f"https://query1.finance.yahoo.com/v8/finance/chart/{encoded_symbol}?{query}",
-        headers={"User-Agent": "CapitalBench/1.0"},
-    )
-    with urllib.request.urlopen(request, timeout=30) as response:
-        payload = json.loads(response.read().decode("utf-8"))
-    result = ((payload.get("chart") or {}).get("result") or [None])[0]
-    if not result:
-        raise ValueError(f"Yahoo chart returned no result for {symbol}")
-    timestamps = result.get("timestamp") or []
-    indicators = result.get("indicators") or {}
-    quote = (indicators.get("quote") or [{}])[0]
-    adjusted = (indicators.get("adjclose") or [{}])[0].get("adjclose") or []
-    closes = quote.get("close") or []
-    volumes = quote.get("volume") or []
-    rows: list[dict[str, Any]] = []
-    for index, timestamp in enumerate(timestamps):
-        close = closes[index] if index < len(closes) else None
-        adj_close = adjusted[index] if index < len(adjusted) else None
-        if adj_close is None:
-            adj_close = close
-        if adj_close is None:
-            continue
-        rows.append(
-            {
-                "date": datetime.fromtimestamp(int(timestamp), tz=timezone.utc).date().isoformat(),
-                "adjClose": adj_close,
-                "volume": volumes[index] if index < len(volumes) else None,
-            }
-        )
-    return rows
+    return [
+        {
+            "date": row["date"],
+            "adjClose": row["adjClose"],
+            "volume": row.get("volume"),
+        }
+        for row in _fetch_yahoo_chart_adjclose(symbol, start, end)
+    ]
 
 
 def _parse_history(rows: list[dict[str, Any]], as_of: date) -> list[dict[str, Any]]:

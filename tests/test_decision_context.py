@@ -108,7 +108,7 @@ def test_yahoo_history_uses_close_when_latest_adjusted_close_is_pending(monkeypa
         assert query["interval"] == ["1d"]
         return Response()
 
-    monkeypatch.setattr("capitalbench.decision_context.urllib.request.urlopen", fake_urlopen)
+    monkeypatch.setattr("capitalbench.performance.urllib.request.urlopen", fake_urlopen)
 
     rows = _fetch_yahoo_history("AAA", date(2026, 1, 1), date(2026, 1, 30))
 
@@ -117,6 +117,55 @@ def test_yahoo_history_uses_close_when_latest_adjusted_close_is_pending(monkeypa
             "date": "2026-01-30",
             "adjClose": 123.45,
             "volume": 987654,
+        }
+    ]
+
+
+def test_yahoo_history_uses_completed_regular_market_metadata_when_daily_close_is_pending(monkeypatch) -> None:
+    payload = {
+        "chart": {
+            "result": [
+                {
+                    "meta": {
+                        "regularMarketTime": 1786996800,
+                        "regularMarketPrice": 772.67,
+                        "regularMarketVolume": 33_285_717,
+                        "currentTradingPeriod": {
+                            "regular": {"start": 1787059800, "end": 1787083200}
+                        },
+                    },
+                    "timestamp": [1786996800],
+                    "indicators": {
+                        "quote": [{"close": [None], "volume": [33_285_717]}],
+                        "adjclose": [{"adjclose": [None]}],
+                    },
+                }
+            ]
+        }
+    }
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+        def read(self):
+            return json.dumps(payload).encode("utf-8")
+
+    monkeypatch.setattr(
+        "capitalbench.performance.urllib.request.urlopen",
+        lambda _request, timeout: Response(),
+    )
+
+    rows = _fetch_yahoo_history("SPY", date(2026, 8, 1), date(2026, 8, 17))
+
+    assert rows == [
+        {
+            "date": "2026-08-17",
+            "adjClose": 772.67,
+            "volume": 33_285_717,
         }
     ]
 

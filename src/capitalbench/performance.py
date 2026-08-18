@@ -276,22 +276,55 @@ def _fetch_yahoo_chart_adjclose(symbol: str, start_date: date, end_date: date) -
     result = ((data.get("chart") or {}).get("result") or [None])[0]
     if not result:
         raise ValueError(f"Yahoo chart returned no result for {symbol}")
+    meta = result.get("meta") or {}
+    regular_market_timestamp = meta.get("regularMarketTime")
+    regular_market_date = (
+        datetime.fromtimestamp(int(regular_market_timestamp), tz=timezone.utc).date().isoformat()
+        if regular_market_timestamp
+        else None
+    )
+    regular_period = ((meta.get("currentTradingPeriod") or {}).get("regular") or {})
+    regular_start = regular_period.get("start")
+    regular_end = regular_period.get("end")
+    regular_market_complete = bool(
+        regular_market_timestamp
+        and (
+            (regular_start and int(regular_market_timestamp) < int(regular_start))
+            or (regular_end and int(regular_market_timestamp) >= int(regular_end))
+        )
+    )
     timestamps = result.get("timestamp") or []
     indicators = result.get("indicators") or {}
     quote = (indicators.get("quote") or [{}])[0]
     adjclose = (indicators.get("adjclose") or [{}])[0].get("adjclose") or []
     closes = quote.get("close") or []
+    volumes = quote.get("volume") or []
     rows: list[dict[str, Any]] = []
     for index, timestamp in enumerate(timestamps):
+        row_date = datetime.fromtimestamp(int(timestamp), tz=timezone.utc).date().isoformat()
         close = closes[index] if index < len(closes) else None
         adj_close = adjclose[index] if index < len(adjclose) else close
+        if adj_close is None:
+            adj_close = close
+        volume = volumes[index] if index < len(volumes) else None
+        if (
+            close is None
+            and regular_market_complete
+            and row_date == regular_market_date
+            and meta.get("regularMarketPrice") is not None
+        ):
+            close = meta.get("regularMarketPrice")
+            adj_close = close
+            if volume is None:
+                volume = meta.get("regularMarketVolume")
         if close is None or adj_close is None:
             continue
         rows.append(
             {
-                "date": datetime.fromtimestamp(int(timestamp), tz=timezone.utc).date().isoformat(),
+                "date": row_date,
                 "close": close,
                 "adjClose": adj_close,
+                "volume": volume,
             }
         )
     if not rows:
