@@ -179,13 +179,12 @@ def _ensure_daily_snapshot(
     if skip_fetch:
         return "missing"
 
-    api_key = os.environ.get(TIINGO_API_KEY_ENV, "").strip()
-    if not api_key:
-        raise RuntimeError("TIINGO_API_KEY is required unless --skip-fetch is passed")
-
     selected_round = universe_round or _latest_universe_round(rounds_dir)
     options = load_options(selected_round)
-    fetch = fetcher or fetch_tiingo_eod_prices
+    api_key = os.environ.get(TIINGO_API_KEY_ENV, "").strip()
+    if fetcher is not None and not api_key:
+        raise RuntimeError("TIINGO_API_KEY is required when a custom Tiingo fetcher is supplied")
+    fetch = fetcher or (fetch_tiingo_eod_prices if api_key else _unavailable_tiingo_fetcher)
     rows = _price_rows_for_date(
         options,
         snapshot_date,
@@ -231,6 +230,7 @@ def _update_interim_round(
         return InterimRoundSummary(round_id, None, "skipped", f"not a {track} round")
     if _parse_date(snapshot_date) >= _parse_date(manifest.exit_date):
         return InterimRoundSummary(round_id, None, "skipped", "snapshot date is on or after exit_date")
+    entry_prices_created = _materialize_entry_prices(round_path, manifest.entry_date, snapshots)
     if not (round_path / "prices" / "entry_prices.csv").exists():
         return InterimRoundSummary(round_id, None, "skipped", "missing entry_prices.csv")
 
@@ -244,7 +244,7 @@ def _update_interim_round(
         if _parse_date(manifest.entry_date) < _parse_date(snapshot.target_date) < _parse_date(manifest.exit_date)
     ]
     selected_snapshots.sort(key=lambda item: item.target_date)
-    if not selected_snapshots:
+    if not selected_snapshots and not entry_prices_created and snapshot_date != manifest.entry_date:
         return InterimRoundSummary(round_id, run_id, "skipped", "no reusable interim snapshots after entry_date")
 
     try:
@@ -271,14 +271,66 @@ def _update_interim_round(
             sync_status = "failed"
             sync_message = str(exc)
 
+    summary_snapshots = selected_snapshots or [
+        PriceSnapshotFile(
+            target_date=manifest.entry_date,
+            path=round_path / "prices" / "entry_prices.csv",
+            row_count=0,
+            source="round_entry_prices",
+        )
+    ]
     return _updated_summary(
         round_id=round_id,
         run_id=run_id,
         output=output,
-        selected_snapshots=selected_snapshots,
+        selected_snapshots=summary_snapshots,
         sync_status=sync_status,
         sync_message=sync_message,
     )
+
+
+def _materialize_entry_prices(
+    round_path: Path,
+    entry_date: str,
+    snapshots: list[PriceSnapshotFile],
+) -> bool:
+    entry_path = round_path / "prices" / "entry_prices.csv"
+    if entry_path.exists():
+        return False
+    matching = next((snapshot for snapshot in snapshots if snapshot.target_date == entry_date), None)
+    if matching is None:
+        return False
+
+    with matching.path.open("r", encoding="utf-8", newline="") as handle:
+        rows_by_option = {
+            str(row.get("option_id") or "").strip(): row
+            for row in csv.DictReader(handle)
+            if str(row.get("option_id") or "").strip()
+        }
+    option_ids = [option.option_id for option in load_options(round_path)]
+    missing = [option_id for option_id in option_ids if option_id not in rows_by_option]
+    if missing:
+        raise ValueError(
+            f"entry snapshot {matching.path} is missing round options: {', '.join(missing)}"
+        )
+    ordered_rows = [
+        {
+            "option_id": option_id,
+            "symbol": rows_by_option[option_id].get("symbol") or "",
+            "date": rows_by_option[option_id].get("date") or entry_date,
+            "close": rows_by_option[option_id].get("close") or rows_by_option[option_id].get("price") or "",
+            "adj_close": rows_by_option[option_id].get("adj_close") or rows_by_option[option_id].get("price") or "",
+            "source": rows_by_option[option_id].get("source") or rows_by_option[option_id].get("price_source") or "",
+        }
+        for option_id in option_ids
+    ]
+    entry_path.parent.mkdir(parents=True, exist_ok=True)
+    _write_price_csv(entry_path, ordered_rows)
+    return True
+
+
+def _unavailable_tiingo_fetcher(*_args: Any) -> list[dict[str, Any]]:
+    raise RuntimeError("Tiingo is unavailable because TIINGO_API_KEY is not configured")
 
 
 def _updated_summary(

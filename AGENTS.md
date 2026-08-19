@@ -32,9 +32,9 @@ provider-supported reasoning setting that still returns the required valid
 structured decision. Technical or formatting retries must remain disclosed and
 must never be used to seek a different portfolio.
 
-The active production roster has eight models: GPT-5.6 SOL, Grok 4.3, Grok
-4.5, Grok 4.6, Gemini 3.1 Pro, Claude Opus 4.8, Claude Opus 5, and Claude
-Fable 5. Grok 4.6 joined future rounds effective `2026-08-13T03:14:52Z`
+The active production roster has seven models: GPT-5.6 SOL, Grok 4.3, Grok
+4.5, Grok 4.6, Gemini 3.1 Pro, Claude Opus 5, and Claude Fable 5. Grok 4.6
+joined future rounds effective `2026-08-13T03:14:52Z`
 using the xAI API model ID `grok-4.6`; do not backfill it into older rounds.
 GPT-5.5 was retired from new rounds by operator direction effective
 `2026-08-13T02:59:24Z` (August 12, 2026 in America/Toronto), with no designated
@@ -42,7 +42,12 @@ successor. Preserve all GPT-5.5 historical submissions, results, profiles, and
 comparison sets; do not backfill or remove it from an already frozen roster.
 Claude Opus 5 joined future rounds effective July 24, 2026 using the Anthropic
 API model ID `claude-opus-5`; do not backfill it into older rounds. Claude Opus
-4.7 was retired from new rounds effective July 21, 2026; preserve all of its
+4.8 was retired from new rounds by operator direction effective
+`2026-08-19T05:54:20Z` (August 19, 2026 in America/Toronto), with no designated
+successor. Preserve all Claude Opus 4.8 historical submissions, results,
+profiles, and comparison sets; do not backfill or remove it from an already
+frozen roster. Claude Opus 4.7 was retired from new rounds effective July 21,
+2026; preserve all of its
 historical submissions, results, profiles, and comparison sets. Never delete a
 retired model from `configs/models.v2.yaml`. New production round manifests
 freeze `model_roster_version`, `model_roster_frozen_at_utc`, and

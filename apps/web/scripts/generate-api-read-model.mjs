@@ -1965,7 +1965,7 @@ function loadSubmissions({ roundPath, round, selectedRun, assetsById, recentWinn
       status: round.status,
       entry_date: round.entry_date,
       exit_date: round.exit_date,
-      submission_format: portfolioAllocations.length > 1 ? "portfolio" : "single_pick",
+      submission_format: String(round.submission_format ?? (portfolioAllocations.length > 1 ? "portfolio" : "single_pick")),
       selected_option_id: primaryOptionId(payload),
       holding_count: portfolioAllocations.length || 1,
       confidence: numberValue(payload.confidence),

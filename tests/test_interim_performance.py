@@ -213,6 +213,82 @@ def test_update_interim_performance_falls_back_to_yahoo_when_tiingo_fails(
     assert {row["source"] for row in rows} == {"cash", "yahoo_chart_adjclose"}
 
 
+def test_update_interim_performance_uses_yahoo_without_tiingo_key(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    rounds_dir = tmp_path / "rounds"
+    _create_round(rounds_dir, "round-one", entry_date="2026-01-02", exit_date="2026-02-02")
+    snapshots_dir = tmp_path / "snapshots"
+
+    monkeypatch.delenv("TIINGO_API_KEY", raising=False)
+    monkeypatch.setattr(
+        "capitalbench.prices._fetch_yahoo_chart_adjclose",
+        lambda _symbol, _start, end: [
+            {
+                "date": end.isoformat(),
+                "close": 101.0,
+                "adjClose": 101.0,
+                "volume": 1_000,
+            }
+        ],
+    )
+
+    output = update_interim_performance(
+        rounds_dir=rounds_dir,
+        snapshot_date="2026-01-06",
+        snapshots_dir=snapshots_dir,
+        track="all",
+        sync=False,
+        min_snapshot_rows=1,
+    )
+
+    assert output.snapshot_status == "created"
+    rows = _read_csv(snapshots_dir / "2026-01-06.csv")
+    assert len(rows) == 4
+    assert {row["source"] for row in rows} == {"cash", "yahoo_chart_adjclose"}
+
+
+def test_update_interim_performance_promotes_entry_snapshot_for_new_round(
+    tmp_path: Path,
+) -> None:
+    rounds_dir = tmp_path / "rounds"
+    round_path = _create_round(
+        rounds_dir,
+        "round-one",
+        entry_date="2026-01-06",
+        exit_date="2026-02-06",
+    )
+    (round_path / "prices" / "entry_prices.csv").unlink()
+    snapshots_dir = tmp_path / "snapshots"
+    _write_prices(
+        snapshots_dir / "2026-01-06.csv",
+        [
+            {"option_id": "opt_a", "price": 110, "date": "2026-01-06", "source": "fixture"},
+            {"option_id": "opt_b", "price": 97, "date": "2026-01-06", "source": "fixture"},
+            {"option_id": "sp500", "price": 105, "date": "2026-01-06", "source": "fixture"},
+            {"option_id": "cash", "price": 1, "date": "2026-01-06", "source": "cash"},
+        ],
+    )
+
+    output = update_interim_performance(
+        rounds_dir=rounds_dir,
+        snapshot_date="2026-01-06",
+        snapshots_dir=snapshots_dir,
+        track="all",
+        skip_fetch=True,
+        sync=False,
+        min_snapshot_rows=1,
+    )
+
+    assert {item.round_id for item in output.updated_rounds} == {"round-one"}
+    assert (round_path / "prices" / "entry_prices.csv").exists()
+    performance_rows = _read_csv(round_path / "runs" / "official" / "results" / "weekly_performance.csv")
+    assert len(performance_rows) == 1
+    assert performance_rows[0]["target_date"] == "2026-01-06"
+    assert performance_rows[0]["days_elapsed"] == "0"
+
+
 def test_update_interim_performance_skips_weekly_track_by_default(tmp_path: Path) -> None:
     rounds_dir = tmp_path / "rounds"
     weekly = _create_round(

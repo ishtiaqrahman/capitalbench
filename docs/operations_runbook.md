@@ -50,6 +50,11 @@ tokens, and raw provider responses.
    roster. Claude Opus 5 is forward-only beginning with the July 24, 2026
    weekly and monthly rounds and must not be backfilled.
 
+   Claude Opus 4.8 is retired from new rounds effective August 19, 2026. Keep
+   its registry entry and every historical submission, result, profile, and
+   comparison set. Do not remove it from an already frozen roster or backfill
+   its retirement into older rounds.
+
 3. Validate the run.
 
    ```bash
@@ -140,6 +145,11 @@ The command reuses full-universe `entry_prices.csv` and `exit_prices.csv`
 packages from other rounds as eligible snapshots. That keeps free-tier Tiingo
 usage low: one new daily full-universe pull can update all active weekly and
 monthly charts.
+
+When a daily snapshot matches a newly accepted round's entry date, the command
+also promotes that same full-universe package to `prices/entry_prices.csv` and
+publishes the day-zero baseline. If Tiingo is unavailable or its key is absent,
+the snapshot fetch automatically falls back to Yahoo adjusted-close data.
 
 ## Insights Refresh
 

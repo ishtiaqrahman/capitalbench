@@ -31,6 +31,9 @@ EXPECTED_POST_OPUS_4_7_RETIREMENT_MODEL_IDS = EXPECTED_PORTFOLIO_V2_MODEL_IDS - 
 EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS = EXPECTED_POST_OPUS_4_7_RETIREMENT_MODEL_IDS - {
     "openai-gpt-5-5"
 }
+EXPECTED_POST_OPUS_4_8_RETIREMENT_MODEL_IDS = EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS - {
+    "anthropic-claude-opus-4-8"
+}
 EXPECTED_PRE_GROK_4_6_MODEL_IDS = EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS - {
     "xai-grok-4-6"
 }
@@ -74,6 +77,18 @@ def test_active_portfolio_v2_roster_excludes_models_after_retirement() -> None:
             round_id="CB-2026-08-13-1W",
         )
     ) == EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS
+    assert set(
+        active_portfolio_v2_model_ids(
+            "2026-08-19T05:54:19Z",
+            round_id="CB-2026-08-19-1W",
+        )
+    ) == EXPECTED_ACTIVE_PORTFOLIO_V2_MODEL_IDS
+    assert set(
+        active_portfolio_v2_model_ids(
+            "2026-08-19T05:54:20Z",
+            round_id="CB-2026-08-19-1W",
+        )
+    ) == EXPECTED_POST_OPUS_4_8_RETIREMENT_MODEL_IDS
 
 
 def test_roster_version_is_order_independent() -> None:
