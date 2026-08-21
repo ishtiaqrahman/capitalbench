@@ -1253,6 +1253,19 @@ function pctValue(value) {
   return `${numeric.toFixed(2)}%`;
 }
 
+function modelDirectoryPctValue(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return "n/a";
+  return `${numeric.toFixed(numeric >= 10 ? 1 : 2)}%`;
+}
+
+function modelRiskScoreValue(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return "n/a";
+  const normalized = Number.parseFloat(numeric.toPrecision(15));
+  return `${normalized.toFixed(2)} / 5`;
+}
+
 function numberLabel(value, digits = 1) {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric.toFixed(digits) : "n/a";
@@ -3457,7 +3470,7 @@ for (const model of apiReadModel.models) {
   includes(modelsIndexHtml, `<strong>${directoryLive.portfolio_count}</strong>`, `${directoryContext} live portfolio count`);
   includes(modelsIndexHtml, `<strong>${directoryCompletedCount}</strong>`, `${directoryContext} completed count`);
   if (directoryLive.top_holding) {
-    const topHoldingLabel = `${assetDisplay(directoryLive.top_holding)} ${pctValue(directoryLive.top_holding.exposure_pct)}`;
+    const topHoldingLabel = `${assetDisplay(directoryLive.top_holding)} ${modelDirectoryPctValue(directoryLive.top_holding.exposure_pct)}`;
     includesAny(
       modelsIndexHtml,
       [topHoldingLabel, htmlText(topHoldingLabel)],
@@ -3469,7 +3482,7 @@ for (const model of apiReadModel.models) {
   if (directoryStyle) {
     includes(modelsIndexHtml, directoryStyle.risk_appetite_label, `${directoryContext} risk label`);
     if (typeof directoryStyle.risk_appetite_score === "number") {
-      includes(modelsIndexHtml, `${directoryStyle.risk_appetite_score.toFixed(2)} / 5`, `${directoryContext} risk score`);
+      includes(modelsIndexHtml, modelRiskScoreValue(directoryStyle.risk_appetite_score), `${directoryContext} risk score`);
     }
   }
   const directoryBehavior = apiReadModel.model_behavior?.profiles?.find((row) => row.model_id === model.model_id);
@@ -3587,7 +3600,7 @@ for (const model of apiReadModel.models) {
   if (style) {
     includes(html, style.risk_appetite_label, `${context} risk label`);
     if (typeof style.risk_appetite_score === "number") {
-      includes(html, `${style.risk_appetite_score.toFixed(2)} / 5`, `${context} risk score`);
+      includes(html, modelRiskScoreValue(style.risk_appetite_score), `${context} risk score`);
     }
   }
 

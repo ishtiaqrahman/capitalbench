@@ -53,14 +53,14 @@ function coverage(count: number | null | undefined, total: number | null | undef
 
 function riskScore(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
-  const rounded = Math.round((value + Number.EPSILON * Math.abs(value)) * 100) / 100;
-  return `${rounded.toFixed(2)} / 5`;
+  const normalized = Number.parseFloat(value.toPrecision(15));
+  return `${normalized.toFixed(2)} / 5`;
 }
 
 function riskScoreShort(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "n/a";
-  const rounded = Math.round((value + Number.EPSILON * Math.abs(value)) * 100) / 100;
-  return rounded.toFixed(2);
+  const normalized = Number.parseFloat(value.toPrecision(15));
+  return normalized.toFixed(2);
 }
 
 function riskWidth(value: number | null | undefined): string {
