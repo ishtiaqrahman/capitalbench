@@ -384,7 +384,21 @@ def audit_text(path: Path, text: str) -> list[Finding]:
     return findings
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    args = sys.argv[1:] if argv is None else argv
+    if args == ["--automation-readiness-only"]:
+        findings = audit_automation_readiness()
+        if findings:
+            print("Automation readiness check failed:\n")
+            for finding in findings:
+                print(f"- {finding.format()}")
+            return 1
+        print("Automation readiness check passed.")
+        return 0
+    if args:
+        print("usage: public_repo_audit.py [--automation-readiness-only]", file=sys.stderr)
+        return 2
+
     try:
         files = git_candidate_files()
     except subprocess.CalledProcessError as exc:

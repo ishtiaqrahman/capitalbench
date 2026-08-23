@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 from dataclasses import dataclass, field
 from datetime import datetime, time, timedelta, timezone
 from pathlib import Path
@@ -9,7 +10,7 @@ from typing import Any, Protocol
 from .cumulative import publish_cumulative, publish_latest, track_for_horizon_days
 from .hashing import round_hashes_match
 from .io import load_manifest, read_json, read_yaml, write_yaml
-from .prices import fetch_selected_prices
+from .prices import fetch_selected_prices, materialize_price_snapshot
 from .report import publish_report
 from .roster import (
     LEGACY_PORTFOLIO_V2_METHODOLOGY,
@@ -294,18 +295,35 @@ def resolve_accepted_round(
     _validate_resolution_gate(round_path, run_manifest)
 
     if fetch_exit_prices:
-        # Refresh both sides together so final adjusted-close ETF returns use one
-        # post-window price basis, not a stale entry snapshot plus a fresh exit.
-        fetch_selected_prices(
-            round_path=round_path,
-            run_id=run_id,
-            entry_date=manifest.entry_date,
-            exit_date=manifest.exit_date,
-            overwrite_prices=True,
-            full_universe=full_universe_prices,
-            price_side="both",
-            allow_previous_trading_day_exit=True,
-        )
+        exit_prices_path = round_path / "prices" / "exit_prices.csv"
+        snapshot_path = _resolution_snapshot_path(rounds_dir, manifest.exit_date)
+        reused_snapshot = False
+        if full_universe_prices and snapshot_path.exists():
+            try:
+                materialize_price_snapshot(
+                    round_path=round_path,
+                    snapshot_path=snapshot_path,
+                    output_path=exit_prices_path,
+                )
+                reused_snapshot = True
+            except ValueError:
+                # An older universe snapshot may not contain every option in
+                # this frozen round. Fetch the round's full universe instead.
+                reused_snapshot = False
+        if not reused_snapshot:
+            output = fetch_selected_prices(
+                round_path=round_path,
+                run_id=run_id,
+                entry_date=None,
+                exit_date=manifest.exit_date,
+                overwrite_prices=True,
+                full_universe=full_universe_prices,
+                price_side="exit",
+                allow_previous_trading_day_exit=True,
+            )
+            if full_universe_prices and output.exit_prices_path is not None:
+                snapshot_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(output.exit_prices_path, snapshot_path)
     elif not (round_path / "prices" / "exit_prices.csv").exists():
         raise FileNotFoundError("missing exit prices and fetch_exit_prices is false")
 
@@ -343,6 +361,11 @@ def resolve_accepted_round(
             "cumulative_report": str(cumulative.cumulative_report_path),
         },
     )
+
+
+def _resolution_snapshot_path(rounds_dir: Path, exit_date: str) -> Path:
+    project_root = rounds_dir.parent if rounds_dir.name == "rounds" else rounds_dir
+    return project_root / "market_data" / "daily_price_snapshots" / f"{exit_date}.csv"
 
 
 def _automation_run_supabase(
@@ -554,7 +577,7 @@ def _validate_resolution_gate(round_path: Path, run_manifest: dict[str, Any]) ->
     if not bool(run_manifest.get("operator_selected_official")):
         raise ValueError("official run has not been accepted by operator")
     if not (round_path / "prices" / "entry_prices.csv").exists():
-        raise FileNotFoundError("missing entry prices")
+        raise FileNotFoundError("missing frozen entry prices; resolution stopped before fetching exit prices")
 
 
 def _automation_job_row(

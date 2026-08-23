@@ -274,7 +274,7 @@ def test_fetch_prices_can_use_previous_trading_day_for_exit_only(tmp_path: Path,
     assert all(row["close"] == "101.0" for row in non_cash_rows)
 
 
-def test_fetch_prices_falls_back_to_yahoo_when_tiingo_rate_limited(tmp_path: Path, monkeypatch) -> None:
+def test_fetch_prices_uses_yahoo_for_rest_of_batch_when_tiingo_rate_limited(tmp_path: Path, monkeypatch) -> None:
     round_path = _create_round_with_submission(tmp_path)
     monkeypatch.setenv("TIINGO_API_KEY", "test-key")
     tiingo_calls: list[str] = []
@@ -300,7 +300,7 @@ def test_fetch_prices_falls_back_to_yahoo_when_tiingo_rate_limited(tmp_path: Pat
         price_side="entry",
     )
 
-    assert tiingo_calls == ["AAA", "BBB", "SPY"]
+    assert tiingo_calls == ["AAA"]
     assert yahoo_calls == ["AAA", "BBB", "SPY"]
     with output.entry_prices_path.open("r", encoding="utf-8", newline="") as handle:
         rows = list(csv.DictReader(handle))

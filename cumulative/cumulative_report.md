@@ -8,14 +8,14 @@ Each round is a separate market decision with its own declared scoring window. O
 
 | Rank | Model | Provider | Resolved Rounds | Avg Return | Avg S&P Return | Avg Alpha | Hit Rate vs S&P | Avg Regret | Cumulative Return | Cumulative S&P Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | openai-gpt-5-6-sol | openai | 5 | 3.35% | 3.26% | 0.09% | 40.00% | 11.90% | 17.72% | 17.38% |
-| 2 | xai-grok-4-3 | xai | 35 | 0.08% | 0.77% | -0.69% | 48.57% | 17.94% | 0.32% | 30.07% |
-| 3 | xai-grok-4-5 | xai | 7 | 2.44% | 3.27% | -0.83% | 57.14% | 12.12% | 17.89% | 25.26% |
-| 4 | anthropic-claude-opus-4-8 | anthropic | 32 | -0.31% | 0.93% | -1.24% | 34.38% | 18.91% | -11.11% | 33.83% |
-| 5 | anthropic-claude-fable-5 | anthropic | 13 | 1.05% | 2.55% | -1.50% | 30.77% | 15.90% | 14.06% | 38.60% |
+| 1 | xai-grok-4-5 | xai | 10 | 3.53% | 3.14% | 0.39% | 70.00% | 14.70% | 40.76% | 36.22% |
+| 2 | openai-gpt-5-6-sol | openai | 8 | 2.88% | 3.10% | -0.22% | 25.00% | 16.71% | 25.27% | 27.65% |
+| 3 | xai-grok-4-3 | xai | 38 | 0.43% | 0.93% | -0.50% | 52.63% | 18.28% | 14.39% | 41.45% |
+| 4 | anthropic-claude-opus-4-8 | anthropic | 35 | 0.21% | 1.10% | -0.88% | 40.00% | 19.09% | 5.02% | 45.54% |
+| 5 | anthropic-claude-fable-5 | anthropic | 16 | 1.63% | 2.60% | -0.97% | 37.50% | 17.17% | 28.70% | 50.72% |
 | 6 | anthropic-claude-opus-4-7 | anthropic | 35 | -0.92% | 0.77% | -1.69% | 34.29% | 18.94% | -29.58% | 30.07% |
-| 7 | google-gemini-3-1-pro | google | 35 | -1.54% | 0.77% | -2.32% | 25.71% | 19.57% | -44.51% | 30.07% |
-| 8 | openai-gpt-5-5 | openai | 35 | -2.92% | 0.77% | -3.69% | 20.00% | 20.94% | -66.40% | 30.07% |
+| 7 | google-gemini-3-1-pro | google | 38 | -0.88% | 0.93% | -1.81% | 31.58% | 19.59% | -32.16% | 41.45% |
+| 8 | openai-gpt-5-5 | openai | 38 | -2.29% | 0.93% | -3.22% | 26.32% | 21.00% | -60.97% | 41.45% |
 
 ## Cumulative Stability Leaderboard
 
@@ -60,6 +60,9 @@ _No rows._
 | CB-2026-07-14-1M | official-20260714 |  | yes | no |  |
 | CB-2026-07-15-1M | official-20260715 |  | yes | no |  |
 | CB-2026-07-17-1M | official-v2-all-final-20260717 |  | yes | no |  |
+| CB-2026-07-21-1M | official-v2-2-20260721-1m |  | yes | no |  |
+| CB-2026-07-22-1M | official-v2-2-20260722-1m |  | yes | no |  |
+| CB-2026-07-23-1M | official-v2-2-20260723-1m |  | yes | no |  |
 
 ## Methodology
 
@@ -85,9 +88,6 @@ The official leaderboard measures the saved public model decision. The stability
 ## Warnings
 
 - Round CB-2026-07-16-1M has no scored official or stability runs.
-- Round CB-2026-07-21-1M has no scored official or stability runs.
-- Round CB-2026-07-22-1M has no scored official or stability runs.
-- Round CB-2026-07-23-1M has no scored official or stability runs.
 - Round CB-2026-07-24-1M has no scored official or stability runs.
 - Round CB-2026-07-27-1M has no scored official or stability runs.
 - Round CB-2026-07-28-1M has no scored official or stability runs.
@@ -102,5 +102,9 @@ The official leaderboard measures the saved public model decision. The stability
 - Round CB-2026-08-13-1M has no scored official or stability runs.
 - Round CB-2026-08-15-1M has no scored official or stability runs.
 - Round CB-2026-08-18-1M has no scored official or stability runs.
+- Round CB-2026-08-19-1M has no scored official or stability runs.
+- Round CB-2026-08-20-1M has no scored official or stability runs.
+- Round CB-2026-08-21-1M has no scored official or stability runs.
+- Round CB-2026-08-23-1M has no scored official or stability runs.
 - Round example-round has no scored official or stability runs.
 - Round example-round-2 has no scored official or stability runs.

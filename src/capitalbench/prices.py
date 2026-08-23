@@ -166,6 +166,7 @@ def _price_rows_for_date(
     allow_yahoo_fallback: bool = False,
 ) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
+    tiingo_unavailable: Exception | None = None
     start_date = (
         _fallback_start_date(price_date, fallback_lookback_days)
         if allow_previous_trading_day
@@ -188,6 +189,8 @@ def _price_rows_for_date(
         if not symbol:
             raise ValueError(f"non-cash option has no Tiingo symbol: {option.option_id}")
         try:
+            if tiingo_unavailable is not None:
+                raise tiingo_unavailable
             tiingo_rows = fetch(symbol, start_date, price_date, api_key)
             price_row = _select_tiingo_row(
                 option.option_id,
@@ -207,8 +210,50 @@ def _price_rows_for_date(
                 fallback_lookback_days=fallback_lookback_days,
                 original_error=exc,
             )
+            # A provider failure followed by a successful Yahoo response is a
+            # batch-level signal. Avoid repeating the same Tiingo retry delay
+            # for every remaining symbol in this snapshot.
+            tiingo_unavailable = exc
         rows.append(price_row)
     return rows
+
+
+def materialize_price_snapshot(
+    *,
+    round_path: Path,
+    snapshot_path: Path,
+    output_path: Path,
+) -> Path:
+    """Validate, order, and copy a full-universe snapshot into a round."""
+
+    with snapshot_path.open("r", encoding="utf-8", newline="") as handle:
+        rows_by_option = {
+            str(row.get("option_id") or "").strip(): row
+            for row in csv.DictReader(handle)
+            if str(row.get("option_id") or "").strip()
+        }
+
+    option_ids = [option.option_id for option in load_options(round_path)]
+    missing = [option_id for option_id in option_ids if option_id not in rows_by_option]
+    if missing:
+        raise ValueError(
+            f"price snapshot {snapshot_path} is missing round options: {', '.join(missing)}"
+        )
+
+    ordered_rows = [
+        {
+            "option_id": option_id,
+            "symbol": rows_by_option[option_id].get("symbol") or "",
+            "date": rows_by_option[option_id].get("date") or "",
+            "close": rows_by_option[option_id].get("close") or rows_by_option[option_id].get("price") or "",
+            "adj_close": rows_by_option[option_id].get("adj_close") or rows_by_option[option_id].get("price") or "",
+            "source": rows_by_option[option_id].get("source") or rows_by_option[option_id].get("price_source") or "",
+        }
+        for option_id in option_ids
+    ]
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    _write_price_csv(output_path, ordered_rows)
+    return output_path
 
 
 def _price_row_from_yahoo(

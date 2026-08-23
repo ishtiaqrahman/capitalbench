@@ -13,6 +13,18 @@ SPEC.loader.exec_module(public_repo_audit)
 entry_prices_are_due = public_repo_audit.entry_prices_are_due
 
 
+def test_automation_readiness_only_mode_skips_full_repository_scan(monkeypatch, capsys) -> None:
+    monkeypatch.setattr(public_repo_audit, "audit_automation_readiness", lambda: [])
+    monkeypatch.setattr(
+        public_repo_audit,
+        "git_candidate_files",
+        lambda: (_ for _ in ()).throw(AssertionError("full repository scan should not run")),
+    )
+
+    assert public_repo_audit.main(["--automation-readiness-only"]) == 0
+    assert "Automation readiness check passed" in capsys.readouterr().out
+
+
 def _round_with_entry_date(tmp_path: Path, entry_date: str) -> Path:
     round_path = tmp_path / "round"
     round_path.mkdir()

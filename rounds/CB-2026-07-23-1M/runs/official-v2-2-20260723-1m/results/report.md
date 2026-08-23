@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-07-23-1M / official-v2-2-20260723-1m
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-07-23-1M
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-v2-2-20260723-1m
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench CB-2026-07-23-1M
+- Description: One-month market allocation evaluation round.
+- Decision date: 2026-07-23
 - Decision deadline: 2026-07-24T09:30:00Z
 - Horizon: one month
-- Official run ID: official-v2-2-20260723-1m
-- Mock: no
+- Entry date: 2026-07-23
+- Exit date: 2026-08-21
+- Entry rule: Use adjusted close prices on Thursday, July 23, 2026 as the one-month entry snapshot, calculated after regular trading ends and supplied in prices/entry_prices.csv.
+- Exit rule: Use adjusted close prices on Friday, August 21, 2026 as the one-month exit snapshot, the closest prior trading close to Sunday, August 23, and supplied in prices/exit_prices.csv.
+- Options: 70
 
 ## Model Decisions
 
@@ -95,45 +110,99 @@
 | SOLAR | Solar Energy | 52.849998474121094 | 49.31999969482422 | -0.06679278867009619 | 69 |
 | UTILITIES | Utilities Sector | 46.189998626708984 | 42.77000045776367 | -0.07404196299256283 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| anthropic-claude-fable-5 | portfolio | ENERGY | 5 | 0.6 | 0.0717412974891416 | 0.07366929162905607 | 0.0363613473599141 | 0.2190309362186808 |  | True | True |
-| openai-gpt-5-5 | portfolio | ENERGY | 4 | 0.57 | 0.0717412974891416 | 0.0636243684221033 | 0.02631642415296133 | 0.22907585942563358 |  | True | True |
-| google-gemini-3-1-pro | portfolio | ENERGY | 4 | 0.65 | 0.0717412974891416 | 0.05882651775143531 | 0.021518573482293343 | 0.23387371009630153 |  | True | True |
-| anthropic-claude-opus-4-8 | portfolio | HEALTHCARE | 4 | 0.55 | 0.08164019125659294 | 0.057665160068265484 | 0.020357215799123515 | 0.23503506777947136 |  | True | True |
-| xai-grok-4-5 | portfolio | ENERGY | 4 | 0.58 | 0.0717412974891416 | 0.0496310540154076 | 0.012323109746265631 | 0.24306917383232926 |  | True | True |
-| xai-grok-4-3 | portfolio | SP500 | 3 | 0.62 | 0.03730794426914197 | 0.049133555452427945 | 0.011825611183285976 | 0.2435666723953089 |  | True | True |
-| openai-gpt-5-6-sol | portfolio | AEROSPACE_DEFENSE | 4 | 0.58 | -0.00373588299378691 | 0.03393470584483955 | -0.00337323842430242 | 0.2587655220028973 |  | False | True |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-fable-5 | ENERGY | 30.0 | 0.0717412974891416 | 0.02152238924674248 | Brent at $100.69 (from sub-$72 early July) amid war shock; energy sector has strong 21-session active return (+8.41%) and low SPY beta, benefiting from sustained high crude through the window. |
+| anthropic-claude-fable-5 | LARGE_VALUE | 25.0 | 0.04512964578633527 | 0.011282411446583818 | Value leading (+1.54% 21s active), shallow drawdown, benefits from energy/financials tilt while growth de-rates on 4.69% 10-year yield. |
+| anthropic-claude-fable-5 | HEALTHCARE | 20.0 | 0.08164019125659294 | 0.01632803825131859 | Best 21-session active return (+5.46%), low beta (0.32) defensive exposure amid war/oil shock and equity weakness; low prior-window active return argues room to run. |
+| anthropic-claude-fable-5 | DIVIDEND | 15.0 | 0.07042687277507476 | 0.010564030916261213 | +2.62% 21s active, very low beta (0.27), shallow drawdown; suits an environment of elevated yields, energy shock, and negative market breadth. |
+| anthropic-claude-fable-5 | GOLD | 10.0 | 0.13972421768149967 | 0.013972421768149968 | Safe-haven hedge on war escalation and inflation pass-through; +1.80% over 5 sessions despite dollar strength, deep prior pullback offers entry. |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 30.0 | 0.08164019125659294 | 0.02449205737697788 | Defensive sector with strong recent active outperformance (+5.46% 21s), shallow drawdown, low beta; attractive after prior underperformance. |
+| anthropic-claude-opus-4-8 | ENERGY | 25.0 | 0.0717412974891416 | 0.0179353243722854 | Strongest active return (+8.41% 21s) amid Brent surging 7% to $100.69; oil momentum supports energy equities. |
+| anthropic-claude-opus-4-8 | FINANCIALS | 20.0 | 0.02955396125858356 | 0.005910792251716712 | Positive active return (+2.99% 21s), shallow drawdown, low volatility; benefits from steady rates and strong labor market. |
+| anthropic-claude-opus-4-8 | SP500 | 25.0 | 0.03730794426914197 | 0.009326986067285492 | Core benchmark exposure to reduce tracking risk while active tilts seek alpha. |
+| google-gemini-3-1-pro | ENERGY | 30.0 | 0.0717412974891416 | 0.02152238924674248 | Energy sector shows strong recent momentum and benefits from rising crude prices and tight inventories. |
+| google-gemini-3-1-pro | OIL | 20.0 | -0.03476955991483788 | -0.0069539119829675755 | Direct exposure to crude oil, which has surged recently amid tight supplies and strong demand proxies. |
+| google-gemini-3-1-pro | GOLD | 25.0 | 0.13972421768149967 | 0.03493105442037492 | Gold provides a hedge against inflation and geopolitical uncertainty, with recent positive momentum. |
+| google-gemini-3-1-pro | SP500 | 25.0 | 0.03730794426914197 | 0.009326986067285492 | Core equity exposure to balance the portfolio, despite recent weakness, supported by ongoing economic growth. |
+| openai-gpt-5-5 | ENERGY | 30.0 | 0.0717412974891416 | 0.02152238924674248 | Energy equities have direct support from the supplied oil shock, positive recent active performance, and a still-reasonable distance from highs versus crude itself. |
+| openai-gpt-5-5 | BROAD_COMMODITIES | 25.0 | 0.03266889092109415 | 0.008167222730273538 | Broad commodities provide diversified exposure to the energy-led inflation impulse while avoiding single-contract oil concentration. |
+| openai-gpt-5-5 | DIVIDEND | 25.0 | 0.07042687277507476 | 0.01760671819376869 | Dividend equities show strong recent active return, low drawdown, and lower beta, offering a defensive equity tilt if mega-cap growth remains under pressure. |
+| openai-gpt-5-5 | HEALTHCARE | 20.0 | 0.08164019125659294 | 0.01632803825131859 | Healthcare has a strong 21-day active return, shallow drawdown, and low market beta, fitting a defensive sector rotation case over the one-month window. |
+| openai-gpt-5-6-sol | AEROSPACE_DEFENSE | 35.0 | -0.00373588299378691 | -0.0013075590478254183 | RTX's strong sales, earnings, and cash-flow growth provide direct fundamental support, while geopolitical conditions may sustain defense demand. |
+| openai-gpt-5-6-sol | TECHNOLOGY | 25.0 | 0.027234523359286777 | 0.006808630839821694 | Strong prior relative performance and a recent relative pullback create a favorable setup around major technology earnings. |
+| openai-gpt-5-6-sol | ENERGY | 20.0 | 0.0717412974891416 | 0.01434825949782832 | Elevated crude prices and strong sector-relative momentum support near-term earnings expectations, with sizing limited by reversal risk. |
+| openai-gpt-5-6-sol | DIVIDEND | 20.0 | 0.07042687277507476 | 0.014085374555014952 | Positive short- and prior-window relative performance, moderate volatility, and mature-company exposure offer defensive participation during macro uncertainty. |
+| xai-grok-4-3 | SP500 | 50.0 | 0.03730794426914197 | 0.018653972134570984 | Broad US equity exposure with base forecast supported by recent stabilization and upcoming data releases. |
+| xai-grok-4-3 | ENERGY | 30.0 | 0.0717412974891416 | 0.02152238924674248 | Strong oil price momentum and inventory data support outperformance versus SPY. |
+| xai-grok-4-3 | JAPAN | 20.0 | 0.04478597035557241 | 0.008957194071114482 | Relative strength in prior active returns and Bank of Japan policy meeting provide catalyst. |
+| xai-grok-4-5 | ENERGY | 35.0 | 0.0717412974891416 | 0.025109454121199557 | Oil price spike and inventory tightness support energy equities outperformance versus broad market over the one-month window. |
+| xai-grok-4-5 | OIL | 15.0 | -0.03476955991483788 | -0.005215433987225682 | Direct crude exposure captures the sharp recent price move and elevated levels after the session surge. |
+| xai-grok-4-5 | HEALTHCARE | 25.0 | 0.08164019125659294 | 0.020410047814148236 | Defensive relative strength and positive active return provide diversification with higher base case than SPY. |
+| xai-grok-4-5 | SP500 | 25.0 | 0.03730794426914197 | 0.009326986067285492 | Core benchmark holding while concentrating active risk in higher-base energy and healthcare. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| anthropic-claude-fable-5 | ENERGY | 5 | 0.6 | 0.0717412974891416 | 0.07366929162905607 | 0.0363613473599141 | 0.2190309362186808 |  | True | True |
+| openai-gpt-5-5 | ENERGY | 4 | 0.57 | 0.0717412974891416 | 0.0636243684221033 | 0.02631642415296133 | 0.22907585942563358 |  | True | True |
+| google-gemini-3-1-pro | ENERGY | 4 | 0.65 | 0.0717412974891416 | 0.05882651775143531 | 0.021518573482293343 | 0.23387371009630153 |  | True | True |
+| anthropic-claude-opus-4-8 | HEALTHCARE | 4 | 0.55 | 0.08164019125659294 | 0.057665160068265484 | 0.020357215799123515 | 0.23503506777947136 |  | True | True |
+| xai-grok-4-5 | ENERGY | 4 | 0.58 | 0.0717412974891416 | 0.0496310540154076 | 0.012323109746265631 | 0.24306917383232926 |  | True | True |
+| xai-grok-4-3 | SP500 | 3 | 0.62 | 0.03730794426914197 | 0.049133555452427945 | 0.011825611183285976 | 0.2435666723953089 |  | True | True |
+| openai-gpt-5-6-sol | AEROSPACE_DEFENSE | 4 | 0.58 | -0.00373588299378691 | 0.03393470584483955 | -0.00337323842430242 | 0.2587655220028973 |  | False | True |
+
+## Cost-Adjusted Leaderboard
+
+| model_id | selected_option_id | alpha_vs_sp500 | cost_usd | alpha_per_dollar |
+| --- | --- | --- | --- | --- |
+| anthropic-claude-fable-5 | ENERGY | 0.0363613473599141 | 0.47733000000000003 | 0.0761765389979974 |
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | 35719b1e1aed21a35150d8f2f577abb191a027721c728526b6a206f5634efe48 |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | ef3cf65c548d3cc3229f74393dc61292363e4cb8a6e609b4a75e4c2062b6698e |
+| manifest.yaml | 595021ad891d72d904d3d5506d262e4f2c109f038eb91b24c45793d59fa56f32 |
+| submission_schema.json | 722025ee45d276e3f4d132a6be281de790a0c5478dc0051f23ade0524ff79571 |
+| market_data/universe_decision_context.csv | d263fa53ccb0b7f09a8c639491bd44ea37957575064b13c7d7a62be40c99b0d2 |
+| market_data/universe_decision_context.md | 3b25a34c5332d21e7694e4a5206e4a55df141da106d21154cebef012fa7570f5 |
+| market_data/universe_decision_context.json | f0de03a7eba67d80bc7804b65ab5d2a36b0e8f797a54ffdf66e6ee6b41e4350a |
+| market_data/decision_context_source_history.json | d8a52935923966c85a0ea7c39c196d6210e7ac82541ac67913bdf309040270e8 |
+| market_data/universe_quality_evidence.md | d20fa212025928bf700a78f1bf0eb9f4037cbbf81a45c9cd07b9f77d93ed0b4e |
+| market_data/universe_quality_evidence.json | 25afcb60643308cda4e1b09f74971e174f47a2fa3a657a035311a4542d780bcf |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | 27d0418fae50529e59d35ed261eabed009bc5862e1baaf622e230bb5fc925c45 | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | c3734f1f0a8a4f49e610c11199ec52d8c72a482fdac355c53365889bb75c68a4 | yes |
+| Final briefing | research/final_briefing.md | model-facing | 35719b1e1aed21a35150d8f2f577abb191a027721c728526b6a206f5634efe48 | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-07-16-1M has no scored official run.
-- Round CB-2026-07-24-1M has no scored official run.
-- Round CB-2026-07-27-1M has no scored official run.
-- Round CB-2026-07-28-1M has no scored official run.
-- Round CB-2026-07-29-1M has no scored official run.
-- Round CB-2026-07-30-1M has no scored official run.
-- Round CB-2026-07-31-1M has no scored official run.
-- Round CB-2026-08-04-1M has no scored official run.
-- Round CB-2026-08-05-1M has no scored official run.
-- Round CB-2026-08-07-1M has no scored official run.
-- Round CB-2026-08-09-1M has no scored official run.
-- Round CB-2026-08-11-1M has no scored official run.
-- Round CB-2026-08-13-1M has no scored official run.
-- Round CB-2026-08-15-1M has no scored official run.
-- Round CB-2026-08-18-1M has no scored official run.
-- Round CB-2026-08-19-1M has no scored official run.
-- Round CB-2026-08-20-1M has no scored official run.
-- Round CB-2026-08-21-1M has no scored official run.
-- Round CB-2026-08-23-1M has no scored official run.
-- Round example-round has no scored official run.
-- Round example-round-2 has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.

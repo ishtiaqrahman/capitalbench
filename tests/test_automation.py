@@ -235,7 +235,9 @@ def test_resolve_accepted_round_scores_publishes_and_marks_job(tmp_path: Path) -
     assert local_job["status"] == "succeeded"
 
 
-def test_resolve_accepted_round_refreshes_entry_and_exit_prices(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_resolve_accepted_round_preserves_entry_and_fetches_exit_snapshot(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     round_path = _copy_due_round(tmp_path)
     accept_run(
         round_path,
@@ -245,24 +247,14 @@ def test_resolve_accepted_round_refreshes_entry_and_exit_prices(tmp_path: Path, 
         sync_pending=False,
     )
     calls: list[dict[str, Any]] = []
+    original_entry = (round_path / "prices" / "entry_prices.csv").read_text(encoding="utf-8")
 
     def fake_fetch_selected_prices(**kwargs: Any) -> Any:
         calls.append(kwargs)
         prices_dir = round_path / "prices"
         prices_dir.mkdir(exist_ok=True)
-        (prices_dir / "entry_prices.csv").write_text(
-            "\n".join(
-                [
-                    "option_id,symbol,date,close,adj_close,source",
-                    "CASH,,2026-05-08,1.0,1.0,cash",
-                    "SP500,SPY,2026-05-08,100.0,100.0,test",
-                    "SEMICONDUCTORS,SMH,2026-05-08,100.0,100.0,test",
-                    "",
-                ]
-            ),
-            encoding="utf-8",
-        )
-        (prices_dir / "exit_prices.csv").write_text(
+        exit_path = prices_dir / "exit_prices.csv"
+        exit_path.write_text(
             "\n".join(
                 [
                     "option_id,symbol,date,close,adj_close,source",
@@ -274,7 +266,7 @@ def test_resolve_accepted_round_refreshes_entry_and_exit_prices(tmp_path: Path, 
             ),
             encoding="utf-8",
         )
-        return SimpleNamespace()
+        return SimpleNamespace(exit_prices_path=exit_path)
 
     monkeypatch.setattr("capitalbench.automation.fetch_selected_prices", fake_fetch_selected_prices)
 
@@ -290,12 +282,79 @@ def test_resolve_accepted_round_refreshes_entry_and_exit_prices(tmp_path: Path, 
 
     assert summary.status == "succeeded"
     assert len(calls) == 1
-    assert calls[0]["entry_date"] == "2026-05-08"
+    assert calls[0]["entry_date"] is None
     assert calls[0]["exit_date"] == "2026-05-11"
-    assert calls[0]["price_side"] == "both"
+    assert calls[0]["price_side"] == "exit"
     assert calls[0]["overwrite_prices"] is True
     assert calls[0]["full_universe"] is True
     assert calls[0]["allow_previous_trading_day_exit"] is True
+    assert (round_path / "prices" / "entry_prices.csv").read_text(encoding="utf-8") == original_entry
+    assert (tmp_path / "market_data" / "daily_price_snapshots" / "2026-05-11.csv").exists()
+
+
+def test_resolve_accepted_round_reuses_shared_exit_snapshot(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    round_path = _copy_due_round(tmp_path)
+    source_exit = round_path / "prices" / "exit_prices.csv"
+    snapshot_path = tmp_path / "market_data" / "daily_price_snapshots" / "2026-05-11.csv"
+    snapshot_path.parent.mkdir(parents=True)
+    entry_snapshot = (round_path / "prices" / "entry_prices.csv").read_text(encoding="utf-8")
+    snapshot_path.write_text(entry_snapshot.replace("2026-05-08", "2026-05-11"), encoding="utf-8")
+    accept_run(
+        round_path,
+        run_id="official-round-1-clean",
+        due_at_utc="2026-05-11T23:30:00+00:00",
+        store=FakeAutomationStore(),
+        sync_pending=False,
+    )
+
+    def unexpected_fetch(**_kwargs: Any) -> Any:
+        raise AssertionError("shared snapshot should avoid a provider fetch")
+
+    monkeypatch.setattr("capitalbench.automation.fetch_selected_prices", unexpected_fetch)
+
+    summary = resolve_accepted_round(
+        tmp_path,
+        round_id="CB-2026-05-10-1M",
+        run_id="official-round-1-clean",
+        latest_output=tmp_path / "latest",
+        cumulative_output=tmp_path / "cumulative",
+        sync=False,
+    )
+
+    assert summary.status == "succeeded"
+    assert source_exit.exists()
+    assert "2026-05-11" in source_exit.read_text(encoding="utf-8")
+
+
+def test_resolve_accepted_round_stops_before_fetch_when_entry_snapshot_is_missing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    round_path = _copy_due_round(tmp_path)
+    accept_run(
+        round_path,
+        run_id="official-round-1-clean",
+        due_at_utc="2026-05-11T23:30:00+00:00",
+        store=FakeAutomationStore(),
+        sync_pending=False,
+    )
+    (round_path / "prices" / "entry_prices.csv").unlink()
+
+    def unexpected_fetch(**_kwargs: Any) -> Any:
+        raise AssertionError("provider fetch must not start without frozen entry prices")
+
+    monkeypatch.setattr("capitalbench.automation.fetch_selected_prices", unexpected_fetch)
+
+    with pytest.raises(FileNotFoundError, match="stopped before fetching exit prices"):
+        resolve_accepted_round(
+            tmp_path,
+            round_id="CB-2026-05-10-1M",
+            run_id="official-round-1-clean",
+            latest_output=tmp_path / "latest",
+            cumulative_output=tmp_path / "cumulative",
+            sync=False,
+        )
 
 
 def test_automation_run_falls_back_to_due_local_jobs_when_supabase_has_none(
