@@ -86,8 +86,9 @@ def fetch_selected_prices(
         raise ValueError("exit_date is required when fetching exit prices")
 
     api_key = os.environ.get(TIINGO_API_KEY_ENV, "").strip()
-    if not api_key:
-        raise RuntimeError("TIINGO_API_KEY is required for price fetching")
+    allow_yahoo_fallback = fetcher is None
+    if not api_key and not allow_yahoo_fallback:
+        raise RuntimeError("TIINGO_API_KEY is required when a custom Tiingo price fetcher is supplied")
 
     prices_dir = round_path / "prices"
     prices_dir.mkdir(parents=True, exist_ok=True)
@@ -107,8 +108,7 @@ def fetch_selected_prices(
             )
 
     options = load_options(round_path) if full_universe else selected_price_options(round_path, run_id)
-    fetch = fetcher or fetch_tiingo_eod_prices
-    allow_yahoo_fallback = fetcher is None
+    fetch = fetcher or (fetch_tiingo_eod_prices if api_key else _missing_tiingo_key)
     entry_rows: list[dict[str, Any]] = []
     exit_rows: list[dict[str, Any]] = []
     if price_side in {"entry", "both"}:
@@ -144,6 +144,15 @@ def fetch_selected_prices(
         fetched_symbols=fetched_symbols,
         cash_option_ids=cash_ids,
     )
+
+
+def _missing_tiingo_key(
+    _symbol: str,
+    _start_date: str,
+    _end_date: str,
+    _api_key: str,
+) -> list[dict[str, Any]]:
+    raise RuntimeError("TIINGO_API_KEY is not configured; using Yahoo price fallback")
 
 
 def _price_rows_for_date(

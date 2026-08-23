@@ -310,6 +310,34 @@ def test_fetch_prices_falls_back_to_yahoo_when_tiingo_rate_limited(tmp_path: Pat
     assert all(row["date"] == "2026-01-02" for row in non_cash_rows)
 
 
+def test_fetch_prices_uses_yahoo_when_tiingo_key_is_missing(tmp_path: Path, monkeypatch) -> None:
+    round_path = _create_round_with_submission(tmp_path)
+    monkeypatch.delenv("TIINGO_API_KEY", raising=False)
+    yahoo_calls: list[str] = []
+
+    def fake_yahoo(symbol: str, start_date, end_date) -> list[dict[str, object]]:
+        yahoo_calls.append(symbol)
+        return [{"date": end_date.isoformat(), "close": 101.0, "adjClose": 101.0}]
+
+    monkeypatch.setattr("capitalbench.prices._fetch_yahoo_chart_adjclose", fake_yahoo)
+
+    output = fetch_selected_prices(
+        round_path=round_path,
+        run_id=None,
+        entry_date="2026-01-02",
+        exit_date=None,
+        full_universe=True,
+        price_side="entry",
+    )
+
+    assert yahoo_calls == ["AAA", "BBB", "SPY"]
+    with output.entry_prices_path.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    non_cash_rows = [row for row in rows if row["option_id"] != "cash"]
+    assert non_cash_rows
+    assert all(row["source"] == "yahoo_chart_adjclose" for row in non_cash_rows)
+
+
 def test_fetch_selected_prices_requires_tiingo_key(tmp_path: Path, monkeypatch) -> None:
     round_path = _create_round_with_submission(tmp_path)
     monkeypatch.delenv("TIINGO_API_KEY", raising=False)
