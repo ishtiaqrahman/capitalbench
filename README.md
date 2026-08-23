@@ -5,24 +5,88 @@
 ![Data License: CC BY 4.0](https://img.shields.io/badge/data-CC%20BY%204.0-lightgrey)
 ![Offline First](https://img.shields.io/badge/default-offline--first-black)
 
-CapitalBench is an offline, auditable benchmark for LLM market decisions.
+CapitalBench is an open, auditable benchmark for how AI models allocate capital.
 
-In each round, every model receives the same frozen briefing, prompt, option
-universe, and mechanical market-data table. The round manifest declares whether
-the model must choose one investable option or allocate a constrained portfolio.
-After the declared scoring window resolves, CapitalBench scores the decision
-against local entry and exit prices.
+Every model receives the same frozen market brief and asset list. It creates one portfolio without browsing, tools, or follow-up. The portfolio is saved before prices move and scored later using real market returns.
 
-CapitalBench is designed for evaluation research, not investment advice. It is
-not a trading system, recommendation engine, or investment adviser.
+[Live Benchmark](https://www.capitalbench.org/) · [All Rounds](https://www.capitalbench.org/rounds/) · [Data API](https://www.capitalbench.org/api/) · [Methodology](https://www.capitalbench.org/methodology/)
 
-```text
-Status: research benchmark framework
-Default behavior: offline and dry-run safe
-Official score: CapitalBench Score plus return versus S&P 500
-Secondary analysis: repeated-call stability
-Code license: Apache License 2.0
-Public artifact license: CC BY 4.0
+CapitalBench is built for AI evaluation research. It is not an investment adviser, trading system, or source of financial advice.
+
+## Current Status
+
+CapitalBench is live and updated regularly.
+
+As of August 2026:
+
+- 112 public benchmark rounds
+- 81 completed weekly and monthly rounds
+- 484 scored model results
+- Public prompts, portfolios, prices, scores, and audit records
+- Models from OpenAI, Anthropic, Google, and xAI
+- Apache 2.0 code license
+- CC BY 4.0 public-data license
+
+The [live benchmark](https://www.capitalbench.org/) is the source of truth for current results.
+
+![CapitalBench live benchmark](docs/assets/capitalbench-dashboard.png)
+
+## What You Can Do
+
+- Run a complete benchmark round locally
+- Reproduce and check a published result
+- Inspect the frozen inputs and model outputs
+- Compare official decisions with repeated-call stability
+- Add or test another model
+- Generate public reports and audit files
+
+## Quickstart
+
+The sample can be run without API keys, paid model calls, or live market data.
+
+Install locally:
+
+```bash
+python3 -m pip install --user .
+```
+
+Run tests:
+
+```bash
+python3 -m pytest
+```
+
+Run the fake example round in safe mock mode:
+
+```bash
+capitalbench run-round \
+  --round rounds/example-round \
+  --models configs/models.example.yaml \
+  --mock \
+  --run-id official-mock \
+  --run-type official \
+  --overwrite-run
+
+capitalbench validate-submissions \
+  --round rounds/example-round \
+  --run-id official-mock
+
+capitalbench score-round \
+  --round rounds/example-round \
+  --run-id official-mock
+
+capitalbench publish-report \
+  --round rounds/example-round \
+  --run-id official-mock
+```
+
+The sample round uses fake prices and fake model decisions. It exists to
+exercise the protocol and test the framework.
+
+You can also run commands without installing:
+
+```bash
+PYTHONPATH=src python3 -m capitalbench --help
 ```
 
 ## At A Glance
@@ -63,19 +127,6 @@ The framework emphasizes reproducibility:
 - raw provider text is preserved for current and future runs
 - each run is isolated under its own `run_id`
 - official and stability results are never combined into a weighted score
-
-## Current Public Round Status
-
-The first official CapitalBench round has model submissions collected and is
-awaiting price resolution.
-
-| Field | Value |
-|---|---|
-| Round | `CB-2026-05-10-1M` |
-| Official run | `official-round-1-clean` |
-| Methodology | `round1-v1.0` |
-| Status | Submissions collected, unscored until exit prices are available |
-| Round README | `rounds/CB-2026-05-10-1M/README.md` |
 
 ## Core Protocol
 
@@ -300,52 +351,7 @@ capitalbench validate-universe \
 round that will include 7-day, 30-day, six-month, and one-year trailing returns,
 validate a long enough lookback window before freezing the round.
 
-## Quickstart
 
-Install locally:
-
-```bash
-python3 -m pip install --user .
-```
-
-Run tests:
-
-```bash
-python3 -m pytest
-```
-
-Run the fake example round in safe mock mode:
-
-```bash
-capitalbench run-round \
-  --round rounds/example-round \
-  --models configs/models.example.yaml \
-  --mock \
-  --run-id official-mock \
-  --run-type official \
-  --overwrite-run
-
-capitalbench validate-submissions \
-  --round rounds/example-round \
-  --run-id official-mock
-
-capitalbench score-round \
-  --round rounds/example-round \
-  --run-id official-mock
-
-capitalbench publish-report \
-  --round rounds/example-round \
-  --run-id official-mock
-```
-
-The sample round uses fake prices and fake model decisions. It exists to
-exercise the protocol and test the framework.
-
-You can also run commands without installing:
-
-```bash
-PYTHONPATH=src python3 -m capitalbench --help
-```
 
 ## Operating A Real Round
 
