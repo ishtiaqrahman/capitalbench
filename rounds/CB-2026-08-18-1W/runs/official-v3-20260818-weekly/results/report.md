@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-08-18-1W / official-v3-20260818-weekly
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-08-18-1W
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-v3-20260818-weekly
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench CB-2026-08-18-1W
+- Description: One-week market allocation evaluation round.
+- Decision date: 2026-08-18
 - Decision deadline: 2026-08-18T13:25:00Z
 - Horizon: one week
-- Official run ID: official-v3-20260818-weekly
-- Mock: no
+- Entry date: 2026-08-18
+- Exit date: 2026-08-25
+- Entry rule: Use the Tuesday, August 18, 2026 adjusted close supplied in prices/entry_prices.csv.
+- Exit rule: Use the Tuesday, August 25, 2026 adjusted close supplied in prices/exit_prices.csv.
+- Options: 70
 
 ## Model Decisions
 
@@ -96,35 +111,92 @@
 | CYBERSECURITY | Cybersecurity | 97.44 | 92.46 | -0.05110837438423654 | 69 |
 | AEROSPACE_DEFENSE | Aerospace and Defense | 252.16 | 234.3 | -0.07082804568527912 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| xai-grok-4-3 | portfolio | CHINA | 3 | 0.5833 | 0.004007285974499064 | 0.029297972452095672 | 0.031304617836159926 | 0.25879067020718427 |  | True | True |
-| anthropic-claude-fable-5 | portfolio | SOFTWARE | 3 | 0.5833 | -0.0010788454831343053 | 0.005922252480101316 | 0.00792889786416557 | 0.2821663901791786 |  | True | True |
-| openai-gpt-5-6-sol | portfolio | SOFTWARE | 3 | 0.5733 | -0.0010788454831343053 | 0.005922252480101316 | 0.00792889786416557 | 0.2821663901791786 |  | True | True |
-| anthropic-claude-opus-5 | portfolio | SOFTWARE | 3 | 0.5667 | -0.0010788454831343053 | 0.005922252480101316 | 0.00792889786416557 | 0.2821663901791786 |  | True | True |
-| anthropic-claude-opus-4-8 | portfolio | SP500 | 1 | 0.5 | -0.002006645384064254 | -0.002006645384064254 | 0.0 | 0.29009528804334417 |  | False | False |
-| xai-grok-4-5 | portfolio | CHINA | 3 | 0.57 | 0.004007285974499064 | -0.014307558143293295 | -0.012300912759229041 | 0.30239620080257323 |  | False | False |
-| xai-grok-4-6 | portfolio | CHINA | 3 | 0.5633 | 0.004007285974499064 | -0.014307558143293295 | -0.012300912759229041 | 0.30239620080257323 |  | False | False |
-| google-gemini-3-1-pro | portfolio | SOFTWARE | 3 | 0.58 | -0.0010788454831343053 | -0.017063341161230077 | -0.015056695777165823 | 0.30515198382051 |  | False | False |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-fable-5 | SOFTWARE | 35.0 | -0.0010788454831343053 | -0.00037759591909700683 | V3 selected model rank 1: overreaction with 60% estimated probability of beating SPY. |
+| anthropic-claude-fable-5 | CYBERSECURITY | 35.0 | -0.05110837438423654 | -0.017887931034482787 | V3 selected model rank 2: overreaction with 58% estimated probability of beating SPY. |
+| anthropic-claude-fable-5 | SOUTH_AFRICA | 30.0 | 0.0806259314456037 | 0.02418777943368111 | V3 selected model rank 3: overreaction with 57% estimated probability of beating SPY. |
+| anthropic-claude-opus-4-8 | SP500 | 100.0 | -0.002006645384064254 | -0.002006645384064254 | Deterministic SPY fallback for V3 slots without an eligible active candidate. |
+| anthropic-claude-opus-5 | SOFTWARE | 35.0 | -0.0010788454831343053 | -0.00037759591909700683 | V3 selected model rank 1: overreaction with 58% estimated probability of beating SPY. |
+| anthropic-claude-opus-5 | CYBERSECURITY | 35.0 | -0.05110837438423654 | -0.017887931034482787 | V3 selected model rank 2: overreaction with 57% estimated probability of beating SPY. |
+| anthropic-claude-opus-5 | SOUTH_AFRICA | 30.0 | 0.0806259314456037 | 0.02418777943368111 | V3 selected model rank 3: overreaction with 55% estimated probability of beating SPY. |
+| google-gemini-3-1-pro | SOFTWARE | 35.0 | -0.0010788454831343053 | -0.00037759591909700683 | V3 selected model rank 1: overreaction with 60% estimated probability of beating SPY. |
+| google-gemini-3-1-pro | CYBERSECURITY | 35.0 | -0.05110837438423654 | -0.017887931034482787 | V3 selected model rank 2: overreaction with 58% estimated probability of beating SPY. |
+| google-gemini-3-1-pro | CHINA | 30.0 | 0.004007285974499064 | 0.0012021857923497192 | V3 selected model rank 3: overreaction with 56% estimated probability of beating SPY. |
+| openai-gpt-5-6-sol | SOFTWARE | 35.0 | -0.0010788454831343053 | -0.00037759591909700683 | V3 selected model rank 1: overreaction with 59% estimated probability of beating SPY. |
+| openai-gpt-5-6-sol | CYBERSECURITY | 35.0 | -0.05110837438423654 | -0.017887931034482787 | V3 selected model rank 2: overreaction with 57% estimated probability of beating SPY. |
+| openai-gpt-5-6-sol | SOUTH_AFRICA | 30.0 | 0.0806259314456037 | 0.02418777943368111 | V3 selected model rank 3: overreaction with 56% estimated probability of beating SPY. |
+| xai-grok-4-3 | CHINA | 35.0 | 0.004007285974499064 | 0.0014025500910746723 | V3 selected model rank 1: overreaction with 62% estimated probability of beating SPY. |
+| xai-grok-4-3 | SOUTH_AFRICA | 35.0 | 0.0806259314456037 | 0.028219076005961293 | V3 selected model rank 2: overreaction with 58% estimated probability of beating SPY. |
+| xai-grok-4-3 | SOFTWARE | 30.0 | -0.0010788454831343053 | -0.0003236536449402916 | V3 selected model rank 3: overreaction with 55% estimated probability of beating SPY. |
+| xai-grok-4-5 | CHINA | 35.0 | 0.004007285974499064 | 0.0014025500910746723 | V3 selected model rank 1: overreaction with 58% estimated probability of beating SPY. |
+| xai-grok-4-5 | SOFTWARE | 35.0 | -0.0010788454831343053 | -0.00037759591909700683 | V3 selected model rank 2: overreaction with 57% estimated probability of beating SPY. |
+| xai-grok-4-5 | CYBERSECURITY | 30.0 | -0.05110837438423654 | -0.015332512315270962 | V3 selected model rank 3: overreaction with 56% estimated probability of beating SPY. |
+| xai-grok-4-6 | CHINA | 35.0 | 0.004007285974499064 | 0.0014025500910746723 | V3 selected model rank 1: overreaction with 58% estimated probability of beating SPY. |
+| xai-grok-4-6 | SOFTWARE | 35.0 | -0.0010788454831343053 | -0.00037759591909700683 | V3 selected model rank 2: overreaction with 56% estimated probability of beating SPY. |
+| xai-grok-4-6 | CYBERSECURITY | 30.0 | -0.05110837438423654 | -0.015332512315270962 | V3 selected model rank 3: overreaction with 55% estimated probability of beating SPY. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| xai-grok-4-3 | CHINA | 3 | 0.5833 | 0.004007285974499064 | 0.029297972452095672 | 0.031304617836159926 | 0.25879067020718427 |  | True | True |
+| anthropic-claude-fable-5 | SOFTWARE | 3 | 0.5833 | -0.0010788454831343053 | 0.005922252480101316 | 0.00792889786416557 | 0.2821663901791786 |  | True | True |
+| openai-gpt-5-6-sol | SOFTWARE | 3 | 0.5733 | -0.0010788454831343053 | 0.005922252480101316 | 0.00792889786416557 | 0.2821663901791786 |  | True | True |
+| anthropic-claude-opus-5 | SOFTWARE | 3 | 0.5667 | -0.0010788454831343053 | 0.005922252480101316 | 0.00792889786416557 | 0.2821663901791786 |  | True | True |
+| anthropic-claude-opus-4-8 | SP500 | 1 | 0.5 | -0.002006645384064254 | -0.002006645384064254 | 0.0 | 0.29009528804334417 |  | False | False |
+| xai-grok-4-5 | CHINA | 3 | 0.57 | 0.004007285974499064 | -0.014307558143293295 | -0.012300912759229041 | 0.30239620080257323 |  | False | False |
+| xai-grok-4-6 | CHINA | 3 | 0.5633 | 0.004007285974499064 | -0.014307558143293295 | -0.012300912759229041 | 0.30239620080257323 |  | False | False |
+| google-gemini-3-1-pro | SOFTWARE | 3 | 0.58 | -0.0010788454831343053 | -0.017063341161230077 | -0.015056695777165823 | 0.30515198382051 |  | False | False |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | 4edaec8125fd868a585c3e4ab4b55a21329c158c817874b629b01f774a82ef11 |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | c86dfbb217e032991acc64cd3d0bcbb7f26d32639a67b7473af5122ac2230431 |
+| manifest.yaml | 1bf4903ebbfc903f6b6f4938223192c43b4d98452a4fe3e7ef052e3fed41dfb3 |
+| submission_schema.json | fb15e640b97fa100237112e5d6bd8548696c72f75ce22b2d3ae2bf212e10166d |
+| market_data/universe_decision_context.csv | 32a1b37ad2499d48219b6afb644998c4412831feb9c8d63ba8e10b6da23af781 |
+| market_data/universe_decision_context.md | fe3a7e5a854df4b01e5aa64ef3273577b728e428eb1bf0d78dd105da615a10b3 |
+| market_data/universe_decision_context.json | 5783dbec7eaa63435c1039eb078038112f23af136110fd7c159fbd1650e62d29 |
+| market_data/decision_context_source_history.json | 8ba17119637e40cc61b9dc91c34529a335c5fa883c9556fda92c3f52982f49da |
+| market_data/universe_quality_evidence.md | 5e67a40cc97cee7c4dc1b88b7ba92f27a41439c8c59b4d58993cdfd64f291b5e |
+| market_data/universe_quality_evidence.json | 20ce1e078bc5db2952371260da04c40352989e323091b354b27467a17e6363bf |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | 6788836986cb7b98745a9e08bae1a791f604743898fcc2aa46b2e713c7b121a3 | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | 5de76b6c7e4253d05aa56f7e0deff657907b7bcdd05d446ec22d16d4cbde86ad | yes |
+| Final briefing | research/final_briefing.md | model-facing | 4edaec8125fd868a585c3e4ab4b55a21329c158c817874b629b01f774a82ef11 | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-07-16-1W has no scored official run.
-- Round CB-2026-08-07-1W has no scored official run.
-- Round CB-2026-08-09-1W has no scored official run.
-- Round CB-2026-08-11-1W has no scored official run.
-- Round CB-2026-08-13-1W has no scored official run.
-- Round CB-2026-08-19-1W has no scored official run.
-- Round CB-2026-08-20-1W has no scored official run.
-- Round CB-2026-08-21-1W has no scored official run.
-- Round CB-2026-08-23-1W has no scored official run.
-- Round CB-2026-08-24-1W has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.
