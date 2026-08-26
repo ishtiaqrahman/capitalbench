@@ -235,17 +235,6 @@ def sync_round(
 
     if run_id and not run_payloads:
         raise ValueError(f"run_id is not syncable public benchmark data: {run_id}")
-    if not run_payloads and not _round_has_public_metadata(round_path):
-        return _record_event(
-            sink,
-            SyncSummary(
-                event_type=event_type,
-                round_id=manifest.round_id,
-                status="skipped",
-                message="round has no public non-mock benchmark run",
-            ),
-        )
-
     round_row = _round_row(round_path, selected_run_ids)
     option_rows = _option_rows(round_path, published=True)
     weekly_price_rows.extend(_weekly_price_rows(manifest.round_id, round_path))

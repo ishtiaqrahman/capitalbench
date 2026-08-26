@@ -39,7 +39,9 @@ function fail(message) {
 }
 
 function publicRoundStatus(status) {
-  return status === "active" ? "pending" : status;
+  // Supabase stores the coarse lifecycle; the static read model refines
+  // unresolved rows into active, overdue, or draft for public rendering.
+  return ["active", "overdue", "draft"].includes(status) ? "pending" : status;
 }
 
 function normalizeDate(value) {
@@ -279,7 +281,7 @@ function compareRounds(rows) {
 }
 
 function expectedRuns() {
-  return apiReadModel.rounds.map((round) => {
+  return apiReadModel.rounds.filter((round) => round.official_run_id).map((round) => {
     const manifestPath = join(repoRoot, "rounds", round.round_id, "runs", round.official_run_id, "run_manifest.yaml");
     const manifest = readYaml(manifestPath, {});
     return {

@@ -160,6 +160,21 @@ def test_sync_round_publishes_pending_round_without_leaderboard(tmp_path: Path) 
     assert sink.inserts["sync_events"][0]["status"] == "success"
 
 
+def test_sync_round_publishes_draft_and_clears_stale_public_rows(tmp_path: Path) -> None:
+    round_path = tmp_path / "CB-2026-07-16-1W"
+    copytree(PROJECT_ROOT / "rounds" / "CB-2026-07-16-1W", round_path)
+    sink = FakeSink()
+
+    summary = sync_round(round_path, sink=sink)
+
+    assert summary.status == "success"
+    assert sink.upserts["rounds"][0]["status"] == "pending"
+    assert sink.upserts["runs"] == []
+    assert sink.upserts["submissions"] == []
+    assert ("runs", {"round_id": "CB-2026-07-16-1W"}) in sink.deletes
+    assert ("submissions", {"round_id": "CB-2026-07-16-1W"}) in sink.deletes
+
+
 def test_sync_round_skips_pilot_publication_stream(tmp_path: Path) -> None:
     round_path = tmp_path / "CB-2026-05-10-1M"
     copytree(ROUND_1, round_path)
