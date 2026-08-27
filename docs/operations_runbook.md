@@ -96,7 +96,9 @@ tokens, and raw provider responses.
 
 ## Resolution Path
 
-The scheduled GitHub resolver runs every 30 minutes. When a job is due, it:
+The scheduled GitHub resolver runs every 30 minutes and processes one job per
+workflow invocation so a failed round cannot prevent another round's completed
+artifacts from being committed. When a job is due, it:
 
 1. Claims the due automation job.
 2. Fetches exit prices.
@@ -202,7 +204,8 @@ run; scheduled publication is deterministic.
 
 ## Manual Recovery
 
-Retry a local job:
+Retry a job. When Supabase credentials are configured, this updates both the
+tracked local job file and the cloud queue row:
 
 ```bash
 capitalbench automation-retry --round rounds/<round_id>
@@ -217,7 +220,8 @@ capitalbench automation-resolve \
   --run-id <run_id>
 ```
 
-Cancel a local job only when replacing it with a corrected acceptance:
+Cancel a job only when replacing it with a corrected acceptance. When Supabase
+credentials are configured, cancellation updates both local and cloud state:
 
 ```bash
 capitalbench automation-cancel --round rounds/<round_id>

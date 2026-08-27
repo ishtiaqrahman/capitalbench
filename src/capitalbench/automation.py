@@ -177,14 +177,34 @@ def automation_status(rounds_dir: Path) -> list[dict[str, Any]]:
     return rows
 
 
-def retry_local_job(round_path: Path, *, next_attempt_at_utc: str | None = None) -> AutomationSummary:
+def retry_local_job(
+    round_path: Path,
+    *,
+    next_attempt_at_utc: str | None = None,
+    store: AutomationStore | None = None,
+) -> AutomationSummary:
     job_path = _local_job_path(round_path)
     if not job_path.exists():
         raise FileNotFoundError(f"no local automation job found: {job_path}")
     job = read_yaml(job_path)
+    selected_store = store if store is not None else configured_automation_store_from_env()
+    remote_updates = {
+        "status": "scheduled",
+        "next_attempt_at_utc": next_attempt_at_utc,
+        "last_error": "",
+        "locked_at_utc": None,
+        "locked_by": None,
+        "completed_at_utc": None,
+    }
+    if selected_store is not None:
+        selected_store.update_job(str(job["job_id"]), remote_updates)
     job["status"] = "scheduled"
     job["next_attempt_at_utc"] = next_attempt_at_utc
     job["last_error"] = ""
+    job.pop("completed_at_utc", None)
+    job.pop("cancelled_at_utc", None)
+    job.pop("locked_at_utc", None)
+    job.pop("locked_by", None)
     write_yaml(job_path, job)
     return AutomationSummary(
         status="scheduled",
@@ -192,24 +212,40 @@ def retry_local_job(round_path: Path, *, next_attempt_at_utc: str | None = None)
         run_id=str(job["run_id"]),
         job_id=str(job.get("job_id") or ""),
         due_at_utc=str(job.get("due_at_utc") or ""),
-        message="local automation job marked for retry",
+        message="automation job marked for retry",
     )
 
 
-def cancel_local_job(round_path: Path) -> AutomationSummary:
+def cancel_local_job(round_path: Path, *, store: AutomationStore | None = None) -> AutomationSummary:
     job_path = _local_job_path(round_path)
     if not job_path.exists():
         raise FileNotFoundError(f"no local automation job found: {job_path}")
     job = read_yaml(job_path)
+    cancelled_at_utc = _utc_now()
+    cancellation_reason = "cancelled by operator"
+    selected_store = store if store is not None else configured_automation_store_from_env()
+    if selected_store is not None:
+        selected_store.update_job(
+            str(job["job_id"]),
+            {
+                "status": "cancelled",
+                "last_error": cancellation_reason,
+                "locked_at_utc": None,
+                "locked_by": None,
+            },
+        )
     job["status"] = "cancelled"
-    job["cancelled_at_utc"] = _utc_now()
+    job["last_error"] = cancellation_reason
+    job["cancelled_at_utc"] = cancelled_at_utc
+    job.pop("locked_at_utc", None)
+    job.pop("locked_by", None)
     write_yaml(job_path, job)
     return AutomationSummary(
         status="cancelled",
         round_id=str(job["round_id"]),
         run_id=str(job["run_id"]),
         job_id=str(job.get("job_id") or ""),
-        message="local automation job cancelled",
+        message="automation job cancelled",
     )
 
 
@@ -277,6 +313,8 @@ def resolve_accepted_round(
     overwrite_prices: bool = False,
     full_universe_prices: bool = True,
     sync: bool = True,
+    store: AutomationStore | None = None,
+    update_remote_job: bool = True,
 ) -> AutomationSummary:
     round_path = _round_path_for_id(rounds_dir, round_id)
     manifest = load_manifest(round_path)
@@ -332,6 +370,7 @@ def resolve_accepted_round(
     track = track_for_horizon_days(_horizon_days(manifest.entry_date, manifest.exit_date))
     latest = publish_latest(rounds_dir, latest_output, selection_path=selection_path, track=track)
     cumulative = publish_cumulative(rounds_dir, cumulative_output, selection_path=selection_path, track=track)
+    summary_outputs = _resolution_outputs(report_path=report_path, latest=latest, cumulative=cumulative)
 
     if sync:
         optional_sync_round(round_path, run_id=run_id, event_type="automation_resolve")
@@ -346,21 +385,44 @@ def resolve_accepted_round(
     completed_at_utc = _utc_now()
     update_run_manifest(run_paths, {"resolved_at_utc": completed_at_utc})
     _mark_local_job(round_path, status="succeeded", completed_at_utc=completed_at_utc, last_error="")
+    if sync and update_remote_job:
+        selected_store = store if store is not None else configured_automation_store_from_env()
+        if selected_store is not None:
+            selected_store.update_job(
+                f"{round_id}:{run_id}:{AUTOMATION_JOB_TYPE}",
+                {
+                    "status": "succeeded",
+                    "last_error": "",
+                    "completed_at_utc": completed_at_utc,
+                    "locked_at_utc": None,
+                    "locked_by": None,
+                    "metadata": {"outputs": summary_outputs},
+                },
+            )
 
     return AutomationSummary(
         status="succeeded",
         round_id=round_id,
         run_id=run_id,
         message=f"resolved {len(scores)} official scores",
-        outputs={
-            "report": str(report_path),
-            "latest_leaderboard": str(latest.latest_leaderboard_path),
-            "latest_report": str(latest.latest_report_path),
-            "cumulative_official": str(cumulative.official_leaderboard_path),
-            "cumulative_stability": str(cumulative.stability_leaderboard_path),
-            "cumulative_report": str(cumulative.cumulative_report_path),
-        },
+        outputs=summary_outputs,
     )
+
+
+def _resolution_outputs(
+    *,
+    report_path: Path,
+    latest: Any,
+    cumulative: Any,
+) -> dict[str, str]:
+    return {
+        "report": str(report_path),
+        "latest_leaderboard": str(latest.latest_leaderboard_path),
+        "latest_report": str(latest.latest_report_path),
+        "cumulative_official": str(cumulative.official_leaderboard_path),
+        "cumulative_stability": str(cumulative.stability_leaderboard_path),
+        "cumulative_report": str(cumulative.cumulative_report_path),
+    }
 
 
 def _resolution_snapshot_path(rounds_dir: Path, exit_date: str) -> Path:
@@ -394,6 +456,8 @@ def _automation_run_supabase(
                 cumulative_output=cumulative_output,
                 selection_path=selection_path,
                 overwrite_prices=True,
+                store=store,
+                update_remote_job=False,
             )
         except Exception as exc:
             next_attempt = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()

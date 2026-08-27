@@ -160,7 +160,30 @@ def test_sync_round_publishes_pending_round_without_leaderboard(tmp_path: Path) 
     assert sink.inserts["sync_events"][0]["status"] == "success"
 
 
-def test_sync_round_publishes_draft_and_clears_stale_public_rows(tmp_path: Path) -> None:
+def test_sync_round_archives_cancelled_unresolved_round(tmp_path: Path) -> None:
+    round_path = tmp_path / "CB-2026-05-10-1M"
+    copytree(ROUND_1, round_path)
+    rmtree(round_path / "runs" / "official-round-1-clean" / "results")
+    job_path = round_path / "automation" / "resolution_job.yaml"
+    job_path.parent.mkdir(parents=True, exist_ok=True)
+    job = {
+        "job_id": "CB-2026-05-10-1M:official-round-1-clean:resolve_round",
+        "round_id": "CB-2026-05-10-1M",
+        "run_id": "official-round-1-clean",
+        "job_type": "resolve_round",
+        "status": "cancelled",
+    }
+    job_path.write_text(yaml.safe_dump(job, sort_keys=False), encoding="utf-8")
+    sink = FakeSink()
+
+    summary = sync_round(round_path, run_id="official-round-1-clean", sink=sink)
+
+    assert summary.status == "success"
+    assert sink.upserts["rounds"][0]["status"] == "archived"
+    assert sink.upserts["official_results"] == []
+
+
+def test_sync_round_publishes_cancelled_draft_as_archived_and_clears_stale_public_rows(tmp_path: Path) -> None:
     round_path = tmp_path / "CB-2026-07-16-1W"
     copytree(PROJECT_ROOT / "rounds" / "CB-2026-07-16-1W", round_path)
     sink = FakeSink()
@@ -168,7 +191,7 @@ def test_sync_round_publishes_draft_and_clears_stale_public_rows(tmp_path: Path)
     summary = sync_round(round_path, sink=sink)
 
     assert summary.status == "success"
-    assert sink.upserts["rounds"][0]["status"] == "pending"
+    assert sink.upserts["rounds"][0]["status"] == "archived"
     assert sink.upserts["runs"] == []
     assert sink.upserts["submissions"] == []
     assert ("runs", {"round_id": "CB-2026-07-16-1W"}) in sink.deletes

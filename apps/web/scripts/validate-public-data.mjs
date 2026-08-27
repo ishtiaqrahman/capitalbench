@@ -244,13 +244,14 @@ function expectedRoundMetadata(round) {
   const selectedRun = publicOfficialRuns(round)[0];
   const entryDate = String(manifest.entry_date ?? "");
   const exitDate = String(manifest.exit_date ?? "");
-  const status = selectedRun
-    ? existsSync(resultPath(round, "leaderboard.csv"))
-      ? "resolved"
-      : exitDate && exitDate < buildDate
-        ? "overdue"
-        : "active"
-    : "draft";
+  const automationJob = readYaml(resolutionJobPath(round), {}) ?? {};
+  let status = "draft";
+  if (selectedRun && existsSync(resultPath(round, "leaderboard.csv"))) status = "resolved";
+  else if (automationJob.status === "cancelled") status = "archived";
+  else if (selectedRun) {
+    if (exitDate && exitDate < buildDate) status = "overdue";
+    else status = "active";
+  }
   return {
     manifest,
     selectedRun,
@@ -737,7 +738,9 @@ for (const round of apiReadModel.rounds) {
   const metadata = expectedRoundMetadata(round);
   const roundContext = `${round.round_id} round metadata`;
   if (!metadata.manifest.round_id) failures.push(`${roundContext} missing manifest.yaml round_id`);
-  if (!metadata.selectedRun && round.status !== "draft") failures.push(`${roundContext} has no selected public official run`);
+  if (!metadata.selectedRun && !["draft", "archived"].includes(round.status)) {
+    failures.push(`${roundContext} has no selected public official run`);
+  }
   for (const [field, expectedValue] of Object.entries(metadata.values)) {
     if (round[field] !== expectedValue) {
       failures.push(`${roundContext} ${field} ${round[field]} does not match manifest/run source ${expectedValue}`);
@@ -873,7 +876,7 @@ for (const round of apiReadModel.rounds) {
   if (round.status === "resolved" && returnRows.length === 0) {
     failures.push(`${round.round_id} is resolved but has no generated asset-return rows`);
   }
-  if ((round.status === "active" || round.status === "overdue") && resultRows.length > 0) {
+  if ((round.status === "active" || round.status === "overdue" || round.status === "archived") && resultRows.length > 0) {
     failures.push(`${round.round_id} is ${round.status} but has generated final result rows`);
   }
   if (round.status === "active" && round.exit_date && round.exit_date < buildDate) {

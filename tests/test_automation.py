@@ -6,7 +6,14 @@ from typing import Any
 import pytest
 import yaml
 
-from capitalbench.automation import AutomationSummary, accept_run, automation_run, resolve_accepted_round
+from capitalbench.automation import (
+    AutomationSummary,
+    accept_run,
+    automation_run,
+    cancel_local_job,
+    resolve_accepted_round,
+    retry_local_job,
+)
 from capitalbench.hashing import write_round_hashes
 from capitalbench.roster import portfolio_v2_roster_version
 
@@ -81,6 +88,57 @@ def test_accept_run_schedules_resolution_job(tmp_path: Path) -> None:
     )
     assert run_manifest["operator_selected_official"] is True
     assert run_manifest["resolution_due_at_utc"] == "2026-05-11T23:30:00+00:00"
+
+
+def test_cancel_and_retry_job_keep_remote_store_in_sync(tmp_path: Path) -> None:
+    round_path = _copy_due_round(tmp_path)
+    accept_run(
+        round_path,
+        run_id="official-round-1-clean",
+        due_at_utc="2026-05-11T23:30:00+00:00",
+        store=FakeAutomationStore(),
+        sync_pending=False,
+    )
+
+    cancel_store = FakeAutomationStore()
+    cancelled = cancel_local_job(round_path, store=cancel_store)
+
+    assert cancelled.status == "cancelled"
+    assert cancel_store.updates == [
+        (
+            "CB-2026-05-10-1M:official-round-1-clean:resolve_round",
+            {
+                "status": "cancelled",
+                "last_error": "cancelled by operator",
+                "locked_at_utc": None,
+                "locked_by": None,
+            },
+        )
+    ]
+    local_job = yaml.safe_load((round_path / "automation" / "resolution_job.yaml").read_text(encoding="utf-8"))
+    assert local_job["status"] == "cancelled"
+    assert local_job["last_error"] == "cancelled by operator"
+
+    retry_store = FakeAutomationStore()
+    retried = retry_local_job(round_path, next_attempt_at_utc="2026-05-12T00:00:00+00:00", store=retry_store)
+
+    assert retried.status == "scheduled"
+    assert retry_store.updates == [
+        (
+            "CB-2026-05-10-1M:official-round-1-clean:resolve_round",
+            {
+                "status": "scheduled",
+                "next_attempt_at_utc": "2026-05-12T00:00:00+00:00",
+                "last_error": "",
+                "locked_at_utc": None,
+                "locked_by": None,
+                "completed_at_utc": None,
+            },
+        )
+    ]
+    local_job = yaml.safe_load((round_path / "automation" / "resolution_job.yaml").read_text(encoding="utf-8"))
+    assert local_job["status"] == "scheduled"
+    assert "cancelled_at_utc" not in local_job
 
 
 def test_accept_run_syncs_round_selection_to_clear_superseded_rows(
@@ -233,6 +291,45 @@ def test_resolve_accepted_round_scores_publishes_and_marks_job(tmp_path: Path) -
     assert (tmp_path / "cumulative" / "official_leaderboard.csv").exists()
     local_job = yaml.safe_load((round_path / "automation" / "resolution_job.yaml").read_text(encoding="utf-8"))
     assert local_job["status"] == "succeeded"
+
+
+def test_manual_resolution_marks_remote_job_succeeded(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    round_path = _copy_due_round(tmp_path)
+    _write_exit_prices(round_path)
+    accept_run(
+        round_path,
+        run_id="official-round-1-clean",
+        due_at_utc="2026-05-11T23:30:00+00:00",
+        store=FakeAutomationStore(),
+        sync_pending=False,
+    )
+    monkeypatch.setattr("capitalbench.automation.optional_sync_round", lambda *args, **kwargs: None)
+    monkeypatch.setattr("capitalbench.automation.optional_sync_latest", lambda *args, **kwargs: None)
+    monkeypatch.setattr("capitalbench.automation.optional_sync_cumulative", lambda *args, **kwargs: None)
+    store = FakeAutomationStore()
+
+    summary = resolve_accepted_round(
+        tmp_path,
+        round_id="CB-2026-05-10-1M",
+        run_id="official-round-1-clean",
+        latest_output=tmp_path / "latest",
+        cumulative_output=tmp_path / "cumulative",
+        fetch_exit_prices=False,
+        sync=True,
+        store=store,
+    )
+
+    assert summary.status == "succeeded"
+    assert len(store.updates) == 1
+    job_id, updates = store.updates[0]
+    assert job_id == "CB-2026-05-10-1M:official-round-1-clean:resolve_round"
+    assert updates["status"] == "succeeded"
+    assert updates["last_error"] == ""
+    assert updates["completed_at_utc"]
+    assert updates["metadata"]["outputs"] == summary.outputs
 
 
 def test_resolve_accepted_round_preserves_entry_and_fetches_exit_snapshot(

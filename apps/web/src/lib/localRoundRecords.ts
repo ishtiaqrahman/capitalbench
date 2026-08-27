@@ -245,8 +245,14 @@ function buildDate(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-function localRoundStatus(hasScoredResults: boolean, exitDate: string, fallbackStatus?: RoundRecord["status"]): RoundRecord["status"] {
+function localRoundStatus(
+  hasScoredResults: boolean,
+  exitDate: string,
+  automationStatus?: string,
+  fallbackStatus?: RoundRecord["status"]
+): RoundRecord["status"] {
   if (hasScoredResults) return "resolved";
+  if (automationStatus === "cancelled") return "archived";
   if (fallbackStatus === "archived") return "archived";
   if (exitDate && exitDate < buildDate()) return "overdue";
   return fallbackStatus === "resolved" ? "resolved" : "pending";
@@ -276,7 +282,11 @@ function discoverRoundRecord(roundPath: string): RoundRecord | null {
   const hasScoredResults =
     selectedRun !== undefined &&
     existsSync(join(roundPath, "runs", selectedRun.runId, "results", "leaderboard.csv"));
-  const status = selectedRun === undefined ? "draft" : localRoundStatus(hasScoredResults, exitDate, fallback?.status);
+  const automationJob = readYamlFile<ResolutionJobYaml>(join(roundPath, "automation", "resolution_job.yaml"));
+  const status =
+    selectedRun !== undefined || automationJob?.status === "cancelled"
+      ? localRoundStatus(hasScoredResults, exitDate, automationJob?.status, fallback?.status)
+      : "draft";
   const scoreEtaFields = scoreEta(roundPath, manifest);
   return {
     round_id: manifest.round_id,

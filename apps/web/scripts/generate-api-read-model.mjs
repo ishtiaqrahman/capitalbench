@@ -558,8 +558,9 @@ function horizonDays(entryDate, exitDate) {
   return Math.round((end - start) / 86_400_000);
 }
 
-function roundStatus({ hasResults, exitDate }) {
+function roundStatus({ hasResults, exitDate, automationStatus }) {
   if (hasResults) return "resolved";
+  if (automationStatus === "cancelled") return "archived";
   return exitDate && exitDate < buildDate ? "overdue" : "active";
 }
 
@@ -1902,7 +1903,12 @@ function loadRound(row) {
   const entryDate = String(manifest.entry_date ?? "");
   const exitDate = String(manifest.exit_date ?? "");
   const track = trackFromRound(manifest);
-  const status = selectedRun ? roundStatus({ hasResults: existsSync(resultsPath), exitDate }) : "draft";
+  const automationJob = readYaml(join(roundPath, "automation", "resolution_job.yaml"), {});
+  const automationStatus = String(automationJob.status ?? "");
+  const status =
+    selectedRun || automationStatus === "cancelled"
+      ? roundStatus({ hasResults: existsSync(resultsPath), exitDate, automationStatus })
+      : "draft";
   const round = {
     round_id: String(manifest.round_id),
     title: String(manifest.title ?? manifest.round_id),

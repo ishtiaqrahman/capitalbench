@@ -117,10 +117,6 @@
 ## Warnings
 
 - Round CB-2026-07-16-1W has no scored official run.
-- Round CB-2026-08-07-1W has no scored official run.
-- Round CB-2026-08-09-1W has no scored official run.
-- Round CB-2026-08-11-1W has no scored official run.
-- Round CB-2026-08-13-1W has no scored official run.
 - Round CB-2026-08-20-1W has no scored official run.
 - Round CB-2026-08-21-1W has no scored official run.
 - Round CB-2026-08-23-1W has no scored official run.

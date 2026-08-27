@@ -476,6 +476,15 @@ def _round_row(round_path: Path, selected_run_ids: list[str]) -> dict[str, Any]:
         or (get_run_paths(round_path, run_id).results_dir / "stability.csv").exists()
         for run_id in selected_run_ids
     )
+    automation_job_path = round_path / "automation" / "resolution_job.yaml"
+    automation_job = read_yaml(automation_job_path) if automation_job_path.exists() else {}
+    automation_status = str(automation_job.get("status") or "") if automation_job else ""
+    if has_scored_results:
+        public_status = "resolved"
+    elif automation_status == "cancelled":
+        public_status = "archived"
+    else:
+        public_status = "pending"
     return {
         "round_id": manifest.round_id,
         "title": manifest.title,
@@ -488,7 +497,7 @@ def _round_row(round_path: Path, selected_run_ids: list[str]) -> dict[str, Any]:
         "exit_rule": manifest.exit_rule,
         "entry_date": manifest.entry_date,
         "exit_date": manifest.exit_date,
-        "status": "resolved" if has_scored_results else "pending",
+        "status": public_status,
         "methodology_version": methodology_version,
         "universe_version": _round_universe_version(round_path, manifest.universe_version),
         "submission_format": manifest.submission_format,
