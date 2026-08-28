@@ -1,0 +1,476 @@
+{
+  "confidence": 0.5,
+  "is_official_score": true,
+  "key_risks": [
+    "BLS August employment on 2026-09-04 can reprice rates, growth, and mega-cap leadership inside the exit close.",
+    "Elevated PCE/CPI prints and a still-restrictive funds range leave duration-sensitive defensives and cyclicals two-way.",
+    "High-vol continuations (software, crypto, Korea) can reverse without volume confirmation.",
+    "Oil/energy bounce can fail if commercial inventories keep building despite SPR draws."
+  ],
+  "metadata": {
+    "portfolio_v3": {
+      "candidate_assessments": [
+        {
+          "evidence": [
+            "SPY 5-session return +1.11% and 21-session +5.71% with distance to 52w high only -0.87%.",
+            "AP: S&P 500 closed 7730.99, +0.7% on Aug 27, while a majority of constituents declined.",
+            "NVIDIA reported $96.2B Q2 revenue and guided ~$108B next quarter, supporting mega-cap index concentration."
+          ],
+          "excess_return_p10_pct": 0.0,
+          "excess_return_p50_pct": 0.0,
+          "excess_return_p90_pct": 0.0,
+          "mechanism": "continuation",
+          "option_id": "SP500",
+          "origin_lanes": [
+            "benchmark"
+          ],
+          "p_beat_spy_pct": 50,
+          "p_top3_pct": 28,
+          "rank": 1,
+          "recent_return_interpretation": "supported_continuation"
+        },
+        {
+          "evidence": [
+            "SOFTWARE recent return +7.68% and active 5s +7.14% after prior active +5.78%.",
+            "Horizon vol 39.25% and volume z -0.71, so the move is not volume-confirmed.",
+            "Quality evidence score 0.407 with recent pullback rank 0.015, indicating little unused pullback."
+          ],
+          "excess_return_p10_pct": -4.2,
+          "excess_return_p50_pct": 0.3,
+          "excess_return_p90_pct": 4.8,
+          "mechanism": "continuation",
+          "option_id": "SOFTWARE",
+          "origin_lanes": [
+            "short_continuation"
+          ],
+          "p_beat_spy_pct": 47,
+          "p_top3_pct": 22,
+          "rank": 2,
+          "recent_return_interpretation": "supported_continuation"
+        },
+        {
+          "evidence": [
+            "Highest quality evidence score on the slate at 0.726 with recent pullback rank 0.985 after prior active +4.15%.",
+            "Active 5s -3.40% with negative SPY corr (-0.32) and beta -0.52.",
+            "EIA: commercial crude +0.095mb while SPR -3.7mb; production 13.843 mbpd and refinery utilization 97.4%."
+          ],
+          "excess_return_p10_pct": -3.1,
+          "excess_return_p50_pct": 0.1,
+          "excess_return_p90_pct": 3.4,
+          "mechanism": "reversal",
+          "option_id": "ENERGY",
+          "origin_lanes": [
+            "shock_reversal",
+            "quality_pullback"
+          ],
+          "p_beat_spy_pct": 49,
+          "p_top3_pct": 18,
+          "rank": 3,
+          "recent_return_interpretation": "no_edge"
+        },
+        {
+          "evidence": [
+            "Active 5s +8.81% after prior active +9.90% with volume z 1.38.",
+            "Still -36.47% from 52w high; vol 38.58%.",
+            "SPY corr only 0.35, so crypto path can diverge over one week."
+          ],
+          "excess_return_p10_pct": -5.5,
+          "excess_return_p50_pct": 0.2,
+          "excess_return_p90_pct": 6.0,
+          "mechanism": "continuation",
+          "option_id": "BITCOIN_ETF",
+          "origin_lanes": [
+            "short_continuation"
+          ],
+          "p_beat_spy_pct": 44,
+          "p_top3_pct": 16,
+          "rank": 4,
+          "recent_return_interpretation": "supported_continuation"
+        },
+        {
+          "evidence": [
+            "Prior active +18.70% and active 5s +6.41% with volume z 1.47.",
+            "Horizon vol 52.45% and -47.28% from 52w high.",
+            "Quality score 0.510 with recent pullback rank 0.045."
+          ],
+          "excess_return_p10_pct": -6.8,
+          "excess_return_p50_pct": 0.1,
+          "excess_return_p90_pct": 7.2,
+          "mechanism": "continuation",
+          "option_id": "ETHEREUM_ETF",
+          "origin_lanes": [
+            "medium_strength",
+            "volume_dislocation"
+          ],
+          "p_beat_spy_pct": 42,
+          "p_top3_pct": 14,
+          "rank": 5,
+          "recent_return_interpretation": "supported_continuation"
+        },
+        {
+          "evidence": [
+            "Prior active +14.56% with modest recent +0.92% and active 5s +0.69%.",
+            "Vol 35.32% and -40.56% from 52w high.",
+            "Quality score 0.555; gold 21s +13.91% in mechanical state as related precious-metals context."
+          ],
+          "excess_return_p10_pct": -4.0,
+          "excess_return_p50_pct": 0.15,
+          "excess_return_p90_pct": 4.6,
+          "mechanism": "continuation",
+          "option_id": "SILVER",
+          "origin_lanes": [
+            "medium_strength"
+          ],
+          "p_beat_spy_pct": 43,
+          "p_top3_pct": 12,
+          "rank": 6,
+          "recent_return_interpretation": "supported_continuation"
+        },
+        {
+          "evidence": [
+            "Prior active +19.00% and recent +4.90%, but horizon vol 64.16% and beta 3.81.",
+            "Volume z -1.21 and -16.91% from 52w high.",
+            "Quality score 0.499 with low-vol rank 0.000."
+          ],
+          "excess_return_p10_pct": -7.5,
+          "excess_return_p50_pct": 0.0,
+          "excess_return_p90_pct": 6.5,
+          "mechanism": "continuation",
+          "option_id": "SOUTH_KOREA",
+          "origin_lanes": [
+            "medium_strength"
+          ],
+          "p_beat_spy_pct": 40,
+          "p_top3_pct": 11,
+          "rank": 7,
+          "recent_return_interpretation": "no_edge"
+        },
+        {
+          "evidence": [
+            "Quality score 0.672 with recent pullback rank 0.896 after prior active +1.03%.",
+            "Active 5s -1.82%, negative SPY corr.",
+            "USO 5s -3.37% while IAU 21s +13.91% shows mixed commodity internals."
+          ],
+          "excess_return_p10_pct": -2.4,
+          "excess_return_p50_pct": -0.2,
+          "excess_return_p90_pct": 2.2,
+          "mechanism": "defensive",
+          "option_id": "BROAD_COMMODITIES",
+          "origin_lanes": [
+            "quality_pullback"
+          ],
+          "p_beat_spy_pct": 41,
+          "p_top3_pct": 8,
+          "rank": 8,
+          "recent_return_interpretation": "no_edge"
+        },
+        {
+          "evidence": [
+            "Quality score 0.666 but recent return -2.05% and active 5s -1.80%.",
+            "Census advance July retail and food-services sales -0.6% m/m.",
+            "BEA: real consumption effectively unchanged in July; BLS July payrolls -23,000."
+          ],
+          "excess_return_p10_pct": -2.8,
+          "excess_return_p50_pct": -0.4,
+          "excess_return_p90_pct": 2.0,
+          "mechanism": "no_edge",
+          "option_id": "CONSUMER_DISCRETIONARY",
+          "origin_lanes": [
+            "quality_pullback"
+          ],
+          "p_beat_spy_pct": 38,
+          "p_top3_pct": 7,
+          "rank": 9,
+          "recent_return_interpretation": "fundamental_deterioration"
+        },
+        {
+          "evidence": [
+            "Active 5s -4.48% with recent pullback rank 1.000 and quality score 0.573.",
+            "Horizon vol 46.47% and max drawdown -11.16%, beta -1.20.",
+            "EIA week ended Aug 21: total crude including SPR -3.605mb; commercial crude +0.095mb."
+          ],
+          "excess_return_p10_pct": -5.8,
+          "excess_return_p50_pct": -0.1,
+          "excess_return_p90_pct": 5.2,
+          "mechanism": "reversal",
+          "option_id": "OIL",
+          "origin_lanes": [
+            "shock_reversal"
+          ],
+          "p_beat_spy_pct": 46,
+          "p_top3_pct": 10,
+          "rank": 10,
+          "recent_return_interpretation": "overreaction"
+        },
+        {
+          "evidence": [
+            "Active 5s -2.50% after prior active -3.99%; quality score 0.468.",
+            "Horizon max drawdown -7.83% and 52w-high distance -7.49%.",
+            "Census durable-goods orders +1.1% including 1.3% excluding defense, mixed for the cluster."
+          ],
+          "excess_return_p10_pct": -3.2,
+          "excess_return_p50_pct": -0.5,
+          "excess_return_p90_pct": 2.1,
+          "mechanism": "no_edge",
+          "option_id": "AEROSPACE_DEFENSE",
+          "origin_lanes": [
+            "shock_reversal"
+          ],
+          "p_beat_spy_pct": 36,
+          "p_top3_pct": 5,
+          "rank": 11,
+          "recent_return_interpretation": "no_edge"
+        },
+        {
+          "evidence": [
+            "Active 5s -2.21% after prior -3.74%; -16.50% from 52w high.",
+            "NBS July manufacturing PMI 49.2, non-manufacturing 49.0, composite 49.3.",
+            "Volume z -1.20; quality score 0.522."
+          ],
+          "excess_return_p10_pct": -3.0,
+          "excess_return_p50_pct": -0.6,
+          "excess_return_p90_pct": 1.8,
+          "mechanism": "no_edge",
+          "option_id": "CHINA",
+          "origin_lanes": [
+            "shock_reversal"
+          ],
+          "p_beat_spy_pct": 34,
+          "p_top3_pct": 5,
+          "rank": 12,
+          "recent_return_interpretation": "fundamental_deterioration"
+        },
+        {
+          "evidence": [
+            "Prior active -7.08% and active 5s -2.46%; quality score 0.393.",
+            "Treasury 10y 4.67% and 30y 5.19% on Aug 27; Fed funds still 3.50\u20133.75% with inflation described as elevated.",
+            "Low SPY corr (-0.13) but 52w-high distance -8.32%."
+          ],
+          "excess_return_p10_pct": -2.2,
+          "excess_return_p50_pct": -0.7,
+          "excess_return_p90_pct": 1.4,
+          "mechanism": "defensive",
+          "option_id": "UTILITIES",
+          "origin_lanes": [
+            "shock_reversal"
+          ],
+          "p_beat_spy_pct": 33,
+          "p_top3_pct": 4,
+          "rank": 13,
+          "recent_return_interpretation": "fundamental_deterioration"
+        },
+        {
+          "evidence": [
+            "UUP 21s -1.41% and prior active -6.34%; recent +0.21%.",
+            "Volume z -1.49 with horizon vol only 5.56%.",
+            "Negative SPY corr (-0.38) but quality score 0.395."
+          ],
+          "excess_return_p10_pct": -1.6,
+          "excess_return_p50_pct": -0.8,
+          "excess_return_p90_pct": 0.7,
+          "mechanism": "no_edge",
+          "option_id": "US_DOLLAR",
+          "origin_lanes": [
+            "volume_dislocation"
+          ],
+          "p_beat_spy_pct": 31,
+          "p_top3_pct": 3,
+          "rank": 14,
+          "recent_return_interpretation": "no_edge"
+        }
+      ],
+      "candidate_slate_option_ids": [
+        "OIL",
+        "ENERGY",
+        "AEROSPACE_DEFENSE",
+        "UTILITIES",
+        "CHINA",
+        "SOUTH_KOREA",
+        "ETHEREUM_ETF",
+        "SILVER",
+        "BITCOIN_ETF",
+        "SOFTWARE",
+        "BROAD_COMMODITIES",
+        "CONSUMER_DISCRETIONARY",
+        "US_DOLLAR",
+        "SP500"
+      ],
+      "confidence_derivation": "mean selected-active p_beat_spy_pct; 0.5 when all slots fall back to SPY",
+      "deterministic_allocation": {
+        "allocation_pct": {
+          "SP500": 100.0
+        },
+        "benchmark_option_id": "SP500",
+        "decisions": [
+          {
+            "eligible": false,
+            "option_id": "SP500",
+            "p_beat_spy_pct": 50.0,
+            "rank": 1,
+            "reason": "benchmark_fallback",
+            "recent_return_interpretation": "supported_continuation",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "SOFTWARE",
+            "p_beat_spy_pct": 47.0,
+            "rank": 2,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "supported_continuation",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "ENERGY",
+            "p_beat_spy_pct": 49.0,
+            "rank": 3,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "no_edge",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "BITCOIN_ETF",
+            "p_beat_spy_pct": 44.0,
+            "rank": 4,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "supported_continuation",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "ETHEREUM_ETF",
+            "p_beat_spy_pct": 42.0,
+            "rank": 5,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "supported_continuation",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "SILVER",
+            "p_beat_spy_pct": 43.0,
+            "rank": 6,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "supported_continuation",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "SOUTH_KOREA",
+            "p_beat_spy_pct": 40.0,
+            "rank": 7,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "no_edge",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "BROAD_COMMODITIES",
+            "p_beat_spy_pct": 41.0,
+            "rank": 8,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "no_edge",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "CONSUMER_DISCRETIONARY",
+            "p_beat_spy_pct": 38.0,
+            "rank": 9,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "fundamental_deterioration",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "OIL",
+            "p_beat_spy_pct": 46.0,
+            "rank": 10,
+            "reason": "below_probability_hurdle",
+            "recent_return_interpretation": "overreaction",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "AEROSPACE_DEFENSE",
+            "p_beat_spy_pct": 36.0,
+            "rank": 11,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "no_edge",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "CHINA",
+            "p_beat_spy_pct": 34.0,
+            "rank": 12,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "fundamental_deterioration",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "UTILITIES",
+            "p_beat_spy_pct": 33.0,
+            "rank": 13,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "fundamental_deterioration",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "US_DOLLAR",
+            "p_beat_spy_pct": 31.0,
+            "rank": 14,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "no_edge",
+            "selected": false
+          }
+        ],
+        "methodology_version": "portfolio-v3.0",
+        "minimum_beat_spy_probability_pct": 55.0,
+        "selected_active_option_ids": [],
+        "slot_weights_pct": [
+          35.0,
+          35.0,
+          30.0
+        ]
+      },
+      "dispersion_state": "normal",
+      "dominant_pattern": "mixed",
+      "market_rationale": "SPY is near a 52-week high with mega-cap/Nasdaq leadership (NVDA print) while a majority of S&P names fell, equal-weight lagged, and 5-session active dispersion is only 2.38%. Labor softening and the Aug payrolls print on 2026-09-04 sit inside the scoring window, so one-week edges versus SPY are mixed rather than a clean continuation or reversal regime.",
+      "methodology_version": "portfolio-v3.0",
+      "prefer_spy": true,
+      "top3_option_ids": [
+        "SP500",
+        "SOFTWARE",
+        "ENERGY"
+      ]
+    }
+  },
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-6",
+  "portfolio": [
+    {
+      "allocation_pct": 100,
+      "option_id": "SP500",
+      "rationale": "Deterministic SPY fallback for V3 slots without an eligible active candidate."
+    }
+  ],
+  "portfolio_rationale": "One-week scoring is dominated by mega-cap index support and an in-window payrolls print. SOFTWARE has the strongest independent continuation tape but already extended; ENERGY is the best quality pullback yet lacks a 55% beat-SPY case. No non-SPY name is both labeled overreaction and \u226555% to beat SPY except OIL at 46%, so the mechanical rule should leave slots in SPY.",
+  "provider": "xai",
+  "rationale_summary": "SPY is near a 52-week high with mega-cap/Nasdaq leadership (NVDA print) while a majority of S&P names fell, equal-weight lagged, and 5-session active dispersion is only 2.38%. Labor softening and the Aug payrolls print on 2026-09-04 sit inside the scoring window, so one-week edges versus SPY are mixed rather than a clean continuation or reversal regime.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-08-27-1W",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 17810,
+    "latency_seconds": 47.454972428968176,
+    "output_tokens": 2885,
+    "reasoning_tokens": 623,
+    "total_tokens": 21318
+  }
+}
