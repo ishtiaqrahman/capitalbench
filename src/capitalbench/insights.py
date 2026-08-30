@@ -44,6 +44,10 @@ DEFAULT_NVIDIA_MAX_TOKENS = 2000
 DEFAULT_LLM_CANDIDATE_LIMIT = 4
 VALID_LLM_MODES = {"auto", "off", "required"}
 LLM_REWRITE_LENGTH_LIMITS = {"title": 80, "summary": 260, "why_it_matters": 240}
+COMPARISON_MARKET_ENVIRONMENT_ENGINES = {
+    "market_environment_engine_v3",
+    MARKET_ENVIRONMENT_ENGINE_VERSION,
+}
 
 AUDIENCE_ALL = ["investors", "capital_allocators", "traders", "ai_researchers"]
 
@@ -1728,6 +1732,14 @@ def _round_snapshot(round_path: Path, asset_risk: dict[str, Any]) -> dict[str, A
         "exit_date": _text(manifest.exit_date),
         "horizon": manifest.horizon,
         "methodology_version": _text(manifest.methodology_version),
+        "model_roster_version": _text(manifest.model_roster_version),
+        "expected_model_ids": sorted(
+            {
+                _text(model_id)
+                for model_id in manifest.expected_model_ids or []
+                if _text(model_id)
+            }
+        ),
         "universe_version": _text(manifest.universe_version),
         "submission_format": manifest.submission_format,
         "run_id": selected_run_id,
@@ -3312,13 +3324,13 @@ def _validate_market_environment(payload: dict[str, Any], path: Path) -> None:
             raise ValueError(f"{path} {track} track must contain five environments")
         if not isinstance(track_data.get("directions"), list) or len(track_data["directions"]) != 3:
             raise ValueError(f"{path} {track} track must contain three direction buckets")
-        current_engine = payload.get("engine_version") == MARKET_ENVIRONMENT_ENGINE_VERSION
+        comparison_engine = payload.get("engine_version") in COMPARISON_MARKET_ENVIRONMENT_ENGINES
         for bucket in [*track_data["environments"], *track_data["directions"]]:
             _validate_market_bucket(
                 bucket,
                 track_round_ids=track_round_ids,
                 ready_threshold=thresholds["environment_rounds"],
-                require_comparison=current_engine,
+                require_comparison=comparison_engine,
                 path=path,
                 track=track,
             )
@@ -3328,12 +3340,12 @@ def _validate_market_environment(payload: dict[str, Any], path: Path) -> None:
             for row in track_data["environments"]
             if (row.get("comparison") or {}).get("status") == "ready"
         )
-        expected_ready_count = comparison_ready_count if current_engine else raw_ready_count
+        expected_ready_count = comparison_ready_count if comparison_engine else raw_ready_count
         if track_data.get("ready_environment_count") != expected_ready_count:
             raise ValueError(f"{path} {track} track has an invalid ready environment count")
-        if current_engine and track_data.get("raw_ready_environment_count") != raw_ready_count:
+        if comparison_engine and track_data.get("raw_ready_environment_count") != raw_ready_count:
             raise ValueError(f"{path} {track} track has an invalid raw-ready environment count")
-        if current_engine:
+        if comparison_engine:
             _validate_regime_leaderboard(
                 track_data,
                 model_ready_threshold=thresholds["model_observations"],

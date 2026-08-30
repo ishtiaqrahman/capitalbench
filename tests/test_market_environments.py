@@ -19,6 +19,8 @@ def _round(
     index: int,
     sp500_return: float,
     model_returns: dict[str, float],
+    expected_model_ids: list[str] | None = None,
+    model_roster_version: str | None = None,
 ) -> dict:
     suffix = "1W" if track == "weekly" else "1M"
     day = index + 1
@@ -39,6 +41,8 @@ def _round(
         "run_id": "official",
         "track": track,
         "status": "resolved",
+        "expected_model_ids": expected_model_ids or [],
+        "model_roster_version": model_roster_version,
         "decision_date": f"2026-01-{day:02d}",
         "entry_date": f"2026-01-{day:02d}",
         "exit_date": f"2026-02-{day:02d}",
@@ -219,6 +223,78 @@ def test_shared_comparison_uses_identical_rounds_for_every_model() -> None:
     assert {row["tests"] for row in comparison["model_rows"]} == {3}
 
 
+def test_new_ready_roster_replaces_prior_cohort_without_blanking_direction() -> None:
+    rounds = [
+        _round(
+            track="monthly",
+            index=index,
+            sp500_return=0.02,
+            model_returns={"model-a": 0.01, "model-b": 0.02, "model-retired": 0.0},
+            expected_model_ids=["model-a", "model-b", "model-retired"],
+            model_roster_version="roster-v1",
+        )
+        for index in range(5)
+    ]
+    rounds.extend(
+        _round(
+            track="monthly",
+            index=index,
+            sp500_return=0.02,
+            model_returns={"model-a": 0.015, "model-b": 0.01, "model-new": 0.03},
+            expected_model_ids=["model-a", "model-b", "model-new"],
+            model_roster_version="roster-v2",
+        )
+        for index in range(5, 8)
+    )
+
+    forming_market = build_market_environment(_snapshot(rounds[:-1]))
+    forming_up = next(
+        row for row in forming_market["tracks"]["monthly"]["directions"] if row["key"] == "up"
+    )
+
+    assert forming_up["comparison"]["status"] == "ready"
+    assert forming_up["comparison"]["cohort_id"] == "roster-v1"
+    assert forming_up["comparison"]["round_count"] == 5
+
+    market = build_market_environment(_snapshot(rounds))
+    up = next(row for row in market["tracks"]["monthly"]["directions"] if row["key"] == "up")
+    comparison = up["comparison"]
+
+    assert comparison["status"] == "ready"
+    assert comparison["cohort_id"] == "roster-v2"
+    assert comparison["cohort_source"] == "frozen_roster"
+    assert comparison["round_count"] == 3
+    assert comparison["eligible_model_ids"] == ["model-a", "model-b", "model-new"]
+    assert {row["tests"] for row in comparison["model_rows"]} == {3}
+
+
+def test_temporary_outage_does_not_create_a_smaller_frozen_roster_cohort() -> None:
+    rounds = []
+    for index in range(4):
+        model_returns = {"model-a": 0.02, "model-b": 0.01, "model-c": 0.0}
+        if index == 1:
+            model_returns.pop("model-c")
+        rounds.append(
+            _round(
+                track="weekly",
+                index=index,
+                sp500_return=0.01,
+                model_returns=model_returns,
+                expected_model_ids=["model-a", "model-b", "model-c"],
+                model_roster_version="roster-stable",
+            )
+        )
+
+    market = build_market_environment(_snapshot(rounds))
+    up = next(row for row in market["tracks"]["weekly"]["directions"] if row["key"] == "up")
+    comparison = up["comparison"]
+
+    assert comparison["status"] == "ready"
+    assert comparison["cohort_id"] == "roster-stable"
+    assert comparison["eligible_model_ids"] == ["model-a", "model-b", "model-c"]
+    assert comparison["round_count"] == 3
+
+
 def test_raw_ready_bucket_with_roster_churn_does_not_blank_regime_leaderboard() -> None:
     rounds = []
     index = 0
@@ -256,20 +332,20 @@ def test_raw_ready_bucket_with_roster_churn_does_not_blank_regime_leaderboard() 
     ranked = [row for row in weekly["regime_leaderboard"] if row["status"] == "ready"]
 
     assert flat["status"] == "ready"
-    assert flat["comparison"]["status"] == "forming"
-    assert flat["comparison"]["round_count"] == 2
+    assert flat["comparison"]["status"] == "ready"
+    assert flat["comparison"]["round_count"] == 5
     assert weekly["raw_ready_environment_count"] == 4
-    assert weekly["ready_environment_count"] == 3
+    assert weekly["ready_environment_count"] == 4
     assert {row["model_id"] for row in ranked} == {"model-a", "model-b"}
-    assert {row["ready_environments_required"] for row in ranked} == {3}
+    assert {row["ready_environments_required"] for row in ranked} == {4}
     assert {
         score["key"]
         for row in ranked
         for score in row["environment_scores"]
-    } == {"sharp_down", "down", "up"}
+    } == {"sharp_down", "down", "flat", "up"}
 
     insights_module._validate_market_environment(market, Path("<regression>"))
-    weekly["ready_environment_count"] = 4
+    weekly["ready_environment_count"] = 3
     with pytest.raises(ValueError, match="invalid ready environment count"):
         insights_module._validate_market_environment(market, Path("<regression>"))
 
@@ -291,3 +367,19 @@ def test_high_confidence_requires_established_stable_leadership() -> None:
     assert flat["comparison"]["confidence"] == "high"
     assert flat["comparison"]["leave_one_out_stability"] == 1.0
     assert flat["comparison"]["leader_margin_ci_95_low"] > 0
+
+
+def test_prior_comparison_engine_artifacts_remain_valid() -> None:
+    rounds = [
+        _round(
+            track="weekly",
+            index=index,
+            sp500_return=0.0,
+            model_returns={"model-a": 0.03, "model-b": 0.0},
+        )
+        for index in range(3)
+    ]
+    market = build_market_environment(_snapshot(rounds))
+    market["engine_version"] = "market_environment_engine_v3"
+
+    insights_module._validate_market_environment(market, Path("<v3-regression>"))

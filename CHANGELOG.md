@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-08-30
+
+### Market-environment roster continuity
+
+- Prevented a newly eligible model roster from erasing an established market-
+  environment comparison while the successor cohort is still forming.
+- Market-type leaders now use the newest frozen roster with at least three
+  identical completed market-type rounds; temporary model outages remain
+  excluded rather than creating smaller comparison groups.
+- Restored the homepage monthly rising-market leader from five matching rounds
+  across the selected eight-model roster.
+
 ## 2026-08-15
 
 ### Portfolio V3.0 production adoption

@@ -6,7 +6,7 @@ from typing import Any
 
 
 MARKET_ENVIRONMENT_VERSION = "capitalbench_market_environment_v1"
-MARKET_ENVIRONMENT_ENGINE_VERSION = "market_environment_engine_v3"
+MARKET_ENVIRONMENT_ENGINE_VERSION = "market_environment_engine_v4"
 READY_ROUND_THRESHOLD = 3
 MODEL_READY_OBSERVATION_THRESHOLD = 3
 BALANCED_SAMPLE_THRESHOLD = 3
@@ -224,6 +224,16 @@ def _normalize_round(raw: dict[str, Any]) -> dict[str, Any] | None:
     if not results:
         return None
     results.sort(key=lambda row: (-row["portfolio_return"], row["model_label"]))
+    result_model_ids = sorted({row["model_id"] for row in results})
+    expected_model_ids = sorted(
+        {
+            str(model_id)
+            for model_id in raw.get("expected_model_ids") or []
+            if str(model_id).strip()
+        }
+    )
+    comparison_model_ids = expected_model_ids if len(expected_model_ids) >= 2 else result_model_ids
+    model_roster_version = str(raw.get("model_roster_version") or "").strip()
     alphas = [row["alpha_vs_sp500"] for row in results]
     return {
         "round_id": str(raw.get("round_id") or ""),
@@ -232,6 +242,11 @@ def _normalize_round(raw: dict[str, Any]) -> dict[str, Any] | None:
         "decision_deadline_utc": str(raw.get("decision_deadline_utc") or ""),
         "entry_date": str(raw.get("entry_date") or ""),
         "exit_date": str(raw.get("exit_date") or ""),
+        "model_roster_version": model_roster_version or None,
+        "expected_model_ids": expected_model_ids,
+        "comparison_cohort_id": model_roster_version or f"observed:{'|'.join(comparison_model_ids)}",
+        "comparison_cohort_source": "frozen_roster" if expected_model_ids else "observed_roster",
+        "comparison_model_ids": comparison_model_ids,
         "environment_key": environment_key,
         "direction_key": direction_key,
         "sp500_return": sp500_return,
@@ -257,18 +272,27 @@ def _bucket(definition: dict[str, str], rounds: list[dict[str, Any]]) -> dict[st
 
 
 def _fair_comparison(rounds: list[dict[str, Any]]) -> dict[str, Any]:
-    raw_rows = _model_rows(rounds)
-    eligible_rows = [row for row in raw_rows if row["tests"] >= MODEL_READY_OBSERVATION_THRESHOLD]
-    eligible_model_ids = [row["model_id"] for row in eligible_rows]
-    shared_round_ids: set[str] = set()
-    if eligible_rows:
-        shared_round_ids = set(eligible_rows[0]["round_ids"])
-        for row in eligible_rows[1:]:
-            shared_round_ids &= set(row["round_ids"])
-    ordered_round_ids = [row["round_id"] for row in rounds if row["round_id"] in shared_round_ids]
+    candidates = [_comparison_candidate(rounds, cohort) for cohort in _comparison_cohorts(rounds)]
+    ready_candidates = [row for row in candidates if row["round_count"] >= READY_ROUND_THRESHOLD]
+    if ready_candidates:
+        selected_candidate = max(
+            ready_candidates,
+            key=lambda row: (row["started_index"], len(row["model_ids"]), row["round_count"]),
+        )
+    elif candidates:
+        selected_candidate = max(
+            candidates,
+            key=lambda row: (row["round_count"], row["started_index"], len(row["model_ids"])),
+        )
+    else:
+        selected_candidate = None
+
+    eligible_model_ids = list(selected_candidate["model_ids"]) if selected_candidate else []
+    ordered_round_ids = list(selected_candidate["round_ids"]) if selected_candidate else []
     comparable = len(eligible_model_ids) >= 2 and bool(ordered_round_ids)
     ready = comparable and len(ordered_round_ids) >= READY_ROUND_THRESHOLD
-    selected_rounds = [row for row in rounds if row["round_id"] in shared_round_ids] if comparable else []
+    selected_round_ids = set(ordered_round_ids)
+    selected_rounds = [row for row in rounds if row["round_id"] in selected_round_ids] if comparable else []
     model_rows = [
         row
         for row in _model_rows(selected_rounds)
@@ -312,6 +336,11 @@ def _fair_comparison(rounds: list[dict[str, Any]]) -> dict[str, Any]:
         "round_count": len(ordered_round_ids) if comparable else 0,
         "eligible_model_ids": eligible_model_ids,
         "eligible_model_count": len(eligible_model_ids),
+        "cohort_id": selected_candidate.get("cohort_id") if selected_candidate else None,
+        "cohort_source": selected_candidate.get("source") if selected_candidate else None,
+        "cohort_started_round_id": (
+            selected_candidate.get("started_round_id") if selected_candidate else None
+        ),
         "model_rows": model_rows,
         "leader_model_id": leader.get("model_id") if leader else None,
         "runner_up_model_id": runner_up.get("model_id") if runner_up else None,
@@ -333,6 +362,49 @@ def _fair_comparison(rounds: list[dict[str, Any]]) -> dict[str, Any]:
         "leave_one_out_stability": leave_one_out_stability,
         "established_observation_threshold": ESTABLISHED_OBSERVATION_THRESHOLD,
         "stability_threshold": STABILITY_THRESHOLD,
+    }
+
+
+def _comparison_cohorts(rounds: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    cohorts: list[dict[str, Any]] = []
+    for index, round_item in enumerate(rounds):
+        model_ids = tuple(sorted(set(round_item.get("comparison_model_ids") or [])))
+        if len(model_ids) < 2:
+            continue
+        cohort_id = str(
+            round_item.get("comparison_cohort_id") or f"observed:{'|'.join(model_ids)}"
+        )
+        source = str(round_item.get("comparison_cohort_source") or "observed_roster")
+        if source == "frozen_roster":
+            if any(row["cohort_id"] == cohort_id for row in cohorts):
+                continue
+        elif any(set(row["model_ids"]).issuperset(model_ids) for row in cohorts):
+            continue
+        cohorts.append(
+            {
+                "cohort_id": cohort_id,
+                "source": source,
+                "model_ids": model_ids,
+                "started_index": index,
+                "started_round_id": round_item["round_id"],
+            }
+        )
+    return cohorts
+
+
+def _comparison_candidate(rounds: list[dict[str, Any]], cohort: dict[str, Any]) -> dict[str, Any]:
+    required_model_ids = set(cohort["model_ids"])
+    selected_rounds = []
+    for index, round_item in enumerate(rounds):
+        if index < cohort["started_index"]:
+            continue
+        result_model_ids = {row["model_id"] for row in round_item["results"]}
+        if required_model_ids.issubset(result_model_ids):
+            selected_rounds.append(round_item)
+    return {
+        **cohort,
+        "round_ids": [row["round_id"] for row in selected_rounds],
+        "round_count": len(selected_rounds),
     }
 
 
