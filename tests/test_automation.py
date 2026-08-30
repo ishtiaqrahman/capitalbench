@@ -1,3 +1,4 @@
+import csv
 from pathlib import Path
 from shutil import copytree
 from types import SimpleNamespace
@@ -423,6 +424,57 @@ def test_resolve_accepted_round_reuses_shared_exit_snapshot(
     assert summary.status == "succeeded"
     assert source_exit.exists()
     assert "2026-05-11" in source_exit.read_text(encoding="utf-8")
+
+
+def test_resolve_accepted_round_repairs_incomplete_entry_from_shared_snapshot(
+    tmp_path: Path,
+) -> None:
+    round_path = _copy_due_round(tmp_path)
+    entry_path = round_path / "prices" / "entry_prices.csv"
+    full_entry = entry_path.read_text(encoding="utf-8")
+    (round_path / "prices" / "exit_prices.csv").write_text(
+        full_entry.replace("2026-05-08", "2026-05-11"),
+        encoding="utf-8",
+    )
+    snapshot_path = tmp_path / "market_data" / "daily_price_snapshots" / "2026-05-08.csv"
+    snapshot_path.parent.mkdir(parents=True)
+    snapshot_path.write_text(full_entry, encoding="utf-8")
+    entry_path.write_text(
+        "\n".join(line for line in full_entry.splitlines() if not line.startswith("SOFTWARE,")) + "\n",
+        encoding="utf-8",
+    )
+    accept_run(
+        round_path,
+        run_id="official-round-1-clean",
+        due_at_utc="2026-05-11T23:30:00+00:00",
+        store=FakeAutomationStore(),
+        sync_pending=False,
+    )
+
+    summary = resolve_accepted_round(
+        tmp_path,
+        round_id="CB-2026-05-10-1M",
+        run_id="official-round-1-clean",
+        latest_output=tmp_path / "latest",
+        cumulative_output=tmp_path / "cumulative",
+        fetch_exit_prices=False,
+        sync=False,
+    )
+
+    assert summary.status == "succeeded"
+    with entry_path.open("r", encoding="utf-8", newline="") as handle:
+        repaired_ids = {row["option_id"] for row in csv.DictReader(handle)}
+    expected_ids = {
+        line.split(",", 1)[0]
+        for line in full_entry.splitlines()[1:]
+        if line
+    }
+    assert repaired_ids == expected_ids
+    leaderboard_path = round_path / "runs" / "official-round-1-clean" / "results" / "leaderboard.csv"
+    with leaderboard_path.open("r", encoding="utf-8", newline="") as handle:
+        leaderboard = list(csv.DictReader(handle))
+    assert leaderboard
+    assert all(row["regret_vs_best_option"] for row in leaderboard)
 
 
 def test_resolve_accepted_round_stops_before_fetch_when_entry_snapshot_is_missing(

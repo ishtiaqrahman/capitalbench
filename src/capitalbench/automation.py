@@ -9,7 +9,7 @@ from typing import Any, Protocol
 
 from .cumulative import publish_cumulative, publish_latest, track_for_horizon_days
 from .hashing import round_hashes_match
-from .io import load_manifest, read_json, read_yaml, write_yaml
+from .io import load_manifest, load_options, read_json, read_yaml, write_yaml
 from .prices import fetch_selected_prices, materialize_price_snapshot
 from .report import publish_report
 from .roster import (
@@ -19,7 +19,7 @@ from .roster import (
     validate_official_portfolio_run_manifest,
 )
 from .run_store import get_run_paths, list_run_ids, read_run_manifest, update_run_manifest
-from .scoring import score_round
+from .scoring import read_price_records, score_round
 from .web_sync import (
     SUPABASE_SKIP_MESSAGE,
     optional_sync_cumulative,
@@ -332,6 +332,13 @@ def resolve_accepted_round(
     run_manifest = read_run_manifest(run_paths)
     _validate_resolution_gate(round_path, run_manifest)
 
+    if full_universe_prices:
+        _repair_full_universe_entry_prices(
+            rounds_dir=rounds_dir,
+            round_path=round_path,
+            entry_date=manifest.entry_date,
+        )
+
     if fetch_exit_prices:
         exit_prices_path = round_path / "prices" / "exit_prices.csv"
         snapshot_path = _resolution_snapshot_path(rounds_dir, manifest.exit_date)
@@ -407,6 +414,48 @@ def resolve_accepted_round(
         message=f"resolved {len(scores)} official scores",
         outputs=summary_outputs,
     )
+
+
+def _repair_full_universe_entry_prices(
+    *,
+    rounds_dir: Path,
+    round_path: Path,
+    entry_date: str | None,
+) -> None:
+    """Promote a complete shared entry snapshot before full-universe scoring.
+
+    Older accepted rounds may already have a selected-options entry file. That
+    is enough to score the submitted portfolios, but not enough to calculate
+    regret against the best allowed option. Reuse the immutable daily snapshot
+    when it exists, and fail before fetching exit prices when it does not.
+    """
+
+    entry_prices_path = round_path / "prices" / "entry_prices.csv"
+    entry_prices = read_price_records(entry_prices_path)
+    option_ids = [option.option_id for option in load_options(round_path)]
+    missing = [option_id for option_id in option_ids if option_id not in entry_prices]
+    if not missing:
+        return
+    if not entry_date:
+        raise ValueError("full-universe resolution requires a manifest entry_date")
+
+    snapshot_path = _resolution_snapshot_path(rounds_dir, entry_date)
+    if not snapshot_path.exists():
+        raise FileNotFoundError(
+            "full-universe entry prices are incomplete and the shared entry snapshot is missing: "
+            f"{snapshot_path}; missing options: {', '.join(missing)}"
+        )
+    try:
+        materialize_price_snapshot(
+            round_path=round_path,
+            snapshot_path=snapshot_path,
+            output_path=entry_prices_path,
+        )
+    except ValueError as exc:
+        raise ValueError(
+            "full-universe entry prices are incomplete and the shared entry snapshot cannot repair them: "
+            f"{exc}"
+        ) from exc
 
 
 def _resolution_outputs(
