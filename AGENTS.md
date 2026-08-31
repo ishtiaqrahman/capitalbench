@@ -64,7 +64,12 @@ sets, or results. Create the next round normally so it freezes the new active
 roster. Retrospective runs may still use retired models for research, but they
 remain ineligible for official scoring. A permanent retirement opens a new
 comparison set when the first accepted frozen-roster run is published; a
-temporary provider outage does not.
+temporary provider outage does not. The successor keeps the prior comparison
+origin and reuses already official shared rounds completed by every surviving
+model. This is a survivor-only comparison view, not a rerun or historical model
+backfill. Any added or reintroduced model resets the comparison origin. A
+successor must have at least one resolved round under its new roster before it
+can become the current benchmark.
 
 The first complete official production V2.0 rounds were:
 

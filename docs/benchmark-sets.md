@@ -5,9 +5,11 @@ Benchmark Comparison Sets keep model rankings fair when new models enter Capital
 ## Definitions
 
 - **Comparison Set**: a fixed model roster scored only on rounds every model in that roster completed.
+- **Roster Start**: the first official round run with that exact model roster.
+- **Comparison Origin**: the earliest round eligible for that roster's shared history. It normally equals the roster start, but a retirement-only successor retains the prior set's origin.
 - **Current Benchmark**: the newest qualified comparison set for a track.
 - **Shared Rounds**: resolved rounds included because every set model has an official result.
-- **Excluded For Fairness**: resolved rounds after the set started where at least one set model is missing.
+- **Excluded For Fairness**: resolved rounds inside the comparison history where at least one set model is missing.
 - **All Available History**: context across all resolved rounds in a track. It can include unequal model histories and is not the primary fair ranking view.
 
 ## Qualification
@@ -47,7 +49,10 @@ checked in chronological order:
    exact same roster. Older rounds without a frozen version keep the historical
    contained-roster rule.
 3. If yes, do not create a new set.
-4. If no, create a new set starting at that round.
+4. If the roster only removes formally retired models, create a successor set
+   at that round while retaining the prior set's comparison origin.
+5. If any model was added or reintroduced, create a fresh set whose comparison
+   origin is that round.
 
 This means temporary model outages do not create smaller benchmark sets. If a
 six-model set already exists and one model is unavailable for several weekly or
@@ -57,9 +62,11 @@ excluded from that set for everyone.
 
 A permanent model retirement is different. The first accepted round whose
 manifest freezes the smaller active roster opens a successor comparison set,
-even when an older set contains those models plus the retired model. Historical
-sets continue to accumulate any later shared rounds that still contain every
-model in those sets; they are never rewritten to remove the retired model.
+even when an older set contains those models plus the retired model. The
+successor retains the prior comparison origin and therefore uses earlier
+official rounds that every surviving model completed. It must complete at least
+one resolved round under the smaller roster before it can become current.
+Historical sets are never rewritten to remove the retired model.
 
 ## Retiring A Model
 
@@ -71,7 +78,8 @@ model in those sets; they are never rewritten to remove the retired model.
    active roster without the retired model.
 5. Run and accept the exact frozen roster.
 6. Build site data. The first accepted frozen-roster round in each track opens
-   the successor comparison set automatically.
+   the successor comparison set automatically. Earlier shared results for the
+   surviving roster are reused without rerunning or modifying any submission.
 
 If a model is merely unavailable for one run, do not retire it. The incomplete
 round remains excluded from the existing set under the missed-round rule.
@@ -81,7 +89,7 @@ round remains excluded from the existing set under the missed-round rule.
 `benchmark_sets.yaml` defines the policy and optional explicit set metadata:
 
 ```yaml
-version: benchmark_sets_v1
+version: benchmark_sets_v2
 qualification_thresholds:
   weekly: 6
   monthly: 3
@@ -92,6 +100,7 @@ sets:
     short_label: "May 28 Weekly"
     description: "Weekly comparison set that adds Claude Opus 4.8."
     started_round_id: CB-2026-05-28-1W
+    comparison_origin_round_id: CB-2026-05-28-1W
     model_ids:
       - anthropic-claude-opus-4-7
       - anthropic-claude-opus-4-8
@@ -101,8 +110,11 @@ sets:
 ```
 
 Configured sets are loaded first. The automatic discovery step then adds any
-uncovered official rosters. A set only covers rounds at or after its own
-`started_round_id`; future set metadata cannot hide an earlier new-model cohort.
+uncovered official rosters. A set only covers rounds at or after its
+`comparison_origin_round_id`, which defaults to `started_round_id`. A generated
+retirement-only successor carries forward the previous origin; a set that adds
+or reintroduces a model always begins comparison history at its own
+`started_round_id`. Future set metadata cannot hide an earlier new-model cohort.
 Validation also fails if a later set is redundant because an earlier set or
 larger roster already covers it. Use `benchmark_sets.yaml` when a set needs a
 stable label, description, or manually chosen start round; otherwise a new model
@@ -115,8 +127,8 @@ The build computes included rounds, excluded rounds, scores, qualification, and 
 1. Add the model to future official weekly and monthly runs only.
 2. Run the official round normally.
 3. Build the site data.
-4. The generator opens a new comparison set automatically if no already-started
-   set for that track contains the official run roster.
+4. The generator opens a fresh comparison set at that round because the roster
+   includes a model that was not in the preceding set.
 5. Add a YAML override only if the generated label, description, or start round
    needs to be curated.
 6. Run the validation commands.

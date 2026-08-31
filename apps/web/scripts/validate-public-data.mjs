@@ -1685,9 +1685,72 @@ for (const track of ["weekly", "monthly"]) {
 for (const set of benchmarkSets.sets) {
   const context = `benchmark set ${set.set_id}`;
   const startRound = roundByIdForSets.get(set.started_round_id);
+  const comparisonOriginRound = roundByIdForSets.get(set.comparison_origin_round_id);
   if (!startRound) failures.push(`${context} start round ${set.started_round_id} does not exist`);
   if (startRound && startRound.track !== set.track) {
     failures.push(`${context} start round ${set.started_round_id} track ${startRound.track} does not match ${set.track}`);
+  }
+  if (!comparisonOriginRound) {
+    failures.push(`${context} comparison origin round ${set.comparison_origin_round_id} does not exist`);
+  } else if (comparisonOriginRound.track !== set.track) {
+    failures.push(`${context} comparison origin track ${comparisonOriginRound.track} does not match ${set.track}`);
+  } else if (startRound && roundSortValue(comparisonOriginRound) > roundSortValue(startRound)) {
+    failures.push(`${context} comparison origin occurs after its roster start`);
+  }
+
+  const inheritedRoundIds = set.comparison.comparison_round_ids.filter((roundId) => {
+    const round = roundByIdForSets.get(roundId);
+    return startRound && round && roundSortValue(round) < roundSortValue(startRound);
+  });
+  const postStartRoundIds = set.comparison.comparison_round_ids.filter((roundId) => !inheritedRoundIds.includes(roundId));
+  if (set.inherited_round_count !== inheritedRoundIds.length || set.comparison.inherited_round_count !== inheritedRoundIds.length) {
+    failures.push(`${context} inherited round count does not match its included rounds`);
+  }
+  if (set.post_start_round_count !== postStartRoundIds.length || set.comparison.post_start_round_count !== postStartRoundIds.length) {
+    failures.push(`${context} post-start round count does not match its included rounds`);
+  }
+  if (new Set(set.comparison.comparison_round_ids).size !== set.comparison.comparison_round_ids.length) {
+    failures.push(`${context} contains duplicate comparison round ids`);
+  }
+  const expectedQualified =
+    set.comparison.comparison_round_count >= set.qualification_threshold && postStartRoundIds.length > 0;
+  if (set.is_qualified !== expectedQualified || set.comparison.is_qualified !== expectedQualified) {
+    failures.push(`${context} qualification does not match its shared and post-start round counts`);
+  }
+
+  if (startRound && comparisonOriginRound && roundSortValue(comparisonOriginRound) < roundSortValue(startRound)) {
+    const parent = benchmarkSets.sets
+      .filter((candidate) => {
+        if (candidate.track !== set.track || candidate.set_id === set.set_id) return false;
+        const candidateStart = roundByIdForSets.get(candidate.started_round_id);
+        if (!candidateStart || roundSortValue(candidateStart) >= roundSortValue(startRound)) return false;
+        const candidateModels = new Set(candidate.model_ids);
+        return (
+          candidate.comparison_origin_round_id === set.comparison_origin_round_id &&
+          candidate.model_ids.length > set.model_ids.length &&
+          set.model_ids.every((modelId) => candidateModels.has(modelId))
+        );
+      })
+      .sort((left, right) => {
+        const leftStart = roundByIdForSets.get(left.started_round_id);
+        const rightStart = roundByIdForSets.get(right.started_round_id);
+        return roundSortValue(rightStart).localeCompare(roundSortValue(leftStart));
+      })[0];
+    if (!parent) {
+      failures.push(`${context} inherits history without an earlier strict-superset set`);
+    } else {
+      const setModels = new Set(set.model_ids);
+      const removedModelIds = parent.model_ids.filter((modelId) => !setModels.has(modelId));
+      const rosterFrozenAt = Date.parse(
+        startRound.model_roster_frozen_at_utc || startRound.decision_deadline_utc || `${startRound.decision_date}T23:59:59Z`
+      );
+      for (const modelId of removedModelIds) {
+        const retiredAt = Date.parse(String(modelByIdForSets.get(modelId)?.retired_at_utc ?? ""));
+        if (!Number.isFinite(retiredAt) || (Number.isFinite(rosterFrozenAt) && retiredAt > rosterFrozenAt)) {
+          failures.push(`${context} inherits after removing ${modelId} without an effective formal retirement`);
+        }
+      }
+    }
   }
   for (const earlierSet of benchmarkSets.sets.filter((item) => item.track === set.track && item.set_id !== set.set_id)) {
     const earlierStart = roundByIdForSets.get(earlierSet.started_round_id);

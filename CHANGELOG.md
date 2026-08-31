@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-08-31
+
+### Retirement comparison continuity
+
+- Changed retirement-only successor comparison sets to retain the preceding
+  set's comparison origin and reuse already official rounds completed by every
+  surviving model.
+- Kept additions, replacements, and reintroduced models on fresh comparison
+  histories; historical sets and submitted results remain unchanged.
+- Required at least one resolved round under the smaller roster before an
+  inherited successor can become the current benchmark.
+
 ## 2026-08-30
 
 ### Market-environment roster continuity

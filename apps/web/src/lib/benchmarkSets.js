@@ -5,6 +5,31 @@ export const DEFAULT_BENCHMARK_SET_THRESHOLDS = {
   monthly: 3
 };
 
+function normalizeModelIds(modelIds) {
+  return Array.from(new Set((modelIds ?? []).map(String).filter(Boolean))).sort();
+}
+
+export function comparisonOriginForRosterTransition({
+  currentModelIds,
+  previousDefinition,
+  retiredModelIds = []
+}) {
+  if (!previousDefinition?.started_round_id) return null;
+  const current = normalizeModelIds(currentModelIds);
+  const previous = normalizeModelIds(previousDefinition.model_ids);
+  if (current.length === 0 || current.length >= previous.length) return null;
+
+  const currentSet = new Set(current);
+  const previousSet = new Set(previous);
+  if (current.some((modelId) => !previousSet.has(modelId))) return null;
+
+  const retired = new Set(retiredModelIds);
+  const removed = previous.filter((modelId) => !currentSet.has(modelId));
+  if (removed.length === 0 || removed.some((modelId) => !retired.has(modelId))) return null;
+
+  return previousDefinition.comparison_origin_round_id || previousDefinition.started_round_id;
+}
+
 function finiteNumber(value) {
   return typeof value === "number" && Number.isFinite(value);
 }
@@ -201,11 +226,14 @@ function buildBenchmarkSet(readModel, definition, currentSetIds = new Set()) {
   const roundById = new Map(readModel.rounds.map((round) => [round.round_id, round]));
   const modelById = new Map(readModel.models.map((model) => [model.model_id, model]));
   const startRound = roundById.get(definition.started_round_id);
+  const comparisonOriginRoundId = definition.comparison_origin_round_id || definition.started_round_id;
+  const comparisonOriginRound = roundById.get(comparisonOriginRoundId);
   const startSort = roundSortValue(startRound);
+  const comparisonOriginSort = roundSortValue(comparisonOriginRound);
   const threshold = thresholdFor(readModel, definition.track);
   const resolvedRounds = readModel.rounds
     .filter((round) => round.track === definition.track && round.status === "resolved")
-    .filter((round) => !startRound || roundSortValue(round) >= startSort)
+    .filter((round) => !comparisonOriginRound || roundSortValue(round) >= comparisonOriginSort)
     .filter((round) => resultRowsForRound(readModel, round).length > 0)
     .sort((left, right) => roundSortValue(left).localeCompare(roundSortValue(right)));
 
@@ -229,7 +257,9 @@ function buildBenchmarkSet(readModel, definition, currentSetIds = new Set()) {
 
   const modelRoster = definition.model_ids.map((modelId) => modelDisplay(modelById, modelId));
   const rows = buildSetRows({ readModel, definition, candidateRounds: resolvedRounds, includedRounds, modelById });
-  const isQualified = rows.comparison.comparison_round_count >= threshold;
+  const inheritedRoundCount = includedRounds.filter((round) => startRound && roundSortValue(round) < startSort).length;
+  const postStartRoundCount = includedRounds.length - inheritedRoundCount;
+  const isQualified = rows.comparison.comparison_round_count >= threshold && postStartRoundCount > 0;
   const isCurrent = currentSetIds.has(definition.set_id);
 
   return {
@@ -239,9 +269,13 @@ function buildBenchmarkSet(readModel, definition, currentSetIds = new Set()) {
     short_label: definition.short_label || definition.label,
     description: definition.description || "",
     started_round_id: definition.started_round_id,
+    comparison_origin_round_id: comparisonOriginRoundId,
     roster_policy: definition.roster_policy || "contains",
     model_roster_version: definition.model_roster_version || null,
     started_at: startRound?.decision_date ?? null,
+    comparison_origin_at: comparisonOriginRound?.decision_date ?? null,
+    inherited_round_count: inheritedRoundCount,
+    post_start_round_count: postStartRoundCount,
     model_ids: definition.model_ids,
     models: modelRoster,
     qualification_threshold: threshold,
@@ -262,6 +296,8 @@ function buildBenchmarkSet(readModel, definition, currentSetIds = new Set()) {
       ...rows.comparison,
       excluded_round_count: excludedRounds.length,
       excluded_round_ids: excludedRounds.map((round) => round.round_id),
+      inherited_round_count: inheritedRoundCount,
+      post_start_round_count: postStartRoundCount,
       qualification_threshold: threshold,
       is_qualified: isQualified,
       is_current: isCurrent,
@@ -305,7 +341,7 @@ export function buildBenchmarkSetsData(readModel) {
 
   return {
     policy: {
-      version: readModel.benchmark_set_policy?.version ?? "benchmark_sets_v1",
+      version: readModel.benchmark_set_policy?.version ?? "benchmark_sets_v2",
       qualification_thresholds: {
         weekly: thresholdFor(readModel, "weekly"),
         monthly: thresholdFor(readModel, "monthly")

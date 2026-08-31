@@ -33,6 +33,7 @@ const riskReturn = scorecard ? buildBenchmarkSetRiskReturn(apiReadModel, set) : 
 const status = set.is_current ? "Current Benchmark" : set.is_qualified ? "Qualified Comparison Set" : "Benchmark Forming";
 const trackLabel = set.track === "weekly" ? "Weekly" : "Monthly";
 const remainingRounds = Math.max(0, set.qualification_threshold - set.comparison.comparison_round_count);
+const qualificationMessage = remainingRounds > 0 ? `${remainingRounds} more to qualify` : "1 current-roster result needed";
 const title = `${set.label} | CapitalBench`;
 const description = `${set.label} ranks ${set.models.length} AI models only on shared ${set.track} rounds that every model completed.`;
 const defaultPair = defaultBenchmarkSetComparison(benchmarkSets.sets, set.track);
@@ -64,6 +65,13 @@ const detailComparison =
             Every ranked model in this set is scored only on rounds that all {set.models.length} listed models completed.
             If one model misses a resolved round, that round is excluded from this set for everyone.
           </p>
+          {set.inherited_round_count > 0 && (
+            <p>
+              Includes {set.inherited_round_count} earlier shared {set.inherited_round_count === 1 ? "round" : "rounds"}
+              completed by all {set.models.length} models before this roster began, plus {set.post_start_round_count} completed
+              since the roster changed.
+            </p>
+          )}
         </div>
         <a class="action-link" href="/leaderboards/benchmark-sets">All comparison sets</a>
       </div>
@@ -169,12 +177,12 @@ const detailComparison =
           <span class="panel-kicker">Round audit</span>
           <h2>Included And Excluded Rounds</h2>
           <p>
-            Included rounds count toward the score. Excluded rounds are resolved rounds after the set started where at least
-            one set model was missing.
+            Included rounds count toward the score. Excluded rounds are resolved rounds inside this comparison history where
+            at least one set model was missing.
           </p>
         </div>
         {!set.is_qualified && (
-          <span class="status-badge status-pending">{remainingRounds} more to qualify</span>
+          <span class="status-badge status-pending">{qualificationMessage}</span>
         )}
       </div>
       <div class="leaderboard-lanes-status-grid">
