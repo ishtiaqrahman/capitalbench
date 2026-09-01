@@ -2,110 +2,110 @@
 
 ## Round
 
-- Round ID: CB-2026-08-23-1W
-- Decision deadline: 2026-08-24T13:25:00Z
+- Round ID: CB-2026-08-24-1W
+- Decision deadline: 2026-08-25T13:25:00Z
 - Horizon: one week
-- Official run ID: official-v3-20260823-weekly
+- Official run ID: official-v3-20260824-weekly
 - Mock: no
 
 ## Model Decisions
 
 | model_id | provider | submission_format | selected_option_id | holding_count | confidence | rationale_summary | key_risks |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| xai-grok-4-3 | xai | portfolio | METALS_MINING | 3 | 0.585 | Mixed signals with equity weakness offset by commodity and crypto strength; quality pullbacks and volume dislocations provide selective reversal opportunities within one-week window. | High volatility in crypto and semiconductors; Potential further equity drawdown if macro data disappoints; Volume dislocations may reverse quickly |
-| google-gemini-3-1-pro | google | portfolio | AEROSPACE_DEFENSE | 3 | 0.5767 | The market is showing mixed signals with some sectors experiencing pullbacks while others continue to show strength. The upcoming NVIDIA earnings report is a significant catalyst for the technology sector. | NVIDIA earnings disappoint, leading to a broader tech sell-off.; Macroeconomic data releases (GDP, PCE) surprise to the downside, increasing recession fears. |
-| openai-gpt-5-6-sol | openai | portfolio | CYBERSECURITY | 3 | 0.5667 | Active-return dispersion is elevated at 5.20%, while only 39.13% of assets rose over five sessions despite broad 21-session strength. This favors selective reversals in high-quality prior leaders rather than indiscriminate momentum chasing. | NVIDIA results could trigger a broad technology selloff and invalidate the technology-pullback thesis.; July Personal Income and Outlays or revised GDP could lift rate expectations and pressure growth exposures.; Escalation or rapid de-escalation of the Iran conflict could produce abrupt cross-asset and defense-sector reversals.; High dispersion may persist through fundamental deterioration rather than mean reversion. |
-| anthropic-claude-fable-5 | anthropic | portfolio | CYBERSECURITY | 3 | 0.59 | SPY fell 1.37% on the week while breadth (RSP -0.49%) held better and defensive/hard assets rallied; 5s active dispersion of 5.2% is elevated. Fed minutes lean hawkish but the week's pullback in high-quality tech themes with strong prior trends (cybersecurity, defense) looks like temporary de-risking rather than fundamental deterioration, and geopolitical tension (Iran, Brent $92.67) supports defense demand. | NVIDIA earnings Aug 26 could swing all tech-adjacent themes sharply either way; Hawkish Fed tone and a 5.27% 30-year yield could pressure high-beta growth further; A geopolitical de-escalation would remove the defense-sector tailwind; Crypto momentum could persist another week, making momentum-fade ranks costly |
-| anthropic-claude-opus-5 | anthropic | portfolio | CYBERSECURITY | 3 | 0.57 | SPY fell 1.4% on the week with breadth rotating away from mega-cap tech toward defensives, healthcare, precious metals and international. Rates remain elevated (10y 4.74%, 30y 5.27%) with hawkish FOMC minutes, so long-duration growth is under pressure. NVIDIA earnings on August 26 is the dominant single-name catalyst inside the scoring window and cuts both ways for semis and AI baskets. Cross-sectional dispersion is high (5.2% 5-session active spread) and crypto has spiked on huge volume, which is stretched rather than a fresh edge. Best risk-adjusted reversal candidates are high-quality tech-adjacent groups with strong prior relative trend and a sharp one-week pullback: cybersecurity, aerospace/defense, and to a lesser degree autonomous robotics. | NVIDIA's Aug 26 results could trigger a broad tech/AI drawdown that hits cybersecurity and robotics alongside semis; Hawkish rate repricing with 10y at 4.74% and 30y at 5.27% pressures high-beta growth baskets; Aerospace/defense weakness may reflect unreported order or budget news rather than a temporary overreaction; High cross-sectional dispersion (5.2%) means one-week sector outcomes are wide and noisy; A sharp crypto or commodity unwind could spill into broader risk appetite before the Aug 31 close |
-| xai-grok-4-5 | xai | portfolio | AEROSPACE_DEFENSE | 3 | 0.58 | SPY soft on the week amid sticky inflation prints, softer labor revisions, elevated long rates, and geopolitics supporting oil; Friday bounce and strong PMI contrast with crypto/precious-metal surges and selective equity pullbacks, yielding mixed continuation versus shock-reversal setups into NVDA and data releases. | NVIDIA results and July PCE/GDP revisions mid-window can reverse tech and beta factors sharply; Further Middle East / tanker escalation could spike oil and risk-off equities beyond defense bounce; Elevated long-end yields and hawkish Fed minutes residual may pressure duration-sensitive and high-vol growth names; Crypto and metals momentum unwind could lift cross-asset vol and correlation to SPY |
-| xai-grok-4-6 | xai | portfolio | AEROSPACE_DEFENSE | 3 | 0.5633 | SPY is only modestly off highs after a down week while 5-session active-return dispersion is elevated; crypto already ran hard, several quality names pulled back, and the window includes GDP/PCE plus NVIDIA results, so reversal and continuation can coexist. | NVIDIA results and the August 26 GDP/PCE package can dominate the week and overwhelm sector mean-reversion.; Geopolitical oil/tanker headlines can keep risk premia elevated and reverse defense or bank rebounds.; Elevated 5-session dispersion and high-beta tech/crypto residual volatility can make excess ranges miss even if direction is right. |
+| xai-grok-4-5 | xai | portfolio | AUTONOMOUS_ROBOTICS | 3 | 0.57 | SPY soft on the week with better equal-weight breadth, elevated but not extreme cross-sectional dispersion, crypto short-term surge on volume, and multiple high-beta growth/tech names showing sharp relative pullbacks into Jackson Hole and a large-cap semi print; mixed continuation vs mean-reversion setup over one week. | Jackson Hole Fed chair remarks and FOMC dissent backdrop could reprice rates and hit high-beta growth/international simultaneously; Aug 26 large-cap semiconductor results may extend SMH/EWY/ARKQ weakness rather than reverse it; Crypto volume-dislocation fade could spill into risk sentiment and reverse short-term leadership; Elevated horizon vols (Korea 70%+, semis 45%+) imply wide one-week error bands even if mean-reversion thesis is directionally right |
+| openai-gpt-5-6-sol | openai | portfolio | SEMICONDUCTORS | 3 | 0.5733 | High active-return dispersion, improving breadth, and sharp pullbacks in prior leaders favor selective reversals, while semiconductor earnings and Jackson Hole create substantial one-week event risk. | The August 26 semiconductor earnings release could validate the selloff and pressure all technology-linked selections.; A hawkish Federal Reserve message at Jackson Hole could lift yields and extend the growth-factor drawdown.; Weak labor, retail-sales, or housing signals could shift the market from rotation into a broader risk-off decline.; High beta and elevated volatility could overwhelm reversal signals during the one-week window. |
+| anthropic-claude-opus-5 | anthropic | portfolio | SEMICONDUCTORS | 3 | 0.56 | Breadth is improving (RSP +0.52% vs SPY -1.19% over 5 sessions, positive asset share 79.7% over 21 sessions) while mega-cap tech and high-beta AI/semi complexes de-rate. Dispersion of active returns at 5.38% is elevated. Jackson Hole (Aug 27-29), the Fed chair address (Aug 28), the payroll benchmark revision, and a large-cap semiconductor earnings report on Aug 26 are all inside the scoring window, favoring a modest tilt to quality tech pullbacks with strong prior trends over stretched crypto momentum. | Aug 26 large-cap semiconductor earnings could extend rather than reverse the SMH drawdown; Hawkish Jackson Hole tone on Aug 28 with a 9-3 FOMC split could compress high-beta growth multiples further; High-beta selections (beta 2.4-2.9) magnify any broad index decline within the one-week window; Continued rotation into defensives and breadth-led value (RSP-SPY +1.71%) could leave tech pullbacks lagging; Crypto momentum could keep extending, causing rank-order opportunity cost |
+| xai-grok-4-6 | xai | portfolio | SP500 | 1 | 0.5 | SPY slipped while a majority of constituents and equal-weight beat it; 5-session active dispersion is elevated. Jackson Hole, GDP/PCE, and a large-cap semiconductor print sit inside the scoring week, so high-beta shock names can bounce or extend. Crypto already posted extreme short-window gains with very low quality scores. | Jackson Hole remarks on Aug 28 can reprice duration and high-beta growth in either direction before Sep 1.; Aug 26 large-cap semiconductor results can extend SMH/EWY/ARKQ weakness instead of reversing it.; Crypto volume spikes after 15-17% weekly gains can reverse violently and dominate cross-sectional noise.; Soft July payrolls, retail sales, and housing starts leave growth-scare risk if confidence or GDP revisions disappoint. |
+| xai-grok-4-3 | xai | portfolio | SOUTH_KOREA | 3 | 0.565 | Mixed signals with equity weakness, crypto strength, and upcoming policy events; limited one-week edge outside volatility-driven moves. | Jackson Hole policy surprises; GDP revision volatility; Crypto liquidity swings; Sector-specific earnings reactions |
+| google-gemini-3-1-pro | google | portfolio | SEMICONDUCTORS | 3 | 0.58 | The market is experiencing a mixed environment with some recent pullbacks in technology and momentum, while defensive and commodity sectors show relative strength. The upcoming Jackson Hole symposium and semiconductor earnings are key catalysts. | Hawkish surprises from the Jackson Hole symposium could negatively impact risk assets.; Disappointing semiconductor earnings could lead to further downside in tech. |
+| anthropic-claude-fable-5 | anthropic | portfolio | SEMICONDUCTORS | 3 | 0.5667 | SPY fell 1.19% over five sessions while equal-weight outperformed (+1.71% active), signaling a rotation-driven pullback in high-beta tech rather than broad deterioration. Active dispersion is elevated at 5.38%. Key in-window catalysts: a large-cap semiconductor earnings report Aug 26 and the Fed chair's Jackson Hole address Aug 28. Prior 21-session breadth was strong (79.7% positive), supporting a reversal setup for quality tech pullbacks. | Semiconductor earnings disappointment on Aug 26 would extend the tech pullback rather than reverse it; Hawkish Jackson Hole remarks Aug 28 could pressure high-beta growth exposure; South Korea carries 70%+ annualized volatility and regional geopolitical/currency risk; Momentum unwind rotation into value could persist through the window |
 
 ## Realized Returns
 
 | option_id | label | entry_price | exit_price | return | rank |
 | --- | --- | --- | --- | --- | --- |
-| CYBERSECURITY | Cybersecurity | 93.23 | 100.1500015258789 | 0.07422505122684653 | 1 |
-| SOFTWARE | Software | 102.45 | 109.9800033569336 | 0.07349930070213362 | 2 |
-| TAIWAN | Taiwan Equities | 103.33 | 108.02999877929688 | 0.04548532642308012 | 3 |
-| SOUTH_KOREA | South Korea Equities | 173.64 | 180.86000061035156 | 0.04158028455627494 | 4 |
-| AGRICULTURE | Agriculture Commodities | 28.3 | 29.31999969482422 | 0.03604239204325865 | 5 |
-| TECHNOLOGY | Technology Sector | 180.05 | 186.5 | 0.03582338239377947 | 6 |
-| BROAD_AI_TECH | Broad AI Technology | 62.3 | 64.30000305175781 | 0.0321027777168188 | 7 |
-| BRAZIL | Brazil Equities | 35.17 | 36.029998779296875 | 0.0244526238071332 | 8 |
-| SEMICONDUCTORS | Semiconductors | 546.8 | 556.6300048828125 | 0.01797733153403902 | 9 |
-| NASDAQ100 | Nasdaq 100 | 706.32 | 716.760009765625 | 0.014780849707816568 | 10 |
-| LARGE_GROWTH | US Large-Cap Growth | 121.04 | 122.70999908447266 | 0.01379708430661486 | 11 |
-| ENERGY | Energy Sector | 63.11 | 63.959999084472656 | 0.013468532474610218 | 12 |
-| OIL | Crude Oil | 132.21 | 133.6999969482422 | 0.011269926240391692 | 13 |
-| JAPAN | Japan Equities | 94.84 | 95.87999725341797 | 0.010965808239329133 | 14 |
-| BROAD_COMMODITIES | Broad Commodities | 18.47 | 18.649999618530273 | 0.009745512643761556 | 15 |
-| EMERGING_MARKETS | Emerging Markets | 59.97 | 60.52000045776367 | 0.0091712599260243 | 16 |
-| INDIA | India Equities | 49.35 | 49.70000076293945 | 0.007092214041326317 | 17 |
-| US_DOLLAR | US Dollar | 27.96 | 28.1200008392334 | 0.005722490673583547 | 18 |
-| AUTONOMOUS_ROBOTICS | Autonomous Technology and Robotics | 121.83 | 122.5 | 0.005499466469670811 | 19 |
-| SP500 | S&P 500 | 763.47 | 767.0499877929688 | 0.004689100806801516 | 20 |
-| ETHEREUM_ETF | Ethereum ETF | 18.66 | 18.719999313354492 | 0.0032153972858783852 | 21 |
-| TOTAL_US_MARKET | Total US Stock Market | 377.07 | 378.1499938964844 | 0.002864173486313959 | 22 |
-| METALS_MINING | Metals and Mining | 117.87 | 118.12999725341797 | 0.0022057966693642683 | 23 |
-| HIGH_YIELD_CREDIT | High Yield Corporate Bonds | 79.7 | 79.80999755859375 | 0.001380145026270263 | 24 |
-| BITCOIN_ETF | Bitcoin ETF | 44.64 | 44.66999816894531 | 0.0006720019925026133 | 25 |
-| SHORT_TREASURY | Short-Term Treasury Bills | 91.61 | 91.66000366210938 | 0.0005458319191067318 | 26 |
-| INVESTMENT_GRADE_CREDIT | Investment Grade Corporate Bonds | 106.18 | 106.20999908447266 | 0.00028253046216475397 | 27 |
-| CASH | Cash / Do Not Invest | 1.0 | 1.0 | 0.0 | 28 |
-| LONG_TREASURY | Long-Term US Treasury Bonds | 82.56 | 82.5199966430664 | -0.0004845367845639492 | 29 |
-| MOMENTUM | US Momentum Equities | 300.59 | 300.3599853515625 | -0.0007652105806496001 | 30 |
-| EMERGING_MARKET_BONDS | Emerging Market USD Bonds | 94.85 | 94.7699966430664 | -0.0008434723978237857 | 31 |
-| AUSTRALIA | Australia Equities | 30.06 | 30.020000457763672 | -0.0013306567610221753 | 32 |
-| AGGREGATE_BONDS | US Aggregate Bond Market | 97.55 | 97.41000366210938 | -0.0014351239148192585 | 33 |
-| COPPER | Copper | 40.07 | 40.0 | -0.001746942850012534 | 34 |
-| DEVELOPED_EX_US | Developed Markets ex-US | 73.06 | 72.91999816894531 | -0.0019162582953009544 | 35 |
-| MORTGAGE_BACKED_BONDS | Agency Mortgage-Backed Bonds | 93.31 | 93.0999984741211 | -0.0022505789934509357 | 36 |
-| INTERNATIONAL_BONDS | International Aggregate Bonds | 47.68 | 47.54999923706055 | -0.0027265260683609904 | 37 |
-| INTERMEDIATE_TREASURY | Intermediate-Term US Treasury Bonds | 93.01 | 92.73999786376953 | -0.002902936632947828 | 38 |
-| MUNICIPAL_BONDS | Municipal Bonds | 105.41 | 105.0999984741211 | -0.0029409119237160386 | 39 |
-| EURO | Euro | 107.645 | 107.25 | -0.003669469088206534 | 40 |
-| CHINA | China Equities | 54.93 | 54.720001220703125 | -0.0038230252921331864 | 41 |
-| TIPS | Treasury Inflation-Protected Securities | 107.25 | 106.81999969482422 | -0.004009326854785833 | 42 |
-| YEN | Japanese Yen | 57.64 | 57.38999938964844 | -0.004337276376675248 | 43 |
-| LARGE_VALUE | US Large-Cap Value | 258.32 | 256.9100036621094 | -0.005458332060586213 | 44 |
-| MEXICO | Mexico Equities | 77.15 | 76.72000122070312 | -0.005573542181424251 | 45 |
-| COMMUNICATIONS | Communication Services Sector | 112.32 | 111.45999908447266 | -0.007656703307757584 | 46 |
-| FINANCIALS | Financials Sector | 58.22 | 57.709999084472656 | -0.008759892056464103 | 47 |
-| DIVIDEND | US Dividend Equities | 35.21 | 34.88999938964844 | -0.009088344514386892 | 48 |
-| SMALL_VALUE | US Small-Cap Value | 224.06 | 221.8000030517578 | -0.010086570330457012 | 49 |
-| BIOTECH | Biotechnology | 164.17 | 162.5 | -0.010172382286653958 | 50 |
-| EUROPE | Europe Equities | 92.61 | 91.66000366210938 | -0.010258031939214152 | 51 |
-| CANADA | Canada Equities | 62.12 | 61.43000030517578 | -0.011107528892856045 | 52 |
-| MID_CAP | US Mid-Cap Stocks | 76.2 | 75.3499984741211 | -0.011154875667702235 | 53 |
-| EQUAL_WEIGHT_SP500 | Equal-Weight S&P 500 | 221.93 | 219.38999938964844 | -0.011445052991265525 | 54 |
-| SOUTH_AFRICA | South Africa Equities | 71.33 | 70.5 | -0.01163605775970833 | 55 |
-| SMALL_CAP | US Small-Cap Stocks | 297.97 | 293.92999267578125 | -0.01355843650105304 | 56 |
-| CONSUMER_DISCRETIONARY | Consumer Discretionary Sector | 118.3 | 116.58999633789062 | -0.014454806949360743 | 57 |
-| UNITED_KINGDOM | United Kingdom Equities | 49.1 | 48.369998931884766 | -0.014867638861817412 | 58 |
-| SOLAR | Solar Energy | 48.32 | 47.56999969482422 | -0.015521529494531894 | 59 |
-| REGIONAL_BANKS | Regional Banks | 74.76 | 73.55999755859375 | -0.016051397022555536 | 60 |
-| MATERIALS | Materials Sector | 53.58 | 52.689998626708984 | -0.01661070125589803 | 61 |
-| LOW_VOL | US Low Volatility Equities | 76.01 | 74.69000244140625 | -0.01736610391519211 | 62 |
-| INDUSTRIALS | Industrials Sector | 179.0 | 175.1300048828125 | -0.02162008445356145 | 63 |
-| AEROSPACE_DEFENSE | Aerospace and Defense | 233.4 | 228.35000610351562 | -0.02163664908519447 | 64 |
-| UTILITIES | Utilities Sector | 43.22 | 42.22999954223633 | -0.02290607259980726 | 65 |
-| HEALTHCARE | Healthcare Sector | 174.7 | 170.5399932861328 | -0.023812288001529347 | 66 |
-| REAL_ESTATE | Real Estate Sector | 45.33 | 44.11000061035156 | -0.026913730192994367 | 67 |
-| CONSUMER_STAPLES | Consumer Staples Sector | 87.45 | 84.9800033569336 | -0.028244672876688526 | 68 |
-| SILVER | Silver | 62.2 | 60.130001068115234 | -0.03327972559300274 | 69 |
-| GOLD | Gold | 87.47 | 83.70999908447266 | -0.0429861771524791 | 70 |
+| OIL | Crude Oil | 126.15 | 141.0 | 0.11771700356718195 | 1 |
+| BROAD_COMMODITIES | Broad Commodities | 18.17 | 19.05 | 0.0484314804623005 | 2 |
+| ENERGY | Energy Sector | 62.06 | 64.77 | 0.04366741862713486 | 3 |
+| AGRICULTURE | Agriculture Commodities | 28.28 | 29.49 | 0.04278642149929279 | 4 |
+| SOFTWARE | Software | 101.85 | 106.18 | 0.04251350024545908 | 5 |
+| TAIWAN | Taiwan Equities | 105.4 | 109.74 | 0.04117647058823515 | 6 |
+| CYBERSECURITY | Cybersecurity | 92.46 | 96.2 | 0.04044992429158567 | 7 |
+| BRAZIL | Brazil Equities | 35.88 | 36.57 | 0.019230769230769162 | 8 |
+| TECHNOLOGY | Technology Sector | 181.74 | 183.64 | 0.010454495433036115 | 9 |
+| US_DOLLAR | US Dollar | 27.94 | 28.21 | 0.00966356478167496 | 10 |
+| EMERGING_MARKETS | Emerging Markets | 60.64 | 60.68 | 0.0006596306068602509 | 11 |
+| CASH | Cash / Do Not Invest | 1.0 | 1.0 | 0.0 | 12 |
+| BROAD_AI_TECH | Broad AI Technology | 63.08 | 63.06 | -0.0003170577045021883 | 13 |
+| SHORT_TREASURY | Short-Term Treasury Bills | 91.62 | 91.39 | -0.002510368915084049 | 14 |
+| JAPAN | Japan Equities | 95.63 | 95.22 | -0.004287357523789614 | 15 |
+| NASDAQ100 | Nasdaq 100 | 710.72 | 707.64 | -0.004333633498424194 | 16 |
+| LARGE_GROWTH | US Large-Cap Growth | 121.83 | 121.21 | -0.0050890585241730735 | 17 |
+| SP500 | S&P 500 | 765.91 | 761.78 | -0.005392278466138323 | 18 |
+| YEN | Japanese Yen | 57.63 | 57.2 | -0.007461391636300552 | 19 |
+| TIPS | Treasury Inflation-Protected Securities | 107.64 | 106.81 | -0.00771088814567078 | 20 |
+| TOTAL_US_MARKET | Total US Stock Market | 378.15 | 375.17 | -0.007880470712680054 | 21 |
+| EURO | Euro | 107.8 | 106.93 | -0.00807050092764372 | 22 |
+| DIVIDEND | US Dividend Equities | 35.11 | 34.81 | -0.008544574195385901 | 23 |
+| LARGE_VALUE | US Large-Cap Value | 258.27 | 255.95 | -0.00898284740775157 | 24 |
+| HIGH_YIELD_CREDIT | High Yield Corporate Bonds | 79.92 | 79.1 | -0.01026026026026039 | 25 |
+| MUNICIPAL_BONDS | Municipal Bonds | 105.58 | 104.33 | -0.01183936351581738 | 26 |
+| AGGREGATE_BONDS | US Aggregate Bond Market | 98.01 | 96.77 | -0.012651770227527948 | 27 |
+| CHINA | China Equities | 55.12 | 54.41 | -0.012880986937590766 | 28 |
+| INDIA | India Equities | 50.23 | 49.58 | -0.012940473820425957 | 29 |
+| INTERNATIONAL_BONDS | International Aggregate Bonds | 47.91 | 47.27 | -0.013358380296388916 | 30 |
+| EMERGING_MARKET_BONDS | Emerging Market USD Bonds | 95.38 | 94.09 | -0.013524847976514875 | 31 |
+| MORTGAGE_BACKED_BONDS | Agency Mortgage-Backed Bonds | 93.77 | 92.41 | -0.014503572571184842 | 32 |
+| LOW_VOL | US Low Volatility Equities | 75.64 | 74.54 | -0.014542570068746596 | 33 |
+| CONSUMER_STAPLES | Consumer Staples Sector | 86.52 | 85.25 | -0.014678687008784053 | 34 |
+| INTERMEDIATE_TREASURY | Intermediate-Term US Treasury Bonds | 93.51 | 92.1 | -0.01507860121912108 | 35 |
+| INVESTMENT_GRADE_CREDIT | Investment Grade Corporate Bonds | 106.86 | 105.22 | -0.015347183230394967 | 36 |
+| UTILITIES | Utilities Sector | 43.31 | 42.56 | -0.017317016855229683 | 37 |
+| EQUAL_WEIGHT_SP500 | Equal-Weight S&P 500 | 221.77 | 217.59 | -0.018848356405284816 | 38 |
+| FINANCIALS | Financials Sector | 58.31 | 57.2 | -0.019036185902932545 | 39 |
+| SEMICONDUCTORS | Semiconductors | 555.82 | 545.22 | -0.019070922241013366 | 40 |
+| LONG_TREASURY | Long-Term US Treasury Bonds | 83.47 | 81.87 | -0.01916856355576846 | 41 |
+| MOMENTUM | US Momentum Equities | 302.4 | 296.52 | -0.019444444444444375 | 42 |
+| ETHEREUM_ETF | Ethereum ETF | 18.6 | 18.23 | -0.019892473118279574 | 43 |
+| MID_CAP | US Mid-Cap Stocks | 76.14 | 74.6 | -0.020225899658523838 | 44 |
+| COMMUNICATIONS | Communication Services Sector | 113.18 | 110.88 | -0.020321611592154176 | 45 |
+| HEALTHCARE | Healthcare Sector | 175.29 | 171.67 | -0.02065149181356607 | 46 |
+| SMALL_VALUE | US Small-Cap Value | 224.64 | 219.94 | -0.020922364672364635 | 47 |
+| AUTONOMOUS_ROBOTICS | Autonomous Technology and Robotics | 122.74 | 120.15 | -0.021101515398402992 | 48 |
+| BITCOIN_ETF | Bitcoin ETF | 44.72 | 43.76 | -0.02146690518783545 | 49 |
+| DEVELOPED_EX_US | Developed Markets ex-US | 73.79 | 72.11 | -0.02276731264398979 | 50 |
+| REGIONAL_BANKS | Regional Banks | 74.33 | 72.62 | -0.02300551594241884 | 51 |
+| SOUTH_KOREA | South Korea Equities | 180.15 | 175.8 | -0.024146544546211457 | 52 |
+| UNITED_KINGDOM | United Kingdom Equities | 49.39 | 48.19 | -0.02429641627859891 | 53 |
+| AUSTRALIA | Australia Equities | 30.43 | 29.68 | -0.024646730200460043 | 54 |
+| EUROPE | Europe Equities | 93.19 | 90.72 | -0.026504989805773094 | 55 |
+| MEXICO | Mexico Equities | 77.85 | 75.66 | -0.028131021194604977 | 56 |
+| MATERIALS | Materials Sector | 53.58 | 52.07 | -0.028182157521463247 | 57 |
+| CONSUMER_DISCRETIONARY | Consumer Discretionary Sector | 117.95 | 114.59 | -0.028486646884272937 | 58 |
+| SMALL_CAP | US Small-Cap Stocks | 299.23 | 290.57 | -0.028940948434314828 | 59 |
+| REAL_ESTATE | Real Estate Sector | 45.36 | 44.04 | -0.02910052910052907 | 60 |
+| INDUSTRIALS | Industrials Sector | 178.4 | 172.73 | -0.031782511210762365 | 61 |
+| CANADA | Canada Equities | 62.64 | 60.6 | -0.03256704980842906 | 62 |
+| BIOTECH | Biotechnology | 169.1 | 163.4 | -0.0337078651685393 | 63 |
+| AEROSPACE_DEFENSE | Aerospace and Defense | 234.3 | 225.46 | -0.037729406743491234 | 64 |
+| SOLAR | Solar Energy | 48.85 | 46.86 | -0.040736949846468806 | 65 |
+| SOUTH_AFRICA | South Africa Equities | 72.51 | 69.54 | -0.04095986760446835 | 66 |
+| COPPER | Copper | 40.76 | 39.07 | -0.04146221786064763 | 67 |
+| METALS_MINING | Metals and Mining | 120.94 | 115.77 | -0.042748470315859155 | 68 |
+| SILVER | Silver | 62.32 | 57.92 | -0.07060333761232351 | 69 |
+| GOLD | Gold | 87.76 | 81.35 | -0.07304010938924355 | 70 |
 
 ## Official Leaderboard
 
 | model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| xai-grok-4-3 | portfolio | METALS_MINING | 3 | 0.585 | 0.0022057966693642683 | 0.028157527005714233 | 0.023468426198912717 | 0.04606752422113229 |  | True | True |
-| google-gemini-3-1-pro | portfolio | AEROSPACE_DEFENSE | 3 | 0.5767 | -0.02163664908519447 | 0.023799140209789925 | 0.01911003940298841 | 0.0504259110170566 |  | True | True |
-| openai-gpt-5-6-sol | portfolio | CYBERSECURITY | 3 | 0.5667 | 0.07422505122684653 | 0.02005578069047946 | 0.015366679883677944 | 0.05416927053636707 |  | True | True |
-| anthropic-claude-fable-5 | portfolio | CYBERSECURITY | 3 | 0.59 | 0.07422505122684653 | 0.019812670991618674 | 0.015123570184817157 | 0.054412380235227854 |  | True | True |
-| anthropic-claude-opus-5 | portfolio | CYBERSECURITY | 3 | 0.57 | 0.07422505122684653 | 0.019812670991618674 | 0.015123570184817157 | 0.054412380235227854 |  | True | True |
-| xai-grok-4-5 | portfolio | AEROSPACE_DEFENSE | 3 | 0.58 | -0.02163664908519447 | 0.013590521642811559 | 0.008901420836010043 | 0.060634529584034966 |  | True | True |
-| xai-grok-4-6 | portfolio | AEROSPACE_DEFENSE | 3 | 0.5633 | -0.02163664908519447 | 0.013590521642811559 | 0.008901420836010043 | 0.060634529584034966 |  | True | True |
+| xai-grok-4-5 | portfolio | AUTONOMOUS_ROBOTICS | 3 | 0.57 | -0.021101515398402992 | -0.00047202025124950045 | 0.004920258214888822 | 0.11818902381843145 |  | True | False |
+| openai-gpt-5-6-sol | portfolio | SEMICONDUCTORS | 3 | 0.5733 | -0.019070922241013366 | -0.0019253758863200243 | 0.0034669025798182984 | 0.11964237945350198 |  | True | False |
+| anthropic-claude-opus-5 | portfolio | SEMICONDUCTORS | 3 | 0.56 | -0.019070922241013366 | -0.0019253758863200243 | 0.0034669025798182984 | 0.11964237945350198 |  | True | False |
+| xai-grok-4-6 | portfolio | SP500 | 1 | 0.5 | -0.005392278466138323 | -0.005392278466138323 | 0.0 | 0.12310928203332028 |  | False | False |
+| xai-grok-4-3 | portfolio | SOUTH_KOREA | 3 | 0.565 | -0.024146544546211457 | -0.017454504520456552 | -0.01206222605431823 | 0.1351715080876385 |  | False | False |
+| google-gemini-3-1-pro | portfolio | SEMICONDUCTORS | 3 | 0.58 | -0.019070922241013366 | -0.021304316537659164 | -0.01591203807152084 | 0.1390213201048411 |  | False | False |
+| anthropic-claude-fable-5 | portfolio | SEMICONDUCTORS | 3 | 0.5667 | -0.019070922241013366 | -0.021304316537659164 | -0.01591203807152084 | 0.1390213201048411 |  | False | False |
 
 ## Notes
 
@@ -117,7 +117,6 @@
 ## Warnings
 
 - Round CB-2026-07-16-1W has no scored official run.
-- Round CB-2026-08-24-1W has no scored official run.
 - Round CB-2026-08-25-1W has no scored official run.
 - Round CB-2026-08-26-1W has no scored official run.
 - Round CB-2026-08-27-1W has no scored official run.
