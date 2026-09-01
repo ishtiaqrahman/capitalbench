@@ -1,0 +1,476 @@
+{
+  "confidence": 0.5,
+  "is_official_score": true,
+  "key_risks": [
+    "September 15\u201316 FOMC and August CPI/payrolls can reprice duration and growth simultaneously.",
+    "Sticky 3.7% PCE and a 4.75% 10-year can extend underperformance of utilities, REITs, and regional banks.",
+    "High-vol semiconductors, solar, oil, and crypto can gap versus SPY on a single risk-off session.",
+    "Equal-weight lag versus SPY can persist if mega-cap tech leadership continues."
+  ],
+  "metadata": {
+    "portfolio_v3": {
+      "candidate_assessments": [
+        {
+          "evidence": [
+            "SPY 5-session return 0.47% and 21-session 2.68% with distance to 52-week high only -1.39%.",
+            "S&P 500 closed 7686.14 on Aug 31, down 0.3% that day but up 2.6% in August.",
+            "Horizon vol 13.71% and max drawdown -4.49% are lower than most slate growth names."
+          ],
+          "excess_return_p10_pct": 0.0,
+          "excess_return_p50_pct": 0.0,
+          "excess_return_p90_pct": 0.0,
+          "mechanism": "no_edge",
+          "option_id": "SP500",
+          "origin_lanes": [
+            "benchmark"
+          ],
+          "p_beat_spy_pct": 50,
+          "p_top3_pct": 22,
+          "rank": 1,
+          "recent_return_interpretation": "no_edge"
+        },
+        {
+          "evidence": [
+            "XLK 21-session active return +3.45% and prior active +17.54% with NVIDIA data-center revenue $89.0B up 117% y/y.",
+            "Volume z -1.30 indicates a volume dislocation versus the 20/120 baseline.",
+            "Beta 1.75 and 35% horizon vol raise FOMC/CPI event risk versus SPY."
+          ],
+          "excess_return_p10_pct": -6.5,
+          "excess_return_p50_pct": 0.4,
+          "excess_return_p90_pct": 7.2,
+          "mechanism": "continuation",
+          "option_id": "TECHNOLOGY",
+          "origin_lanes": [
+            "volume_dislocation"
+          ],
+          "p_beat_spy_pct": 48,
+          "p_top3_pct": 18,
+          "rank": 2,
+          "recent_return_interpretation": "supported_continuation"
+        },
+        {
+          "evidence": [
+            "CIBR 21-session active +8.57% and prior active +34.05% with only -2.01% from 52-week high.",
+            "Quality evidence score 0.530 with very high prior-active rank 0.985.",
+            "Horizon vol 33.46% and SPY beta 1.15 leave a wide one-month range."
+          ],
+          "excess_return_p10_pct": -7.0,
+          "excess_return_p50_pct": 0.3,
+          "excess_return_p90_pct": 8.0,
+          "mechanism": "continuation",
+          "option_id": "CYBERSECURITY",
+          "origin_lanes": [
+            "medium_strength"
+          ],
+          "p_beat_spy_pct": 46,
+          "p_top3_pct": 16,
+          "rank": 3,
+          "recent_return_interpretation": "supported_continuation"
+        },
+        {
+          "evidence": [
+            "SMH prior active +23.20% but 21-session active only +0.61% and -16.79% from 52-week high.",
+            "Horizon vol 53.65% and max drawdown -24.62% with beta 2.40.",
+            "NVIDIA fiscal-2027 Q2 revenue $96.2B up 106% is a sector support, not a one-month guarantee."
+          ],
+          "excess_return_p10_pct": -10.5,
+          "excess_return_p50_pct": -0.4,
+          "excess_return_p90_pct": 9.5,
+          "mechanism": "continuation",
+          "option_id": "SEMICONDUCTORS",
+          "origin_lanes": [
+            "medium_strength"
+          ],
+          "p_beat_spy_pct": 42,
+          "p_top3_pct": 12,
+          "rank": 4,
+          "recent_return_interpretation": "supported_continuation"
+        },
+        {
+          "evidence": [
+            "KRE quality evidence score 0.801 is the highest on the slate with recent pullback rank 0.955.",
+            "21-session active -5.76% after prior active +5.59%; max drawdown only -5.61%.",
+            "10-year yield 4.75% and September FOMC keep net-interest-margin and curve risk elevated."
+          ],
+          "excess_return_p10_pct": -5.5,
+          "excess_return_p50_pct": 0.5,
+          "excess_return_p90_pct": 6.0,
+          "mechanism": "reversal",
+          "option_id": "REGIONAL_BANKS",
+          "origin_lanes": [
+            "shock_reversal",
+            "quality_pullback"
+          ],
+          "p_beat_spy_pct": 52,
+          "p_top3_pct": 14,
+          "rank": 5,
+          "recent_return_interpretation": "overreaction"
+        },
+        {
+          "evidence": [
+            "IWN quality score 0.760 with prior active +3.57% and 21-session active -2.68%.",
+            "Horizon vol 13.42% and drawdown -2.60% are close to SPY.",
+            "Russell 2000 closed down 0.5% on Aug 31; RSP minus SPY 5-session -1.50% shows recent small/mid lag."
+          ],
+          "excess_return_p10_pct": -4.8,
+          "excess_return_p50_pct": 0.1,
+          "excess_return_p90_pct": 4.5,
+          "mechanism": "reversal",
+          "option_id": "SMALL_VALUE",
+          "origin_lanes": [
+            "quality_pullback"
+          ],
+          "p_beat_spy_pct": 47,
+          "p_top3_pct": 10,
+          "rank": 6,
+          "recent_return_interpretation": "overreaction"
+        },
+        {
+          "evidence": [
+            "XLRE quality score 0.715 with recent pullback rank 0.940 and 21-session active -4.81%.",
+            "July housing starts 1.239 million, down 12.4% from June; 10-year at 4.75%.",
+            "Low SPY beta 0.26 can lag if large-cap growth continues to lead."
+          ],
+          "excess_return_p10_pct": -5.2,
+          "excess_return_p50_pct": -0.2,
+          "excess_return_p90_pct": 4.8,
+          "mechanism": "reversal",
+          "option_id": "REAL_ESTATE",
+          "origin_lanes": [
+            "shock_reversal",
+            "quality_pullback"
+          ],
+          "p_beat_spy_pct": 44,
+          "p_top3_pct": 9,
+          "rank": 7,
+          "recent_return_interpretation": "overreaction"
+        },
+        {
+          "evidence": [
+            "Brent settled $90.49 on Aug 31, up 2.7% that session; energy was the S&P sector that gained.",
+            "USO prior active +38.73% but 21-session active only +0.83%; EIA Aug forecast saw Q3 Brent about $85.",
+            "Horizon vol 51.86% and negative SPY correlation -0.34 create a wide excess range."
+          ],
+          "excess_return_p10_pct": -9.0,
+          "excess_return_p50_pct": -0.3,
+          "excess_return_p90_pct": 8.5,
+          "mechanism": "continuation",
+          "option_id": "OIL",
+          "origin_lanes": [
+            "medium_strength"
+          ],
+          "p_beat_spy_pct": 41,
+          "p_top3_pct": 11,
+          "rank": 8,
+          "recent_return_interpretation": "supported_continuation"
+        },
+        {
+          "evidence": [
+            "IWM 5-session -2.01% and volume z -1.21 versus SPY volume z -1.07.",
+            "Quality score 0.689 with prior active +2.98% and shallow drawdown -3.95%.",
+            "July payrolls -23,000 and FOMC in-window raise domestic-cyclical risk."
+          ],
+          "excess_return_p10_pct": -5.8,
+          "excess_return_p50_pct": -0.3,
+          "excess_return_p90_pct": 5.0,
+          "mechanism": "reversal",
+          "option_id": "SMALL_CAP",
+          "origin_lanes": [
+            "volume_dislocation"
+          ],
+          "p_beat_spy_pct": 43,
+          "p_top3_pct": 8,
+          "rank": 9,
+          "recent_return_interpretation": "overreaction"
+        },
+        {
+          "evidence": [
+            "XLU 21-session active -8.12% and prior active -14.59% with recent pullback rank 1.000.",
+            "SPY corr 0.12 and beta 0.14; 10-year yield rose to 4.75%.",
+            "Chair Warsh cited 3.7% 12-month PCE and 4.1% six-month PCE, limiting near-term rate-cut odds."
+          ],
+          "excess_return_p10_pct": -5.0,
+          "excess_return_p50_pct": -0.6,
+          "excess_return_p90_pct": 4.2,
+          "mechanism": "defensive",
+          "option_id": "UTILITIES",
+          "origin_lanes": [
+            "shock_reversal"
+          ],
+          "p_beat_spy_pct": 40,
+          "p_top3_pct": 7,
+          "rank": 10,
+          "recent_return_interpretation": "overreaction"
+        },
+        {
+          "evidence": [
+            "ITA 5-session -3.79% and 21-session active -6.79% after prior active -11.58%.",
+            "Quality score 0.504; recent pullback rank 0.970.",
+            "Horizon vol 25.50% and -9.82% from 52-week high with no in-window contract catalyst in the briefing."
+          ],
+          "excess_return_p10_pct": -6.5,
+          "excess_return_p50_pct": -0.5,
+          "excess_return_p90_pct": 5.5,
+          "mechanism": "reversal",
+          "option_id": "AEROSPACE_DEFENSE",
+          "origin_lanes": [
+            "shock_reversal"
+          ],
+          "p_beat_spy_pct": 39,
+          "p_top3_pct": 6,
+          "rank": 11,
+          "recent_return_interpretation": "overreaction"
+        },
+        {
+          "evidence": [
+            "IBIT 21-session active +22.66% after prior active -18.48%; still -37.34% from 52-week high.",
+            "Quality evidence score 0.081 with very low prior and pullback ranks.",
+            "Horizon vol 41.46% and beta 1.66 versus a dense macro calendar."
+          ],
+          "excess_return_p10_pct": -12.0,
+          "excess_return_p50_pct": -0.8,
+          "excess_return_p90_pct": 11.0,
+          "mechanism": "continuation",
+          "option_id": "BITCOIN_ETF",
+          "origin_lanes": [
+            "short_continuation"
+          ],
+          "p_beat_spy_pct": 38,
+          "p_top3_pct": 8,
+          "rank": 12,
+          "recent_return_interpretation": "no_edge"
+        },
+        {
+          "evidence": [
+            "ETHA 21-session active +30.37% after prior active -17.87%; -47.69% from 52-week high.",
+            "Quality score 0.060 is the lowest on the slate.",
+            "Horizon vol 59.33% and beta 2.51 dominate one-month excess-return uncertainty."
+          ],
+          "excess_return_p10_pct": -14.0,
+          "excess_return_p50_pct": -1.0,
+          "excess_return_p90_pct": 12.5,
+          "mechanism": "continuation",
+          "option_id": "ETHEREUM_ETF",
+          "origin_lanes": [
+            "short_continuation"
+          ],
+          "p_beat_spy_pct": 36,
+          "p_top3_pct": 7,
+          "rank": 13,
+          "recent_return_interpretation": "no_edge"
+        },
+        {
+          "evidence": [
+            "TAN prior active -18.80%, 21-session active -7.23%, max drawdown and 52-week distance both -35.66%.",
+            "Quality score 0.334 with low-vol rank 0.075 and shallow-drawdown rank 0.000.",
+            "Horizon vol 43.23% and beta 1.89 without a supplied in-window policy catalyst."
+          ],
+          "excess_return_p10_pct": -14.0,
+          "excess_return_p50_pct": -2.5,
+          "excess_return_p90_pct": 8.0,
+          "mechanism": "no_edge",
+          "option_id": "SOLAR",
+          "origin_lanes": [
+            "shock_reversal"
+          ],
+          "p_beat_spy_pct": 28,
+          "p_top3_pct": 4,
+          "rank": 14,
+          "recent_return_interpretation": "fundamental_deterioration"
+        }
+      ],
+      "candidate_slate_option_ids": [
+        "UTILITIES",
+        "SOLAR",
+        "AEROSPACE_DEFENSE",
+        "REGIONAL_BANKS",
+        "REAL_ESTATE",
+        "OIL",
+        "CYBERSECURITY",
+        "SEMICONDUCTORS",
+        "ETHEREUM_ETF",
+        "BITCOIN_ETF",
+        "SMALL_VALUE",
+        "TECHNOLOGY",
+        "SMALL_CAP",
+        "SP500"
+      ],
+      "confidence_derivation": "mean selected-active p_beat_spy_pct; 0.5 when all slots fall back to SPY",
+      "deterministic_allocation": {
+        "allocation_pct": {
+          "SP500": 100.0
+        },
+        "benchmark_option_id": "SP500",
+        "decisions": [
+          {
+            "eligible": false,
+            "option_id": "SP500",
+            "p_beat_spy_pct": 50.0,
+            "rank": 1,
+            "reason": "benchmark_fallback",
+            "recent_return_interpretation": "no_edge",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "TECHNOLOGY",
+            "p_beat_spy_pct": 48.0,
+            "rank": 2,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "supported_continuation",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "CYBERSECURITY",
+            "p_beat_spy_pct": 46.0,
+            "rank": 3,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "supported_continuation",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "SEMICONDUCTORS",
+            "p_beat_spy_pct": 42.0,
+            "rank": 4,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "supported_continuation",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "REGIONAL_BANKS",
+            "p_beat_spy_pct": 52.0,
+            "rank": 5,
+            "reason": "below_probability_hurdle",
+            "recent_return_interpretation": "overreaction",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "SMALL_VALUE",
+            "p_beat_spy_pct": 47.0,
+            "rank": 6,
+            "reason": "below_probability_hurdle",
+            "recent_return_interpretation": "overreaction",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "REAL_ESTATE",
+            "p_beat_spy_pct": 44.0,
+            "rank": 7,
+            "reason": "below_probability_hurdle",
+            "recent_return_interpretation": "overreaction",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "OIL",
+            "p_beat_spy_pct": 41.0,
+            "rank": 8,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "supported_continuation",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "SMALL_CAP",
+            "p_beat_spy_pct": 43.0,
+            "rank": 9,
+            "reason": "below_probability_hurdle",
+            "recent_return_interpretation": "overreaction",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "UTILITIES",
+            "p_beat_spy_pct": 40.0,
+            "rank": 10,
+            "reason": "below_probability_hurdle",
+            "recent_return_interpretation": "overreaction",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "AEROSPACE_DEFENSE",
+            "p_beat_spy_pct": 39.0,
+            "rank": 11,
+            "reason": "below_probability_hurdle",
+            "recent_return_interpretation": "overreaction",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "BITCOIN_ETF",
+            "p_beat_spy_pct": 38.0,
+            "rank": 12,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "no_edge",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "ETHEREUM_ETF",
+            "p_beat_spy_pct": 36.0,
+            "rank": 13,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "no_edge",
+            "selected": false
+          },
+          {
+            "eligible": false,
+            "option_id": "SOLAR",
+            "p_beat_spy_pct": 28.0,
+            "rank": 14,
+            "reason": "not_overreaction",
+            "recent_return_interpretation": "fundamental_deterioration",
+            "selected": false
+          }
+        ],
+        "methodology_version": "portfolio-v3.0",
+        "minimum_beat_spy_probability_pct": 55.0,
+        "selected_active_option_ids": [],
+        "slot_weights_pct": [
+          35.0,
+          35.0,
+          30.0
+        ]
+      },
+      "dispersion_state": "normal",
+      "dominant_pattern": "mixed",
+      "market_rationale": "SPY is near a 52-week high after an August gain while equal-weight lagged, breadth was mixed on the latest session, and the one-month window includes FOMC plus CPI/payrolls with sticky PCE and a 4.75% 10-year. Mega-cap tech still has relative strength; rate-sensitive losers lack a clear in-window easing catalyst.",
+      "methodology_version": "portfolio-v3.0",
+      "prefer_spy": true,
+      "top3_option_ids": [
+        "SP500",
+        "TECHNOLOGY",
+        "CYBERSECURITY"
+      ]
+    }
+  },
+  "mode": "closed_capability",
+  "model_id": "xai-grok-4-6",
+  "portfolio": [
+    {
+      "allocation_pct": 100,
+      "option_id": "SP500",
+      "rationale": "Deterministic SPY fallback for V3 slots without an eligible active candidate."
+    }
+  ],
+  "portfolio_rationale": "One-month scoring is dominated by FOMC, CPI, and labor prints with sticky inflation and a 4.75% 10-year. SPY already leads equal-weight and sits near highs, so high-beta continuation names have only modest, not majority, odds of beating it. Quality pullbacks in banks, REITs, and small value look like overreactions but stay below a 55% beat-SPY bar because rates remain restrictive.",
+  "provider": "xai",
+  "rationale_summary": "SPY is near a 52-week high after an August gain while equal-weight lagged, breadth was mixed on the latest session, and the one-month window includes FOMC plus CPI/payrolls with sticky PCE and a 4.75% 10-year. Mega-cap tech still has relative strength; rate-sensitive losers lack a clear in-window easing catalyst.",
+  "replicate_count": 1,
+  "replicate_index": 1,
+  "round_id": "CB-2026-09-01-1M",
+  "run_type": "official",
+  "usage": {
+    "input_tokens": 18110,
+    "latency_seconds": 49.33575803297572,
+    "output_tokens": 3000,
+    "reasoning_tokens": 530,
+    "total_tokens": 21640
+  }
+}
