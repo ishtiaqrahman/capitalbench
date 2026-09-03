@@ -1,12 +1,27 @@
-# CapitalBench Latest Round Leaderboard
+# CapitalBench Report: CB-2026-08-25-1W / official-v3-20260825-weekly-clean
 
-## Round
+## Official Public Leaderboard
 
-- Round ID: CB-2026-08-25-1W
+This is the official CapitalBench score for this run.
+
+
+
+## Round Summary
+
+- Run ID: official-v3-20260825-weekly-clean
+- Run type: official
+- Replicates: 1
+- Mock: no
+- Title: CapitalBench CB-2026-08-25-1W
+- Description: One-week market allocation evaluation round.
+- Decision date: 2026-08-25
 - Decision deadline: 2026-08-26T13:25:00Z
 - Horizon: one week
-- Official run ID: official-v3-20260825-weekly-clean
-- Mock: no
+- Entry date: 2026-08-26
+- Exit date: 2026-09-02
+- Entry rule: Use the official entry prices supplied in prices/entry_prices.csv.
+- Exit rule: Use the official exit prices supplied in prices/exit_prices.csv.
+- Options: 70
 
 ## Model Decisions
 
@@ -95,30 +110,90 @@
 | GOLD | Gold | 86.37000274658203 | 82.55 | -0.044228350412240824 | 69 |
 | AEROSPACE_DEFENSE | Aerospace and Defense | 236.3800048828125 | 223.37 | -0.055038516854512776 | 70 |
 
-## Official Leaderboard
+## Portfolio Allocations
 
-| model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| openai-gpt-5-6-sol | portfolio | CYBERSECURITY | 3 | 0.57 | -0.0012812690307199004 | 0.009394834399948832 | 0.010595775645406053 | 0.0989679586210752 |  | True | True |
-| xai-grok-4-5 | portfolio | CYBERSECURITY | 3 | 0.5867 | -0.0012812690307199004 | 0.0064021922070726265 | 0.0076031334525298476 | 0.1019606008139514 |  | True | True |
-| xai-grok-4-3 | portfolio | METALS_MINING | 3 | 0.5833 | -0.007065061722570376 | 0.005083207229596808 | 0.006284148475054029 | 0.10327958579142722 |  | True | True |
-| anthropic-claude-fable-5 | portfolio | CYBERSECURITY | 3 | 0.5833 | -0.0012812690307199004 | -0.0034103016326906535 | -0.0022093603872334324 | 0.11177309465371468 |  | False | False |
-| xai-grok-4-6 | portfolio | CYBERSECURITY | 3 | 0.5633 | -0.0012812690307199004 | -0.006881556574620041 | -0.00568061532916282 | 0.11524434959564407 |  | False | False |
-| anthropic-claude-opus-5 | portfolio | CYBERSECURITY | 3 | 0.5633 | -0.0012812690307199004 | -0.013439145464082997 | -0.012238204218625776 | 0.12180193848510702 |  | False | False |
-| google-gemini-3-1-pro | portfolio | CYBERSECURITY | 3 | 0.58 | -0.0012812690307199004 | -0.021079591281501265 | -0.019878650036044044 | 0.1294423843025253 |  | False | False |
+| model_id | option_id | allocation_pct | option_return | return_contribution | rationale |
+| --- | --- | --- | --- | --- | --- |
+| anthropic-claude-fable-5 | CYBERSECURITY | 35.0 | -0.0012812690307199004 | -0.0004484441607519651 | V3 selected model rank 1: overreaction with 60% estimated probability of beating SPY. |
+| anthropic-claude-fable-5 | AUTONOMOUS_ROBOTICS | 35.0 | -0.01708494890681944 | -0.005979732117386804 | V3 selected model rank 2: overreaction with 58% estimated probability of beating SPY. |
+| anthropic-claude-fable-5 | SOFTWARE | 30.0 | 0.010059582151493718 | 0.0030178746454481153 | V3 selected model rank 3: overreaction with 57% estimated probability of beating SPY. |
+| anthropic-claude-opus-5 | CYBERSECURITY | 35.0 | -0.0012812690307199004 | -0.0004484441607519651 | V3 selected model rank 1: overreaction with 58% estimated probability of beating SPY. |
+| anthropic-claude-opus-5 | SOFTWARE | 35.0 | 0.010059582151493718 | 0.003520853753022801 | V3 selected model rank 2: overreaction with 56% estimated probability of beating SPY. |
+| anthropic-claude-opus-5 | AEROSPACE_DEFENSE | 30.0 | -0.055038516854512776 | -0.016511555056353832 | V3 selected model rank 3: overreaction with 55% estimated probability of beating SPY. |
+| google-gemini-3-1-pro | CYBERSECURITY | 35.0 | -0.0012812690307199004 | -0.0004484441607519651 | V3 selected model rank 1: overreaction with 60% estimated probability of beating SPY. |
+| google-gemini-3-1-pro | AEROSPACE_DEFENSE | 35.0 | -0.055038516854512776 | -0.01926348089907947 | V3 selected model rank 2: overreaction with 58% estimated probability of beating SPY. |
+| google-gemini-3-1-pro | REGIONAL_BANKS | 30.0 | -0.004558887405566092 | -0.0013676662216698277 | V3 selected model rank 3: overreaction with 56% estimated probability of beating SPY. |
+| openai-gpt-5-6-sol | CYBERSECURITY | 35.0 | -0.0012812690307199004 | -0.0004484441607519651 | V3 selected model rank 1: overreaction with 59% estimated probability of beating SPY. |
+| openai-gpt-5-6-sol | ENERGY | 35.0 | 0.042767894950704655 | 0.014968763232746629 | V3 selected model rank 2: overreaction with 57% estimated probability of beating SPY. |
+| openai-gpt-5-6-sol | AUTONOMOUS_ROBOTICS | 30.0 | -0.01708494890681944 | -0.005125484672045833 | V3 selected model rank 3: overreaction with 55% estimated probability of beating SPY. |
+| xai-grok-4-3 | METALS_MINING | 35.0 | -0.007065061722570376 | -0.0024727716028996316 | V3 selected model rank 1: overreaction with 62% estimated probability of beating SPY. |
+| xai-grok-4-3 | BITCOIN_ETF | 35.0 | -0.015069684722042731 | -0.005274389652714956 | V3 selected model rank 2: overreaction with 58% estimated probability of beating SPY. |
+| xai-grok-4-3 | ENERGY | 30.0 | 0.042767894950704655 | 0.012830368485211395 | V3 selected model rank 3: overreaction with 55% estimated probability of beating SPY. |
+| xai-grok-4-5 | CYBERSECURITY | 35.0 | -0.0012812690307199004 | -0.0004484441607519651 | V3 selected model rank 1: overreaction with 62% estimated probability of beating SPY. |
+| xai-grok-4-5 | AUTONOMOUS_ROBOTICS | 35.0 | -0.01708494890681944 | -0.005979732117386804 | V3 selected model rank 2: overreaction with 58% estimated probability of beating SPY. |
+| xai-grok-4-5 | ENERGY | 30.0 | 0.042767894950704655 | 0.012830368485211395 | V3 selected model rank 3: overreaction with 56% estimated probability of beating SPY. |
+| xai-grok-4-6 | CYBERSECURITY | 35.0 | -0.0012812690307199004 | -0.0004484441607519651 | V3 selected model rank 1: overreaction with 58% estimated probability of beating SPY. |
+| xai-grok-4-6 | AEROSPACE_DEFENSE | 35.0 | -0.055038516854512776 | -0.01926348089907947 | V3 selected model rank 2: overreaction with 56% estimated probability of beating SPY. |
+| xai-grok-4-6 | ENERGY | 30.0 | 0.042767894950704655 | 0.012830368485211395 | V3 selected model rank 3: overreaction with 55% estimated probability of beating SPY. |
 
-## Notes
+## Leaderboard
 
-- This is one standalone round.
+Official Public Leaderboard
+
+| model_id | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| openai-gpt-5-6-sol | CYBERSECURITY | 3 | 0.57 | -0.0012812690307199004 | 0.009394834399948832 | 0.010595775645406053 | 0.0989679586210752 |  | True | True |
+| xai-grok-4-5 | CYBERSECURITY | 3 | 0.5867 | -0.0012812690307199004 | 0.0064021922070726265 | 0.0076031334525298476 | 0.1019606008139514 |  | True | True |
+| xai-grok-4-3 | METALS_MINING | 3 | 0.5833 | -0.007065061722570376 | 0.005083207229596808 | 0.006284148475054029 | 0.10327958579142722 |  | True | True |
+| anthropic-claude-fable-5 | CYBERSECURITY | 3 | 0.5833 | -0.0012812690307199004 | -0.0034103016326906535 | -0.0022093603872334324 | 0.11177309465371468 |  | False | False |
+| xai-grok-4-6 | CYBERSECURITY | 3 | 0.5633 | -0.0012812690307199004 | -0.006881556574620041 | -0.00568061532916282 | 0.11524434959564407 |  | False | False |
+| anthropic-claude-opus-5 | CYBERSECURITY | 3 | 0.5633 | -0.0012812690307199004 | -0.013439145464082997 | -0.012238204218625776 | 0.12180193848510702 |  | False | False |
+| google-gemini-3-1-pro | CYBERSECURITY | 3 | 0.58 | -0.0012812690307199004 | -0.021079591281501265 | -0.019878650036044044 | 0.1294423843025253 |  | False | False |
+
+## Cost-Adjusted Leaderboard
+
+_No cost data available._
+
+## Invalid Submissions
+
+- Invalid raw submissions: 0
+- Files: none
+
+## Reproducibility
+
+- hashes.json matches current files: yes
+
+| file | sha256 |
+| --- | --- |
+| briefing.md | f80b43cbb211635532aa200e6f0bb830f1cfa3c34b67c84311f51497a3a9f02b |
+| options.yaml | 1003c5795615371c4808eb307b1057c658972e2e36b5522e72c894bc4ce0c729 |
+| prompt.md | c86dfbb217e032991acc64cd3d0bcbb7f26d32639a67b7473af5122ac2230431 |
+| manifest.yaml | 140724bc0078da540ce0a71ef740ea5069e4763a95fd4e3df8fb8619afeae84d |
+| submission_schema.json | fb15e640b97fa100237112e5d6bd8548696c72f75ce22b2d3ae2bf212e10166d |
+| market_data/universe_decision_context.csv | 38e6fdc93972d9e01315c01cc2e12d3513b7bd2e994eef354ae0d201255411ab |
+| market_data/universe_decision_context.md | 8f3af1e62ba266f13849e2fa6549a6acc0181e3f73a7868caa8941ebf227981f |
+| market_data/universe_decision_context.json | ea965d37efe4d02b77bbc7663207df6678dfe0acd1d401ae57493f3b53d079ed |
+| market_data/decision_context_source_history.json | 402aa9d6e62239df2eb914f135cc645c6b76c0257c8efb20419cc2c21b4c205c |
+| market_data/universe_quality_evidence.md | 2e92dbecaaf0086a3e1746bc3fc76e620aaf30da2b14c05af4a067c91f5ecd31 |
+| market_data/universe_quality_evidence.json | f38dbf37d9c2e194448012e9b067fdc48330cfd5623db865d1863f0c973bd558 |
+
+## Research Artifacts
+
+- Market fact report: stored in research/market_fact_report.md, audit-only
+- Briefing audit report: stored in research/briefing_audit_report.md, audit-only
+- Final briefing: stored in research/final_briefing.md and copied to briefing.md, model-facing
+- final_briefing.md hash matches briefing.md: yes
+
+| artifact | path | visibility | sha256 | exists |
+| --- | --- | --- | --- | --- |
+| Market fact report | research/market_fact_report.md | audit-only | fea2ce583f511a928c8ad143ddc49912f10b1f67f39127a844b526c2473ef697 | yes |
+| Briefing audit report | research/briefing_audit_report.md | audit-only | b6e5821ef98a7fb55e227b36298f660dd1b55eb7f23bbae2731ca935e77c16c9 | yes |
+| Final briefing | research/final_briefing.md | model-facing | f80b43cbb211635532aa200e6f0bb830f1cfa3c34b67c84311f51497a3a9f02b | yes |
+
+## Limitations
+
+- Prices are loaded from local CSV files and are not fetched live.
+- Official scoring uses the round's declared submission format.
+- Stability analysis, when present, is separate and does not change this leaderboard.
 - Portfolio-format rounds score weighted realized returns; single-pick rounds score one selected option.
-- Cumulative results are separate.
-- Stability results are separate and do not affect this leaderboard.
-
-## Warnings
-
-- Round CB-2026-07-16-1W has no scored official run.
-- Round CB-2026-08-26-1W has no scored official run.
-- Round CB-2026-08-27-1W has no scored official run.
-- Round CB-2026-08-30-1W has no scored official run.
-- Round CB-2026-09-01-1W has no scored official run.
-- Round CB-2026-09-02-1W has no scored official run.
+- Results depend on the round briefing, prompt, options, and local price files supplied by the operator.
