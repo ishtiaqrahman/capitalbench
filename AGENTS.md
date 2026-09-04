@@ -33,7 +33,15 @@ structured decision. Technical or formatting retries must remain disclosed and
 must never be used to seek a different portfolio.
 
 The active production roster has seven models: GPT-5.6 SOL, Grok 4.3, Grok
-4.5, Grok 4.6, Gemini 3.1 Pro, Claude Opus 5, and Claude Fable 5. Grok 4.6
+4.5, Grok 4.6, Gemini 3.1 Pro, Claude Opus 5, and Claude Fable 5.1. Claude
+Fable 5.1 joined future rounds effective `2026-09-04T01:24:56Z` (September 3,
+2026 in America/Toronto) using the Anthropic API model ID
+`claude-fable-5-1`; do not backfill it into older rounds. Claude Fable 5 was
+retired from new rounds at the same timestamp and designates
+`anthropic-claude-fable-5-1` as its successor. Preserve every historical Fable
+5 submission, result, profile, and comparison set. Because Fable 5.1 is a new
+participant, the first accepted frozen roster containing it starts a new fair
+comparison origin. Grok 4.6
 joined future rounds effective `2026-08-13T03:14:52Z`
 using the xAI API model ID `grok-4.6`; do not backfill it into older rounds.
 GPT-5.5 was retired from new rounds by operator direction effective

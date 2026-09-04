@@ -46,7 +46,7 @@ tokens, and raw provider responses.
    Claude Opus 4.7 is retired from new rounds effective July 21, 2026. It
    remains in the registry and in historical data. Do not remove it from old
    manifests or results. Anthropic credentials are still required while Claude
-   Opus 4.8, Claude Opus 5, or Claude Fable 5 remains in the active frozen
+   Opus 4.8, Claude Opus 5, Claude Fable 5, or Claude Fable 5.1 remains in the active frozen
    roster. Claude Opus 5 is forward-only beginning with the July 24, 2026
    weekly and monthly rounds and must not be backfilled.
 
@@ -54,6 +54,12 @@ tokens, and raw provider responses.
    its registry entry and every historical submission, result, profile, and
    comparison set. Do not remove it from an already frozen roster or backfill
    its retirement into older rounds.
+
+   Claude Fable 5 is retired from new rounds effective September 3, 2026 in
+   America/Toronto and is retained for historical and retrospective use. Claude
+   Fable 5.1 is its forward-only successor beginning with the September 3
+   weekly and monthly rounds, using Anthropic API model ID
+   `claude-fable-5-1`. Do not rewrite or backfill older frozen rosters.
 
 3. Validate the run.
 

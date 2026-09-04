@@ -26,6 +26,26 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    id: "2026-09-03-claude-fable-5-1-added",
+    date: "2026-09-03",
+    title: "Claude Fable 5.1 replaces Fable 5 in future rounds",
+    category: "Benchmark",
+    status: "published",
+    summary:
+      "Claude Fable 5.1 joins the production roster for new weekly and monthly rounds while Fable 5's historical record remains intact.",
+    details: [
+      "The new participant is configured as anthropic-claude-fable-5-1 using Anthropic's official API model ID claude-fable-5-1.",
+      "Claude Fable 5 is retired forward-only; its prior submissions, results, model profile, and comparison sets remain published without backfill.",
+      "The first accepted September 3 weekly and monthly rounds freeze the new seven-model roster and begin fresh fair-roster comparison cohorts.",
+      "Published API pricing is recorded as $10 per million input tokens, $50 per million output tokens, and $0.25 per million cache-read tokens."
+    ],
+    links: [
+      { label: "Models", href: "/models" },
+      { label: "Benchmark sets", href: "/leaderboards/benchmark-sets" },
+      { label: "Protocol", href: "/methodology" }
+    ]
+  },
+  {
     id: "2026-08-15-portfolio-v3-production",
     date: "2026-08-15",
     title: "Portfolio V3.0 becomes the production protocol",

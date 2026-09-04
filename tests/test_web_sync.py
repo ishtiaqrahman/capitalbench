@@ -46,6 +46,7 @@ class FakeSink:
 
 def test_claude_fable_uses_public_display_name() -> None:
     assert _display_model_name("anthropic-claude-fable-5") == "Claude Fable 5"
+    assert _display_model_name("anthropic-claude-fable-5-1") == "Claude Fable 5.1"
     assert _display_model_name("openai-gpt-5-6-sol") == "GPT-5.6 Sol"
 
 

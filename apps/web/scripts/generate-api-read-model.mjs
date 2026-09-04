@@ -34,6 +34,7 @@ const PROVIDER_LABELS = {
 
 const MODEL_LABELS = {
   "anthropic-claude-fable-5": "Claude Fable 5",
+  "anthropic-claude-fable-5-1": "Claude Fable 5.1",
   "anthropic-claude-opus-4-7": "Claude Opus 4.7",
   "anthropic-claude-opus-4-8": "Claude Opus 4.8",
   "anthropic-claude-opus-5": "Claude Opus 5",

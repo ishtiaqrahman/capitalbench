@@ -94,6 +94,7 @@ function modelColorClass(modelId: string, index: number): string {
     "xai-grok-4-5": "live-bar-xai",
     "xai-grok-4-6": "live-bar-xai",
     "anthropic-claude-fable-5": "live-bar-anthropic-fable",
+    "anthropic-claude-fable-5-1": "live-bar-anthropic-fable",
     "anthropic-claude-opus-4-7": "live-bar-anthropic",
     "anthropic-claude-opus-4-8": "live-bar-anthropic-alt",
     "anthropic-claude-opus-5": "live-bar-anthropic",
