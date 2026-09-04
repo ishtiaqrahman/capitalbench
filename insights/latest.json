@@ -1,7 +1,7 @@
 {
   "data_as_of": "2026-09-03",
   "engine_version": "deterministic_insights_v4",
-  "generated_at": "2026-09-04T01:57:48Z",
+  "generated_at": "2026-09-04T02:15:21Z",
   "insight_count": 29,
   "insights": [
     {
@@ -66,7 +66,7 @@
           "source": "rounds/CB-2026-07-31-1M/runs/official-v2-2-all-monthly-20260731-clean/results"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "consensus-performance-CB-2026-07-31-1M",
       "importance_score": 92.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
@@ -95,58 +95,58 @@
           "formula": "sum(average_model_allocation * asset_return)",
           "name": "consensus_portfolio_return",
           "unit": "percent",
-          "value": -0.3419
+          "value": -1.4016
         },
         {
           "formula": "average resolved model portfolio return",
           "name": "average_model_return",
           "unit": "percent",
-          "value": -0.3419
+          "value": -1.4016
         },
         {
           "formula": "100 * consensus_return / oracle_return",
           "name": "consensus_capitalbench_score",
           "unit": "points",
-          "value": -3.1548
+          "value": -15.085
         }
       ],
       "category": "consensus_performance",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-09-02",
-        "decision_date": "2026-08-25",
-        "entry_date": "2026-08-26",
-        "exit_date": "2026-09-02",
+        "data_as_of": "2026-09-03",
+        "decision_date": "2026-08-26",
+        "entry_date": "2026-08-27",
+        "exit_date": "2026-09-03",
         "model_count": 7,
         "oracle_asset": {
           "display": "Crude Oil (USO)",
           "name": "Crude Oil",
           "option_id": "OIL",
-          "return_pct": 10.8363,
+          "return_pct": 9.2916,
           "ticker": "USO"
         },
         "primary_label": "Weekly result",
         "result_count": 7,
-        "round_id": "CB-2026-08-25-1W",
-        "run_id": "official-v3-20260825-weekly-clean",
+        "round_id": "CB-2026-08-26-1W",
+        "run_id": "official-v3-20260827-weekly",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-09-02",
+      "data_as_of": "2026-09-03",
       "date": "2026-09-04",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-08-25-1W",
+          "href": "/rounds/CB-2026-08-26-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-08-25-1W/runs/official-v3-20260825-weekly-clean/results"
+          "source": "rounds/CB-2026-08-26-1W/runs/official-v3-20260827-weekly/results"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
-      "id": "consensus-performance-CB-2026-08-25-1W",
+      "generated_at": "2026-09-04T02:15:21Z",
+      "id": "consensus-performance-CB-2026-08-26-1W",
       "importance_score": 92.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
       "publication_tier": "global",
@@ -158,8 +158,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "If the weekly model allocations were averaged into one consensus portfolio, it returned -0.34% versus -0.12% for the S&P 500 and +10.84% for the hindsight best asset.",
-      "title": "AI consensus portfolio scored -3.2 versus the oracle",
+      "summary": "If the weekly model allocations were averaged into one consensus portfolio, it returned -1.40% versus +0.27% for the S&P 500 and +9.29% for the hindsight best asset.",
+      "title": "AI consensus portfolio scored -15.1 versus the oracle",
       "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
     },
     {
@@ -223,7 +223,7 @@
           "source": "rounds/CB-2026-07-31-1M/runs/official-v2-2-all-monthly-20260731-clean/results/returns.csv"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "benchmark-difficulty-CB-2026-07-31-1M",
       "importance_score": 90.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
@@ -251,58 +251,58 @@
           "formula": "max(scored asset returns)",
           "name": "oracle_return",
           "unit": "percent",
-          "value": 10.8363
+          "value": 9.2916
         },
         {
           "formula": "min(scored asset returns)",
           "name": "worst_asset_return",
           "unit": "percent",
-          "value": -5.5039
+          "value": -5.4271
         },
         {
           "formula": "positive asset count / scored asset count",
           "name": "positive_universe_share",
           "unit": "percent",
-          "value": 21.4286
+          "value": 38.5714
         }
       ],
       "category": "benchmark_difficulty",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-09-02",
-        "decision_date": "2026-08-25",
-        "entry_date": "2026-08-26",
-        "exit_date": "2026-09-02",
+        "data_as_of": "2026-09-03",
+        "decision_date": "2026-08-26",
+        "entry_date": "2026-08-27",
+        "exit_date": "2026-09-03",
         "model_count": 7,
         "oracle_asset": {
           "display": "Crude Oil (USO)",
           "name": "Crude Oil",
           "option_id": "OIL",
-          "return_pct": 10.8363,
+          "return_pct": 9.2916,
           "ticker": "USO"
         },
         "primary_label": "Weekly result",
         "result_count": 7,
-        "round_id": "CB-2026-08-25-1W",
-        "run_id": "official-v3-20260825-weekly-clean",
+        "round_id": "CB-2026-08-26-1W",
+        "run_id": "official-v3-20260827-weekly",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-09-02",
+      "data_as_of": "2026-09-03",
       "date": "2026-09-04",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-08-25-1W",
+          "href": "/rounds/CB-2026-08-26-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-08-25-1W/runs/official-v3-20260825-weekly-clean/results/returns.csv"
+          "source": "rounds/CB-2026-08-26-1W/runs/official-v3-20260827-weekly/results/returns.csv"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
-      "id": "benchmark-difficulty-CB-2026-08-25-1W",
+      "generated_at": "2026-09-04T02:15:21Z",
+      "id": "benchmark-difficulty-CB-2026-08-26-1W",
       "importance_score": 90.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
       "publication_tier": "global",
@@ -314,8 +314,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The best scored asset returned +10.84%, the worst returned -5.50%, and +21.43% of the universe was positive. The S&P 500 ranked 18 out of 70 options.",
-      "title": "Weekly round had +16.34% asset dispersion",
+      "summary": "The best scored asset returned +9.29%, the worst returned -5.43%, and +38.57% of the universe was positive. The S&P 500 ranked 22 out of 70 options.",
+      "title": "Weekly round had +14.72% asset dispersion",
       "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
     },
     {
@@ -374,7 +374,7 @@
           "source": "rounds/CB-2026-07-31-1M/runs/official-v2-2-all-monthly-20260731-clean/results"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "missed-oracle-CB-2026-07-31-1M",
       "importance_score": 89.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
@@ -416,39 +416,39 @@
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-09-02",
-        "decision_date": "2026-08-25",
-        "entry_date": "2026-08-26",
-        "exit_date": "2026-09-02",
+        "data_as_of": "2026-09-03",
+        "decision_date": "2026-08-26",
+        "entry_date": "2026-08-27",
+        "exit_date": "2026-09-03",
         "model_count": 7,
         "oracle_asset": {
           "display": "Crude Oil (USO)",
           "name": "Crude Oil",
           "option_id": "OIL",
-          "return_pct": 10.8363,
+          "return_pct": 9.2916,
           "ticker": "USO"
         },
         "primary_label": "Weekly result",
         "result_count": 7,
-        "round_id": "CB-2026-08-25-1W",
-        "run_id": "official-v3-20260825-weekly-clean",
+        "round_id": "CB-2026-08-26-1W",
+        "run_id": "official-v3-20260827-weekly",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-09-02",
+      "data_as_of": "2026-09-03",
       "date": "2026-09-04",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-08-25-1W",
+          "href": "/rounds/CB-2026-08-26-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-08-25-1W/runs/official-v3-20260825-weekly-clean/results"
+          "source": "rounds/CB-2026-08-26-1W/runs/official-v3-20260827-weekly/results"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
-      "id": "missed-oracle-CB-2026-08-25-1W",
+      "generated_at": "2026-09-04T02:15:21Z",
+      "id": "missed-oracle-CB-2026-08-26-1W",
       "importance_score": 89.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
       "publication_tier": "global",
@@ -460,7 +460,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The hindsight best asset was Crude Oil (USO) at +10.84%. 0 of 7 models held it, with +0.00% average allocation.",
+      "summary": "The hindsight best asset was Crude Oil (USO) at +9.29%. 0 of 7 models held it, with +0.00% average allocation.",
       "title": "Models missed the weekly oracle asset",
       "why_it_matters": "This shows whether models identified the eventual best asset before scoring, even when portfolio weights were too small to fully capture the oracle return."
     },
@@ -513,7 +513,7 @@
       "confidence": "medium",
       "context": {
         "comparison_method": "shared_round_cohort",
-        "data_as_of": "2026-09-02",
+        "data_as_of": "2026-09-03",
         "insight_kind": "synthesis",
         "maturity": "ready",
         "minimum_shared_round_count": 4,
@@ -541,7 +541,7 @@
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-09-02",
+      "data_as_of": "2026-09-03",
       "date": "2026-09-04",
       "evidence": [
         {
@@ -550,7 +550,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-weekly-synthesis",
       "importance_score": 88.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -656,7 +656,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-monthly-synthesis",
       "importance_score": 86.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -722,7 +722,7 @@
           "source": "rounds/CB-2026-09-03-1M"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "active-risk-2026-09-03",
       "importance_score": 86.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -750,25 +750,25 @@
           "formula": "average return for confidence >= median confidence",
           "name": "high_confidence_average_return",
           "unit": "percent",
-          "value": 0.0934
+          "value": 0.0742
         },
         {
           "formula": "average return for confidence < median confidence",
           "name": "low_confidence_average_return",
           "unit": "percent",
-          "value": 0.5058
+          "value": 0.4865
         },
         {
           "formula": "average CapitalBench Score for confidence >= median confidence",
           "name": "high_confidence_average_capitalbench_score",
           "unit": "points",
-          "value": -2.587
+          "value": -2.7719
         },
         {
           "formula": "average CapitalBench Score for confidence < median confidence",
           "name": "low_confidence_average_capitalbench_score",
           "unit": "points",
-          "value": -0.3089
+          "value": -0.4275
         }
       ],
       "category": "confidence_calibration",
@@ -777,8 +777,8 @@
         "data_as_of": "2026-09-03",
         "median_confidence": 0.58,
         "primary_label": "All resolved official results",
-        "result_count": 643,
-        "round_count": 102,
+        "result_count": 650,
+        "round_count": 103,
         "scope": "resolved_history",
         "status": "resolved",
         "status_label": "Resolved history",
@@ -794,7 +794,7 @@
           "source": "resolved official leaderboard rows"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "confidence-calibration-2026-09-03",
       "importance_score": 85.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -807,7 +807,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Across resolved official results, submissions at or above the median confidence of 0.58 averaged +0.09%, while lower-confidence submissions averaged +0.51%.",
+      "summary": "Across resolved official results, submissions at or above the median confidence of 0.58 averaged +0.07%, while lower-confidence submissions averaged +0.49%.",
       "title": "High-confidence model calls have underperformed lower-confidence calls",
       "why_it_matters": "Confidence calibration helps readers judge whether model self-reported confidence carries useful information about realized benchmark performance."
     },
@@ -864,7 +864,7 @@
           "source": "asset risk model and behavior formulas"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "model-behavior-profiles-2026-09-03",
       "importance_score": 83.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -941,7 +941,7 @@
           "source": "rounds/CB-2026-07-31-1M/runs/official-v2-2-all-monthly-20260731-clean/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "attribution-CB-2026-07-31-1M-xai-grok-4-5",
       "importance_score": 83.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -969,49 +969,49 @@
           "formula": "allocation weight * asset return",
           "name": "largest_positive_contribution",
           "unit": "percent",
-          "value": 1.4969
+          "value": 0.2685
         },
         {
           "formula": "allocation weight * asset return",
-          "name": "largest_negative_contribution",
+          "name": "smallest_positive_contribution",
           "unit": "percent",
-          "value": -0.5125
+          "value": 0.2685
         }
       ],
       "category": "performance_attribution",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-09-02",
-        "decision_date": "2026-08-25",
-        "entry_date": "2026-08-26",
-        "exit_date": "2026-09-02",
+        "data_as_of": "2026-09-03",
+        "decision_date": "2026-08-26",
+        "entry_date": "2026-08-27",
+        "exit_date": "2026-09-03",
         "model": {
-          "label": "GPT-5.6 Sol",
-          "model_id": "openai-gpt-5-6-sol"
+          "label": "Grok 4.3",
+          "model_id": "xai-grok-4-3"
         },
         "model_count": 7,
         "primary_label": "Weekly result",
         "result_count": 7,
-        "round_id": "CB-2026-08-25-1W",
-        "run_id": "official-v3-20260825-weekly-clean",
+        "round_id": "CB-2026-08-26-1W",
+        "run_id": "official-v3-20260827-weekly",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-09-02",
+      "data_as_of": "2026-09-03",
       "date": "2026-09-04",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-08-25-1W",
+          "href": "/rounds/CB-2026-08-26-1W",
           "label": "Weekly result",
-          "source": "rounds/CB-2026-08-25-1W/runs/official-v3-20260825-weekly-clean/results/allocations.csv"
+          "source": "rounds/CB-2026-08-26-1W/runs/official-v3-20260827-weekly/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
-      "id": "attribution-CB-2026-08-25-1W-openai-gpt-5-6-sol",
+      "generated_at": "2026-09-04T02:15:21Z",
+      "id": "attribution-CB-2026-08-26-1W-xai-grok-4-3",
       "importance_score": 83.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
       "publication_tier": "category",
@@ -1023,8 +1023,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "In the latest weekly result, Energy Sector contributed +1.50% to GPT-5.6 Sol's portfolio. The largest drag came from Autonomous Technology and Robotics at -0.51%.",
-      "title": "GPT-5.6 Sol's result was driven by Energy Sector",
+      "summary": "In the latest weekly result, S&P 500 contributed +0.27% to Grok 4.3's portfolio. No holding detracted from the portfolio in this one-holding attribution view.",
+      "title": "Grok 4.3's result was driven by S&P 500",
       "why_it_matters": "Attribution turns a model score into an explanation of which holdings actually helped or hurt the frozen portfolio."
     },
     {
@@ -1083,7 +1083,7 @@
           "source": "rounds/CB-2026-09-03-1M"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "horizon-agreement-2026-09-03",
       "importance_score": 82.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -1197,7 +1197,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-monthly-down-leader",
       "importance_score": 80.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -1315,7 +1315,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-monthly-up-leader",
       "importance_score": 80.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -1392,7 +1392,7 @@
       "context": {
         "comparison_method": "shared_round_cohort",
         "comparison_round_count": 4,
-        "data_as_of": "2026-09-02",
+        "data_as_of": "2026-09-03",
         "eligible_model_count": 8,
         "environment_key": "down",
         "environment_round_count": 17,
@@ -1422,7 +1422,7 @@
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-09-02",
+      "data_as_of": "2026-09-03",
       "date": "2026-09-04",
       "evidence": [
         {
@@ -1431,7 +1431,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-weekly-down-leader",
       "importance_score": 80.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -1508,7 +1508,7 @@
       "context": {
         "comparison_method": "shared_round_cohort",
         "comparison_round_count": 6,
-        "data_as_of": "2026-09-02",
+        "data_as_of": "2026-09-03",
         "eligible_model_count": 8,
         "environment_key": "up",
         "environment_round_count": 22,
@@ -1540,7 +1540,7 @@
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-09-02",
+      "data_as_of": "2026-09-03",
       "date": "2026-09-04",
       "evidence": [
         {
@@ -1549,7 +1549,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-weekly-up-leader",
       "importance_score": 80.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -1622,7 +1622,7 @@
           "source": "rounds/CB-2026-09-03-1M"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "active-positioning-2026-09-03",
       "importance_score": 78.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -1725,7 +1725,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-monthly-consistency",
       "importance_score": 78.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -1757,13 +1757,13 @@
           "formula": "minimum direction-level CapitalBench Score across tested market directions",
           "name": "score_floor",
           "unit": "points",
-          "value": 9.9705
+          "value": 8.4731
         },
         {
           "formula": "average of direction-level model returns",
           "name": "average_model_return",
           "unit": "percent",
-          "value": 1.2527
+          "value": 1.0001
         },
         {
           "formula": "market directions with scored model observations",
@@ -1776,11 +1776,11 @@
       "confidence": "medium",
       "context": {
         "comparison_method": "shared_round_cohort",
-        "data_as_of": "2026-09-02",
+        "data_as_of": "2026-09-03",
         "environment_count": 2,
         "insight_kind": "consistency",
         "maturity": "ready",
-        "minimum_direction_observations": 4,
+        "minimum_direction_observations": 5,
         "model": {
           "label": "Claude Opus 5",
           "model_id": "anthropic-claude-opus-5"
@@ -1789,9 +1789,9 @@
         "model_ids": [
           "anthropic-claude-opus-5"
         ],
-        "model_observation_count": 10,
+        "model_observation_count": 11,
         "primary_label": "Weekly environment consistency",
-        "round_count": 10,
+        "round_count": 11,
         "round_ids": [
           "CB-2026-07-24-1W",
           "CB-2026-07-27-1W",
@@ -1802,7 +1802,8 @@
           "CB-2026-08-19-1W",
           "CB-2026-08-21-1W",
           "CB-2026-08-23-1W",
-          "CB-2026-08-25-1W"
+          "CB-2026-08-25-1W",
+          "CB-2026-08-26-1W"
         ],
         "scope": "resolved_history",
         "status": "resolved",
@@ -1810,7 +1811,7 @@
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-09-02",
+      "data_as_of": "2026-09-03",
       "date": "2026-09-04",
       "evidence": [
         {
@@ -1819,7 +1820,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-weekly-consistency",
       "importance_score": 78.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -1836,7 +1837,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Its lowest CapitalBench Score across 2 tested market directions is 10.0, with at least 4 model observations in each included direction.",
+      "summary": "Its lowest CapitalBench Score across 2 tested market directions is 8.5, with at least 5 model observations in each included direction.",
       "title": "Claude Opus 5 has the strongest weekly score floor",
       "why_it_matters": "A stronger floor identifies models whose benchmark performance is less dependent on one favorable market direction."
     },
@@ -1894,7 +1895,7 @@
           "source": "rounds/CB-2026-09-03-1M/market_data/universe_decision_context.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "recent-winner-tilt-CB-2026-09-03-1M",
       "importance_score": 78.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -1965,7 +1966,7 @@
           "source": "rounds/CB-2026-09-03-1W/market_data/universe_decision_context.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "recent-winner-tilt-CB-2026-09-03-1W",
       "importance_score": 78.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -1999,7 +2000,7 @@
           "formula": "interim model return - interim S&P 500 return",
           "name": "worst_live_alpha",
           "unit": "percentage_points",
-          "value": -4.2307
+          "value": -3.7996
         }
       ],
       "category": "live_performance",
@@ -2013,7 +2014,7 @@
         "data_as_of": "2026-09-02",
         "model_count": 9,
         "primary_label": "Open-round interim performance",
-        "round_count": 22,
+        "round_count": 21,
         "round_ids": [
           "CB-2026-08-04-1M",
           "CB-2026-08-05-1M",
@@ -2030,7 +2031,6 @@
           "CB-2026-08-24-1M",
           "CB-2026-08-25-1M",
           "CB-2026-08-26-1M",
-          "CB-2026-08-26-1W",
           "CB-2026-08-27-1M",
           "CB-2026-08-27-1W",
           "CB-2026-08-30-1M",
@@ -2044,9 +2044,9 @@
         "track": "all_live",
         "track_label": "Open weekly + monthly",
         "worst": {
-          "model_id": "google-gemini-3-1-pro",
-          "model_label": "Gemini 3.1 Pro",
-          "round_id": "CB-2026-08-26-1W"
+          "model_id": "openai-gpt-5-5",
+          "model_label": "GPT-5.5",
+          "round_id": "CB-2026-08-07-1M"
         }
       },
       "data_as_of": "2026-09-02",
@@ -2058,7 +2058,7 @@
           "source": "weekly_performance.csv"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "live-path-2026-09-02",
       "importance_score": 77.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -2071,7 +2071,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Using the latest available interim close, Grok 4.5 in CB-2026-08-11-1M is ahead of the S&P 500 by +6.07 percentage points, while Gemini 3.1 Pro in CB-2026-08-26-1W is at -4.23 percentage points.",
+      "summary": "Using the latest available interim close, Grok 4.5 in CB-2026-08-11-1M is ahead of the S&P 500 by +6.07 percentage points, while GPT-5.5 in CB-2026-08-07-1M is at -3.80 percentage points.",
       "title": "Grok 4.5 has the strongest live alpha",
       "why_it_matters": "Live alpha is provisional, but it shows how open model portfolios are moving before the final official score."
     },
@@ -2152,7 +2152,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-monthly-split",
       "importance_score": 76.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -2204,7 +2204,7 @@
       "confidence": "medium",
       "context": {
         "comparison_method": "shared_round_cohort",
-        "data_as_of": "2026-09-02",
+        "data_as_of": "2026-09-03",
         "down_environment_round_count": 17,
         "down_model_observation_count": 4,
         "insight_kind": "split",
@@ -2239,7 +2239,7 @@
         "up_environment_round_count": 22,
         "up_model_observation_count": 6
       },
-      "data_as_of": "2026-09-02",
+      "data_as_of": "2026-09-03",
       "date": "2026-09-04",
       "evidence": [
         {
@@ -2248,7 +2248,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-weekly-split",
       "importance_score": 76.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -2318,7 +2318,7 @@
           "source": "live parsed submissions"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "model-similarity-2026-09-03",
       "importance_score": 76.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -2437,7 +2437,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-monthly-flat-leader",
       "importance_score": 74.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -2470,73 +2470,74 @@
           "formula": "average model return across resolved weekly flat environments",
           "name": "average_model_return",
           "unit": "percent",
-          "value": 1.5836
+          "value": 0.863
         },
         {
           "formula": "average S&P 500 return across the same weekly environments",
           "name": "average_sp500_return",
           "unit": "percent",
-          "value": 0.1088
+          "value": 0.1408
         },
         {
           "formula": "100 * summed model return / summed hindsight-best eligible return",
           "name": "capitalbench_score",
           "unit": "points",
-          "value": 15.2153
+          "value": 8.4731
         },
         {
           "formula": "resolved rounds shared by every eligible model in the comparison",
           "name": "model_observations",
           "unit": "count",
-          "value": 4
+          "value": 5
         },
         {
           "formula": "leader average return minus runner-up average return on the shared cohort",
           "name": "leader_margin",
           "unit": "percentage_points",
-          "value": 0.1303
+          "value": 0.1084
         },
         {
           "formula": "lower bound of the paired 95% confidence interval for the leader margin",
           "name": "leader_margin_ci_95_low",
           "unit": "percentage_points",
-          "value": -0.6454
+          "value": -1.7135
         },
         {
           "formula": "share of leave-one-round-out samples retaining the same leader",
           "name": "leave_one_out_stability",
           "unit": "ratio",
-          "value": 0.75
+          "value": 0.4
         }
       ],
       "category": "market_environment",
       "confidence": "medium",
       "context": {
         "comparison_method": "shared_round_cohort",
-        "comparison_round_count": 4,
-        "data_as_of": "2026-09-02",
+        "comparison_round_count": 5,
+        "data_as_of": "2026-09-03",
         "eligible_model_count": 7,
         "environment_key": "flat",
-        "environment_round_count": 19,
+        "environment_round_count": 20,
         "insight_kind": "direction_leader",
-        "leave_one_out_stability": 0.75,
+        "leave_one_out_stability": 0.4,
         "maturity": "ready",
         "model": {
-          "label": "GPT-5.6 Sol",
-          "model_id": "openai-gpt-5-6-sol"
+          "label": "Claude Opus 5",
+          "model_id": "anthropic-claude-opus-5"
         },
         "model_count": 1,
         "model_ids": [
-          "openai-gpt-5-6-sol"
+          "anthropic-claude-opus-5"
         ],
-        "model_observation_count": 4,
+        "model_observation_count": 5,
         "primary_label": "Weekly flat environments",
-        "round_count": 4,
+        "round_count": 5,
         "round_ids": [
           "CB-2026-08-19-1W",
           "CB-2026-08-21-1W",
           "CB-2026-08-23-1W",
-          "CB-2026-08-25-1W"
+          "CB-2026-08-25-1W",
+          "CB-2026-08-26-1W"
         ],
         "scope": "resolved_history",
         "status": "resolved",
@@ -2544,7 +2545,7 @@
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-09-02",
+      "data_as_of": "2026-09-03",
       "date": "2026-09-04",
       "evidence": [
         {
@@ -2553,15 +2554,15 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-09-04T01:57:48Z",
+      "generated_at": "2026-09-04T02:15:21Z",
       "id": "market-environment-weekly-flat-leader",
       "importance_score": 74.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
       "publication_tier": "category",
       "related": [
         {
-          "href": "/models/openai-gpt-5-6-sol/",
-          "label": "GPT-5.6 Sol"
+          "href": "/models/anthropic-claude-opus-5/",
+          "label": "Claude Opus 5"
         },
         {
           "href": "/leaderboards/market-regime-benchmark/",
@@ -2570,19 +2571,19 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The model averaged +1.58% across 4 shared-cohort rounds drawn from 19 resolved weekly flat environments. The sample meets publication thresholds.",
-      "title": "GPT-5.6 Sol leads when the S&P 500 is flat",
+      "summary": "The model averaged +0.86% across 5 shared-cohort rounds drawn from 20 resolved weekly flat environments. The sample meets publication thresholds.",
+      "title": "Claude Opus 5 leads when the S&P 500 is flat",
       "why_it_matters": "Environment-specific returns show whether a model's all-history result is broad or depends on a particular market direction."
     }
   ],
   "publication_policy_version": "capitalbench_publication_policy_v1",
-  "run_date": "2026-09-03",
-  "run_id": "20260904T015748Z-423cd9c19ec4",
+  "run_date": "2026-09-04",
+  "run_id": "20260904T021521Z-c7df139e4584",
   "source": {
-    "build_fingerprint": "423cd9c19ec463d7bbf4228e9377acc528820f6eaef919c1baa4f7506b7e29d7",
+    "build_fingerprint": "c7df139e4584803cd70aa7b848bdc6e5c6a14d2a47658d97c8d7696ec89007c1",
     "build_fingerprint_version": "capitalbench_insights_build_fingerprint_v2",
-    "capitalbench_generated_at": "2026-09-04T01:57:48Z",
-    "data_fingerprint": "255aaffb1de4d6097947036856f9a19f4a3923b29105467c0443dac00317d0a6",
+    "capitalbench_generated_at": "2026-09-04T02:15:21Z",
+    "data_fingerprint": "7ca5c3c87386f09da015d3c2e1a3119e63fc9f0be9e32ad539565bb33e2da57a",
     "data_fingerprint_version": "capitalbench_insights_data_fingerprint_v3",
     "input_version": "capitalbench_insights_input_v1",
     "llm": {
