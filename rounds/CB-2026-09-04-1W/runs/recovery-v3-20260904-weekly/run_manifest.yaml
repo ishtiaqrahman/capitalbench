@@ -1,0 +1,35 @@
+run_id: recovery-v3-20260904-weekly
+round_id: CB-2026-09-04-1W
+run_type: official
+mode: closed_capability
+mock: false
+created_at_utc: '2026-09-05T04:08:39.621207+00:00'
+models_config_file: output/sep4-2026/recovery/weekly-missing-models.local.yaml
+models_path: output/sep4-2026/recovery/weekly-missing-models.local.yaml
+pricing_path: configs/pricing.local.yaml
+replicates: 1
+allow_real_api_calls: true
+official_score_eligible: false
+model_roster_version: portfolio-v3-roster-96dc9f3d5254
+expected_model_ids:
+- openai-gpt-6-astra
+- anthropic-claude-opus-5
+- anthropic-claude-fable-5-1
+- google-gemini-3-1-pro
+- xai-grok-4-3
+- xai-grok-4-5
+- xai-grok-4-6
+model_count: 4
+valid_submissions: 4
+invalid_submissions: 0
+model_ids:
+- google-gemini-3-1-pro
+- xai-grok-4-3
+- xai-grok-4-5
+- xai-grok-4-6
+loaded_models: 4
+skipped_models: 0
+completed_at_utc: '2026-09-05T04:10:54.562522+00:00'
+format_retry: true
+notes: Format-retry source run; preserved for audit and never independently eligible
+  for public official scoring.

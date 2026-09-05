@@ -32,9 +32,16 @@ provider-supported reasoning setting that still returns the required valid
 structured decision. Technical or formatting retries must remain disclosed and
 must never be used to seek a different portfolio.
 
-The active production roster has seven models: GPT-5.6 SOL, Grok 4.3, Grok
-4.5, Grok 4.6, Gemini 3.1 Pro, Claude Opus 5, and Claude Fable 5.1. Claude
-Fable 5.1 joined future rounds effective `2026-09-04T01:24:56Z` (September 3,
+The active production roster has seven models: GPT-6 Astra, Grok 4.3, Grok
+4.5, Grok 4.6, Gemini 3.1 Pro, Claude Opus 5, and Claude Fable 5.1.
+GPT-6 Astra joined future rounds effective `2026-09-05T02:40:00Z`
+(September 4, 2026 in America/Toronto) using OpenAI API model ID
+`gpt-6-astra`, `reasoning_effort: low`, and no temperature parameter.
+GPT-5.6 SOL was retired at the same timestamp with `openai-gpt-6-astra`
+as its successor. Preserve every historical SOL submission, result, profile,
+and comparison set. Astra is a new participant, so its first accepted frozen
+roster starts a new fair comparison origin; never backfill it into old rounds.
+Claude Fable 5.1 joined future rounds effective `2026-09-04T01:24:56Z` (September 3,
 2026 in America/Toronto) using the Anthropic API model ID
 `claude-fable-5-1`; do not backfill it into older rounds. Claude Fable 5 was
 retired from new rounds at the same timestamp and designates

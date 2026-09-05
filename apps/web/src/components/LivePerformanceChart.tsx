@@ -90,6 +90,7 @@ function modelColorClass(modelId: string, index: number): string {
   const colors: Record<string, string> = {
     "openai-gpt-5-5": "live-bar-openai",
     "openai-gpt-5-6-sol": "live-bar-openai",
+    "openai-gpt-6-astra": "live-bar-openai",
     "xai-grok-4-3": "live-bar-xai",
     "xai-grok-4-5": "live-bar-xai",
     "xai-grok-4-6": "live-bar-xai",

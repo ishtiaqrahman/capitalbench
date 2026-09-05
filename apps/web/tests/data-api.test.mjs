@@ -714,9 +714,8 @@ test("model holdings and asset holder endpoints filter correctly", async () => {
 test("model behavior endpoint exposes canonical behavior profiles", async () => {
   const list = await apiGet("/api/v1/models/behavior");
   const patterns = await apiGet("/api/v1/models/patterns");
-  const modelId = "openai-gpt-5-6-sol";
+  const modelId = "google-gemini-3-1-pro";
   const detail = await apiGet(`/api/v1/models/${modelId}/behavior`);
-  const retiredDetail = await apiGet("/api/v1/models/openai-gpt-5-5/behavior");
 
   assert.equal(list.status, 200);
   assert.equal(list.body.version, "model_behavior_v2");
@@ -763,14 +762,17 @@ test("model behavior endpoint exposes canonical behavior profiles", async () => 
   assert.ok(detail.body.methodology_href.includes("/models/patterns/#methodology"));
   assert.equal(detail.body.behavior_v2.version, "model_behavior_v2");
   assert.deepEqual(detail.body.behavior_v2.pills.map((pill) => pill.role), ["Signature", "Construction", "Tempo", "Now"]);
-  assert.equal(retiredDetail.status, 200);
-  assert.equal(retiredDetail.body.model_id, "openai-gpt-5-5");
-  assert.equal(retiredDetail.body.lifecycle_status, "retired");
-  assert.ok(retiredDetail.body.sample.portfolio_count > 0);
-  assert.deepEqual(
-    retiredDetail.body.behavior_v2.pills.map((pill) => pill.role),
-    ["Signature", "Construction", "Tempo", "Lifecycle"]
-  );
+  for (const retiredModelId of ["openai-gpt-5-5", "openai-gpt-5-6-sol"]) {
+    const retiredDetail = await apiGet(`/api/v1/models/${retiredModelId}/behavior`);
+    assert.equal(retiredDetail.status, 200);
+    assert.equal(retiredDetail.body.model_id, retiredModelId);
+    assert.equal(retiredDetail.body.lifecycle_status, "retired");
+    assert.ok(retiredDetail.body.sample.portfolio_count > 0);
+    assert.deepEqual(
+      retiredDetail.body.behavior_v2.pills.map((pill) => pill.role),
+      ["Signature", "Construction", "Tempo", "Lifecycle"]
+    );
+  }
 });
 
 test("insights endpoint returns ranked public insights with detail lookups", async () => {

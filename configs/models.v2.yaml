@@ -26,7 +26,27 @@ models:
     first_eligible_round: CB-2026-07-10-1M
     first_eligible_date_utc: "2026-07-10T21:00:00Z"
     model_release_date: "2026-07-10"
-    notes: CapitalBench production portfolio participant.
+    retired_at_utc: "2026-09-05T02:40:00Z"
+    retirement_reason: Superseded by GPT-6 Astra for future CapitalBench production rounds; historical submissions, scores, profiles, and comparison sets remain published.
+    successor_model_id: openai-gpt-6-astra
+    notes: Retired from new CapitalBench production rounds on September 4, 2026 America/Toronto; preserved for historical and retrospective use.
+
+  - model_id: openai-gpt-6-astra
+    provider: openai
+    api_model_name: gpt-6-astra
+    enabled: true
+    mode: closed_capability
+    temperature: 0
+    max_completion_tokens: 6000
+    max_wall_clock_seconds: 180
+    reasoning_effort: low
+    first_eligible_round: CB-2026-09-04-1M
+    first_eligible_date_utc: "2026-09-05T02:40:00Z"
+    notes: CapitalBench production portfolio participant starting with the September 4, 2026 weekly and monthly rounds; successor to GPT-5.6 SOL with no historical backfill. API access verified September 4, 2026 America/Toronto; uses the lowest supported reasoning effort and omits unsupported temperature.
+    metadata:
+      pricing_per_1m_tokens_usd:
+        base_input: 10.0
+        output: 50.0
 
   - model_id: anthropic-claude-opus-4-7
     provider: anthropic

@@ -246,6 +246,28 @@ def test_openai_provider_disables_tools_in_payload(monkeypatch) -> None:
     assert captured_payload["tool_choice"] == "none"
 
 
+def test_astra_omits_temperature_and_uses_low_reasoning_without_retry(monkeypatch) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    provider = OpenAIProvider()
+    payloads = []
+
+    def fake_post(url, headers, payload, timeout):
+        payloads.append(dict(payload))
+        return {"output_text": '{"ok":true}'}
+
+    monkeypatch.setattr(provider, "_post_json", fake_post)
+    config = _model_config().model_copy(update={"api_model_name": "gpt-6-astra"})
+    provider.run_model(
+        config, "prompt", provider_submission_schema(config),
+        RuntimeSettings(timeout_seconds=1, max_output_tokens=500, temperature=0, reasoning_effort="low"),
+    )
+    assert len(payloads) == 1
+    assert "temperature" not in payloads[0]
+    assert payloads[0]["reasoning"] == {"effort": "low"}
+    assert payloads[0]["tools"] == []
+    assert payloads[0]["tool_choice"] == "none"
+
+
 def test_openai_provider_handles_missing_usage_fields(monkeypatch) -> None:
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
     provider = OpenAIProvider()

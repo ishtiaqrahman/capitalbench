@@ -37,6 +37,8 @@ class OpenAIProvider(BaseProvider):
         }
         if runtime_limits.reasoning_effort:
             payload["reasoning"] = {"effort": runtime_limits.reasoning_effort}
+        if model_config.api_model_name.startswith("gpt-6-astra"):
+            payload.pop("temperature", None)
 
         response = self._post_openai(payload, runtime_limits.timeout_seconds)
         raw_text = _extract_openai_text(response)

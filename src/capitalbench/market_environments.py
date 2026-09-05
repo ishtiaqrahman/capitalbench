@@ -55,6 +55,7 @@ MODEL_LABELS = {
     "google-gemini-3-1-pro": "Gemini 3.1 Pro",
     "openai-gpt-5-5": "GPT-5.5",
     "openai-gpt-5-6-sol": "GPT-5.6 Sol",
+    "openai-gpt-6-astra": "GPT-6 Astra",
     "xai-grok-4-3": "Grok 4.3",
     "xai-grok-4-5": "Grok 4.5",
     "xai-grok-4-6": "Grok 4.6",

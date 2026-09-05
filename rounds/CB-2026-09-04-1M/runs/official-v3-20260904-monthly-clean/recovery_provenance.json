@@ -1,0 +1,64 @@
+{
+  "assembled_prompt_sha256": "f2939372e9b150415ed2629bf006d9ef6709e4af178168227013aff5aff5d2e0",
+  "disclosure": "Clean official run assembled after the operator agent crashed during collection. Every saved valid original decision is reused byte-for-byte; only models with no saved response were called in the recovery source run. Calls potentially in flight at the crash have no recoverable response and are disclosed as infrastructure recovery. All decisions use the unchanged frozen prompt and precede the decision deadline. Source runs remain ineligible; no best-of-many selection or portfolio edits occurred. The original buffered run log was empty; reconstructed records preserve saved usage and response hashes, with unavailable original call timestamps explicitly null.",
+  "models": {
+    "anthropic-claude-fable-5-1": {
+      "sha256": {
+        "parsed": "e5b2c74049cb62c438ecda19aa5ff053e1baac4f5c3938bef6ac106335cfca0c",
+        "raw": "b200b485a6c10f285fc724c78c5d8d358a9117471d5b239b516545a8db5ebe6d",
+        "raw_responses": "ace2c7cdfa90b95edf47488c588e411ff8aa3560494ddc058054ea35adb31a74"
+      },
+      "source_run_id": "recovery-v3-20260904-monthly"
+    },
+    "anthropic-claude-opus-5": {
+      "sha256": {
+        "parsed": "82f841153b104f1ba415bf1421b3ce97bea506c9a47ae1eb1bb6b9e13af71fa5",
+        "raw": "0cf7e6b0f6550f2787e82bc14d56a08b987258bef66e8dcc371a95cf6790497b",
+        "raw_responses": "c5723acc458f617d52dafad06acb0fe8773e506a785011fbca8f71acffec129c"
+      },
+      "source_run_id": "official-v3-20260904-monthly"
+    },
+    "google-gemini-3-1-pro": {
+      "sha256": {
+        "parsed": "ac4c9721b256c8c0ce8a045471c7c2d464b7ed3b5a6f142373833b3b810c75cc",
+        "raw": "bd339184d3a1f8a90ee70c79245b66b282e4cbea6bea1f54318dde8783745226",
+        "raw_responses": "cf4e26d668980795826a45308f94007b3dd428074c126cc55d84668a5bd74b89"
+      },
+      "source_run_id": "recovery-v3-20260904-monthly"
+    },
+    "openai-gpt-6-astra": {
+      "sha256": {
+        "parsed": "e21a384fed422f6eacfa8031a47c204fcd8866a93767c189fcd2866f5fa833c0",
+        "raw": "543ee704b882081bf433fdb4456ef438df38133d17d4ef90f6011b4f8b0938cc",
+        "raw_responses": "c6ab045174db3258dcee246b16dcdfe29098caa5acf73a24e0995909d80298dd"
+      },
+      "source_run_id": "official-v3-20260904-monthly"
+    },
+    "xai-grok-4-3": {
+      "sha256": {
+        "parsed": "2d01aafcbff896044abb724c2b29879e6be2132ee43ed8e38b6f78341c723003",
+        "raw": "f108d3bf20b9303337124f46de6f32068dceff74d02c6462d6f66b75c1f7dec5",
+        "raw_responses": "fd293c1a418c7a2816e4fcfd0419b7db8d8f894e5f94b0f4f8b35bac44a0eb25"
+      },
+      "source_run_id": "recovery-v3-20260904-monthly"
+    },
+    "xai-grok-4-5": {
+      "sha256": {
+        "parsed": "60664628fa25b9b1b4271a02644841e92faabe9ba0a74f98ec242e3532f7997e",
+        "raw": "b2360d4afe772196f843fed914836834ced5f16624ea5ab642db721ee8354cf3",
+        "raw_responses": "38b47f66c75f1195b09a9333ae391e95fdd581e7e627c55ef4f47dcea53ef34e"
+      },
+      "source_run_id": "recovery-v3-20260904-monthly"
+    },
+    "xai-grok-4-6": {
+      "sha256": {
+        "parsed": "83ab23e14912d1f2ced4df66f16b7a790ab9497bca4b2791064ee471e2ff8f60",
+        "raw": "fa26b8d20e48ef3a6b4b962328324c6b9f7fad8e2d292d19907236a2c45c0c7a",
+        "raw_responses": "eb033bce03b1f937f4a25d5fe990ad698c82f8177bfdae917211096c392cabaa"
+      },
+      "source_run_id": "recovery-v3-20260904-monthly"
+    }
+  },
+  "round_id": "CB-2026-09-04-1M",
+  "run_id": "official-v3-20260904-monthly-clean"
+}

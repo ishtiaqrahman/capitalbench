@@ -45,8 +45,21 @@ EXPECTED_POST_FABLE_5_RETIREMENT_MODEL_IDS = (
 ) | {"anthropic-claude-fable-5-1"}
 
 
-def test_canonical_portfolio_v2_roster_contains_all_eleven_models() -> None:
-    assert set(canonical_portfolio_v2_model_ids()) == EXPECTED_PORTFOLIO_V2_MODEL_IDS
+def test_canonical_portfolio_v2_roster_preserves_history_and_adds_astra() -> None:
+    assert set(canonical_portfolio_v2_model_ids()) == EXPECTED_PORTFOLIO_V2_MODEL_IDS | {
+        "openai-gpt-6-astra"
+    }
+
+
+def test_astra_replaces_sol_only_from_its_eligibility_timestamp() -> None:
+    assert set(active_portfolio_v2_model_ids(
+        "2026-09-05T02:39:59Z", round_id="CB-2026-09-04-1W"
+    )) == EXPECTED_POST_FABLE_5_RETIREMENT_MODEL_IDS
+    assert set(active_portfolio_v2_model_ids(
+        "2026-09-05T02:40:00Z", round_id="CB-2026-09-04-1W"
+    )) == (EXPECTED_POST_FABLE_5_RETIREMENT_MODEL_IDS - {"openai-gpt-5-6-sol"}) | {
+        "openai-gpt-6-astra"
+    }
 
 
 def test_active_portfolio_v2_roster_excludes_models_after_retirement() -> None:

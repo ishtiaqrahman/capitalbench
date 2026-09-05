@@ -163,6 +163,7 @@ function scoreChartModelColorClass(modelId: string, index: number): string {
   const modelColors: Record<string, string> = {
     "openai-gpt-5-5": "score-bar-openai",
     "openai-gpt-5-6-sol": "score-bar-openai",
+    "openai-gpt-6-astra": "score-bar-openai",
     "xai-grok-4-3": "score-bar-xai",
     "xai-grok-4-5": "score-bar-xai",
     "xai-grok-4-6": "score-bar-xai",

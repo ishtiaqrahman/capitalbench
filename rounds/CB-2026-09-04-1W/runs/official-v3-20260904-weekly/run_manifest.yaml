@@ -1,0 +1,43 @@
+run_id: official-v3-20260904-weekly
+round_id: CB-2026-09-04-1W
+run_type: official
+mode: closed_capability
+mock: false
+created_at_utc: '2026-09-05T02:48:54.541480+00:00'
+models_config_file: configs/models.v2.yaml
+models_path: configs/models.v2.yaml
+pricing_path: configs/pricing.local.yaml
+replicates: 1
+allow_real_api_calls: true
+official_score_eligible: false
+model_roster_version: portfolio-v3-roster-96dc9f3d5254
+expected_model_ids:
+- openai-gpt-6-astra
+- anthropic-claude-opus-5
+- anthropic-claude-fable-5-1
+- google-gemini-3-1-pro
+- xai-grok-4-3
+- xai-grok-4-5
+- xai-grok-4-6
+model_count: 7
+valid_submissions: 3
+invalid_submissions: 0
+model_ids:
+- openai-gpt-6-astra
+- anthropic-claude-opus-5
+- anthropic-claude-fable-5-1
+- google-gemini-3-1-pro
+- xai-grok-4-3
+- xai-grok-4-5
+- xai-grok-4-6
+interrupted: true
+recovery_recorded_at_utc: '2026-09-05T04:08:27.901132+00:00'
+missing_model_ids:
+- google-gemini-3-1-pro
+- xai-grok-4-3
+- xai-grok-4-5
+- xai-grok-4-6
+notes: Collection interrupted by the operator agent crash. Saved valid responses are
+  preserved unchanged. Missing responses will be collected separately with the identical
+  frozen inputs; this incomplete source run is not independently eligible. Original
+  run_log.jsonl was empty after the crash, so exact original call timestamps are unavailable.

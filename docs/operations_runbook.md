@@ -63,6 +63,13 @@ tokens, and raw provider responses.
 
 3. Validate the run.
 
+   GPT-5.6 SOL is retired from new rounds effective `2026-09-05T02:40:00Z`
+   (September 4, 2026 in America/Toronto). Its forward-only successor is
+   GPT-6 Astra, API model `gpt-6-astra`, using `reasoning_effort: low` and
+   omitting temperature. Preserve SOL's historical artifacts and frozen
+   rosters. Astra first participates in the September 4 weekly and monthly
+   rounds and starts a new comparison origin in each track.
+
    ```bash
    capitalbench validate-submissions \
      --round rounds/<round_id> \
