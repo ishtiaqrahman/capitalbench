@@ -2,110 +2,110 @@
 
 ## Round
 
-- Round ID: CB-2026-08-27-1W
-- Decision deadline: 2026-08-28T13:25:00Z
+- Round ID: CB-2026-08-30-1W
+- Decision deadline: 2026-08-31T13:25:00Z
 - Horizon: one week
-- Official run ID: official-v3-20260828-weekly
+- Official run ID: official-v3-20260830-weekly
 - Mock: no
 
 ## Model Decisions
 
 | model_id | provider | submission_format | selected_option_id | holding_count | confidence | rationale_summary | key_risks |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| google-gemini-3-1-pro | google | portfolio | OIL | 3 | 0.58 | The market is showing mixed signals with some sectors experiencing pullbacks while others continue to show strength. The recent GDP and inflation data suggest a stable economic environment, but there are underlying concerns about specific sectors like energy and consumer discretionary. | Continued weakness in the energy sector despite inventory draws.; Further deterioration in consumer spending impacting the consumer discretionary sector. |
-| openai-gpt-5-6-sol | openai | portfolio | ENERGY | 3 | 0.575 | High dispersion and narrow mega-cap leadership favor selective reversals over broad continuation. Elevated inflation and weak labor and consumption data create competing risks around the employment report, while rising yields constrain defensive and long-duration exposures. | A stronger-than-expected August employment report could lift yields and favor SPY over commodity-linked reversals.; Weak September 2 petroleum data could extend losses in energy and broad commodities.; A rapid reversal in inflation expectations or dollar strength could pressure commodity and precious-metal exposures.; Narrow AI-led equity momentum could persist and leave the selected reversal candidates behind. |
-| xai-grok-4-5 | xai | portfolio | ENERGY | 3 | 0.5633 | SPY firm on mega-cap/tech strength post-NVIDIA; soft labor and mixed growth data with elevated but stable inflation; low-to-normal cross-sectional dispersion favors selective mean-reversion in quality pullbacks over pure momentum continuation into the short window. | Continued mega-cap/tech momentum could keep SPY elevated and delay mean-reversion in cyclicals and commodities; August employment report on 4 Sep may reprice rates and risk appetite sharply; High idiosyncratic vol in oil and energy complex can extend the recent shock rather than reverse; Soft retail sales and labor data may pressure consumer discretionary further if confirmed |
-| anthropic-claude-fable-5 | anthropic | portfolio | SP500 | 2 | 0.58 | SPY up 1.11% on the week with narrow breadth (RSP -0.58% vs SPY, majority of S&P constituents declined on Aug 27), tech-led continuation after NVIDIA's strong report already printed. Dispersion 2.38% is moderate. Post-earnings, the biggest catalyst inside the window is the September 4 payrolls report; prior payrolls fell 23k, keeping rate-cut expectations alive. Best edge is in high-quality pullbacks (Energy) rather than chasing extended tech. | Further crude price weakness would drag XLE despite the quality pullback setup; September 4 payrolls surprise could reprice rates and hit both equities and metals; Narrow breadth reverses and extended tech leadership continues, leaving SPY hard to beat; Dollar rebound pressuring commodity-linked positions |
-| xai-grok-4-3 | xai | portfolio | SP500 | 1 | 0.5 | Mixed signals with software continuation supported by earnings strength offset by energy and commodity pullbacks amid stable macro data and rising yields. | Rising Treasury yields pressuring growth assets; NVIDIA China revenue assumption uncertainty; September employment data volatility; Commodity inventory revisions |
-| xai-grok-4-6 | xai | portfolio | SP500 | 1 | 0.5 | SPY is near a 52-week high with mega-cap/Nasdaq leadership (NVDA print) while a majority of S&P names fell, equal-weight lagged, and 5-session active dispersion is only 2.38%. Labor softening and the Aug payrolls print on 2026-09-04 sit inside the scoring window, so one-week edges versus SPY are mixed rather than a clean continuation or reversal regime. | BLS August employment on 2026-09-04 can reprice rates, growth, and mega-cap leadership inside the exit close.; Elevated PCE/CPI prints and a still-restrictive funds range leave duration-sensitive defensives and cyclicals two-way.; High-vol continuations (software, crypto, Korea) can reverse without volume confirmation.; Oil/energy bounce can fail if commercial inventories keep building despite SPR draws. |
-| anthropic-claude-opus-5 | anthropic | portfolio | CONSUMER_DISCRETIONARY | 3 | 0.555 | SPY is near highs after a strong 21-day run (+5.71%) led by mega-cap tech and a blowout NVIDIA print, while breadth is weak (RSP -3.06% active over 21 sessions, majority of S&P constituents down on Aug 27). Rates rose modestly with 10y at 4.67% and PCE at 3.7% y/y, keeping duration and rate-sensitive defensives capped. The week contains the August employment report on Sept 4, the exact exit date, which caps conviction in high-beta reversal bets. Dispersion (2.38% weekly active) is normal, so few candidates carry genuine mechanical edge; most slate pullbacks look like modest noise rather than exploitable overreaction. | August employment report on September 4 lands at the exit close and can reprice high-beta and rate-sensitive positions within the scoring window; Mega-cap tech leadership post-NVIDIA can keep SPY ahead of the weak-breadth reversal candidates; China exposure is subject to policy and geopolitical headlines with sub-50 PMIs signaling genuine slowdown; Rising long yields (30y 5.19%) with 3.7% PCE inflation could pressure cyclicals and discretionary consumption; Crude inventory and OPEC surprises could extend energy weakness rather than reverse it |
+| google-gemini-3-1-pro | google | portfolio | SILVER | 3 | 0.5767 | The market is digesting mixed economic signals, with solid GDP growth but a slight contraction in payrolls and a downward benchmark revision. The Fed remains focused on inflation, which is still above target, suggesting rates will stay higher for longer. This environment favors defensive positioning and selective opportunities in sectors with strong fundamentals or recent overreactions. | A stronger-than-expected employment report on September 4 could lead to a reassessment of Fed policy, negatively impacting precious metals.; Continued weakness in global manufacturing could weigh on industrial commodities like Silver and Oil. |
+| xai-grok-4-3 | xai | portfolio | SP500 | 1 | 0.5 | Tech short-continuation amid commodity shock_reversals and macro data showing solid but inflation-sticky growth; one-week window favors limited edges. | Fed policy signals on persistent inflation; One-week volatility in tech and commodities; Labor market revisions and upcoming employment data |
+| xai-grok-4-6 | xai | portfolio | SP500 | 1 | 0.5 | Five-session active-return dispersion is only 1.62% with 40.6% of assets positive versus 73.9% over 21 sessions, SPY is 1.1% from its 52-week high, and a hawkish Chair speech plus a jobs print and Labor Day close sit inside the week, so breadth is mixed and a one-week SPY-relative edge is thin. | August employment report on September 4 can reprice rates and risk assets before the September 8 close.; Labor Day closure on September 7 compresses liquidity and can exaggerate residual moves in high-vol metals and crypto.; Chair Warsh restated a firm 2% PCE objective with inflation still too high, which can keep real-rate pressure on gold, silver, and duration-sensitive growth.; Software and cybersecurity already posted large short-window gains with weak volume confirmation, raising mean-reversion risk if mega-cap tech fades. |
+| openai-gpt-5-6-sol | openai | portfolio | SILVER | 3 | 0.57 | Breadth weakened while mega-cap technology held firm, creating a mixed setup of narrow continuation and selective reversal. The employment report is the main in-window catalyst, while high real yields and dollar strength constrain precious metals and other high-duration exposures. | A stronger-than-expected employment report could lift yields and the dollar, extending precious-metals weakness.; A broad risk-off response to labor deterioration could overwhelm the reversal signals in South African and other high-beta assets.; Recent pullbacks may reflect an emerging regime change rather than temporary overreaction.; Holiday-shortened trading and high volatility could amplify gap risk before the September 8 exit. |
+| anthropic-claude-fable-5 | anthropic | portfolio | SILVER | 3 | 0.58 | SPY grinds higher but breadth is weak (RSP lagging, only 41% of assets positive over 5 sessions). Inflation remains sticky (PCE 3.7%, six-month annualized 4.1%) with a hawkish Fed chair, which supports real-asset trends. Precious metals had strong prior-window active returns (+9% to +14%) and pulled back sharply last week with no fundamental change, making them the best-tested overreaction candidates ahead of a payrolls week that could pressure the dollar. | Strong August payrolls could lift the dollar and real yields, extending the metals pullback; High-volatility candidates (silver 39%, EZA 30%) can produce large adverse excess returns in a week; Hawkish Fed communication ahead of the Sep 15-16 FOMC may pressure non-yielding assets; South Africa carries idiosyncratic currency and power-supply risk uncorrelated to the metals thesis |
+| xai-grok-4-5 | xai | portfolio | HEALTHCARE | 3 | 0.59 | Low cross-sectional dispersion with mixed short-term signals: sticky inflation and hawkish Fed tone support limited risk appetite, while quality pullbacks in metals and select defensives offer modest reversal potential versus strong short-term software/cyber momentum that lacks fresh catalysts inside the one-week window. | Hawkish Fed speech and elevated PCE could pressure risk assets and precious metals if real yields rise further; Low dispersion and Labor Day shortened week may mute reversal magnitude; High-beta metals and robotics remain vulnerable to any equity risk-off move; Employment report on Sept 4 could reverse defensive or commodity bounces |
+| anthropic-claude-opus-5 | anthropic | portfolio | GOLD | 3 | 0.5633 | SPY is near highs with modest gains while breadth narrowed (RSP -0.44% vs SPY +0.47% over 5 sessions, positive asset share 40.6%). Rates rose sharply at the long end (2y 4.20%->4.34%, 30y ~5.22%) with Warsh signaling firm 2% target and inflation too high, which pressured precious metals and rate-sensitive defensives. Gold and silver saw a sharp one-week pullback after a strong prior 16-session run, a classic real-rate-driven overreaction that often partially mean-reverts into a heavy macro week (Sept 4 payrolls, pre-FOMC positioning). Crypto is drifting lower with elevated volume z-scores, and software/cybersecurity have parabolic recent moves with very high volatility and no in-window catalyst. | A strong August employment report on September 4 could push yields higher and extend the gold and silver selloff rather than reverse it; Pre-FOMC hawkish positioning after Warsh's inflation remarks keeps real yields elevated, a direct headwind to precious metals; Silver's 38.7% volatility means a modest adverse move produces large negative excess return; Healthcare's low beta underperforms if the S&P 500 continues grinding to new highs; Shortened week around the September 7 Labor Day holiday reduces liquidity and can amplify momentum rather than mean reversion |
 
 ## Realized Returns
 
 | option_id | label | entry_price | exit_price | return | rank |
 | --- | --- | --- | --- | --- | --- |
-| OIL | Crude Oil | 129.7 | 141.96 | 0.0945258288357751 | 1 |
-| BRAZIL | Brazil Equities | 35.55 | 37.86 | 0.06497890295358655 | 2 |
-| SOUTH_KOREA | South Korea Equities | 180.2 | 188.87 | 0.04811320754716997 | 3 |
-| TAIWAN | Taiwan Equities | 107.9 | 112.18 | 0.03966635773864691 | 4 |
-| BROAD_COMMODITIES | Broad Commodities | 18.39 | 19.01 | 0.033713974986405715 | 5 |
-| BITCOIN_ETF | Bitcoin ETF | 43.9 | 45.23 | 0.030296127562642328 | 6 |
-| JAPAN | Japan Equities | 95.87 | 98.28 | 0.02513820798998645 | 7 |
-| SEMICONDUCTORS | Semiconductors | 553.11 | 567.01 | 0.0251306250112997 | 8 |
-| YEN | Japanese Yen | 57.25 | 58.67 | 0.02480349344978161 | 9 |
-| ENERGY | Energy Sector | 62.68 | 64.06 | 0.022016592214422426 | 10 |
-| MOMENTUM | US Momentum Equities | 299.71 | 304.86 | 0.017183277167929223 | 11 |
-| REGIONAL_BANKS | Regional Banks | 74.3 | 75.27 | 0.013055181695827756 | 12 |
-| SOUTH_AFRICA | South Africa Equities | 70.72 | 71.64 | 0.01300904977375561 | 13 |
-| EMERGING_MARKETS | Emerging Markets | 60.79 | 61.44 | 0.010692548116466583 | 14 |
-| DEVELOPED_EX_US | Developed Markets ex-US | 73.06 | 73.76 | 0.009581166164796207 | 15 |
-| BIOTECH | Biotechnology | 162.38 | 163.81 | 0.008806503263948828 | 16 |
-| TECHNOLOGY | Technology Sector | 185.69 | 187.28 | 0.008562658193763895 | 17 |
-| UTILITIES | Utilities Sector | 42.73 | 43.08 | 0.008190966534051158 | 18 |
-| ETHEREUM_ETF | Ethereum ETF | 18.37 | 18.52 | 0.008165487207403288 | 19 |
-| AUSTRALIA | Australia Equities | 30.0 | 30.23 | 0.0076666666666667105 | 20 |
-| INDIA | India Equities | 49.56 | 49.91 | 0.007062146892655274 | 21 |
-| COPPER | Copper | 39.67 | 39.95 | 0.007058230400806664 | 22 |
-| SMALL_VALUE | US Small-Cap Value | 223.14 | 224.62 | 0.006632607331719997 | 23 |
-| LARGE_GROWTH | US Large-Cap Growth | 122.75 | 123.41 | 0.005376782077393116 | 24 |
-| CANADA | Canada Equities | 61.73 | 62.04 | 0.005021869431394821 | 25 |
-| NASDAQ100 | Nasdaq 100 | 716.43 | 718.96 | 0.003531398740979741 | 26 |
-| MEXICO | Mexico Equities | 76.48 | 76.63 | 0.001961297071129575 | 27 |
-| HEALTHCARE | Healthcare Sector | 171.16 | 171.45 | 0.0016943211030613359 | 28 |
-| EURO | Euro | 106.978 | 107.15 | 0.0016078072126981535 | 29 |
-| BROAD_AI_TECH | Broad AI Technology | 64.22 | 64.32 | 0.0015571473061350982 | 30 |
-| MID_CAP | US Mid-Cap Stocks | 75.76 | 75.85 | 0.0011879619852164236 | 31 |
-| SP500 | S&P 500 | 769.35 | 770.19 | 0.0010918307662313165 | 32 |
-| TOTAL_US_MARKET | Total US Stock Market | 379.36 | 379.73 | 0.000975326866301085 | 33 |
-| SMALL_CAP | US Small-Cap Stocks | 295.75 | 296.01 | 0.0008791208791207872 | 34 |
-| UNITED_KINGDOM | United Kingdom Equities | 48.55 | 48.59 | 0.0008238928939239276 | 35 |
-| TIPS | Treasury Inflation-Protected Securities | 106.94 | 106.97 | 0.0002805311389564302 | 36 |
-| CASH | Cash / Do Not Invest | 1.0 | 1.0 | 0.0 | 37 |
-| FINANCIALS | Financials Sector | 58.1 | 58.1 | 0.0 | 37 |
-| AUTONOMOUS_ROBOTICS | Autonomous Technology and Robotics | 122.32 | 122.25 | -0.0005722694571614895 | 39 |
-| METALS_MINING | Metals and Mining | 118.74 | 118.62 | -0.001010611419908991 | 40 |
-| SHORT_TREASURY | Short-Term Treasury Bills | 91.65 | 91.45 | -0.0021822149481723896 | 41 |
-| EUROPE | Europe Equities | 91.98 | 91.74 | -0.002609262883235597 | 42 |
-| LARGE_VALUE | US Large-Cap Value | 258.33 | 257.63 | -0.0027097123833855763 | 43 |
-| DIVIDEND | US Dividend Equities | 34.9 | 34.8 | -0.002865329512893977 | 44 |
-| INTERNATIONAL_BONDS | International Aggregate Bonds | 47.6 | 47.45 | -0.0031512605042016695 | 45 |
-| SILVER | Silver | 60.02 | 59.82 | -0.003332222592469236 | 46 |
-| US_DOLLAR | US Dollar | 28.18 | 28.08 | -0.0035486160397445454 | 47 |
-| EMERGING_MARKET_BONDS | Emerging Market USD Bonds | 94.89 | 94.47 | -0.0044261776794183305 | 48 |
-| LOW_VOL | US Low Volatility Equities | 75.08 | 74.74 | -0.0045285029302077895 | 49 |
-| MORTGAGE_BACKED_BONDS | Agency Mortgage-Backed Bonds | 93.17 | 92.715 | -0.00488354620586029 | 50 |
-| AGGREGATE_BONDS | US Aggregate Bond Market | 97.49 | 97.0 | -0.005026156528874726 | 51 |
-| GOLD | Gold | 83.82 | 83.39 | -0.005130040563111393 | 52 |
-| CHINA | China Equities | 55.23 | 54.91 | -0.005793952562013427 | 53 |
-| INTERMEDIATE_TREASURY | Intermediate-Term US Treasury Bonds | 92.85 | 92.25 | -0.006462035541195399 | 54 |
-| HIGH_YIELD_CREDIT | High Yield Corporate Bonds | 79.74 | 79.16 | -0.007273639327815329 | 55 |
-| EQUAL_WEIGHT_SP500 | Equal-Weight S&P 500 | 220.69 | 219.0 | -0.007657800534686676 | 56 |
-| LONG_TREASURY | Long-Term US Treasury Bonds | 82.88 | 82.21 | -0.00808397683397688 | 57 |
-| INVESTMENT_GRADE_CREDIT | Investment Grade Corporate Bonds | 106.35 | 105.48 | -0.008180535966149427 | 58 |
-| COMMUNICATIONS | Communication Services Sector | 112.99 | 112.03 | -0.008496327108593604 | 59 |
-| CONSUMER_STAPLES | Consumer Staples Sector | 85.45 | 84.58 | -0.010181392627267472 | 60 |
-| INDUSTRIALS | Industrials Sector | 177.14 | 175.27 | -0.01055662188099793 | 61 |
-| MUNICIPAL_BONDS | Municipal Bonds | 105.22 | 104.03 | -0.011309636951149948 | 62 |
-| AGRICULTURE | Agriculture Commodities | 29.19 | 28.85 | -0.011647824597464829 | 63 |
-| REAL_ESTATE | Real Estate Sector | 44.48 | 43.93 | -0.01236510791366896 | 64 |
-| SOLAR | Solar Energy | 48.65 | 48.04 | -0.012538540596094494 | 65 |
-| MATERIALS | Materials Sector | 53.18 | 52.44 | -0.013915005641218503 | 66 |
-| CONSUMER_DISCRETIONARY | Consumer Discretionary Sector | 117.21 | 114.91 | -0.01962289907004522 | 67 |
-| AEROSPACE_DEFENSE | Aerospace and Defense | 232.82 | 225.61 | -0.030968129885748596 | 68 |
-| CYBERSECURITY | Cybersecurity | 98.56 | 94.59 | -0.04028003246753242 | 69 |
-| SOFTWARE | Software | 109.5 | 104.57 | -0.04502283105022842 | 70 |
+| OIL | Crude Oil | 133.6999969482422 | 146.02999877929688 | 0.09222140697451064 | 1 |
+| BRAZIL | Brazil Equities | 36.029998779296875 | 38.61000061035156 | 0.07160704741786383 | 2 |
+| SOUTH_KOREA | South Korea Equities | 180.86000061035156 | 189.91000366210938 | 0.05003872067464665 | 3 |
+| YEN | Japanese Yen | 57.38999938964844 | 59.560001373291016 | 0.03781150037847869 | 4 |
+| BROAD_COMMODITIES | Broad Commodities | 18.649999618530273 | 19.299999237060547 | 0.0348525271756277 | 5 |
+| SOLAR | Solar Energy | 47.56999969482422 | 49.130001068115234 | 0.032793806670146974 | 6 |
+| TAIWAN | Taiwan Equities | 108.02999877929688 | 111.54000091552734 | 0.032490994870798096 | 7 |
+| SEMICONDUCTORS | Semiconductors | 556.6300048828125 | 573.72998046875 | 0.03072054225595977 | 8 |
+| UTILITIES | Utilities Sector | 42.22999954223633 | 43.45000076293945 | 0.028889444326963387 | 9 |
+| MOMENTUM | US Momentum Equities | 300.3599853515625 | 308.69000244140625 | 0.02773344485316076 | 10 |
+| JAPAN | Japan Equities | 95.87999725341797 | 97.95999908447266 | 0.021693803615336904 | 11 |
+| METALS_MINING | Metals and Mining | 118.12999725341797 | 119.94999694824219 | 0.015406753044443722 | 12 |
+| COPPER | Copper | 40.0 | 40.56999969482422 | 0.014249992370605424 | 13 |
+| ENERGY | Energy Sector | 63.959999084472656 | 64.7699966430664 | 0.012664127113635182 | 14 |
+| AUTONOMOUS_ROBOTICS | Autonomous Technology and Robotics | 122.5 | 124.05000305175781 | 0.012653086136798386 | 15 |
+| EMERGING_MARKETS | Emerging Markets | 60.52000045776367 | 61.22999954223633 | 0.011731643739298248 | 16 |
+| SOUTH_AFRICA | South Africa Equities | 70.5 | 71.30000305175781 | 0.01134756101784129 | 17 |
+| REGIONAL_BANKS | Regional Banks | 73.55999755859375 | 74.30999755859375 | 0.010195758902827423 | 18 |
+| TECHNOLOGY | Technology Sector | 186.5 | 187.8699951171875 | 0.007345818322721076 | 19 |
+| DEVELOPED_EX_US | Developed Markets ex-US | 72.91999816894531 | 73.44999694824219 | 0.007268222608411756 | 20 |
+| SMALL_VALUE | US Small-Cap Value | 221.8000030517578 | 222.75999450683594 | 0.0043281850399889965 | 21 |
+| LARGE_GROWTH | US Large-Cap Growth | 122.70999908447266 | 123.0199966430664 | 0.0025262615997605486 | 22 |
+| SMALL_CAP | US Small-Cap Stocks | 293.92999267578125 | 294.6700134277344 | 0.002517676897197063 | 23 |
+| NASDAQ100 | Nasdaq 100 | 716.760009765625 | 718.3599853515625 | 0.00223223333352629 | 24 |
+| TIPS | Treasury Inflation-Protected Securities | 106.81999969482422 | 107.05000305175781 | 0.0021531862721464456 | 25 |
+| CANADA | Canada Equities | 61.43000030517578 | 61.4900016784668 | 0.0009767438221217617 | 26 |
+| COMMUNICATIONS | Communication Services Sector | 111.45999908447266 | 111.5199966430664 | 0.0005382878080617548 | 27 |
+| BROAD_AI_TECH | Broad AI Technology | 64.30000305175781 | 64.31999969482422 | 0.00031098976854337934 | 28 |
+| MID_CAP | US Mid-Cap Stocks | 75.3499984741211 | 75.36000061035156 | 0.0001327423547845541 | 29 |
+| CASH | Cash / Do Not Invest | 1.0 | 1.0 | 0.0 | 30 |
+| ETHEREUM_ETF | Ethereum ETF | 18.719999313354492 | 18.719999313354492 | 0.0 | 30 |
+| EURO | Euro | 107.25 | 107.2300033569336 | -0.00018644888640007018 | 32 |
+| UNITED_KINGDOM | United Kingdom Equities | 48.369998931884766 | 48.349998474121094 | -0.00041348890232217883 | 33 |
+| MEXICO | Mexico Equities | 76.72000122070312 | 76.66999816894531 | -0.0006517603097263569 | 34 |
+| AUSTRALIA | Australia Equities | 30.020000457763672 | 30.0 | -0.000666237756785204 | 35 |
+| SP500 | S&P 500 | 767.0499877929688 | 765.9600219726562 | -0.0014209840788195205 | 36 |
+| TOTAL_US_MARKET | Total US Stock Market | 378.1499938964844 | 377.6000061035156 | -0.0014544170351601382 | 37 |
+| LOW_VOL | US Low Volatility Equities | 74.69000244140625 | 74.55000305175781 | -0.0018744060124815665 | 38 |
+| SHORT_TREASURY | Short-Term Treasury Bills | 91.66000366210938 | 91.45999908447266 | -0.002182026725353503 | 39 |
+| INTERNATIONAL_BONDS | International Aggregate Bonds | 47.54999923706055 | 47.38999938964844 | -0.0033648759196489575 | 40 |
+| BIOTECH | Biotechnology | 162.5 | 161.92999267578125 | -0.003507737379807696 | 41 |
+| LONG_TREASURY | Long-Term US Treasury Bonds | 82.5199966430664 | 82.19999694824219 | -0.0038778442540218228 | 42 |
+| INDUSTRIALS | Industrials Sector | 175.1300048828125 | 174.4199981689453 | -0.0040541694402526085 | 43 |
+| EMERGING_MARKET_BONDS | Emerging Market USD Bonds | 94.7699966430664 | 94.36000061035156 | -0.0043262218765187654 | 44 |
+| US_DOLLAR | US Dollar | 28.1200008392334 | 27.989999771118164 | -0.004623081942937035 | 45 |
+| REAL_ESTATE | Real Estate Sector | 44.11000061035156 | 43.900001525878906 | -0.0047608043882768625 | 46 |
+| EUROPE | Europe Equities | 91.66000366210938 | 91.19000244140625 | -0.005127658759819798 | 47 |
+| AGGREGATE_BONDS | US Aggregate Bond Market | 97.41000366210938 | 96.9000015258789 | -0.005235623827708036 | 48 |
+| LARGE_VALUE | US Large-Cap Value | 256.9100036621094 | 255.52999877929688 | -0.005371549815660348 | 49 |
+| MORTGAGE_BACKED_BONDS | Agency Mortgage-Backed Bonds | 93.0999984741211 | 92.52999877929688 | -0.006122445802001386 | 50 |
+| INTERMEDIATE_TREASURY | Intermediate-Term US Treasury Bonds | 92.73999786376953 | 92.16000366210938 | -0.006253981184171864 | 51 |
+| BITCOIN_ETF | Bitcoin ETF | 44.66999816894531 | 44.38999938964844 | -0.006268161870925049 | 52 |
+| AGRICULTURE | Agriculture Commodities | 29.31999969482422 | 29.1299991607666 | -0.006480236563275232 | 53 |
+| INVESTMENT_GRADE_CREDIT | Investment Grade Corporate Bonds | 106.20999908447266 | 105.4800033569336 | -0.00687313561652958 | 54 |
+| FINANCIALS | Financials Sector | 57.709999084472656 | 57.29999923706055 | -0.00710448542568809 | 55 |
+| HIGH_YIELD_CREDIT | High Yield Corporate Bonds | 79.80999755859375 | 79.12000274658203 | -0.00864546840143865 | 56 |
+| MUNICIPAL_BONDS | Municipal Bonds | 105.0999984741211 | 104.0199966430664 | -0.010275945259129782 | 57 |
+| CONSUMER_STAPLES | Consumer Staples Sector | 84.9800033569336 | 84.0199966430664 | -0.011296854270939072 | 58 |
+| EQUAL_WEIGHT_SP500 | Equal-Weight S&P 500 | 219.38999938964844 | 216.72999572753906 | -0.012124543823827882 | 59 |
+| INDIA | India Equities | 49.70000076293945 | 49.09000015258789 | -0.012273653943410623 | 60 |
+| SILVER | Silver | 60.130001068115234 | 59.369998931884766 | -0.012639316858975902 | 61 |
+| DIVIDEND | US Dividend Equities | 34.88999938964844 | 34.40999984741211 | -0.01375751076621512 | 62 |
+| CHINA | China Equities | 54.720001220703125 | 53.95000076293945 | -0.014071645478552108 | 63 |
+| MATERIALS | Materials Sector | 52.689998626708984 | 51.939998626708984 | -0.014234200408952402 | 64 |
+| HEALTHCARE | Healthcare Sector | 170.5399932861328 | 167.1300048828125 | -0.01999524180582679 | 65 |
+| GOLD | Gold | 83.70999908447266 | 81.94999694824219 | -0.021024992897854755 | 66 |
+| AEROSPACE_DEFENSE | Aerospace and Defense | 228.35000610351562 | 223.52999877929688 | -0.021107979835278567 | 67 |
+| CONSUMER_DISCRETIONARY | Consumer Discretionary Sector | 116.58999633789062 | 113.98999786376953 | -0.02230035642668704 | 68 |
+| CYBERSECURITY | Cybersecurity | 100.1500015258789 | 94.01000213623047 | -0.06130803091462611 | 69 |
+| SOFTWARE | Software | 109.9800033569336 | 102.66000366210938 | -0.06655755111288364 | 70 |
 
 ## Official Leaderboard
 
 | model_id | submission_format | selected_option_id | holding_count | confidence | selected_asset_return | portfolio_return | alpha_vs_sp500 | regret_vs_best_option | rank_among_options | beats_sp500 | beats_cash |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| google-gemini-3-1-pro | portfolio | OIL | 3 | 0.58 | 0.0945258288357751 | 0.03490297764655556 | 0.033811146880324244 | 0.05962285118921953 |  | True | True |
-| openai-gpt-5-6-sol | portfolio | ENERGY | 3 | 0.575 | 0.022016592214422426 | 0.019833247750159242 | 0.018741416983927926 | 0.07469258108561586 |  | True | True |
-| xai-grok-4-5 | portfolio | ENERGY | 3 | 0.5633 | 0.022016592214422426 | 0.010951985096453737 | 0.00986015433022242 | 0.08357384373932136 |  | True | True |
-| anthropic-claude-fable-5 | portfolio | SP500 | 2 | 0.58 | 0.0010918307662313165 | 0.008415497273098205 | 0.007323666506866888 | 0.08611033156267689 |  | True | True |
-| xai-grok-4-3 | portfolio | SP500 | 1 | 0.5 | 0.0010918307662313165 | 0.0010918307662313165 | 0.0 | 0.09343399806954378 |  | False | True |
-| xai-grok-4-6 | portfolio | SP500 | 1 | 0.5 | 0.0010918307662313165 | 0.0010918307662313165 | 0.0 | 0.09343399806954378 |  | False | True |
-| anthropic-claude-opus-5 | portfolio | CONSUMER_DISCRETIONARY | 3 | 0.555 | -0.01962289907004522 | -0.008568348841351131 | -0.009660179607582448 | 0.10309417767712623 |  | False | False |
+| google-gemini-3-1-pro | portfolio | SILVER | 3 | 0.5767 | -0.012639316858975902 | 0.021546233671080734 | 0.022967217749900255 | 0.07067517330342991 |  | True | True |
+| xai-grok-4-3 | portfolio | SP500 | 1 | 0.5 | -0.0014209840788195205 | -0.0014209840788195205 | 0.0 | 0.09364239105333017 |  | False | False |
+| xai-grok-4-6 | portfolio | SP500 | 1 | 0.5 | -0.0014209840788195205 | -0.0014209840788195205 | 0.0 | 0.09364239105333017 |  | False | False |
+| openai-gpt-5-6-sol | portfolio | SILVER | 3 | 0.57 | -0.012639316858975902 | -0.006450687086145151 | -0.0050297030073256305 | 0.0986720940606558 |  | False | False |
+| anthropic-claude-fable-5 | portfolio | SILVER | 3 | 0.58 | -0.012639316858975902 | -0.008378240109538342 | -0.006957256030718822 | 0.10059964708404899 |  | False | False |
+| xai-grok-4-5 | portfolio | HEALTHCARE | 3 | 0.59 | -0.01999524180582679 | -0.017729593402037367 | -0.016308609323217847 | 0.10995100037654801 |  | False | False |
+| anthropic-claude-opus-5 | portfolio | GOLD | 3 | 0.5633 | -0.021024992897854755 | -0.017781080956638766 | -0.016360096877819245 | 0.11000248793114942 |  | False | False |
 
 ## Notes
 
@@ -117,8 +117,8 @@
 ## Warnings
 
 - Round CB-2026-07-16-1W has no scored official run.
-- Round CB-2026-08-30-1W has no scored official run.
 - Round CB-2026-09-01-1W has no scored official run.
 - Round CB-2026-09-02-1W has no scored official run.
 - Round CB-2026-09-03-1W has no scored official run.
 - Round CB-2026-09-04-1W has no scored official run.
+- Round CB-2026-09-09-1W has no scored official run.
