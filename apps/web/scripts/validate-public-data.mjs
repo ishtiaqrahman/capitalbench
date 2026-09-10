@@ -1328,7 +1328,10 @@ if (!modelBehavior || modelBehavior.version !== "model_behavior_v2") {
         }
         for (const field of ["average_difference_score", "average_shared_allocation_pct"]) {
           percentInRange(combined[field], `portfolio_difference.combined.${field}`, context);
-          const expected = Number(((monthly[field] + weekly[field]) / 2).toFixed(2));
+          const expectedDifference = Number(((monthly.average_difference_score + weekly.average_difference_score) / 2).toFixed(2));
+          const expected = field === "average_shared_allocation_pct"
+            ? Number((100 - expectedDifference).toFixed(2))
+            : expectedDifference;
           if (!approxEqual(combined[field], expected)) {
             failures.push(`${context} Portfolio Difference combined ${field} ${combined[field]} does not match equal-track value ${expected}`);
           }

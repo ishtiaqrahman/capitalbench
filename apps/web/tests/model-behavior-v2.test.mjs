@@ -251,6 +251,29 @@ test("Portfolio Difference combines monthly and weekly with equal weight", () =>
   assert.notEqual(difference.average_difference_score, 28, "combined must not be weighted by round count");
 });
 
+test("Portfolio Difference keeps rounded track and combined percentages complementary", () => {
+  const rows = [];
+  for (const [track, scores] of [["weekly", [50.12, 50.13]], ["monthly", [50.13, 50.14]]]) {
+    scores.forEach((score, index) => {
+      for (const modelId of MODEL_IDS) {
+        rows.push(scoredRow({
+          modelId, index, track,
+          allocations: modelId === "model-a"
+            ? [{ option_id: "A", allocation_pct: score }, { option_id: "B", allocation_pct: 100 - score }]
+            : [{ option_id: "B", allocation_pct: 100 }]
+        }));
+      }
+    });
+  }
+  const difference = buildPortfolioDifferenceProfiles(rows).get("model-a").current_methodology;
+  for (const summary of [difference.tracks.weekly, difference.tracks.monthly, difference.combined]) {
+    assert.ok(Math.abs(summary.average_difference_score + summary.average_shared_allocation_pct - 100) < 1e-9);
+  }
+  assert.equal(difference.tracks.weekly.average_difference_score, 50.13);
+  assert.equal(difference.tracks.weekly.average_shared_allocation_pct, 49.87);
+  assert.equal(difference.average_difference_score, Number(((difference.tracks.weekly.average_difference_score + difference.tracks.monthly.average_difference_score) / 2).toFixed(2)));
+});
+
 test("Portfolio Difference requires at least three models and both horizons for a combined score", () => {
   const twoModelRows = ["model-a", "model-b"].map((modelId) =>
     scoredRow({ modelId, index: 0, allocations: [{ option_id: modelId, allocation_pct: 100 }] })

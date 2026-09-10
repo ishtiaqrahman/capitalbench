@@ -522,11 +522,13 @@ function portfolioDifferenceSummary(observations) {
       average_peer_count: null
     };
   }
+  const averageDifferenceScore = rounded(average(observations.map((row) => row.difference_score)));
   return {
     observation_count: observations.length,
     decision_date_count: unique(observations.map((row) => row.decision_date)).length,
-    average_difference_score: rounded(average(observations.map((row) => row.difference_score))),
-    average_shared_allocation_pct: rounded(average(observations.map((row) => row.shared_allocation_pct))),
+    average_difference_score: averageDifferenceScore,
+    // These are complementary percentages; rounding each mean can yield 100.01%.
+    average_shared_allocation_pct: rounded(100 - averageDifferenceScore),
     average_peer_count: rounded(average(observations.map((row) => row.peer_count)), 1)
   };
 }
@@ -540,6 +542,7 @@ function combinedPortfolioDifferenceSummary(summary, tracks) {
     if (!combinedAvailable || !requiredTracks.every((track) => finite(track[key]))) return null;
     return rounded(average(requiredTracks.map((track) => track[key])));
   };
+  const averageDifferenceScore = equalTrackAverage("average_difference_score");
   return {
     observation_count: summary.observation_count,
     decision_date_count: summary.decision_date_count,
@@ -549,8 +552,8 @@ function combinedPortfolioDifferenceSummary(summary, tracks) {
     monthly_weight_pct: combinedAvailable ? 50 : null,
     weekly_weight_pct: combinedAvailable ? 50 : null,
     availability_note: combinedAvailable ? null : "Both monthly and weekly observations are required.",
-    average_difference_score: equalTrackAverage("average_difference_score"),
-    average_shared_allocation_pct: equalTrackAverage("average_shared_allocation_pct"),
+    average_difference_score: averageDifferenceScore,
+    average_shared_allocation_pct: combinedAvailable ? rounded(100 - averageDifferenceScore) : null,
     average_peer_count: equalTrackAverage("average_peer_count")
   };
 }
