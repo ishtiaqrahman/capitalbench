@@ -1,5 +1,5 @@
 {
-  "data_as_of": "2026-09-08",
+  "data_as_of": "2026-09-10",
   "definitions": {
     "monthly": {
       "directions": [
@@ -105,12 +105,12 @@
     }
   },
   "engine_version": "market_environment_engine_v4",
-  "generated_at": "2026-09-11T04:00:55Z",
+  "generated_at": "2026-09-11T04:47:28Z",
   "source": {
-    "build_fingerprint": "6ac4cc3a41d3a71020e42b50cadc57f472824e4916822e52e472c7f14a5d379d",
+    "build_fingerprint": "1ae9504416ae75be24d25b7d256b564fb06ea792be4be4f7f9fb1405c6f41971",
     "build_fingerprint_version": "capitalbench_insights_build_fingerprint_v2",
-    "capitalbench_generated_at": "2026-09-11T04:00:55Z",
-    "data_fingerprint": "8581054c72fd39bec8eb66cadc0972094805429e2a7a278e97e649c9593f7d17",
+    "capitalbench_generated_at": "2026-09-11T04:47:28Z",
+    "data_fingerprint": "57f962d057945a6e5bab670bdfc1b74777c90d31565f973da47b3e7f095efecc",
     "data_fingerprint_version": "capitalbench_insights_data_fingerprint_v3",
     "input_version": "capitalbench_insights_input_v1",
     "type": "deterministic"
@@ -127,12 +127,12 @@
       "balanced_sample": {
         "categories": [
           {
-            "count": 8,
+            "count": 9,
             "key": "down",
             "label": "Down",
             "missing": 0,
             "range_label": "S&P < -1.0%",
-            "selected_count": 8
+            "selected_count": 9
           },
           {
             "count": 15,
@@ -140,7 +140,7 @@
             "label": "Flat",
             "missing": 0,
             "range_label": "-1.0% to +1.0%",
-            "selected_count": 8
+            "selected_count": 9
           },
           {
             "count": 24,
@@ -148,20 +148,21 @@
             "label": "Up",
             "missing": 0,
             "range_label": "S&P > +1.0%",
-            "selected_count": 8
+            "selected_count": 9
           }
         ],
         "leaderboard": [
           {
-            "average_alpha": 0.0021525241819889767,
-            "average_return": 0.008496430167212752,
-            "average_sp500_return": 0.0063439059852237745,
-            "hit_rate": 0.5416666666666666,
+            "average_alpha": 0.002452235603663086,
+            "average_return": 0.008458464531038653,
+            "average_sp500_return": 0.006006228927375568,
+            "hit_rate": 0.5185185185185185,
             "maturity": "ready",
             "model_id": "xai-grok-4-3",
             "model_label": "Grok 4.3",
             "provider": "xai",
             "round_ids": [
+              "CB-2026-08-09-1M",
               "CB-2026-06-29-1M",
               "CB-2026-06-03-1M",
               "CB-2026-06-02-1M",
@@ -178,6 +179,7 @@
               "CB-2026-06-30-1M",
               "CB-2026-06-25-1M",
               "CB-2026-06-24-1M",
+              "CB-2026-06-23-1M",
               "CB-2026-07-31-1M",
               "CB-2026-07-30-1M",
               "CB-2026-07-29-1M",
@@ -185,24 +187,26 @@
               "CB-2026-07-27-1M",
               "CB-2026-07-24-1M",
               "CB-2026-07-23-1M",
-              "CB-2026-07-22-1M"
+              "CB-2026-07-22-1M",
+              "CB-2026-07-21-1M"
             ],
-            "score": 3.546547784170826,
+            "score": 3.4753889268587184,
             "status": "ready",
-            "tests": 24,
-            "tests_included": 24,
-            "tests_required": 24
+            "tests": 27,
+            "tests_included": 27,
+            "tests_required": 27
           },
           {
-            "average_alpha": -0.006951235540575043,
-            "average_return": -0.0006073295553512686,
-            "average_sp500_return": 0.0063439059852237745,
-            "hit_rate": 0.5416666666666666,
+            "average_alpha": -0.0036223327170570325,
+            "average_return": 0.002383896210318535,
+            "average_sp500_return": 0.006006228927375568,
+            "hit_rate": 0.5925925925925926,
             "maturity": "ready",
             "model_id": "google-gemini-3-1-pro",
             "model_label": "Gemini 3.1 Pro",
             "provider": "google",
             "round_ids": [
+              "CB-2026-08-09-1M",
               "CB-2026-06-29-1M",
               "CB-2026-06-03-1M",
               "CB-2026-06-02-1M",
@@ -219,6 +223,7 @@
               "CB-2026-06-30-1M",
               "CB-2026-06-25-1M",
               "CB-2026-06-24-1M",
+              "CB-2026-06-23-1M",
               "CB-2026-07-31-1M",
               "CB-2026-07-30-1M",
               "CB-2026-07-29-1M",
@@ -226,24 +231,26 @@
               "CB-2026-07-27-1M",
               "CB-2026-07-24-1M",
               "CB-2026-07-23-1M",
-              "CB-2026-07-22-1M"
+              "CB-2026-07-22-1M",
+              "CB-2026-07-21-1M"
             ],
-            "score": -0.25350920873855526,
+            "score": 0.9794882347404196,
             "status": "ready",
-            "tests": 24,
-            "tests_included": 24,
-            "tests_required": 24
+            "tests": 27,
+            "tests_included": 27,
+            "tests_required": 27
           },
           {
-            "average_alpha": -0.011145059341193928,
-            "average_return": -0.004801153355970154,
-            "average_sp500_return": 0.0063439059852237745,
-            "hit_rate": 0.4166666666666667,
+            "average_alpha": -0.0067726363352519,
+            "average_return": -0.000766407407876332,
+            "average_sp500_return": 0.006006228927375568,
+            "hit_rate": 0.4444444444444444,
             "maturity": "ready",
             "model_id": "openai-gpt-5-5",
             "model_label": "GPT-5.5",
             "provider": "openai",
             "round_ids": [
+              "CB-2026-08-09-1M",
               "CB-2026-06-29-1M",
               "CB-2026-06-03-1M",
               "CB-2026-06-02-1M",
@@ -260,6 +267,7 @@
               "CB-2026-06-30-1M",
               "CB-2026-06-25-1M",
               "CB-2026-06-24-1M",
+              "CB-2026-06-23-1M",
               "CB-2026-07-31-1M",
               "CB-2026-07-30-1M",
               "CB-2026-07-29-1M",
@@ -267,24 +275,26 @@
               "CB-2026-07-27-1M",
               "CB-2026-07-24-1M",
               "CB-2026-07-23-1M",
-              "CB-2026-07-22-1M"
+              "CB-2026-07-22-1M",
+              "CB-2026-07-21-1M"
             ],
-            "score": -2.0040792969485612,
+            "score": -0.31489921238327,
             "status": "ready",
-            "tests": 24,
-            "tests_included": 24,
-            "tests_required": 24
+            "tests": 27,
+            "tests_included": 27,
+            "tests_required": 27
           },
           {
-            "average_alpha": 0.013926309818273279,
-            "average_return": 0.0398498875907538,
-            "average_sp500_return": 0.025923577772480524,
-            "hit_rate": 0.7272727272727273,
+            "average_alpha": 0.015392982266879785,
+            "average_return": 0.03760861109966616,
+            "average_sp500_return": 0.022215628832786376,
+            "hit_rate": 0.7692307692307693,
             "maturity": "ready",
             "model_id": "xai-grok-4-5",
             "model_label": "Grok 4.5",
             "provider": "xai",
             "round_ids": [
+              "CB-2026-08-09-1M",
               "CB-2026-08-07-1M",
               "CB-2026-08-05-1M",
               "CB-2026-08-04-1M",
@@ -295,24 +305,26 @@
               "CB-2026-07-27-1M",
               "CB-2026-07-24-1M",
               "CB-2026-07-23-1M",
-              "CB-2026-07-22-1M"
+              "CB-2026-07-22-1M",
+              "CB-2026-07-21-1M"
             ],
-            "score": 13.712872167809081,
+            "score": 12.987279524161996,
             "status": "forming",
-            "tests": 11,
-            "tests_included": 11,
-            "tests_required": 24
+            "tests": 13,
+            "tests_included": 13,
+            "tests_required": 27
           },
           {
-            "average_alpha": 0.0053516544553604785,
-            "average_return": 0.02765037008024967,
-            "average_sp500_return": 0.02229871562488919,
-            "hit_rate": 0.5384615384615384,
+            "average_alpha": 0.005223590302025056,
+            "average_return": 0.024792065132191496,
+            "average_sp500_return": 0.019568474830166438,
+            "hit_rate": 0.6,
             "maturity": "ready",
             "model_id": "anthropic-claude-fable-5",
             "model_label": "Claude Fable 5",
             "provider": "anthropic",
             "round_ids": [
+              "CB-2026-08-09-1M",
               "CB-2026-08-07-1M",
               "CB-2026-08-05-1M",
               "CB-2026-08-04-1M",
@@ -325,24 +337,26 @@
               "CB-2026-07-27-1M",
               "CB-2026-07-24-1M",
               "CB-2026-07-23-1M",
-              "CB-2026-07-22-1M"
+              "CB-2026-07-22-1M",
+              "CB-2026-07-21-1M"
             ],
-            "score": 9.742168923575006,
+            "score": 8.734517813427718,
             "status": "forming",
-            "tests": 13,
-            "tests_included": 13,
-            "tests_required": 24
+            "tests": 15,
+            "tests_included": 15,
+            "tests_required": 27
           },
           {
-            "average_alpha": -0.0033239193985104445,
-            "average_return": 0.02259965837397008,
-            "average_sp500_return": 0.025923577772480524,
-            "hit_rate": 0.36363636363636365,
+            "average_alpha": 0.0012195314447574367,
+            "average_return": 0.02343516027754381,
+            "average_sp500_return": 0.022215628832786376,
+            "hit_rate": 0.38461538461538464,
             "maturity": "ready",
             "model_id": "openai-gpt-5-6-sol",
             "model_label": "GPT-5.6 Sol",
             "provider": "openai",
             "round_ids": [
+              "CB-2026-08-09-1M",
               "CB-2026-08-07-1M",
               "CB-2026-08-05-1M",
               "CB-2026-08-04-1M",
@@ -353,24 +367,26 @@
               "CB-2026-07-27-1M",
               "CB-2026-07-24-1M",
               "CB-2026-07-23-1M",
-              "CB-2026-07-22-1M"
+              "CB-2026-07-22-1M",
+              "CB-2026-07-21-1M"
             ],
-            "score": 7.7768406651745225,
+            "score": 8.092800247566203,
             "status": "forming",
-            "tests": 11,
-            "tests_included": 11,
-            "tests_required": 24
+            "tests": 13,
+            "tests_included": 13,
+            "tests_required": 27
           },
           {
-            "average_alpha": -0.0034630885135159737,
-            "average_return": 0.02135396490347364,
-            "average_sp500_return": 0.02481705341698961,
-            "hit_rate": 0.3333333333333333,
+            "average_alpha": -0.0030309804921243634,
+            "average_return": 0.017338079082073195,
+            "average_sp500_return": 0.020369059574197556,
+            "hit_rate": 0.4,
             "maturity": "ready",
             "model_id": "anthropic-claude-opus-5",
             "model_label": "Claude Opus 5",
             "provider": "anthropic",
             "round_ids": [
+              "CB-2026-08-09-1M",
               "CB-2026-08-07-1M",
               "CB-2026-08-05-1M",
               "CB-2026-08-04-1M",
@@ -381,22 +397,23 @@
               "CB-2026-07-27-1M",
               "CB-2026-07-24-1M"
             ],
-            "score": 7.258524006766565,
+            "score": 5.856841033170675,
             "status": "forming",
-            "tests": 9,
-            "tests_included": 9,
-            "tests_required": 24
+            "tests": 10,
+            "tests_included": 10,
+            "tests_required": 27
           },
           {
-            "average_alpha": 0.00036275202349377744,
-            "average_return": 0.008676532363503972,
-            "average_sp500_return": 0.008313780340010195,
-            "hit_rate": 0.45454545454545453,
+            "average_alpha": 0.0007489048676941745,
+            "average_return": 0.008461609062653936,
+            "average_sp500_return": 0.007712704194959761,
+            "hit_rate": 0.44,
             "maturity": "ready",
             "model_id": "anthropic-claude-opus-4-8",
             "model_label": "Claude Opus 4.8",
             "provider": "anthropic",
             "round_ids": [
+              "CB-2026-08-09-1M",
               "CB-2026-06-29-1M",
               "CB-2026-06-03-1M",
               "CB-2026-06-02-1M",
@@ -411,6 +428,7 @@
               "CB-2026-06-30-1M",
               "CB-2026-06-25-1M",
               "CB-2026-06-24-1M",
+              "CB-2026-06-23-1M",
               "CB-2026-07-31-1M",
               "CB-2026-07-30-1M",
               "CB-2026-07-29-1M",
@@ -418,19 +436,20 @@
               "CB-2026-07-27-1M",
               "CB-2026-07-24-1M",
               "CB-2026-07-23-1M",
-              "CB-2026-07-22-1M"
+              "CB-2026-07-22-1M",
+              "CB-2026-07-21-1M"
             ],
-            "score": 3.4416693698618217,
+            "score": 3.321974817447553,
             "status": "forming",
-            "tests": 22,
-            "tests_included": 22,
-            "tests_required": 24
+            "tests": 25,
+            "tests_included": 25,
+            "tests_required": 27
           },
           {
-            "average_alpha": -0.0037030145325460066,
-            "average_return": -0.013926523136539483,
-            "average_sp500_return": -0.010223508603993476,
-            "hit_rate": 0.46153846153846156,
+            "average_alpha": -0.004483054089828715,
+            "average_return": -0.013528410788906039,
+            "average_sp500_return": -0.009045356699077325,
+            "hit_rate": 0.42857142857142855,
             "maturity": "ready",
             "model_id": "anthropic-claude-opus-4-7",
             "model_label": "Claude Opus 4.7",
@@ -448,17 +467,19 @@
               "CB-2026-07-01-1M",
               "CB-2026-06-30-1M",
               "CB-2026-06-25-1M",
-              "CB-2026-06-24-1M"
+              "CB-2026-06-24-1M",
+              "CB-2026-06-23-1M"
             ],
-            "score": -7.091358221309281,
+            "score": -6.747903895514727,
             "status": "forming",
-            "tests": 13,
-            "tests_included": 13,
-            "tests_required": 24
+            "tests": 14,
+            "tests_included": 14,
+            "tests_required": 27
           }
         ],
-        "sample_size": 8,
+        "sample_size": 9,
         "selected_round_ids": [
+          "CB-2026-08-09-1M",
           "CB-2026-06-29-1M",
           "CB-2026-06-03-1M",
           "CB-2026-06-02-1M",
@@ -475,6 +496,7 @@
           "CB-2026-06-30-1M",
           "CB-2026-06-25-1M",
           "CB-2026-06-24-1M",
+          "CB-2026-06-23-1M",
           "CB-2026-07-31-1M",
           "CB-2026-07-30-1M",
           "CB-2026-07-29-1M",
@@ -482,7 +504,8 @@
           "CB-2026-07-27-1M",
           "CB-2026-07-24-1M",
           "CB-2026-07-23-1M",
-          "CB-2026-07-22-1M"
+          "CB-2026-07-22-1M",
+          "CB-2026-07-21-1M"
         ],
         "status": "ready"
       },
@@ -491,10 +514,10 @@
         "label": "More balanced",
         "status": "ready"
       },
-      "data_as_of": "2026-09-08",
+      "data_as_of": "2026-09-10",
       "directions": [
         {
-          "average_sp500_return": -0.01811154035814705,
+          "average_sp500_return": -0.01828391198623415,
           "comparison": {
             "cohort_id": "observed:anthropic-claude-opus-4-7|anthropic-claude-opus-4-8|google-gemini-3-1-pro|openai-gpt-5-5|xai-grok-4-3",
             "cohort_source": "observed_roster",
@@ -633,15 +656,30 @@
             "stability_threshold": 0.8,
             "status": "ready"
           },
-          "count": 8,
+          "count": 9,
           "key": "down",
           "label": "Down",
           "model_rows": [
             {
-              "average_alpha": 0.01714502376433945,
-              "average_return": -0.0009665165938075981,
-              "average_sp500_return": -0.01811154035814705,
-              "hit_rate": 0.875,
+              "average_alpha": 0.06502575119599466,
+              "average_return": 0.04536286618506372,
+              "average_sp500_return": -0.01966288501093094,
+              "hit_rate": 1.0,
+              "maturity": "forming",
+              "model_id": "openai-gpt-5-6-sol",
+              "model_label": "GPT-5.6 Sol",
+              "provider": "openai",
+              "round_ids": [
+                "CB-2026-08-09-1M"
+              ],
+              "score": 14.512013695912119,
+              "tests": 1
+            },
+            {
+              "average_alpha": 0.01524002112385729,
+              "average_return": -0.0030438908623768588,
+              "average_sp500_return": -0.01828391198623415,
+              "hit_rate": 0.7777777777777778,
               "maturity": "ready",
               "model_id": "xai-grok-4-3",
               "model_label": "Grok 4.3",
@@ -654,10 +692,11 @@
                 "CB-2026-06-01-1M",
                 "CB-2026-06-02-1M",
                 "CB-2026-06-03-1M",
-                "CB-2026-06-29-1M"
+                "CB-2026-06-29-1M",
+                "CB-2026-08-09-1M"
               ],
-              "score": -0.5933491570359684,
-              "tests": 8
+              "score": -1.6955278746975726,
+              "tests": 9
             },
             {
               "average_alpha": 0.007773461608867847,
@@ -682,10 +721,40 @@
               "tests": 8
             },
             {
-              "average_alpha": 0.0010501955884467788,
-              "average_return": -0.01799028758327367,
-              "average_sp500_return": -0.01904048317172045,
-              "hit_rate": 0.5,
+              "average_alpha": 0.004690456616981708,
+              "average_return": -0.014972428393949234,
+              "average_sp500_return": -0.01966288501093094,
+              "hit_rate": 1.0,
+              "maturity": "forming",
+              "model_id": "xai-grok-4-5",
+              "model_label": "Grok 4.5",
+              "provider": "xai",
+              "round_ids": [
+                "CB-2026-08-09-1M"
+              ],
+              "score": -4.789822693910749,
+              "tests": 1
+            },
+            {
+              "average_alpha": 0.0017423829481636906,
+              "average_return": -0.01792050206276725,
+              "average_sp500_return": -0.01966288501093094,
+              "hit_rate": 1.0,
+              "maturity": "forming",
+              "model_id": "anthropic-claude-fable-5",
+              "model_label": "Claude Fable 5",
+              "provider": "anthropic",
+              "round_ids": [
+                "CB-2026-08-09-1M"
+              ],
+              "score": -5.732939587889809,
+              "tests": 1
+            },
+            {
+              "average_alpha": 0.0006166984470547413,
+              "average_return": -0.01851269927312435,
+              "average_sp500_return": -0.019129397720179093,
+              "hit_rate": 0.42857142857142855,
               "maturity": "ready",
               "model_id": "anthropic-claude-opus-4-8",
               "model_label": "Claude Opus 4.8",
@@ -696,16 +765,32 @@
                 "CB-2026-06-01-1M",
                 "CB-2026-06-02-1M",
                 "CB-2026-06-03-1M",
-                "CB-2026-06-29-1M"
+                "CB-2026-06-29-1M",
+                "CB-2026-08-09-1M"
               ],
-              "score": -9.815288359505772,
-              "tests": 6
+              "score": -9.17561131901872,
+              "tests": 7
             },
             {
-              "average_alpha": -0.010742180807139588,
-              "average_return": -0.028853721165286637,
-              "average_sp500_return": -0.01811154035814705,
-              "hit_rate": 0.5,
+              "average_alpha": 0.0008579917004001292,
+              "average_return": -0.018804893310530812,
+              "average_sp500_return": -0.01966288501093094,
+              "hit_rate": 1.0,
+              "maturity": "forming",
+              "model_id": "anthropic-claude-opus-5",
+              "model_label": "Claude Opus 5",
+              "provider": "anthropic",
+              "round_ids": [
+                "CB-2026-08-09-1M"
+              ],
+              "score": -6.015864785952259,
+              "tests": 1
+            },
+            {
+              "average_alpha": -0.001005750529795466,
+              "average_return": -0.019289662516029614,
+              "average_sp500_return": -0.01828391198623415,
+              "hit_rate": 0.5555555555555556,
               "maturity": "ready",
               "model_id": "openai-gpt-5-5",
               "model_label": "GPT-5.5",
@@ -718,16 +803,17 @@
                 "CB-2026-06-01-1M",
                 "CB-2026-06-02-1M",
                 "CB-2026-06-03-1M",
-                "CB-2026-06-29-1M"
+                "CB-2026-06-29-1M",
+                "CB-2026-08-09-1M"
               ],
-              "score": -17.713437348579866,
-              "tests": 8
+              "score": -10.744853205380078,
+              "tests": 9
             },
             {
-              "average_alpha": -0.01262376693231778,
-              "average_return": -0.03073530729046483,
-              "average_sp500_return": -0.01811154035814705,
-              "hit_rate": 0.375,
+              "average_alpha": -0.010505164812912672,
+              "average_return": -0.028789076799146822,
+              "average_sp500_return": -0.01828391198623415,
+              "hit_rate": 0.4444444444444444,
               "maturity": "ready",
               "model_id": "google-gemini-3-1-pro",
               "model_label": "Gemini 3.1 Pro",
@@ -740,10 +826,11 @@
                 "CB-2026-06-01-1M",
                 "CB-2026-06-02-1M",
                 "CB-2026-06-03-1M",
-                "CB-2026-06-29-1M"
+                "CB-2026-06-29-1M",
+                "CB-2026-08-09-1M"
               ],
-              "score": -18.868552065096882,
-              "tests": 8
+              "score": -16.036278699442803,
+              "tests": 9
             }
           ],
           "range_label": "S&P < -1.0%",
@@ -755,7 +842,8 @@
             "CB-2026-06-01-1M",
             "CB-2026-06-02-1M",
             "CB-2026-06-03-1M",
-            "CB-2026-06-29-1M"
+            "CB-2026-06-29-1M",
+            "CB-2026-08-09-1M"
           ],
           "status": "ready"
         },
@@ -1901,7 +1989,7 @@
           "status": "forming"
         },
         {
-          "average_sp500_return": -0.016202343016866166,
+          "average_sp500_return": -0.016634910766124264,
           "comparison": {
             "cohort_id": "observed:anthropic-claude-opus-4-7|anthropic-claude-opus-4-8|google-gemini-3-1-pro|openai-gpt-5-5|xai-grok-4-3",
             "cohort_source": "observed_roster",
@@ -2034,16 +2122,31 @@
             "stability_threshold": 0.8,
             "status": "ready"
           },
-          "count": 7,
+          "count": 8,
           "direction": "down",
           "key": "down",
           "label": "Down",
           "model_rows": [
             {
-              "average_alpha": 0.01392350921270143,
-              "average_return": -0.0022788338041647366,
-              "average_sp500_return": -0.016202343016866166,
-              "hit_rate": 0.8571428571428571,
+              "average_alpha": 0.06502575119599466,
+              "average_return": 0.04536286618506372,
+              "average_sp500_return": -0.01966288501093094,
+              "hit_rate": 1.0,
+              "maturity": "forming",
+              "model_id": "openai-gpt-5-6-sol",
+              "model_label": "GPT-5.6 Sol",
+              "provider": "openai",
+              "round_ids": [
+                "CB-2026-08-09-1M"
+              ],
+              "score": 14.512013695912119,
+              "tests": 1
+            },
+            {
+              "average_alpha": 0.012183070561113752,
+              "average_return": -0.004451840205010512,
+              "average_sp500_return": -0.016634910766124264,
+              "hit_rate": 0.75,
               "maturity": "ready",
               "model_id": "xai-grok-4-3",
               "model_label": "Grok 4.3",
@@ -2055,10 +2158,11 @@
                 "CB-2026-06-01-1M",
                 "CB-2026-06-02-1M",
                 "CB-2026-06-03-1M",
-                "CB-2026-06-29-1M"
+                "CB-2026-06-29-1M",
+                "CB-2026-08-09-1M"
               ],
-              "score": -1.3757894277962888,
-              "tests": 7
+              "score": -2.4193859154839545,
+              "tests": 8
             },
             {
               "average_alpha": 0.005851422967613619,
@@ -2082,29 +2186,55 @@
               "tests": 7
             },
             {
-              "average_alpha": -0.005237971762189467,
-              "average_return": -0.021791367218831362,
-              "average_sp500_return": -0.016553395456641896,
-              "hit_rate": 0.4,
-              "maturity": "ready",
-              "model_id": "anthropic-claude-opus-4-8",
-              "model_label": "Claude Opus 4.8",
-              "provider": "anthropic",
+              "average_alpha": 0.004690456616981708,
+              "average_return": -0.014972428393949234,
+              "average_sp500_return": -0.01966288501093094,
+              "hit_rate": 1.0,
+              "maturity": "forming",
+              "model_id": "xai-grok-4-5",
+              "model_label": "Grok 4.5",
+              "provider": "xai",
               "round_ids": [
-                "CB-2026-05-29-1M",
-                "CB-2026-06-01-1M",
-                "CB-2026-06-02-1M",
-                "CB-2026-06-03-1M",
-                "CB-2026-06-29-1M"
+                "CB-2026-08-09-1M"
               ],
-              "score": -11.39638659552012,
-              "tests": 5
+              "score": -4.789822693910749,
+              "tests": 1
             },
             {
-              "average_alpha": -0.01651119198299599,
-              "average_return": -0.03271353499986216,
-              "average_sp500_return": -0.016202343016866166,
-              "hit_rate": 0.42857142857142855,
+              "average_alpha": 0.0017423829481636906,
+              "average_return": -0.01792050206276725,
+              "average_sp500_return": -0.01966288501093094,
+              "hit_rate": 1.0,
+              "maturity": "forming",
+              "model_id": "anthropic-claude-fable-5",
+              "model_label": "Claude Fable 5",
+              "provider": "anthropic",
+              "round_ids": [
+                "CB-2026-08-09-1M"
+              ],
+              "score": -5.732939587889809,
+              "tests": 1
+            },
+            {
+              "average_alpha": 0.0008579917004001292,
+              "average_return": -0.018804893310530812,
+              "average_sp500_return": -0.01966288501093094,
+              "hit_rate": 1.0,
+              "maturity": "forming",
+              "model_id": "anthropic-claude-opus-5",
+              "model_label": "Claude Opus 5",
+              "provider": "anthropic",
+              "round_ids": [
+                "CB-2026-08-09-1M"
+              ],
+              "score": -6.015864785952259,
+              "tests": 1
+            },
+            {
+              "average_alpha": -0.004836581524001805,
+              "average_return": -0.02147149229012607,
+              "average_sp500_return": -0.016634910766124264,
+              "hit_rate": 0.5,
               "maturity": "ready",
               "model_id": "openai-gpt-5-5",
               "model_label": "GPT-5.5",
@@ -2116,16 +2246,37 @@
                 "CB-2026-06-01-1M",
                 "CB-2026-06-02-1M",
                 "CB-2026-06-03-1M",
-                "CB-2026-06-29-1M"
+                "CB-2026-06-29-1M",
+                "CB-2026-08-09-1M"
               ],
-              "score": -19.749985942985724,
-              "tests": 7
+              "score": -11.668843363399803,
+              "tests": 8
             },
             {
-              "average_alpha": -0.0179292277222798,
-              "average_return": -0.03413157073914597,
-              "average_sp500_return": -0.016202343016866166,
-              "hit_rate": 0.2857142857142857,
+              "average_alpha": -0.004695690535374136,
+              "average_return": -0.021767334251064207,
+              "average_sp500_return": -0.01707164371569007,
+              "hit_rate": 0.3333333333333333,
+              "maturity": "ready",
+              "model_id": "anthropic-claude-opus-4-8",
+              "model_label": "Claude Opus 4.8",
+              "provider": "anthropic",
+              "round_ids": [
+                "CB-2026-05-29-1M",
+                "CB-2026-06-01-1M",
+                "CB-2026-06-02-1M",
+                "CB-2026-06-03-1M",
+                "CB-2026-06-29-1M",
+                "CB-2026-08-09-1M"
+              ],
+              "score": -10.294697825303095,
+              "tests": 6
+            },
+            {
+              "average_alpha": -0.0148826177392038,
+              "average_return": -0.03151752850532807,
+              "average_sp500_return": -0.016634910766124264,
+              "hit_rate": 0.375,
               "maturity": "ready",
               "model_id": "google-gemini-3-1-pro",
               "model_label": "Gemini 3.1 Pro",
@@ -2137,10 +2288,11 @@
                 "CB-2026-06-01-1M",
                 "CB-2026-06-02-1M",
                 "CB-2026-06-03-1M",
-                "CB-2026-06-29-1M"
+                "CB-2026-06-29-1M",
+                "CB-2026-08-09-1M"
               ],
-              "score": -20.60608987420638,
-              "tests": 7
+              "score": -17.128437015963094,
+              "tests": 8
             }
           ],
           "range_label": "-3.0% to -1.0%",
@@ -2151,7 +2303,8 @@
             "CB-2026-06-01-1M",
             "CB-2026-06-02-1M",
             "CB-2026-06-03-1M",
-            "CB-2026-06-29-1M"
+            "CB-2026-06-29-1M",
+            "CB-2026-08-09-1M"
           ],
           "status": "ready"
         },
@@ -3391,7 +3544,7 @@
       "ready_environment_count": 4,
       "regime_leaderboard": [
         {
-          "all_round_score": -0.8458712457662191,
+          "all_round_score": -0.9508657262249219,
           "average_alpha": -0.005438920895583494,
           "average_return": 0.012893202150633727,
           "average_sp500_return": 0.011559728544168233,
@@ -3449,7 +3602,7 @@
           "tests_included": 16
         },
         {
-          "all_round_score": 3.098152886515589,
+          "all_round_score": 2.806779868472809,
           "average_alpha": -0.0029096158165217148,
           "average_return": 0.011336072859380649,
           "average_sp500_return": 0.011559728544168233,
@@ -3507,7 +3660,7 @@
           "tests_included": 16
         },
         {
-          "all_round_score": 2.4329936675733776,
+          "all_round_score": 2.131955282975097,
           "average_alpha": -0.0017766735976796455,
           "average_return": 0.011277284350122702,
           "average_sp500_return": 0.011559728544168233,
@@ -3565,7 +3718,7 @@
           "tests_included": 16
         },
         {
-          "all_round_score": -6.706492609400651,
+          "all_round_score": -5.930223453582722,
           "average_alpha": -0.011067074284194709,
           "average_return": 0.006621301036190114,
           "average_sp500_return": 0.011559728544168233,
@@ -3623,7 +3776,7 @@
           "tests_included": 16
         },
         {
-          "all_round_score": 15.087949232694308,
+          "all_round_score": 13.789023315747869,
           "average_alpha": 0.01664501846419908,
           "average_return": 0.04239318895082195,
           "average_sp500_return": 0.02093076987777161,
@@ -3681,7 +3834,7 @@
           "tests_included": 11
         },
         {
-          "all_round_score": 9.402501044243468,
+          "all_round_score": 8.609784099200107,
           "average_alpha": 0.004570235305708516,
           "average_return": 0.028186254708399163,
           "average_sp500_return": 0.02093076987777161,
@@ -3739,7 +3892,7 @@
           "tests_included": 11
         },
         {
-          "all_round_score": 10.123905503606965,
+          "all_round_score": 10.42689249890374,
           "average_alpha": -0.004163509453622324,
           "average_return": 0.01839215689171288,
           "average_sp500_return": 0.02093076987777161,
@@ -3797,7 +3950,7 @@
           "tests_included": 11
         },
         {
-          "all_round_score": 7.258524006766565,
+          "all_round_score": 5.856841033170675,
           "average_alpha": -0.0034630885135159737,
           "average_return": 0.016395350314762438,
           "average_sp500_return": 0.01896214858377896,
@@ -3913,7 +4066,7 @@
           "tests_included": 5
         }
       ],
-      "round_count": 47,
+      "round_count": 48,
       "rounds": [
         {
           "average_alpha": 0.024239613460301457,
@@ -8290,6 +8443,126 @@
           "round_id": "CB-2026-08-07-1M",
           "sp500_return": -0.009440521981408212,
           "track": "monthly"
+        },
+        {
+          "average_alpha": 0.01920770523644105,
+          "comparison_cohort_id": "portfolio-v2-roster-5e5ef62318ec",
+          "comparison_cohort_source": "frozen_roster",
+          "comparison_model_ids": [
+            "anthropic-claude-fable-5",
+            "anthropic-claude-opus-4-8",
+            "anthropic-claude-opus-5",
+            "google-gemini-3-1-pro",
+            "openai-gpt-5-5",
+            "openai-gpt-5-6-sol",
+            "xai-grok-4-3",
+            "xai-grok-4-5"
+          ],
+          "decision_date": "2026-08-09",
+          "decision_deadline_utc": "2026-08-10T13:25:00Z",
+          "direction_key": "down",
+          "entry_date": "2026-08-10",
+          "environment_key": "down",
+          "exit_date": "2026-09-10",
+          "expected_model_ids": [
+            "anthropic-claude-fable-5",
+            "anthropic-claude-opus-4-8",
+            "anthropic-claude-opus-5",
+            "google-gemini-3-1-pro",
+            "openai-gpt-5-5",
+            "openai-gpt-5-6-sol",
+            "xai-grok-4-3",
+            "xai-grok-4-5"
+          ],
+          "hit_rate": 0.75,
+          "max_possible_return": 0.3125883639280327,
+          "model_count": 8,
+          "model_roster_version": "portfolio-v2-roster-5e5ef62318ec",
+          "results": [
+            {
+              "alpha_vs_sp500": 0.07688569168895751,
+              "beats_sp500": true,
+              "capitalbench_score": 18.306121814310718,
+              "model_id": "openai-gpt-5-5",
+              "model_label": "GPT-5.5",
+              "portfolio_return": 0.057222806678026567,
+              "provider": "openai",
+              "sp500_return": -0.01966288501093094
+            },
+            {
+              "alpha_vs_sp500": 0.06502575119599466,
+              "beats_sp500": true,
+              "capitalbench_score": 14.512013695912119,
+              "model_id": "openai-gpt-5-6-sol",
+              "model_label": "GPT-5.6 Sol",
+              "portfolio_return": 0.04536286618506372,
+              "provider": "openai",
+              "sp500_return": -0.01966288501093094
+            },
+            {
+              "alpha_vs_sp500": 0.006443652142328192,
+              "beats_sp500": true,
+              "capitalbench_score": -4.228958718260612,
+              "model_id": "google-gemini-3-1-pro",
+              "model_label": "Gemini 3.1 Pro",
+              "portfolio_return": -0.01321923286860275,
+              "provider": "google",
+              "sp500_return": -0.01966288501093094
+            },
+            {
+              "alpha_vs_sp500": 0.004690456616981708,
+              "beats_sp500": true,
+              "capitalbench_score": -4.789822693910749,
+              "model_id": "xai-grok-4-5",
+              "model_label": "Grok 4.5",
+              "portfolio_return": -0.014972428393949234,
+              "provider": "xai",
+              "sp500_return": -0.01966288501093094
+            },
+            {
+              "alpha_vs_sp500": 0.0017423829481636906,
+              "beats_sp500": true,
+              "capitalbench_score": -5.732939587889809,
+              "model_id": "anthropic-claude-fable-5",
+              "model_label": "Claude Fable 5",
+              "portfolio_return": -0.01792050206276725,
+              "provider": "anthropic",
+              "sp500_return": -0.01966288501093094
+            },
+            {
+              "alpha_vs_sp500": 0.0008579917004001292,
+              "beats_sp500": true,
+              "capitalbench_score": -6.015864785952259,
+              "model_id": "anthropic-claude-opus-5",
+              "model_label": "Claude Opus 5",
+              "portfolio_return": -0.018804893310530812,
+              "provider": "anthropic",
+              "sp500_return": -0.01966288501093094
+            },
+            {
+              "alpha_vs_sp500": 0.0,
+              "beats_sp500": false,
+              "capitalbench_score": -6.290344516937275,
+              "model_id": "xai-grok-4-3",
+              "model_label": "Grok 4.3",
+              "portfolio_return": -0.01966288501093094,
+              "provider": "xai",
+              "sp500_return": -0.01966288501093094
+            },
+            {
+              "alpha_vs_sp500": -0.001984284401297484,
+              "beats_sp500": false,
+              "capitalbench_score": -6.925136028803766,
+              "model_id": "anthropic-claude-opus-4-8",
+              "model_label": "Claude Opus 4.8",
+              "portfolio_return": -0.021647169412228426,
+              "provider": "anthropic",
+              "sp500_return": -0.01966288501093094
+            }
+          ],
+          "round_id": "CB-2026-08-09-1M",
+          "sp500_return": -0.01966288501093094,
+          "track": "monthly"
         }
       ],
       "signals": [
@@ -8309,7 +8582,7 @@
           "confidence": "medium",
           "direction": "down",
           "eligible_model_count": 5,
-          "environment_round_count": 8,
+          "environment_round_count": 9,
           "key": "monthly-down-leader",
           "kind": "direction_leader",
           "maturity": "ready",
@@ -8538,7 +8811,7 @@
             "up_tests": 6
           },
           "confidence": "medium",
-          "down_environment_round_count": 8,
+          "down_environment_round_count": 9,
           "key": "monthly-split",
           "kind": "split",
           "maturity": "ready",
@@ -8564,7 +8837,7 @@
               "confidence": "medium",
               "direction": "down",
               "eligible_model_count": 5,
-              "environment_round_count": 8,
+              "environment_round_count": 9,
               "key": "monthly-down-leader",
               "kind": "direction_leader",
               "maturity": "ready",
