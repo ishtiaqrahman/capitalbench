@@ -1,0 +1,38 @@
+# Fresh source report — September 11, 2026
+
+Audit-only. Cutoff: 2026-09-11T03:51:50Z. This report was authored from new direct public-source browsing in the current session. No old research report was used as source material or copied into this report. Existing pipeline code was reused solely to acquire fresh mechanical data and assemble the prescribed inputs. No model research APIs were called.
+
+## Sources reviewed before cutoff
+
+| ID | Publisher and source | Publication | Observation / status | Facts retained |
+| --- | --- | --- | --- | --- |
+| R01 | [BLS August PPI](https://www.bls.gov/news.release/ppi.nr0.htm) | September 10, 2026, 08:30 ET | August estimates; April–July revised | Final demand +0.4% monthly/+5.4% annual; goods +1.1%, services +0.1%; excluding food, energy and trade services +0.3%/+4.7%; energy +4.2%; other goods +0.4%. |
+| R02 | [DOL weekly claims](https://www.dol.gov/ui/data.pdf) | September 10, 2026, 08:30 ET | Advance estimates; weeks ending September 5 and August 29 respectively | Initial 206,000, -1,000; four-week mean 206,000; continuing insured claims 1,774,000, -1,000; insured rate 1.2%. |
+| R03 | [AP reporting NAR August home sales](https://apnews.com/article/f6805f57c7e0f147592357f8e378030d) | September 10, 2026, 14:01 UTC | August completed existing-home sales; survey estimate | Annualized sales 3.98 million, -2.0% monthly/-1.2% annually. |
+| R04 | [ECB policy decision](https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp260910~314e508016.en.html) | September 10, 2026 | Announced policy effective September 16; staff forecasts | Rate increase 25bp to 2.50%/2.65%/2.90%; 2026/2027 inflation forecasts 3.0%/2.5%, growth 0.9%/1.4%; upside inflation and downside growth risks. |
+| R05 | [AP index closing summary](https://apnews.com/article/0c547c6cc3e374a2c04f78a90e35e113) | September 10, 2026 closing summary; exact update time not exposed | Completed September 10 session | Four index levels and rounded daily moves reproduced in the final digest. |
+| R06 | [Reuters intraday stock report](https://ae.marketscreener.com/news/wall-street-dips-as-treasury-yields-rise-and-investors-fret-about-inflation-ce785bded180f625) | September 10, 2026, 22:21 UTC+4 = 14:21 ET | Intraday breadth, not close | Nine of eleven sectors down; S&P decliners/advancers 2.3:1. Intraday index and individual-stock quotes excluded. |
+| R07 | [Reuters morning global-markets report](https://www.marketscreener.com/news/wall-street-dips-oil-continues-climb-ahead-of-us-inflation-data-ce785bdede8df426) | September 10, 2026, 10:30 ET | Timed European bond quotations | German ten-year 3.45%, French ten-year 4.35%; not official par rates or synchronized U.S. closes. |
+| R08 | [AP September 10 market wrap](https://apnews.com/article/7fbc77061abd778608068d3beb1bbbaf) | September 10, 2026, closing update; exact updated timestamp unavailable | Brent settlement and late-day Treasury quote | Brent $107.63, +6.3%; ten-year Treasury 4.95%. |
+| R09 | [Freddie Mac PMMS](https://www.freddiemac.com/pmms) | September 10, 2026, noon ET | Weekly average of loan offers, preceding Thursday–Wednesday | Thirty-year 6.76% versus 6.71% prior week/6.35% year ago; fifteen-year 6.09% versus 6.04%. |
+| R10 | [EIA petroleum highlights](https://www.eia.gov/petroleum/supply/weekly/pdf/highlights.pdf) and [release schedule](https://www.eia.gov/petroleum/supply/weekly/schedule.php) | September 10, 2026, noon ET; holiday-delayed release | Week ended September 4, estimates | Crude 424.1 million barrels, -0.4 million, at five-year average; gasoline +1.3 million, 5% below average; distillate +2.1 million, 13% below average. |
+| R11 | [EIA gas storage](https://ir.eia.gov/ngs/ngs.html) | September 10, 2026, 10:30 ET | Week ended September 4; survey estimates | Stocks 3,254 Bcf, weekly +40; -79 year over year, +148 versus five-year average; within historical range. |
+| R12 | [BLS 2026 calendar](https://www.bls.gov/schedule/2026/) | Rolling calendar reviewed this session | Future scheduled releases, not outcomes | CPI Sep11; import/export Sep16; JOLTS Sep29; employment Oct2. |
+| R13 | [Census indicator calendar](https://www.census.gov/economic-indicators/calendar-listview.html?sec_ak_reference=18.52333b8.1542589455.5b7ef1e9) | Rolling calendar reviewed this session | Future scheduled releases, not outcomes | Retail Sep16; starts Sep17; new-home sales Sep24; durable goods Sep25. |
+| R14 | [Federal Reserve calendar](https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm) | Rolling calendar reviewed this session | Scheduled FOMC meeting | September 15–16, with Summary of Economic Projections. |
+| R15 | [BEA release calendar](https://www.bea.gov/news/schedule) | Rolling calendar reviewed this session | Scheduled releases | GDP and August income/PCE Sep30 08:30 ET; August international trade Oct6 08:30 ET. |
+| R16 | [NYSE sessions and holidays](https://www.nyse.com/trade/hours-calendars) | Calendar reviewed this session | 2026 exchange schedule | September 11/18 and October 12 are equity trading days; October 11 is Sunday. |
+
+## Source reconciliation and limitations
+
+- The BLS full PPI landing page still surfaced July in search; the directly reviewed summary explicitly states August and September 10 publication. Only the new summary is used. No August CPI result is available before the cutoff.
+- AP's dedicated closing summary supplies index levels. Reuters' 14:21 ET breadth is explicitly intraday; its contemporaneous index levels are not mixed into the closes. The morning Reuters report retains forward-looking wording about PPI despite its displayed timestamp; those narrative and economic-release statements are excluded. Its bond quotations remain labeled as timed observations.
+- AP's market-wrap search timestamp appears to be the initial story timestamp, while its reviewed body contains Thursday settlement data. Publication is therefore recorded by day and update precision left unknown. Neither the initial timestamp nor live quote widgets are treated as the time of a closing fact.
+- The directly attempted NAR article URL did not load. AP's September 10 report is the actual cited source for NAR sales; a separately reviewed NAR syndicated release search extraction corroborated the numeric values but is not required for the digest. No publication timestamp was invented.
+- EIA's natural-gas page redirected to a signed delivery URL. Only its stable public URL is recorded, and no signed query or delivery token is saved. EIA petroleum publication timing was checked against the holiday schedule. Neither weekly inventory figure describes September 10 stocks.
+- ECB rates take effect September 16. The new projections retain their forecast status and uncertainty; no forecast is presented as a realized return. No market-implied Fed probability or analyst recommendation is supplied.
+- The calendar is a selection of major official releases within the frozen windows, not an exhaustive event inventory. No unpublished CPI, FOMC or other future outcome is inferred. Rates and monthly/weekly statistics have different observation dates.
+
+## Mechanical evidence is separate
+
+The fresh Tiingo acquisition covers all 69 traded symbols through September 10 and is retained in the complete market_data/universe_decision_context.md package, with native histories and acquisition provenance. This report contains no hand-picked mechanical return rows, quality-score summary, candidate-slate computation, or option ranking. The same fresh acquisition supports both horizon-specific pipeline runs; yesterday's research and market-data files are not input sources.
