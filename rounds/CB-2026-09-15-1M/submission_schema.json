@@ -1,0 +1,179 @@
+{
+  "$id": "https://capitalbench.org/schemas/portfolio_judgment_v3.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_assessments": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "type": "array"
+          },
+          "excess_return_p10_pct": {
+            "type": "number"
+          },
+          "excess_return_p50_pct": {
+            "type": "number"
+          },
+          "excess_return_p90_pct": {
+            "type": "number"
+          },
+          "mechanism": {
+            "enum": [
+              "continuation",
+              "reversal",
+              "catalyst",
+              "defensive",
+              "no_edge"
+            ]
+          },
+          "option_id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "origin_lanes": {
+            "items": {
+              "enum": [
+                "shock_reversal",
+                "medium_strength",
+                "short_continuation",
+                "quality_pullback",
+                "volume_dislocation",
+                "benchmark",
+                "wildcard"
+              ]
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "type": "array"
+          },
+          "p_beat_spy_pct": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "p_top3_pct": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "rank": {
+            "maximum": 18,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "recent_return_interpretation": {
+            "enum": [
+              "overreaction",
+              "fundamental_deterioration",
+              "supported_continuation",
+              "no_edge"
+            ]
+          }
+        },
+        "required": [
+          "option_id",
+          "origin_lanes",
+          "mechanism",
+          "p_beat_spy_pct",
+          "p_top3_pct",
+          "excess_return_p10_pct",
+          "excess_return_p50_pct",
+          "excess_return_p90_pct",
+          "recent_return_interpretation",
+          "evidence",
+          "rank"
+        ],
+        "type": "object"
+      },
+      "maxItems": 18,
+      "minItems": 10,
+      "type": "array"
+    },
+    "dispersion_state": {
+      "enum": [
+        "low",
+        "normal",
+        "high"
+      ]
+    },
+    "dominant_pattern": {
+      "enum": [
+        "continuation",
+        "reversal",
+        "mixed"
+      ]
+    },
+    "key_risks": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 5,
+      "minItems": 2,
+      "type": "array"
+    },
+    "market_rationale": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "mode": {
+      "const": "closed_capability"
+    },
+    "model_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "portfolio_rationale": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "prefer_spy": {
+      "type": "boolean"
+    },
+    "provider": {
+      "enum": [
+        "openai",
+        "anthropic",
+        "google",
+        "xai"
+      ]
+    },
+    "round_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "top3_option_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    }
+  },
+  "required": [
+    "round_id",
+    "model_id",
+    "provider",
+    "mode",
+    "dispersion_state",
+    "dominant_pattern",
+    "market_rationale",
+    "candidate_assessments",
+    "top3_option_ids",
+    "prefer_spy",
+    "portfolio_rationale",
+    "key_risks"
+  ],
+  "title": "CapitalBench portfolio-v3.0 Model Judgment",
+  "type": "object"
+}
