@@ -8,14 +8,14 @@ Each round is a separate market decision with its own declared scoring window. O
 
 | Rank | Model | Provider | Resolved Rounds | Avg Return | Avg S&P Return | Avg Alpha | Hit Rate vs S&P | Avg Regret | Cumulative Return | Cumulative S&P Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | xai-grok-4-5 | xai | 31 | 2.06% | 1.59% | 0.46% | 61.29% | 21.76% | 83.50% | 62.14% |
-| 2 | anthropic-claude-fable-5 | anthropic | 37 | 1.85% | 1.61% | 0.24% | 51.35% | 21.30% | 93.16% | 79.40% |
-| 3 | openai-gpt-5-6-sol | openai | 29 | 1.62% | 1.48% | 0.15% | 37.93% | 22.95% | 56.61% | 51.94% |
-| 4 | anthropic-claude-opus-5 | anthropic | 21 | 0.69% | 0.86% | -0.17% | 47.62% | 25.79% | 14.15% | 19.03% |
-| 5 | xai-grok-4-3 | xai | 59 | 0.41% | 0.91% | -0.50% | 44.07% | 21.07% | 22.52% | 68.37% |
+| 1 | xai-grok-4-5 | xai | 32 | 1.98% | 1.53% | 0.45% | 59.38% | 21.59% | 82.61% | 61.35% |
+| 2 | anthropic-claude-fable-5 | anthropic | 38 | 1.65% | 1.56% | 0.09% | 50.00% | 21.31% | 81.93% | 78.53% |
+| 3 | openai-gpt-5-6-sol | openai | 30 | 1.40% | 1.41% | -0.01% | 36.67% | 22.88% | 48.63% | 51.20% |
+| 4 | anthropic-claude-opus-5 | anthropic | 22 | 0.46% | 0.79% | -0.34% | 45.45% | 25.53% | 9.16% | 18.45% |
+| 5 | xai-grok-4-3 | xai | 60 | 0.30% | 0.88% | -0.58% | 43.33% | 21.08% | 15.40% | 67.55% |
 | 6 | anthropic-claude-opus-4-8 | anthropic | 49 | 0.33% | 1.09% | -0.76% | 34.69% | 22.27% | 14.44% | 68.73% |
-| 7 | xai-grok-4-6 | xai | 10 | -1.49% | -0.16% | -1.34% | 10.00% | 23.98% | -14.31% | -1.63% |
-| 8 | google-gemini-3-1-pro | google | 59 | -0.45% | 0.91% | -1.36% | 40.68% | 21.93% | -28.81% | 68.37% |
+| 7 | xai-grok-4-6 | xai | 11 | -1.40% | -0.19% | -1.22% | 9.09% | 23.27% | -14.73% | -2.11% |
+| 8 | google-gemini-3-1-pro | google | 60 | -0.56% | 0.88% | -1.44% | 40.00% | 21.94% | -33.65% | 67.55% |
 | 9 | anthropic-claude-opus-4-7 | anthropic | 35 | -0.92% | 0.77% | -1.69% | 34.29% | 18.94% | -29.58% | 30.07% |
 | 10 | openai-gpt-5-5 | openai | 49 | -1.17% | 1.12% | -2.30% | 32.65% | 22.45% | -48.00% | 71.16% |
 
@@ -86,6 +86,7 @@ _No rows._
 | CB-2026-08-24-1M | official-v3-20260824-monthly |  | yes | no |  |
 | CB-2026-08-25-1M | official-v3-20260825-monthly-clean |  | yes | no |  |
 | CB-2026-08-26-1M | official-v3-20260827-monthly |  | yes | no |  |
+| CB-2026-08-27-1M | official-v3-20260828-monthly |  | yes | no |  |
 
 ## Methodology
 
@@ -111,7 +112,6 @@ The official leaderboard measures the saved public model decision. The stability
 ## Warnings
 
 - Round CB-2026-07-16-1M has no scored official or stability runs.
-- Round CB-2026-08-27-1M has no scored official or stability runs.
 - Round CB-2026-08-30-1M has no scored official or stability runs.
 - Round CB-2026-09-01-1M has no scored official or stability runs.
 - Round CB-2026-09-02-1M has no scored official or stability runs.
