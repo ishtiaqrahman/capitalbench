@@ -602,7 +602,8 @@ def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
     assert "anthropic-claude-opus-4-7" not in manifest["expected_model_ids"]
     assert "anthropic-claude-opus-4-8" not in manifest["expected_model_ids"]
     assert "openai-gpt-5-5" not in manifest["expected_model_ids"]
-    assert "anthropic-claude-opus-5" in manifest["expected_model_ids"]
+    assert "anthropic-claude-opus-5-5" in manifest["expected_model_ids"]
+    assert "anthropic-claude-opus-5" not in manifest["expected_model_ids"]
     assert "xai-grok-4-6" in manifest["expected_model_ids"]
     assert manifest["portfolio_constraints"]["max_holdings"] == 3
     assert manifest["portfolio_constraints"]["max_economic_exposure_pct"] is None

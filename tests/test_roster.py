@@ -45,9 +45,9 @@ EXPECTED_POST_FABLE_5_RETIREMENT_MODEL_IDS = (
 ) | {"anthropic-claude-fable-5-1"}
 
 
-def test_canonical_portfolio_v2_roster_preserves_history_and_adds_astra() -> None:
+def test_canonical_portfolio_v2_roster_preserves_history_and_adds_successors() -> None:
     assert set(canonical_portfolio_v2_model_ids()) == EXPECTED_PORTFOLIO_V2_MODEL_IDS | {
-        "openai-gpt-6-astra"
+        "openai-gpt-6-astra", "anthropic-claude-opus-5-5"
     }
 
 
@@ -59,6 +59,20 @@ def test_astra_replaces_sol_only_from_its_eligibility_timestamp() -> None:
         "2026-09-05T02:40:00Z", round_id="CB-2026-09-04-1W"
     )) == (EXPECTED_POST_FABLE_5_RETIREMENT_MODEL_IDS - {"openai-gpt-5-6-sol"}) | {
         "openai-gpt-6-astra"
+    }
+
+
+def test_opus_5_5_replaces_opus_5_only_from_its_eligibility_timestamp() -> None:
+    expected_before = (EXPECTED_POST_FABLE_5_RETIREMENT_MODEL_IDS - {"openai-gpt-5-6-sol"}) | {
+        "openai-gpt-6-astra"
+    }
+    assert set(active_portfolio_v2_model_ids(
+        "2026-09-23T04:52:19Z", round_id="CB-2026-09-23-1W"
+    )) == expected_before
+    assert set(active_portfolio_v2_model_ids(
+        "2026-09-23T04:52:20Z", round_id="CB-2026-09-23-1W"
+    )) == (expected_before - {"anthropic-claude-opus-5"}) | {
+        "anthropic-claude-opus-5-5"
     }
 
 

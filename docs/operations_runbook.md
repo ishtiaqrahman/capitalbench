@@ -50,6 +50,12 @@ tokens, and raw provider responses.
    roster. Claude Opus 5 is forward-only beginning with the July 24, 2026
    weekly and monthly rounds and must not be backfilled.
 
+   Claude Opus 5 is retired from new rounds effective `2026-09-23T04:52:20Z`
+   (September 23, 2026 America/Toronto). Claude Opus 5.5 is its forward-only
+   successor, using Anthropic API model ID `claude-opus-5-5`; do not rewrite or
+   backfill older frozen rosters. Keep Opus 5's registry entry and every
+   historical submission, result, profile, and comparison set.
+
    Claude Opus 4.8 is retired from new rounds effective August 19, 2026. Keep
    its registry entry and every historical submission, result, profile, and
    comparison set. Do not remove it from an already frozen roster or backfill

@@ -33,7 +33,7 @@ structured decision. Technical or formatting retries must remain disclosed and
 must never be used to seek a different portfolio.
 
 The active production roster has seven models: GPT-6 Astra, Grok 4.3, Grok
-4.5, Grok 4.6, Gemini 3.1 Pro, Claude Opus 5, and Claude Fable 5.1.
+4.5, Grok 4.6, Gemini 3.1 Pro, Claude Opus 5.5, and Claude Fable 5.1.
 GPT-6 Astra joined future rounds effective `2026-09-05T02:40:00Z`
 (September 4, 2026 in America/Toronto) using OpenAI API model ID
 `gpt-6-astra`, `reasoning_effort: low`, and no temperature parameter.
@@ -55,9 +55,14 @@ GPT-5.5 was retired from new rounds by operator direction effective
 `2026-08-13T02:59:24Z` (August 12, 2026 in America/Toronto), with no designated
 successor. Preserve all GPT-5.5 historical submissions, results, profiles, and
 comparison sets; do not backfill or remove it from an already frozen roster.
-Claude Opus 5 joined future rounds effective July 24, 2026 using the Anthropic
-API model ID `claude-opus-5`; do not backfill it into older rounds. Claude Opus
-4.8 was retired from new rounds by operator direction effective
+Claude Opus 5.5 joined future rounds effective `2026-09-23T04:52:20Z`
+(September 23, 2026 in America/Toronto) using the Anthropic API model ID
+`claude-opus-5-5`, `reasoning_effort: low`, and temperature `0`; do not
+backfill it into older rounds. Claude Opus 5 was retired from new rounds at the
+same timestamp and designates `anthropic-claude-opus-5-5` as its successor.
+Preserve every historical Opus 5 submission, result, profile, and comparison
+set. Because Opus 5.5 is a new participant, the first accepted frozen roster
+containing it starts a new fair comparison origin. Claude Opus 4.8 was retired from new rounds by operator direction effective
 `2026-08-19T05:54:20Z` (August 19, 2026 in America/Toronto), with no designated
 successor. Preserve all Claude Opus 4.8 historical submissions, results,
 profiles, and comparison sets; do not backfill or remove it from an already
