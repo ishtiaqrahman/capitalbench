@@ -1,0 +1,24 @@
+# Market Fact Report — October 10, 2026
+
+Research cutoff: 2026-10-11T00:51:00Z. Latest completed trading session: October 9. Prepared through direct public-source browsing; no participant or research-provider model APIs were used.
+
+## Source ledger
+
+- BLS, Employment Situation, September 2026, released October 2 at 08:30 ET: payrolls +29,000, unemployment 4.2%, combined July/August revisions -60,000; hourly earnings +0.1% monthly and +3.0% annually. Preliminary survey estimates are subject to sampling error and revision. https://www.bls.gov/news.release/archives/empsit_10022026.htm
+- BEA, Personal Income and Outlays, August 2026, released September 30: real PCE +0.6%, nominal PCE +0.9%; headline PCE prices +0.3% monthly/+3.4% annually, core +0.2%/+3.0%. Annual historical revisions were incorporated. https://www.bea.gov/news/2026/personal-income-and-outlays-august-2026
+- ISM, September Services report, released October 5: headline 54.9 versus 55.4, business activity 56.5, new orders 59.8, employment 50.1, prices 74.0. Diffusion indexes describe breadth, not output magnitude. https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/services/september/
+- Census Bureau, Monthly Wholesale Trade, August 2026, released October 8: sales $817.5bn, +1.8% monthly/+15.6% annually; inventories $964.2bn, +0.5%/+6.4%; inventory/sales 1.18 versus 1.28. July sales growth revised from 0.8% to 1.0%. Seasonal adjustment does not remove price changes; estimates are revisable. https://www.census.gov/wholesale/current/index.html
+- BEA/Census, August international trade, released October 6 at 08:30 ET: deficit $105.6bn versus July revised $92.8bn, exports $315.2bn (+1.4%), imports $420.8bn (+4.3%). Nominal values are not price adjusted. https://www.bea.gov/news/2026/us-international-trade-goods-and-services-august-2026
+- Federal Reserve, September 15-16 meeting minutes, released October 7: all participants supported the hike to 3.75%-4.00%; most judged another hike likely appropriate by year end, subject to incoming information. Several noted lower-income household pressure from energy costs. Minutes report September views rather than a fresh policy decision. https://www.federalreserve.gov/monetarypolicy/fomcminutes20260916.htm
+- Treasury, par yield curve, observed October 9: 1Y 4.47%, 2Y 4.80%, 5Y 5.02%, 10Y 5.24%, 30Y 5.60%; October 8: 4.44%, 4.75%, 4.99%, 5.22%, 5.60%. Derived from indicative bid quotations near 15:30 ET rather than transactions. https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value=2026
+- Associated Press, October 9 close: S&P 500 7,811.54 (+0.6%), Dow 51,654.95 (+0.8%), Nasdaq 27,366.17 (+0.6%), Russell 2000 2,806.98 (+0.5%). Weekly changes +1.2%, +0.9%, +0.6%, -0.9%. This is a secondary index-close source; official ETF entry prices come from the separate repository snapshot. https://apnews.com/article/dafbd0c4037ee10e2a9e305f3cfa8e70
+- EIA, October STEO, released October 6 with forecast inputs completed October 1: Q4 Brent forecast $105/b, $14 above September; estimated September Middle East shut-ins 4.8mb/d versus 5.8mb/d in August. Forecasts are conditional and exclude events after the model-input completion date. https://www.eia.gov/outlooks/steo/report/index.php
+- EIA, Weekly Petroleum Status Report, October 7 release for October 2: national distillate inventories 105.1 million barrels versus 121.6 million year earlier; East Coast 21.7 million versus 30.2 million. Weekly estimates can be revised and published values rounded. https://www.eia.gov/petroleum/supply/weekly/archive/2026/2026_10_07/pdf/table6.pdf
+
+## Calendar and uncertainty
+
+Weekly exit October 16 includes CPI October 14, PPI October 15, import/export prices October 16 (all 08:30 ET), and petroleum October 15 at 12:00 ET. Monthly exit November 9 additionally includes FOMC October 27-28; GDP/PCE October 29; ECI October 30; ISM manufacturing November 2; JOLTS November 3; trade/services November 4; productivity November 5; employment November 6; wholesale November 9 at 10:00 ET.
+
+Calendar sources reviewed: https://www.bls.gov/schedule/2026/home.htm ; https://www.bea.gov/news/schedule/full ; https://www.ismworld.org/supply-management-news-and-reports/reports/rob-report-calendar/ ; https://www.census.gov/wholesale/release_schedule.html ; https://www.eia.gov/petroleum/supply/weekly/ ; https://www.federalreserve.gov/monetarypolicy/fomcminutes20260916.htm
+
+Current releases mix positive real consumption, services activity and wholesale growth with small preliminary payroll gains and elevated inflation. Large-cap indexes gained for the week while small caps declined. Scheduled outcomes remain unknown. Full-universe price/risk context and breadth are supplied mechanically in market_data/universe_decision_context.md; no selected return rows or quality/slate rankings are reproduced here.
