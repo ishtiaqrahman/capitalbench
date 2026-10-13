@@ -1,0 +1,30 @@
+# Market Fact Report — October 12, 2026
+
+Research cutoff: 2026-10-13T02:14:44Z. Latest completed U.S. equity session: October 12. Direct public-source browsing was used; no model-provider research/search APIs were used. This ledger is audit-only and makes no allocation recommendations or option rankings.
+
+## Source ledger and uncertainty
+
+- BLS, September Employment Situation, released October 2 at 08:30 ET: payrolls +29,000, unemployment 4.2%, July/August revisions -60,000; hourly earnings +0.1% monthly/+3.0% annually. Preliminary survey estimates are subject to sampling error and revision. https://www.bls.gov/news.release/archives/empsit_10022026.htm
+- BEA, August Personal Income and Outlays, released September 30: nominal PCE +0.9%, real +0.6%, headline PCE prices +0.3% monthly/+3.4% annually, core +0.2%/+3.0%, saving 4.1%. Annual revisions begin January 2021. https://www.bea.gov/news/2026/personal-income-and-outlays-august-2026
+- ISM, September Services report, released October 5: 54.9 versus August 55.4; activity 56.5, new orders 59.8, employment 50.1, prices 74.0; thirteen industries expanding and four contracting. Its comparison table reports manufacturing 54.5 versus 54.6. These are breadth-based survey indexes. https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/services/september/
+- Census, August Wholesale Trade, released October 8: sales $817.5bn (+1.8% monthly/+15.6% annually), inventories $964.2bn (+0.5%/+6.4%), inventory/sales 1.18 versus 1.28. July sales growth revised from 0.8% to 1.0%. Estimates are seasonally adjusted, nominal and revisable. https://www.census.gov/wholesale/current/index.html
+- BEA/Census, August international trade, released October 6: deficit $105.6bn versus July revised $92.8bn; exports $315.2bn (+1.4%), imports $420.8bn (+4.3%). Values are not price adjusted. https://www.bea.gov/news/2026/us-international-trade-goods-and-services-august-2026
+- Federal Reserve, minutes released October 7 at 14:00 ET for the September 15-16 meeting: unanimous hike to 3.75%-4.00%, most participants saw another increase likely appropriate by year end, subject to incoming information. Several described energy-price strain on lower-income households. Meeting-vintage views should not be confused with current-release PCE estimates or a new October decision. https://www.federalreserve.gov/monetarypolicy/fomcminutes20260916.htm ; https://www.federalreserve.gov/newsevents/pressreleases/monetary20261007a.htm
+- AP, October 12 close report, published October 12: S&P 500 7,807.24 (-0.1%), Dow 51,850.55 (+0.4%), Nasdaq 27,245.90 (-0.4%), Russell 2000 2,794.48 (-0.4%); Brent +1.8% to $106.65/b; U.S. bond trading closed. Official ETF scoring prices use the canonical repository snapshot instead of these index levels. https://apnews.com/article/f07713e8b2e438ac5903b50f5ce97235
+- AP syndicated full market report, published October 12, reports approximately 64% of S&P 500 companies advanced and major-bank earnings beginning October 13. Breadth is a rounded secondary-source close statistic. https://wplginc-wplg-prod.web.arc-cdn.net/business/2026/10/12/us-stocks-hover-near-their-latest-record-in-mixed-trading-on-wall-street/
+- Treasury, latest available par curve October 9: 1Y 4.47%, 2Y 4.80%, 5Y 5.02%, 10Y 5.24%, 30Y 5.60%. No October 12 row was published because of the federal holiday; these are indicative-quotation yields around 15:30 ET, not transactions or October 12 rates. https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value=2026
+- EIA, October STEO, released October 6, inputs completed October 1: Q4 Brent forecast $105/b, $14 above prior forecast; September Middle East shut-ins estimated 4.8mb/d versus 5.8mb/d in August. Conditional forecast excludes subsequent events; next outlook November 10. https://www.eia.gov/outlooks/steo/report/index.php
+- EIA gasoline/diesel holiday schedule: October 12 observations are scheduled for October 14 release. They are unavailable at this cutoff and are not substituted with fabricated current prices. https://www.eia.gov/petroleum/gasdiesel/schedule.php
+- ECB, September 10 decision effective September 16: deposit facility rate 2.50%; projected 2026 inflation 3.0%, growth 0.9%. Conditional projections with upside inflation/downside growth risks amid energy-shock uncertainty. https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp260910~314e508016.en.html
+
+## Scheduled events within the scoring windows
+
+Weekly exit October 19: CPI/real earnings October 14; retail sales/PPI October 15; petroleum October 15 at 12:00 ET; import/export prices October 16. Banks begin earnings reporting October 13 according to AP.
+
+Monthly exit November 12 additionally includes FOMC October 27-28; GDP/PCE October 29; ECI October 30; ISM manufacturing November 2; JOLTS November 3; trade/services November 4; productivity November 5; jobs November 6; wholesale November 9; CPI and STEO November 10; holiday-delayed petroleum November 12 at 12:00 ET. November 13 PPI is excluded. Outcomes remain unknown.
+
+Calendar sources reviewed: https://www.bls.gov/schedule/2026/home.htm ; https://www.bea.gov/news/schedule/full ; https://www.census.gov/retail/release_schedule.html ; https://www.census.gov/wholesale/release_schedule.html ; https://www.ismworld.org/supply-management-news-and-reports/reports/rob-report-calendar/ ; https://www.eia.gov/petroleum/supply/weekly/schedule.php ; https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm
+
+## Coverage and uncertainty
+
+Mixed headline equity performance coexisted with positive reported constituent breadth. The current source set retains both slower preliminary payroll gains and positive spending/services/wholesale observations, as well as inflation and conditional policy/energy risks. The bond holiday creates an explicitly dated rates gap. Full-universe adjusted-price, risk and breadth context is provided separately by market_data/universe_decision_context.md; no selected returns, quality scores or slate ranks are reproduced in this report.
