@@ -1,7 +1,7 @@
 {
   "data_as_of": "2026-10-12",
   "engine_version": "deterministic_insights_v4",
-  "generated_at": "2026-10-13T02:04:15Z",
+  "generated_at": "2026-10-13T09:28:56Z",
   "insight_count": 29,
   "insights": [
     {
@@ -16,19 +16,19 @@
           "formula": "sum(average_model_allocation * asset_return)",
           "name": "consensus_portfolio_return",
           "unit": "percent",
-          "value": 4.3129
+          "value": 0.8901
         },
         {
           "formula": "average resolved model portfolio return",
           "name": "average_model_return",
           "unit": "percent",
-          "value": 4.3129
+          "value": 0.8901
         },
         {
           "formula": "100 * consensus_return / oracle_return",
           "name": "consensus_capitalbench_score",
           "unit": "points",
-          "value": 2.0851
+          "value": 0.4513
         }
       ],
       "category": "consensus_performance",
@@ -36,21 +36,21 @@
       "context": {
         "asset_count": 70,
         "data_as_of": "2026-10-12",
-        "decision_date": "2026-09-10",
-        "entry_date": "2026-09-10",
+        "decision_date": "2026-09-11",
+        "entry_date": "2026-09-11",
         "exit_date": "2026-10-12",
         "model_count": 7,
         "oracle_asset": {
           "display": "Ethereum ETF (ETHA)",
           "name": "Ethereum ETF",
           "option_id": "ETHEREUM_ETF",
-          "return_pct": 206.8427,
+          "return_pct": 197.2338,
           "ticker": "ETHA"
         },
         "primary_label": "Monthly result",
         "result_count": 7,
-        "round_id": "CB-2026-09-10-1M",
-        "run_id": "official-v3-20260910-monthly",
+        "round_id": "CB-2026-09-11-1M",
+        "run_id": "official-v3-20260911-monthly",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
@@ -61,13 +61,13 @@
       "date": "2026-10-13",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-09-10-1M",
+          "href": "/rounds/CB-2026-09-11-1M",
           "label": "Monthly result",
-          "source": "rounds/CB-2026-09-10-1M/runs/official-v3-20260910-monthly/results"
+          "source": "rounds/CB-2026-09-11-1M/runs/official-v3-20260911-monthly/results"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
-      "id": "consensus-performance-CB-2026-09-10-1M",
+      "generated_at": "2026-10-13T09:28:56Z",
+      "id": "consensus-performance-CB-2026-09-11-1M",
       "importance_score": 92.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
       "publication_tier": "global",
@@ -79,8 +79,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "If the monthly model allocations were averaged into one consensus portfolio, it returned +4.31% versus +2.67% for the S&P 500 and +206.84% for the hindsight best asset.",
-      "title": "AI consensus portfolio scored 2.1 versus the oracle",
+      "summary": "If the monthly model allocations were averaged into one consensus portfolio, it returned +0.89% versus +1.81% for the S&P 500 and +197.23% for the hindsight best asset.",
+      "title": "AI consensus portfolio scored 0.5 versus the oracle",
       "why_it_matters": "The consensus portfolio tests whether the combined AI view is more useful than any single model's portfolio or the S&P 500 benchmark."
     },
     {
@@ -145,7 +145,7 @@
           "source": "rounds/CB-2026-10-04-1W/runs/20261005-022943-official/results"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "consensus-performance-CB-2026-10-04-1W",
       "importance_score": 92.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
@@ -173,19 +173,19 @@
           "formula": "max(scored asset returns)",
           "name": "oracle_return",
           "unit": "percent",
-          "value": 206.8427
+          "value": 197.2338
         },
         {
           "formula": "min(scored asset returns)",
           "name": "worst_asset_return",
           "unit": "percent",
-          "value": -8.6434
+          "value": -9.8612
         },
         {
           "formula": "positive asset count / scored asset count",
           "name": "positive_universe_share",
           "unit": "percent",
-          "value": 37.1429
+          "value": 30.0
         }
       ],
       "category": "benchmark_difficulty",
@@ -193,21 +193,21 @@
       "context": {
         "asset_count": 70,
         "data_as_of": "2026-10-12",
-        "decision_date": "2026-09-10",
-        "entry_date": "2026-09-10",
+        "decision_date": "2026-09-11",
+        "entry_date": "2026-09-11",
         "exit_date": "2026-10-12",
         "model_count": 7,
         "oracle_asset": {
           "display": "Ethereum ETF (ETHA)",
           "name": "Ethereum ETF",
           "option_id": "ETHEREUM_ETF",
-          "return_pct": 206.8427,
+          "return_pct": 197.2338,
           "ticker": "ETHA"
         },
         "primary_label": "Monthly result",
         "result_count": 7,
-        "round_id": "CB-2026-09-10-1M",
-        "run_id": "official-v3-20260910-monthly",
+        "round_id": "CB-2026-09-11-1M",
+        "run_id": "official-v3-20260911-monthly",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
@@ -218,13 +218,13 @@
       "date": "2026-10-13",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-09-10-1M",
+          "href": "/rounds/CB-2026-09-11-1M",
           "label": "Monthly result",
-          "source": "rounds/CB-2026-09-10-1M/runs/official-v3-20260910-monthly/results/returns.csv"
+          "source": "rounds/CB-2026-09-11-1M/runs/official-v3-20260911-monthly/results/returns.csv"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
-      "id": "benchmark-difficulty-CB-2026-09-10-1M",
+      "generated_at": "2026-10-13T09:28:56Z",
+      "id": "benchmark-difficulty-CB-2026-09-11-1M",
       "importance_score": 90.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
       "publication_tier": "global",
@@ -236,8 +236,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The best scored asset returned +206.84%, the worst returned -8.64%, and +37.14% of the universe was positive. The S&P 500 ranked 16 out of 70 options.",
-      "title": "Monthly round had +215.49% asset dispersion",
+      "summary": "The best scored asset returned +197.23%, the worst returned -9.86%, and +30.00% of the universe was positive. The S&P 500 ranked 16 out of 70 options.",
+      "title": "Monthly round had +207.09% asset dispersion",
       "why_it_matters": "Benchmark difficulty matters because model scores should be interpreted against the opportunity set and the market window they faced."
     },
     {
@@ -301,7 +301,7 @@
           "source": "rounds/CB-2026-10-04-1W/runs/20261005-022943-official/results/returns.csv"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "benchmark-difficulty-CB-2026-10-04-1W",
       "importance_score": 90.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
@@ -344,21 +344,21 @@
       "context": {
         "asset_count": 70,
         "data_as_of": "2026-10-12",
-        "decision_date": "2026-09-10",
-        "entry_date": "2026-09-10",
+        "decision_date": "2026-09-11",
+        "entry_date": "2026-09-11",
         "exit_date": "2026-10-12",
         "model_count": 7,
         "oracle_asset": {
           "display": "Ethereum ETF (ETHA)",
           "name": "Ethereum ETF",
           "option_id": "ETHEREUM_ETF",
-          "return_pct": 206.8427,
+          "return_pct": 197.2338,
           "ticker": "ETHA"
         },
         "primary_label": "Monthly result",
         "result_count": 7,
-        "round_id": "CB-2026-09-10-1M",
-        "run_id": "official-v3-20260910-monthly",
+        "round_id": "CB-2026-09-11-1M",
+        "run_id": "official-v3-20260911-monthly",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
@@ -369,13 +369,13 @@
       "date": "2026-10-13",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-09-10-1M",
+          "href": "/rounds/CB-2026-09-11-1M",
           "label": "Monthly result",
-          "source": "rounds/CB-2026-09-10-1M/runs/official-v3-20260910-monthly/results"
+          "source": "rounds/CB-2026-09-11-1M/runs/official-v3-20260911-monthly/results"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
-      "id": "missed-oracle-CB-2026-09-10-1M",
+      "generated_at": "2026-10-13T09:28:56Z",
+      "id": "missed-oracle-CB-2026-09-11-1M",
       "importance_score": 89.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
       "publication_tier": "global",
@@ -387,7 +387,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The hindsight best asset was Ethereum ETF (ETHA) at +206.84%. 0 of 7 models held it, with +0.00% average allocation.",
+      "summary": "The hindsight best asset was Ethereum ETF (ETHA) at +197.23%. 0 of 7 models held it, with +0.00% average allocation.",
       "title": "Models missed the monthly oracle asset",
       "why_it_matters": "This shows whether models identified the eventual best asset before scoring, even when portfolio weights were too small to fully capture the oracle return."
     },
@@ -447,7 +447,7 @@
           "source": "rounds/CB-2026-10-04-1W/runs/20261005-022943-official/results"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "missed-oracle-CB-2026-10-04-1W",
       "importance_score": 89.0,
       "publication_reason": "High-confidence, high-importance evidence is eligible for global surfaces.",
@@ -463,75 +463,6 @@
       "summary": "The hindsight best asset was Ethereum ETF (ETHA) at +178.42%. 0 of 7 models held it, with +0.00% average allocation.",
       "title": "Models missed the weekly oracle asset",
       "why_it_matters": "This shows whether models identified the eventual best asset before scoring, even when portfolio weights were too small to fully capture the oracle return."
-    },
-    {
-      "audiences": [
-        "investors",
-        "capital_allocators",
-        "traders"
-      ],
-      "calculations": [
-        {
-          "formula": "average allocation across newest live model portfolios",
-          "name": "aggregate_live_allocation",
-          "unit": "percentage_points",
-          "value": 39.2857
-        }
-      ],
-      "category": "current_positioning",
-      "confidence": "medium",
-      "context": {
-        "asset_label": "S&P 500",
-        "asset_option_id": "SP500",
-        "asset_ticker": "SPY",
-        "data_as_of": "2026-10-10",
-        "decision_dates": [
-          "2026-10-10",
-          "2026-10-10"
-        ],
-        "model_count": 14,
-        "primary_label": "Latest live portfolios",
-        "round_count": 2,
-        "round_ids": [
-          "CB-2026-10-10-1W",
-          "CB-2026-10-10-1M"
-        ],
-        "scope": "live_rounds",
-        "status": "active",
-        "status_label": "Live portfolios",
-        "track": "weekly_monthly",
-        "track_label": "Weekly + Monthly"
-      },
-      "data_as_of": "2026-10-10",
-      "date": "2026-10-13",
-      "evidence": [
-        {
-          "href": "/rounds/CB-2026-10-10-1W",
-          "label": "Weekly live round",
-          "source": "rounds/CB-2026-10-10-1W"
-        },
-        {
-          "href": "/rounds/CB-2026-10-10-1M",
-          "label": "Monthly live round",
-          "source": "rounds/CB-2026-10-10-1M"
-        }
-      ],
-      "generated_at": "2026-10-13T02:04:15Z",
-      "id": "active-positioning-2026-10-10",
-      "importance_score": 88.0,
-      "publication_reason": "The finding is useful in its category without displacing broader signals.",
-      "publication_tier": "category",
-      "related": [
-        {
-          "href": "/risk-appetite",
-          "label": "AI Risk Appetite"
-        }
-      ],
-      "source_type": "deterministic",
-      "status": "published",
-      "summary": "Across the newest live weekly and monthly portfolios, S&P 500 (SPY) is the largest aggregate allocation at +39.29%.",
-      "title": "Live AI portfolios are concentrated in S&P 500 (SPY)",
-      "why_it_matters": "This shows the current crowding point in model capital allocation, before the open rounds receive their final market scores."
     },
     {
       "audiences": [
@@ -617,7 +548,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-weekly-synthesis",
       "importance_score": 88.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -664,19 +595,19 @@
           "formula": "average model return on the shared monthly up comparison cohort",
           "name": "up_leader_average_return",
           "unit": "percent",
-          "value": 4.1116
+          "value": 5.2151
         },
         {
           "formula": "resolved rounds shared by every eligible model in the comparison",
           "name": "up_shared_rounds",
           "unit": "count",
-          "value": 6
+          "value": 3
         },
         {
           "formula": "share of leave-one-round-out samples retaining the same leader",
           "name": "up_leader_stability",
           "unit": "ratio",
-          "value": 0.8333
+          "value": 0.6667
         }
       ],
       "category": "market_environment",
@@ -686,14 +617,14 @@
         "data_as_of": "2026-10-12",
         "insight_kind": "synthesis",
         "maturity": "ready",
-        "minimum_shared_round_count": 6,
+        "minimum_shared_round_count": 3,
         "model_count": 2,
         "model_ids": [
           "xai-grok-4-3",
-          "xai-grok-4-5"
+          "anthropic-claude-opus-5"
         ],
         "primary_label": "Monthly market environments",
-        "round_count": 12,
+        "round_count": 9,
         "round_ids": [
           "CB-2026-05-28-1M",
           "CB-2026-05-29-1M",
@@ -701,12 +632,9 @@
           "CB-2026-06-02-1M",
           "CB-2026-06-03-1M",
           "CB-2026-06-29-1M",
-          "CB-2026-07-24-1M",
-          "CB-2026-07-27-1M",
-          "CB-2026-07-28-1M",
-          "CB-2026-07-29-1M",
-          "CB-2026-07-30-1M",
-          "CB-2026-07-31-1M"
+          "CB-2026-09-09-1M",
+          "CB-2026-09-10-1M",
+          "CB-2026-09-11-1M"
         ],
         "scope": "resolved_history",
         "status": "resolved",
@@ -723,7 +651,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-monthly-synthesis",
       "importance_score": 86.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -736,7 +664,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Grok 4.3 leads down environments at -1.22% across 6 tests; Grok 4.5 leads up environments at +4.11% across 6 tests.",
+      "summary": "Grok 4.3 leads down environments at -1.22% across 6 tests; Claude Opus 5 leads up environments at +5.22% across 3 tests.",
       "title": "Monthly model leadership changes with the S&P 500 environment",
       "why_it_matters": "Leadership that changes with the broad-market backdrop shows why a single all-history ranking can hide meaningful model strengths and weaknesses."
     },
@@ -751,23 +679,23 @@
           "formula": "50 + 50 * weighted average asset risk-on loading",
           "name": "live_risk_taking_score",
           "unit": "points",
-          "value": 77.3125
+          "value": 81.7768
         }
       ],
       "category": "risk_regime",
       "confidence": "medium",
       "context": {
-        "data_as_of": "2026-10-10",
+        "data_as_of": "2026-10-12",
         "decision_dates": [
-          "2026-10-10",
-          "2026-10-10"
+          "2026-10-12",
+          "2026-10-12"
         ],
         "model_count": 14,
         "primary_label": "Latest live portfolios",
         "round_count": 2,
         "round_ids": [
-          "CB-2026-10-10-1W",
-          "CB-2026-10-10-1M"
+          "CB-2026-10-12-1W",
+          "CB-2026-10-12-1M"
         ],
         "scope": "live_rounds",
         "status": "active",
@@ -775,22 +703,22 @@
         "track": "weekly_monthly",
         "track_label": "Weekly + Monthly"
       },
-      "data_as_of": "2026-10-10",
+      "data_as_of": "2026-10-12",
       "date": "2026-10-13",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-10-10-1W",
+          "href": "/rounds/CB-2026-10-12-1W",
           "label": "Weekly live round",
-          "source": "rounds/CB-2026-10-10-1W"
+          "source": "rounds/CB-2026-10-12-1W"
         },
         {
-          "href": "/rounds/CB-2026-10-10-1M",
+          "href": "/rounds/CB-2026-10-12-1M",
           "label": "Monthly live round",
-          "source": "rounds/CB-2026-10-10-1M"
+          "source": "rounds/CB-2026-10-12-1M"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
-      "id": "active-risk-2026-10-10",
+      "generated_at": "2026-10-13T09:28:56Z",
+      "id": "active-risk-2026-10-12",
       "importance_score": 86.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
       "publication_tier": "category",
@@ -802,8 +730,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The newest live portfolios have a deterministic risk-taking score of 77.3 out of 100.",
-      "title": "Live AI risk posture is risk-seeking",
+      "summary": "The newest live portfolios have a deterministic risk-taking score of 81.8 out of 100.",
+      "title": "Live AI risk posture is aggressive",
       "why_it_matters": "The score translates allocations into a common risk scale, so readers can see whether models are collectively leaning defensive, balanced, or aggressive."
     },
     {
@@ -817,25 +745,25 @@
           "formula": "average return for confidence >= median confidence",
           "name": "high_confidence_average_return",
           "unit": "percent",
-          "value": 0.0249
+          "value": 0.0312
         },
         {
           "formula": "average return for confidence < median confidence",
           "name": "low_confidence_average_return",
           "unit": "percent",
-          "value": 0.3507
+          "value": 0.3543
         },
         {
           "formula": "average CapitalBench Score for confidence >= median confidence",
           "name": "high_confidence_average_capitalbench_score",
           "unit": "points",
-          "value": -2.842
+          "value": -2.8218
         },
         {
           "formula": "average CapitalBench Score for confidence < median confidence",
           "name": "low_confidence_average_capitalbench_score",
           "unit": "points",
-          "value": -2.251
+          "value": -2.2267
         }
       ],
       "category": "confidence_calibration",
@@ -844,8 +772,8 @@
         "data_as_of": "2026-10-12",
         "median_confidence": 0.57,
         "primary_label": "All resolved official results",
-        "result_count": 931,
-        "round_count": 142,
+        "result_count": 938,
+        "round_count": 143,
         "scope": "resolved_history",
         "status": "resolved",
         "status_label": "Resolved history",
@@ -861,7 +789,7 @@
           "source": "resolved official leaderboard rows"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "confidence-calibration-2026-10-12",
       "importance_score": 85.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -874,7 +802,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Across resolved official results, submissions at or above the median confidence of 0.57 averaged +0.02%, while lower-confidence submissions averaged +0.35%.",
+      "summary": "Across resolved official results, submissions at or above the median confidence of 0.57 averaged +0.03%, while lower-confidence submissions averaged +0.35%.",
       "title": "High-confidence model calls have underperformed lower-confidence calls",
       "why_it_matters": "Confidence calibration helps readers judge whether model self-reported confidence carries useful information about realized benchmark performance."
     },
@@ -896,13 +824,13 @@
           "formula": "average largest single holding across official saved portfolios",
           "name": "largest_average_top_holding",
           "unit": "percentage_points",
-          "value": 79.0
+          "value": 76.6667
         },
         {
           "formula": "one-half of summed absolute allocation changes between consecutive same-track portfolios",
           "name": "lowest_average_turnover",
           "unit": "percentage_points",
-          "value": 26.25
+          "value": 21.0
         }
       ],
       "category": "model_behavior",
@@ -913,7 +841,7 @@
         "model_count": 13,
         "most_concentrated_model_id": "anthropic-claude-opus-5-5",
         "most_stable_model_id": "anthropic-claude-opus-5-5",
-        "portfolio_count": 1015,
+        "portfolio_count": 1029,
         "primary_label": "Model behavior profiles",
         "scope": "all official portfolios"
       },
@@ -931,7 +859,7 @@
           "source": "asset risk model and behavior formulas"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "model-behavior-profiles-2026-10-12",
       "importance_score": 83.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -952,7 +880,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "GPT-5.5 has the highest average risk-taking score at 79.7/100. anthropic-claude-opus-5-5 has the largest average top holding at +79.00%. anthropic-claude-opus-5-5 has the lowest measured turnover at +26.25%.",
+      "summary": "GPT-5.5 has the highest average risk-taking score at 79.7/100. anthropic-claude-opus-5-5 has the largest average top holding at +76.67%. anthropic-claude-opus-5-5 has the lowest measured turnover at +21.00%.",
       "title": "Model allocation styles are separating into clear behavior profiles",
       "why_it_matters": "Behavior profiles help readers separate model style from short-term score noise: some models seek more risk, some concentrate harder, and some change portfolios less between rounds."
     },
@@ -967,13 +895,13 @@
           "formula": "allocation weight * asset return",
           "name": "largest_positive_contribution",
           "unit": "percent",
-          "value": 5.0701
+          "value": 4.9682
         },
         {
           "formula": "allocation weight * asset return",
           "name": "smallest_positive_contribution",
           "unit": "percent",
-          "value": 0.1824
+          "value": 1.1745
         }
       ],
       "category": "performance_attribution",
@@ -981,18 +909,18 @@
       "context": {
         "asset_count": 70,
         "data_as_of": "2026-10-12",
-        "decision_date": "2026-09-10",
-        "entry_date": "2026-09-10",
+        "decision_date": "2026-09-11",
+        "entry_date": "2026-09-11",
         "exit_date": "2026-10-12",
         "model": {
-          "label": "Claude Fable 5.1",
-          "model_id": "anthropic-claude-fable-5-1"
+          "label": "Grok 4.3",
+          "model_id": "xai-grok-4-3"
         },
         "model_count": 7,
         "primary_label": "Monthly result",
         "result_count": 7,
-        "round_id": "CB-2026-09-10-1M",
-        "run_id": "official-v3-20260910-monthly",
+        "round_id": "CB-2026-09-11-1M",
+        "run_id": "official-v3-20260911-monthly",
         "scope": "round",
         "status": "resolved",
         "status_label": "Resolved result",
@@ -1003,13 +931,13 @@
       "date": "2026-10-13",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-09-10-1M",
+          "href": "/rounds/CB-2026-09-11-1M",
           "label": "Monthly result",
-          "source": "rounds/CB-2026-09-10-1M/runs/official-v3-20260910-monthly/results/allocations.csv"
+          "source": "rounds/CB-2026-09-11-1M/runs/official-v3-20260911-monthly/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
-      "id": "attribution-CB-2026-09-10-1M-anthropic-claude-fable-5-1",
+      "generated_at": "2026-10-13T09:28:56Z",
+      "id": "attribution-CB-2026-09-11-1M-xai-grok-4-3",
       "importance_score": 83.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
       "publication_tier": "category",
@@ -1021,8 +949,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "In the latest monthly result, Cybersecurity contributed +5.07% to Claude Fable 5.1's portfolio. No holding detracted; the smallest positive contribution came from US Large-Cap Value at +0.18%.",
-      "title": "Claude Fable 5.1's result was driven by Cybersecurity",
+      "summary": "In the latest monthly result, Cybersecurity contributed +4.97% to Grok 4.3's portfolio. No holding detracted; the smallest positive contribution came from S&P 500 at +1.17%.",
+      "title": "Grok 4.3's result was driven by Cybersecurity",
       "why_it_matters": "Attribution turns a model score into an explanation of which holdings actually helped or hurt the frozen portfolio."
     },
     {
@@ -1077,7 +1005,7 @@
           "source": "rounds/CB-2026-10-04-1W/runs/20261005-022943-official/results/allocations.csv"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "attribution-CB-2026-10-04-1W-openai-gpt-6-astra",
       "importance_score": 83.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -1112,23 +1040,23 @@
           "formula": "average monthly allocation by asset-risk regime",
           "name": "monthly_top_regime_allocation",
           "unit": "percentage_points",
-          "value": 80.7143
+          "value": 65.7143
         }
       ],
       "category": "horizon_agreement",
       "confidence": "medium",
       "context": {
-        "data_as_of": "2026-10-10",
+        "data_as_of": "2026-10-12",
         "decision_dates": [
-          "2026-10-10",
-          "2026-10-10"
+          "2026-10-12",
+          "2026-10-12"
         ],
         "model_count": 14,
         "primary_label": "Latest live portfolios",
         "round_count": 2,
         "round_ids": [
-          "CB-2026-10-10-1W",
-          "CB-2026-10-10-1M"
+          "CB-2026-10-12-1W",
+          "CB-2026-10-12-1M"
         ],
         "scope": "live_rounds",
         "status": "active",
@@ -1136,22 +1064,22 @@
         "track": "weekly_monthly",
         "track_label": "Weekly + Monthly"
       },
-      "data_as_of": "2026-10-10",
+      "data_as_of": "2026-10-12",
       "date": "2026-10-13",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-10-10-1W",
+          "href": "/rounds/CB-2026-10-12-1W",
           "label": "Weekly live round",
-          "source": "rounds/CB-2026-10-10-1W"
+          "source": "rounds/CB-2026-10-12-1W"
         },
         {
-          "href": "/rounds/CB-2026-10-10-1M",
+          "href": "/rounds/CB-2026-10-12-1M",
           "label": "Monthly live round",
-          "source": "rounds/CB-2026-10-10-1M"
+          "source": "rounds/CB-2026-10-12-1M"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
-      "id": "horizon-agreement-2026-10-10",
+      "generated_at": "2026-10-13T09:28:56Z",
+      "id": "horizon-agreement-2026-10-12",
       "importance_score": 82.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
       "publication_tier": "category",
@@ -1264,7 +1192,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-monthly-down-leader",
       "importance_score": 80.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -1297,75 +1225,72 @@
           "formula": "average model return across resolved monthly up environments",
           "name": "average_model_return",
           "unit": "percent",
-          "value": 4.1116
+          "value": 5.2151
         },
         {
           "formula": "average S&P 500 return across the same monthly environments",
           "name": "average_sp500_return",
           "unit": "percent",
-          "value": 3.8959
+          "value": 2.2009
         },
         {
           "formula": "100 * summed model return / summed hindsight-best eligible return",
           "name": "capitalbench_score",
           "unit": "points",
-          "value": 13.9677
+          "value": 2.5842
         },
         {
           "formula": "resolved rounds shared by every eligible model in the comparison",
           "name": "model_observations",
           "unit": "count",
-          "value": 6
+          "value": 3
         },
         {
           "formula": "leader average return minus runner-up average return on the shared cohort",
           "name": "leader_margin",
           "unit": "percentage_points",
-          "value": 0.6439
+          "value": 0.6384
         },
         {
           "formula": "lower bound of the paired 95% confidence interval for the leader margin",
           "name": "leader_margin_ci_95_low",
           "unit": "percentage_points",
-          "value": -1.3894
+          "value": -0.0746
         },
         {
           "formula": "share of leave-one-round-out samples retaining the same leader",
           "name": "leave_one_out_stability",
           "unit": "ratio",
-          "value": 0.8333
+          "value": 0.6667
         }
       ],
       "category": "market_environment",
       "confidence": "medium",
       "context": {
         "comparison_method": "shared_round_cohort",
-        "comparison_round_count": 6,
+        "comparison_round_count": 3,
         "data_as_of": "2026-10-12",
-        "eligible_model_count": 8,
+        "eligible_model_count": 7,
         "environment_key": "up",
-        "environment_round_count": 28,
+        "environment_round_count": 29,
         "insight_kind": "direction_leader",
-        "leave_one_out_stability": 0.8333333333333334,
+        "leave_one_out_stability": 0.6666666666666666,
         "maturity": "ready",
         "model": {
-          "label": "Grok 4.5",
-          "model_id": "xai-grok-4-5"
+          "label": "Claude Opus 5",
+          "model_id": "anthropic-claude-opus-5"
         },
         "model_count": 1,
         "model_ids": [
-          "xai-grok-4-5"
+          "anthropic-claude-opus-5"
         ],
-        "model_observation_count": 6,
+        "model_observation_count": 3,
         "primary_label": "Monthly up environments",
-        "round_count": 6,
+        "round_count": 3,
         "round_ids": [
-          "CB-2026-07-24-1M",
-          "CB-2026-07-27-1M",
-          "CB-2026-07-28-1M",
-          "CB-2026-07-29-1M",
-          "CB-2026-07-30-1M",
-          "CB-2026-07-31-1M"
+          "CB-2026-09-09-1M",
+          "CB-2026-09-10-1M",
+          "CB-2026-09-11-1M"
         ],
         "scope": "resolved_history",
         "status": "resolved",
@@ -1382,15 +1307,15 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-monthly-up-leader",
       "importance_score": 80.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
       "publication_tier": "category",
       "related": [
         {
-          "href": "/models/xai-grok-4-5/",
-          "label": "Grok 4.5"
+          "href": "/models/anthropic-claude-opus-5/",
+          "label": "Claude Opus 5"
         },
         {
           "href": "/leaderboards/market-regime-benchmark/",
@@ -1399,8 +1324,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The model averaged +4.11% across 6 shared-cohort rounds drawn from 28 resolved monthly up environments. The sample meets publication thresholds.",
-      "title": "Grok 4.5 leads when the S&P 500 is positive",
+      "summary": "The model averaged +5.22% across 3 shared-cohort rounds drawn from 29 resolved monthly up environments. The sample meets publication thresholds.",
+      "title": "Claude Opus 5 leads when the S&P 500 is positive",
       "why_it_matters": "Environment-specific returns show whether a model's all-history result is broad or depends on a particular market direction."
     },
     {
@@ -1497,7 +1422,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-weekly-down-leader",
       "importance_score": 80.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -1613,7 +1538,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-weekly-up-leader",
       "importance_score": 80.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -1638,6 +1563,75 @@
       "audiences": [
         "investors",
         "capital_allocators",
+        "traders"
+      ],
+      "calculations": [
+        {
+          "formula": "average allocation across newest live model portfolios",
+          "name": "aggregate_live_allocation",
+          "unit": "percentage_points",
+          "value": 27.5
+        }
+      ],
+      "category": "current_positioning",
+      "confidence": "medium",
+      "context": {
+        "asset_label": "S&P 500",
+        "asset_option_id": "SP500",
+        "asset_ticker": "SPY",
+        "data_as_of": "2026-10-12",
+        "decision_dates": [
+          "2026-10-12",
+          "2026-10-12"
+        ],
+        "model_count": 14,
+        "primary_label": "Latest live portfolios",
+        "round_count": 2,
+        "round_ids": [
+          "CB-2026-10-12-1W",
+          "CB-2026-10-12-1M"
+        ],
+        "scope": "live_rounds",
+        "status": "active",
+        "status_label": "Live portfolios",
+        "track": "weekly_monthly",
+        "track_label": "Weekly + Monthly"
+      },
+      "data_as_of": "2026-10-12",
+      "date": "2026-10-13",
+      "evidence": [
+        {
+          "href": "/rounds/CB-2026-10-12-1W",
+          "label": "Weekly live round",
+          "source": "rounds/CB-2026-10-12-1W"
+        },
+        {
+          "href": "/rounds/CB-2026-10-12-1M",
+          "label": "Monthly live round",
+          "source": "rounds/CB-2026-10-12-1M"
+        }
+      ],
+      "generated_at": "2026-10-13T09:28:56Z",
+      "id": "active-positioning-2026-10-12",
+      "importance_score": 78.0,
+      "publication_reason": "The finding is useful in its category without displacing broader signals.",
+      "publication_tier": "category",
+      "related": [
+        {
+          "href": "/risk-appetite",
+          "label": "AI Risk Appetite"
+        }
+      ],
+      "source_type": "deterministic",
+      "status": "published",
+      "summary": "Across the newest live weekly and monthly portfolios, S&P 500 (SPY) is the largest aggregate allocation at +27.50%.",
+      "title": "Live AI portfolios are concentrated in S&P 500 (SPY)",
+      "why_it_matters": "This shows the current crowding point in model capital allocation, before the open rounds receive their final market scores."
+    },
+    {
+      "audiences": [
+        "investors",
+        "capital_allocators",
         "ai_researchers"
       ],
       "calculations": [
@@ -1645,19 +1639,19 @@
           "formula": "minimum direction-level CapitalBench Score across tested market directions",
           "name": "score_floor",
           "unit": "points",
-          "value": 2.8789
+          "value": -6.6801
         },
         {
           "formula": "average of direction-level model returns",
           "name": "average_model_return",
           "unit": "percent",
-          "value": 1.9658
+          "value": 0.5161
         },
         {
           "formula": "market directions with scored model observations",
           "name": "directions_covered",
           "unit": "count",
-          "value": 2
+          "value": 3
         }
       ],
       "category": "market_environment",
@@ -1665,28 +1659,28 @@
       "context": {
         "comparison_method": "shared_round_cohort",
         "data_as_of": "2026-10-12",
-        "environment_count": 2,
+        "environment_count": 3,
         "insight_kind": "consistency",
         "maturity": "ready",
-        "minimum_direction_observations": 6,
+        "minimum_direction_observations": 3,
         "model": {
-          "label": "Claude Fable 5",
-          "model_id": "anthropic-claude-fable-5"
+          "label": "Grok 4.3",
+          "model_id": "xai-grok-4-3"
         },
         "model_count": 1,
         "model_ids": [
-          "anthropic-claude-fable-5"
+          "xai-grok-4-3"
         ],
-        "model_observation_count": 15,
+        "model_observation_count": 18,
         "primary_label": "Monthly environment consistency",
-        "round_count": 15,
+        "round_count": 18,
         "round_ids": [
-          "CB-2026-07-24-1M",
-          "CB-2026-07-27-1M",
-          "CB-2026-07-28-1M",
-          "CB-2026-07-29-1M",
-          "CB-2026-07-30-1M",
-          "CB-2026-07-31-1M",
+          "CB-2026-05-28-1M",
+          "CB-2026-05-29-1M",
+          "CB-2026-06-01-1M",
+          "CB-2026-06-02-1M",
+          "CB-2026-06-03-1M",
+          "CB-2026-06-29-1M",
           "CB-2026-08-19-1M",
           "CB-2026-08-23-1M",
           "CB-2026-08-24-1M",
@@ -1695,7 +1689,10 @@
           "CB-2026-08-27-1M",
           "CB-2026-08-30-1M",
           "CB-2026-09-01-1M",
-          "CB-2026-09-02-1M"
+          "CB-2026-09-02-1M",
+          "CB-2026-09-09-1M",
+          "CB-2026-09-10-1M",
+          "CB-2026-09-11-1M"
         ],
         "scope": "resolved_history",
         "status": "resolved",
@@ -1712,15 +1709,15 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-monthly-consistency",
       "importance_score": 78.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
       "publication_tier": "category",
       "related": [
         {
-          "href": "/models/anthropic-claude-fable-5/",
-          "label": "Claude Fable 5"
+          "href": "/models/xai-grok-4-3/",
+          "label": "Grok 4.3"
         },
         {
           "href": "/leaderboards/market-regime-benchmark/",
@@ -1729,8 +1726,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Its lowest CapitalBench Score across 2 tested market directions is 2.9, with at least 6 model observations in each included direction.",
-      "title": "Claude Fable 5 has the strongest monthly score floor",
+      "summary": "Its lowest CapitalBench Score across 3 tested market directions is -6.7, with at least 3 model observations in each included direction.",
+      "title": "Grok 4.3 has the strongest monthly score floor",
       "why_it_matters": "A stronger floor identifies models whose benchmark performance is less dependent on one favorable market direction."
     },
     {
@@ -1810,7 +1807,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-weekly-consistency",
       "importance_score": 78.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -1842,7 +1839,7 @@
           "formula": "allocation-weighted percentile of 21 trading sessions relative to SPY",
           "name": "leader_recent_winner_tilt_score",
           "unit": "score_100",
-          "value": 50.0
+          "value": 39.8134
         },
         {
           "formula": "allocation to the top 20% by 21 trading sessions relative to SPY",
@@ -1854,39 +1851,39 @@
           "formula": "model tilt score minus the median score of other models in the same round",
           "name": "leader_peer_delta",
           "unit": "score_points",
-          "value": 18.6754
+          "value": 22.1269
         }
       ],
       "category": "model_behavior",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-10-10",
-        "decision_date": "2026-10-10",
-        "entry_date": "2026-10-09",
-        "exit_date": "2026-11-09",
+        "data_as_of": "2026-10-12",
+        "decision_date": "2026-10-12",
+        "entry_date": "2026-10-12",
+        "exit_date": "2026-11-12",
         "model_count": 7,
         "primary_label": "Monthly live round",
         "result_count": 0,
-        "round_id": "CB-2026-10-10-1M",
-        "run_id": "official-20261010-1M",
+        "round_id": "CB-2026-10-12-1M",
+        "run_id": "official-20261012-1M-clean",
         "scope": "round",
         "status": "active",
         "status_label": "Live portfolios",
         "track": "monthly",
         "track_label": "Monthly"
       },
-      "data_as_of": "2026-10-10",
+      "data_as_of": "2026-10-12",
       "date": "2026-10-13",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-10-10-1M",
+          "href": "/rounds/CB-2026-10-12-1M",
           "label": "Monthly round",
-          "source": "rounds/CB-2026-10-10-1M/market_data/universe_decision_context.json"
+          "source": "rounds/CB-2026-10-12-1M/market_data/universe_decision_context.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
-      "id": "recent-winner-tilt-CB-2026-10-10-1M",
+      "generated_at": "2026-10-13T09:28:56Z",
+      "id": "recent-winner-tilt-CB-2026-10-12-1M",
       "importance_score": 78.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
       "publication_tier": "category",
@@ -1898,8 +1895,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Its score is 50.0 out of 100, with 0.0% in the top recent-return quintile. Grok 4.5 is lowest at 4.1.",
-      "title": "Grok 4.3 has the strongest current monthly recent-winner tilt",
+      "summary": "Its score is 39.8 out of 100, with 0.0% in the top recent-return quintile. Gemini 3.1 Pro is lowest at 1.9.",
+      "title": "GPT-6 Astra has the strongest current monthly recent-winner tilt",
       "why_it_matters": "This compares how strongly current model portfolios favor assets that had already outperformed. It describes the allocation and does not infer why the model chose it."
     },
     {
@@ -1913,51 +1910,51 @@
           "formula": "allocation-weighted percentile of 5 trading sessions relative to SPY",
           "name": "leader_recent_winner_tilt_score",
           "unit": "score_100",
-          "value": 50.0
+          "value": 64.3657
         },
         {
           "formula": "allocation to the top 20% by 5 trading sessions relative to SPY",
           "name": "leader_top_recent_winner_quintile_allocation",
           "unit": "percentage_points",
-          "value": 0.0
+          "value": 35.0
         },
         {
           "formula": "model tilt score minus the median score of other models in the same round",
           "name": "leader_peer_delta",
           "unit": "score_points",
-          "value": 35.2612
+          "value": 61.1567
         }
       ],
       "category": "model_behavior",
       "confidence": "high",
       "context": {
         "asset_count": 70,
-        "data_as_of": "2026-10-10",
-        "decision_date": "2026-10-10",
-        "entry_date": "2026-10-09",
-        "exit_date": "2026-10-16",
+        "data_as_of": "2026-10-12",
+        "decision_date": "2026-10-12",
+        "entry_date": "2026-10-12",
+        "exit_date": "2026-10-19",
         "model_count": 7,
         "primary_label": "Weekly live round",
         "result_count": 0,
-        "round_id": "CB-2026-10-10-1W",
-        "run_id": "official-20261010-1W",
+        "round_id": "CB-2026-10-12-1W",
+        "run_id": "official-20261012-1W-clean",
         "scope": "round",
         "status": "active",
         "status_label": "Live portfolios",
         "track": "weekly",
         "track_label": "Weekly"
       },
-      "data_as_of": "2026-10-10",
+      "data_as_of": "2026-10-12",
       "date": "2026-10-13",
       "evidence": [
         {
-          "href": "/rounds/CB-2026-10-10-1W",
+          "href": "/rounds/CB-2026-10-12-1W",
           "label": "Weekly round",
-          "source": "rounds/CB-2026-10-10-1W/market_data/universe_decision_context.json"
+          "source": "rounds/CB-2026-10-12-1W/market_data/universe_decision_context.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
-      "id": "recent-winner-tilt-CB-2026-10-10-1W",
+      "generated_at": "2026-10-13T09:28:56Z",
+      "id": "recent-winner-tilt-CB-2026-10-12-1W",
       "importance_score": 78.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
       "publication_tier": "category",
@@ -1969,8 +1966,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Its score is 50.0 out of 100, with 0.0% in the top recent-return quintile. Gemini 3.1 Pro is lowest at 1.4.",
-      "title": "Grok 4.6 has the strongest current weekly recent-winner tilt",
+      "summary": "Its score is 64.4 out of 100, with 35.0% in the top recent-return quintile. Claude Fable 5.1 is lowest at 2.3.",
+      "title": "Grok 4.3 has the strongest current weekly recent-winner tilt",
       "why_it_matters": "This compares how strongly current model portfolios favor assets that had already outperformed. It describes the allocation and does not infer why the model chose it."
     },
     {
@@ -1984,29 +1981,28 @@
           "formula": "interim model return - interim S&P 500 return",
           "name": "best_live_alpha",
           "unit": "percentage_points",
-          "value": 5.13
+          "value": 2.667
         },
         {
           "formula": "interim model return - interim S&P 500 return",
           "name": "worst_live_alpha",
           "unit": "percentage_points",
-          "value": -6.9105
+          "value": -5.5174
         }
       ],
       "category": "live_performance",
       "confidence": "medium",
       "context": {
         "best": {
-          "model_id": "xai-grok-4-3",
-          "model_label": "Grok 4.3",
-          "round_id": "CB-2026-09-11-1M"
+          "model_id": "anthropic-claude-fable-5-1",
+          "model_label": "Claude Fable 5.1",
+          "round_id": "CB-2026-09-13-1M"
         },
         "data_as_of": "2026-10-09",
         "model_count": 8,
         "primary_label": "Open-round interim performance",
-        "round_count": 10,
+        "round_count": 9,
         "round_ids": [
-          "CB-2026-09-11-1M",
           "CB-2026-09-13-1M",
           "CB-2026-09-15-1M",
           "CB-2026-09-16-1M",
@@ -2023,9 +2019,9 @@
         "track": "all_live",
         "track_label": "Open weekly + monthly",
         "worst": {
-          "model_id": "google-gemini-3-1-pro",
-          "model_label": "Gemini 3.1 Pro",
-          "round_id": "CB-2026-09-11-1M"
+          "model_id": "anthropic-claude-opus-5",
+          "model_label": "Claude Opus 5",
+          "round_id": "CB-2026-09-16-1M"
         }
       },
       "data_as_of": "2026-10-09",
@@ -2037,7 +2033,7 @@
           "source": "weekly_performance.csv"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "live-path-2026-10-09",
       "importance_score": 77.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
@@ -2050,8 +2046,8 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "Using the latest available interim close, Grok 4.3 in CB-2026-09-11-1M is ahead of the S&P 500 by +5.13 percentage points, while Gemini 3.1 Pro in CB-2026-09-11-1M is at -6.91 percentage points.",
-      "title": "Grok 4.3 has the strongest live alpha",
+      "summary": "Using the latest available interim close, Claude Fable 5.1 in CB-2026-09-13-1M is ahead of the S&P 500 by +2.67 percentage points, while Claude Opus 5 in CB-2026-09-16-1M is at -5.52 percentage points.",
+      "title": "Claude Fable 5.1 has the strongest live alpha",
       "why_it_matters": "Live alpha is provisional, but it shows how open model portfolios are moving before the final official score."
     },
     {
@@ -2066,7 +2062,7 @@
           "formula": "absolute difference between average up- and down-environment model returns",
           "name": "average_return_gap",
           "unit": "percentage_points",
-          "value": 8.334
+          "value": 5.4164
         },
         {
           "formula": "average model return in down environments",
@@ -2078,7 +2074,7 @@
           "formula": "average model return in up environments",
           "name": "up_average_return",
           "unit": "percent",
-          "value": 3.2537
+          "value": 0.3361
         }
       ],
       "category": "market_environment",
@@ -2099,7 +2095,7 @@
           "google-gemini-3-1-pro"
         ],
         "primary_label": "Monthly up/down split",
-        "round_count": 12,
+        "round_count": 9,
         "round_ids": [
           "CB-2026-05-28-1M",
           "CB-2026-05-29-1M",
@@ -2107,20 +2103,17 @@
           "CB-2026-06-02-1M",
           "CB-2026-06-03-1M",
           "CB-2026-06-29-1M",
-          "CB-2026-07-24-1M",
-          "CB-2026-07-27-1M",
-          "CB-2026-07-28-1M",
-          "CB-2026-07-29-1M",
-          "CB-2026-07-30-1M",
-          "CB-2026-07-31-1M"
+          "CB-2026-09-09-1M",
+          "CB-2026-09-10-1M",
+          "CB-2026-09-11-1M"
         ],
         "scope": "resolved_history",
         "status": "resolved",
         "status_label": "Ready sample",
         "track": "monthly",
         "track_label": "Monthly",
-        "up_environment_round_count": 28,
-        "up_model_observation_count": 6
+        "up_environment_round_count": 29,
+        "up_model_observation_count": 3
       },
       "data_as_of": "2026-10-12",
       "date": "2026-10-13",
@@ -2131,7 +2124,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-monthly-split",
       "importance_score": 76.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -2148,7 +2141,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The model averaged -5.08% in down environments and +3.25% in up environments, a 8.3 percentage-point gap.",
+      "summary": "The model averaged -5.08% in down environments and +0.34% in up environments, a 5.4 percentage-point gap.",
       "title": "Gemini 3.1 Pro changes most between monthly up and down environments",
       "why_it_matters": "A large directional split identifies models whose benchmark behavior is especially sensitive to the market backdrop."
     },
@@ -2224,7 +2217,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-weekly-split",
       "importance_score": 76.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -2261,23 +2254,23 @@
           "formula": "1 - average cosine similarity versus other live model allocation vectors",
           "name": "outlier_average_distance",
           "unit": "ratio",
-          "value": 0.741
+          "value": 0.5802
         }
       ],
       "category": "model_similarity",
       "confidence": "medium",
       "context": {
-        "data_as_of": "2026-10-10",
+        "data_as_of": "2026-10-12",
         "decision_dates": [
-          "2026-10-10",
-          "2026-10-10"
+          "2026-10-12",
+          "2026-10-12"
         ],
         "model_count": 14,
         "primary_label": "Latest live portfolios",
         "round_count": 2,
         "round_ids": [
-          "CB-2026-10-10-1W",
-          "CB-2026-10-10-1M"
+          "CB-2026-10-12-1W",
+          "CB-2026-10-12-1M"
         ],
         "scope": "live_rounds",
         "status": "active",
@@ -2285,7 +2278,7 @@
         "track": "weekly_monthly",
         "track_label": "Weekly + Monthly"
       },
-      "data_as_of": "2026-10-10",
+      "data_as_of": "2026-10-12",
       "date": "2026-10-13",
       "evidence": [
         {
@@ -2294,8 +2287,8 @@
           "source": "live parsed submissions"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
-      "id": "model-similarity-2026-10-10",
+      "generated_at": "2026-10-13T09:28:56Z",
+      "id": "model-similarity-2026-10-12",
       "importance_score": 76.0,
       "publication_reason": "The finding is useful in its category without displacing broader signals.",
       "publication_tier": "category",
@@ -2307,7 +2300,7 @@
       ],
       "source_type": "deterministic",
       "status": "published",
-      "summary": "The closest live allocation pair is Claude Fable 5.1 and anthropic-claude-opus-5-5 with +94.41% cosine similarity. The current allocation outlier is Grok 4.5.",
+      "summary": "The closest live allocation pair is anthropic-claude-opus-5-5 and GPT-6 Astra with +94.41% cosine similarity. The current allocation outlier is Gemini 3.1 Pro.",
       "title": "Live model portfolios are tightly clustered",
       "why_it_matters": "Similarity analysis shows whether models are independently converging on the same portfolio or expressing meaningfully different capital-allocation behavior."
     },
@@ -2411,7 +2404,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-monthly-flat-leader",
       "importance_score": 74.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -2530,7 +2523,7 @@
           "source": "insights/market_environment_latest.json"
         }
       ],
-      "generated_at": "2026-10-13T02:04:15Z",
+      "generated_at": "2026-10-13T09:28:56Z",
       "id": "market-environment-weekly-flat-leader",
       "importance_score": 74.0,
       "publication_reason": "A mature environment finding belongs on benchmark and insight surfaces.",
@@ -2554,12 +2547,12 @@
   ],
   "publication_policy_version": "capitalbench_publication_policy_v1",
   "run_date": "2026-10-13",
-  "run_id": "20261013T020415Z-bfcde7fd35c3",
+  "run_id": "20261013T092856Z-59cb3a2c7e4a",
   "source": {
-    "build_fingerprint": "bfcde7fd35c31d556eaa54ae5b6edd79bc37743f5061cc94e40ce6ae59d2ac3f",
+    "build_fingerprint": "59cb3a2c7e4ae22295064e7eb097c3d7ee24c1aa25cb0e7ecc8416e530f1b490",
     "build_fingerprint_version": "capitalbench_insights_build_fingerprint_v2",
-    "capitalbench_generated_at": "2026-10-13T02:04:15Z",
-    "data_fingerprint": "d65e8c7b0aa22819c558972c31974b4319f36a31ed4d3f65c5653f63ed4116f2",
+    "capitalbench_generated_at": "2026-10-13T09:28:56Z",
+    "data_fingerprint": "76cd4610b4ddbbee3ffd2e3968fb3df7eae9c63b0b1b95c8a8b405d8b75ffb8f",
     "data_fingerprint_version": "capitalbench_insights_data_fingerprint_v3",
     "input_version": "capitalbench_insights_input_v1",
     "llm": {
