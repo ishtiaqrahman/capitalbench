@@ -33,7 +33,14 @@ structured decision. Technical or formatting retries must remain disclosed and
 must never be used to seek a different portfolio.
 
 The active production roster has seven models: GPT-6 Astra, Grok 4.3, Grok
-4.5, Grok 4.6, Gemini 3.1 Pro, Claude Opus 5.5, and Claude Fable 5.1.
+4.5, Grok 4.6, Gemini 4 Argon, Claude Opus 5.5, and Claude Fable 5.1.
+Gemini 4 Argon replaces Gemini 3.1 Pro for future rounds effective
+`2026-10-14T20:38:28Z`, using API ID `gemini-4-argon` and low thinking.
+The adapter omits ignored temperature and retains the standard 6,000-token
+and 180-second limits with no continuation calls or participant tools.
+Preserve all Gemini 3.1 historical artifacts and frozen rosters. Argon is a
+new participant: its first accepted frozen roster starts a new comparison
+origin, with no historical backfill.
 GPT-6 Astra joined future rounds effective `2026-09-05T02:40:00Z`
 (September 4, 2026 in America/Toronto) using OpenAI API model ID
 `gpt-6-astra`, `reasoning_effort: low`, and no temperature parameter.

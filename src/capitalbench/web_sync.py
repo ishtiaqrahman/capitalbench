@@ -35,6 +35,7 @@ MODEL_DISPLAY_NAMES = {
     "anthropic-claude-opus-4-8": "Claude Opus 4.8",
     "anthropic-claude-opus-5": "Claude Opus 5",
     "google-gemini-3-1-pro": "Gemini 3.1 Pro",
+    "google-gemini-4-argon": "Gemini 4 Argon",
     "openai-gpt-5-5": "GPT-5.5",
     "openai-gpt-5-6-sol": "GPT-5.6 Sol",
     "openai-gpt-6-astra": "GPT-6 Astra",

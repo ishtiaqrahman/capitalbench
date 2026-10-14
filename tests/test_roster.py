@@ -47,8 +47,17 @@ EXPECTED_POST_FABLE_5_RETIREMENT_MODEL_IDS = (
 
 def test_canonical_portfolio_v2_roster_preserves_history_and_adds_successors() -> None:
     assert set(canonical_portfolio_v2_model_ids()) == EXPECTED_PORTFOLIO_V2_MODEL_IDS | {
-        "openai-gpt-6-astra", "anthropic-claude-opus-5-5"
+        "openai-gpt-6-astra", "anthropic-claude-opus-5-5", "google-gemini-4-argon"
     }
+
+
+def test_argon_replaces_gemini_only_from_its_eligibility_timestamp() -> None:
+    before = set(active_portfolio_v2_model_ids("2026-10-14T20:38:27Z"))
+    after = set(active_portfolio_v2_model_ids("2026-10-14T20:38:28Z"))
+    assert "google-gemini-3-1-pro" in before
+    assert "google-gemini-4-argon" not in before
+    assert after == (before - {"google-gemini-3-1-pro"}) | {"google-gemini-4-argon"}
+    assert len(after) == 7
 
 
 def test_astra_replaces_sol_only_from_its_eligibility_timestamp() -> None:

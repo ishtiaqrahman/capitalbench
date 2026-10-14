@@ -1,3 +1,5 @@
+import pytest
+
 from capitalbench.providers.base import parse_json_object
 from capitalbench.providers.anthropic_provider import AnthropicProvider, _to_anthropic_output_schema
 from capitalbench.providers.google_provider import GoogleProvider, _to_google_response_schema
@@ -633,11 +635,12 @@ def test_google_provider_retries_without_native_schema_after_invalid_argument(mo
     assert "Required JSON schema:" in payloads[1]["contents"][0]["parts"][0]["text"]
 
 
-def test_google_provider_uses_thinking_level_for_gemini_3(monkeypatch) -> None:
+@pytest.mark.parametrize("api_model_name", ["gemini-3.1-pro-preview", "gemini-4-argon"])
+def test_google_provider_uses_thinking_level(monkeypatch, api_model_name) -> None:
     monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
     provider = GoogleProvider()
     captured_payload = {}
-    config = _model_config().model_copy(update={"api_model_name": "gemini-3.1-pro-preview"})
+    config = _model_config().model_copy(update={"api_model_name": api_model_name})
     raw_json = (
         '{"round_id":"example-round","model_id":"openai-smoke","provider":"openai",'
         '"mode":"closed_capability","selected_option_id":"SP500","confidence":0.5,'
@@ -661,6 +664,9 @@ def test_google_provider_uses_thinking_level_for_gemini_3(monkeypatch) -> None:
     )
 
     assert captured_payload["generationConfig"]["thinkingConfig"] == {"thinkingLevel": "low"}
+    assert ("temperature" in captured_payload["generationConfig"]) == api_model_name.startswith("gemini-3")
+    assert captured_payload["tools"] == []
+    assert captured_payload["toolConfig"]["functionCallingConfig"]["mode"] == "NONE"
 
 
 def test_google_provider_leaves_thinking_default_for_real_runs(monkeypatch) -> None:

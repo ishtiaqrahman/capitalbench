@@ -69,6 +69,13 @@ tokens, and raw provider responses.
 
 3. Validate the run.
 
+   Gemini 3.1 Pro is retired forward-only effective `2026-10-14T20:38:28Z`.
+   Its successor is Gemini 4 Argon (`google-gemini-4-argon`, API model
+   `gemini-4-argon`) with low thinking and no temperature parameter. Keep
+   the benchmark's 6,000-token/180-second limits, tools disabled, and no
+   continuation calls. Do not rewrite existing frozen rosters or backfill
+   Argon; its first accepted roster starts a new comparison origin.
+
    GPT-5.6 SOL is retired from new rounds effective `2026-09-05T02:40:00Z`
    (September 4, 2026 in America/Toronto). Its forward-only successor is
    GPT-6 Astra, API model `gpt-6-astra`, using `reasoning_effort: low` and

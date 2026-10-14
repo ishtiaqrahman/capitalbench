@@ -30,6 +30,9 @@ class GoogleProvider(BaseProvider):
             "responseMimeType": "application/json",
             "responseSchema": _to_google_response_schema(json_schema),
         }
+        if model_config.api_model_name.lower().startswith("gemini-4"):
+            # Gemini 4 ignores deprecated sampling parameters.
+            generation_config.pop("temperature", None)
         thinking_config = _google_thinking_config(
             model_config.api_model_name,
             runtime_limits.reasoning_effort,
@@ -105,7 +108,7 @@ def _google_thinking_config(
 ) -> dict[str, int | str] | None:
     if reasoning_effort is None:
         return None
-    if api_model_name.lower().startswith("gemini-3"):
+    if api_model_name.lower().startswith(("gemini-3", "gemini-4")):
         levels = {
             "minimal": "minimal",
             "low": "low",
