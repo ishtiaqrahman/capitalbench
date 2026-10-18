@@ -598,7 +598,8 @@ def test_init_round_can_create_portfolio_protocol_round(tmp_path: Path) -> None:
     assert manifest["methodology_version"] == "portfolio-v3.0"
     assert manifest["model_roster_version"].startswith("portfolio-v3-roster-")
     assert manifest["model_roster_frozen_at_utc"]
-    assert len(manifest["expected_model_ids"]) == 7
+    assert len(manifest["expected_model_ids"]) == 6
+    assert "xai-grok-4-3" not in manifest["expected_model_ids"]
     assert "anthropic-claude-opus-4-7" not in manifest["expected_model_ids"]
     assert "anthropic-claude-opus-4-8" not in manifest["expected_model_ids"]
     assert "openai-gpt-5-5" not in manifest["expected_model_ids"]

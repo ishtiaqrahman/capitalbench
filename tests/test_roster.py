@@ -60,6 +60,22 @@ def test_argon_replaces_gemini_only_from_its_eligibility_timestamp() -> None:
     assert len(after) == 7
 
 
+def test_grok_4_3_retirement_is_forward_only() -> None:
+    before = set(active_portfolio_v2_model_ids("2026-10-18T02:19:41Z"))
+    after = set(active_portfolio_v2_model_ids("2026-10-18T02:19:42Z"))
+    assert "xai-grok-4-3" in before
+    assert after == before - {"xai-grok-4-3"}
+    assert len(after) == 6
+    configs = load_model_configs(PROJECT_ROOT / "configs" / "models.v2.yaml")
+    retired = next(config for config in configs if config.model_id == "xai-grok-4-3")
+    assert retired.enabled
+    assert retired.successor_model_id is None
+    historical = [config for config in configs if config.model_id in before]
+    assert set(validate_official_portfolio_v2_roster(
+        "portfolio-v2.2", historical, before
+    )) == before
+
+
 def test_astra_replaces_sol_only_from_its_eligibility_timestamp() -> None:
     assert set(active_portfolio_v2_model_ids(
         "2026-09-05T02:39:59Z", round_id="CB-2026-09-04-1W"

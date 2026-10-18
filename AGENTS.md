@@ -32,8 +32,12 @@ provider-supported reasoning setting that still returns the required valid
 structured decision. Technical or formatting retries must remain disclosed and
 must never be used to seek a different portfolio.
 
-The active production roster has seven models: GPT-6 Astra, Grok 4.3, Grok
-4.5, Grok 4.6, Gemini 4 Argon, Claude Opus 5.5, and Claude Fable 5.1.
+The active production roster has six models: GPT-6 Astra, Grok 4.5, Grok 4.6,
+Gemini 4 Argon, Claude Opus 5.5, and Claude Fable 5.1.
+Grok 4.3 is permanently retired from future rounds by operator direction
+effective `2026-10-18T02:19:42Z` (October 17 in America/Toronto), with no
+designated successor. Preserve its registry entry, historical submissions,
+results, profiles, comparison sets, and every already frozen roster.
 Gemini 4 Argon replaces Gemini 3.1 Pro for future rounds effective
 `2026-10-14T20:38:28Z`, using API ID `gemini-4-argon` and low thinking.
 The adapter omits ignored temperature and retains the standard 6,000-token

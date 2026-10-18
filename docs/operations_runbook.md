@@ -69,6 +69,12 @@ tokens, and raw provider responses.
 
 3. Validate the run.
 
+   Grok 4.3 is permanently retired from future rounds by operator direction
+   effective `2026-10-18T02:19:42Z` (October 17 in America/Toronto), with no
+   designated successor. Keep its enabled registry entry for frozen historical
+   rosters and research. Newly initialized rounds exclude it; never remove it
+   from already frozen rounds or rewrite results or comparison sets.
+
    Gemini 3.1 Pro is retired forward-only effective `2026-10-14T20:38:28Z`.
    Its successor is Gemini 4 Argon (`google-gemini-4-argon`, API model
    `gemini-4-argon`) with low thinking and no temperature parameter. Keep
