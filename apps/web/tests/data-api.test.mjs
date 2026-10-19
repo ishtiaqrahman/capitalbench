@@ -761,8 +761,9 @@ test("model behavior endpoint exposes canonical behavior profiles", async () => 
   assert.ok(patterns.body.rows.every((row) => row.portfolio_difference?.current_methodology?.observation_count > 0));
   assert.ok(detail.body.methodology_href.includes("/models/patterns/#methodology"));
   assert.equal(detail.body.behavior_v2.version, "model_behavior_v2");
-  assert.deepEqual(detail.body.behavior_v2.pills.map((pill) => pill.role), ["Signature", "Construction", "Tempo", "Now"]);
-  for (const retiredModelId of ["openai-gpt-5-5", "openai-gpt-5-6-sol"]) {
+  assert.equal(detail.body.lifecycle_status, "retired");
+  assert.deepEqual(detail.body.behavior_v2.pills.map((pill) => pill.role), ["Signature", "Construction", "Tempo", "Lifecycle"]);
+  for (const retiredModelId of ["openai-gpt-5-5", "openai-gpt-5-6-sol", "google-gemini-3-1-pro", "xai-grok-4-3"]) {
     const retiredDetail = await apiGet(`/api/v1/models/${retiredModelId}/behavior`);
     assert.equal(retiredDetail.status, 200);
     assert.equal(retiredDetail.body.model_id, retiredModelId);
