@@ -1,0 +1,37 @@
+run_id: official-20261022-1W
+round_id: CB-2026-10-22-1W
+run_type: official
+mode: closed_capability
+mock: false
+created_at_utc: '2026-10-23T01:58:38.118524+00:00'
+models_config_file: configs/models.v2.yaml
+models_path: configs/models.v2.yaml
+pricing_path: null
+replicates: 1
+allow_real_api_calls: true
+official_score_eligible: false
+model_roster_version: portfolio-v3-roster-5f7392bbcea6
+expected_model_ids:
+- openai-gpt-6-astra
+- anthropic-claude-opus-5-5
+- anthropic-claude-fable-5-1
+- google-gemini-4-argon
+- xai-grok-4-5
+- xai-grok-4-6
+model_count: 6
+valid_submissions: 5
+invalid_submissions: 1
+model_ids:
+- openai-gpt-6-astra
+- anthropic-claude-opus-5-5
+- anthropic-claude-fable-5-1
+- google-gemini-4-argon
+- xai-grok-4-5
+- xai-grok-4-6
+loaded_models: 14
+skipped_models: 8
+completed_at_utc: '2026-10-23T02:03:07.962175+00:00'
+format_retry: false
+notes: Source run retained with five valid first attempts and one truncated Fable
+  response missing required dispersion_state. Technical/schema retry only; never independently
+  accepted.
