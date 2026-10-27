@@ -54,3 +54,6 @@ participant must cover every historical weekly round. Roster replacements can
 leave all histories provisional. The test now checks coverage-based eligibility
 and cumulative arithmetic for all rows, while preserving eligibility-first
 ordering. No production scoring or eligibility rule was changed.
+The rendered-page validator had the same stale assumption; it now verifies the
+actual full-history model count and preserves provisional-row checks when that
+count is zero, rather than requiring a nonexistent leader.

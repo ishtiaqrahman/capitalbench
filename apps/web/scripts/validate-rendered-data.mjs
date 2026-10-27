@@ -2107,7 +2107,8 @@ for (const track of ["weekly", "monthly"]) {
 
   const eligibleRows = cumulative.data.filter((row) => row.is_rank_eligible);
   const leader = eligibleRows[0];
-  if (!leader) failures.push(`${track} cumulative leaderboard has no rank-eligible leader`);
+  // Replacements can leave no participant with every historical round.
+  // Such a scorecard must preserve provisional labels, not invent a leader.
 
   const score = leader ? scoreLabel(leader.capitalbench_score) : "";
   const pagePath = `leaderboards/cumulative-${track}/index.html`;
@@ -2120,7 +2121,7 @@ for (const track of ["weekly", "monthly"]) {
   const context = `${track} cumulative page`;
 
   includes(cumulativeHtml, `${cumulative.comparison.comparison_round_count} resolved`, context);
-  includes(cumulativeScorecardHtml, score, context);
+  if (leader) includes(cumulativeScorecardHtml, score, context);
   includes(cumulativeScorecardHtml, `Resolved ${track} rounds only.`, context);
   includes(
     cumulativeScorecardHtml,
@@ -2128,7 +2129,11 @@ for (const track of ["weekly", "monthly"]) {
     `${context} max possible explanation`
   );
   includes(cumulativeScorecardHtml, `${cumulative.comparison.comparison_round_count} resolved rounds compared`, context);
-  includes(cumulativeScorecardHtml, "full-history models ranked", context);
+  includes(
+    cumulativeScorecardHtml,
+    `${eligibleRows.length} full-history model${eligibleRows.length === 1 ? "" : "s"} ranked`,
+    context
+  );
   includes(cumulativeScorecardHtml, `Newest included round: ${cumulative.comparison.comparison_round_ids.at(-1)}`, context);
   excludes(cumulativeScorecardHtml, "Rounds included:", context);
   for (const row of cumulative.data) {
