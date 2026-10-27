@@ -67,7 +67,10 @@ const latestResolvedRoundDate =
     latestDataDate
   ) ?? latestRoundDate;
 const latestInsightDate =
-  latestDate([(apiReadModel as any).insights?.data_as_of, (apiReadModel as any).insights?.generated_at]) ??
+  latestDate(
+    [(apiReadModel as any).insights?.data_as_of, (apiReadModel as any).insights?.generated_at],
+    latestDataDate
+  ) ??
   latestDataDate;
 const defaultLastmod = latestPublicChangeDate;
 

@@ -57,3 +57,7 @@ ordering. No production scoring or eligibility rule was changed.
 The rendered-page validator had the same stale assumption; it now verifies the
 actual full-history model count and preserves provisional-row checks when that
 count is zero, rather than requiring a nonexistent leader.
+SEO verification also exposed a future insights sitemap last-modified date
+derived from the prospective decision day. The sitemap now bounds insight
+dates by the actual read-model generation date, without changing round dates,
+research cutoffs, portfolios, or score calculations.
