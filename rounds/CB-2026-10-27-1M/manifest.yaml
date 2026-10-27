@@ -1,0 +1,33 @@
+round_id: CB-2026-10-27-1M
+title: CapitalBench CB-2026-10-27-1M
+description: One-month market allocation evaluation round.
+decision_date: '2026-10-28'
+decision_deadline: '2026-10-28T13:25:00Z'
+horizon: one month
+methodology_version: portfolio-v3.0
+model_roster_version: portfolio-v3-roster-5f7392bbcea6
+model_roster_frozen_at_utc: '2026-10-27T22:31:49.360348+00:00'
+expected_model_ids:
+- openai-gpt-6-astra
+- anthropic-claude-opus-5-5
+- anthropic-claude-fable-5-1
+- google-gemini-4-argon
+- xai-grok-4-5
+- xai-grok-4-6
+universe_version: v2.1
+submission_format: portfolio
+portfolio_constraints:
+  min_holdings: 1
+  max_holdings: 3
+  allocation_increment_pct: 5
+  min_allocation_pct: 5
+  max_total_allocation_pct: 100
+  allow_cash: true
+  allow_benchmark_asset: true
+  max_economic_exposure_pct: null
+entry_rule: Use the official entry prices supplied in prices/entry_prices.csv.
+exit_rule: Use the official exit prices supplied in prices/exit_prices.csv.
+entry_date: '2026-10-28'
+exit_date: '2026-11-30'
+created_at: '2026-10-27T22:31:49.360348+00:00'
+notes: Fresh direct public-source research October 27 America/Toronto; complete mechanical context through October 27 close. Prospective October 28 close entry; one-month anniversary November 28 is a Saturday, so exit is next trading close November 30. Six-model frozen V3 roster; participant tools and search disabled.

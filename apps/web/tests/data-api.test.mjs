@@ -431,13 +431,19 @@ test("cumulative weekly leaderboard ranks eligible all-resolved rows by CapitalB
   assert.equal(result.body.comparison.comparison_round_count, resolvedWeeklyRoundIds.length);
   assert.ok(result.body.data.length > 0);
   assert.equal(result.body.data[0].rank, 1);
-  assert.equal(result.body.data[0].is_rank_eligible, true);
+  assert.equal(
+    result.body.data[0].is_rank_eligible,
+    result.body.data.some((row) => row.is_rank_eligible),
+    "complete-history models rank first when any exist; roster changes may leave every history provisional"
+  );
   assert.equal(typeof result.body.data[0].capitalbench_score, "number");
   assert.equal(typeof result.body.data[0].max_possible_return_pct, "number");
 
   const latestWeeklyRoundId = result.body.comparison.comparison_round_ids.at(-1);
   let foundNonLatestOnlyAverage = false;
-  for (const row of result.body.data.filter((item) => item.is_rank_eligible)) {
+  for (const row of result.body.data) {
+    assert.equal(row.is_rank_eligible, row.tests_included === row.tests_required);
+    assert.equal(row.sample_status, row.is_rank_eligible ? "eligible" : "provisional");
     const rawRows = officialRowsForReadModel(apiReadModel, apiReadModel.results).filter((item) => item.track === "weekly" && item.model_id === row.model_id);
     const expectedScore = cumulativeCapitalBenchScore(
       rawRows.map((item) => item.portfolio_return_pct),
